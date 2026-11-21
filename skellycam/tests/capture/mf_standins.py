@@ -124,7 +124,8 @@ def install(case):
     calls = Calls()
     link = fake_link(0)
     # exposure (IAMCameraControl 4) in auto at -6, focus (6) absent, gain (IAMVideoProcAmp 9) manual at 10
-    camera = Control(calls, "camera", {4: [-6, 1]}, ranges={4: (-13, -1, 1, -6, 3)})
+    # "record-rounds": an earlier open set manual -7 and got no restore; this camera rounds and reads manual -6 now
+    camera = Control(calls, "camera", {4: [-6, 2 if case == "record-rounds" else 1]}, ranges={4: (-13, -1, 1, -6, 3)})
     hang = {"after-hang": ((9, 1),), "restore-hangs": ((9, 2),)}.get(case, ())
     procamp = Control(calls, "procamp", {9: [10, 2]}, fail_sets=((9, 2),) if case == "restore-fails" else (),
                       hang_sets=hang)
@@ -153,6 +154,13 @@ def run(case):
     if case == "restore-off":
         os.environ["SKELLYCAM_RESTORE_CONTROLS"] = "0"
     mf, camera_id, calls, reader = install(case)
+    if case == "record-rounds":  # unix-capture.md 4.7 [Z7F3]: the record of that open, auto -5 before it
+        from types import SimpleNamespace
+
+        from skellycam.core.camera.capture import source as shared
+        store = {"r": dict(before={"exposure": [True, True, -5]}, names=["exposure"], set={"exposure": [False, -7]})}
+        shared.RESTORE_RECORDS[camera_id] = SimpleNamespace(restore_record=lambda: store["r"],
+                                                            set_restore_record=lambda record: store.update(r=record))
     if case.startswith("auto-open"):
         return auto_open(mf, camera_id, calls, int(case.split(":")[1]))
     source = mf.MediaFoundationSource()

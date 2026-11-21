@@ -107,13 +107,15 @@ def test_f7_no_restore_when_the_loop_failed(monkeypatch):
     assert source.diagnostics()["restore_ok"] is None
 
 
-@pytest.mark.parametrize("next_open", ["apply again", "a new group"])
+@pytest.mark.parametrize("next_open", ["apply again", "a new group", "a camera that rounds"])
 def test_t_unx_91_the_values_of_before_survive_a_camera_with_no_restore(monkeypatch, next_open):
     """T-UNX-91, unix-capture.md 4.7 [NYT6]: a camera that keeps its controls between opens (a real camera) was in auto -6. Its
     first open sets MANUAL -7; its loop fails, so it gets no restore and stays at manual -7. The next open ("apply
     again", or a new group after a group close) reads manual -7, but its "before" values stay auto -6, and its
-    close restores auto -6."""
-    script = FakeScript(controls=AUTO_BEFORE, keeps_controls=True)
+    close restores auto -6. [Z7F3]: a camera that rounds (the C930e) reads manual -6 at the next open, one step from
+    -7; its close also restores auto -6."""
+    rounds = next_open == "a camera that rounds"
+    script = FakeScript(controls=AUTO_BEFORE, keeps_controls=True, reopen_shift=(("exposure", 1),) if rounds else ())
     with one_camera(monkeypatch, script) as (app, camera_id, _):
         log = app.factory.logs[camera_id]
         app.factory.sources[camera_id].stop_now()
@@ -219,3 +221,32 @@ def test_t_unx_92_a_record_applies_only_to_controls_that_still_hold_the_value_of
     restore = ControlRestore("cam")
     restore.read(dict(device))
     assert restore.before["exposure"] == ControlValue(True, True, -6) and restore.before["gain"] == ControlValue(True, False, 0)
+
+
+@pytest.mark.parametrize("read, steps, takes_record", [
+    (-6, {"exposure": 1}, True), (-8, {"exposure": 1}, True),  # (d) one step: a camera that rounds at a new open (C930e)
+    (-6, None, False), (-6, {"exposure": 0}, False),  # (d) no step known: the same value is needed
+    (-5, {"exposure": 1}, False), (-9, {"exposure": 1}, False),  # (e) two steps: another program set it
+])
+def test_t_unx_92_a_camera_that_rounds_at_a_new_open_keeps_the_record(monkeypatch, read, steps, takes_record):
+    """T-UNX-92 (d), (e), unix-capture.md 4.7 [Z7F3]: open 1 set manual -7 and got no restore. At open 2 the camera
+    reads manual `read`. Within one step of the control's own step the record still applies (the "before" value is
+    auto -6 of the record); else the record drops the control, and the "before" value is the value that the camera
+    reads. The auto flag must always be the same."""
+    from types import SimpleNamespace
+
+    from skellycam.core.camera.capture import source
+    from skellycam.core.camera.capture.source import ControlRestore, ControlValue
+
+    store = {"r": dict(before={"exposure": [True, True, -6]}, names=["exposure"], set={"exposure": [False, -7]})}
+    monkeypatch.setitem(source.RESTORE_RECORDS, "cam", SimpleNamespace(
+        restore_record=lambda: store.get("r", {}), set_restore_record=lambda r: store.__setitem__("r", r)))
+    restore = ControlRestore("cam")
+    restore.read({"exposure": ControlValue(True, False, read)}, steps)
+    expected = ControlValue(True, True, -6) if takes_record else ControlValue(True, False, read)
+    assert restore.before["exposure"] == expected
+    assert bool(store["r"]) == takes_record
+    store["r"] = dict(before={"exposure": [True, True, -6]}, names=["exposure"], set={"exposure": [False, -7]})
+    auto = ControlRestore("cam")
+    auto.read({"exposure": ControlValue(True, True, -7)}, steps)  # the same value, but the camera is in auto again
+    assert auto.before["exposure"] == ControlValue(True, True, -7)

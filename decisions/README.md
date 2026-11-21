@@ -95,6 +95,7 @@ These entries wait for a decision of the user. Section is the section or area of
 | [VG5F](entries/VG5F-choices-of-the-first-certify-code.md) | Choices of the first certify code: built and not-built checks, plan `total`, `has-sequence`, unfilled keys, session child, phase G | `certify` | proposed |
 | [X8XE](entries/X8XE-choices-of-the-certify-review-fixes-and-format-1-6-0.md) | Certify review fixes and format 1.6.0: wedge after any step, phase G rules, caller watch, time-out grace, run lock, `abandon`; 5 questions | `certify` | proposed |
 | [1T0S](entries/1T0S-choices-of-step-4-one-frame-rate-and-the-fall-back.md) | Choices of step 4: group rate of a request, configs of the fall back, its watch and texts, rate selector helpers, note and "Checking 60 fps…" | none | proposed |
+| [Z7F3](entries/Z7F3-choices-of-fix-lane-3.md) | Choices of fix lane 3: restore record within one step, retry list, restore after a failure, one group creation, Media Foundation clock, median rate | none | proposed |
 
 The entries that are `rejected`, `superseded by XXXX`, `absorbed into <path>#<anchor>`,
 `evidence; used by XXXX` or `done` are in [historical.md](historical.md).

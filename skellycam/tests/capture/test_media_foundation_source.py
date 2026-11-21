@@ -84,6 +84,14 @@ def test_t_unx_78_a_failed_restore_is_recorded_and_the_close_goes_on():
     assert (data["restore_ok"], data["restore_failed"]) == (False, 1)
 
 
+def test_t_unx_92_the_media_foundation_source_gives_the_step_of_get_range_to_the_restore_record():
+    """T-UNX-92 (d) on Media Foundation, unix-capture.md 4.7 [Z7F3]: an earlier open set manual -7 and got no restore
+    (the record holds auto -5 as "before"); the camera rounds and reads manual -6 now, one step of GetRange (step 1)
+    from -7. The record applies: the close restores auto -5."""
+    sets, flush_at, calls = restore_sets(run_case("record-rounds"))
+    assert ["camera", 4, -5, 1] in sets, calls  # flags 1: auto
+
+
 def test_f7_no_restore_after_a_stream_error():
     """F7 (reviewer list): a removal HRESULT in `OnReadSample` before the close: the close sets no control."""
     sets, _, calls = restore_sets(run_case("after-error"))

@@ -1270,12 +1270,17 @@ the record), 6 (the citation of 0) and 7 (4.4.10 filled) are applied here.
   A restore with no failure clears the record. A camera process that ends with no restore (a kill, a
   hang, a failed loop) leaves the record. At the first read of a later open, a control of the record
   whose current read still holds the value that this app set last (the same auto flag, and with auto
-  off the same value) takes its "before" value from the record, in place of the value that the camera
-  reads then; the record drops each other control. Thus the "before" values stay the values of the
+  off a value not more than one step from that value) takes its "before" value from the record, in
+  place of the value that the camera reads then; the record drops each other control. The step is the
+  `step` of the range of that control at this open (`c_step`). A control with no range, or with a step
+  that is not above 0, needs the same value [ADR-Z7F3](../decisions/entries/Z7F3-choices-of-fix-lane-3.md).
+  Reason: a camera can round a value at a new open. A Logitech C930e read back manual exposure -8 in
+  the open that set it, and -7 at the next open; a Logitech C922 read back -8 in both. Thus the "before"
+  values stay the values of the
   first open, the close of the next open restores them, and a value that another program set meanwhile
   stays. What is left: another unit of the same model in the same USB port (a camera with no serial
-  number has the same `camera_id` there), or a value that another program set to exactly the value that
-  this app set last, takes the "before" values of the record. A record that a kill tore during its
+  number has the same `camera_id` there), or a value that another program set to not more than one step
+  from the value that this app set last, takes the "before" values of the record. A record that a kill tore during its
   write reads as no record. "Apply again" keeps the record (`reset_for_start`), and
   `CameraGroupManager` keeps it from a group close to the next group, for the life of the app, also
   when the close raises for a process that cannot be killed. A group close does not restore a camera
@@ -1647,8 +1652,8 @@ facts of macOS only.
 | T-UNX-76 | windows | `MediaFoundationSource.diagnostics()` with the stand-in interfaces of the Windows tests. | Every key of 4.6.2; `id_source` `mf-link`; `native_domain` `hresult`; `clock` `unknown`; `t_*_ms` filled. |
 | T-UNX-77 | windows | Map the HRESULTs of [W 6.7] and `0x800718CF` to codes. | In-use codes give `camera-in-use`; removal codes give `device-removed`; `0x800718CF` gives `usb-bandwidth`; `0x80004005` gives `open-failed` at open and `stream-error` in streaming. |
 | T-UNX-78 | windows | The restore of the Media Foundation source at the close, with stand-in control interfaces. | Each changed control is set back to its "before" value and flags before the flush, and read back; on by default. |
-| T-UNX-91 | fake | A fake camera that keeps its controls between opens, auto -6 before the first open; it opens in `MANUAL -7`, and its loop fails (no restore); then "apply again", and in a second case a group close and a new group. | The camera holds manual -7 after the failure and after the group close; the next open has `exposure_before` auto -6, and its close restores auto -6, `restore_ok` true (4.7) [ADR-NYT6](../decisions/entries/NYT6-choices-of-fix-lane-2.md). |
-| T-UNX-92 | fake | `ControlRestore` with a record: open 1 sets manual -7 and gets no restore; (a) the camera still holds -7; (b) another program set manual -3; (c) a record whose `before` has a control that is not in `names`. | (a) The close of open 2 restores auto -6; (b) it restores -3; the record is empty after each; (c) that control keeps the value that the camera reads (4.7). |
+| T-UNX-91 | fake | A fake camera that keeps its controls between opens, auto -6 before the first open; it opens in `MANUAL -7`, and its loop fails (no restore); then "apply again", and in a second case a group close and a new group; in a third case the camera rounds: after a reopen it reads manual -6 (one step from -7). | The camera holds manual -7 after the failure and after the group close; the next open has `exposure_before` auto -6, and its close restores auto -6, `restore_ok` true (4.7) [ADR-NYT6](../decisions/entries/NYT6-choices-of-fix-lane-2.md); the camera that rounds also gets auto -6 back [ADR-Z7F3](../decisions/entries/Z7F3-choices-of-fix-lane-3.md). |
+| T-UNX-92 | fake | `ControlRestore` with a record: open 1 sets manual -7 and gets no restore; (a) the camera still holds -7; (b) another program set manual -3; (c) a record whose `before` has a control that is not in `names`; (d) the camera reads one step from -7 (-6 or -8) with the step 1, and with no step; (e) it reads two steps from -7. | (a) The close of open 2 restores auto -6; (b) it restores -3; the record is empty after each; (c) that control keeps the value that the camera reads; (d) with the step: auto -6, with no step: the value that the camera reads; (e) the value that the camera reads (4.7) [ADR-Z7F3](../decisions/entries/Z7F3-choices-of-fix-lane-3.md). |
 | T-UNX-93 | fake | A frame decision with no take (first frame -1) while another thread holds the lock of the last frame. | It returns "no record, no finish" in under 0.2 s and starts no stretch with no lock (4.10). |
 | T-UNX-94 | fake | `CameraManager.close()` with a camera process that cannot be killed and a camera with a restore record. | The close raises; `restore_records` holds the record of that camera (4.7). |
 | T-UNX-79 | fake | `capture_timing`. A paused camera process with `V4L2Source` and with `AVFoundationSource` over the fakes, 10 s. | Process CPU under 2 % of one core (the rule of T-CAP-49). Not calibrated on a hosted runner: a failure is recorded and the user decides [A]. |

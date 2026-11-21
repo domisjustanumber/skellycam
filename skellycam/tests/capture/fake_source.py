@@ -221,6 +221,7 @@ class FakeScript:
     controls: tuple = (("exposure", True, False, -6), ("gain", True, False, 0), ("focus", True, True, 30))
     reset_on_stream: tuple = ()  # (name, value): the camera sets this when the stream starts (C930e)
     keeps_controls: bool = False  # the camera keeps its control values from one open to the next (THREAD workers)
+    reopen_shift: tuple = ()  # (name, delta): with keeps_controls, a later open reads a manual value moved by delta (C930e)
     reports_auto: tuple = ()  # control names that read back auto whatever the set (a camera in its own auto)
     live_set_faults: tuple = ()  # for the n-th live change: None, "error" or "readback:<value>"
     rate_after_change: tuple = ()  # the delivered rate after the n-th live change
@@ -389,6 +390,9 @@ class FakeSource:
             self._controls = kept or {name: [present, auto, value] for name, present, auto, value in self.script.controls}
             if self.script.keeps_controls:
                 self.log.device_controls = self._controls
+            for name, delta in self.script.reopen_shift if kept else ():
+                if not self._controls[name][1]:
+                    self._controls[name][2] += delta
             for name, value in self.script.reset_on_stream:
                 self._controls[name][2] = value
             restore = getattr(types, "ControlRestore", None)  # the stand-ins of the self-tests have none
@@ -452,7 +456,7 @@ class FakeSource:
                 faults = self.script.live_set_faults
                 fault = faults[self._live_changes - 1] if self._live_changes <= len(faults) else None
             if self._restore is not None:
-                self._restore.read(self._read_back())
+                self._restore.read(self._read_back(), {"exposure": (self.exposure_range() or (0, 0, None))[2]})
                 self._restore.changed(changes)
             if fault == "error":
                 raise types.CaptureFailure("set controls", "the camera refused the value")
