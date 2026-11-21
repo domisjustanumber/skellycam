@@ -142,6 +142,7 @@ class CameraLoop:
         self.search_before: dict | None = None
         self.search_final: int | None = None
         self.search_replies = queue.Queue()
+        self.no_exposure = False  # the camera has no working exposure control (camera-requests.md 1.9) [K3]
         self.signals = queue.Queue()
         self.hung = threading.Event()
         self._failure_lock = threading.Lock()
@@ -327,7 +328,17 @@ class CameraLoop:
         """9.1 steps 5 and 6. The config stores the read-back values (agent 44). `AUTO` sets its held value as a
         manual value (camera-requests.md 1.3a); no call of an open has `auto=True` (1.3 item 7)."""
         value = self.config.exposure
-        readback = self.source.set_controls({"exposure": ControlSetting(auto=False, value=value)})
+        readback = self.source.set_controls({})  # a read: a camera with no exposure control gets no set (1.9)
+        exposure = readback.get("exposure")
+        self.no_exposure = exposure is not None and not exposure.present
+        text = f"Camera {self.camera_id} has no manual exposure. SkellyCam does not set its exposure."
+        self.status.replace_warning_items(self.status.camera_warnings, ("no_manual_exposure",), [
+            dict(kind="no_manual_exposure", camera_ids=[self.camera_id], control="exposure", text=text)
+        ] if self.no_exposure else [])  # it comes again at each open (1.5)
+        if self.no_exposure:
+            logger.warning(text)
+        else:
+            readback = self.source.set_controls({"exposure": ControlSetting(auto=False, value=value)})
         self._publish_controls(readback)
         exposure = readback.get("exposure")
         if exposure is not None and exposure.present and exposure.value is not None:
@@ -360,7 +371,7 @@ class CameraLoop:
 
     def _searches(self) -> bool:
         """A camera in `AUTO` searches, except on a source that cannot (the OpenCV source of Linux and macOS, 1.7)."""
-        return self.config.exposure_mode == "AUTO" and getattr(self.source, "searches", True)
+        return self.config.exposure_mode == "AUTO" and getattr(self.source, "searches", True) and not self.no_exposure
 
     def _start_search(self) -> None:
         """The one-shot search on the open stream, in the state `adjusting`. A check that runs stops (1.5)."""
@@ -571,7 +582,7 @@ class CameraLoop:
         """The button or "Search again" (camera-requests.md 1.2 (c)): the camera goes to `AUTO` and searches. Never
         during a take, and only on a stream that runs (1.5); the main process checks the states first."""
         if (self.search is None and self.take_writer is None and not self.status.should_pause.value
-                and self.status.state in ("ready", "too_slow", "checking")):
+                and not self.no_exposure and self.status.state in ("ready", "too_slow", "checking")):
             self._start_search()
             self.config = self.config.model_copy(update=dict(exposure_mode="AUTO"))
         self.status.search_requested.value = False  # last: the main process then sees the new count and state
@@ -582,7 +593,7 @@ class CameraLoop:
             self._reopen(requested)
             return
         if requested.exposure_mode == "AUTO" and current.exposure_mode != "AUTO" and self.search is None \
-                and getattr(self.source, "searches", True):
+                and getattr(self.source, "searches", True) and not self.no_exposure:
             # camera-requests.md 1.2 (c): a switch to AUTO searches on the open stream; the response sees `adjusting`
             self._start_search()  # it keeps the MANUAL setting of before, for a failed search (1.3 item 6)
             self.config = requested.model_copy(update=dict(
@@ -594,7 +605,9 @@ class CameraLoop:
         if requested.exposure_mode == "MANUAL":
             adopted = adopted.model_copy(update=dict(exposure_found_at_fps=None))  # camera-requests.md 1.3a
         changes = {}
-        if requested.exposure_mode == "MANUAL" and (current.exposure_mode, current.exposure) != ("MANUAL", requested.exposure):
+        if self.no_exposure:  # 1.9 [K3]: an exposure in a request is ignored, not refused; the warning stays
+            pass
+        elif requested.exposure_mode == "MANUAL" and (current.exposure_mode, current.exposure) != ("MANUAL", requested.exposure):
             changes["exposure"] = ControlSetting(auto=False, value=requested.exposure)
         if changes:
             self.status.replace_warning_items(self.status.camera_warnings, SEARCH_WARNINGS, [])  # 1.5: an exposure change

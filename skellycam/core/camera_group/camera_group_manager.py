@@ -235,7 +235,9 @@ class CameraGroupManager:
         if opencv and (camera_ids or len(opencv) == len(named)):  # 1.7 [K2]: the button skips them when others can
             raise RequestRefused(422, "the exposure search does not run on the OpenCV source of this system: "
                                  + ", ".join(opencv))
-        streaming = [camera_id for camera_id in named if camera_id not in opencv
+        lacking = {camera_id: item for camera_id in named for item in statuses[camera_id].warning_items(
+            statuses[camera_id].camera_warnings) if item["kind"] == "no_manual_exposure"}  # 1.9 [K3]: skipped
+        streaming = [camera_id for camera_id in named if camera_id not in opencv and camera_id not in lacking
                      and statuses[camera_id].state in ("ready", "too_slow", "checking")]
         self.searching = True
         try:
@@ -243,7 +245,8 @@ class CameraGroupManager:
         finally:
             self.searching = False
         response["not_streaming"] = [camera_id for camera_id in named if camera_id not in opencv
-                                     and camera_id not in streaming]
+                                     and camera_id not in lacking and camera_id not in streaming]
+        response["warnings"] += list(lacking.values())
         return response
 
     def get_camera_group(self, camera_group_id: CameraGroupIdString) -> CameraGroup:

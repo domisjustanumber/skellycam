@@ -839,3 +839,36 @@ def test_t_req_21_the_opencv_source_of_linux_and_macos_does_not_search(monkeypat
             assert "the exposure search does not run on the OpenCV source of this system" in refused.text
     finally:
         app.close()
+
+
+# ---------------------------------------------------------------------------
+# 1.9: a camera with no working exposure control (T-REQ-20)
+# ---------------------------------------------------------------------------
+
+def test_t_req_20_a_camera_with_no_manual_exposure(monkeypatch):
+    """T-REQ-20, 1.9 [K3, B21]: a fake with no exposure control (`present: false`), connected in `AUTO` with a
+    second fake. No search and no `adjusting` at the connect; the start-up rate check judges it as for `MANUAL`;
+    the warning `no_manual_exposure` with the text of 1.5 at the open; the button skips it and names it with the
+    warning; an apply of `MANUAL -7` for it gets no 422, and the fake gets no exposure set."""
+    no_exposure = (("exposure", False, False, None), ("gain", True, False, 0), ("focus", True, True, 30))
+    scripts = [FakeScript(controls=no_exposure), FakeScript(brightness=MODEL)]
+    with capture_app(monkeypatch, scripts, track=True) as app:
+        lacking, other = app.factory.camera_ids
+        app.detect()
+        assert app.apply([auto(app, lacking), app.config(other)]).status_code == 200
+        app.wait_state(lacking, "ready", "failed")
+        status = app.status(lacking)
+        item = {"kind": "no_manual_exposure", "camera_ids": [lacking], "control": "exposure",
+                "text": f"Camera {lacking} has no manual exposure. SkellyCam does not set its exposure."}
+        assert status["state"] == "ready" and status["measured_fps"] and status["exposure_search"] is None, status
+        assert item in status["warnings"]
+        assert "adjusting" not in run_of_states(app, lacking)
+        app.wait_state(other, "ready")
+        response = press(app)
+        assert response.status_code == 200, response.text
+        body = response.json()
+        assert list(body["results"]) == [other] and item in body["warnings"]
+        app.wait_state(other, "ready")
+        applied = app.apply([app.config(lacking)])
+        assert applied.status_code == 200, applied.text
+        assert not [s for s in app.factory.logs[lacking].settings if "exposure" in s]
