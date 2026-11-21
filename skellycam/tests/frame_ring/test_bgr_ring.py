@@ -345,8 +345,9 @@ def test_t_ring_36_reader_killed(cleanup, spawn, procs):
     timings, survivor_results, victim_results = spawn.Queue(), spawn.Queue(), spawn.Queue()
     _start(spawn, procs, ring_children.timed_writer, creator.name, SIZE, phase, stop, ready, timings, SHAPE)
     _start(spawn, procs, ring_children.busy_reader, creator.name, SIZE, phase, stop, survivor_results, SHAPE)
-    victim = _start(spawn, procs, ring_children.busy_reader, creator.name, SIZE, phase, stop,
-                    victim_results, SHAPE)
+    victim_stop = spawn.Event()  # its own Event: a victim killed inside `is_set` keeps the lock of the Event
+    victim = _start(spawn, procs, ring_children.busy_reader, creator.name, SIZE,
+                    phase, victim_stop, victim_results, SHAPE)
     _wait(ready, "writer ready")
     time.sleep(TIMING_SECONDS)
     victim.kill()

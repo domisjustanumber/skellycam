@@ -1013,12 +1013,13 @@ def test_a_queued_live_change_lands_before_a_requested_search():
 def test_only_the_reply_of_the_last_set_ends_the_search():
     """[GEH0] (review item 6): a late reply of a value tried before the result does not end the search; the reply of
     the last set does. A new search empties the replies of an earlier one."""
+    from skellycam.core.camera.capture import camera_loop
     from skellycam.core.camera.config.camera_config import CameraConfig
 
     loop = bare_loop(CameraConfig(camera_id="a1b2", exposure_mode="AUTO", exposure=-7))
     loop._start_search()
     loop.search.result = dict(state="done", chosen=-9, add_light=False, reason=None, trials=[])
-    loop.search_final = -9
+    loop.search_final, loop.search_final_ns = -9, camera_loop.perf_counter_ns()
     loop.search_replies.put((-5, 1, None, -5))
     loop._search_step()
     assert loop.search is not None and loop.status.state == "adjusting"
@@ -1077,6 +1078,7 @@ def test_the_state_route_runs_on_the_event_loop():
     assert inspect.iscoroutinefunction(camera_group_state)
 
 
+@pytest.mark.capture_timing  # real time: the limit of the endpoint is 0.5 s of real time here
 def test_the_endpoint_does_not_fail_a_camera_that_still_searches(monkeypatch):
     """[GEH0] (review item 8): the wait of the endpoint covers the worst case of a search; at its limit, a camera whose
     process is alive and still `adjusting` is not marked `failed`. "Apply again" clears a request of a search."""
@@ -1100,3 +1102,136 @@ def test_the_endpoint_does_not_fail_a_camera_that_still_searches(monkeypatch):
         assert status["state"] == "adjusting" and status["failure"] is None, status
         app.factory.sources[camera_id].release()
         app.wait_state(camera_id, "ready")
+
+
+
+# ---------------------------------------------------------------------------
+# Second review fixes of 2026-11-21 [GEH0]
+# ---------------------------------------------------------------------------
+
+@pytest.mark.parametrize("out_of_range", ["refuse", "clamp"])
+def test_a_source_with_no_range_skips_the_values_that_the_camera_cannot_set(monkeypatch, out_of_range):
+    """camera-requests.md 1.3 item 6 [GEH0, supervisor]: a fake that gives no range (as OpenCV) and refuses or clamps
+    below -11. The search skips -12, tries -11 to -5 and finds a value; the result lists -12 as skipped."""
+    script = FakeScript(brightness=MODEL, exposure_range=(-11, -2), reported_range=False, out_of_range=out_of_range)
+    with capture_app(monkeypatch, [script]) as app:
+        camera_id = app.factory.camera_ids[0]
+        app.detect()
+        assert app.apply([auto(app, camera_id)]).status_code == 200
+        app.wait_state(camera_id, "ready", "too_slow")
+        search = app.status(camera_id)["exposure_search"]
+        assert (search["state"], search["chosen"], search["skipped"]) == ("done", -9, [-12]), search
+        assert [t["value"] for t in search["trials"]] == list(range(-11, -4))
+
+
+def test_a_last_set_that_raises_another_error_ends_the_search(monkeypatch):
+    """[GEH0] (review item 3): the last set (the result -9) raises an error that is not a `CaptureFailure`. The search
+    ends failed (`set-failed`), the held value is set again, and the camera leaves `adjusting`."""
+    script = FakeScript(brightness=MODEL, raise_on_set=((-9, 2),))
+    with capture_app(monkeypatch, [script]) as app:
+        camera_id = app.factory.camera_ids[0]
+        app.detect()
+        assert app.apply([auto(app, camera_id)]).status_code == 200
+        app.wait_state(camera_id, "ready", "too_slow")
+        search = app.status(camera_id)["exposure_search"]
+        assert (search["state"], search["reason"]) == ("failed", "set-failed"), search
+        assert exposure_sets(app, camera_id)[-1] == (False, -7)
+
+
+def test_the_last_set_has_a_bounded_wait():
+    """[GEH0] (review item 3): no reply of the last set within the bounded call limit and a margin: the search ends
+    failed with `set-failed`, and the camera leaves `adjusting`."""
+    from skellycam.core.camera.capture import camera_loop
+    from skellycam.core.camera.config.camera_config import CameraConfig
+
+    loop = bare_loop(CameraConfig(camera_id="a1b2", exposure_mode="AUTO", exposure=-7))
+    loop._start_search()
+    loop.search.result = dict(state="done", chosen=-9, add_light=False, reason=None, trials=[], skipped=[])
+    loop.search_final, loop.search_final_ns = -9, camera_loop.perf_counter_ns() - 7_000_000_000
+    loop._search_step()
+    assert loop.search is None and loop.status.state == "checking"
+    result = loop.status.info_dict()["exposure_search"]
+    assert (result["state"], result["reason"]) == ("failed", "set-failed")
+
+
+def test_a_live_change_during_a_search_keeps_its_other_fields():
+    """[GEH0] (review item 4, `drop_signal.py`): a live change (exposure and rotation) whose signal lands during a
+    search: the loop takes its rotation, keeps the held fields of the search, and changes no state."""
+    from skellycam.core.camera.config.camera_config import CameraConfig
+    from skellycam.core.camera.config.image_rotation_types import RotationTypes
+
+    base = CameraConfig(camera_id="a1b2", exposure_mode="MANUAL", exposure=-7)
+    loop = bare_loop(base)
+    loop._start_search()
+    rotated = next(r for r in RotationTypes if r != base.rotation)
+    loop.signals.put(("check", 0, base.model_copy(update=dict(exposure=-6, rotation=rotated))))
+    loop._check_updates()
+    assert loop.config.rotation == rotated
+    assert (loop.config.exposure, loop.config.exposure_mode) == (-7, "MANUAL")
+    assert loop.status.state == "adjusting" and loop.check is None
+
+
+def test_a_reopen_cancels_the_search_and_publishes_its_result():
+    """[GEH0] (review item 5): a reopen during a search publishes the search as failed (`camera-closed`)."""
+    from types import SimpleNamespace
+
+    from skellycam.core.camera.config.camera_config import CameraConfig
+
+    config = CameraConfig(camera_id="a1b2", exposure_mode="AUTO", exposure=-7)
+    loop = bare_loop(config)
+    loop._start_search()
+    loop._stop_control = loop._close_rings = loop._add_replaced = loop._start_up = lambda: None
+    loop.source = SimpleNamespace(close=lambda: None)
+    loop._reopen(config)
+    result = loop.status.info_dict()["exposure_search"]
+    assert loop.search is None and (result["state"], result["reason"]) == ("failed", "camera-closed")
+
+
+def test_a_changed_config_waits_for_a_requested_search(monkeypatch):
+    """[GEH0] (review item 5): a camera whose `search_requested` is set (the loop has not started the search yet)
+    refuses a changed config with 409."""
+    from skellycam.core.camera.capture.camera_loop import CameraLoop
+
+    with capture_app(monkeypatch, [FakeScript(brightness=MODEL)]) as app:
+        camera_id = app.factory.camera_ids[0]
+        ready_manual(app)
+        monkeypatch.setattr(CameraLoop, "_requested_search", lambda loop: None)
+        app.group.cameras.orchestrator.camera_statuses[camera_id].search_requested.value = True
+        refused = app.apply([app.config(camera_id, exposure=-6)])
+        assert refused.status_code == 409, refused.text
+        app.group.cameras.orchestrator.camera_statuses[camera_id].search_requested.value = False
+
+
+def test_the_give_up_of_the_endpoint_names_its_own_limit():
+    """[GEH0] (review item 6): a camera that the endpoint gives up gets the limit of the endpoint in its reason."""
+    from types import SimpleNamespace
+
+    from skellycam.core.camera_group.camera_group import SEARCH_WAIT_LIMIT_S, CameraGroup
+    from skellycam.core.camera_group.camera_status import CameraStatus
+
+    status = CameraStatus()
+    group = SimpleNamespace(cameras=SimpleNamespace(orchestrator=SimpleNamespace(camera_statuses={"a1b2": status})),
+                            _note_failure=lambda camera_id, code: None)
+    CameraGroup._give_up(group, ["a1b2"], "streaming", SEARCH_WAIT_LIMIT_S)
+    assert status.info_dict()["failure"]["reason"] == "no answer from the camera process in 35 s"
+    assert status.state == "failed"
+
+
+@pytest.mark.parametrize("guard", ["paused", "take writer"])
+def test_the_loop_starts_no_search_in_a_take(guard):
+    """[GEH0] (review items 2 and 6): the loop itself starts no search while the camera is paused or has a take writer,
+    for a switch to AUTO and for a requested search; the camera keeps its state."""
+    from types import SimpleNamespace
+
+    from skellycam.core.camera.config.camera_config import CameraConfig
+
+    loop = bare_loop(CameraConfig(camera_id="a1b2", exposure_mode="MANUAL", exposure=-7))
+    loop.source, loop._publish_config = SimpleNamespace(searches=True), lambda *args, **kwargs: None
+    if guard == "paused":
+        loop.status.should_pause.value = True
+    else:
+        loop.take_writer = object()
+    loop._apply_change(loop.config.model_copy(update=dict(exposure_mode="AUTO")))
+    loop.status.search_requested.value = True
+    loop._requested_search()
+    assert loop.search is None and loop.status.state == "ready" and loop.status.search_count.value == 0

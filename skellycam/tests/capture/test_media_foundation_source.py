@@ -118,11 +118,11 @@ def test_f7_a_hanging_restore_ends_the_close_as_hung_within_its_bound():
 
 def test_t_req_15_no_auto_set_outside_the_close_and_the_exposure_range():
     """T-REQ-15 (Media Foundation), camera-requests.md 1.1 and 1.3 item 1 [K4, GEH0]: no `Set` with the auto flag
-    comes before the close (only the restore of the close sets it); `exposure_range()` gives min and max of
-    `IAMCameraControl::GetRange`."""
+    comes before the close (only the restore of the close sets it); `exposure_range()` gives min, max and step
+    of `IAMCameraControl::GetRange`."""
     result = run_case("restore")
     calls = result["calls"]
     close = calls.index(["close"])
     auto = [i for i, call in enumerate(calls) if call[0] == "set" and call[4] & 1]  # flags: 1 auto, 2 manual
     assert auto and all(i > close for i in auto), calls
-    assert result["exposure_range"] == [-13, -1]
+    assert result["exposure_range"] == [-13, -1, 1]

@@ -417,6 +417,7 @@ def test_f3_a_reopen_closes_the_source_in_starting(monkeypatch):
     loop._close_rings = loop._add_replaced = lambda: None
     loop._start_up = lambda: None
     loop.source = SimpleNamespace(close=lambda: seen.append(loop.status.state))
+    loop.search = None  # no exposure search runs (camera-requests.md 1.3)
     from skellycam.core.camera.config.camera_config import CameraConfig
 
     loop._reopen(CameraConfig(camera_id="aaaa", camera_index=0, exposure_mode="MANUAL", exposure=-7))

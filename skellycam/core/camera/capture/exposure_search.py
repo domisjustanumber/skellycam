@@ -2,9 +2,12 @@
 `add_light`. Pure: no camera and no clock. The shared loop gives it each frame and each set result, and it does
 each set that `pending` names on the control thread (1.3 "Who does what").
 """
+import logging
 from collections.abc import Callable
 
 from skellycam.core.camera.capture import rate_check
+
+logger = logging.getLogger(__name__)
 
 VALUES = tuple(range(-12, -4))  # 1.3 item 1 [E6]: -12 to -5, in that order; -4 gives about 16 fps (ADR-JMS0 H)
 SETTLE_FRAMES = 10  # 1.3 item 2.2 [Q4]: the 10th delivered frame after the set returned
@@ -37,11 +40,15 @@ class ExposureSearch:
 
     def __init__(self, mode_rate: float, start_ns: int | None = None, exposure_range: tuple | None = None):
         """`start_ns`: the time of the first set; None: the first `take_pending(now_ns)` sets it (1.3 item 6).
-        `exposure_range`: (min, max) of the camera; the search tries only the values in it (1.3 item 1)."""
+        `exposure_range`: (min, max) or (min, max, step) of the camera; the search tries only the values in it, on
+        its step grid (1.3 item 1). With no range, a value that the camera cannot set is skipped (1.3 item 6)."""
         self.mode_rate = mode_rate
         self.limit_ns = None if start_ns is None else start_ns + LIMIT_NS
-        low, high = exposure_range or (VALUES[0], VALUES[-1])
-        self.values = tuple(value for value in VALUES if low <= value <= high)
+        self.strict = exposure_range is not None
+        low, high, *step = exposure_range or (VALUES[0], VALUES[-1])
+        step = step[0] if step and step[0] and step[0] > 0 else 1
+        self.values = tuple(value for value in VALUES if low <= value <= high and (value - low) % step == 0)
+        self.skipped: list[int] = []  # values that the camera could not set, with no range (1.3 item 6) [GEH0]
         self.trials: list[dict] = []
         self.pending: int | None = self.values[0] if self.values else None
         self.result: dict | None = None
@@ -66,7 +73,13 @@ class ExposureSearch:
         """The set of `value` returned at `returned_ns`, with an error text, or with its read-back value."""
         if self.result is not None:
             return
-        if error is not None:
+        refused = error is not None or (readback is not None and readback != value)
+        if refused and not self.strict:  # [GEH0, supervisor]: with no range, a value the camera cannot set is skipped
+            logger.info(f"The exposure search skips {value}: not supported by the camera "
+                        f"({error if error is not None else f'read back as {readback}'})")
+            self.skipped.append(value)
+            self._next(value)
+        elif error is not None:
             self.fail("set-failed", f"the camera refused exposure {value} ({error})")
         elif readback is not None and readback != value:
             self.fail("readback-differs", f"exposure {value} read back as {readback}")
@@ -112,20 +125,30 @@ class ExposureSearch:
     def _trial(self, measured: float, early: bool = False) -> None:
         kept = not early and not rate_check.is_slow(measured, self.mode_rate)
         self.trials.append(dict(value=self._value, brightness=self._a[2], measured_fps=measured, kept_rate=kept))
-        index = self.values.index(self._value) + 1
+        self._next(self._value)
+
+    def _next(self, value: int) -> None:
+        """The next value after `value`, or the choice after the last value."""
+        index = self.values.index(value) + 1
         self._returned_ns, self._a, self._deadline = None, None, None
         if index < len(self.values):
             self.pending = self.values[index]
             return
+        if not self.trials:  # no value could be set (with no range)
+            self.fail("no-value-in-range", f"no exposure from {VALUES[0]} to {VALUES[-1]} could be set on the camera")
+            return
         chosen, add_light, reason = choose(self.trials)
+        tried = [trial["value"] for trial in self.trials]
         if reason is not None:
-            self.fail(reason, f"no exposure from {self.values[0]} to {self.values[-1]} keeps {self.mode_rate:g} fps")
+            self.fail(reason, f"no exposure from {tried[0]} to {tried[-1]} keeps {self.mode_rate:g} fps")
         else:
-            self.result = dict(state="done", chosen=chosen, add_light=add_light, reason=None, trials=self.trials)
+            self.result = dict(state="done", chosen=chosen, add_light=add_light, reason=None, trials=self.trials,
+                               skipped=self.skipped)
 
     def fail(self, reason: str, detail: str | None) -> None:
         self.pending, self.detail = None, detail
-        self.result = dict(state="failed", chosen=None, add_light=False, reason=reason, trials=self.trials)
+        self.result = dict(state="failed", chosen=None, add_light=False, reason=reason, trials=self.trials,
+                           skipped=self.skipped)
 
     def take_pending(self, now_ns: int | None = None) -> int | None:
         """The value to set now. The first value taken with `now_ns` starts the limit of 20 s (1.3 item 6)."""

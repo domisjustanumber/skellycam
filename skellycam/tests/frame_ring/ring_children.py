@@ -161,6 +161,14 @@ def hold_lock_forever(value, held):
         time.sleep(1)
 
 
+def hold_event_lock_forever(event, held):
+    """Take the lock of the condition of a shared Event, as `Event.is_set()` does on entry, and keep it."""
+    event._cond.acquire()
+    held.set()
+    while True:
+        time.sleep(1)
+
+
 def hammer_reader(name, stop):
     """T-RING-23: a reader that reads the newest frame as fast as it can."""
     reader = ring().FrameRingReader.attach(name)

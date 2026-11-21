@@ -248,7 +248,8 @@ def test_t_ring_12_reader_killed(cleanup, spawn, procs):
     timings, survivor_results, victim_results = spawn.Queue(), spawn.Queue(), spawn.Queue()
     _start(spawn, procs, ring_children.timed_writer, creator.name, size, phase, stop, ready, timings)
     _start(spawn, procs, ring_children.busy_reader, creator.name, size, phase, stop, survivor_results)
-    victim = _start(spawn, procs, ring_children.busy_reader, creator.name, size, phase, stop, victim_results)
+    victim_stop = spawn.Event()  # its own Event: a victim killed inside `is_set` keeps the lock of the Event
+    victim = _start(spawn, procs, ring_children.busy_reader, creator.name, size, phase, victim_stop, victim_results)
     _wait(ready, "writer ready")
     time.sleep(TIMING_SECONDS)
     victim.kill()
@@ -342,5 +343,18 @@ def test_a_killed_process_keeps_the_lock_of_a_shared_value(spawn, procs):
     holder.join(timeout=WAIT_TIMEOUT_S)
     lock = value.get_lock()
     assert not lock.acquire(timeout=1.0), "the lock of the killed process was released"
+    event, held = spawn.Event(), spawn.Event()
+    holder = _start(spawn, procs, ring_children.hold_event_lock_forever, event, held)
+    _wait(held, "the child holds the lock of the Event")
+    holder.kill()
+    holder.join(timeout=WAIT_TIMEOUT_S)
+    import threading
+
+    blocked = threading.Thread(target=event.is_set, daemon=True)  # stays blocked: a daemon thread, no hang of the run
+    blocked.start()
+    blocked.join(1.0)
+    assert blocked.is_alive(), "is_set returned after the holder of the lock was killed"
     for test in (test_t_ring_12_reader_killed, test_bgr_ring.test_t_ring_36_reader_killed):
-        assert 'spawn.Value("i", 0, lock=False)' in inspect.getsource(test), test.__name__
+        source = inspect.getsource(test)
+        assert 'spawn.Value("i", 0, lock=False)' in source, test.__name__
+        assert "phase, victim_stop, victim_results" in source, f"{test.__name__}: the victim shares `stop`"

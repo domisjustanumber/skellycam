@@ -101,8 +101,8 @@ class CaptureSource(Protocol):
 
     def diagnostics(self) -> dict: ...
 
-    def exposure_range(self) -> tuple[int, int] | None: ...
-    # (min, max) of the exposure control, read before the first set of the open; None: not known. The exposure
+    def exposure_range(self) -> tuple | None: ...
+    # (min, max) or (min, max, step) of the exposure control, read before the first set of the open; None: not known. The exposure
     # search tries only the values in it (camera-requests.md 1.3 item 1). Optional: the loop uses getattr.
 
 

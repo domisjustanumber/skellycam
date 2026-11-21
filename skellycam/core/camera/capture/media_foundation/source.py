@@ -144,11 +144,11 @@ class MediaFoundationSource:
                           for name, (value, via) in read.items()}
         return {name: value for name, (value, _) in read.items()}
 
-    def exposure_range(self) -> tuple[int, int] | None:
-        """(min, max) of `IAMCameraControl::GetRange` for exposure, read at the first read of the open; None when the
-        camera gives no range (camera-requests.md 1.3 item 1)."""
+    def exposure_range(self) -> tuple[int, int, int] | None:
+        """(min, max, step) of `IAMCameraControl::GetRange` for exposure, read at the first read of the open; None when
+        the camera gives no range (camera-requests.md 1.3 item 1)."""
         values = self._ranges.get("exposure")
-        return (values[0], values[1]) if values is not None else None
+        return (values[0], values[1], values[2]) if values is not None else None
 
     def close(self, restore: bool = True) -> None:
         """Close in the order of 6.9. Each step is bounded; a hung step stops the close there."""
