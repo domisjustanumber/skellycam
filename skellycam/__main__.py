@@ -18,7 +18,6 @@ async def main() -> None:
     from skellycam.app import create_fastapi_app
     from skellycam.core.ipc.process_management.worker_registry import WorkerRegistry
     from skellycam.core.ipc.process_management.managed_worker import WorkerMode
-    from skellycam.utilities.wait_functions import await_1s
 
     # Suppress benign ConnectionResetError from Windows ProactorEventLoop.
     # When browsers close range-request connections early (normal for <video> streaming),
@@ -84,12 +83,8 @@ async def main() -> None:
         logger.error(f"Fatal error: {e}")
         raise
     finally:
-        global_kill_flag.value = True
-        if server:
-            server.should_exit = True
-            await await_1s()
-
-        worker_registry.shutdown_all()
+        global_kill_flag.value = True  # serve() has returned: its connections, tasks and lifespan end are done
+        worker_registry.shutdown_all()  # it waits for each worker (kill flag, then terminate, then kill)
         logger.success("Done! Thank you for using SkellyCam 💀📸✨")
 
 

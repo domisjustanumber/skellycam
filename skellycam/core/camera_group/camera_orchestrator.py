@@ -117,10 +117,12 @@ class CameraOrchestrator:
 
     def should_record_frame_number(self, frame_number: int | np.integer) -> tuple[bool, bool]:
         """(record, finish). A take records the group frames first to last - 1. With no take (first is -1)
-        no frame is recorded: a stale last frame must not record again (open work, T-CAP-85 case 2)."""
-        first, last = self.first_recording_frame_number.value, self._decision_last_frame()
+        no frame is recorded: a stale last frame must not record again (open work, T-CAP-85 case 2). Outside a take
+        the decision takes no lock (unix-capture.md 4.10) [NYT6]."""
+        first = self.first_recording_frame_number.value
         if first == -1:
             return False, False
+        last = self._decision_last_frame()
         if last != -1 and frame_number >= last:
             return False, True
         return frame_number >= first, False
