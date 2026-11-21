@@ -13,6 +13,7 @@ import {
     createDefaultCameraConfig,
 } from './cameras-types';
 import { selectSelectedCameraConfigs } from './cameras-selectors';
+import { applyRequestBody } from './camera-number';
 import {
     loadPersistedCameraSettings,
     savePersistedCameraSettings,
@@ -106,13 +107,12 @@ export const camerasConnectOrUpdate = createAsyncThunk<
     'cameras/connect',
     async (onlyConfigs, { getState }) => {
         const state = getState();
-        const cameraConfigs = onlyConfigs ?? selectSelectedCameraConfigs(state);
+        // A stored config can hold the number of an earlier detection: the request never sends it (camera-requests.md 8.1)
+        const request: CamerasConnectOrUpdateRequest = applyRequestBody(onlyConfigs ?? selectSelectedCameraConfigs(state), state.cameras.cameras);
 
-        if (Object.keys(cameraConfigs).length === 0) {
+        if (Object.keys(request.camera_configs).length === 0) {
             throw new Error('No cameras selected for connection');
         }
-
-        const request: CamerasConnectOrUpdateRequest = { camera_configs: cameraConfigs };
 
         const response = await backendFetch(serverUrls.endpoints.camerasConnectOrUpdate, {
             method: 'POST',

@@ -481,6 +481,9 @@ class CameraLoop:
         elif requested.exposure_mode == "MANUAL" and (current.exposure_mode, current.exposure) != ("MANUAL", requested.exposure):
             changes["exposure"] = ControlSetting(auto=False, value=requested.exposure)
         if changes:
+            # A failed change publishes self.config: it must hold the request's number and name (camera-requests.md 8.1)
+            self.config = current.model_copy(update=dict(camera_index=requested.camera_index,
+                                                         camera_name=requested.camera_name))
             self.control.requests.put((adopted, changes))  # live, on the control thread (U16)
             return
         if requested.exposure_mode == "AUTO":

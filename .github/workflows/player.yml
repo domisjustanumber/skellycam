@@ -1,13 +1,15 @@
 name: Player
 
 # specs/player.md section 12.6: the unit, component and electron tests of the step 6a player on Windows,
-# Linux and macOS (Y7). The benchmarks do not run here.
+# Linux and macOS (Y7). The benchmarks do not run here. Each job also runs the unit tests of the cameras slice
+# (`npm run test:cameras`) in a step of its own.
 on:
   push:
     branches: [dom/player, dom/native-jpeg]
     paths:
       - "skellycam-ui/src/player/**"
       - "skellycam-ui/src/components/playback/**"
+      - "skellycam-ui/src/store/slices/cameras/**"
       - "skellycam-ui/electron/**"
       - "skellycam-ui/package.json"
       - "skellycam-ui/package-lock.json"
@@ -20,6 +22,7 @@ on:
     paths:
       - "skellycam-ui/src/player/**"
       - "skellycam-ui/src/components/playback/**"
+      - "skellycam-ui/src/store/slices/cameras/**"
       - "skellycam-ui/electron/**"
       - "skellycam-ui/package.json"
       - "skellycam-ui/package-lock.json"
@@ -62,6 +65,10 @@ jobs:
       - name: Run the unit tests
         run: npm run test:player:unit
 
+      - name: Run the unit tests of the cameras slice
+        if: ${{ !cancelled() && steps.deps.outcome == 'success' }}
+        run: npm run test:cameras
+
       - name: Run the component and electron tests
         if: ${{ !cancelled() && steps.deps.outcome == 'success' }}
         run: npm run test:player:browser
@@ -97,6 +104,10 @@ jobs:
       - name: Run the unit tests
         run: npm run test:player:unit
 
+      - name: Run the unit tests of the cameras slice
+        if: ${{ !cancelled() && steps.deps.outcome == 'success' }}
+        run: npm run test:cameras
+
       - name: Run the component and electron tests
         if: ${{ !cancelled() && steps.deps.outcome == 'success' }}
         run: xvfb-run --auto-servernum npm run test:player:browser
@@ -128,6 +139,10 @@ jobs:
 
       - name: Run the unit tests
         run: npm run test:player:unit
+
+      - name: Run the unit tests of the cameras slice
+        if: ${{ !cancelled() && steps.deps.outcome == 'success' }}
+        run: npm run test:cameras
 
       - name: Run the component and electron tests
         if: ${{ !cancelled() && steps.deps.outcome == 'success' }}

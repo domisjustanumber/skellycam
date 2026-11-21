@@ -1531,3 +1531,24 @@ def test_a_failed_start_keeps_the_unfetched_summary(monkeypatch, tmp_path):
         assert app.record_start(tmp_path, name="bad/name").status_code == 422
         stopped = app.record_stop()
         assert stopped.status_code == 200 and stopped.json()[0]["recording_name"] == "take", stopped.text
+
+
+def test_t_req_61_take_orders_the_cameras_by_the_camera_index_of_the_request(monkeypatch, tmp_path):
+    """T-REQ-61 [G7, H6] (`specs/camera-requests.md` 8.3): two fakes; the apply request gives camera A
+    `camera_index` 2 and camera B `camera_index` 0; the source order is A, then B. Start a take. The
+    configs of the response keep 2 and 0; in the manifest, B has `group_position` 0 and A has 1."""
+    # The timing sidecar of each camera holds the same `group_position` (recorder.md 6.5).
+    with capture_app(monkeypatch, [FakeScript(), FakeScript()]) as app:
+        spies = Spies(monkeypatch, app)
+        camera_a, camera_b = app.factory.camera_ids
+        response = ready_app_steps(app, [app.config(camera_a, camera_index=2), app.config(camera_b, camera_index=0)])
+        assert app.record_start(tmp_path).status_code == 200
+        record_until(app, spies, 10)
+        stop(app)
+    configs = response.json()["camera_configs"]
+    assert (configs[camera_a]["camera_index"], configs[camera_b]["camera_index"]) == (2, 0)
+    positions = {item["camera_key"][:4]: item["group_position"] for item in take_manifest(tmp_path)["cameras"]}
+    assert positions == {camera_b: 0, camera_a: 1}, positions
+    for camera_id, (_, timing) in take_files(tmp_path).items():
+        header = timing.read_text(encoding="utf-8").splitlines()
+        assert f"# group_position={positions[camera_id]}" in header, camera_id
