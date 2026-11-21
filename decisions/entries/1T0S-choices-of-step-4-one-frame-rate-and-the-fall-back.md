@@ -29,28 +29,30 @@ The agent made these choices where the spec gave no rule. Sections 2.4a and 2.8 
    the request, each at 30 fps.
 3. The fall back is an apply of these configs, with no whole-request check and no clear of the group
    warnings. Its `rate_fallback` items (no `control`) go into `group_warnings` before the reopen.
-4. The texts of `rate_fallback`, also for a `set mode` failure and for a search with no measured rate.
-   The rates and the exposure come from the time of the failure.
+4. The texts of `rate_fallback`, also for a `set mode` failure, for a search with no measured rate and
+   for no exposure value. The rates and the exposure come from the time of the failure.
 5. The watch thread of the group finds the fall back that a search of the request starts
    (`held.count`). It stops at the fall back, when no camera is busy, at an apply request of the user,
    at a search on request and at the close.
 6. The fall back that the watch finds runs on the event loop of the group.
-7. A request count: a fall back of an older count does not run. While a fall back runs, an apply
-   request and a record start get HTTP 409.
+7. One group flag `request_runs` covers each user apply with its start-up fall back, and each fall back.
+   While it is set, an apply, a record start and a search on request get HTTP 409. A request count
+   stops a fall back of the watch for an older request.
 8. T-REQ-19 reads the reason at 60 fps in the log.
-9. A pick sends each group camera with its applied config and the new rate. A failed pick sets the
-   choice back.
+9. A pick sends each group camera with its applied config and the new rate, and keeps the unapplied
+   edits of the list. A failed pick sets the choice to the rate of the group in the live state.
 10. The selector options are disabled buttons during a recording and while a camera is busy; 60 fps
     also when `can60` is false. The reason is a visible text, named by `aria-describedby`.
 11. An empty `supported_modes` has no 60 fps mode. A reason text for 59.94 against 60. English only.
 12. The UI takes only a new `rate_fallback` text of the live state: 30 fps and a note under the selector.
-13. "Checking 60 fps…" from a sent pick of 60 or a new fall back item until no camera is busy.
+13. "Checking 60 fps…" from a sent pick of 60, or a new fall back item while a camera is busy, until a
+    live state has no busy camera. After a pick with a camera in `AUTO` the next live state decides.
 14. A fall back does not run during a take, a record start or a close, as the user decided that a rate
     change never disturbs a recording.
 15. "Update Cameras" resends a camera whose desired rate differs from its applied rate. A detection gives
     each camera the current choice.
 
-The tests T-REQ-84 to T-REQ-95 check these choices.
+The tests T-REQ-84 to T-REQ-97 check these choices.
 
 ## Reason
 
@@ -59,8 +61,9 @@ The tests T-REQ-84 to T-REQ-95 check these choices.
 3. One apply path keeps the waits and states of 8.2 and 8.3; the items must survive the reopen (1.5).
 4. The spec text needs a measured rate, and a later read can see the new mode.
 5. `held.count` comes in the same status write as the search result.
-7. Without it, a stale fall back undid a later request of the user (an independent review). The check
-   and the flag are set on the event loop with no wait between them.
+7. Two applies on one group at the same time gave two rates and a dead camera, and a stale fall back
+   undid a later request (two independent reviews). The check and the set of the flag have no wait
+   between them. The count still covers a fall back of the watch that a finished request replaced.
 9. A pending edit can make the server refuse the whole pick.
 10. A CSS class still lets Enter and Space work, and a disabled button cannot show a tooltip to the
     keyboard.
@@ -72,6 +75,6 @@ The tests T-REQ-84 to T-REQ-95 check these choices.
 ## Alternatives rejected
 
 1. A group field for the rate in the API: [Q13] keeps the field of each camera.
-2. A lock between the fall back and the request of the user: the count and the flag do the same on the
-   one event loop.
+2. An `asyncio.Lock` that queues a second request: the user then waits for a change that can take 30 s
+   with no answer. A 409 with a reason answers at once.
 3. A fall back after a search on request at 60 fps: the spec ties the fall back to a request.
