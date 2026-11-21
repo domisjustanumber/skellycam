@@ -14,7 +14,6 @@ from collections.abc import Callable
 from multiprocessing import parent_process
 
 import cv2
-import numpy as np
 
 from skellycam.core.camera.capture import rate_check
 from skellycam.core.camera.capture.modes import NO_FLOOR_MODE, at_floor, rates_equal
@@ -40,7 +39,6 @@ from skellycam.core.ipc.frame_ring import (
     FrameFlag,
     FrameRingWriter,
     check_jpeg,
-    decode_jpeg,
     rotation_to_cw_deg,
 )
 from skellycam.core.ipc.pubsub.pubsub_manager import TopicTypes
@@ -66,11 +64,6 @@ STALL_NS = 2_000_000_000  # 9.5, D38
 READY_LIMIT_NS = 15_000_000_000  # 9.3, D21
 CONTROL_READ_INTERVAL_S = 1.0  # 11.4, U16
 JPEG_Q90 = [int(cv2.IMWRITE_JPEG_QUALITY), 90]  # ring 2.3, 8.8
-RECOMMEND_MAX_EXPOSURE = -5  # 11.1, decision H (ADR-JMS0): -4 gives about 16 fps on the Logitech cameras
-RECOMMEND_OFFSET = -1  # 11.1, decision H: one step darker than the nearest value, as the old helper
-MIN_EXPOSURE = -12  # 11.1: the lowest value of the search, in log base 2 seconds
-NUMBER_OF_FRAMES_TO_SETTLE = 10  # 11.1: frames at each value before the sample
-TARGET_BRIGHTNESS = 127.5  # 11.1: half of 255
 DIAGNOSTICS_INTERVAL_NS = 1_000_000_000  # unix-capture.md 4.2 item 2: one dict each second
 DIAGNOSTICS_LIMIT_BYTES = 32 * 1024  # the pickled message; a larger dict is not sent
 DIAGNOSTICS_FLUSH_S = 1.0  # the longest wait of a camera process for its close dict to reach the pipe
@@ -107,8 +100,7 @@ def needs_reopen(requested: CameraConfig, current: CameraConfig) -> bool:
     """A change of resolution or rate reopens the camera (D31). Each other change is live (11.2)."""
     return ((requested.resolution, requested.capture_fourcc, requested.bgr_ring)
             != (current.resolution, current.capture_fourcc, current.bgr_ring)
-            or (requested.framerate > 0 and not rates_equal(requested.framerate, current.framerate))
-            or requested.exposure_mode == "RECOMMEND")  # RECOMMEND runs at the open (11.1)
+            or (requested.framerate > 0 and not rates_equal(requested.framerate, current.framerate)))
 
 
 class CameraLoop:
@@ -314,50 +306,15 @@ class CameraLoop:
         return self._read(deadline)
 
     def _set_start_controls(self, deadline: int) -> None:
-        """9.1 steps 5 and 6. The config stores the read-back values (agent 44)."""
-        mode, value = self.config.exposure_mode, self.config.exposure
-        if mode == "RECOMMEND":
-            mode, value = "MANUAL", self._recommend(deadline)
-        setting = ControlSetting(auto=True, value=None) if mode == "AUTO" else ControlSetting(auto=False, value=value)
-        readback = self.source.set_controls({"exposure": setting})
+        """9.1 steps 5 and 6. The config stores the read-back values (agent 44). `AUTO` sets its held value as a
+        manual value (camera-requests.md 1.3a); no call of an open has `auto=True` (1.3 item 7)."""
+        value = self.config.exposure
+        readback = self.source.set_controls({"exposure": ControlSetting(auto=False, value=value)})
         self._publish_controls(readback)
         exposure = readback.get("exposure")
         if exposure is not None and exposure.present and exposure.value is not None:
             value = exposure.value
-        self.config = self.config.model_copy(update=dict(exposure_mode=mode, exposure=value))
-
-    def _recommend(self, deadline: int) -> int:
-        """RECOMMEND (11.1): -12 to -5, 10 frames to settle, the mean of the image nearest to 127.5, then one
-        step darker, in the range. A failed search sets back the exposure that the camera had before it."""
-        before = self.source.set_controls({}).get("exposure")  # no change: a read
-        best = None
-        try:
-            for value in range(MIN_EXPOSURE, RECOMMEND_MAX_EXPOSURE + 1):
-                set_ns = perf_counter_ns()
-                self.source.set_controls({"exposure": ControlSetting(auto=False, value=value)})
-                seen, frame = 0, None
-                while seen < NUMBER_OF_FRAMES_TO_SETTLE:
-                    read = self._read_in_start(deadline)
-                    if read is not None and read.arrival_ns > set_ns:
-                        seen, frame = seen + 1, read
-                image = frame.payload if frame.format == "BGR" else decode_jpeg(frame.payload)
-                error = abs(float(np.mean(image)) - TARGET_BRIGHTNESS) if image is not None else float("inf")
-                if best is None or error < best[0]:
-                    best = (error, value)
-        except BaseException as error:
-            # Port from sfn26: the device keeps a UVC control after the close, so put back the value of before.
-            # shortcut: the OpenCV source reports auto=False until skellycam sets auto, so a camera in auto mode
-            # before the search goes back to MANUAL at its read value; upgrade when the source reads the mode.
-            if before is not None and before.present and not getattr(error, "hung", False):
-                try:
-                    self.source.set_controls({"exposure": ControlSetting(auto=before.auto, value=before.value)})
-                except Exception as restore_error:
-                    if getattr(restore_error, "hung", False):
-                        raise restore_error from error  # 9.3: a hung control call ends the camera as hung
-                    logger.warning(f"Camera {self.camera_id}: the exposure of before the search was not set back: "
-                                   f"{type(restore_error).__name__}: {restore_error}")
-            raise
-        return max(MIN_EXPOSURE, best[1] + RECOMMEND_OFFSET)
+        self.config = self.config.model_copy(update=dict(exposure=value))
 
     def _wait_pass(self) -> None:
         """`waiting` (9.4): keep the stream, take no frame to the rings, join the gate with the others."""
@@ -516,9 +473,7 @@ class CameraLoop:
             return
         adopted = requested.model_copy(update=dict(framerate=current.framerate, resolution=current.resolution))
         changes = {}
-        if requested.exposure_mode == "AUTO" and current.exposure_mode != "AUTO":
-            changes["exposure"] = ControlSetting(auto=True, value=None)
-        elif requested.exposure_mode == "MANUAL" and (current.exposure_mode, current.exposure) != ("MANUAL", requested.exposure):
+        if requested.exposure_mode == "MANUAL" and (current.exposure_mode, current.exposure) != ("MANUAL", requested.exposure):
             changes["exposure"] = ControlSetting(auto=False, value=requested.exposure)
         if changes:
             # A failed change publishes self.config: it must hold the request's number and name (camera-requests.md 8.1)

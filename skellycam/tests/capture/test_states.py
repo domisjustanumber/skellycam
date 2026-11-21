@@ -317,13 +317,14 @@ def test_t_cap_33_no_change_during_a_recording(monkeypatch, tmp_path):
 # ---------------------------------------------------------------------------
 
 def test_t_cap_34_auto_exposure_at_record_start(monkeypatch, tmp_path):
-    """T-CAP-34, sections 11.3 and 11.6 [D37, agent 33], changed by step 5a (recorder.md section 14): start
-    a recording with exposure in `AUTO`. The recording starts; the response `warnings` holds the camera,
-    `exposure` and the text of 11.3; the status shows the same item; the log has the text; the capture
-    info has `controls.exposure_us.auto` true."""
-    with capture_logs() as logs, capture_app(monkeypatch, [FakeScript()]) as app:
+    """T-CAP-34, sections 11.3 and 11.6 [D37, agent 33], changed by step 5a (recorder.md section 14) and by
+    camera-requests.md 1.10 (16.2): the fake reports its exposure in auto (a script value), with the config in
+    `MANUAL`. The recording starts; the response `warnings` holds the camera, `exposure` and the text of 11.3;
+    the status shows the same item; the log has the text; the capture info has `controls.exposure_us.auto`
+    true."""
+    with capture_logs() as logs, capture_app(monkeypatch, [FakeScript(reports_auto=("exposure",))]) as app:
         camera_id = app.factory.camera_ids[0]
-        ready_app_steps(app, [app.config(camera_id, exposure_mode="AUTO")])
+        ready_app_steps(app, [app.config(camera_id)])
         text = f"Camera {camera_id}: exposure is in auto mode at the start of the recording"
         item = {"kind": "auto_control", "camera_ids": [camera_id], "control": "exposure", "text": text}
         started = app.record_start(tmp_path)
@@ -427,15 +428,15 @@ def test_t_cap_38_failure_object_first_failure_and_order():
 # ---------------------------------------------------------------------------
 
 def test_t_cap_42_status_shows_values_that_change_in_auto(monkeypatch):
-    """T-CAP-42, sections 8.4 and 11.4 [D30, agent 31]: exposure in `AUTO`; the fake changes its exposure
-    from -6 to -5, its gain from 0 to 4 and its focus from 30 to 40, with no set through the config.
-    Within 2 s, the status shows `exposure` with `auto: true` and `value: -5`, and the new gain and
-    focus values.
+    """T-CAP-42, sections 8.4 and 11.4 [D30, agent 31], changed by camera-requests.md 1.10 (16.2): the fake
+    reports its exposure in auto with no set through the config (`MANUAL -7`); the fake changes its exposure
+    to -5, its gain from 0 to 4 and its focus from 30 to 40. Within 2 s, the status shows `exposure` with
+    `auto: true` and `value: -5`, and the new gain and focus values.
 
     Real time: the control thread of U16 sleeps in real time between its reads (4.3)."""
-    with capture_app(monkeypatch, [FakeScript()], track=True, virtual=False) as app:
+    with capture_app(monkeypatch, [FakeScript(reports_auto=("exposure",))], track=True, virtual=False) as app:
         camera_id = app.factory.camera_ids[0]
-        ready_app_steps(app, [app.config(camera_id, exposure_mode="AUTO")])
+        ready_app_steps(app, [app.config(camera_id)])
         source = app.factory.sources[camera_id]
         t_drift = time.perf_counter_ns()
         source.drift(exposure=-5, gain=4, focus=40)

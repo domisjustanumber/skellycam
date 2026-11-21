@@ -155,12 +155,14 @@ def test_t_cap_103_a_camera_that_stops_during_a_recording(monkeypatch, tmp_path)
 
 @pytest.mark.parametrize("case", ["AUTO config", "MANUAL config on Linux"])
 def test_t_cap_104_auto_exposure_warning_once_per_camera_per_recording(monkeypatch, tmp_path, case):
-    """T-CAP-104, sections 11.3 and 14.1 [D37, U23]: two OpenCV fakes, two recordings. Each record start
-    gives the `auto_control` warning for `exposure` one time for each camera. Case 1: the config asks
-    for `AUTO` (each system). Case 2: the config asks for `MANUAL`, and the OpenCV source forces auto
-    exposure on Linux (14.1); Linux only."""
-    if case == "MANUAL config on Linux" and not sys.platform.startswith("linux"):
-        pytest.skip("the OpenCV source forces auto exposure on Linux only (14.1)")
+    """T-CAP-104, sections 11.3 and 14.1 [D37, U23], changed by camera-requests.md 1.10 (16.2): two OpenCV
+    fakes, two recordings. Case 1: the config asks for `AUTO`. On Windows the OpenCV source searches (1.7), so no
+    `auto_control` comes; on Linux and macOS each record start gives the warning one time for each camera.
+    Case 2: the config asks for `MANUAL`, and the OpenCV source forces auto exposure on Linux and macOS (1.7);
+    Linux and macOS only."""
+    forced = sys.platform.startswith("linux") or sys.platform == "darwin"
+    if case == "MANUAL config on Linux" and not forced:
+        pytest.skip("the OpenCV source forces auto exposure on Linux and macOS only (camera-requests.md 1.7)")
     mode = "AUTO" if case == "AUTO config" else "MANUAL"
     with OpenCVApp(monkeypatch, count=2) as app:
         ready_app_steps(app, [app.config(cid, exposure_mode=mode) for cid in app.factory.camera_ids])
@@ -169,7 +171,7 @@ def test_t_cap_104_auto_exposure_warning_once_per_camera_per_recording(monkeypat
             assert started.status_code == 200, started.text
             items = [w for w in started.json()["warnings"] if w["kind"] == "auto_control" and w["control"] == "exposure"]
             named = [cid for item in items for cid in item["camera_ids"]]
-            assert sorted(named) == sorted(app.factory.camera_ids), f"{take}: {named}"
+            assert sorted(named) == (sorted(app.factory.camera_ids) if forced else []), f"{take}: {named}"
             time.sleep(1.0)
             assert app.record_stop().status_code == 200
 

@@ -220,6 +220,7 @@ class FakeScript:
     sample_offset_ms: float | None = -4.0  # sample time = arrival + offset; None: no sample time
     controls: tuple = (("exposure", True, False, -6), ("gain", True, False, 0), ("focus", True, True, 30))
     reset_on_stream: tuple = ()  # (name, value): the camera sets this when the stream starts (C930e)
+    reports_auto: tuple = ()  # control names that read back auto whatever the set (a camera in its own auto)
     live_set_faults: tuple = ()  # for the n-th live change: None, "error" or "readback:<value>"
     rate_after_change: tuple = ()  # the delivered rate after the n-th live change
     hold_after_change: bool = False  # the first read after a live change waits until release()
@@ -559,7 +560,8 @@ class FakeSource:
 
     def _read_back(self):
         value_type = self.types.ControlValue
-        return {name: value_type(present=present, auto=auto if present else False, value=value if present else None)
+        return {name: value_type(present=present, auto=(auto or name in self.script.reports_auto) if present else False,
+                                 value=value if present else None)
                 for name, (present, auto, value) in self._controls.items()}
 
     def _interval_ns(self, previous_arrival):

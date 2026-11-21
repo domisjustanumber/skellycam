@@ -88,13 +88,13 @@ class RequestRefused(Exception):
 
 
 def same_config(requested: CameraConfig, current: CameraConfig) -> bool:
-    """The same config in an apply request has no effect (8.3). "Auto" matches the mode rate (D17)."""
-    update = {}
+    """The same config in an apply request has no effect (8.3). "Auto" matches the mode rate (D17). The found rate,
+    the number and the name are not compared; in `AUTO` the server holds the value (camera-requests.md 1.5)."""
+    update = dict(exposure_found_at_fps=current.exposure_found_at_fps, camera_index=current.camera_index,
+                  camera_name=current.camera_name)
     if requested.framerate in (-1, 0):
         update["framerate"] = current.framerate
-    if requested.exposure_mode == "RECOMMEND":  # the stored config holds the result of the search (11.1)
-        update.update(exposure_mode=current.exposure_mode, exposure=current.exposure)
-    elif requested.exposure_mode == "AUTO":
+    if requested.exposure_mode == "AUTO":
         update["exposure"] = current.exposure
     return requested.model_copy(update=update) == current
 
@@ -229,6 +229,9 @@ class CameraGroup:
                 restart.append(camera_id)
             elif not same_config(config, self.configs[camera_id]):
                 changed[camera_id] = config
+            else:  # no effect on the camera; the number and the name of the request are kept (camera-requests.md 1.5)
+                self.configs[camera_id] = self.configs[camera_id].model_copy(
+                    update=dict(camera_index=config.camera_index, camera_name=config.camera_name))
         # The joins of a camera process take seconds: not on the event loop, which serves the preview.
         for camera_id in removed:
             await asyncio.to_thread(self.cameras.remove_camera, camera_id)
