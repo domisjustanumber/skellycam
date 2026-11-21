@@ -5,10 +5,13 @@ Each test runs THREAD workers with the virtual clock of `capture_session`. The f
 of `conftest.py` is the spy of T-REQ-15 here too.
 """
 
+import asyncio
 import re
-import time
+import sys
+import threading
 
-from skellycam.tests.capture.capture_session import capture_app, ready_app_steps
+from skellycam.core.camera_group.camera_group import CameraGroup
+from skellycam.tests.capture.capture_session import capture_app, capture_logs, ready_app_steps
 from skellycam.tests.capture.fake_source import FakeScript
 from skellycam.tests.capture.test_camera_requests import MODEL, auto, group_state, press
 
@@ -45,6 +48,50 @@ def wait_ready_at(app, camera_ids, fps):
     for camera_id in camera_ids:
         app.wait(lambda: released(app, camera_ids) and app.state(camera_id) == "ready" and rate(app, camera_id) == fps,
                  f"camera {camera_id} ready at {fps} fps")
+
+
+class WatchGate:
+    """Holds the rounds of the fall back watch of each group (`CameraGroup._watch_fall_back`) until `open_and_settle`.
+    It records each fall back that a round starts: the watch thread calls `_fall_back_after_search` itself."""
+
+    def __init__(self, monkeypatch):
+        self.go, self.started, self.done, self.rounds = threading.Event(), threading.Event(), threading.Event(), 0
+        watch, after = CameraGroup._watch_fall_back, CameraGroup._fall_back_after_search
+
+        def gated(group):
+            if self.go.is_set():
+                watch(group)
+                self.rounds += 1
+
+        def tracked(group, *args):
+            self.started.set()
+
+            async def run():
+                try:
+                    await after(group, *args)
+                finally:
+                    self.done.set()
+            return run()
+
+        monkeypatch.setattr(CameraGroup, "_watch_fall_back", gated)
+        monkeypatch.setattr(CameraGroup, "_fall_back_after_search", tracked)
+
+    def open_and_settle(self, app):
+        """Let the watch make two full rounds; then wait for the end of each fall back that a round started."""
+        self.go.set()
+        first = self.rounds
+        app.wait(lambda: self.rounds >= first + 2, "two rounds of the fall back watch")
+        if self.started.is_set():
+            app.wait(self.done.is_set, "the end of the fall back that the watch started")
+
+
+def on_loop(app, coroutine):
+    """Run a coroutine on the event loop of the group (the loop of the test client) and give its result."""
+    return asyncio.run_coroutine_threadsafe(coroutine, app.group._loop).result(timeout=60)
+
+
+def at_30(app):
+    return {camera_id: config.model_copy(update=dict(framerate=30.0)) for camera_id, config in app.group.configs.items()}
 
 
 def test_t_req_30_each_camera_keeps_60(monkeypatch):
@@ -227,8 +274,10 @@ def test_t_req_41_auto_searches_at_60_before_its_check(monkeypatch):
 def test_t_req_84_a_search_on_request_at_60_gives_no_fall_back(monkeypatch):
     """T-REQ-84, 2.4a item 5: a fake in `AUTO` is `ready` at 60; then it delivers 29.66 fps after each later set; press
     the button. The search fails with `no-value-kept-rate`; no fall back: the camera stays at 60 with no new open, and
-    no status has a `rate_fallback` item."""
+    no status has a `rate_fallback` item. The watch makes no round until the search ended, so the watch is still armed
+    by the request at 60 when the button is pressed, at each thread timing: only the button stops it."""
     script = FakeScript(modes=MODES, brightness=MODEL, rate_after_change=(60.0,) * 9 + (SLOW,) * 8)
+    gate = WatchGate(monkeypatch)
     with capture_app(monkeypatch, [script]) as app:
         camera_id = app.factory.camera_ids[0]
         app.detect()
@@ -238,8 +287,8 @@ def test_t_req_84_a_search_on_request_at_60_gives_no_fall_back(monkeypatch):
         assert response.status_code == 200, response.text
         assert response.json()["results"][camera_id]["reason"] == "no-value-kept-rate", response.text
         app.wait_state(camera_id, "too_slow")
-        time.sleep(0.5)  # five rounds of the watch of the group (WATCH_INTERVAL_S)
-        assert opens(app, camera_id) == 1 and rate(app, camera_id) == 60
+        gate.open_and_settle(app)
+        assert not gate.started.is_set() and opens(app, camera_id) == 1 and rate(app, camera_id) == 60
         assert app.state(camera_id) == "too_slow" and not fallback_items(app, camera_id)
 
 
@@ -274,3 +323,117 @@ def test_t_req_86_a_failure_at_set_mode_falls_back_with_its_own_text(monkeypatch
         assert [item["text"] for item in response_items(response)] == [
             f"The group runs at 30 fps. Camera {camera_id} could not set its 60 fps mode."]
         wait_ready_at(app, [camera_id], 30)
+
+
+def test_t_req_91_no_fall_back_during_a_take(monkeypatch, tmp_path):
+    """T-REQ-91, 2.4a item 9: the search at 60 keeps no value, but the check passes (`ready`), so a take can start. The
+    watch makes no round until the take runs. The take keeps running at 60 with no new open and no `rate_fallback`
+    item; a call of `fall_back` during the take does nothing and logs why; the record start cleared the watch."""
+    script = FakeScript(modes=MODES, brightness=MODEL, rate_after_change=(SLOW,) * 8 + (60.0,) * 20)
+    gate = WatchGate(monkeypatch)
+    with capture_logs() as logs, capture_app(monkeypatch, [script]) as app:
+        camera_id = app.factory.camera_ids[0]
+        app.detect()
+        assert app.apply([app.config(camera_id)]).status_code == 200
+        wait_ready_at(app, [camera_id], 30)
+        assert app.apply([auto(app, camera_id, framerate=60.0)]).status_code == 200
+        app.wait(lambda: app.state(camera_id) in ("ready", "too_slow"), "the search and the check at 60")
+        assert app.state(camera_id) == "ready"
+        assert app.status(camera_id)["exposure_search"]["reason"] == "no-value-kept-rate"
+        assert app.record_start(tmp_path).status_code == 200
+        assert app.group.fall_back_armed is None
+        gate.open_and_settle(app)
+        assert on_loop(app, app.group.fall_back(at_30(app), {camera_id: (SLOW, -7, 60.0)})) == ({}, [])
+        assert app.group.take is not None and opens(app, camera_id) == 2 and rate(app, camera_id) == 60
+        assert not fallback_items(app, camera_id)
+        assert any("does not run during a take" in message for message in logs.messages()), logs.messages()
+        assert app.record_stop().status_code == 200
+
+
+def test_t_req_92_a_request_of_the_user_replaces_a_waiting_fall_back(monkeypatch):
+    """T-REQ-92, 2.4a item 7: the fall back that the search at 60 starts waits on the event loop until a request of the
+    user (`MANUAL -9` at 30) has answered. The fall back then does not run (the log tells why); the camera runs the
+    request of the user; no status has a `rate_fallback` item."""
+    entered, user_done, finished = threading.Event(), threading.Event(), threading.Event()
+    after = CameraGroup._fall_back_after_search
+
+    def held_back(group, *args):
+        entered.set()
+
+        async def run():
+            while not user_done.is_set():
+                await asyncio.sleep(0.01)
+            try:
+                await after(group, *args)
+            finally:
+                finished.set()
+        return run()
+
+    monkeypatch.setattr(CameraGroup, "_fall_back_after_search", held_back)
+    with capture_logs() as logs, capture_app(monkeypatch, [FakeScript(modes=MODES, brightness=MODEL, rate=SLOW)]) as app:
+        camera_id = app.factory.camera_ids[0]
+        app.detect()
+        assert app.apply([auto(app, camera_id)]).status_code == 200
+        wait_ready_at(app, [camera_id], 30)
+        assert app.apply([auto(app, camera_id, framerate=60.0)]).status_code == 200
+        app.wait(entered.is_set, "the watch starts the fall back")
+        response = app.apply([app.config(camera_id, exposure_mode="MANUAL", exposure=-9)])
+        assert response.status_code == 200, response.text
+        user_done.set()
+        app.wait(finished.is_set, "the waiting fall back ends")
+        wait_ready_at(app, [camera_id], 30)
+        config = group_state(app)["configs"][camera_id]
+        assert (config["exposure_mode"], config["exposure"], config["framerate"]) == ("MANUAL", -9, 30.0)
+        assert not fallback_items(app, camera_id)
+        assert any("a later request of the user replaced" in message for message in logs.messages()), logs.messages()
+
+
+def test_t_req_93_no_request_of_the_user_while_a_fall_back_runs(monkeypatch):
+    """T-REQ-93, 2.4a item 7 and 1.5: the apply of the fall back waits until a request of the user (`MANUAL -9` at 30)
+    has answered. That request gets 409 with the reason of 2.4a; the camera then runs the configs of the fall back, with
+    its `rate_fallback` item; a new request of the user clears the item."""
+    entered, user_done = threading.Event(), threading.Event()
+    apply = CameraGroup.apply
+
+    async def held_apply(group, requested):
+        frame = sys._getframe()
+        while frame is not None and frame.f_code.co_name != "fall_back":
+            frame = frame.f_back
+        if frame is not None:  # the apply of the fall back
+            entered.set()
+            while not user_done.is_set():
+                await asyncio.sleep(0.01)
+        return await apply(group, requested)
+
+    monkeypatch.setattr(CameraGroup, "apply", held_apply)
+    with capture_app(monkeypatch, [FakeScript(modes=MODES, brightness=MODEL, rate=SLOW)]) as app:
+        camera_id = app.factory.camera_ids[0]
+        app.detect()
+        assert app.apply([auto(app, camera_id)]).status_code == 200
+        wait_ready_at(app, [camera_id], 30)
+        assert app.apply([auto(app, camera_id, framerate=60.0)]).status_code == 200
+        app.wait(entered.is_set, "the fall back runs its apply")
+        refused = app.apply([app.config(camera_id, exposure_mode="MANUAL", exposure=-9)])
+        user_done.set()
+        assert refused.status_code == 409, refused.text
+        assert "The group falls back to 30 fps. Send the request again when the cameras are ready." in refused.text
+        wait_ready_at(app, [camera_id], 30)
+        assert group_state(app)["configs"][camera_id]["exposure_mode"] == "AUTO"
+        assert len(fallback_items(app, camera_id)) == 1
+        assert app.apply([auto(app, camera_id)]).status_code == 200
+        assert not fallback_items(app, camera_id)
+
+
+def test_t_req_94_the_texts_of_the_fall_back(monkeypatch):
+    """T-REQ-94, 2.4a item 4: the text of a search with no measured rate, of a `set mode` failure, and of a camera
+    whose mode rate at the failure was 60 while it now runs at 30."""
+    with capture_app(monkeypatch, [FakeScript(modes=MODES)]) as app:
+        ready_app_steps(app)
+        camera_id = app.factory.camera_ids[0]
+        texts = [on_loop(app, app.group.fall_back(at_30(app), {camera_id: facts}))[1][0]["text"]
+                 for facts in ((None, -7, 60.0), (None, None, None), (SLOW, -7, 60.0))]
+        assert texts == [f"The group runs at 30 fps. Camera {camera_id} found no exposure that keeps 60 fps.",
+                         f"The group runs at 30 fps. Camera {camera_id} could not set its 60 fps mode.",
+                         f"The group runs at 30 fps. Camera {camera_id} measured 29.66 fps in its 60 fps mode at "
+                         f"exposure -7."]
+        assert opens(app, camera_id) == 1  # the configs did not change: no reopen
