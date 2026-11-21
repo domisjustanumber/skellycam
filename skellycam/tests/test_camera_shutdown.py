@@ -209,3 +209,27 @@ async def test_two_closes_at_once_close_the_camera_processes_one_time(manager):
     await asyncio.wait_for(asyncio.gather(group.close(), group.close()), timeout=5)
     worker.mark_stopping.assert_called_once()
     assert not manager.camera_workers
+
+
+def test_a_restart_after_an_unselect_joins_the_old_process_first(manager, monkeypatch):
+    """Fix lane I: "apply again" of an unselected camera joins its old process (and kills it when it still runs)
+    before `reset_for_start` clears the stop flag; else an old loop could go on."""
+    from skellycam.core.ipc.process_management.managed_worker import ManagedProcess
+
+    old = Mock(spec=ManagedProcess)
+    status = manager.orchestrator.camera_statuses["camera1"]
+    flags_at_join = []
+    old.join.side_effect = lambda timeout: flags_at_join.append(bool(status.should_close.value))
+    old.is_alive.return_value = True
+    manager.camera_workers["camera1"] = CameraWorker(camera_id="camera1", worker=old, ipc=manager.ipc,
+                                                     orchestrator=manager.orchestrator)
+    manager.remove_camera("camera1")
+    new = Mock(spec=CameraWorker)
+    monkeypatch.setattr(manager, "_create_worker", lambda camera_id, config: new)
+    from skellycam.core.camera.config.camera_config import CameraConfig
+
+    manager.restart_camera("camera1", CameraConfig(camera_id="camera1", camera_index=0))
+    assert flags_at_join == [True, True, True]  # the join of the unselect, then the restart: join, kill, join
+    old.kill.assert_called_once()
+    new.start.assert_called_once()
+    assert not status.should_close.value and "camera1" not in manager.removed_workers

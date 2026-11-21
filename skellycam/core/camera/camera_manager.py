@@ -29,6 +29,7 @@ class CameraManager:
     # The status of an unselected camera. The other camera processes keep it, so a camera that is
     # selected again joins their gate with it (8.3).
     removed_statuses: dict[CameraIdString, CameraStatus] = field(default_factory=dict)
+    removed_workers: dict[CameraIdString, CameraWorker] = field(default_factory=dict)  # a restart joins them first
 
     @property
     def all_ready(self) -> bool:
@@ -79,13 +80,20 @@ class CameraManager:
         camera process with the same status (8.2, 8.3, D23)."""
         if camera_id in self.removed_statuses:
             self.orchestrator.camera_statuses[camera_id] = self.removed_statuses.pop(camera_id)
+            old = self.removed_workers.pop(camera_id, None)
         else:
-            # The old process can still hold the device, for example while its close steps run (6.9).
-            worker = self.camera_workers[camera_id].worker
+            old = self.camera_workers[camera_id]
+        if old is not None:
+            # The old process can still hold the device, for example while its close steps run (6.9), and
+            # `reset_for_start` clears its stop flag, so an old loop that still runs would go on.
+            worker = old.worker
             worker.join(timeout=2 * BOUNDED_CALL_LIMIT_S)
             if worker.is_alive() and isinstance(worker, ManagedProcess):
+                logger.error(f"The old process of camera {camera_id} still runs; it is killed before the restart")
                 worker.kill()
                 worker.join(timeout=BOUNDED_CALL_LIMIT_S)
+            elif worker.is_alive():
+                logger.error(f"The old thread of camera {camera_id} still runs; a thread cannot be killed")
         self.orchestrator.camera_statuses[camera_id].reset_for_start()
         self.camera_workers[camera_id] = self._create_worker(camera_id, config)
         self.camera_workers[camera_id].start()
@@ -94,7 +102,7 @@ class CameraManager:
         """Unselect (8.3, agent 24): close the camera and remove it from the gate and the record check."""
         status = self.orchestrator.camera_statuses[camera_id]
         status.should_close.value = True
-        worker = self.camera_workers.pop(camera_id)
+        worker = self.removed_workers[camera_id] = self.camera_workers.pop(camera_id)
         worker.worker.mark_stopping()
         worker.join(timeout=2 * BOUNDED_CALL_LIMIT_S)
         status.set_state("failed")  # not in the gate of the other camera processes, which keep this status
