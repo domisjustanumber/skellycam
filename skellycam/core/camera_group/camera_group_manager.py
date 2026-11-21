@@ -241,7 +241,7 @@ class CameraGroupManager:
             raise RequestRefused(422, "the exposure search does not run on the OpenCV source of this system: "
                                  + ", ".join(opencv))
         lacking = {camera_id: item for camera_id in named for item in statuses[camera_id].warning_items(
-            statuses[camera_id].camera_warnings) if item["kind"] == "no_manual_exposure"}  # 1.9 [K3]: skipped
+            "camera_warnings") if item["kind"] == "no_manual_exposure"}  # 1.9 [K3]: skipped
         streaming = [camera_id for camera_id in named if camera_id not in opencv and camera_id not in lacking
                      and statuses[camera_id].state in ("ready", "too_slow", "checking")]
         self.searching = True

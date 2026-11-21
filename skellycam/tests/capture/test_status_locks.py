@@ -1,6 +1,7 @@
 """The JSON arrays of `CameraStatus` (unix-capture.md 4.10): a camera process that holds a lock of its status, slow
 or killed, never blocks the main process for more than ARRAY_LOCK_WAIT_S for one call, and torn JSON of a read with
 no lock never escapes a reader (review of the fix lane, `torn.py`)."""
+import asyncio
 import json
 import multiprocessing
 import time
@@ -33,21 +34,30 @@ def read_for(status, seconds):
 
 @pytest.mark.capture_timing
 @pytest.mark.parametrize("locked", [True, False], ids=["writes with the lock", "writes with no lock"])
-def test_a_live_but_slow_holder_and_torn_json_never_raise(locked):
-    """A live child holds the lock of `info` for 0.6 s, then writes `info` (with its lock, or with no lock). The
-    first main-process read goes on with no lock after 0.5 s; the status does not stop waiting for good (the child
-    is alive); no JSONDecodeError escapes over many reads; the later reads take the lock again."""
+def test_a_live_but_slow_holder_and_torn_json_never_raise(monkeypatch, locked):
+    """A live child holds the lock of `info` for 1.5 s, then writes `info` (with its lock, or with no lock). The
+    first main-process read goes on with no lock after 0.5 s and logs one line; the next reads of that stretch do
+    not wait (F4 of the review); the status does not stop the tries for good (the child is alive); no
+    JSONDecodeError escapes over many reads; the later reads take the lock again."""
+    from unittest.mock import Mock
+
+    log = Mock()
+    monkeypatch.setattr(camera_status, "logger", log)
     status, go, stop = CameraStatus(), SPAWN.Event(), SPAWN.Event()
-    child = start(status_children.hold_then_write, status, go, stop, 0.6, locked)
+    child = start(status_children.hold_then_write, status, go, stop, 1.5, locked)
     status.owner = child
     try:
         assert go.wait(60), "the child holds the lock"
         started = time.monotonic()
         status.info_dict()
         assert time.monotonic() - started >= camera_status.ARRAY_LOCK_WAIT_S - 0.05
-        assert not status.holder_dead and status.lock_warned
+        started = time.monotonic()
+        status.info_dict()
+        assert time.monotonic() - started < 0.2, "a second wait in one stretch with no lock"
+        assert not status.holder_dead and "info" in status.no_lock
         assert read_for(status, 3.0) > 100
-        assert not status.holder_dead and not status.lock_warned  # the lock came again
+        assert not status.holder_dead and "info" not in status.no_lock  # the lock came again
+        assert log.error.call_count == 1
     finally:
         stop.set()
         child.join(30)
@@ -106,7 +116,7 @@ def test_a_dead_holder_then_a_restart_with_new_arrays():
     items of the camera and the group, and a new process writes the new `info` with its lock."""
     status, held = CameraStatus(), SPAWN.Event()
     status.update_info(mode={"width": 640})
-    status.set_warning_items([{"kind": "start_failure"}], status.group_warnings)
+    status.set_warning_items([{"kind": "start_failure"}], "group_warnings")
     holder = start(ring_children.hold_lock_forever, status.info, held)
     status.owner = holder
     try:
@@ -123,7 +133,7 @@ def test_a_dead_holder_then_a_restart_with_new_arrays():
         old = status.info
         status.reset_for_start()
         assert status.info is not old and not status.holder_dead and status.info_dict() == {}
-        assert status.warning_items(status.group_warnings) == [{"kind": "start_failure"}]
+        assert status.warning_items("group_warnings") == [{"kind": "start_failure"}]
         done = SPAWN.Event()
         writer = start(status_children.write_info, status, done)
         assert done.wait(60)
@@ -166,3 +176,157 @@ def test_a_killed_reader_of_the_heartbeat_does_not_stop_the_heartbeat():
         registry._stop_threads()
         if reader.is_alive():
             reader.kill()
+
+
+def kill_holder(array):
+    """A child that takes the lock of `array` and is killed (the experiments of the second review)."""
+    held = SPAWN.Event()
+    holder = start(ring_children.hold_lock_forever, array, held)
+    assert held.wait(60), "the child holds the lock"
+    holder.kill()
+    holder.join(30)
+    return holder
+
+
+@pytest.mark.capture_timing
+def test_experiment_1_a_restart_right_after_a_dead_holder_of_camera_warnings_gives_new_arrays():
+    """F2 of the second review: the old process was killed while it held the lock of `camera_warnings`, and no read
+    found that before `reset_for_start`. The restart gives four new arrays; each later `serialize` of the new
+    process takes no wait."""
+    from types import SimpleNamespace
+
+    status = CameraStatus()
+    status.set_warning_items([{"kind": "no_manual_exposure"}], "camera_warnings")
+    olds = [getattr(status, name) for name in camera_status.ARRAYS]
+    status.owner = kill_holder(status.camera_warnings)
+    started = time.monotonic()
+    status.reset_for_start()
+    assert time.monotonic() - started < 0.4
+    assert all(getattr(status, name) is not old for name, old in zip(camera_status.ARRAYS, olds))
+    assert status.warning_items("camera_warnings") == [{"kind": "no_manual_exposure"}]
+    status.owner = SimpleNamespace(is_alive=lambda: True, name="new process")
+    for _ in range(3):
+        started = time.monotonic()
+        status.serialize()
+        assert time.monotonic() - started < 0.2
+
+
+@pytest.mark.capture_timing
+def test_experiment_2_a_restart_right_after_a_dead_holder_of_info_lets_the_main_process_write():
+    """F2: the old process was killed while it held the lock of `info`. After the restart, a main-process write
+    (`writer_failure=None` of a record start) goes into the shared array, not into the kept-back fields, so the
+    refusal that the new camera writes later is seen."""
+    from types import SimpleNamespace
+
+    status = CameraStatus()
+    old = status.info
+    status.owner = kill_holder(status.info)
+    status.reset_for_start()
+    assert status.info is not old
+    status.owner = SimpleNamespace(is_alive=lambda: True, name="new process")
+    status.update_info(writer_failure=None)
+    assert status.pending_info == {} and json.loads(status.info.get_obj().value) == {"writer_failure": None}
+    status.info.get_obj().value = b'{"writer_failure": "camera c1: the take writer did not start"}'
+    assert status.info_dict()["writer_failure"] == "camera c1: the take writer did not start"
+
+
+def test_experiment_3_a_swap_of_the_arrays_during_a_read_raises_nothing():
+    """F3: the warning arrays go by name, so a read that comes during the swap of `reset_for_start` cannot raise."""
+    status = CameraStatus()
+    status.camera_warnings = multiprocessing.Array("c", camera_status.INFO_SIZE)  # the swap
+    assert status.warning_items("camera_warnings") == []
+    assert status.serialize()["warnings"] == []
+
+
+@pytest.mark.capture_timing
+def test_experiment_4_a_dead_holder_of_the_last_frame_blocks_no_frame_decision():
+    """F1: a camera killed while it held the lock of the last frame of the take. The decision of each frame
+    (`should_record_frame_number`, in each camera process) reads with no lock and returns at once."""
+    from skellycam.core.camera_group.camera_orchestrator import CameraOrchestrator
+
+    orchestrator = CameraOrchestrator.from_statuses({})
+    kill_holder(orchestrator.last_recording_frame_number)
+    orchestrator.first_recording_frame_number.value = 3
+    started = time.monotonic()
+    assert orchestrator.should_record_frame_number(5) == (True, False)
+    orchestrator.last_frame = 5
+    assert orchestrator.should_record_frame_number(5) == (False, True)
+    assert orchestrator.take_frame_count() == 2
+    assert time.monotonic() - started < 0.2
+
+
+async def test_a_state_read_that_raises_once_does_not_end_the_app_state_sender(monkeypatch):
+    """F3 of the second review: a state read that raises (for example during the swap of the arrays) is logged; the
+    sender goes on, and the next tick sends a state. The kill flag stays clear."""
+    from unittest.mock import Mock
+
+    from starlette.websockets import WebSocketState
+
+    from skellycam.api.websocket import websocket_server as server_module
+
+    server = object.__new__(server_module.WebsocketServer)
+    sent, calls = [], []
+
+    def to_state_dict():
+        calls.append(1)
+        if len(calls) == 1:
+            raise StopIteration("test: a read during a swap")
+        server._websocket_should_continue = False
+        return {"camera_groups": {}}
+
+    async def send(message):
+        sent.append(message)
+
+    monkeypatch.setattr(server_module, "logger", Mock())
+    server.global_kill_flag = multiprocessing.Value("b", False)
+    server._cgm = Mock(to_state_dict=to_state_dict)
+    server._websocket_should_continue, server.ws_tasks = True, []
+    server.websocket = Mock(client_state=WebSocketState.CONNECTED)
+    monkeypatch.setattr(server, "_send_msgspec_json", send)
+    await asyncio.wait_for(server._app_state_sender(), timeout=10)
+    assert not server.global_kill_flag.value
+    assert len(calls) == 2 and sent and sent[0]["state"] == {"camera_groups": {}}
+
+
+def test_the_camera_end_with_no_take_level_waits_at_most_its_bound_for_the_last_frame_lock():
+    """F1: a camera that ends while the group stops (no take level follows) sets the last frame under its lock. With
+    a holder that keeps the lock, it waits at most FRAME_LOCK_WAIT_S, then ends its part of the take alone with a
+    clear reason (`abandon`, and a result message with the error)."""
+    import threading
+    from types import SimpleNamespace
+    from unittest.mock import Mock
+
+    from skellycam.core.camera.capture.camera_loop import CameraLoop
+    from skellycam.core.camera_group.camera_orchestrator import FRAME_LOCK_WAIT_S, CameraOrchestrator
+    from skellycam.core.ipc.pubsub.pubsub_manager import TopicTypes
+
+    orchestrator = CameraOrchestrator.from_statuses({})
+    orchestrator.first_recording_frame_number.value = 3
+    writer, topic = Mock(), Mock()
+    writer.abandon.return_value = None
+    topics = {TopicTypes.RECORDING_FINISHED: topic}
+    loop = SimpleNamespace(take_writer=writer, orchestrator=orchestrator, camera_id="c1", gate_count=10,
+                           ipc=SimpleNamespace(should_continue=False, pubsub=SimpleNamespace(topics=topics)),
+                           status=SimpleNamespace(recording_in_progress=SimpleNamespace(value=True)))
+    held, release = threading.Event(), threading.Event()
+
+    def hold():
+        with orchestrator.last_recording_frame_number.get_lock():
+            held.set()
+            release.wait(10)
+
+    holder = threading.Thread(target=hold, daemon=True)
+    holder.start()
+    try:
+        assert held.wait(5)
+        started = time.monotonic()
+        CameraLoop._end_take(loop)
+        assert time.monotonic() - started < FRAME_LOCK_WAIT_S + 0.5
+    finally:
+        release.set()
+        holder.join(5)
+    writer.abandon.assert_called_once()
+    writer.end.assert_not_called()
+    message = topic.publish.call_args.args[0]
+    assert message.error == f"camera c1: no lock of the last frame of the take in {FRAME_LOCK_WAIT_S:g} s"
+    assert orchestrator.last_frame == -1 and loop.status.recording_in_progress.value is False

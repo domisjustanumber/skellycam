@@ -13,15 +13,16 @@ The fix lane makes small fixes. The supervisor gave each rule. The agent made th
 2. F. The warning kind for a camera that cannot join a running group is `cameras_left_out`. The item is
    only in the `warnings` of the apply response that selects that camera, not in a status: the camera
    has no status in the group ([`windows-capture.md`](../../specs/windows-capture.md) 11.3).
-3. G. Each scalar of `CameraStatus` is a shared Value with no lock. Each wait for the lock of a JSON array
-   of `CameraStatus` (`info` and the three warning arrays) is at most 0.5 s; after it, that one call goes
-   on with no lock, and one error line tells whether the camera process is alive. The main process stops
-   the wait for a status only when its camera process has ended; `reset_for_start` then gives new arrays,
-   which go to the new process when it is spawned. A read gives the last good JSON after 3 torn reads. A
+3. G. Each scalar of `CameraStatus` is a shared Value with no lock. For a JSON array of `CameraStatus`
+   (`info` and the three warning arrays, by name), one wait of at most 0.5 s and one error line come in
+   each stretch with no lock; the next calls try with no wait. The main process stops the tries for a
+   status only when its camera process has ended. `reset_for_start` always gives four new arrays, which
+   go to the new process when it is spawned. A read gives the last good JSON after 3 torn reads. A
    main-process write of `info` with no lock stays in the main process until a write with the lock. The
-   heartbeat value, the global kill flag, the group flags and the first frame of a take have no lock
-   either. The end of a take waits at most 0.5 s for the lock of the last frame, then ends as an error
-   ([`unix-capture.md`](../../specs/unix-capture.md) 4.10).
+   heartbeat value, the global kill flag, the group flags and the first frame of a take have no lock. The
+   last frame is read and written with no lock, except in its two check-then-set blocks, which wait at
+   most 0.5 s for its lock and then end the take (or the part of one camera) as an error. A failed read of
+   the app state sets no kill flag ([`unix-capture.md`](../../specs/unix-capture.md) 4.10).
 4. I. The opened mode of the OpenCV source (the `mode` of the status) has the FOURCC of `CAP_PROP_FOURCC`,
    or `BGR` when the backend gives 0 or a negative value
    ([`windows-capture.md`](../../specs/windows-capture.md) 14 (e)).
@@ -43,7 +44,9 @@ The fix lane makes small fixes. The supervisor gave each rule. The agent made th
    One writer at a time sets each scalar, and an aligned scalar is read and written whole, so a scalar
    needs no lock. A JSON array needs its lock against a torn read. The review of the fix lane measured
    2.2 % torn reads with no lock for good after one slow holder, and a decode error in the websocket
-   sender ended the app: thus no flag for good while the process lives, and readers that never raise.
+   sender ended the app: thus no flag for good while the process lives, and readers that never raise. The
+   second check of the fix lane found that a camera killed with the lock of the last frame stopped each
+   other camera at its next frame, and that a restart could start on arrays with a lost lock.
 4. I. The FOURCC in the config of `extract_config_from_cv2_capture` reached no reader: the opened mode does.
 5. H. The supervisor found the earlier rule a fault: a failed start dropped a summary that no client had
    fetched, and logged "A new take starts" for a take that did not start.

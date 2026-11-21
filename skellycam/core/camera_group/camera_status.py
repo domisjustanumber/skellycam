@@ -15,12 +15,12 @@ GATE_STATES = ("checking", "too_slow", "ready", "adjusting")  # 5.2: only these 
 SETTLED_STATES = ("waiting", "failed", "checking", "too_slow", "ready", "dead")
 INFO_SIZE = 16384
 # A process that ends while it holds a lock of a shared object keeps that lock for ever. Thus each scalar of the
-# status has no lock (one writer at a time; an aligned scalar is read and written whole), and each wait for the
-# lock of a JSON array is bounded: after it, that one call goes on with no lock (unix-capture.md 4.10).
+# status has no lock (one writer at a time; an aligned scalar is read and written whole), and the wait for the
+# lock of a JSON array is bounded: one wait of ARRAY_LOCK_WAIT_S for each stretch with no lock, then tries with no
+# wait until the lock comes again; a call with no lock goes on with no lock (unix-capture.md 4.10).
 ARRAY_LOCK_WAIT_S = 0.5
 ARRAYS = ("info", "warnings", "camera_warnings", "group_warnings")
-MAIN_ONLY = ("owner", "holder_dead", "last_good", "pending_info", "lock_warned")  # never pickled to a camera process
-
+MAIN_ONLY = ("owner", "holder_dead", "last_good", "pending_info", "no_lock")  # never pickled to a camera process
 
 @dataclass
 class CameraStatus:
@@ -63,48 +63,50 @@ class CameraStatus:
     # The main process only: the counter subset of the newest diagnostics of the camera (unix-capture.md 4.2 item 2).
     diagnostics: dict = field(default_factory=dict)
     # Per process, and never pickled: the worker of the camera (the main process sets it), whether that process
-    # ended while the lock of an array did not come, the last good JSON of each array, and the fields that the
-    # main process could not write into `info` with no lock.
+    # ended while the lock of an array did not come, the last good JSON of each array, the fields that the main
+    # process could not write into `info` with no lock, and the arrays in a stretch with no lock.
     owner: Any = None
     holder_dead: bool = False
     last_good: dict = field(default_factory=dict)
     pending_info: dict = field(default_factory=dict)
-    lock_warned: bool = False
+    no_lock: set = field(default_factory=set)
 
     def __getstate__(self) -> dict:
         return {name: value for name, value in self.__dict__.items() if name not in MAIN_ONLY}
 
     def __setstate__(self, state: dict) -> None:
-        self.__dict__.update(state, owner=None, holder_dead=False, last_good={}, pending_info={}, lock_warned=False)
+        self.__dict__.update(state, owner=None, holder_dead=False, last_good={}, pending_info={}, no_lock=set())
 
     @contextmanager
-    def _array_lock(self, array):
-        """True with the lock of `array`; False when it did not come in ARRAY_LOCK_WAIT_S: this call only goes on
-        with no lock. Only an ended process of the camera stops the wait for good (until `reset_for_start`)."""
-        lock = array.get_lock()
-        if not self.holder_dead and lock.acquire(timeout=ARRAY_LOCK_WAIT_S):
-            self.lock_warned = False
+    def _array_lock(self, name: str):
+        """True with the lock of the array `name`; False with no lock: this call goes on with no lock. The first
+        call of a stretch with no lock waits ARRAY_LOCK_WAIT_S and logs one line; the next calls try with no wait
+        until the lock comes again. An ended process of the camera stops the tries until `reset_for_start`."""
+        lock = getattr(self, name).get_lock()
+        if not self.holder_dead and lock.acquire(timeout=0 if name in self.no_lock else ARRAY_LOCK_WAIT_S):
+            self.no_lock.discard(name)
             try:
                 yield True
             finally:
                 lock.release()
             return
-        alive = None if self.owner is None else self.owner.is_alive()
-        if not self.holder_dead and (alive is False or not self.lock_warned):
-            self.holder_dead, self.lock_warned = alive is False, True
-            state = {None: "not known here", True: "alive", False: "ended"}[alive]
-            logger.error(f"No lock of a status array of {getattr(self.owner, 'name', 'a camera')} in "
-                         f"{ARRAY_LOCK_WAIT_S:g} s; the camera process is {state}; the call goes on with no lock")
+        if not self.holder_dead:
+            alive = None if self.owner is None else self.owner.is_alive()
+            new, self.holder_dead = name not in self.no_lock, alive is False
+            self.no_lock.add(name)
+            if new or self.holder_dead:
+                state = {None: "not known here", True: "alive", False: "ended"}[alive]
+                logger.error(f"No lock of the status array {name} of {getattr(self.owner, 'name', 'a camera')} in "
+                             f"{ARRAY_LOCK_WAIT_S:g} s; the camera process is {state}; the calls go on with no lock")
         yield False
 
     def _json(self, name: str, empty, raw: bytes | None = None):
         """The JSON of the array `name`. A read with no lock can see torn JSON: it reads again up to 3 times, then
         gives the last good value of this process, or `empty`. It never raises."""
-        array = getattr(self, name)
         for _ in range(3):
             if raw is None:
-                with self._array_lock(array):
-                    raw = array.get_obj().value
+                with self._array_lock(name):
+                    raw = getattr(self, name).get_obj().value
             try:
                 value = json.loads(raw) if raw else empty
             except ValueError:  # JSONDecodeError, UnicodeDecodeError
@@ -137,33 +139,32 @@ class CameraStatus:
         return {**self._json("info", {}), **self.pending_info}
 
     def update_info(self, **fields) -> None:
-        with self._array_lock(self.info) as locked:
+        with self._array_lock("info") as locked:
             if not locked and parent_process() is None:
                 # The main process with no lock: a write could lose or tear a write of the camera. Its fields stay
                 # in this process (`info_dict` shows them) until a write with the lock.
                 self.pending_info.update(fields)
                 return
             data = self._json("info", {}, raw=self.info.get_obj().value)
+            # What is left (a rare case): a field kept back here while a live camera held the lock for one call
+            # replaces a newer value of the camera at this write. `reset_for_start` clears it with the new arrays.
             data.update(self.pending_info)
             data.update(fields)
             self.pending_info.clear()
             self.info.get_obj().value = self.last_good["info"] = json.dumps(data).encode()[:INFO_SIZE - 1]
 
-    def _name(self, array) -> str:
-        return "warnings" if array is None else next(name for name in ARRAYS if getattr(self, name) is array)
+    # The warning arrays go by name, not by object: `reset_for_start` gives new array objects.
+    def warning_items(self, name: str = "warnings") -> list:
+        return self._json(name, [])
 
-    def warning_items(self, array=None) -> list:
-        return self._json(self._name(array), [])
+    def set_warning_items(self, items: list, name: str = "warnings") -> None:
+        with self._array_lock(name):  # one writer process for each warning array: a write with no lock loses nothing
+            getattr(self, name).get_obj().value = json.dumps(items).encode()[:INFO_SIZE - 1]
 
-    def set_warning_items(self, items: list, array=None) -> None:
-        array = getattr(self, self._name(array))
-        with self._array_lock(array):  # one writer process for each warning array: a write with no lock loses nothing
-            array.get_obj().value = json.dumps(items).encode()[:INFO_SIZE - 1]
-
-    def replace_warning_items(self, array, kinds: tuple, items: list) -> None:
-        """Drop the items of `kinds` from `array` (`camera_warnings` or `group_warnings`), then add `items`."""
-        kept = [item for item in self.warning_items(array) if item.get("kind") not in kinds]
-        self.set_warning_items(kept + items, array)
+    def replace_warning_items(self, name: str, kinds: tuple, items: list) -> None:
+        """Drop the items of `kinds` from the array `name` (`camera_warnings` or `group_warnings`), then add `items`."""
+        kept = [item for item in self.warning_items(name) if item.get("kind") not in kinds]
+        self.set_warning_items(kept + items, name)
 
     def reset_for_start(self) -> None:
         """A new camera process for "apply again" (8.3): the gate count stays (5.3), the rest starts again."""
@@ -171,19 +172,20 @@ class CameraStatus:
                      self.is_recording_frame, self.should_pause, self.should_close, self.is_paused, self.updating,
                      self.error, self.search_requested):
             flag.value = False
-        if self.holder_dead:  # the old process ended with a lock: the new process gets new arrays (unix 4.10)
-            kept = {name: self.warning_items(getattr(self, name)) for name in ("camera_warnings", "group_warnings")}
-            for name in ARRAYS:
-                setattr(self, name, multiprocessing.Array("c", INFO_SIZE))
-            for name, items in kept.items():
-                self.set_warning_items(items, getattr(self, name))
-            self.holder_dead = False
-        with self._array_lock(self.info):
-            self.info.get_obj().value = b""
+        # Always new arrays (unix-capture.md 4.10): the old process is joined or killed by now, and it can have ended
+        # while it held a lock. The new process gets them when it is spawned. The old arrays have no writer left, so
+        # the warning items of the camera and the group are read with no lock.
+        kept = {name: self._json(name, [], raw=getattr(self, name).get_obj().value)
+                for name in ("camera_warnings", "group_warnings")}
+        for name in ARRAYS:
+            setattr(self, name, multiprocessing.Array("c", INFO_SIZE))
+        self.holder_dead = False
+        self.no_lock.clear()
         self.pending_info.clear()
         self.last_good.clear()
+        for name, items in kept.items():
+            self.set_warning_items(items, name)
         self.diagnostics = {}
-        self.set_warning_items([])
         self.set_state("starting")
 
     def signal_error(self):
@@ -219,8 +221,8 @@ class CameraStatus:
             "failure": info.get("failure"),
             "mode": info.get("mode"),
             "measured_fps": info.get("measured_fps"),
-            "warnings": self.warning_items() + self.warning_items(self.camera_warnings)
-                        + self.warning_items(self.group_warnings),  # camera-requests.md 1.5 [AC5B]
+            "warnings": self.warning_items() + self.warning_items("camera_warnings")
+                        + self.warning_items("group_warnings"),  # camera-requests.md 1.5 [AC5B]
             "exposure_search": ({**info["exposure_search"], "count": self.search_count.value}
                                 if info.get("exposure_search") else None),
             "controls": info.get("controls"),

@@ -2,6 +2,8 @@
 import json
 import time
 
+DEADLINE_S = 60.0  # each child ends by itself after this, also when nobody stops or kills it
+
 
 def hold_then_write(status, go, stop, hold_s, locked):
     """Hold the lock of `info` for `hold_s` (a live holder that is only slow), then write `info` until `stop`: with
@@ -11,8 +13,8 @@ def hold_then_write(status, go, stop, hold_s, locked):
     go.set()
     time.sleep(hold_s)
     lock.release()
-    count = 0
-    while not stop.is_set():
+    count, deadline = 0, time.monotonic() + DEADLINE_S
+    while not stop.is_set() and time.monotonic() < deadline:
         count += 1
         fields = dict(controls={"x": "a" * (50 + (count % 7) * 900)}, measured_fps=count)
         if locked:
@@ -32,5 +34,6 @@ def read_heartbeat_forever(heartbeat, reading):
     from skellycam.utilities.check_main_processs_heartbeat import check_main_process_heartbeat
 
     reading.set()
-    while True:
+    deadline = time.monotonic() + DEADLINE_S
+    while time.monotonic() < deadline:
         check_main_process_heartbeat(heartbeat_timestamp=heartbeat)

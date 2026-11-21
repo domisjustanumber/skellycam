@@ -22,6 +22,7 @@ from skellycam.core.camera.capture.source import COUNTER_KEYS
 from skellycam.core.camera.capture.camera_loop import needs_reopen
 from skellycam.core.camera.config.camera_config import CameraConfigs, CameraConfig, validate_camera_configs
 from skellycam.core.camera_group.camera_group_ipc import CameraGroupIPC
+from skellycam.core.camera_group.camera_orchestrator import FRAME_LOCK_WAIT_S
 from skellycam.core.camera_group.camera_status import SETTLED_STATES
 from skellycam.core.ipc.pubsub.pubsub_manager import TopicTypes
 from skellycam.core.ipc.pubsub.pubsub_topics import (
@@ -80,7 +81,6 @@ AUTO_SETTLED_STATES = ("adjusting", "ready", "too_slow", "failed", "dead")
 STALL_WATCH_S = 3.0  # over the 2 s of the in-process rule (W 9.5), which closes the camera and its files cleanly
 STALL_REASON = "no loop pass for 3 s"
 KILL_AFTER_S = 1.0
-FRAME_LOCK_WAIT_S = 0.5  # the end of a take waits this long for the lock of the last frame
 STALL_WATCH_SETTING = "SKELLYCAM_STALL_WATCH"  # "0" turns the watch off; read when a group is made
 MICROPHONE_REFUSED = "audio recording returns in step 5b; start again with no microphone"  # recorder.md 10 item 13
 WRITER = f"skellycam {__version__.lstrip('v')}"  # SFF-712
@@ -629,7 +629,7 @@ class CameraGroup:
             except ValueError as error:  # a bad name, a FAT disk (D3), a camera that the format refuses
                 raise RequestRefused(422, str(error))
             specs = {camera_id: take.camera_spec(camera_id) for camera_id in self.recording_ids}  # before any goes out
-            orchestrator.last_recording_frame_number.value = -1
+            orchestrator.last_frame = -1
             orchestrator.first_recording_frame_number.value = orchestrator.largest_gate_count() + 3  # [M7, review B4]
             self.take = take
             for camera_id in self.recording_ids:
@@ -645,7 +645,7 @@ class CameraGroup:
                 if sent:
                     # Each camera with a writer ends it at its next frame, with no row; a camera that gets its take
                     # spec from now on refuses it (`CameraLoop._start_take`).
-                    orchestrator.last_recording_frame_number.value = orchestrator.first_recording_frame_number.value
+                    orchestrator.last_frame = orchestrator.first_recording_frame_number.value
                 # No wait: a camera that still opens its files cannot unpause in time, and the group runs on.
                 await orchestrator.unpause(await_unpaused=False)
             finally:
@@ -686,7 +686,7 @@ class CameraGroup:
         finally:
             self.recording_ids = ids
             orchestrator.first_recording_frame_number.value = -1
-            orchestrator.last_recording_frame_number.value = -1
+            orchestrator.last_frame = -1
 
     def _take_camera(self, camera_id: CameraIdString, device) -> TakeCamera:
         """The take facts of one camera (recorder.md 4.2, 6.7) from its config, status and detection."""
@@ -793,7 +793,7 @@ class CameraGroup:
         finally:
             self.take = self.take_error = None
             orchestrator.first_recording_frame_number.value = -1
-            orchestrator.last_recording_frame_number.get_obj().value = -1  # the take ended: no camera decides on it
+            orchestrator.last_frame = -1  # the take ended: no camera decides on it
             for status in list(statuses.values()):
                 status.set_warning_items([])
         logger.info(f"Stopped recording for camera group ID: {self.id} with recording name: {take.rec}")
@@ -915,12 +915,12 @@ class CameraGroup:
         statuses = self.cameras.orchestrator.camera_statuses
         for camera_id in item["camera_ids"]:
             if camera_id in statuses:
-                statuses[camera_id].replace_warning_items(statuses[camera_id].group_warnings, (item["kind"],), [item])
+                statuses[camera_id].replace_warning_items("group_warnings", (item["kind"],), [item])
 
     def clear_group_warnings(self) -> None:
         """At each apply request of the user (camera-requests.md 1.5); the fall back of step 4 must not call it."""
         for status in list(self.cameras.orchestrator.camera_statuses.values()):
-            status.set_warning_items([], status.group_warnings)
+            status.set_warning_items([], "group_warnings")
 
     async def search_exposure(self, camera_ids: list) -> dict:
         """camera-requests.md 1.5: each camera of `camera_ids` (checked by the manager) searches on its open stream;
@@ -955,7 +955,7 @@ class CameraGroup:
             results={camera_id: statuses[camera_id].serialize()["exposure_search"] for camera_id in searched},
             camera_failures=self._failures(camera_ids),
             warnings=[item for camera_id in searched for item in statuses[camera_id].warning_items(
-                statuses[camera_id].camera_warnings) if item["kind"] in ("add_light", "exposure_search_failed")])
+                "camera_warnings") if item["kind"] in ("add_light", "exposure_search_failed")])
 
     def adopt_search_results(self) -> None:
         """Copy the held value of each ended search into `configs`, once for each search (camera-requests.md 1.3b):

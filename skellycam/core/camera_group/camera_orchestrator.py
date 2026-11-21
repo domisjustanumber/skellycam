@@ -13,6 +13,7 @@ from skellycam.utilities.wait_functions import await_10ms
 logger = logging.getLogger(__name__)
 
 CAMERA_STATE_TIMEOUT_SECONDS = 10.0
+FRAME_LOCK_WAIT_S = 0.5  # the two check-then-set blocks of the last frame wait this long for its lock (unix 4.10)
 
 
 @dataclass
@@ -20,6 +21,17 @@ class CameraOrchestrator:
     camera_statuses: dict[CameraIdString, CameraStatus]
     first_recording_frame_number: SharedValue  # no lock: the main process is its one writer
     last_recording_frame_number: Synchronized
+
+    @property
+    def last_frame(self) -> int:
+        """The last frame of the take, read and written with no lock: one aligned 8-byte value, and the + 2 margin
+        of the end covers the race. A camera killed while it held the lock would else stop each camera at its next
+        frame. Only the two check-then-set blocks take the lock, with a bounded wait (unix-capture.md 4.10)."""
+        return self.last_recording_frame_number.get_obj().value
+
+    @last_frame.setter
+    def last_frame(self, value: int) -> None:
+        self.last_recording_frame_number.get_obj().value = value
 
     @property
     def camera_ids(self) -> list[CameraIdString]:
@@ -102,7 +114,7 @@ class CameraOrchestrator:
     def should_record_frame_number(self, frame_number: int | np.integer) -> tuple[bool, bool]:
         """(record, finish). A take records the group frames first to last - 1. With no take (first is -1)
         no frame is recorded: a stale last frame must not record again (open work, T-CAP-85 case 2)."""
-        first, last = self.first_recording_frame_number.value, self.last_recording_frame_number.value
+        first, last = self.first_recording_frame_number.value, self.last_frame
         if first == -1:
             return False, False
         if last != -1 and frame_number >= last:
@@ -111,7 +123,7 @@ class CameraOrchestrator:
 
     def take_frame_count(self) -> int:
         """The group frames of the take that the stop ended (recorder.md 7.6): first to last - 1."""
-        return self.last_recording_frame_number.value - self.first_recording_frame_number.value
+        return self.last_frame - self.first_recording_frame_number.value
 
     def should_grab_by_id(self, camera_id: CameraIdString) -> bool:
         if not camera_id in self.camera_statuses:

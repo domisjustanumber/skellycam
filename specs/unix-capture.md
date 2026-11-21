@@ -1338,16 +1338,22 @@ The signal and the watch [ADR-AC5B](../decisions/entries/AC5B-choices-of-the-thi
   closes the camera, and it must come first; the watch kills the process, with no restore (4.7) and no
   clean finish of the files [ADR-Q2NY](../decisions/entries/Q2NY-choices-of-code-step-2.md). The counter has no lock: a process
   stopped inside its add keeps the lock. Each other scalar of `CameraStatus` has no lock too. A process
-  that ends while it holds a lock keeps it for ever, so each wait for the lock of a JSON array of
-  `CameraStatus` is at most 0.5 s. After that wait, only that one call goes on with no lock. The main
-  process stops the wait for a status only when the camera process of that status has ended; "apply
-  again" then gives the new camera process new arrays. Each read tolerates torn JSON: it reads again up
-  to 3 times, then gives the last good value. A main-process write of `info` with no lock stays in the
-  main process until a write with the lock. The heartbeat value (its one writer: the heartbeat thread),
-  the global kill flag, the shutdown flag of the group and the first frame of a take (their writers: the
-  main process only) have no lock either. The end of a take waits at most 0.5 s for the lock of the last
-  frame; with no lock in that time, the take ends with the `take_error` "no lock of the last frame of the
-  take in 0.5 s" [ADR-QJH6](../decisions/entries/QJH6-choices-of-the-fix-lane.md).
+  that ends while it holds a lock keeps it for ever. Thus, for the lock of each JSON array of
+  `CameraStatus`, the first call of a stretch with no lock waits at most 0.5 s and logs one line; the
+  next calls try with no wait until the lock comes again. A call with no lock goes on with no lock. The
+  main process stops the tries for a status only when the camera process of that status has ended.
+  "Apply again" always gives the new camera process new arrays. The arrays go by name, not by object.
+  Each read tolerates torn JSON: it reads again up to 3 times, then gives the last good value. A
+  main-process write of `info` with no lock stays in the main process until a write with the lock. The
+  heartbeat value (its one writer: the heartbeat thread), the global kill flag, the shutdown flag of the
+  group and the first frame of a take (their writers: the main process only) have no lock either. The
+  last frame of a take is read and written with no lock (one aligned 8-byte value; the margin of + 2
+  covers the race), except in its two check-then-set blocks. Each of these waits at most 0.5 s for the
+  lock: the end of a take then ends with the `take_error` "no lock of the last frame of the take in
+  0.5 s", and a camera that ends with no take level ends its part of the take alone with the error
+  "camera `<id>`: no lock of the last frame of the take in 0.5 s". A failed read of the app state is
+  logged, and the websocket sends the state at the next tick; it sets no kill flag
+  [ADR-QJH6](../decisions/entries/QJH6-choices-of-the-fix-lane.md).
 - The setting `SKELLYCAM_STALL_WATCH=0` turns the watch off. The group reads it when it is made, and logs
   at its start that the watch is off [ADR-Q2NY](../decisions/entries/Q2NY-choices-of-code-step-2.md).
 - When it trips, the main process removes the camera from the gate, marks it `dead` with the failure

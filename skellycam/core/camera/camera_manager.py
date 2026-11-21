@@ -202,7 +202,7 @@ class CameraManager:
 
         # A forcibly stopped or never-started worker cannot acknowledge closure.
         # Only update these flags after confirming that every worker has exited.
-        for status in self.orchestrator.camera_statuses.values():
+        for status in list(self.orchestrator.camera_statuses.values()) + list(self.removed_statuses.values()):
             status.signal_closing()
             status.closed.value = True
         self.camera_workers.clear()
