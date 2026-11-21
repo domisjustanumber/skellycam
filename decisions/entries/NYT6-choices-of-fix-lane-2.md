@@ -8,9 +8,9 @@ The user decided the rule of item 1 (Q522: "re-measure a borderline value"). The
 items. The agent chose these details:
 
 1. A value of the exposure search that misses the rate by not more than 10 % (`measured >= 0.90 x r`) is
-   measured again one time. The second window starts at the frame that ended the first, with no new set and no
-   frames to settle; it keeps the brightness of the first window and decides. The limit of 20 s stays
-   ([`camera-requests.md`](../../specs/camera-requests.md) 1.3 item 2.7).
+   measured again one time: the window grows to 60 intervals from frame a, with no new set, and its whole rate
+   decides. The trial records the first rate in `first_fps` (null with no repeat). The limit of 20 s stays
+   ([`camera-requests.md`](../../specs/camera-requests.md) 1.3 item 2.7, 1.5).
 2. With no take (first frame -1), a frame decision takes no lock of the last frame
    ([`unix-capture.md`](../../specs/unix-capture.md) 4.10).
 3. Two texts of 4.10 now state the code: a call that finds the camera process ended logs one more line, and a
@@ -32,7 +32,7 @@ items. The agent chose these details:
 
 1. 28.1 fps is 6.3 % below 30 fps; 56.5 fps (the C922 at -6, 60 fps mode) is 5.8 % below 60 fps. A slow value
    (15 fps, or 29.7 fps at 60 fps) is far outside 10 %, so it costs no repeat. One repeat of 30 frames keeps the
-   cost low.
+   cost low. The window of 60 intervals gives a truly slow value almost no second chance (T-REQ-80).
 2. A camera killed inside that lock made each new camera process wait 1.5 s at its first frame. Each later take of
    such a group still ends with the lock error until the cameras are closed and opened again (4.10).
 4. Before, the clamp changed the value with no word. The main process does the clamp, as it does `start_failure`.
@@ -49,8 +49,8 @@ items. The agent chose these details:
 
 1. Each repeat adds about 1.0 s at 30 fps and 0.5 s at 60 fps. A lab search of 7 values took about 16 s, so more
    than about three borderline values can pass 20 s (`timed-out`). If camera runs show this, the user must decide
-   a new limit. One repeat may be too few for the Kiyo Pro at -8 (a miss in four of five opens): T-REQ-23 and
-   T-REQ-26 must record the repeats.
+   a new limit. A window that missed two frames (28.1 fps over 30 intervals) is about 29.0 fps over 60 and is
+   dropped; only a late frame is forgiven. T-REQ-23 and T-REQ-26 record `first_fps`.
 6. A group close does not restore a camera whose process ended. The record is not on disk: a restart of the app
    loses it. Another unit of the same model in the same USB port (no serial number), or a value that another program
    set to exactly the last value of this app, still takes the record. A torn record reads as no record.
@@ -58,12 +58,14 @@ items. The agent chose these details:
 ## Evidence
 
 1. The fake timeline `simulate` of `skellycam/tests/capture/test_exposure_search.py` (T-REQ-77), 30 fps, 8
-   values, no set time: 10.67 s with no borderline value; 11.69 s with one value at 28.1 fps for 40 frames, then
-   30 fps (kept); 11.72 s with one value always at 28.1 fps (dropped); 10.73 s with one value at 25 fps (no
-   repeat); 18.82 s with each value at 28.1 fps. At 60 fps: 5.33 s, and 5.87 s with one value at 56.5 fps.
+   values, no set time: 10.67 s with no borderline value; 11.67 s with one late frame at -8 (kept); 11.75 s with
+   one value always at 28.1 fps (dropped); 10.73 s with one value at 25 fps; 19.11 s with each value at 28.1 fps.
+   At 60 fps: 5.33 s, and 5.87 s with one value at 56.5 fps. T-REQ-80 (600 seeded runs, the jitter of the review):
+   29.0 fps kept 11.3 % with no repeat, 11.8 % with this repeat, 23.8 % when a second window decides alone.
 
 ## Alternatives rejected
 
-1. Two or more repeats, or a longer first window for each value: each costs time near the limit of 20 s.
+1. Two or more repeats, or a longer first window for each value: each costs time near the limit of 20 s. A
+   second window that decides alone: it about doubles the chance to keep a slow value (T-REQ-80).
 6. A restore at the group close in a short process that opens the camera: 4.7 [U] forbids it, and a wedged
    camera (the Kiyo Pro) can hang the open. A file on disk for the record: a new format for a rare case.
