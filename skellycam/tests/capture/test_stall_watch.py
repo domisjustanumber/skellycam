@@ -373,12 +373,11 @@ def test_f2_the_counter_and_the_other_scalars_of_the_status_have_no_lock():
     (fix lane G), so no read of the main process can wait for it."""
     import dataclasses
 
-    from skellycam.core.camera_group.camera_status import CameraStatus
+    from skellycam.core.camera_group.camera_status import ARRAYS, CameraStatus
 
     status = CameraStatus()
     scalars = [f.name for f in dataclasses.fields(status) if f.name not in (
-        "info", "warnings", "camera_warnings", "group_warnings", "diagnostics", "owner", "holder_dead",
-        "last_good", "pending_info", "no_lock")]
+        *ARRAYS, "diagnostics", "owner", "holder_dead", "last_good", "pending_info", "no_lock")]
     assert "alive_count" in scalars and "state_index" in scalars
     assert not [name for name in scalars if hasattr(getattr(status, name), "get_lock")]
 

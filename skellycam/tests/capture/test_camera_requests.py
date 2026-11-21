@@ -536,6 +536,33 @@ def test_t_req_68_add_light_stays_until_the_next_exposure_change(monkeypatch, tm
         assert kinds() == []
 
 
+def test_t_req_78_the_clamp_of_a_manual_exposure_gives_a_warning(monkeypatch):
+    """T-REQ-78, 1.1 and 1.5 [NYT6]: `MANUAL -2` is clamped to -5. The apply response and the status of the camera
+    hold the item `exposure_clamped` with its text; the next apply request with `MANUAL -7` clears it. The button
+    "Auto-set exposure" (no apply) moves the camera to `AUTO`, and its held value clears the item too."""
+    with capture_app(monkeypatch, [FakeScript(brightness=MODEL)]) as app:
+        camera_id = app.factory.camera_ids[0]
+        app.detect()
+        response = app.apply([app.config(camera_id, exposure=-2)])
+        assert response.status_code == 200, response.text
+        item = {"kind": "exposure_clamped", "camera_ids": [camera_id], "control": "exposure",
+                "text": f"Camera {camera_id}: manual exposure -2 is above the limit -5. The exposure is -5."}
+        assert item in response.json()["warnings"]
+        app.wait_state(camera_id, "ready")
+        assert app.group.configs[camera_id].exposure == -5
+        assert item in app.status(camera_id)["warnings"]
+        assert app.client.post("/skellycam/camera/group/exposure/auto", json=None).status_code == 200
+        app.wait_state(camera_id, "ready")
+        assert app.group.configs[camera_id].exposure_mode == "AUTO"
+        assert "exposure_clamped" not in [w["kind"] for w in app.status(camera_id)["warnings"]]
+        assert item in app.apply([app.config(camera_id, exposure=-2)]).json()["warnings"]
+        app.wait_state(camera_id, "ready")
+        assert item in app.status(camera_id)["warnings"]
+        assert app.apply([app.config(camera_id)]).status_code == 200
+        app.wait_state(camera_id, "ready")
+        assert "exposure_clamped" not in [w["kind"] for w in app.status(camera_id)["warnings"]]
+
+
 # ---------------------------------------------------------------------------
 # 1.2 (c), 1.5: the search on request (T-REQ-01, 02, 04, 05, 10, 11, 13, 16, 17, 22, 66, 69, 72)
 # ---------------------------------------------------------------------------

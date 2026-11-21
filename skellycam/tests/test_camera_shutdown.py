@@ -290,3 +290,18 @@ def test_the_close_ends_an_unselected_camera_process_that_outlived_its_join(mana
     old.terminate.assert_called_once()
     old.kill.assert_called_once()
     assert not manager.removed_workers and manager.removed_statuses["camera1"].closed.value
+
+
+def test_t_unx_94_a_close_that_raises_keeps_the_restore_records(manager):
+    """T-UNX-94, unix-capture.md 4.7 [NYT6]: a camera process that cannot be killed makes the close raise. The restore
+    record of each camera still goes to `restore_records` for the next group."""
+    record = dict(before={"exposure": [True, True, -6]}, names=["exposure"], set={"exposure": [False, -7]})
+    manager.orchestrator.camera_statuses["camera1"].set_restore_record(record)
+    worker = Mock(spec=ManagedWorker)
+    worker.pid = 123
+    worker.is_alive.return_value = True
+    manager.camera_workers["camera1"] = CameraWorker(camera_id="camera1", worker=worker, ipc=manager.ipc,
+                                                     orchestrator=manager.orchestrator)
+    with pytest.raises(RuntimeError, match="could not be killed"):
+        manager.close()
+    assert manager.restore_records["camera1"] == record

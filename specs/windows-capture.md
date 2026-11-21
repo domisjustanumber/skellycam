@@ -805,7 +805,7 @@ A camera that dies while no recording runs is treated as a `failed` camera [U6].
 - `warnings` holds the items of 11.3 for the recording that runs [agent 33].
 - `exposure_search` is null or the result object of [`camera-requests.md`](camera-requests.md) 1.5. `warnings` also holds the items
   of the camera process (`add_light`, `exposure_search_failed`, `no_manual_exposure`) and the items of
-  the main process (`rate_fallback`, `start_failure`). The owners, the storage and the lifetimes of
+  the main process (`rate_fallback`, `start_failure`, `exposure_clamped`). The owners, the storage and the lifetimes of
   these items are in [`camera-requests.md`](camera-requests.md) 1.5 [ADR-AC5B](../decisions/entries/AC5B-choices-of-the-third-consistency-check.md). The route `GET /camera/group/state` returns the same
   state as the `app_state` message of the websocket ([`camera-requests.md`](camera-requests.md) 1.5).
 - `diagnostics` holds only the counter subset of [`unix-capture.md`](unix-capture.md) 4.2 item 2. The full dict of 4.6.2 goes to the

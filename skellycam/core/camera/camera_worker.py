@@ -3,12 +3,13 @@ import logging
 import os
 import sys
 from dataclasses import dataclass
+from types import SimpleNamespace
 from collections.abc import Callable
 
 import cv2
 from pydantic import BaseModel
 
-from skellycam.core.camera.capture import warning_pipe
+from skellycam.core.camera.capture import source, warning_pipe
 from skellycam.core.camera.capture.camera_loop import camera_loop
 from skellycam.core.camera.config.camera_config import CameraConfig
 from skellycam.core.camera_group.camera_group_ipc import CameraGroupIPC
@@ -78,11 +79,16 @@ def camera_worker_method(
     cv2.setNumThreads(1)  # ring 8.2, with or without a BGR ring (ADR-467Z item 3)
     limit_libjpeg_warnings()  # ring 8.9; on Windows the main process gives the pipe (5.6)
     status = orchestrator.camera_statuses[camera_id]
+    # unix-capture.md 4.7 [NYT6]: the restore record lives in the status, so it survives this process
+    keeper = SimpleNamespace(restore_record=status.restore_record, set_restore_record=status.set_restore_record)
+    source.RESTORE_RECORDS[camera_id] = keeper
     try:
         with media_foundation_process(source_factory is None and select_capture_source() == "media_foundation"):
             camera_loop(source_factory or create_capture_source, config, ipc, orchestrator, update_camera_settings_subscription, shm_subscription,
                         recording_info_subscription)
     finally:
+        if source.RESTORE_RECORDS.get(camera_id) is keeper:  # THREAD workers share the dict: not a later run's
+            del source.RESTORE_RECORDS[camera_id]
         status.signal_closing()
         status.closed.value = True
         logger.debug(f"Camera {camera_id} process completed")

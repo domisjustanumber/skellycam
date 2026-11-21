@@ -50,6 +50,7 @@ class CameraGroupManager:
     closing: bool = False
     closed_diagnostics: dict = field(default_factory=dict)  # the last dicts of each camera of a closed group (F4)
     searching: bool = False  # an exposure search of the endpoint runs (camera-requests.md 1.5)
+    restore_records: dict = field(default_factory=dict)  # unix-capture.md 4.7 [NYT6]: from a group to the next
     camera_groups: dict[CameraGroupIdString, CameraGroup] = field(default_factory=dict)
     camera_group_framerate_subscriptions: dict[CameraGroupIdString, TopicSubscriptionQueue] = field(
         default_factory=dict
@@ -68,6 +69,7 @@ class CameraGroupManager:
             global_kill_flag=self.global_kill_flag,
             worker_registry=self.worker_registry,
             source_factory=self.source_factory,
+            restore_records=self.restore_records,
         )
         self.camera_group_framerate_subscriptions[camera_group.id] = (
             camera_group.ipc.pubsub.get_subscription(TopicTypes.FRAMERATE)
@@ -110,6 +112,11 @@ class CameraGroupManager:
         Return the group, the failure object of each camera that failed (8.4) and the warnings (11.3).
         Raise `RequestRefused` (422 or 409) before any change.
         """
+        clamped = [dict(kind="exposure_clamped", camera_ids=[camera_id], control="exposure",  # 1.1, 1.5 [NYT6]
+                        text=f"Camera {camera_id}: manual exposure {config.exposure} is above the limit "
+                             f"{MAX_MANUAL_EXPOSURE}. The exposure is {MAX_MANUAL_EXPOSURE}.")
+                   for camera_id, config in camera_configs.items() if config.use_this_camera
+                   and config.exposure_mode == "MANUAL" and config.exposure > MAX_MANUAL_EXPOSURE]
         camera_configs = {camera_id: config.model_copy(update=dict(exposure=MAX_MANUAL_EXPOSURE))
                           if config.exposure_mode == "MANUAL" and config.exposure > MAX_MANUAL_EXPOSURE else config
                           for camera_id, config in camera_configs.items()}  # sfn26 43e2b968a: the clamp
@@ -143,6 +150,10 @@ class CameraGroupManager:
         else:
             failures, change_warnings = await camera_group.apply(camera_configs)
             warnings += change_warnings
+        for item in clamped:  # the main process owns it (camera-requests.md 1.5)
+            logger.warning(item["text"])
+            warnings.append(item)
+            camera_group.add_group_warning(item)
         if any(config.use_this_camera and abs(config.framerate - 60) <= 0.5 for config in camera_configs.values()):
             # 2.4: a request at 60 fps falls the group back to the configs from before the request, at 30 fps, one time
             fallback = {camera_id: (before.get(camera_id) or camera_configs.get(camera_id) or config).model_copy(

@@ -19,7 +19,8 @@ INFO_SIZE = 16384
 # lock of a JSON array is bounded: one wait of ARRAY_LOCK_WAIT_S for each stretch with no lock, then tries with no
 # wait until the lock comes again; a call with no lock goes on with no lock (unix-capture.md 4.10).
 ARRAY_LOCK_WAIT_S = 0.5
-ARRAYS = ("info", "warnings", "camera_warnings", "group_warnings")
+ARRAYS = ("info", "warnings", "camera_warnings", "group_warnings", "controls_before")
+KEPT_ARRAYS = ("camera_warnings", "group_warnings", "controls_before")  # "apply again" keeps their content
 MAIN_ONLY = ("owner", "holder_dead", "last_good", "pending_info", "no_lock")  # never pickled to a camera process
 
 @dataclass
@@ -60,6 +61,9 @@ class CameraStatus:
     search_count: Any = field(default_factory=lambda: multiprocessing.Value("q", 0, lock=False))
     # camera-requests.md 1.2 (c): the main process asks for a search on the open stream; the camera process clears it.
     search_requested: Any = field(default_factory=lambda: multiprocessing.Value("b", False, lock=False))
+    # unix-capture.md 4.7 [NYT6]: the "before" values and the changed names of the controls that this app changed and
+    # did not restore yet, as JSON; empty when the camera holds its own values. It survives the camera process.
+    controls_before: Any = field(default_factory=lambda: multiprocessing.Array("c", INFO_SIZE))
     # The main process only: the counter subset of the newest diagnostics of the camera (unix-capture.md 4.2 item 2).
     diagnostics: dict = field(default_factory=dict)
     # Per process, and never pickled: the worker of the camera (the main process sets it), whether that process
@@ -158,13 +162,22 @@ class CameraStatus:
         return self._json(name, [])
 
     def set_warning_items(self, items: list, name: str = "warnings") -> None:
-        with self._array_lock(name):  # one writer process for each warning array: a write with no lock loses nothing
-            getattr(self, name).get_obj().value = json.dumps(items).encode()[:INFO_SIZE - 1]
+        self._write_json(name, items)
+
+    def _write_json(self, name: str, value) -> None:
+        with self._array_lock(name):  # one writer process for each of these arrays: a write with no lock loses nothing
+            getattr(self, name).get_obj().value = json.dumps(value).encode()[:INFO_SIZE - 1]
 
     def replace_warning_items(self, name: str, kinds: tuple, items: list) -> None:
         """Drop the items of `kinds` from the array `name` (`camera_warnings` or `group_warnings`), then add `items`."""
         kept = [item for item in self.warning_items(name) if item.get("kind") not in kinds]
         self.set_warning_items(kept + items, name)
+
+    def restore_record(self) -> dict:
+        return self._json("controls_before", {}) or {}
+
+    def set_restore_record(self, record: dict) -> None:
+        self._write_json("controls_before", record)
 
     def reset_for_start(self) -> None:
         """A new camera process for "apply again" (8.3): the gate count stays (5.3), the rest starts again."""
@@ -175,8 +188,7 @@ class CameraStatus:
         # Always new arrays (unix-capture.md 4.10): the old process is joined or killed by now, and it can have ended
         # while it held a lock. The new process gets them when it is spawned. The old arrays have no writer left, so
         # the warning items of the camera and the group are read with no lock.
-        kept = {name: self._json(name, [], raw=getattr(self, name).get_obj().value)
-                for name in ("camera_warnings", "group_warnings")}
+        kept = {name: self._json(name, [], raw=getattr(self, name).get_obj().value) for name in KEPT_ARRAYS}
         for name in ARRAYS:
             setattr(self, name, multiprocessing.Array("c", INFO_SIZE))
         self.holder_dead = False
@@ -184,7 +196,7 @@ class CameraStatus:
         self.pending_info.clear()
         self.last_good.clear()
         for name, items in kept.items():
-            self.set_warning_items(items, name)
+            self._write_json(name, items)
         self.diagnostics = {}
         self.set_state("starting")
 

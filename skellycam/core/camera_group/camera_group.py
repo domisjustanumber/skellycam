@@ -166,16 +166,14 @@ class CameraGroup:
 
     @property
     def alive(self) -> bool:
-        return (
-            self.ipc.running
-            and bool(self.cameras.camera_workers)
-            and all(
-                status.connected.value and not status.closed.value
-                and not status.closing.value and not status.error.value
-                for status in list(self.cameras.orchestrator.camera_statuses.values())
-            )
-            and all(worker.is_alive() for worker in list(self.cameras.camera_workers.values()))
-        )
+        """The group runs and at least one selected camera lives: its process runs, and it is not `failed` or `dead`,
+        not closing and not closed (camera-requests.md 1.5) [NYT6]."""
+        statuses = self.cameras.orchestrator.camera_statuses
+        return self.ipc.running and any(
+            worker.is_alive() and (status := statuses.get(camera_id)) is not None
+            and status.state not in ("failed", "dead") and not status.closed.value
+            and not status.closing.value and not status.error.value
+            for camera_id, worker in list(self.cameras.camera_workers.items()))
 
     @classmethod
     def create(
@@ -186,6 +184,7 @@ class CameraGroup:
         global_kill_flag: SharedValue,
         worker_registry: WorkerRegistry,
         source_factory: Callable | None = None,
+        restore_records: dict | None = None,
     ) -> "CameraGroup":
         try:
             validate_camera_configs(camera_configs)
@@ -199,6 +198,7 @@ class CameraGroup:
                 worker_registry=worker_registry,
                 camera_configs=camera_configs,
                 source_factory=source_factory,
+                restore_records=restore_records,
             )
         except Exception as e:
             logger.error(f"Error creating camera group: {type(e).__name__} - {e}")
@@ -1046,6 +1046,8 @@ class CameraGroup:
             if held and camera_id in self.configs and held["count"] != self._adopted.get(camera_id):
                 self._adopted[camera_id] = held.pop("count")
                 self.configs[camera_id] = self.configs[camera_id].model_copy(update=held)
+                # the camera left the clamped MANUAL value (camera-requests.md 1.5) [NYT6]
+                status.replace_warning_items("group_warnings", ("exposure_clamped",), [])
 
     def to_state(self) -> CameraGroupState:
         self.adopt_search_results()
