@@ -14,22 +14,29 @@ from ctypes import byref, c_long, c_ulong, c_void_p, sizeof, string_at
 from comtypes import COMObject
 
 from skellycam.core.camera.capture.media_foundation import bounded, com, detect
-from skellycam.core.camera.capture.media_foundation.errors import E_FAIL, check, hresult_reason
-from skellycam.core.camera.capture.modes import choose_mode
+from skellycam.core.camera.capture.media_foundation.errors import E_FAIL, check, failure, hresult_reason
+from skellycam.core.camera.capture.modes import choose_mode, mode_fraction
 from skellycam.core.camera.capture.source import (
     BOUNDED_CALL_LIMIT_S, FIRST_FRAME_TIMEOUT_S, CapturedFrame, CaptureFailure, CaptureRequest, CaptureWaitingPlace,
-    ControlSetting, ControlState, ControlValue, OpenedMode)
+    ControlRestore, ControlSetting, ControlState, ControlValue, FrameLog, OpenedMode, empty_diagnostics)
 from skellycam.core.ipc.frame_ring import NO_SAMPLE_NS
 
 logger = logging.getLogger(__name__)
 FIRST = com.MF_SOURCE_READER_FIRST_VIDEO_STREAM
 FLAGS_AUTO, FLAGS_MANUAL = 1, 2  # CameraControl_Flags_Auto, CameraControl_Flags_Manual
+READERF_CURRENTMEDIATYPECHANGED = 0x20  # mfreadwrite.h: `format_changes` (unix-capture.md D-3)
 SAMPLE_TIME_LIMIT_NS = 200_000_000  # 4.2: a sample time more than 200 ms before its arrival is not used
 
 # The controls of step 3a (11.4): name: (index into the control interfaces (0 IAMCameraControl,
 # 1 IAMVideoProcAmp), property ID). White balance and power line frequency come in step 3c.
 CONTROLS = {"exposure": (0, 4), "focus": (0, 6), "gain": (1, 9)}
 ABSENT = ControlValue(present=False, auto=False, value=None)
+# The `call` name (unix-capture.md 4.6.3) and the time key (D-6) of each bounded step.
+CALLS = {"the device list": ("open", "t_enumerate_ms"), "ActivateObject": ("activate", "t_open_ms"),
+         "the reader creation": ("open", "t_open_ms"), "the mode set": ("set-mode", "t_set_mode_ms"),
+         "the first ReadSample": ("read-sample", "t_stream_on_ms"), "a control call": (None, "t_controls_ms"),
+         "Flush": ("flush", None), "IMFMediaSource::Shutdown": ("shutdown", None),
+         "IMFActivate::ShutdownObject": ("shutdown", None)}
 
 
 class _ReaderCallback(COMObject):
@@ -79,6 +86,11 @@ class MediaFoundationSource:
         self._count = 0
         self._sample_time_ok = True
         self._format = "MJPG"
+        self._request = self._mode = self._last_failure = None
+        self._times, self._controls, self._failed_calls, self._failed_call = {}, {}, 0, None
+        self._frame_log, self._discontinuities, self._zero_bytes = FrameLog(), 0, 0
+        self._restore = ControlRestore("")
+        self._ranges, self._format_changes = {}, 0
 
     @property
     def replaced_count(self) -> int:
@@ -113,18 +125,70 @@ class MediaFoundationSource:
 
         def run():
             try:
-                for name, setting in changes.items():
-                    _set_control(interfaces, name, setting)
-                return {name: _read_control(interfaces, name)[0] for name in CONTROLS}
+                return self._set_and_read(interfaces, changes)
             finally:
                 for pointer in interfaces:
                     com.release(pointer)
         return self._call("set controls", "a control call", run)
 
-    def close(self) -> None:
+    def _set_and_read(self, interfaces, changes) -> ControlState:
+        """On the worker of a bounded call. The first read of an open comes before any set (unix-capture.md 4.7)."""
+        if self._restore.before is None:
+            self._restore.read({name: _read_control(interfaces, name)[0] for name in CONTROLS})
+            self._ranges = {name: _read_range(interfaces, name) for name in CONTROLS}
+        self._restore.changed(changes)
+        for name, setting in changes.items():
+            _set_control(interfaces, name, setting)
+        read = {name: _read_control(interfaces, name) for name in CONTROLS}
+        self._controls = {name: (value, None if via is None else "ks" if via is interfaces[2] else "iam")
+                          for name, (value, via) in read.items()}
+        return {name: value for name, (value, _) in read.items()}
+
+    def close(self, restore: bool = True) -> None:
         """Close in the order of 6.9. Each step is bounded; a hung step stops the close there."""
         if self._hung:
             return  # a hung call can still use these objects; the camera process ends hard (6.6)
+        t0 = time.perf_counter_ns()
+        try:
+            self._close(restore)
+        finally:
+            self._times["t_close_ms"] = (time.perf_counter_ns() - t0) / 1e6
+
+    def diagnostics(self) -> dict:
+        """The keys of unix-capture.md 4.6.2 that Media Foundation fills; null for the others."""
+        data = empty_diagnostics("media-foundation")
+        request, mode = self._request, self._mode
+        if request is not None:
+            fps = mode_fraction(request.framerate) if request.framerate > 0 else (None, None)
+            data.update(requested_fourcc=request.capture_fourcc, requested_w=request.width,
+                        requested_h=request.height, requested_fps_num=fps[0], requested_fps_den=fps[1])
+        if mode is not None:
+            data.update(granted_fourcc=mode.format, granted_w=mode.width, granted_h=mode.height,
+                        granted_fps_num=mode.fps_num, granted_fps_den=mode.fps_den,
+                        delivered="jpeg" if mode.format == "MJPG" else "decoded")
+        data.update(clock="unknown", tstamp_src="unknown", ts_conversion="100ns-units",
+                    sample_time_kept=self._sample_time_ok, frames=self._count, sequence_available=False,
+                    discontinuity_flags=self._discontinuities, zero_bytes=self._zero_bytes, native_domain="hresult",
+                    failed_calls=self._failed_calls, call=self._failed_call, id_source="mf-link",
+                    format_changes=self._format_changes, **self._times)
+        for name, values in dict(self._ranges).items():
+            if values is not None:
+                data.update(zip((f"{name}_min", f"{name}_max", f"{name}_step", f"{name}_default",
+                                 f"{name}_auto_supported"), values))
+        self._frame_log.fill(data)
+        self._restore.fill(data)
+        for name, (value, path) in dict(self._controls).items():
+            data.update({f"{name}_present": value.present, f"{name}_value": value.value, f"{name}_auto": value.auto,
+                         f"{name}_native_id": CONTROLS[name][1]})
+            if name == "exposure":
+                data.update(control_path=path or "none", exposure_unit="log2-s" if value.present else "none")
+        failure = self._error or self._last_failure
+        if failure is not None:
+            data.update(fail_code=failure.code, fail_stage=failure.stage,
+                        native_code=getattr(failure, "native_code", None))
+        return data
+
+    def _close(self, restore: bool) -> None:
         with self._lock:
             self._closing = True
             interfaces, self._interfaces = self._interfaces, (None, None, None)
@@ -135,6 +199,9 @@ class MediaFoundationSource:
                 raise CaptureFailure("close", f"a ReadSample issue did not return in {BOUNDED_CALL_LIMIT_S:g} s",
                                      hung=True)
             time.sleep(0.001)
+        if restore and self._error is None:  # 4.7: between step 1 and step 2; never after a failure
+            self._restore.restore(lambda changes: self._call(
+                "close", "a control call", lambda: self._set_and_read(interfaces, changes)))
         if self._reader is not None:
             self._flushed.clear()
             reader = com.ref(self._reader, com.IMFSourceReader)
@@ -161,6 +228,10 @@ class MediaFoundationSource:
         self._first.clear()
         self._closing, self._error, self._count, self._sample_time_ok = False, None, 0, True
         self._format = request.capture_fourcc
+        self._request, self._mode, self._last_failure, self._times, self._controls = request, None, None, {}, {}
+        self._frame_log, self._discontinuities, self._zero_bytes = FrameLog(), 0, 0
+        self._restore = ControlRestore(request.camera_id)
+        self._ranges, self._format_changes = {}, 0
 
         def find():
             found = com.enumerate_devices("open")
@@ -169,7 +240,7 @@ class MediaFoundationSource:
                 if len(keep) != 1 or activate is not keep[0][1]:
                     com.release(activate)
             if not keep:
-                raise CaptureFailure("open", "camera not found")
+                raise CaptureFailure("open", "camera not found", code="not-found")
             if len(keep) > 1:  # D13, agent 12
                 raise CaptureFailure("open", f"{len(keep)} devices have the camera_id {request.camera_id}: "
                                              + ", ".join(link for link, _ in keep))
@@ -205,7 +276,8 @@ class MediaFoundationSource:
                 return _set_mode(reader, request)
             finally:
                 com.release(reader)
-        mode = self._call("set mode", "the mode set", set_mode)
+        mode = self._mode = self._call("set mode", "the mode set", set_mode)
+        self._frame_log = FrameLog(round(1e9 * mode.fps_den / mode.fps_num))
 
         reader = com.ref(self._reader, com.IMFSourceReader)
 
@@ -216,29 +288,41 @@ class MediaFoundationSource:
                 com.release(reader)
         self._call("start stream", "the first ReadSample", start)
 
-        if not self._first.wait(FIRST_FRAME_TIMEOUT_S):  # a wait, not a hung call (6.4)
-            raise CaptureFailure("first frame", f"no frame in {FIRST_FRAME_TIMEOUT_S:g} s")
+        t0 = time.perf_counter_ns()
+        first = self._first.wait(FIRST_FRAME_TIMEOUT_S)
+        if self._count:
+            self._times["t_first_frame_ms"] = (time.perf_counter_ns() - t0) / 1e6
+        if not first:  # a wait, not a hung call (6.4)
+            raise CaptureFailure("first frame", f"no frame in {FIRST_FRAME_TIMEOUT_S:g} s", code="first-frame-timeout")
         if self._count == 0:
-            raise CaptureFailure("first frame", self._error.reason)
+            raise CaptureFailure("first frame", self._error.reason, code=self._error.code)
         return OpenedMode(width=mode.width, height=mode.height, fps_num=mode.fps_num, fps_den=mode.fps_den,
                           format=mode.format, device_path=link)
 
     def _call(self, stage, what, function, on_late=None):
+        name, timing = CALLS.get(what, (None, None))
+        t0 = time.perf_counter_ns()
         try:
             return bounded.call(stage, what, function, on_late)
         except CaptureFailure as failure:
             self._hung = self._hung or failure.hung
+            if name is not None:  # a failed control call is no failure of the camera (11.2, U14)
+                self._last_failure, self._failed_call, self._failed_calls = failure, name, self._failed_calls + 1
             raise
+        finally:
+            if timing:
+                self._times[timing] = self._times.get(timing, 0.0) + (time.perf_counter_ns() - t0) / 1e6
 
     # ----- the callback (6.5) -----
 
     def _on_sample(self, arrival_ns, hr, flags, sample):
         if hr & 0x80000000:
-            return self._fail(CaptureFailure("streaming", hresult_reason(hr)))
+            return self._fail(failure(hr, "streaming"))
         if flags & com.MF_SOURCE_READERF_ERROR:
             return self._fail(CaptureFailure("streaming", hresult_reason(E_FAIL)))
         if flags & com.MF_SOURCE_READERF_ENDOFSTREAM:
             return self._fail(CaptureFailure("streaming", "end of stream"))
+        self._format_changes += bool(flags & READERF_CURRENTMEDIATYPECHANGED)
         if sample:  # a null sample is a stream tick, not a frame
             self._place.put(self._frame(arrival_ns, com.borrow(sample, com.IMFSample)))
             self._first.set()
@@ -263,6 +347,9 @@ class MediaFoundationSource:
         if not has_time or not arrival_ns - SAMPLE_TIME_LIMIT_NS <= sample_ns <= arrival_ns:
             self._sample_time_ok = False  # the rule of 4.2: for the rest of the open
         number, self._count = self._count, self._count + 1
+        self._frame_log.add(number, None, sample_ns if has_time else None, arrival_ns, len(payload))
+        self._discontinuities += discontinuity
+        self._zero_bytes += not payload
         return CapturedFrame(payload=payload, format=self._format, arrival_ns=arrival_ns,
                              sample_ns=sample_ns if self._sample_time_ok else NO_SAMPLE_NS,
                              delivered_len=len(payload), driver_error=False, source_frame_number=number,
@@ -281,7 +368,7 @@ class MediaFoundationSource:
             with self._lock:
                 self._issuing -= 1
         if hresult & 0x80000000:
-            self._fail(CaptureFailure("streaming", hresult_reason(hresult)))
+            self._fail(failure(hresult, "streaming"))
 
     def _fail(self, failure):
         """Keep the first error; the marker wakes the loop (4.3), and no new read is issued."""
@@ -312,7 +399,7 @@ def _set_mode(reader, request):
     finally:
         com.release(current)
     if got != chosen:
-        raise CaptureFailure("set mode", f"the camera set {got} instead of {chosen}")
+        raise CaptureFailure("set mode", f"the camera set {got} instead of {chosen}", code="no-mode")
     return chosen
 
 
@@ -341,6 +428,16 @@ def _end(pointer, shutdown):
         com.release(pointer)
 
 
+def _read_range(interfaces, name):
+    """(min, max, step, default, auto supported) by `IAM...::GetRange`, or None (the KS route has no range here)."""
+    kind, prop = CONTROLS[name]
+    iam = interfaces[kind]
+    values = [c_long() for _ in range(5)]
+    if iam is None or iam.GetRange(prop, *(byref(v) for v in values)) & 0x80000000:
+        return None
+    return (*(v.value for v in values[:4]), bool(values[4].value & FLAGS_AUTO))
+
+
 def _read_control(interfaces, name):
     """(ControlValue, the interface that answered): IAM `Get` first, else IKsControl (6.8)."""
     kind, prop = CONTROLS[name]
@@ -360,10 +457,10 @@ def _read_control(interfaces, name):
 def _set_control(interfaces, name, setting):
     """Set one control through the interface that read it. The read-back follows in `set_controls`."""
     if name not in CONTROLS:
-        raise CaptureFailure("set controls", f"no {name} control")
+        raise CaptureFailure("set controls", f"no {name} control", code="control-failed")
     before, via = _read_control(interfaces, name)
     if not before.present:
-        raise CaptureFailure("set controls", f"no {name} control")
+        raise CaptureFailure("set controls", f"no {name} control", code="control-failed")
     value = before.value if setting.value is None else setting.value
     flags = FLAGS_AUTO if setting.auto else FLAGS_MANUAL
     kind, prop = CONTROLS[name]

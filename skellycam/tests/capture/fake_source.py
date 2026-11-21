@@ -51,7 +51,8 @@ def product_types():
         ControlValue=source.ControlValue, CaptureFailure=source.CaptureFailure,
         WaitingPlace=source.CaptureWaitingPlace, FIRST_FRAME_TIMEOUT_S=source.FIRST_FRAME_TIMEOUT_S,
         BOUNDED_CALL_LIMIT_S=source.BOUNDED_CALL_LIMIT_S, NativeMode=modes.NativeMode,
-        choose_mode=modes.choose_mode, NO_SAMPLE_NS=ring.NO_SAMPLE_NS)
+        choose_mode=modes.choose_mode, NO_SAMPLE_NS=ring.NO_SAMPLE_NS, empty_diagnostics=source.empty_diagnostics,
+        ControlRestore=source.ControlRestore)
 
 
 def spec_camera_id(link):
@@ -232,6 +233,8 @@ class FakeScript:
     close_delay_s: float = 0.0  # the close of the source takes this long (clock time)
     exit_at: str | None = None  # "open", or "frame:<n>": the camera process ends there with os._exit(3)
     name: str | None = None  # the friendly name in the detection result; None: "Fake camera <index>"
+    no_dht: bool = False  # each JPEG has no DHT segment, as many UVC cameras send it
+    diagnostics: dict | None = None  # keys that `diagnostics()` adds to the null source keys and `frames`
 
 
 class FakeLog:
@@ -278,6 +281,17 @@ def synthetic_jpeg(width, height, gray=None):
             image = np.full((height, width, 3), gray, np.uint8)
         _JPEG_CACHE[key] = cv2.imencode(".jpg", image, [int(cv2.IMWRITE_JPEG_QUALITY), 90])[1].tobytes()
     return _JPEG_CACHE[key]
+
+
+def without_dht(jpeg):
+    """The JPEG with each DHT segment before SOS removed (a decoder then needs the standard tables)."""
+    parts, i = [jpeg[:2]], 2
+    while jpeg[i + 1] != 0xDA:
+        end = i + 2 + int.from_bytes(jpeg[i + 2:i + 4], "big")
+        if jpeg[i + 1] != 0xC4:
+            parts.append(jpeg[i:end])
+        i = end
+    return b"".join(parts) + jpeg[i:]
 
 
 def with_comment(jpeg, frame_number):
@@ -330,6 +344,8 @@ class FakeSource:
         self.slow_finished_ns = None
         self.cut_frames = []
         self.removed_frame = None
+        self._restore = None  # the product `ControlRestore` of the open (unix-capture.md 4.7)
+        self.t_close_ms = None
 
     # ----- the capture interface (4.1) -----
 
@@ -363,6 +379,8 @@ class FakeSource:
             self._controls = {name: [present, auto, value] for name, present, auto, value in self.script.controls}
             for name, value in self.script.reset_on_stream:
                 self._controls[name][2] = value
+            restore = getattr(types, "ControlRestore", None)  # the stand-ins of the self-tests have none
+            self._restore = restore(self.camera_id) if restore is not None else None
             t0 = self.clock.now_ns()
             self.log.first_read_sample_ns.value = t0
             self._event("read_sample", None)
@@ -421,6 +439,9 @@ class FakeSource:
                 self._live_changes += 1
                 faults = self.script.live_set_faults
                 fault = faults[self._live_changes - 1] if self._live_changes <= len(faults) else None
+            if self._restore is not None:
+                self._restore.read(self._read_back())
+                self._restore.changed(changes)
             if fault == "error":
                 raise types.CaptureFailure("set controls", "the camera refused the value")
             for name, setting in changes.items():
@@ -442,11 +463,15 @@ class FakeSource:
                 self.log.first_sfn_after_readback = self._next_sfn
             return self._read_back()
 
-    def close(self):
+    def close(self, restore=True):
         self._event("close", None)
+        t0 = time.perf_counter_ns()
         with self._lock:
             self.log.closes.value += 1
         self._maybe_hang("close", "close")
+        # the restore of 4.7, before the stream stops; never after a removal or a failure of the loop
+        if restore and self._restore is not None and self._opened and not self._ended:
+            self._restore.restore(self.set_controls)
         if self.script.close_delay_s:
             self._wait(self.script.close_delay_s)
         self._stop.set()
@@ -454,7 +479,15 @@ class FakeSource:
         if self._thread is not None and self._thread is not threading.current_thread():
             self._thread.join(timeout=2.0)
         self._opened = False
+        self.t_close_ms = (time.perf_counter_ns() - t0) / 1e6
         self.clock.leave()
+
+    def diagnostics(self):
+        """The null source keys of unix-capture.md 4.6.2, `frames`, and the keys of the script."""
+        data = {**self.types.empty_diagnostics(), "frames": len(self.log.taken), "t_close_ms": self.t_close_ms}
+        if self._restore is not None:
+            self._restore.fill(data)
+        return {**data, **(self.script.diagnostics or {})}
 
     @property
     def replaced_count(self):
@@ -612,7 +645,8 @@ class FakeSource:
     def _make_frame(self, k, arrival):
         types = self.types
         width, height = self._mode.width, self._mode.height
-        payload = with_comment(synthetic_jpeg(width, height, self._gray()), k)
+        jpeg = synthetic_jpeg(width, height, self._gray())
+        payload = with_comment(without_dht(jpeg) if self.script.no_dht else jpeg, k)
         if k in self.script.cut_off_frames or self._cut_next:
             self._cut_next = False
             self.cut_frames.append(k)

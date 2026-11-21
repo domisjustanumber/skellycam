@@ -728,12 +728,15 @@ fake-layer tests run on Windows, Linux and macOS, as the parity ruling asks [U].
    so the JSON breaks (`camera_status.py`). The path [ADR-AC5B](../decisions/entries/AC5B-choices-of-the-third-consistency-check.md):
    - The camera process sends the full dict (the source keys and the keys of the shared loop, item 3)
      to the main process one time per second, and at the end of `open`, at a failure and at the
-     close. It uses the existing channel that carries a take error from the camera loop: the topic
-     `TopicTypes.RECORDING_FINISHED`, read in the main process from
-     `CameraGroupIPC.recording_finished_subscription` by `CameraGroup._take_finished` in the watch
-     thread (`_watch_workers`). The message kind `diagnostics` is a `RecordingFinishedMessage` with
-     the new field `diagnostics: dict | None = None` set, and `result` and `error` `None`.
-     `_take_finished` reads that field first, and never puts such a message in `finished`.
+     close. It uses its own topic, `TopicTypes.DIAGNOSTICS`, with the message `DiagnosticsMessage`
+     (`camera_id`, `diagnostics: dict`), through the same pubsub mechanism as a take error. The main
+     process reads it from `CameraGroupIPC.diagnostics_subscription` by `CameraGroup._take_diagnostics`
+     in the watch thread (`_watch_workers`). Thus no diagnostics message goes into `finished`
+     [ADR-Q2NY](../decisions/entries/Q2NY-choices-of-code-step-2.md). The main process reads this topic also during the close of
+     the group, and a camera process waits at most 1 s for its close dict to reach the pipe; then it exits
+     anyway. A closed group keeps its last dicts in `CameraGroupManager.diagnostics()`. A failure that
+     the main process sets (the stall watch, `_mark_ended`, a disk stall, `_give_up`) also sets
+     `fail_code` in the dict that it keeps. "Apply again" clears the counter subset of the status.
    - The pickled message is at most 32 KiB. The largest dict (about 150 keys, 64 `frame_log` rows and
      60 hash keys) is about 14 kB. A dict over the limit is not sent, and the camera process logs it
      one time.
@@ -749,7 +752,8 @@ fake-layer tests run on Windows, Linux and macOS, as the parity ruling asks [U].
 3. The shared loop adds its own keys to the same dict: `decoded_by_skellycam`,
    `encoded_by_skellycam` (D-10), `dht_inserted`, and the frame hashes of D-11 (4.6.2).
 4. The exposure rules of [req 1] apply to each source, with the source parts of 4.5 [U].
-5. The restore of the controls at the close (4.7) is on by default on each source [U].
+5. The restore of the controls at the close (4.7) is on by default on each native source and on the
+   fake source [U]. The OpenCV source has none: it cannot read the auto flag [ADR-Q2NY](../decisions/entries/Q2NY-choices-of-code-step-2.md).
 6. `select_capture_source()` of `camera_worker.py` covers Linux and macOS by 4.9.
 7. `detect_available_cameras()` calls the native detection on Linux and macOS, also when OpenCV is
    chosen, as Windows does [W D11]. The OpenCV source then opens the node that detection names
@@ -1145,8 +1149,8 @@ tests that change.
 | D-1 | `requested_fourcc`, `granted_fourcc`, `requested_w`, `requested_h`, `granted_w`, `granted_h`, `requested_fps_num`, `requested_fps_den`, `granted_fps_num`, `granted_fps_den`, `delivered` (`jpeg`, `decoded`, `none`), `video_settings` (`nil`, `empty`, `dmb1`, null), `bytesused_equals_payload` | `G_FMT`, `G_PARM` | active format, durations | read-back type |
 | D-2 | `clock` (`monotonic`, `realtime`, `host`, `device`, `unknown`), `tstamp_src` (`soe`, `eof`, `unknown`), `ts_conversion` (`timeval-to-ns`, `host-to-mach-to-ns`, `sync-to-host-to-mach-to-ns`, `100ns-units`), `sample_time_kept`, `sample_minus_arrival_p5_ms`, `sample_minus_arrival_p50_ms`, `sample_minus_arrival_p95_ms`, `later_than_arrival` (count since the open, counted before the 200 ms rule) | yes | yes | yes (`clock` `unknown`) |
 | D-2, D-3 | `frame_log`: rows `[source_frame_number, sequence, raw_ts_ns, arrival_ns, bytesused]`, `bytesused` negative when the error flag is set; certify computes `grain_ms` and `jitter_p95_ms` from it | yes | sequence null when absent | sequence null |
-| D-3 | `frames`, `sequence_available`, `sequence_gaps`, `sequence_lost`, `discontinuity_flags`, `error_flag_frames`, `zero_bytes`, `drops_reported`, `poll_timeouts`, `format_changes`, `long_intervals` (intervals over 1.5 periods of the mode rate since the open), `long_intervals_with_seq_gap` (those with a sequence gap) | yes | yes | yes |
-| D-4 | For each control `c` of `exposure`, `gain`, `focus`, `white_balance`, `power_line`: `c_present`, `c_min`, `c_max`, `c_step`, `c_default`, `c_auto_supported`, `c_native_id`, `c_value` (native), `c_auto`, `c_set_rc`, `c_get_rc`, `c_before`, `c_before_auto`; `c_route_proven`; and `exposure_unit` (`log2-s`, `100us`, `seconds`, `ev`, `native`, `native-data`, `none`), `exposure_native_at_m7`, `control_path` (`v4l2`, `cmio-native`, `cmio-absolute`, `cmio-native-data`, `avf-lock`, `ep0`, `iam`, `ks`, `none`), `ae_off_ok`, `af_off_ok`, `ae_back_on_after_s`, `restore_ok`, `restore_failed` (4.7) | yes | yes | yes |
+| D-3 | `frames`, `sequence_available`, `sequence_gaps`, `sequence_lost`, `discontinuity_flags`, `error_flag_frames`, `zero_bytes`, `drops_reported`, `poll_timeouts`, `format_changes`, `long_intervals` (intervals over 1.5 periods of the mode rate since the open), `long_intervals_with_seq_gap` (those with a sequence gap) | yes | yes | yes; null: `sequence_gaps`, `sequence_lost`, `long_intervals_with_seq_gap` (no sequence number), `error_flag_frames` (no error flag), `drops_reported` (no drop report; a drop gives `discontinuity_flags`) |
+| D-4 | For each control `c` of `exposure`, `gain`, `focus`, `white_balance`, `power_line`: `c_present`, `c_min`, `c_max`, `c_step`, `c_default`, `c_auto_supported`, `c_native_id`, `c_value` (native), `c_auto`, `c_set_rc`, `c_get_rc`, `c_before`, `c_before_auto`; `c_route_proven`; and `exposure_unit` (`log2-s`, `100us`, `seconds`, `ev`, `native`, `native-data`, `none`), `exposure_native_at_m7`, `control_path` (`v4l2`, `cmio-native`, `cmio-absolute`, `cmio-native-data`, `avf-lock`, `ep0`, `iam`, `ks`, `none`), `ae_off_ok`, `af_off_ok`, `ae_back_on_after_s`, `restore_ok`, `restore_failed` (4.7) | yes | yes | yes; `c_min` to `c_auto_supported` from `GetRange` on the IAM route, null on the KS route; null: `c_set_rc`, `c_get_rc`, `c_route_proven`, `exposure_native_at_m7`, `ae_off_ok`, `af_off_ok`, `ae_back_on_after_s` (step 3c and certify) |
 | D-5 | `fail_code`, `native_code` (a number), `native_domain` (`errno`, `hresult`, `nserror`, `osstatus`, `ioreturn`), `call` (4.6.3), `fail_stage`, `failed_calls`, `busy_call` | yes | yes | yes |
 | D-6 | `t_enumerate_ms`, `t_open_ms`, `t_set_mode_ms`, `t_buffers_ms`, `t_stream_on_ms`, `t_first_frame_ms`, `t_controls_ms`, `t_close_ms` | yes | yes | yes |
 | D-7 | `id_source` (`serial`, `id-path`, `unique-id`, `mf-link`), `has_serial` | A-2 | M-2 | `mf-link` |
@@ -1208,7 +1212,7 @@ The failure dicts that the main process writes get a code too:
 | `CameraGroup._give_up` (`camera_group.py:292`) | `open` or `warm-up`, `no answer from the camera process in 30 s` | `open-failed` at `open`; `not-ready` at `warm-up` |
 | `CameraGroup._mark_ended` (`camera_group.py:348`) | `open` or `streaming`, `camera process ended (exit code <n>)` | `process-ended` |
 | `CameraGroup._end_stuck_camera` and the stuck writer of `_collect_results` ([recorder.md](recorder.md) 5.3) | `recording`, `disk stall` | `disk-stall` |
-| The stall watch of 4.10 | `streaming`, `no loop pass for 2 s` | `stalled` |
+| The stall watch of 4.10 | `streaming`, `no loop pass for 3 s` | `stalled` |
 
 The new sources set their own codes (4.3.6, 4.4.8): `not-found`, `no-access`, `no-permission`,
 `camera-in-use`, `no-native-jpeg`, `previous-process-alive`, `format-changed` and the others above.
@@ -1246,12 +1250,16 @@ the record), 6 (the citation of 0) and 7 (4.4.10 filled) are applied here.
 - At the close, each source sets each changed control back to its "before" value and auto flag and
   reads it back, before `STREAMOFF`, `stopRunning` or the Media Foundation flush (A-20). A failed
   restore is logged and recorded (`restore_ok` false, `restore_failed` the count of controls); the
-  close continues [A]. This is on by default on each system [U].
+  close continues [A]. This is on by default on each system [U], for each native source and the fake
+  source; the OpenCV source has no restore, because it cannot read the auto flag [ADR-Q2NY](../decisions/entries/Q2NY-choices-of-code-step-2.md).
 - The restore is the one allowed call that may turn the camera's own auto exposure back on, when it
   was on before the open: the camera is then closed, so auto exposure is not a mode [U].
 - The setting `SKELLYCAM_RESTORE_CONTROLS=0` turns it off, for a debug run only [A].
 - A camera that failed, hung or was removed is not opened again to restore it [U]. The restore runs
-  only inside the close of an open camera.
+  only inside the close of an open camera. It is also skipped when the shared loop failed (for example
+  the stall rule of [W 9.5], which sets no error of the source): the loop calls `close(restore=False)`,
+  so a camera that can be wedged gets no set and no read-back [ADR-Q2NY](../decisions/entries/Q2NY-choices-of-code-step-2.md). A restore call that
+  hangs ends the close as hung, within the bound of one call [W 6.6].
 
 ### 4.8 Threads
 
@@ -1305,25 +1313,39 @@ The signal and the watch [ADR-AC5B](../decisions/entries/AC5B-choices-of-the-thi
   camera is paused (a sleep of 50 ms), waits at the gate (1 ms) or is `waiting`. Thus the counter
   works for each source (OpenCV, the fake source, Media Foundation, V4L2, AVFoundation) with no change
   to a source. The capture thread or the callback of a push source MAY also add one.
-- No step of the loop in a watched state runs longer than 2 s outside a pass:
+- No step of the loop in a watched state runs longer than the limit (3 s) outside a pass:
   - The exposure search [req 1.3] and the check of [W 10.2] run inside the passes.
   - A wait of the loop in the recorder (`CameraTakeWriter.give` with a full queue, `end`, `abandon`)
     adds one to `alive_count` at least each 0.5 s: each blocking attempt of its wait is at most
     0.5 s. The stall rule of [recorder.md](recorder.md) 5.3 owns that wait (`disk-stall`), not this
     watch.
-  - A reopen ([W 11.2]) sets `starting` before it closes the source, so the watch is off during that
-    close.
+  - A reopen ([W 11.2]) sets `starting` before it stops the control thread, and again after it, before
+    it closes the source, so the watch is off during that close.
+  - The record start opens the files of the take on the loop thread while the group is paused; the
+    loop adds one before and after that open, and the watch is off while `should_pause` is set.
+  - The loop sets `closing` at the start of each close (also a close that the group flags start), so
+    the watch is off during the close.
 - When a driver call or PyObjC holds the GIL of a camera process, the counter stops: that is the
   signal (M-8).
 - The watch: `CameraGroup._watch_camera`, in the watch thread (each 0.1 s). It trips when
-  `alive_count` did not change for 2 s while the camera process is alive, the state is `waiting`,
+  `alive_count` did not change for 3 s while the camera process is alive, the state is `waiting`,
   `adjusting`, `checking`, `too_slow` or `ready` (also `ready` with a recording), the camera reported
-  no failure, and neither `should_close` nor `closing` is set. It is off in `starting` (the ready
-  limit of [W 9.3] applies) and during the close (the bounded steps of [W 6.6, 6.9] apply).
+  no failure, and none of `should_pause`, `should_close` and `closing` is set. It is off in `starting`
+  (the ready limit of [W 9.3] applies) and during the close (the bounded steps of [W 6.6, 6.9] apply).
+  The limit is 3 s, over the 2 s of the in-process rule of [W 9.5]: that rule finishes the files and
+  closes the camera, and it must come first; the watch kills the process, with no restore (4.7) and no
+  clean finish of the files [ADR-Q2NY](../decisions/entries/Q2NY-choices-of-code-step-2.md). The watch reads the counter with no lock (a process
+  stopped inside its add keeps the lock).
+- The setting `SKELLYCAM_STALL_WATCH=0` turns the watch off. The group reads it when it is made, and logs
+  at its start that the watch is off [ADR-Q2NY](../decisions/entries/Q2NY-choices-of-code-step-2.md).
 - When it trips, the main process removes the camera from the gate, marks it `dead` with the failure
-  `{stage: "streaming", reason: "no loop pass for 2 s", code: "stalled"}`, and ends its process
-  (`terminate`, then `kill` after 1 s) [U].
-- A pull source whose `read_frame` blocks for more than 2 s in a watched state is a stalled camera.
+  `{stage: "streaming", reason: "no loop pass for 3 s", code: "stalled"}`, clears
+  `recording_in_progress` and marks the stop as intended (so the end of the process waits for no save of
+  a take, and the registry logs no crash), and ends its process (`terminate`, then `kill` after 1 s) [U].
+  The `camera_dead` warning of a take gives that reason ([recorder.md](recorder.md) 7.4).
+- A pull source whose `read_frame` blocks for more than 3 s in a watched state is a stalled camera.
+  This is by design: the OpenCV source holds one lock across `grab()`, `retrieve()` and `set_controls`,
+  so a read or a control call that blocks longer than the limit ends the camera [ADR-Q2NY](../decisions/entries/Q2NY-choices-of-code-step-2.md).
   When `read_frame` returns, the in-process stall rule of [W 9.5] (`no frame for 2 s`) normally comes
   first: it ends the read 2 s after the last arrival, and the main process sees the last change of the
   counter only at its next round. The camera is then `dead`, and the watch is off. When the two come
@@ -1572,12 +1594,12 @@ facts of macOS only.
 | T-UNX-67 | fake | An evidence row `known-bad` for a camera model and the native backend. | Default: that camera opens with OpenCV; the others native [U]. |
 | T-UNX-68 | fake | "Apply again" for a camera whose old process is still alive. | `previous-process-alive`, stage `open`; no open of the camera. |
 | T-UNX-69 | fake | The source parts of 4.5 (the camera requests spec owns the tests of the search, T-REQ-01, 06, 12, 19, 41): a native camera with no manual exposure at open; a changed config for a camera in `adjusting`; a start-up rate failure of a camera in Manual. | The camera with no manual exposure opens with the warning `no_manual_exposure` and never enters `adjusting`; the changed config gets 409; the reason has the form of [req 1.5a], with `declared_fps` and `measured_fps`. |
-| T-UNX-70 | fake | A fake source and the OpenCV fake in real camera processes: `CameraStatus.serialize()`, the `app_state` message, `CameraGroup.diagnostics(camera_id)` and `CameraGroupManager.diagnostics()`; a fake whose dict has 64 `frame_log` rows and 60 hash keys; a fake whose dict is over 32 KiB. | A new dict comes each second through the message kind `diagnostics` (4.2 item 2); `serialize()` and `app_state` hold only the counter subset, with no `frame_log` and no hash key; the accessors return the full newest dict; the 64-row dict is under 32 KiB and arrives whole; the dict over the limit is not sent and gives one log line; `CameraStatus.info` holds no diagnostics; no diagnostics message goes into `finished`; the OpenCV dict has `backend` `opencv` and null for every other source key. |
+| T-UNX-70 | fake | A fake source and the OpenCV fake in real camera processes: `CameraStatus.serialize()`, the `app_state` message, `CameraGroup.diagnostics(camera_id)` and `CameraGroupManager.diagnostics()`; a fake whose dict has 64 `frame_log` rows and 60 hash keys; a fake whose dict is over 32 KiB. | A new dict comes each second through the topic `TopicTypes.DIAGNOSTICS` (4.2 item 2); `serialize()` and `app_state` hold only the counter subset, with no `frame_log` and no hash key; the accessors return the full newest dict; the 64-row dict is under 32 KiB and arrives whole; the dict over the limit is not sent and gives one log line; `CameraStatus.info` holds no diagnostics; no diagnostics message goes into `finished`; the OpenCV dict has `backend` `opencv` and null for every other source key. |
 | T-UNX-71 | fake | MJPG passthrough with the fake source; the OpenCV fake (re-encode); a BGR ring on. | `encoded_by_skellycam` 0 and the frame count; `decoded_by_skellycam` counts the decode stage. |
 | T-UNX-72 | fake | D-11: a camera reaches `ready`, gets a live change that ends in `ready` again, then records; one camera sends no DHT. | 30 hashes after the first `ready` with their `source_frame_number`; the live change does not replace them; a new set at the record start; each hash equals the SHA-256 of the ring slot and of the MKV block of that frame; no warm-up frame is hashed; `dht_inserted` counts the DHT camera. |
 | T-UNX-73 | fake | The OpenCV source on Linux with a native detection result; on macOS with a device order. | Linux: `cv2.VideoCapture('/dev/videoN', CAP_V4L2)` of the detected node; macOS: the index of the matching `uniqueID`. |
 | T-UNX-74 | fake | Detection with an evidence file and a local record. | `evidence`, `checked`, `id_source`, `has_serial`, `backend`, `usb_link` in `CameraDeviceInfo`; `system_evidence` in the status. |
-| T-UNX-75 | fake | `capture_timing`. Three fake cameras (pull sources, as the OpenCV source) in real camera processes: the process of one is suspended with `psutil` `suspend()` (it cannot run a loop pass then); a second camera is `waiting`; then the group is in the internal pause of a record start; then a take whose writer of one camera is held for 4 s with progress and then for 4 s with no progress (scaled stall limit); then a reopen by a size change whose close takes 3 s; then the OpenCV fake streams for 10 s. | The main process removes the suspended camera from the gate and ends it 2.0 to 2.5 s after its last loop pass, `dead` with `stalled`; the `waiting` camera, the internal pause, the writer waits, the slow close of the reopen and the OpenCV fake trip nothing; the held writer ends by the rule of recorder.md 5.3, not by this watch; the third camera has no gap longer than 2.5 s (4.10). |
+| T-UNX-75 | fake | `capture_timing`. Three fake cameras (pull sources, as the OpenCV source) in real camera processes: the process of one is suspended with `psutil` `suspend()` (it cannot run a loop pass then); a second camera is `waiting`; then the group is in the internal pause of a record start; then a take whose writer of one camera is held for 4 s with progress and then for 4 s with no progress (scaled stall limit); then a reopen by a size change whose close takes 3 s; then the OpenCV fake streams for 10 s. | The main process removes the suspended camera from the gate and ends it 3.0 to 3.5 s after its last loop pass, `dead` with `stalled`; the `waiting` camera, the internal pause, the writer waits, the slow close of the reopen and the OpenCV fake trip nothing; the held writer ends by the rule of recorder.md 5.3, not by this watch; the third camera has no gap longer than 3.5 s (4.10). |
 | T-UNX-76 | windows | `MediaFoundationSource.diagnostics()` with the stand-in interfaces of the Windows tests. | Every key of 4.6.2; `id_source` `mf-link`; `native_domain` `hresult`; `clock` `unknown`; `t_*_ms` filled. |
 | T-UNX-77 | windows | Map the HRESULTs of [W 6.7] and `0x800718CF` to codes. | In-use codes give `camera-in-use`; removal codes give `device-removed`; `0x800718CF` gives `usb-bandwidth`; `0x80004005` gives `open-failed` at open and `stream-error` in streaming. |
 | T-UNX-78 | windows | The restore of the Media Foundation source at the close, with stand-in control interfaces. | Each changed control is set back to its "before" value and flags before the flush, and read back; on by default. |

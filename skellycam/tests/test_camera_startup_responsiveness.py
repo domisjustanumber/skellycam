@@ -5,6 +5,7 @@ the camera processes run off the event loop, which serves the preview, and each 
 processes has a time limit.
 """
 import asyncio
+import queue
 from threading import Event, get_ident
 from types import SimpleNamespace
 from unittest.mock import Mock
@@ -26,6 +27,7 @@ def group(monkeypatch):
     ipc.group_id = "camera-startup"
     ipc.should_continue = True
     ipc.extracted_config_subscription = Mock(empty=Mock(return_value=True))
+    ipc.diagnostics_subscription = queue.Queue()  # the close reads it (unix-capture.md 4.2 item 2)
     cameras = Mock(spec=CameraManager)
     cameras.camera_workers = {}
     cameras.orchestrator = SimpleNamespace(camera_statuses={})

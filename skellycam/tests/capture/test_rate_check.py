@@ -103,5 +103,6 @@ def test_t_cap_18_reason_of_a_slow_camera(monkeypatch):
     the text of 10.4 with 30.00 and the measured rate, the light hint first."""
     with one_camera(monkeypatch, FakeScript(intervals_ms=GENERIC)) as (app, camera_id, response):
         expected = slow_text(30.0, window_rate(app.factory.logs[camera_id]))
-        assert app.status(camera_id)["failure"] == {"camera_id": camera_id, "stage": "rate check", "reason": expected}
+        assert app.status(camera_id)["failure"] == {"camera_id": camera_id, "stage": "rate check", "reason": expected,
+                                                    "code": "rate-low"}
         assert response.json()["camera_failures"][camera_id]["reason"] == expected

@@ -1,0 +1,105 @@
+"""T-UNX-27 and T-UNX-78, the shared part, and T-REQ-15 as far as it concerns the restore: the restore of the
+controls at the close of a camera (specs/unix-capture.md 4.7; specs/camera-requests.md T-REQ-15).
+
+`ControlRestore` of `capture/source.py` is the shared part: the "before" value and auto flag of each control
+at the first read of an open, the controls that a set changed, the restore at the close, and the keys
+`restore_ok` and `restore_failed`. The fake source uses it as each source does. The close orders of the
+V4L2 source (T-UNX-27) and of the AVFoundation source (T-UNX-51) wait for steps 7a and 7b; the Media
+Foundation source is in `test_media_foundation_source.py` (T-UNX-78).
+
+Each test runs one fake camera through the HTTP endpoints with THREAD workers and the virtual clock.
+"""
+
+import logging
+
+from skellycam.tests.capture.capture_session import capture_logs, one_camera
+from skellycam.tests.capture.fake_source import FakeScript
+
+AUTO_BEFORE = (("exposure", True, True, -6), ("gain", True, False, 0), ("focus", True, True, 30))
+
+
+def exposure_sets(log):
+    """(clock ns, ControlSetting) of each exposure set of the fake, in order."""
+    return [(t, detail["exposure"]) for name, t, detail in log.events if name == "set_controls" and "exposure" in detail]
+
+
+def close_time(log):
+    return [t for name, t, _ in log.events if name == "close"][-1]
+
+
+def test_t_unx_78_fake_restore_at_the_close_is_on_by_default(monkeypatch):
+    """T-UNX-78 and T-UNX-27 (shared part), T-REQ-15: a camera whose exposure was in auto before the open runs
+    in MANUAL -7. At the close, the restore sets exposure back to auto with its value of before, after the
+    last frame was taken, and reads it back; `restore_ok` true, `restore_failed` 0. No other set has
+    `auto=True` for exposure. Gain was not changed: no restore set for it."""
+    monkeypatch.delenv("SKELLYCAM_RESTORE_CONTROLS", raising=False)
+    with one_camera(monkeypatch, FakeScript(controls=AUTO_BEFORE)) as (app, camera_id, _):
+        assert app.state(camera_id) == "ready"
+        source, log = app.factory.sources[camera_id], app.factory.logs[camera_id]
+        app.wait_clock(1.0)
+        app.client.delete("/skellycam/camera/group/close/all")
+        app.wait(lambda: log.closes.value == 1, "the close")
+    sets = exposure_sets(log)
+    auto = [(t, s) for t, s in sets if s.auto]
+    assert [(s.auto, s.value) for _, s in auto] == [(True, -6)], sets
+    assert auto[0] == sets[-1] and auto[0][0] >= close_time(log)
+    last_frame_ns = max(arrival for arrival, _ in log.frames.values())
+    assert auto[0][0] >= last_frame_ns
+    assert not [s for s in log.settings if "gain" in s]
+    data = source.diagnostics()
+    assert (data["restore_ok"], data["restore_failed"]) == (True, 0)
+    assert (data["exposure_before"], data["exposure_before_auto"]) == (-6, True)
+    assert source._controls["exposure"][1:] == [True, -6]  # read back: auto, value of before
+
+
+def test_t_req_15_a_manual_camera_gets_no_auto_set_at_the_close(monkeypatch):
+    """T-REQ-15: a camera whose exposure was manual (-6) before the open: the restore sets -6 with
+    `auto=False`; no set with `auto=True` for exposure, also not at the close."""
+    with one_camera(monkeypatch, FakeScript()) as (app, camera_id, _):
+        log = app.factory.logs[camera_id]
+        app.client.delete("/skellycam/camera/group/close/all")
+        app.wait(lambda: log.closes.value == 1, "the close")
+    sets = exposure_sets(log)
+    assert not [s for _, s in sets if s.auto], sets
+    assert (sets[-1][1].auto, sets[-1][1].value) == (False, -6) and sets[-1][0] >= close_time(log)
+
+
+def test_t_unx_27_no_restore_with_the_setting_0(monkeypatch):
+    """T-UNX-27 (shared part): with `SKELLYCAM_RESTORE_CONTROLS=0` the close sets no control."""
+    monkeypatch.setenv("SKELLYCAM_RESTORE_CONTROLS", "0")
+    with one_camera(monkeypatch, FakeScript(controls=AUTO_BEFORE)) as (app, camera_id, _):
+        source, log = app.factory.sources[camera_id], app.factory.logs[camera_id]
+        app.client.delete("/skellycam/camera/group/close/all")
+        app.wait(lambda: log.closes.value == 1, "the close")
+    assert not [t for t, _ in exposure_sets(log) if t >= close_time(log)]
+    data = source.diagnostics()
+    assert (data["restore_ok"], data["restore_failed"]) == (None, None)
+
+
+def test_t_unx_27_a_failed_restore_is_logged_and_the_close_goes_on(monkeypatch):
+    """T-UNX-27 (shared part): the restore set fails: `restore_ok` false, `restore_failed` 1, one log line;
+    the close goes on (the stream stops, and the camera process ends normally)."""
+    script = FakeScript(controls=AUTO_BEFORE, live_set_faults=("error",))  # the first set after the start: the restore
+    with capture_logs() as logs, one_camera(monkeypatch, script) as (app, camera_id, _):
+        source, log = app.factory.sources[camera_id], app.factory.logs[camera_id]
+        worker = app.worker(camera_id)
+        app.client.delete("/skellycam/camera/group/close/all")
+        app.wait(lambda: not worker.is_alive(), "the camera ends")
+    data = source.diagnostics()
+    assert (data["restore_ok"], data["restore_failed"]) == (False, 1)
+    assert source._stop.is_set() and log.closes.value == 1
+    lines = [m for m in logs.messages(logging.WARNING) if "restore" in m and camera_id in m]
+    assert len(lines) == 1 and "exposure" in lines[0], lines
+
+
+def test_f7_no_restore_when_the_loop_failed(monkeypatch):
+    """F7: the in-process stall rule (W 9.5) ends a camera whose exposure the open changed; it sets no error of
+    the source. The close of that camera sets no control: a possibly wedged camera gets no set and no
+    read-back."""
+    with one_camera(monkeypatch, FakeScript(controls=AUTO_BEFORE)) as (app, camera_id, _):
+        source, log = app.factory.sources[camera_id], app.factory.logs[camera_id]
+        source.stop_now()
+        app.wait_state(camera_id, "dead")
+        app.wait(lambda: log.closes.value == 1, "the close of the dead camera")
+    assert not [t for t, _ in exposure_sets(log) if t >= close_time(log)]
+    assert source.diagnostics()["restore_ok"] is None

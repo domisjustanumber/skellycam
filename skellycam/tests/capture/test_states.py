@@ -79,7 +79,8 @@ def test_t_cap_14_not_ready_in_15_s(monkeypatch):
     with one_camera(monkeypatch, FakeScript(first_frame_delay_s=0.2, rate=5.0)) as (app, camera_id, response):
         status = app.status(camera_id)
         assert status["state"] == "failed"
-        assert status["failure"] == {"camera_id": camera_id, "stage": "warm-up", "reason": "not ready in 15 s"}
+        assert status["failure"] == {"camera_id": camera_id, "stage": "warm-up", "reason": "not ready in 15 s",
+                                     "code": "not-ready"}
         open_ns = next(t for name, t, _ in app.factory.logs[camera_id].events if name == "open")
         elapsed = (app.clock.now_ns() - open_ns) / 1e9
         assert 15.0 <= elapsed <= 15.5, f"failed {elapsed:.3f} s after the open"
@@ -112,7 +113,7 @@ def test_t_cap_19_a_camera_in_use_fails_alone(monkeypatch, tmp_path):
         spies = Spies(monkeypatch, app)
         response, good, failed = start_with_one_in_use(app)
         assert app.status(failed)["failure"] == {"camera_id": failed, "stage": "open",
-                                                 "reason": "in use by another program"}
+                                                 "reason": "in use by another program", "code": "open-failed"}
         assert response.json()["camera_failures"][failed]["reason"] == "in use by another program"
         for camera_id in good:
             count = len(spies.of("jpeg", camera_id))
@@ -396,6 +397,7 @@ def test_t_cap_38_failure_object_first_failure_and_order():
     ipc = CameraGroupIPC(group_id="t-cap-38", pubsub=PubSubTopicManager(topics={}),
                          extracted_config_subscription=multiprocessing.Queue(),
                          recording_finished_subscription=multiprocessing.Queue(),
+                         diagnostics_subscription=multiprocessing.Queue(),
                          global_kill_flag=multiprocessing.Value("b", False),
                          heartbeat_timestamp=multiprocessing.Value("d", time.perf_counter()))
     first = CameraSetupFailure(camera_id="a1b2", stage="open", reason="in use by another program")
@@ -502,7 +504,7 @@ def test_t_cap_83_floor_of_30_fps(monkeypatch, case):
         if outcome == "set mode":
             assert status["state"] == "failed"
             assert status["failure"] == {"camera_id": camera_id, "stage": "set mode",
-                                         "reason": "no mode at 30 fps or more"}
+                                         "reason": "no mode at 30 fps or more", "code": "below-floor"}
         else:
             assert status["state"] == "ready"
             assert (status["mode"]["fps_num"], status["mode"]["fps_den"]) == (30000, 1001)
@@ -736,14 +738,14 @@ def test_t_cap_108_a_dying_camera_does_not_hold_the_others(monkeypatch, tmp_path
     stopped, close_ended = threading.Event(), threading.Event()
     close = FakeSource.close
 
-    def slow_close(source):
+    def slow_close(source, restore=True):
         if source.script.close_delay_s:
             with source.clock.blocked():
                 stopped.wait(10)
-            close(source)
+            close(source, restore)
             close_ended.set()
         else:
-            close(source)
+            close(source, restore)
 
     monkeypatch.setattr(FakeSource, "close", slow_close)
     with capture_app(monkeypatch, scripts, track=True) as app:

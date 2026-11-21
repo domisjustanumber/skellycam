@@ -24,6 +24,7 @@ class CameraGroupIPC:
     pubsub: PubSubTopicManager
     extracted_config_subscription: TopicSubscriptionQueue
     recording_finished_subscription: TopicSubscriptionQueue
+    diagnostics_subscription: TopicSubscriptionQueue
     global_kill_flag: Synchronized
     heartbeat_timestamp: Synchronized
     timebase_mapping: TimebaseMapping = field(default_factory=TimebaseMapping)
@@ -70,6 +71,7 @@ class CameraGroupIPC:
             pubsub=pubsub,
             extracted_config_subscription=pubsub.topics[TopicTypes.EXTRACTED_CONFIG].get_subscription(),
             recording_finished_subscription=pubsub.topics[TopicTypes.RECORDING_FINISHED].get_subscription(),
+            diagnostics_subscription=pubsub.topics[TopicTypes.DIAGNOSTICS].get_subscription(),
             heartbeat_timestamp=heartbeat_timestamp,
             global_kill_flag=global_kill_flag,
 

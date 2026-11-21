@@ -158,7 +158,8 @@ def test_t_cap_109_a_camera_process_that_ends_without_unwinding(monkeypatch, tmp
         assert response.status_code == 200, response.text
         reason = "camera process ended (exit code 3)"
         if state == "starting":
-            assert response.json()["camera_failures"][ended] == {"camera_id": ended, "stage": "open", "reason": reason}
+            assert response.json()["camera_failures"][ended] == {"camera_id": ended, "stage": "open", "reason": reason,
+                                                                  "code": "process-ended"}
             app.wait_state(other, "ready")
             assert app.state(ended) == "failed"
             return
@@ -168,7 +169,8 @@ def test_t_cap_109_a_camera_process_that_ends_without_unwinding(monkeypatch, tmp
         try:
             assert app.record_start(tmp_path).status_code == 200
             app.wait_state(ended, "dead")
-            assert app.status(ended)["failure"] == {"camera_id": ended, "stage": "streaming", "reason": reason}
+            assert app.status(ended)["failure"] == {"camera_id": ended, "stage": "streaming", "reason": reason,
+                                                      "code": "process-ended"}
             count = len(ring.frames)
             app.wait(lambda: len(ring.frames) > count + 30, "the other camera records on")
             stopped = app.record_stop()

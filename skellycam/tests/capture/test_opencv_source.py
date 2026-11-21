@@ -58,7 +58,7 @@ def test_t_cap_99_floor_of_30_fps_with_opencv(monkeypatch, case):
         status = app.status(camera_id)
         if case == "reports 24":
             assert status["failure"] == {"camera_id": camera_id, "stage": "set mode",
-                                         "reason": "no mode at 30 fps or more"}
+                                         "reason": "no mode at 30 fps or more", "code": "below-floor"}
         else:
             assert status["state"] == "ready" and abs(status["measured_fps"] - 30.0) <= 0.9, status
 

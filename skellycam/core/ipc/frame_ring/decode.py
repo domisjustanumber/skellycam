@@ -79,6 +79,7 @@ class DecodeStage:
         self._decode = decode
         self._stopping = threading.Event()
         self._thread = threading.Thread(target=self._run, name=f"decode {writer.name}", daemon=True)
+        self.decoded = 0  # JPEG decodes, `decoded_by_skellycam` (unix-capture.md D-10)
 
     def start(self) -> None:
         self._thread.start()
@@ -120,6 +121,7 @@ class DecodeStage:
 
     def _to_bgr(self, item: DecodeInput) -> np.ndarray | None:
         if item.source == "JPEG":
+            self.decoded += 1
             return self._decode(item.payload)
         if item.source == "BGR":  # 8.7 and 8.8: a new array that the writer copies into the slot
             return item.payload

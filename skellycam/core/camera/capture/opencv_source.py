@@ -15,6 +15,7 @@ from skellycam.core.camera.capture.source import (
     CaptureFailure,
     CaptureRequest,
     ControlSetting,
+    empty_diagnostics,
     ControlState,
     ControlValue,
     OpenedMode,
@@ -91,7 +92,8 @@ class OpenCVSource:
         capture = self._capture
         for name, setting in changes.items():
             if name != "exposure":
-                raise CaptureFailure("set controls", f"Camera {self.config.camera_id} has no {name} control")
+                raise CaptureFailure("set controls", f"Camera {self.config.camera_id} has no {name} control",
+                                     code="control-failed")
             if sys.platform == "linux":  # 14.1: the forced auto exposure on Linux stays until phase 7
                 capture.set(cv2.CAP_PROP_AUTO_EXPOSURE, AUTO_EXPOSURE_SETTING)
                 self._exposure_auto = True
@@ -111,7 +113,8 @@ class OpenCVSource:
                 "focus": ControlValue(present=focus != -1, auto=focus != -1 and bool(capture.get(cv2.CAP_PROP_AUTOFOCUS)),
                                       value=int(focus) if focus != -1 else None)}
 
-    def close(self) -> None:
+    def close(self, restore: bool = True) -> None:
+        """The OpenCV source has no restore (unix-capture.md 4.7): it cannot read the auto flag."""
         if self._capture is not None:
             self._capture.release()
             self._capture = None
@@ -119,3 +122,6 @@ class OpenCVSource:
     @property
     def replaced_count(self) -> int:
         return 0  # a pull source keeps no waiting place (4.4)
+
+    def diagnostics(self) -> dict:
+        return empty_diagnostics("opencv")  # unix-capture.md 4.2 item 2: `backend`, null for each other key

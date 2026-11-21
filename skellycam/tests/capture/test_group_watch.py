@@ -39,9 +39,10 @@ def wait_for(predicate, what):
 def bare_group(workers, statuses, loop=None):
     group = CameraGroup.__new__(CameraGroup)  # no camera process, no ring
     group.ipc = SimpleNamespace(group_id="g1", take_setup_failure=lambda: None,
-                                recording_finished_subscription=queue.Queue())
+                                recording_finished_subscription=queue.Queue(), diagnostics_subscription=queue.Queue())
     group.cameras = SimpleNamespace(camera_workers=workers, orchestrator=SimpleNamespace(camera_statuses=statuses))
     group.configs, group.rings, group.ring_infos, group.ring_readers, group.finished = {}, {}, {}, {}, []
+    group.camera_diagnostics, group._passes, group.stall_watch, group._closing = {}, {}, True, False
     group._ring_lock, group._stop_watch, group._loop = threading.RLock(), threading.Event(), loop
     return group
 
@@ -200,6 +201,7 @@ def test_a_stuck_camera_whose_process_does_not_end_is_killed_and_reported(monkey
     assert group._end_stuck_camera("cam0") is False
     assert worker.calls == ["terminate", "join", "kill", "join"]
     assert status.state == "failed" and status.info_dict()["failure"]["reason"] == "disk stall"
+    assert status.info_dict()["failure"]["code"] == "disk-stall"
 
 
 @pytest.mark.parametrize("case", ["cameras starting", "every camera failed", "every camera died in a take"])

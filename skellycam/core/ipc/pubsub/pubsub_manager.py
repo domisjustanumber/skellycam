@@ -5,7 +5,7 @@ from multiprocessing.process import parent_process
 
 from skellycam.core.ipc.pubsub.pubsub_abcs import PubSubTopicABC
 from skellycam.core.ipc.pubsub.pubsub_topics import LogsTopic, UpdateCamerasSettingsTopic, DeviceExtractedConfigTopic, \
-    SetShmTopic, RecordingInfoTopic, RecordingFinishedTopic, FramerateTopic
+    SetShmTopic, RecordingInfoTopic, RecordingFinishedTopic, FramerateTopic, DiagnosticsTopic
 from skellycam.core.types.type_overloads import CameraGroupIdString, TopicSubscriptionQueue
 
 logger = logging.getLogger(__name__)
@@ -17,6 +17,7 @@ class TopicTypes(Enum):
     SHM_UPDATES = auto()
     RECORDING_INFO = auto()
     RECORDING_FINISHED = auto()
+    DIAGNOSTICS = auto()  # the diagnostics of each camera (unix-capture.md 4.2 item 2)
     FRAMERATE = auto() #Framerate updates for cameras
     LOGS = auto()
 
@@ -28,6 +29,7 @@ def _default_topics() -> dict[TopicTypes, PubSubTopicABC]:
         TopicTypes.SHM_UPDATES: SetShmTopic(),
         TopicTypes.RECORDING_INFO: RecordingInfoTopic(),
         TopicTypes.RECORDING_FINISHED: RecordingFinishedTopic(),
+        TopicTypes.DIAGNOSTICS: DiagnosticsTopic(),
         TopicTypes.FRAMERATE: FramerateTopic(),
         TopicTypes.LOGS: LogsTopic(),
     }

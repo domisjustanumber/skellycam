@@ -48,6 +48,7 @@ class CameraGroupManager:
     source_factory: Callable | None = None  # ADR-HP7D item 10; None: the source of 14.2
     detected_cameras: dict[CameraIdString, CameraDeviceInfo] = field(default_factory=dict)  # U17 (c)
     closing: bool = False
+    closed_diagnostics: dict = field(default_factory=dict)  # the last dicts of each camera of a closed group (F4)
     camera_groups: dict[CameraGroupIdString, CameraGroup] = field(default_factory=dict)
     camera_group_framerate_subscriptions: dict[CameraGroupIdString, TopicSubscriptionQueue] = field(
         default_factory=dict
@@ -230,7 +231,9 @@ class CameraGroupManager:
         try:
             # sfn26 43e2b968a: a group whose close raises stays listed, so that a retry closes it
             for camera_group_id in list(self.camera_groups):
-                await self.camera_groups[camera_group_id].close()
+                group = self.camera_groups[camera_group_id]
+                await group.close()
+                self.closed_diagnostics.update({camera_id: group.diagnostics(camera_id) for camera_id in group.camera_ids})
                 self.camera_groups.pop(camera_group_id)
                 self.camera_group_framerate_subscriptions.pop(camera_group_id, None)
                 logger.info(f"Closed camera group ID: {camera_group_id}")
@@ -322,6 +325,14 @@ class CameraGroupManager:
             if all(camera_id in camera_group.camera_ids for camera_id in camera_ids):
                 return camera_group
         return None
+
+    def diagnostics(self) -> dict:
+        """`{camera_id: dict}` of each camera of each group, the full newest dict (unix-capture.md 4.2 item 2). A
+        closed group keeps its last dicts here until a later group has the camera: certify reads the restore
+        keys of the close (F4)."""
+        live = {camera_id: group.diagnostics(camera_id) for group in list(self.camera_groups.values())
+                for camera_id in group.camera_ids}
+        return {**self.closed_diagnostics, **live}
 
     def to_state_dict(self) -> dict[CameraGroupIdString, dict]:
         """Convert the CameraGroupManager to a serializable state dictionary."""

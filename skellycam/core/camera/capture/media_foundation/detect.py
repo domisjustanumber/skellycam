@@ -28,6 +28,8 @@ class MediaFoundationDeviceInfo(CameraDeviceInfo):
     """`path` is the symbolic link as Media Foundation gives it; `camera_id` hashes it in lower case (7.2).
     `virtual` marks a virtual camera: detection shows it, but a request cannot select it yet."""
     virtual: bool = False
+    backend: str | None = "media-foundation"
+    id_source: str | None = "mf-link"
 
     @computed_field
     @property
@@ -56,7 +58,7 @@ class MediaFoundationBackend:
             if activate is not match:
                 com.release(activate)
         if match is None:
-            raise CaptureFailure("detection", "camera not found")
+            raise CaptureFailure("detection", "camera not found", code="not-found")
         media_source = reader = None
         try:
             media_source = com.activate_source(match, "detection")
@@ -125,11 +127,13 @@ def _child_result(receiver, child):
     while True:
         if not receiver.poll(STEP_LIMIT_S):
             child.kill()
-            raise CaptureFailure("detection", f"the detection process did not answer in {STEP_LIMIT_S:g} s")
+            raise CaptureFailure("detection", f"the detection process did not answer in {STEP_LIMIT_S:g} s",
+                                 code="hung")
         try:
             kind, result = receiver.recv()
         except EOFError:
-            raise CaptureFailure("detection", f"the detection process ended with code {child.exitcode}") from None
+            raise CaptureFailure("detection", f"the detection process ended with code {child.exitcode}",
+                                 code="process-ended") from None
         if kind != "alive":
             return kind, result
 
