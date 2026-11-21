@@ -60,7 +60,6 @@ These entries are `accepted`.
 | [XT31](entries/XT31-kit-adoption-choices-camera-media-check-and-fills.md) | Supersedes NMM1, 4A7H: kit adoption choices; the media check refuses PNG, GIF, WebP, SVG with an allow by path; index limit 24,000 | accepted |
 | [6T78](entries/6T78-choices-of-the-sfn26-integration.md) | Choices of the `sfn26` integration: OpenCV helpers stay ours, kept and dropped items, forms of the four ports, Rust removal | accepted |
 | [82AA](entries/82AA-stop-last-frame-survivor-files-and-stuck-writer-limit.md) | The stop sets the last frame with no pause, plus 2, under its lock; a surviving process leaves its files to the repair step; the stuck-writer limit is 15 s | accepted |
-| [F2KY](entries/F2KY-rulings-of-the-user-after-the-third-consistency-check.md) | Native capture turns on per camera model, not per OS; one Update Cameras button, off in a take; audio line; step k of 8 | accepted |
 
 ### Evidence
 

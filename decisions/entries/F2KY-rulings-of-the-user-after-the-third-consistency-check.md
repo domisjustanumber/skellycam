@@ -1,6 +1,11 @@
 # F2KY — Rulings of the user after the third consistency check
 
-**Status:** accepted, 2026-11-20 (user, relayed by the supervisor).
+**Status:** absorbed into
+[`specs/unix-capture.md#49-source-selection-u`](../../specs/unix-capture.md#49-source-selection-u),
+[`specs/certify.md#113-how-the-product-uses-it-u`](../../specs/certify.md#113-how-the-product-uses-it-u),
+[`specs/camera-requests.md#18-ui`](../../specs/camera-requests.md#18-ui),
+[`specs/recorder.md#13-non-goals`](../../specs/recorder.md#13-non-goals),
+2026-11-20 (commit to dom/integration; was accepted, 2026-11-20 (user, relayed by the supervisor)).
 
 ## Decision
 
