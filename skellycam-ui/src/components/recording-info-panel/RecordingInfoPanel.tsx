@@ -17,6 +17,7 @@ import TextSelector from "@/components/ui-components/TextSelector";
 import { useTranslation } from "react-i18next";
 import { selectCameras } from "@/store/slices/cameras/cameras-selectors";
 import { labelText } from "@/store/slices/cameras/camera-labels";
+import { takeErrorText } from "@/store/slices/recording/ended-take";
 
 interface RecordingOperation {
     type: 'start' | 'stop';
@@ -229,6 +230,11 @@ export const RecordingInfoPanel: React.FC = () => {
                 />
             </div>
             {startError && <p role="alert" className="text sm text-error">{labelText(startError, cameras)}</p>}
+            {recordingInfo.endedTake && (
+                <p role="alert" className="text sm text-error" style={{ whiteSpace: 'normal' }}>
+                    {t('takeEndedWithError', { error: takeErrorText(recordingInfo.endedTake, cameras) })}
+                </p>
+            )}
 
             {/* Microphone: the new recorder refuses a microphone until step 5b */}
             <MicrophoneSelector
