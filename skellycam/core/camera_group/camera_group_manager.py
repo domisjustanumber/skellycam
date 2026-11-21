@@ -207,7 +207,8 @@ class CameraGroupManager:
             blocked = [f"camera {camera_id} is {statuses[camera_id].state}"
                        for camera_id, config in camera_configs.items()
                        if camera_id in camera_group.configs
-                       and statuses[camera_id].state in ("starting", "waiting", "adjusting")
+                       and (statuses[camera_id].state in ("starting", "waiting", "adjusting")
+                            or statuses[camera_id].search_requested.value)  # [GEH0]: a search is asked for
                        and config.use_this_camera and not same_config(config, camera_group.configs[camera_id])]
             if blocked:  # agent 45
                 raise RequestRefused(409, "A camera that starts cannot take a changed config: " + "; ".join(blocked))

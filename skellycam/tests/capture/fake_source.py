@@ -228,6 +228,8 @@ class FakeScript:
     rate_by_exposure: tuple = ()  # (exposure, rate) pairs: the delivered rate at that exposure value
     exposure_range: tuple | None = (-13, 0)  # (min, max) that the camera reports; None: no range
     out_of_range: str = "refuse"  # an exposure set outside the range: "refuse" (an error) or "clamp" (to the range)
+    reported_range: bool = True  # False: `exposure_range()` gives None (as OpenCV), but the camera keeps its range
+    raise_on_set: tuple = ()  # (value, n): the n-th exposure set of that value raises a RuntimeError (no CaptureFailure)
     brightness: tuple = ()  # (exposure, mean gray) pairs: the image follows the exposure
     hang_at: str | None = None  # "open", "set_controls" or "close": hangs when the hang is armed
     hang_armed: bool = False  # armed from the start; else FakeLog.arm_hang()
@@ -451,6 +453,11 @@ class FakeSource:
                 raise types.CaptureFailure("set controls", "the camera refused the value")
             low, high = self.script.exposure_range or (None, None)
             setting = changes.get("exposure")
+            if setting is not None and setting.value is not None and self.script.raise_on_set:
+                self._value_sets = getattr(self, "_value_sets", {})
+                self._value_sets[setting.value] = self._value_sets.get(setting.value, 0) + 1
+                if (setting.value, self._value_sets[setting.value]) in self.script.raise_on_set:
+                    raise RuntimeError(f"the driver call for exposure {setting.value} raised")
             if low is not None and setting is not None and setting.value is not None and not low <= setting.value <= high:
                 if self.script.out_of_range == "refuse":
                     raise types.CaptureFailure("set controls", f"exposure {setting.value} is out of range")
@@ -502,7 +509,7 @@ class FakeSource:
         return {**data, **(self.script.diagnostics or {})}
 
     def exposure_range(self):
-        return self.script.exposure_range
+        return self.script.exposure_range if self.script.reported_range else None
 
     @property
     def replaced_count(self):

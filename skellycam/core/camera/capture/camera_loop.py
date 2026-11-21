@@ -72,6 +72,8 @@ DIAGNOSTICS_LIMIT_BYTES = 32 * 1024  # the pickled message; a larger dict is not
 DIAGNOSTICS_FLUSH_S = 1.0  # the longest wait of a camera process for its close dict to reach the pipe
 SEARCH_WARNINGS = ("add_light", "exposure_search_failed")  # camera-requests.md 1.5: they clear at the next search
 HELD_FIELDS = ("exposure_mode", "exposure", "exposure_found_at_fps")  # the held value of 1.3a
+# [GEH0]: the reply of the last set of a search comes within the limit of a bounded call (6.6) and a margin
+FINAL_SET_LIMIT_NS = round((BOUNDED_CALL_LIMIT_S + 1.0) * 1e9)
 
 
 class _Stop(Exception):
@@ -141,6 +143,7 @@ class CameraLoop:
         self.search: ExposureSearch | None = None
         self.search_before: dict | None = None
         self.search_final: int | None = None
+        self.search_final_ns = 0  # when the last set of the search went to the control thread
         self.search_replies = queue.Queue()
         self.no_exposure = False  # the camera has no working exposure control (camera-requests.md 1.9) [K3]
         self.exposure_range: tuple | None = None  # (min, max) of the camera at this open (1.3 item 1) [GEH0]
@@ -392,7 +395,7 @@ class CameraLoop:
             self.search_replies.get_nowait()
         self.search, self.search_final = ExposureSearch(self.reference_rate, None, self.exposure_range), None
         self.status.update_info(exposure_search=dict(state="running", chosen=None, add_light=False, reason=None,
-                                                     trials=[]))
+                                                     trials=[], skipped=[]))
         self.status.set_state("adjusting")
 
     def _search_step(self) -> None:
@@ -416,9 +419,16 @@ class CameraLoop:
             if value == held:  # the held value failed too: the camera keeps what it has
                 self._end_search(returned_ns)
                 return
-            self.search_final = held
+            self.search_final, self.search_final_ns = held, perf_counter_ns()
             self.control.requests.put(("search", held))
-        search.tick(perf_counter_ns())
+        now = perf_counter_ns()
+        if self.search_final is not None and now - self.search_final_ns > FINAL_SET_LIMIT_NS:
+            if search.result["state"] == "done":  # [GEH0]: no camera stays `adjusting` for ever
+                search.fail("set-failed", f"the set of exposure {self.search_final} gave no answer in "
+                                          f"{FINAL_SET_LIMIT_NS / 1e9:g} s")
+            self._end_search(now)
+            return
+        search.tick(now)
         if search.result is None:
             value = search.take_pending(perf_counter_ns())  # the first set starts the limit of 20 s
             if value is not None:
@@ -426,6 +436,7 @@ class CameraLoop:
         elif self.search_final is None:
             done = search.result["state"] == "done"
             self.search_final = search.result["chosen"] if done else self.search_before["exposure"]
+            self.search_final_ns = perf_counter_ns()
             self.control.requests.put(("search", self.search_final))
 
     def _end_search(self, after_ns: int) -> None:
@@ -593,7 +604,8 @@ class CameraLoop:
                 self._start_take(spec)
         while not self.signals.empty():  # first: a queued live change lands before a search starts
             _, after_ns, config = self.signals.get_nowait()
-            if self.search is not None:  # no live change during a search (the main process refuses it, 1.4)
+            if self.search is not None:  # [GEH0]: its other fields (rotation) land; the search keeps its held fields
+                self.config = config.model_copy(update={name: getattr(self.config, name) for name in HELD_FIELDS})
                 continue
             self.config = config
             self.check = dict(after=after_ns, first=None, start=None, deadline=None)
@@ -654,7 +666,10 @@ class CameraLoop:
         self._close_rings()
         self._add_replaced()
         self.source.close()
-        self.search = None
+        if self.search is not None:  # [GEH0]: as `_end`, the search ends as `camera-closed` in the status
+            self.search.cancel()
+            self.status.update_info(exposure_search=self.search.result)
+            self.search = None
         if requested.exposure_mode == "AUTO":  # camera-requests.md 1.3a [A8]: the held value, not the request's
             requested = requested.model_copy(update=dict(exposure=self.config.exposure,
                                                          exposure_found_at_fps=self.config.exposure_found_at_fps))
@@ -997,6 +1012,10 @@ class _ControlThread:
             if failure.hung:
                 raise
             loop.search_replies.put((value, perf_counter_ns(), failure.reason, None))
+            return
+        except Exception as error:  # [GEH0]: each failed set gives a reply, so the search never waits for ever
+            logger.exception(f"Camera {loop.camera_id}: the exposure set of {value} raised: {error}")
+            loop.search_replies.put((value, perf_counter_ns(), f"{type(error).__name__}: {error}", None))
             return
         returned = perf_counter_ns()
         loop._publish_controls(readback)

@@ -159,10 +159,11 @@ def test_t_req_09_the_search_fails_at_20_s():
     ("the camera refused the value", None, "set-failed", "the camera refused exposure -12 (the camera refused the value)"),
     (None, -11, "readback-differs", "exposure -12 read back as -11")])
 def test_t_req_17_a_failed_set_ends_the_search(error, readback, reason, detail):
-    """T-REQ-17 (pure part), 1.3 item 6, 1.5: a set that returns an error, and a read-back that differs."""
+    """T-REQ-17 (pure part), 1.3 item 6, 1.5: a set that returns an error, and a read-back that differs, on a camera
+    that gives its range (with no range the value is skipped [GEH0])."""
     from skellycam.core.camera.capture.exposure_search import ExposureSearch
 
-    search = ExposureSearch(30.0, T0)
+    search = ExposureSearch(30.0, T0, (-13, 0))
     search.set_done(search.take_pending(), T0, error=error, readback=readback)
     assert (search.result["state"], search.result["reason"], search.detail) == ("failed", reason, detail)
     assert search.pending is None
@@ -224,3 +225,51 @@ def test_a_measuring_frame_that_does_not_decode_passes_to_the_next_frame():
             break
     assert search.trials[0]["brightness"] == 110.0 and search.trials[0]["kept_rate"]
     assert sfn == 10 + 30, "the window starts at the 11th frame"
+
+
+
+@pytest.mark.parametrize("fault", ["refuse", "clamp"])
+def test_with_no_range_a_value_that_cannot_be_set_is_skipped(fault):
+    """camera-requests.md 1.3 item 6 [GEH0, supervisor]: a source with no range (OpenCV); the camera refuses -12 (an
+    error) or clamps it to -11 (a different read-back). The search skips -12 as not supported, lists it, tries -11
+    to -5 and finds a value."""
+    from skellycam.core.camera.capture.exposure_search import ExposureSearch
+
+    search = ExposureSearch(30.0, T0)
+    value = search.take_pending()
+    assert value == -12
+    search.set_done(-12, T0, error="refused" if fault == "refuse" else None, readback=-11 if fault == "clamp" else None)
+    assert search.result is None and search.pending == -11 and search.skipped == [-12]
+    period, now, sfn = round(1e9 / 30), T0, 0
+    while search.result is None:
+        pending = search.take_pending()
+        if pending is not None:
+            search.set_done(pending, now)
+        now += period
+        gray = dict(MODEL)[search._value] if search._value is not None else 0
+        search.frame(sfn, now, lambda gray=gray: gray)
+        sfn += 1
+    assert (search.result["state"], search.result["chosen"], search.result["skipped"]) == ("done", -9, [-12])
+    assert [t["value"] for t in search.result["trials"]] == list(range(-11, -4))
+
+
+def test_with_no_range_and_no_value_that_can_be_set_the_search_fails():
+    """[GEH0, supervisor]: no value could be set: the reason `no-value-in-range`."""
+    from skellycam.core.camera.capture.exposure_search import ExposureSearch
+
+    search = ExposureSearch(30.0, T0)
+    while search.result is None:
+        search.set_done(search.take_pending(), T0, error="refused")
+    assert (search.result["reason"], search.result["skipped"]) == ("no-value-in-range", list(range(-12, -4)))
+    assert search.detail == "no exposure from -12 to -5 could be set on the camera"
+
+
+def test_with_a_range_a_refused_value_inside_it_still_fails_and_the_step_grid_is_kept():
+    """[GEH0]: with a range, a refused set inside it fails the search as before. A value off the step grid of
+    GetRange is left out: the range -11 to -2 with the step 2 gives -11, -9, -7, -5."""
+    from skellycam.core.camera.capture.exposure_search import ExposureSearch
+
+    search = ExposureSearch(30.0, T0, (-11, -2))
+    search.set_done(search.take_pending(), T0, error="refused")
+    assert search.result["reason"] == "set-failed"
+    assert ExposureSearch(30.0, T0, (-11, -2, 2)).values == (-11, -9, -7, -5)

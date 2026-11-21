@@ -322,9 +322,9 @@ class CameraGroup:
                 return
             await await_10ms()
 
-    def _give_up(self, camera_ids, stage: str) -> None:
-        """A camera process that gives no answer within PARENT_WAIT_LIMIT_S is `failed`, and it must close."""
-        reason = f"no answer from the camera process in {PARENT_WAIT_LIMIT_S:g} s"
+    def _give_up(self, camera_ids, stage: str, limit_s: float = PARENT_WAIT_LIMIT_S) -> None:
+        """A camera process that gives no answer within `limit_s` is `failed`, and it must close."""
+        reason = f"no answer from the camera process in {limit_s:g} s"
         for camera_id in list(camera_ids):
             status = self.cameras.orchestrator.camera_statuses.get(camera_id)
             if status is None:
@@ -906,7 +906,7 @@ class CameraGroup:
                     self._mark_ended(camera_id, worker)
             if time.monotonic() >= deadline:
                 self._give_up([camera_id for camera_id in camera_ids if not ended(camera_id)
-                               and statuses[camera_id].state != "adjusting"], "streaming")
+                               and statuses[camera_id].state != "adjusting"], "streaming", SEARCH_WAIT_LIMIT_S)
                 break
             await await_10ms()
         self.adopt_search_results()
