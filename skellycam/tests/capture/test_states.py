@@ -738,14 +738,14 @@ def test_t_cap_108_a_dying_camera_does_not_hold_the_others(monkeypatch, tmp_path
     stopped, close_ended = threading.Event(), threading.Event()
     close = FakeSource.close
 
-    def slow_close(source):
+    def slow_close(source, restore=True):
         if source.script.close_delay_s:
             with source.clock.blocked():
                 stopped.wait(10)
-            close(source)
+            close(source, restore)
             close_ended.set()
         else:
-            close(source)
+            close(source, restore)
 
     monkeypatch.setattr(FakeSource, "close", slow_close)
     with capture_app(monkeypatch, scripts, track=True) as app:

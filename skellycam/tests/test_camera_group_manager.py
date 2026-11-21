@@ -86,8 +86,8 @@ class TestCloseAll:
 
         from skellycam.core.camera_group.camera_group import CameraGroup
 
-        good = Mock(spec=CameraGroup, id="g1", close=AsyncMock())
-        bad = Mock(spec=CameraGroup, id="g2",
+        good = Mock(spec=CameraGroup, id="g1", camera_ids=[], close=AsyncMock())
+        bad = Mock(spec=CameraGroup, id="g2", camera_ids=[],
                    close=AsyncMock(side_effect=RuntimeError("1 camera process(es) could not be killed")))
         manager.camera_groups.update(g1=good, g2=bad)
         manager.camera_group_framerate_subscriptions.update(g1=Mock(), g2=Mock())
@@ -103,7 +103,7 @@ class TestCloseAll:
 
         from skellycam.core.camera_group.camera_group import CameraGroup
 
-        manager.camera_groups.update(g1=Mock(spec=CameraGroup, id="g1", close=AsyncMock()))
+        manager.camera_groups.update(g1=Mock(spec=CameraGroup, id="g1", camera_ids=[], close=AsyncMock()))
         manager.camera_group_framerate_subscriptions.update(g1=Mock())
         await manager.close_all_camera_groups()
         assert manager.camera_groups == {} and manager.camera_group_framerate_subscriptions == {}

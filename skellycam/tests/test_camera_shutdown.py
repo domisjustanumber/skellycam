@@ -32,7 +32,7 @@ def manager(monkeypatch):
         pubsub=Mock(spec=PubSubTopicManager),
         extracted_config_subscription=queue,
         recording_finished_subscription=queue,
-        diagnostics_subscription=queue,
+        diagnostics_subscription=multiprocessing.Queue(),  # a Mock never reports empty: the close reads this queue
         global_kill_flag=multiprocessing.Value("b", False),
         heartbeat_timestamp=multiprocessing.Value("d", time.perf_counter()),
     )
