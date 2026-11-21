@@ -472,8 +472,8 @@ def test_t_cap_81_dead_without_recording_is_treated_as_failed(monkeypatch, tmp_p
         assert (opens(app, alive), opens(app, dying)) == (1, 2)
 
 
-def test_the_group_stays_alive_while_one_selected_camera_lives(monkeypatch):
-    """camera-requests.md 1.5 [NYT6]: `alive` of the state is true while at least one selected camera lives. One of
+def test_t_req_79_the_group_stays_alive_while_one_selected_camera_lives(monkeypatch):
+    """T-REQ-79, camera-requests.md 1.5 [NYT6]: `alive` of the state is true while at least one selected camera lives. One of
     two fakes dies: the group stays alive, also after the end of its camera process. Both dead: not alive."""
     with capture_app(monkeypatch, [FakeScript(), FakeScript()]) as app:
         ready_app_steps(app)

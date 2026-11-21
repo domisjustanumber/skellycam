@@ -274,8 +274,8 @@ def test_experiment_4_a_dead_holder_of_the_last_frame_blocks_no_frame_decision()
     assert time.monotonic() - started < 0.2
 
 
-def test_a_frame_decision_outside_a_take_never_touches_the_last_frame_lock():
-    """unix-capture.md 4.10 [NYT6]: with no take (first is -1), a frame decision reads no last frame and takes no
+def test_t_unx_93_a_frame_decision_outside_a_take_never_touches_the_last_frame_lock():
+    """T-UNX-93, unix-capture.md 4.10 [NYT6]: with no take (first is -1), a frame decision reads no last frame and takes no
     lock. A holder that keeps the lock (a camera killed inside it) makes no wait, and no stretch with no lock starts."""
     import threading
 
