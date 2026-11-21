@@ -419,5 +419,5 @@ def test_f3_a_reopen_closes_the_source_in_starting(monkeypatch):
     loop.source = SimpleNamespace(close=lambda: seen.append(loop.status.state))
     from skellycam.core.camera.config.camera_config import CameraConfig
 
-    loop._reopen(CameraConfig(camera_id="aaaa", camera_index=0))
+    loop._reopen(CameraConfig(camera_id="aaaa", camera_index=0, exposure_mode="MANUAL", exposure=-7))
     assert seen == ["starting"]

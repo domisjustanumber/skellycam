@@ -89,6 +89,7 @@ These entries wait for a decision of the user. Section is the section or area of
 | [F8C0](entries/F8C0-third-review-choices.md) | Choices of the third review fixes: start and stop with no lost take, no stop pause, exit through the take level, Ctrl-C, dead-server end, summary rate | `recorder` | proposed |
 | [AC5B](entries/AC5B-choices-of-the-third-consistency-check.md) | Choices of the third spec check: loop-pass stall counter, diagnostics message, code table, warning owners, apply wait, search reason, `ended_take_summary` | none | proposed |
 | [Q2NY](entries/Q2NY-choices-of-code-step-2.md) | Choices of code step 2: stall watch at 3 s and off in the pause, diagnostics topic and close dict, no OpenCV restore, no restore after a failure | none | proposed |
+| [GEH0](entries/GEH0-choices-of-code-step-3.md) | Choices of code step 3: `not_streaming`, held value through the status, search flag, exposure range (`no-value-in-range`), 409 and 422 rules | none | proposed |
 
 The entries that are `rejected`, `superseded by XXXX`, `absorbed into <path>#<anchor>`,
 `evidence; used by XXXX` or `done` are in [historical.md](historical.md).

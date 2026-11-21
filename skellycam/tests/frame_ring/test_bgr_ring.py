@@ -340,7 +340,8 @@ def test_t_ring_36_reader_killed(cleanup, spawn, procs):
     creator = cleanup.own(fr.FrameRingCreator.create(
         camera_id="timing", camera_index=0, pixel_format=fr.PixelFormat.BGR24, width=640,
         height=480, fps_num=60, fps_den=1, history_s=1.0))
-    phase, stop, ready = spawn.Value("i", 0), spawn.Event(), spawn.Event()
+    # No lock: a reader killed inside a read of `phase` would keep it taken (test_concurrency.py, the lock test)
+    phase, stop, ready = spawn.Value("i", 0, lock=False), spawn.Event(), spawn.Event()
     timings, survivor_results, victim_results = spawn.Queue(), spawn.Queue(), spawn.Queue()
     _start(spawn, procs, ring_children.timed_writer, creator.name, SIZE, phase, stop, ready, timings, SHAPE)
     _start(spawn, procs, ring_children.busy_reader, creator.name, SIZE, phase, stop, survivor_results, SHAPE)

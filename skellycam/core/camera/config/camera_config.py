@@ -3,7 +3,7 @@ from typing import Tuple, Self, Any
 
 import cv2
 import numpy as np
-from pydantic import BaseModel, Field, model_validator, field_serializer
+from pydantic import BaseModel, Field, model_validator, field_serializer, field_validator
 
 from skellycam.core.camera.config.image_resolution import ImageResolution
 from skellycam.core.camera.config.image_rotation_types import RotationTypes
@@ -21,7 +21,7 @@ DEFAULT_CAMERA_INDEX: CameraIndexInt = CameraIndexInt(0)
 DEFAULT_CAMERA_ID: CameraIdString = "000"
 DEFAULT_CAMERA_NAME: CameraNameString = "Default Camera"
 DEFAULT_RESOLUTION: ImageResolution = ImageResolution(height=DEFAULT_IMAGE_HEIGHT, width=DEFAULT_IMAGE_WIDTH)
-DEFAULT_EXPOSURE_MODE: str = ExposureModes.MANUAL.name
+DEFAULT_EXPOSURE_MODE: str = ExposureModes.AUTO.name  # camera-requests.md 1.5 [G1, H7]
 DEFAULT_EXPOSURE: int = -7
 MAX_MANUAL_EXPOSURE: int = -5  # a MANUAL request above it is clamped (sfn26 43e2b968a); -4 gives about 16 fps
 DEFAULT_FRAMERATE: float = -1.0  # Use camera default framerate
@@ -93,17 +93,22 @@ class CameraConfig(BaseModel):
                               description="How to interpret the color channels")
 
     exposure_mode: str = Field(default=DEFAULT_EXPOSURE_MODE,
-                               description="The exposure mode to use for the camera, "
-                                           "AUTO for device automatic exposure, "
-                                           "MANUAL to set the exposure manually, "
-                                           "or RECOMMENDED to use the find the setting "
-                                           "that puts mean pixel intensity at 128 (255/2).")
+                               description="MANUAL sets `exposure`. AUTO: skellycam finds a manual value with its "
+                                           "exposure search at each open, at a rate change and on request, and "
+                                           "holds it in `exposure` (specs/camera-requests.md 1.1). The camera's own "
+                                           "auto exposure is never a mode. RECOMMEND is read as AUTO.")
     exposure: int = Field(
         default=DEFAULT_EXPOSURE,
         description="The exposure of the camera using the opencv convention (the number is the exposure time in ms, raised to the power of -2). "
                     "https://www.kurokesu.com/main/2020/05/22/uvc-camera-exposure-timing-in-opencv/ "
                     " (Hint! Set this as low as possible to avoid blur."
                     " Mocap likes BRIGHT environments and FAST/LOW exposure settings!)",
+    )
+
+    exposure_found_at_fps: float | None = Field(
+        default=None,
+        description="The mode rate at which an exposure search found the held value of AUTO; None: no search found "
+                    "a value yet (specs/camera-requests.md 1.3a).",
     )
 
     framerate: float = Field(default=DEFAULT_FRAMERATE,
@@ -127,6 +132,15 @@ class CameraConfig(BaseModel):
         default=False,
         description="Whether this camera also gets a BGR frame ring (specs/frame-ring.md, section 8.1)",
     )
+
+    @field_validator("exposure_mode", mode="before")
+    @classmethod
+    def read_exposure_mode(cls, value):
+        """camera-requests.md 1.5 [G6]: an old RECOMMEND is AUTO; each other value than MANUAL and AUTO is refused."""
+        value = "AUTO" if value == "RECOMMEND" else value
+        if value not in ("MANUAL", "AUTO"):
+            raise ValueError(f"exposure_mode must be MANUAL or AUTO, not {value!r}")
+        return value
 
     @model_validator(mode="after")
     def validate(self) -> Self:

@@ -101,6 +101,10 @@ class CaptureSource(Protocol):
 
     def diagnostics(self) -> dict: ...
 
+    def exposure_range(self) -> tuple[int, int] | None: ...
+    # (min, max) of the exposure control, read before the first set of the open; None: not known. The exposure
+    # search tries only the values in it (camera-requests.md 1.3 item 1). Optional: the loop uses getattr.
+
 
 class CaptureWaitingPlace:
     """The waiting place of 4.3: at most one frame, and the newest frame wins.

@@ -220,9 +220,14 @@ class FakeScript:
     sample_offset_ms: float | None = -4.0  # sample time = arrival + offset; None: no sample time
     controls: tuple = (("exposure", True, False, -6), ("gain", True, False, 0), ("focus", True, True, 30))
     reset_on_stream: tuple = ()  # (name, value): the camera sets this when the stream starts (C930e)
+    reports_auto: tuple = ()  # control names that read back auto whatever the set (a camera in its own auto)
     live_set_faults: tuple = ()  # for the n-th live change: None, "error" or "readback:<value>"
     rate_after_change: tuple = ()  # the delivered rate after the n-th live change
     hold_after_change: bool = False  # the first read after a live change waits until release()
+    hold_first_change: bool = False  # as hold_after_change, for the first live change of each open only
+    rate_by_exposure: tuple = ()  # (exposure, rate) pairs: the delivered rate at that exposure value
+    exposure_range: tuple | None = (-13, 0)  # (min, max) that the camera reports; None: no range
+    out_of_range: str = "refuse"  # an exposure set outside the range: "refuse" (an error) or "clamp" (to the range)
     brightness: tuple = ()  # (exposure, mean gray) pairs: the image follows the exposure
     hang_at: str | None = None  # "open", "set_controls" or "close": hangs when the hang is armed
     hang_armed: bool = False  # armed from the start; else FakeLog.arm_hang()
@@ -444,6 +449,12 @@ class FakeSource:
                 self._restore.changed(changes)
             if fault == "error":
                 raise types.CaptureFailure("set controls", "the camera refused the value")
+            low, high = self.script.exposure_range or (None, None)
+            setting = changes.get("exposure")
+            if low is not None and setting is not None and setting.value is not None and not low <= setting.value <= high:
+                if self.script.out_of_range == "refuse":
+                    raise types.CaptureFailure("set controls", f"exposure {setting.value} is out of range")
+                changes = {**changes, "exposure": type(setting)(auto=setting.auto, value=min(max(setting.value, low), high))}
             for name, setting in changes.items():
                 control = self._controls.get(name)
                 if control is None or not control[0]:
@@ -458,7 +469,8 @@ class FakeSource:
                 if self._live_changes <= len(rates):
                     self._rate = rates[self._live_changes - 1]
                     self._interval_index = 0
-                self._hold_next_read = self.script.hold_after_change
+                self._hold_next_read = self.script.hold_after_change or (
+                    self.script.hold_first_change and self._live_changes == 1)
             if changes and start is None:
                 self.log.first_sfn_after_readback = self._next_sfn
             return self._read_back()
@@ -488,6 +500,9 @@ class FakeSource:
         if self._restore is not None:
             self._restore.fill(data)
         return {**data, **(self.script.diagnostics or {})}
+
+    def exposure_range(self):
+        return self.script.exposure_range
 
     @property
     def replaced_count(self):
@@ -559,7 +574,8 @@ class FakeSource:
 
     def _read_back(self):
         value_type = self.types.ControlValue
-        return {name: value_type(present=present, auto=auto if present else False, value=value if present else None)
+        return {name: value_type(present=present, auto=(auto or name in self.script.reports_auto) if present else False,
+                                 value=value if present else None)
                 for name, (present, auto, value) in self._controls.items()}
 
     def _interval_ns(self, previous_arrival):
@@ -582,6 +598,9 @@ class FakeSource:
                 return round(1e9 / rate)
             self._slow = None
             self.slow_finished_ns = previous_arrival
+        by_exposure = dict(self.script.rate_by_exposure)
+        if self._controls.get("exposure", [0, 0, None])[2] in by_exposure:
+            return round(1e9 / by_exposure[self._controls["exposure"][2]])
         if self.script.intervals_ms:
             value = self.script.intervals_ms[self._interval_index % len(self.script.intervals_ms)]
             self._interval_index += 1

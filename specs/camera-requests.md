@@ -140,6 +140,11 @@ with the guard of the frame rate [E2]:
 1. The values are -12 to -5, in that order [E6]. On a route with no time unit (1.1), the values are
    the steps 0 to 7, in that order: the step k takes the place of the value k - 12. The offset of item
    4 is then one step down, and the result is a step.
+   The search tries only the values that are in the exposure range of the camera, in the same order.
+   The source reads the range before the first set of the open (`exposure_range()`; on Media Foundation
+   `IAMCameraControl::GetRange`). A source that gives no range gets each value. Reason: each test camera
+   is outside -12 (the C922, the C930e and the Kiyo Pro have -11 to -2; the generic camera has -7 to 3), and
+   Media Foundation gives the value to the camera as it is: the set fails, or the camera clamps it [ADR-GEH0](../decisions/entries/GEH0-choices-of-code-step-3.md).
 2. For each value:
    1. Set the value (a bounded call of [cap 6.6]).
    2. Wait for 10 delivered frames that arrived after the set call returned, as sfn26 [Q4].
@@ -163,8 +168,10 @@ with the guard of the frame rate [E2]:
    255, the result carries the flag `add_light`. The search still holds its result, and it still
    applies the offset of item 4. 64 is a starting value. A camera run in a dim room sets the limit
    (T-REQ-25).
-6. The search fails in these cases. A failed search sets the old exposure (mode, value and
-   `exposure_found_at_fps`) again [E6]:
+6. The search fails in these cases. A failed search sets the old value and the old
+   `exposure_found_at_fps` again [E6]. The mode stays `AUTO`: `AUTO` is the stored mode, also after a
+   failed switch from `MANUAL` [ADR-GEH0](../decisions/entries/GEH0-choices-of-code-step-3.md):
+   - no value of item 1 is in the range of the camera (`no-value-in-range`) [ADR-GEH0](../decisions/entries/GEH0-choices-of-code-step-3.md);
    - no value kept the rate;
    - a set call returned an error, or its read-back differed from the value;
    - the search took more than its limit of 20 s [A2];
@@ -222,7 +229,9 @@ Who does what:
   it from the live state (1.3b) [H1, B14]. Thus the held value is kept across a close and across a
   restart of the app.
 - At an open, a camera in `AUTO` sets its held value as a manual value at step 5 of [cap 9.1]. Then
-  it searches after the warm-up (1.3b) [G1].
+  it searches after the warm-up (1.3b) [G1]. A held value outside the exposure range of the camera is set
+  at the nearest end of the range, and the config stores the read-back value: a new camera (-7) on a camera
+  whose range starts at -6 opens at -6, then searches -6 and -5 [ADR-GEH0](../decisions/entries/GEH0-choices-of-code-step-3.md).
 - The held value is not a start point of the search: the search tries -12 to -5 in order [E6]. The
   held value has two uses [B2]:
   - the warm-up and the first frames of the preview are near the last result;
@@ -274,9 +283,11 @@ The limits [B3]:
   `starting` [ADR-AC5B](../decisions/entries/AC5B-choices-of-the-third-consistency-check.md). That is about 1 s to open and 3 s of warm-up at 30 fps, so about 4 s for one
   camera. With more cameras it is longer: certify measured 5.8 s for three cameras [cert 4.7].
 - Each wait of the main process uses `PARENT_WAIT_LIMIT_S` (30 s, `camera_group.py`): the wait of
-  the apply above, the wait of the endpoint of 1.5 for the end of each search (the search limit is
-  20 s), and the waits of the reopen of the fall back of 2.4, which waits as an apply. A camera
+  the apply above and the waits of the reopen of the fall back of 2.4, which waits as an apply. A camera
   process that gives no answer in that time is `failed` by `_give_up`, as today [ADR-AC5B](../decisions/entries/AC5B-choices-of-the-third-consistency-check.md).
+  The wait of the endpoint of 1.5 for the end of each search uses `SEARCH_WAIT_LIMIT_S` (35 s: the search
+  limit of 20 s, two bounded set calls of 5 s and 5 s of margin). At that limit, a camera whose process is
+  alive and still `adjusting` is not marked `failed`; its result comes through the live status [ADR-GEH0](../decisions/entries/GEH0-choices-of-code-step-3.md).
 - A client that waits for the end of a search waits until no camera is `adjusting` or `checking`. It
   must allow 25 s from the apply response, at 30 fps and at 60 fps: the search limit of 20 s holds at
   each rate, and the check takes about 2.5 s at 30 fps and 1.3 s at 60 fps. The clock starts at the
@@ -387,7 +398,7 @@ POST /camera/group/exposure/auto
   `{"camera_ids": ["a1b2"]}` limits it to those cameras ("Search again"). A camera ID that is not
   selected gets HTTP 422.
 - It sets each camera to `AUTO` and runs the search on each, at the same time. It returns when each
-  search has ended, and it waits at most `PARENT_WAIT_LIMIT_S` (30 s) for that (1.3b).
+  search has ended, and it waits at most `SEARCH_WAIT_LIMIT_S` (35 s) for that (1.3b) [ADR-GEH0](../decisions/entries/GEH0-choices-of-code-step-3.md).
 - Response 200:
 
   ```json
@@ -434,10 +445,12 @@ status of an unselected camera is kept (`removed_statuses` of `camera_manager.py
 keeps it too. A new group starts at 0. A client counts the searches with it.
 
 `reason` of `exposure_search` has a fixed vocabulary [ADR-AC5B](../decisions/entries/AC5B-choices-of-the-third-consistency-check.md): `null` (the search found a value), or,
-with `state` `"failed"`, one of `no-value-kept-rate` (no value kept the rate; at 60 fps this value
+with `state` `"failed"`, one of `no-value-in-range` (no value of 1.3 item 1 is in the exposure range of
+the camera) [ADR-GEH0](../decisions/entries/GEH0-choices-of-code-step-3.md), `no-value-kept-rate` (no value kept the rate; at 60 fps this value
 starts the fall back of 2.4), `set-failed` (a set call returned an error), `readback-differs` (the
-read-back differed from the value), `timed-out` (the limit of 20 s) and `camera-closed` (the group
-closed the camera, or it was unselected).
+read-back differed from the value), `timed-out` (the limit of 20 s from the first set) and `camera-closed`
+(the group closed the camera, or it was unselected). A camera that fails or dies during its search gives
+its failure code ([ux 4.6.3]) as the reason [ADR-GEH0](../decisions/entries/GEH0-choices-of-code-step-3.md).
 
 Warnings ([cap 11.3] form: `kind`, `camera_ids`, `text`, `control`). The kinds `add_light` and
 `exposure_search_failed` are a decision [G5]. Their texts are [A11]. They are not texts of a slow
@@ -451,8 +464,9 @@ camera, so they stay [H5]:
   `Camera a1b2 has no manual exposure. SkellyCam does not set its exposure.` The kind is a decision
   [K3]. The text is [B21]. Certify records the same case with its reason code `no-manual-exposure`.
 
-The text of `exposure_search_failed` names the reason: `no exposure from -12 to -5 keeps 30 fps`
-(`no-value-kept-rate`), `the camera refused exposure -9 (<error text>)` (`set-failed`), `exposure -9
+The text of `exposure_search_failed` names the reason: `no exposure from -12 to -5 is in the range of
+the camera (-4 to 3)` (`no-value-in-range`) [ADR-GEH0](../decisions/entries/GEH0-choices-of-code-step-3.md), `no exposure from -11 to -5 keeps 30 fps` with the first and
+the last value that the search tried (`no-value-kept-rate`), `the camera refused exposure -9 (<error text>)` (`set-failed`), `exposure -9
 read back as -8` (`readback-differs`), `it took more than 20 s` (`timed-out`). `camera-closed` gives
 no warning, because the camera closes [ADR-AC5B](../decisions/entries/AC5B-choices-of-the-third-consistency-check.md).
 

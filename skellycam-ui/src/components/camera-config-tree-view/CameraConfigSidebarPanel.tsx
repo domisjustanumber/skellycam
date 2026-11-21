@@ -1,6 +1,6 @@
 import React, { useEffect, useCallback, useState } from 'react';
 import { useAppDispatch, useAppSelector, selectCameras, selectConnectedCameras, selectIsLoading, detectCameras } from '@/store';
-import { camerasConnectOrUpdate, closeCameras } from '@/store/slices/cameras/cameras-thunks';
+import { camerasConnectOrUpdate, closeCameras, searchExposure } from '@/store/slices/cameras/cameras-thunks';
 import { savedSettingsCleared, displayPauseToggled, cameraErrorCleared } from '@/store/slices/cameras/cameras-slice';
 import { selectError, selectIsPaused } from '@/store/slices/cameras/cameras-selectors';
 import { CameraTreeItem } from './CameraTreeItem';
@@ -12,11 +12,13 @@ import IconButton from "@/components/ui-components/IconButton";
 import { useRecordingGuard } from '@/components/RecordingGuardProvider';
 import { pendingCameraChanges, updateRequestConfigs } from '@/store/slices/cameras/camera-updates';
 import { labelText } from '@/store/slices/cameras/camera-labels';
+import { searchBlocked } from '@/store/slices/cameras/exposure-row';
 
 
 export const CameraConfigSidebarPanel: React.FC = () => {
     const [isStoppingCameras, setIsStoppingCameras] = useState(false);
     const [isUpdating, setIsUpdating] = useState(false);
+    const [isSearching, setIsSearching] = useState(false);
     // The error of each apply (Update Cameras, Connect, the menu, the settings) and of Detect: the store keeps it
     const cameraError = useAppSelector(selectError);
     const dispatch = useAppDispatch();
@@ -68,6 +70,21 @@ export const CameraConfigSidebarPanel: React.FC = () => {
             // the store keeps the error; the error line shows it
         } finally {
             setIsUpdating(false);
+        }
+    };
+
+    // The button "Auto-set exposure (all cameras)" (camera-requests.md 1.2 (c), 1.8): each selected camera that
+    // streams searches; disabled during a recording and with no streaming camera.
+    const searchDisabledText = isRecording ? t('stopRecordingFirst') : connectedCameras.length === 0 ? t('connectCamerasFirst')
+        : searchBlocked(groups) ? t('settingExposure') : undefined;  // 1.5: a camera starts, waits or searches
+    const handleSearchExposure = async () => {
+        setIsSearching(true);
+        try {
+            await dispatch(searchExposure()).unwrap();
+        } catch {
+            // the store keeps the error; the error line shows it
+        } finally {
+            setIsSearching(false);
         }
     };
 
@@ -145,6 +162,16 @@ export const CameraConfigSidebarPanel: React.FC = () => {
                                         tooltipPosition="pos-bottom-right"
                                     />
                                 )}
+                                <ButtonSm
+                                    text={isSearching ? t('settingExposure') : t('autoSetExposureAll')}
+                                    iconClass={isSearching ? 'loader-icon' : undefined}
+                                    onClick={handleSearchExposure}
+                                    className={isSearching ? 'disabled' : ''}
+                                    disabled={isSearching || searchDisabledText !== undefined}
+                                    tooltip={searchDisabledText !== undefined}
+                                    tooltipText={searchDisabledText}
+                                    tooltipPosition="pos-bottom-right"
+                                />
                                 <IconButton
                                     icon={isPaused ? 'play-icon' : 'pause-icon'}
                                     onClick={() => dispatch(displayPauseToggled())}

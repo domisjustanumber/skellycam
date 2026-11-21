@@ -561,8 +561,7 @@ def test_text_helpers():
     with pytest.raises(AssertionError):
         cs.stop_line_count(["nothing"], "ab12")
     assert cs.numbers_in("rate 27.40 fps for a1b2") == [27.40, 1.0, 2.0]
-    assert cs.slow_text(30, 25.756) == ("declared 30.00 fps, measured 25.76 fps. Add light or shorten the exposure, "
-                                        "or choose a rate that the camera reaches.")
+    assert cs.slow_text(30, 25.756) == "declared 30.00 fps, measured 25.76 fps. Camera is slow. Try adding more light"
 
 
 def test_log_capture_keeps_records_of_other_threads():

@@ -8,7 +8,9 @@ import {
     detectCameras,
     camerasConnectOrUpdate,
     closeCameras,
+    searchExposure,
 } from './cameras-thunks';
+import { copyHeldValues } from './exposure-row';
 import { serverStateReceived, serverDisconnected } from '../connection/connection-slice';
 import {
     savePersistedCameraSettings,
@@ -17,6 +19,15 @@ import {
     PersistedCameraSettingsMap,
 } from './camera-settings-storage';
 import { cameraStatesFromAppState, NOT_IN_GROUP, statusesAfterApply } from './camera-state';
+
+/** Copy the held value of each camera whose search is done into its desired config (camera-requests.md 1.3a, 1.8). */
+function adoptHeldValues(state: CamerasState, groups: Parameters<typeof copyHeldValues>[1]): void {
+    const desired = Object.fromEntries(state.cameras.map(camera => [camera.id, camera.desiredConfig]));
+    const copied = copyHeldValues(desired, groups);
+    if (copied === desired) return;
+    state.cameras.forEach(camera => { camera.desiredConfig = copied[camera.id]; });
+    persistAllCameraSettings(state);
+}
 
 // Persist all current camera desired configs + selection to localStorage
 function persistAllCameraSettings(state: CamerasState): void {
@@ -171,6 +182,22 @@ export const cameraSlice = createSlice({
             .addCase(serverStateReceived, (state, action) => {
                 const live = cameraStatesFromAppState(Object.values(action.payload.state.camera_groups));
                 state.cameras.forEach(camera => Object.assign(camera, live[camera.id] ?? NOT_IN_GROUP));
+                adoptHeldValues(state, action.payload.state);  // a search at an open: no response carries it [B14]
+            })
+
+            .addCase(searchExposure.rejected, (state, action) => {
+                state.error = action.error.message || 'The exposure search failed';
+            })
+
+            // ========== Exposure search on request (camera-requests.md 1.5) ==========
+            // The server set each searched camera to Auto; its response carries the held values [A6].
+            .addCase(searchExposure.fulfilled, (state, action) => {
+                const { camera_configs: configs, results } = action.payload;
+                state.cameras.forEach(camera => {
+                    if (results[camera.id]?.state === 'done') camera.desiredConfig = { ...camera.desiredConfig, exposure_mode: 'AUTO' };
+                });
+                const cameras = Object.fromEntries(Object.entries(results).map(([id, result]) => [id, { status: { exposure_search: result } }]));
+                adoptHeldValues(state, { camera_groups: { response: { configs, cameras } } });
             })
 
             // On websocket disconnect, reset to "not connected" so nothing goes stale.

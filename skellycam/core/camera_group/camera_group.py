@@ -69,8 +69,14 @@ TAKE_START_LIMIT_S = 10.0  # each camera starts its writer within this time of t
 # The parent waits this long for a camera process at the start, as sfn26 549217112. The camera process has its own
 # limit of 15 s (9.3); this one ends a wait on a camera process that does not answer at all.
 PARENT_WAIT_LIMIT_S = 30.0
+# The endpoint of the exposure search waits for its worst case (camera-requests.md 1.3b) [GEH0]: the limit of 20 s of a
+# search, the last set (a bounded call of 5 s, 6.6) and one more set of the held value after a failed last set (5 s),
+# with a margin of 5 s.
+SEARCH_WAIT_LIMIT_S = 20.0 + 2 * 5.0 + 5.0
 # The main-process stall watch (unix-capture.md 4.10): the states it watches, its limit, the wait before a kill.
 WATCHED_STATES = ("waiting", "adjusting", "checking", "too_slow", "ready")
+# camera-requests.md 1.3b [H1, AC5B]: the apply waits for a camera in AUTO until it is in one of these states.
+AUTO_SETTLED_STATES = ("adjusting", "ready", "too_slow", "failed", "dead")
 STALL_WATCH_S = 3.0  # over the 2 s of the in-process rule (W 9.5), which closes the camera and its files cleanly
 STALL_REASON = "no loop pass for 3 s"
 KILL_AFTER_S = 1.0
@@ -88,13 +94,13 @@ class RequestRefused(Exception):
 
 
 def same_config(requested: CameraConfig, current: CameraConfig) -> bool:
-    """The same config in an apply request has no effect (8.3). "Auto" matches the mode rate (D17)."""
-    update = {}
+    """The same config in an apply request has no effect (8.3). "Auto" matches the mode rate (D17). The found rate,
+    the number and the name are not compared; in `AUTO` the server holds the value (camera-requests.md 1.5)."""
+    update = dict(exposure_found_at_fps=current.exposure_found_at_fps, camera_index=current.camera_index,
+                  camera_name=current.camera_name)
     if requested.framerate in (-1, 0):
         update["framerate"] = current.framerate
-    if requested.exposure_mode == "RECOMMEND":  # the stored config holds the result of the search (11.1)
-        update.update(exposure_mode=current.exposure_mode, exposure=current.exposure)
-    elif requested.exposure_mode == "AUTO":
+    if requested.exposure_mode == "AUTO":
         update["exposure"] = current.exposure
     return requested.model_copy(update=update) == current
 
@@ -128,12 +134,18 @@ class CameraGroup:
     take_error: tuple | None = None  # (text, camera_id) of the first stall or write error of the take (5.3, 5.4)
     camera_diagnostics: dict = field(default_factory=dict)  # the newest diagnostics of each camera (unix 4.2 item 2)
     _passes: dict = field(default_factory=dict)  # camera_id: (alive_count, time.monotonic() of its last change)
+    _adopted: dict = field(default_factory=dict)  # camera_id: the search count whose held value is in `configs`
     stall_watch: bool = True
     _closing: bool = False  # `close` runs: the watch thread reads the queues but watches no camera (F4)
     _end_lock: Any = field(default_factory=asyncio.Lock)
     _ring_lock: Any = field(default_factory=threading.RLock)
     _stop_watch: Any = field(default_factory=threading.Event)
     _loop: Any = None  # the event loop of `start`: a ring reader is closed only on it (ADR-BM73)
+
+    @property
+    def take_busy(self) -> bool:
+        """A record start, a stop or an error end runs (it holds the lock of the take)."""
+        return self._end_lock.locked()
 
     @property
     def id(self) -> CameraGroupIdString:
@@ -229,6 +241,9 @@ class CameraGroup:
                 restart.append(camera_id)
             elif not same_config(config, self.configs[camera_id]):
                 changed[camera_id] = config
+            else:  # no effect on the camera; the number and the name of the request are kept (camera-requests.md 1.5)
+                self.configs[camera_id] = self.configs[camera_id].model_copy(
+                    update=dict(camera_index=config.camera_index, camera_name=config.camera_name))
         # The joins of a camera process take seconds: not on the event loop, which serves the preview.
         for camera_id in removed:
             await asyncio.to_thread(self.cameras.remove_camera, camera_id)
@@ -287,7 +302,8 @@ class CameraGroup:
         return configs, warnings
 
     async def _await_settled(self, camera_ids: list) -> None:
-        """Wait until each camera has passed its rate check or failed (9.1, 10.1)."""
+        """Wait until each camera has passed its rate check or failed (9.1, 10.1). A camera in `AUTO` waits until it
+        is `adjusting` or later: the apply does not wait for the search (camera-requests.md 1.3b) [H1]."""
         statuses = self.cameras.orchestrator.camera_statuses
         deadline = time.monotonic() + PARENT_WAIT_LIMIT_S
         while self.ipc.running:
@@ -296,7 +312,9 @@ class CameraGroup:
                 if worker is not None and worker.worker.exitcode is not None:
                     self._mark_ended(camera_id, worker)
             pending = [camera_id for camera_id in camera_ids if camera_id in statuses
-                       and statuses[camera_id].state not in SETTLED_STATES]
+                       and statuses[camera_id].state not in (AUTO_SETTLED_STATES if camera_id in self.configs
+                                                             and self.configs[camera_id].exposure_mode == "AUTO"
+                                                             else SETTLED_STATES)]
             if not pending:
                 return
             if time.monotonic() >= deadline:
@@ -552,9 +570,9 @@ class CameraGroup:
         statuses = self.cameras.orchestrator.camera_statuses
         if recording_info.mic_device_index >= 0:
             raise RequestRefused(422, MICROPHONE_REFUSED)  # [C1]
-        blocking = [f"camera {camera_id} is {status.serialize()['state']}"
+        blocking = [f"camera {camera_id} is {'adjusting' if status.search_requested.value else status.serialize()['state']}"
                     for camera_id, status in list(statuses.items())
-                    if not status.ready]
+                    if not status.ready or status.search_requested.value]  # a search that is asked for (1.5)
         if blocking or self.take is not None:  # a recording starts only when each selected camera is `ready` (8.3)
             raise RequestRefused(409, "A recording needs each selected camera ready: " + "; ".join(blocking or ["a recording runs"]))
         folder = Path(recording_info.recording_directory) / recording_info.recording_name
@@ -852,7 +870,65 @@ class CameraGroup:
 
         logger.success("Camera group closed successfully.")
 
+    def add_group_warning(self, item: dict) -> None:
+        """An item of the main process (`start_failure`; `rate_fallback` of step 4) in the status of each camera that
+        it names (camera-requests.md 1.5) [AC5B]."""
+        statuses = self.cameras.orchestrator.camera_statuses
+        for camera_id in item["camera_ids"]:
+            if camera_id in statuses:
+                statuses[camera_id].replace_warning_items(statuses[camera_id].group_warnings, (item["kind"],), [item])
+
+    def clear_group_warnings(self) -> None:
+        """At each apply request of the user (camera-requests.md 1.5); the fall back of step 4 must not call it."""
+        for status in list(self.cameras.orchestrator.camera_statuses.values()):
+            status.set_warning_items([], status.group_warnings)
+
+    async def search_exposure(self, camera_ids: list) -> dict:
+        """camera-requests.md 1.5: each camera of `camera_ids` (checked by the manager) searches on its open stream;
+        return when each search has ended, within SEARCH_WAIT_LIMIT_S. The response of the endpoint. A camera whose
+        process is alive and still `adjusting` at the limit is not marked `failed`: its result comes in the live state."""
+        statuses = self.cameras.orchestrator.camera_statuses
+        counts = {camera_id: statuses[camera_id].search_count.value for camera_id in camera_ids}
+        for camera_id in camera_ids:
+            statuses[camera_id].search_requested.value = True
+        deadline = time.monotonic() + SEARCH_WAIT_LIMIT_S
+
+        def ended(camera_id):
+            status = statuses[camera_id]
+            search = status.serialize()["exposure_search"] or {}
+            return status.state in ("failed", "dead") or (not status.search_requested.value and (
+                status.search_count.value == counts[camera_id] or search.get("state") != "running"))
+
+        while self.ipc.running and not all(ended(camera_id) for camera_id in camera_ids):
+            for camera_id in camera_ids:
+                worker = self.cameras.camera_workers.get(camera_id)
+                if worker is not None and worker.worker.exitcode is not None:
+                    self._mark_ended(camera_id, worker)
+            if time.monotonic() >= deadline:
+                self._give_up([camera_id for camera_id in camera_ids if not ended(camera_id)
+                               and statuses[camera_id].state != "adjusting"], "streaming")
+                break
+            await await_10ms()
+        self.adopt_search_results()
+        searched = [camera_id for camera_id in camera_ids if statuses[camera_id].search_count.value > counts[camera_id]]
+        return dict(
+            camera_configs={camera_id: config.model_dump(mode="json") for camera_id, config in self.configs.items()},
+            results={camera_id: statuses[camera_id].serialize()["exposure_search"] for camera_id in searched},
+            camera_failures=self._failures(camera_ids),
+            warnings=[item for camera_id in searched for item in statuses[camera_id].warning_items(
+                statuses[camera_id].camera_warnings) if item["kind"] in ("add_light", "exposure_search_failed")])
+
+    def adopt_search_results(self) -> None:
+        """Copy the held value of each ended search into `configs`, once for each search (camera-requests.md 1.3b):
+        the camera process writes it into its status (`held`), with the search count."""
+        for camera_id, status in list(self.cameras.orchestrator.camera_statuses.items()):
+            held = status.info_dict().get("held")
+            if held and camera_id in self.configs and held["count"] != self._adopted.get(camera_id):
+                self._adopted[camera_id] = held.pop("count")
+                self.configs[camera_id] = self.configs[camera_id].model_copy(update=held)
+
     def to_state(self) -> CameraGroupState:
+        self.adopt_search_results()
         return CameraGroupState(
             id=self.id,
             configs=self.configs,

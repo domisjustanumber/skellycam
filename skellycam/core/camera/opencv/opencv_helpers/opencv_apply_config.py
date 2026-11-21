@@ -18,26 +18,20 @@ class FailedToApplyCameraConfigurationError(Exception):
 
 
 def _apply_exposure(cv2_vid_capture: cv2.VideoCapture, config: CameraConfig) -> None:
-    """Apply exposure settings to the capture device.
+    """Apply exposure settings to the capture device (specs/camera-requests.md 1.7).
 
-    On Linux/V4L2 the exposure unit convention differs from Windows/DSHOW (absolute
-    device units vs log2-seconds), and the values coming from the frontend are
-    calibrated for Windows.  Until we have proper cross-platform exposure calibration,
-    force auto-exposure on Linux so the camera produces usable frames.
+    On Linux and macOS the exposure unit of OpenCV differs from the log2 seconds of Windows, so the camera keeps its
+    own auto exposure for each mode: a known exception, for now (item 9 of ADR-BVK7). On Windows `AUTO` makes no
+    exposure call: the camera loop sets the held value as a manual value, then runs the exposure search.
     """
-    if sys.platform == "linux":
+    if sys.platform in ("linux", "darwin"):
         logger.info(
-            f"Camera {config.camera_index}: forcing auto-exposure on Linux "
+            f"Camera {config.camera_index}: forcing auto-exposure on {sys.platform} "
             f"(requested mode={config.exposure_mode}, value={config.exposure})"
         )
         cv2_vid_capture.set(cv2.CAP_PROP_AUTO_EXPOSURE, AUTO_EXPOSURE_SETTING)
         return
-
-    if config.exposure_mode == ExposureModes.RECOMMEND.name:
-        return  # the camera loop runs the exposure search after the open (windows-capture.md 11.1)
-    elif config.exposure_mode == ExposureModes.AUTO.name:
-        cv2_vid_capture.set(cv2.CAP_PROP_AUTO_EXPOSURE, AUTO_EXPOSURE_SETTING)
-    elif config.exposure_mode == ExposureModes.MANUAL.name:
+    if config.exposure_mode == ExposureModes.MANUAL.name:
         cv2_vid_capture.set(cv2.CAP_PROP_AUTO_EXPOSURE, MANUAL_EXPOSURE_SETTING)
         cv2_vid_capture.set(cv2.CAP_PROP_EXPOSURE, float(config.exposure))
 

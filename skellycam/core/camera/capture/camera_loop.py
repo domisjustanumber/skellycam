@@ -17,6 +17,7 @@ import cv2
 import numpy as np
 
 from skellycam.core.camera.capture import rate_check
+from skellycam.core.camera.capture.exposure_search import ExposureSearch, add_light_text, failed_text
 from skellycam.core.camera.capture.modes import NO_FLOOR_MODE, at_floor, rates_equal
 from skellycam.core.camera.capture.source import (
     BOUNDED_CALL_LIMIT_S,
@@ -66,14 +67,11 @@ STALL_NS = 2_000_000_000  # 9.5, D38
 READY_LIMIT_NS = 15_000_000_000  # 9.3, D21
 CONTROL_READ_INTERVAL_S = 1.0  # 11.4, U16
 JPEG_Q90 = [int(cv2.IMWRITE_JPEG_QUALITY), 90]  # ring 2.3, 8.8
-RECOMMEND_MAX_EXPOSURE = -5  # 11.1, decision H (ADR-JMS0): -4 gives about 16 fps on the Logitech cameras
-RECOMMEND_OFFSET = -1  # 11.1, decision H: one step darker than the nearest value, as the old helper
-MIN_EXPOSURE = -12  # 11.1: the lowest value of the search, in log base 2 seconds
-NUMBER_OF_FRAMES_TO_SETTLE = 10  # 11.1: frames at each value before the sample
-TARGET_BRIGHTNESS = 127.5  # 11.1: half of 255
 DIAGNOSTICS_INTERVAL_NS = 1_000_000_000  # unix-capture.md 4.2 item 2: one dict each second
 DIAGNOSTICS_LIMIT_BYTES = 32 * 1024  # the pickled message; a larger dict is not sent
 DIAGNOSTICS_FLUSH_S = 1.0  # the longest wait of a camera process for its close dict to reach the pipe
+SEARCH_WARNINGS = ("add_light", "exposure_search_failed")  # camera-requests.md 1.5: they clear at the next search
+HELD_FIELDS = ("exposure_mode", "exposure", "exposure_found_at_fps")  # the held value of 1.3a
 
 
 class _Stop(Exception):
@@ -107,8 +105,7 @@ def needs_reopen(requested: CameraConfig, current: CameraConfig) -> bool:
     """A change of resolution or rate reopens the camera (D31). Each other change is live (11.2)."""
     return ((requested.resolution, requested.capture_fourcc, requested.bgr_ring)
             != (current.resolution, current.capture_fourcc, current.bgr_ring)
-            or (requested.framerate > 0 and not rates_equal(requested.framerate, current.framerate))
-            or requested.exposure_mode == "RECOMMEND")  # RECOMMEND runs at the open (11.1)
+            or (requested.framerate > 0 and not rates_equal(requested.framerate, current.framerate)))
 
 
 class CameraLoop:
@@ -139,6 +136,14 @@ class CameraLoop:
         self.replaced_base: int | None = None
         self.replaced_total = 0
         self.control: _ControlThread | None = None
+        # The exposure search (camera-requests.md 1.3): the search, the config fields before it, the value of its
+        # last set (None while it tries the values) and the results of its sets from the control thread.
+        self.search: ExposureSearch | None = None
+        self.search_before: dict | None = None
+        self.search_final: int | None = None
+        self.search_replies = queue.Queue()
+        self.no_exposure = False  # the camera has no working exposure control (camera-requests.md 1.9) [K3]
+        self.exposure_range: tuple | None = None  # (min, max) of the camera at this open (1.3 item 1) [GEH0]
         self.signals = queue.Queue()
         self.hung = threading.Event()
         self._failure_lock = threading.Lock()
@@ -201,6 +206,8 @@ class CameraLoop:
             self.next_diagnostics_ns = now + DIAGNOSTICS_INTERVAL_NS
             self._publish_diagnostics()
         self._check_updates()
+        if self.search is not None:
+            self._search_step()
         if self.status.state == "waiting":
             self._wait_pass()
             return
@@ -224,7 +231,7 @@ class CameraLoop:
         the end of the last wait of the loop at the gate or in `give` (recorder.md 5.2, agent 32)."""
         since = max(self.last_arrival, self.last_wait_end)
         wake = since + STALL_NS
-        for limit in (deadline_ns, self.check and self.check["deadline"]):
+        for limit in (deadline_ns, self.check and self.check["deadline"], self.search and self.search.wake_ns):
             if limit:
                 wake = min(wake, limit)
         frame = self.source.read_frame(max(wake - perf_counter_ns(), 0) / 1e9)
@@ -236,6 +243,8 @@ class CameraLoop:
             if check is not None and check["deadline"] is not None and now >= check["deadline"]:
                 # 10.2: no frame came by the deadline, so frame s_a + 59 cannot be in time
                 self._too_slow(rate_check.measured_rate(*check["start"], self.last_number, now))
+            if self.search is not None:
+                self.search.no_frame(now)
             return None
         self.last_arrival, self.last_number = frame.arrival_ns, frame.source_frame_number
         return frame
@@ -252,7 +261,9 @@ class CameraLoop:
         deadline = perf_counter_ns() + READY_LIMIT_NS
         config = self.config
         self.source = self.source_factory(config)
-        self.status.update_info(source=getattr(self.source, "name", "fake"))
+        # `searches`: false for the OpenCV source of Linux and macOS (camera-requests.md 1.7); the endpoint reads it
+        self.status.update_info(source=getattr(self.source, "name", "fake"),
+                                searches=getattr(self.source, "searches", True))
         opened = self.source.open(CaptureRequest(camera_id=self.camera_id, width=config.resolution.width,
                                                  height=config.resolution.height, framerate=config.framerate,
                                                  capture_fourcc=config.capture_fourcc))
@@ -289,12 +300,13 @@ class CameraLoop:
             # an empty window (the first frame seen is frame 90 or later) waits for one more frame
             if warm_up_frame >= rate_check.WARM_UP_FRAMES and frame.source_frame_number > window_start[0]:
                 break
-        self.stage = "rate check"
-        measured = rate_check.measured_rate(*window_start, frame.source_frame_number, frame.arrival_ns)
-        self.status.update_info(measured_fps=measured)
-        if not rate_check.within_limit(measured, self.reference_rate):
-            raise CaptureFailure("rate check", rate_check.slow_reason(self.reference_rate, measured),
-                                 code="rate-low" if rate_check.is_slow(measured, self.reference_rate) else "rate-high")
+        if not self._searches():  # camera-requests.md 1.3b: a camera in AUTO has no start-up rate check
+            self.stage = "rate check"
+            measured = rate_check.measured_rate(*window_start, frame.source_frame_number, frame.arrival_ns)
+            self.status.update_info(measured_fps=measured)
+            if not rate_check.within_limit(measured, self.reference_rate):
+                raise CaptureFailure("rate check", rate_check.slow_reason(self.reference_rate, measured),
+                                     code="rate-low" if rate_check.is_slow(measured, self.reference_rate) else "rate-high")
         self.started = True
         self.stage = "streaming"
         self.status.set_state("waiting")
@@ -314,50 +326,33 @@ class CameraLoop:
         return self._read(deadline)
 
     def _set_start_controls(self, deadline: int) -> None:
-        """9.1 steps 5 and 6. The config stores the read-back values (agent 44)."""
-        mode, value = self.config.exposure_mode, self.config.exposure
-        if mode == "RECOMMEND":
-            mode, value = "MANUAL", self._recommend(deadline)
-        setting = ControlSetting(auto=True, value=None) if mode == "AUTO" else ControlSetting(auto=False, value=value)
-        readback = self.source.set_controls({"exposure": setting})
+        """9.1 steps 5 and 6. The config stores the read-back values (agent 44). `AUTO` sets its held value as a
+        manual value (camera-requests.md 1.3a); no call of an open has `auto=True` (1.3 item 7)."""
+        value = self.config.exposure
+        readback = self.source.set_controls({})  # a read: a camera with no exposure control gets no set (1.9)
+        exposure = readback.get("exposure")
+        self.no_exposure = exposure is not None and not exposure.present
+        text = f"Camera {self.camera_id} has no manual exposure. SkellyCam does not set its exposure."
+        self.status.replace_warning_items(self.status.camera_warnings, ("no_manual_exposure",), [
+            dict(kind="no_manual_exposure", camera_ids=[self.camera_id], control="exposure", text=text)
+        ] if self.no_exposure else [])  # it comes again at each open (1.5)
+        self.exposure_range = None if self.no_exposure else getattr(self.source, "exposure_range", lambda: None)()
+        if self.no_exposure:
+            logger.warning(text)
+        else:
+            if self.config.exposure_mode == "AUTO" and self.exposure_range is not None:
+                # 1.3a [GEH0]: the held value is set inside the range of the camera, and the config stores the read-back
+                low, high = self.exposure_range
+                if not low <= value <= high:
+                    logger.info(f"Camera {self.camera_id}: the held exposure {value} is outside the range {low} to "
+                                f"{high} of the camera; it opens at {min(max(value, low), high)}")
+                    value = min(max(value, low), high)
+            readback = self.source.set_controls({"exposure": ControlSetting(auto=False, value=value)})
         self._publish_controls(readback)
         exposure = readback.get("exposure")
         if exposure is not None and exposure.present and exposure.value is not None:
             value = exposure.value
-        self.config = self.config.model_copy(update=dict(exposure_mode=mode, exposure=value))
-
-    def _recommend(self, deadline: int) -> int:
-        """RECOMMEND (11.1): -12 to -5, 10 frames to settle, the mean of the image nearest to 127.5, then one
-        step darker, in the range. A failed search sets back the exposure that the camera had before it."""
-        before = self.source.set_controls({}).get("exposure")  # no change: a read
-        best = None
-        try:
-            for value in range(MIN_EXPOSURE, RECOMMEND_MAX_EXPOSURE + 1):
-                set_ns = perf_counter_ns()
-                self.source.set_controls({"exposure": ControlSetting(auto=False, value=value)})
-                seen, frame = 0, None
-                while seen < NUMBER_OF_FRAMES_TO_SETTLE:
-                    read = self._read_in_start(deadline)
-                    if read is not None and read.arrival_ns > set_ns:
-                        seen, frame = seen + 1, read
-                image = frame.payload if frame.format == "BGR" else decode_jpeg(frame.payload)
-                error = abs(float(np.mean(image)) - TARGET_BRIGHTNESS) if image is not None else float("inf")
-                if best is None or error < best[0]:
-                    best = (error, value)
-        except BaseException as error:
-            # Port from sfn26: the device keeps a UVC control after the close, so put back the value of before.
-            # shortcut: the OpenCV source reports auto=False until skellycam sets auto, so a camera in auto mode
-            # before the search goes back to MANUAL at its read value; upgrade when the source reads the mode.
-            if before is not None and before.present and not getattr(error, "hung", False):
-                try:
-                    self.source.set_controls({"exposure": ControlSetting(auto=before.auto, value=before.value)})
-                except Exception as restore_error:
-                    if getattr(restore_error, "hung", False):
-                        raise restore_error from error  # 9.3: a hung control call ends the camera as hung
-                    logger.warning(f"Camera {self.camera_id}: the exposure of before the search was not set back: "
-                                   f"{type(restore_error).__name__}: {restore_error}")
-            raise
-        return max(MIN_EXPOSURE, best[1] + RECOMMEND_OFFSET)
+        self.config = self.config.model_copy(update=dict(exposure=value))
 
     def _wait_pass(self) -> None:
         """`waiting` (9.4): keep the stream, take no frame to the rings, join the gate with the others."""
@@ -376,7 +371,95 @@ class CameraLoop:
         self.ring_count = 0
         self.status.connected.value = True
         self._arm_hashes("ready")  # the first move to `ready` of this open (D-11); a live change does not arm
-        self.status.set_state("ready")
+        if self._searches():
+            self._start_search()  # camera-requests.md 1.3b: `waiting` to `adjusting`
+        else:
+            self.status.set_state("ready")
+
+    # ----- the exposure search (camera-requests.md 1.3, 1.3b) -----
+
+    def _searches(self) -> bool:
+        """A camera in `AUTO` searches, except on a source that cannot (the OpenCV source of Linux and macOS, 1.7)."""
+        return self.config.exposure_mode == "AUTO" and getattr(self.source, "searches", True) and not self.no_exposure
+
+    def _start_search(self) -> None:
+        """The one-shot search on the open stream, in the state `adjusting`. A check that runs stops (1.5)."""
+        self.check = None
+        self.status.search_count.value += 1
+        self.status.replace_warning_items(self.status.camera_warnings, SEARCH_WARNINGS, [])
+        self.search_before = {name: getattr(self.config, name) for name in HELD_FIELDS}
+        while not self.search_replies.empty():  # a late reply of an earlier search
+            self.search_replies.get_nowait()
+        self.search, self.search_final = ExposureSearch(self.reference_rate, None, self.exposure_range), None
+        self.status.update_info(exposure_search=dict(state="running", chosen=None, add_light=False, reason=None,
+                                                     trials=[]))
+        self.status.set_state("adjusting")
+
+    def _search_step(self) -> None:
+        """One pass: take the results of the sets, send the next set to the control thread, and at the end set the
+        result (or the held value after a failure) one more time (1.3 items 6 and 8)."""
+        search = self.search
+        while not self.search_replies.empty():
+            value, returned_ns, error, readback = self.search_replies.get_nowait()
+            if self.search_final is None:
+                search.set_done(value, returned_ns, error, readback)
+                continue
+            if value != self.search_final:  # a reply of a value tried before the result
+                continue
+            if error is None and (readback is None or readback == value):
+                self._end_search(returned_ns)
+                return
+            text = f"the camera refused exposure {value} ({error})" if error else f"exposure {value} read back as {readback}"
+            if search.result["state"] == "done":
+                search.fail("set-failed" if error else "readback-differs", text)
+            held = self.search_before["exposure"]
+            if value == held:  # the held value failed too: the camera keeps what it has
+                self._end_search(returned_ns)
+                return
+            self.search_final = held
+            self.control.requests.put(("search", held))
+        search.tick(perf_counter_ns())
+        if search.result is None:
+            value = search.take_pending(perf_counter_ns())  # the first set starts the limit of 20 s
+            if value is not None:
+                self.control.requests.put(("search", value))
+        elif self.search_final is None:
+            done = search.result["state"] == "done"
+            self.search_final = search.result["chosen"] if done else self.search_before["exposure"]
+            self.control.requests.put(("search", self.search_final))
+
+    def _end_search(self, after_ns: int) -> None:
+        """The config holds the result, or its fields of before the search after a failure; then the check of 10.2."""
+        search, before = self.search, self.search_before
+        self.search = None
+        result = search.result
+        if result["state"] == "done":
+            self.config = self.config.model_copy(update=dict(exposure_mode="AUTO", exposure=result["chosen"],
+                                                             exposure_found_at_fps=self.reference_rate))
+            texts = [("add_light", add_light_text(self.camera_id, self.reference_rate, result["trials"]))
+                     ] if result["add_light"] else []
+        else:  # [GEH0]: AUTO stays the stored mode; the camera keeps its held value
+            self.config = self.config.model_copy(update=dict(exposure_mode="AUTO", exposure=before["exposure"],
+                                                             exposure_found_at_fps=before["exposure_found_at_fps"]))
+            texts = [("exposure_search_failed", failed_text(self.camera_id, search.detail, before["exposure"]))]
+        for _, text in texts:
+            logger.warning(text)
+        self.status.replace_warning_items(self.status.camera_warnings, SEARCH_WARNINGS, [
+            dict(kind=kind, camera_ids=[self.camera_id], control="exposure", text=text) for kind, text in texts])
+        # `held`: the main process copies the held value into its config once for each search (camera_group.py)
+        self.status.update_info(exposure_search=result, held=dict(
+            count=self.status.search_count.value, **{name: getattr(self.config, name) for name in HELD_FIELDS}))
+        self.check = dict(after=after_ns, first=None, start=None, deadline=None)
+        self.status.set_state("checking")
+
+    def _brightness(self, payload: bytes, image, flags: int) -> float | None:
+        """1.3 item 2.3: the mean of all pixels of the decoded image (`np.mean`, all channels), as sfn26. The bytes
+        that passed the JPEG check; None for a frame with error flags or that does not decode [GEH0]."""
+        if flags & ERROR_FLAGS:
+            return None
+        if image is None:
+            image = decode_jpeg(payload)
+        return float(np.mean(image)) if image is not None else None
 
     def _attach_rings(self) -> None:
         while not self.shm_sub.empty():
@@ -438,12 +521,15 @@ class CameraLoop:
         self.status.frame_count.value = number
         self.status.replaced_count.value = self.replaced_total + self.source.replaced_count - self.replaced_base
         self._feed_check(frame)
+        if self.search is not None:
+            self.search.frame(frame.source_frame_number, frame.arrival_ns,
+                              lambda: self._brightness(payload, image, flags))
         self._feed_block(frame)
 
     def _feed_check(self, frame: CapturedFrame) -> None:
         """The check after a live change (10.2): skip 15 delivered frames, then measure over 60."""
         check = self.check
-        if check is None or frame.arrival_ns <= check["after"]:
+        if check is None or self.search is not None or frame.arrival_ns <= check["after"]:
             return
         if check["first"] is None:
             check["first"] = frame.source_frame_number
@@ -471,6 +557,8 @@ class CameraLoop:
         `measured` is the rate of the window up to the decision: the frames delivered since frame s_a, over
         the time since t_a. It is below the limit by the rule of the deadline. The status shows it (8.4)."""
         self.check = None
+        if self.search is not None:
+            return
         self.status.update_info(measured_fps=measured)
         if self.signals.empty():
             self.status.set_state("too_slow")
@@ -503,31 +591,58 @@ class CameraLoop:
             spec = self.recording_sub.get().take_specs.get(self.camera_id)
             if spec is not None:
                 self._start_take(spec)
-        while not self.signals.empty():
+        while not self.signals.empty():  # first: a queued live change lands before a search starts
             _, after_ns, config = self.signals.get_nowait()
+            if self.search is not None:  # no live change during a search (the main process refuses it, 1.4)
+                continue
             self.config = config
             self.check = dict(after=after_ns, first=None, start=None, deadline=None)
             self.status.set_state("checking")
+        if self.status.search_requested.value:
+            self._requested_search()
+
+    def _requested_search(self) -> None:
+        """The button or "Search again" (camera-requests.md 1.2 (c)): the camera goes to `AUTO` and searches. Never
+        during a take, and only on a stream that runs (1.5); the main process checks the states first."""
+        if (self.search is None and self.take_writer is None and not self.status.should_pause.value
+                and not self.no_exposure and self.status.state in ("ready", "too_slow", "checking")):
+            self._start_search()
+            self.config = self.config.model_copy(update=dict(exposure_mode="AUTO"))
+        self.status.search_requested.value = False  # last: the main process then sees the new count and state
 
     def _apply_change(self, requested: CameraConfig) -> None:
         current = self.config
         if needs_reopen(requested, current):
             self._reopen(requested)
             return
+        if requested.exposure_mode == "AUTO" and current.exposure_mode != "AUTO" and self.search is None \
+                and getattr(self.source, "searches", True) and not self.no_exposure \
+                and not self.status.should_pause.value and self.take_writer is None:  # 1.1 [G4]: never in a take
+            # camera-requests.md 1.2 (c): a switch to AUTO searches on the open stream; the response sees `adjusting`
+            self._start_search()  # it keeps the MANUAL setting of before, for a failed search (1.3 item 6)
+            self.config = requested.model_copy(update=dict(
+                framerate=current.framerate, resolution=current.resolution, exposure=current.exposure,
+                exposure_found_at_fps=current.exposure_found_at_fps))
+            self._publish_config()
+            return
         adopted = requested.model_copy(update=dict(framerate=current.framerate, resolution=current.resolution))
+        if requested.exposure_mode == "MANUAL":
+            adopted = adopted.model_copy(update=dict(exposure_found_at_fps=None))  # camera-requests.md 1.3a
         changes = {}
-        if requested.exposure_mode == "AUTO" and current.exposure_mode != "AUTO":
-            changes["exposure"] = ControlSetting(auto=True, value=None)
+        if self.no_exposure:  # 1.9 [K3]: an exposure in a request is ignored, not refused; the warning stays
+            pass
         elif requested.exposure_mode == "MANUAL" and (current.exposure_mode, current.exposure) != ("MANUAL", requested.exposure):
             changes["exposure"] = ControlSetting(auto=False, value=requested.exposure)
         if changes:
+            self.status.replace_warning_items(self.status.camera_warnings, SEARCH_WARNINGS, [])  # 1.5: an exposure change
             # A failed change publishes self.config: it must hold the request's number and name (camera-requests.md 8.1)
             self.config = current.model_copy(update=dict(camera_index=requested.camera_index,
                                                          camera_name=requested.camera_name))
             self.control.requests.put((adopted, changes))  # live, on the control thread (U16)
             return
         if requested.exposure_mode == "AUTO":
-            adopted = adopted.model_copy(update=dict(exposure=current.exposure))
+            adopted = adopted.model_copy(update=dict(exposure=current.exposure,
+                                                     exposure_found_at_fps=current.exposure_found_at_fps))
         self.config = adopted
         self._publish_config()
 
@@ -539,6 +654,10 @@ class CameraLoop:
         self._close_rings()
         self._add_replaced()
         self.source.close()
+        self.search = None
+        if requested.exposure_mode == "AUTO":  # camera-requests.md 1.3a [A8]: the held value, not the request's
+            requested = requested.model_copy(update=dict(exposure=self.config.exposure,
+                                                         exposure_found_at_fps=self.config.exposure_found_at_fps))
         self.config = requested
         self._start_up()
 
@@ -688,6 +807,10 @@ class CameraLoop:
 
     def _end(self, hung: bool) -> None:
         self.status.closing.value = True  # the stall watch is off in each close, also from the group flags (F9)
+        if self.search is not None:  # camera-requests.md 1.3 item 6: the search sets nothing; the close restores
+            self.search.cancel((self.failure_code or "camera-closed") if self.failed else "camera-closed")
+            self.status.update_info(exposure_search=self.search.result)
+            self.search = None
         if hung:
             self.hard_end()
         try:
@@ -843,9 +966,11 @@ class _ControlThread:
             if self.stop.is_set() or request is None:
                 return
             try:
-                if request:
+                if request and isinstance(request[0], str):
+                    self._search_set(request[1])
+                elif request:
                     self._live_change(*request)
-                else:
+                elif loop.search is None:  # camera-requests.md 1.3 [A4]: no read while the search runs
                     loop._publish_controls(loop.source.set_controls({}))
             except CaptureFailure as failure:
                 if failure.hung:
@@ -861,6 +986,22 @@ class _ControlThread:
             except Exception as error:
                 logger.exception(f"Camera {loop.camera_id} control thread error: {error}")
             failing = False
+
+    def _search_set(self, value: int) -> None:
+        """One set of the exposure search (camera-requests.md 1.3). The loop gets (value, return time, error text,
+        read-back value). A hang raises, as each control call (6.6)."""
+        loop = self.loop
+        try:
+            readback = loop.source.set_controls({"exposure": ControlSetting(auto=False, value=value)})
+        except CaptureFailure as failure:
+            if failure.hung:
+                raise
+            loop.search_replies.put((value, perf_counter_ns(), failure.reason, None))
+            return
+        returned = perf_counter_ns()
+        loop._publish_controls(readback)
+        got = readback.get("exposure")
+        loop.search_replies.put((value, returned, None, got.value if got is not None and got.present else None))
 
     def _live_change(self, config: CameraConfig, changes: dict[str, ControlSetting]) -> None:
         """11.2, U14: a change that fails without a hang leaves the camera in its earlier state."""
@@ -882,7 +1023,8 @@ class _ControlThread:
             return
         if got is not None and got.value is not None:
             config = config.model_copy(update=dict(exposure=got.value))
-        loop.status.set_state("checking")  # before the response, so that a record start sees it (D33)
+        if loop.search is None:  # a search that runs keeps `adjusting` (1.4)
+            loop.status.set_state("checking")  # before the response, so that a record start sees it (D33)
         loop.signals.put(("check", after_ns, config))
         loop.ipc.pubsub.topics[TopicTypes.EXTRACTED_CONFIG].publish(DeviceExtractedConfigMessage(extracted_config=config))
 

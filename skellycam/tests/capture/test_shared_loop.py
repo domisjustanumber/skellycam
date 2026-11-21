@@ -268,91 +268,32 @@ BRIGHTNESS = ((-12, 2), (-11, 4), (-10, 8), (-9, 16), (-8, 32), (-7, 64), (-6, 1
 
 
 @pytest.mark.parametrize("mode", ["MANUAL", "AUTO", "RECOMMEND"])
-def test_t_cap_41_exposure_modes(monkeypatch, mode):
-    """T-CAP-41, sections 11.1 and 9.1 [D29, D35, agent 29]: `MANUAL -7`, `AUTO`, `RECOMMEND` with a
-    brightness model in the fake. The fake gets the values in log2 seconds; `RECOMMEND` tries -12 to -5
-    and ends in `MANUAL` with one step darker than the value nearest to 127.5 (-6 in this model, so -7)
-    (decision H of the user, 2026-11-20)."""
+def test_t_cap_41_exposure_modes(monkeypatch, no_camera_auto_exposure, mode):
+    """T-CAP-41, sections 11.1 and 9.1 [D29, D35, agent 29], changed by camera-requests.md 1.10 (16.2): `MANUAL -7`
+    and `AUTO` held at -9, with a brightness model in the fake. The fake gets the values in log2 seconds.
+    `MANUAL` opens with one manual set of -7. `AUTO` opens with one manual set of its held value -9 (1.3a) [G1].
+    `RECOMMEND` is read as `AUTO` [G6]. `AUTO` and `RECOMMEND` then search after the warm-up: -12 to -5, never -4,
+    and the result -7 (-6 is nearest to 127.5, then one step darker). No set has `auto=True` (T-REQ-15)."""
     with capture_app(monkeypatch, [FakeScript(brightness=BRIGHTNESS)]) as app:
         camera_id = app.factory.camera_ids[0]
-        response = ready_app_steps(app, [app.config(camera_id, exposure_mode=mode, exposure=-7)])
+        exposure = -7 if mode == "MANUAL" else -9
+        app.detect()
+        response = app.apply([app.config(camera_id, exposure_mode=mode, exposure=exposure)])
+        assert response.status_code == 200, response.text
         settings = [s["exposure"] for s in app.factory.logs[camera_id].settings if "exposure" in s]
         assert settings, "the fake got no exposure setting"
         values = [s.value for s in settings if s.value is not None]
         assert all(isinstance(v, int) and -13 <= v <= -1 for v in values), f"not log2 seconds: {values}"
         config = response.json()["camera_configs"][camera_id]
+        assert (settings[0].auto, settings[0].value) == (False, exposure)
+        assert (config["exposure_mode"], config["exposure"]) == ("MANUAL" if mode == "MANUAL" else "AUTO", exposure)
+        app.wait_state(camera_id, "ready")
+        values = [s["exposure"].value for s in app.factory.logs[camera_id].settings if "exposure" in s]
         if mode == "MANUAL":
-            assert (settings[0].auto, settings[0].value) == (False, -7)
-            assert (config["exposure_mode"], config["exposure"]) == ("MANUAL", -7)
-        elif mode == "AUTO":
-            assert settings[0].auto is True
-            assert config["exposure_mode"] == "AUTO"
+            assert values == [-7]
         else:
-            assert set(range(-12, -4)) <= set(values), f"the search did not try -12 to -5: {sorted(set(values))}"
-            assert -4 not in values, "the search tried -4 (about 16 fps on the Logitech cameras)"
-            assert (config["exposure_mode"], config["exposure"]) == ("MANUAL", -7)
-
-
-@pytest.mark.parametrize("scene", ["dark", "bright"])
-def test_t_cap_41_recommend_offset_and_range(monkeypatch, scene):
-    """T-CAP-41, section 11.1, decision H of the user (2026-11-20): in a dark scene the nearest value is the
-    brightest that the search tries, -5 (never -4), and the result is -6; in a bright scene the nearest
-    value is -12, and the step darker stays in the range: -12."""
-    dark = tuple((v, 2 * (v + 13)) for v in range(-12, -3))
-    bright = tuple((v, 130 + 15 * (v + 12)) for v in range(-12, -3))
-    brightness = dark if scene == "dark" else bright
-    with capture_app(monkeypatch, [FakeScript(brightness=brightness)]) as app:
-        camera_id = app.factory.camera_ids[0]
-        response = ready_app_steps(app, [app.config(camera_id, exposure_mode="RECOMMEND", exposure=-7)])
-        values = [s.value for s in app.factory.logs[camera_id].settings if "exposure" in s for s in [s["exposure"]]]
-        config = response.json()["camera_configs"][camera_id]
-    assert -4 not in values and max(v for v in values if v is not None) == -5
-    assert (config["exposure_mode"], config["exposure"]) == ("MANUAL", -6 if scene == "dark" else -12)
-
-
-def test_a_failed_recommend_search_sets_back_the_exposure_of_before(monkeypatch):
-    """Section 11.1, port from sfn26: the frames stop during the search, so the start fails. The camera keeps a
-    UVC control after the close, so the loop sets back the exposure that the camera had before the search: the
-    fake starts at MANUAL -6."""
-    with capture_app(monkeypatch, [FakeScript(brightness=BRIGHTNESS, stop_after_frame=40)]) as app:
-        camera_id = app.factory.camera_ids[0]
-        app.detect()
-        response = app.apply([app.config(camera_id, exposure_mode="RECOMMEND", exposure=-7)])
-        assert response.status_code == 200, response.text
-        assert camera_id in response.json()["camera_failures"]
-        settings = [s["exposure"] for s in app.factory.logs[camera_id].settings if "exposure" in s]
-    assert -12 in [s.value for s in settings], "the search did not start"
-    assert (settings[-1].auto, settings[-1].value) == (False, -6)
-
-
-def test_a_hung_set_back_of_the_exposure_ends_the_camera_as_hung():
-    """Section 11.1 and 9.3: when the set-back call of a failed search hangs, the loop gets the hung failure, so
-    that the hard end of a hung camera runs. The first error does not hide it."""
-    from types import SimpleNamespace
-
-    from skellycam.core.camera.capture.camera_loop import CameraLoop
-    from skellycam.core.camera.capture.source import CaptureFailure, ControlValue
-
-    calls = []
-
-    def set_controls(changes):
-        calls.append(changes)
-        if not changes:
-            return {"exposure": ControlValue(present=True, auto=False, value=-6)}
-        if changes["exposure"].value == -6:  # the set-back
-            raise CaptureFailure("set controls", "a control call did not return in 2 s", hung=True)
-        return {"exposure": ControlValue(present=True, auto=False, value=changes["exposure"].value)}
-
-    def read_in_start(deadline):
-        raise CaptureFailure("warm-up", "not ready in 15 s")
-
-    loop = SimpleNamespace(source=SimpleNamespace(set_controls=set_controls), camera_id="c1",
-                           _read_in_start=read_in_start)
-    with pytest.raises(CaptureFailure) as failure:
-        CameraLoop._recommend(loop, 0)
-    assert failure.value.hung and failure.value.stage == "set controls"
-    assert isinstance(failure.value.__cause__, CaptureFailure) and failure.value.__cause__.stage == "warm-up"
-    assert [change["exposure"].value for change in calls[1:]] == [-12, -6]
+            assert values == [-9] + list(range(-12, -4)) + [-7], values
+            assert app.group.to_state().configs[camera_id].exposure == -7
 
 
 # ---------------------------------------------------------------------------

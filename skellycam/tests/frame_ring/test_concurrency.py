@@ -243,7 +243,8 @@ def test_t_ring_12_reader_killed(cleanup, spawn, procs):
     creator = cleanup.own(fr.FrameRingCreator.create(
         camera_id="timing", camera_index=0, pixel_format=fr.PixelFormat.JPEG, width=1920,
         height=1080, fps_num=60, fps_den=1, history_s=1.0))
-    phase, stop, ready = spawn.Value("i", 0), spawn.Event(), spawn.Event()
+    # No lock: the victim can die inside a read of `phase`, and a lock that it held stays taken (see the test below)
+    phase, stop, ready = spawn.Value("i", 0, lock=False), spawn.Event(), spawn.Event()
     timings, survivor_results, victim_results = spawn.Queue(), spawn.Queue(), spawn.Queue()
     _start(spawn, procs, ring_children.timed_writer, creator.name, size, phase, stop, ready, timings)
     _start(spawn, procs, ring_children.busy_reader, creator.name, size, phase, stop, survivor_results)
@@ -324,3 +325,22 @@ def test_t_ring_14_newest_under_load(cleanup, spawn, procs):
     finally:
         stop.set()
     assert last > 0
+
+
+def test_a_killed_process_keeps_the_lock_of_a_shared_value(spawn, procs):
+    """The hang of the suite run of 2026-11-21 (T-RING-12 waited for ever at `phase.value = 1`): a process that is
+    killed while it holds the lock of a `multiprocessing.Value` leaves the lock taken, so each later locked access
+    waits for ever. The waits here are bounded. T-RING-12 and T-RING-36 therefore share `phase` with no lock."""
+    import inspect
+
+    from skellycam.tests.frame_ring import test_bgr_ring
+
+    value, held = spawn.Value("i", 0), spawn.Event()
+    holder = _start(spawn, procs, ring_children.hold_lock_forever, value, held)
+    _wait(held, "the child holds the lock")
+    holder.kill()
+    holder.join(timeout=WAIT_TIMEOUT_S)
+    lock = value.get_lock()
+    assert not lock.acquire(timeout=1.0), "the lock of the killed process was released"
+    for test in (test_t_ring_12_reader_killed, test_bgr_ring.test_t_ring_36_reader_killed):
+        assert 'spawn.Value("i", 0, lock=False)' in inspect.getsource(test), test.__name__

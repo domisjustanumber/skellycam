@@ -64,6 +64,14 @@ class OpenCVSource:
                           fps_num=fps.numerator, fps_den=fps.denominator, format="BGR",
                           device_path=opened_device_path(opened.camera_index))
 
+    @property
+    def searches(self) -> bool:
+        """camera-requests.md 1.7: the exposure search runs on the OpenCV source of Windows only."""
+        return sys.platform == "win32"
+
+    def exposure_range(self) -> tuple[int, int] | None:
+        return None  # OpenCV gives no range: the search tries each value of camera-requests.md 1.3
+
     def read_frame(self, timeout_s: float) -> CapturedFrame | None:
         deadline = time.perf_counter() + timeout_s
         while True:
@@ -94,7 +102,7 @@ class OpenCVSource:
             if name != "exposure":
                 raise CaptureFailure("set controls", f"Camera {self.config.camera_id} has no {name} control",
                                      code="control-failed")
-            if sys.platform == "linux":  # 14.1: the forced auto exposure on Linux stays until phase 7
+            if sys.platform in ("linux", "darwin"):  # camera-requests.md 1.7: the forced auto exposure, for now
                 capture.set(cv2.CAP_PROP_AUTO_EXPOSURE, AUTO_EXPOSURE_SETTING)
                 self._exposure_auto = True
             elif setting.auto:

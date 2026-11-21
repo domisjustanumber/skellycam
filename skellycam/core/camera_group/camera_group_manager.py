@@ -49,6 +49,7 @@ class CameraGroupManager:
     detected_cameras: dict[CameraIdString, CameraDeviceInfo] = field(default_factory=dict)  # U17 (c)
     closing: bool = False
     closed_diagnostics: dict = field(default_factory=dict)  # the last dicts of each camera of a closed group (F4)
+    searching: bool = False  # an exposure search of the endpoint runs (camera-requests.md 1.5)
     camera_groups: dict[CameraGroupIdString, CameraGroup] = field(default_factory=dict)
     camera_group_framerate_subscriptions: dict[CameraGroupIdString, TopicSubscriptionQueue] = field(
         default_factory=dict
@@ -109,7 +110,11 @@ class CameraGroupManager:
             # 7.1, U17: the check needs the detection data, also to refuse a virtual camera (ADR-PDD3 W5)
             self.detected_cameras = {camera.camera_id: camera
                                      for camera in await asyncio.to_thread(detect_available_cameras)}
+        if camera_group is not None:
+            camera_group.adopt_search_results()
         warnings, rates_known = self._check_request(camera_configs, camera_group)
+        if camera_group is not None:  # camera-requests.md 1.5 [AC5B]: each apply request of the user clears them
+            camera_group.clear_group_warnings()
         started = datetime.now(timezone.utc)
         if camera_group is None:
             selected = {camera_id: config for camera_id, config in camera_configs.items() if config.use_this_camera}
@@ -124,8 +129,10 @@ class CameraGroupManager:
             text = await asyncio.to_thread(describe_start_failure, failures, camera_configs, started,
                                            lambda: detect_available_cameras(modes=False), links)
             if text:
-                warnings.append(dict(kind="start_failure", camera_ids=sorted(failures), text=text))
+                item = dict(kind="start_failure", camera_ids=sorted(failures), text=text)
+                warnings.append(item)
                 logger.warning(text)
+                camera_group.add_group_warning(item)  # the main process owns it (camera-requests.md 1.5)
         if not rates_known:
             # agent 56, ADR-PDD3 W3: different real rates after the open give a warning item and a log record
             rates = {camera_id: config.framerate for camera_id, config in camera_group.configs.items()
@@ -195,15 +202,55 @@ class CameraGroupManager:
             if recording:  # D36
                 raise RequestRefused(409, "A recording runs: no change is possible; recording cameras: "
                                           + ", ".join(recording))
+            if camera_group.take is not None or camera_group.take_busy:  # D36, 1.1 [G4]: also in a record start [GEH0]
+                raise RequestRefused(409, "A recording runs or starts: no change is possible")
             blocked = [f"camera {camera_id} is {statuses[camera_id].state}"
                        for camera_id, config in camera_configs.items()
-                       if camera_id in camera_group.configs and statuses[camera_id].state in ("starting", "waiting")
+                       if camera_id in camera_group.configs
+                       and statuses[camera_id].state in ("starting", "waiting", "adjusting")
                        and config.use_this_camera and not same_config(config, camera_group.configs[camera_id])]
             if blocked:  # agent 45
                 raise RequestRefused(409, "A camera that starts cannot take a changed config: " + "; ".join(blocked))
         for item in warnings:
             logger.warning(item["text"])
         return warnings, rates_known
+
+    async def search_exposure(self, camera_ids: list | None = None) -> dict:
+        """`POST /camera/group/exposure/auto` (camera-requests.md 1.5) [B18]: with no IDs each selected camera that
+        streams, else the named cameras. 409 and 422 by the rules of 1.5; a camera that does not stream is named in
+        `not_streaming`."""
+        if not self.camera_groups:
+            raise RequestRefused(409, "No camera group runs")
+        group = next(iter(self.camera_groups.values()))
+        statuses = group.cameras.orchestrator.camera_statuses
+        unknown = [camera_id for camera_id in camera_ids or () if camera_id not in group.configs]
+        if unknown:
+            raise RequestRefused(422, "These cameras are not selected: " + ", ".join(unknown))
+        if group.take is not None or group.take_busy or any(
+                status.recording_in_progress.value for status in list(statuses.values())):
+            raise RequestRefused(409, "A recording runs: the exposure cannot change")  # D36, 1.1 [G4]
+        blocked = [f"camera {camera_id} is {status.state}" for camera_id, status in list(statuses.items())
+                   if status.state in ("starting", "waiting", "adjusting")]
+        if self.searching or blocked:
+            raise RequestRefused(409, "An exposure search cannot start now: " + "; ".join(blocked or ["a search runs"]))
+        named = list(camera_ids or group.configs)
+        opencv = [camera_id for camera_id in named if statuses[camera_id].info_dict().get("searches") is False]
+        if opencv and (camera_ids or len(opencv) == len(named)):  # 1.7 [K2]: the button skips them when others can
+            raise RequestRefused(422, "the exposure search does not run on the OpenCV source of this system: "
+                                 + ", ".join(opencv))
+        lacking = {camera_id: item for camera_id in named for item in statuses[camera_id].warning_items(
+            statuses[camera_id].camera_warnings) if item["kind"] == "no_manual_exposure"}  # 1.9 [K3]: skipped
+        streaming = [camera_id for camera_id in named if camera_id not in opencv and camera_id not in lacking
+                     and statuses[camera_id].state in ("ready", "too_slow", "checking")]
+        self.searching = True
+        try:
+            response = await group.search_exposure(streaming)
+        finally:
+            self.searching = False
+        response["not_streaming"] = [camera_id for camera_id in named if camera_id not in opencv
+                                     and camera_id not in lacking and camera_id not in streaming]
+        response["warnings"] += list(lacking.values())
+        return response
 
     def get_camera_group(self, camera_group_id: CameraGroupIdString) -> CameraGroup:
         """Retrieve a camera group by its ID."""

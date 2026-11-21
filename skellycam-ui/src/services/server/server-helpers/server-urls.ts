@@ -47,6 +47,7 @@ class ServerUrls {
             detectCameras: `${baseUrl}/skellycam/camera/detect`,
             camerasConnectOrUpdate: `${baseUrl}/skellycam/camera/group/apply`,
             closeAll: `${baseUrl}/skellycam/camera/group/close/all`,
+            exposureAuto: `${baseUrl}/skellycam/camera/group/exposure/auto`,  // camera-requests.md 1.5
             updateConfigs: `${baseUrl}/skellycam/camera/update`,
             detectMicrophones: `${baseUrl}/skellycam/camera/microphone/detect`,
 

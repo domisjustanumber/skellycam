@@ -24,15 +24,14 @@ test('the apply request body holds the numbers and the names of the current dete
     });
 });
 
-test('interim: the Auto choice goes on the wire as RECOMMEND (the search); MANUAL is unchanged; the stored config keeps AUTO', () => {
+test('the Auto choice goes on the wire as AUTO (the exposure search of the server, camera-requests.md 1.5); MANUAL is unchanged', () => {
     const cameras = [{ id: 'a', index: 0, name: 'A' }, { id: 'm', index: 1, name: 'M' }];
     const auto = { camera_id: 'a', camera_index: 0, camera_name: 'A', exposure_mode: 'AUTO', exposure: -7 };
     const manual = { camera_id: 'm', camera_index: 1, camera_name: 'M', exposure_mode: 'MANUAL', exposure: -6 };
     const body = applyRequestBody({ a: auto, m: manual }, cameras);
-    assert.equal(body.camera_configs.a.exposure_mode, 'RECOMMEND');
-    assert.equal(body.camera_configs.a.exposure, -7);
+    assert.deepEqual(body.camera_configs.a, auto);
     assert.deepEqual(body.camera_configs.m, manual);
-    assert.equal(auto.exposure_mode, 'AUTO', 'the desired config is not changed');
+    assert.doesNotMatch(readFileSync(new URL('./camera-number.ts', import.meta.url), 'utf8'), /RECOMMEND|shortcut:/);
 });
 
 test('the apply thunk sends the body of applyRequestBody', () => {
