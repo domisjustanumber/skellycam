@@ -14,14 +14,15 @@ T0 = 1_000_000_000_000
 MODEL = {-12: 10, -11: 20, -10: 40, -9: 70, -8: 110, -7: 150, -6: 190, -5: 230}  # T-REQ-01
 
 
-def simulate(brightness, rates=None, mode_rate=30.0, lag=0, until_s=60.0, exposure_range=None):
-    """Run one search. Returns (search, the sets in order, the frames of each trial as (sfn, brightness))."""
+def simulate(brightness, rates=None, mode_rate=30.0, lag=0, until_s=60.0, exposure_range=None, slow_first=None):
+    """Run one search. Returns (search, the sets in order, the frames of each trial as (sfn, brightness)).
+    `slow_first`: {value: rate} for the first 40 frames after the set of that value (then `rates` or the mode rate)."""
     from skellycam.core.camera.capture.exposure_search import ExposureSearch
 
-    rates = rates or {}
+    rates, slow_first = rates or {}, slow_first or {}
     search = ExposureSearch(mode_rate, T0, exposure_range)
     now, sfn, value, sets, set_at = T0, 0, -7, [], []  # set_at: (sfn of the first frame after the set, value)
-    seen = []
+    seen, last = [], T0  # last: the arrival of the last frame; a wake of the search does not move the next frame
     while search.result is None and now < T0 + until_s * 1e9:
         pending = search.take_pending()
         if pending is not None:
@@ -29,12 +30,13 @@ def simulate(brightness, rates=None, mode_rate=30.0, lag=0, until_s=60.0, exposu
             sets.append(value)
             set_at.append((sfn, value))
             search.set_done(value, now)
-        interval = round(1e9 / rates.get(value, mode_rate))
-        if search.wake_ns < now + interval:
+        early = value in slow_first and sfn - set_at[-1][0] < 40
+        due = last + round(1e9 / (slow_first[value] if early else rates.get(value, mode_rate)))
+        if search.wake_ns < due:
             now = max(now, search.wake_ns)
             search.no_frame(now)
             continue
-        now += interval
+        now = last = max(now, due)
         shown = next((v for s, v in reversed(set_at) if s <= sfn - lag), -7)
         gray = brightness[shown]
         seen.append((sfn, gray))
@@ -153,6 +155,33 @@ def test_t_req_09_the_search_fails_at_20_s():
     assert (search.result["state"], search.result["reason"]) == ("failed", "timed-out")
     assert search.detail == "it took more than 20 s"
     assert abs((search.ended_ns - T0) / 1e9 - 20.0) <= 0.25
+
+
+def test_t_req_77_a_borderline_value_is_measured_again_before_it_is_dropped(caplog):
+    """T-REQ-77, 1.3 item 2.7 [Q522, NYT6]: -8 reads 28.1 fps in its first window, then 30 fps: it is measured again
+    and kept, so the result is -9 (with -8 dropped it is -7). The repeat costs about 1.0 s at 30 fps. A value that
+    stays at 28.1 fps is dropped after the second window; a value at 25 fps (more than 10 % below) is not measured
+    again. Each value is set one time."""
+    import logging
+
+    baseline, _, _ = simulate(MODEL)
+    with caplog.at_level(logging.INFO):
+        search, sets, _ = simulate(MODEL, slow_first={-8: 28.1})
+    assert sets == list(range(-12, -4))
+    assert search.result["chosen"] == -9
+    trial = {t["value"]: t for t in search.result["trials"]}[-8]
+    assert trial["kept_rate"] and trial["measured_fps"] > 29.1 and trial["brightness"] == MODEL[-8]
+    assert len([m for m in caplog.messages if "measures -8 again" in m]) == 1
+    added_s = (search.ended_ns - baseline.ended_ns) / 1e9
+    assert 0.9 <= added_s <= 1.2, added_s
+
+    for rate, windows in ((28.1, 2), (25.0, 1)):
+        search, sets, _ = simulate(MODEL, rates={-8: rate})
+        assert sets == list(range(-12, -4))
+        trial = {t["value"]: t for t in search.result["trials"]}[-8]
+        assert not trial["kept_rate"] and search.result["chosen"] == -7
+        added_s = (search.ended_ns - baseline.ended_ns) / 1e9
+        assert (added_s > 0.9) == (windows == 2), (rate, added_s)
 
 
 @pytest.mark.parametrize(("error", "readback", "reason", "detail"), [

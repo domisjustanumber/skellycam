@@ -159,6 +159,17 @@ with the guard of the frame rate [E2]:
    6. Early decision, as [cap 10.2]: the value does not keep the rate as soon as frame `s_a + 30`
       cannot arrive in time: `now - t_a > 30 / (0.97 x r)`. The search then goes to the next value at
       once [A1].
+   7. A borderline value is measured again one time before the search drops it (Q522 of the user,
+      "re-measure a borderline value"). A value is borderline when it does not keep the rate (item 5
+      or item 6) and its measured rate is not more than 10 % below the mode rate (`measured >= 0.90 x r`).
+      The second window starts at the frame that ended the first window (frame b, or the last frame
+      before the early decision), with no new set and no new frames to settle. It has the 30 intervals
+      and the early decision of items 4 and 6. The trial keeps the brightness of the first window, and
+      the second window decides: its rate is the `measured_fps` of the trial. A second miss drops the
+      value. The search logs each measurement again. Reason: on real cameras one trial read 28.1 fps at
+      a value that kept 30 fps at the next open (the C922 at -7 in one of five opens; the Kiyo Pro at -8
+      in four of five), so the chosen value changed between opens. The margin of 10 % and the one repeat
+      are proposed [ADR-NYT6](../decisions/entries/NYT6-choices-of-fix-lane-2.md).
 3. The search measures the rate at each value. It does not assume that a shorter exposure gives a
    higher rate [E8]. Measured: in its 60 fps mode, the C922 gave 59.7 fps at -7, 29.7 fps at -8, -9
    and -10, and 56.5 fps at -6 [M `research/usb_cameras/docs/free_run_log_20261120.md` §9].
@@ -208,6 +219,12 @@ The frames and the time:
 - The worst case at 30 fps, with each value slow at 15 fps: 10 frames take 0.67 s, and the early
   decision comes 1.03 s after `t_a`. That is 8 x 1.7 s = 13.6 s. The limit of 20 s holds it, with
   margin for the eight set calls (1 to 3 ms each [cap 6.8]).
+- A measurement again (1.3 item 2.7) adds about 1.0 s at 30 fps (about 0.5 s at 60 fps) for each
+  borderline value; a 15 fps value is not borderline, so the worst case above does not change.
+  On the lab cameras a search of 7 values took about 16 s, so a search with more than about three
+  borderline values can pass 20 s and fail with `timed-out`. The limit stays 20 s. A camera run
+  records how often a value is measured again (T-REQ-23, T-REQ-26)
+  [ADR-NYT6](../decisions/entries/NYT6-choices-of-fix-lane-2.md).
 
 Who does what:
 
@@ -811,6 +828,7 @@ the text of a slow camera.
 | T-REQ-07 | fake | The image follows a new exposure only from the 3rd frame after the set; frames that arrived before the set returned have the old brightness; press the button. | Result as in T-REQ-01; the brightness of each trial is the value of the 10th frame that arrived after the set returned. |
 | T-REQ-08 | fake | One value at 10 fps, the others at 30, on the virtual clock; press the button. | The search leaves the slow value at `t_a + 30 / (0.97 x 30)` s, ±25 ms; that trial has `kept_rate: false`. |
 | T-REQ-09 | fake | Each value at 5 fps (the fake still delivers); press the button. | The search fails at 20 s (±0.25 s) of the virtual clock; the old setting is set again. |
+| T-REQ-77 | fake | The model of T-REQ-01; the first 40 frames after the set of -8 come at 28.1 fps, then 30 fps. Then -8 at 28.1 fps for each frame; then -8 at 25 fps. | First case: -8 is measured again and kept, so the result is -9, not -7; the search takes about 1.0 s more than with no borderline value. Second case: -8 is measured two times and dropped. Third case: -8 is measured one time (25 fps is more than 10 % below 30) and dropped. Each value is set one time (1.3 item 2.7). |
 | T-REQ-10 | fake | Two fakes `ready`, A and B in `MANUAL`; apply B with `AUTO` only. During the search of B: a record start; an apply that changes the size of B. | Only B searches; A gets no set call; the rings of A and B get frames at each gate round during the search; the record start gets 409 that names B and `adjusting`; the apply gets 409. |
 | T-REQ-11 | fake | A recording runs with two fakes. Press the button; send "Search again" for one camera; send an apply with `AUTO` for one camera. | Each gets 409; the fakes get no set call; the configs do not change. |
 | T-REQ-12 | fake | Connect, reopen by a size change, reopen by a rate change, and "apply again" after a fail, each with one fake in `AUTO` held at -9 (`exposure_found_at_fps` 30) and the brightness of T-REQ-01 at each rate. In the reopens, the request holds `exposure` -5. | Each open gives one set of -9 at step 5, not -5 [A8], then a search after the warm-up [G1]; each ends with -9 and `exposure_found_at_fps` at the mode rate of that open. |
