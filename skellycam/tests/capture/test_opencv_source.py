@@ -306,6 +306,17 @@ def fake_capture(fourcc="YUY2"):
     return Capture()
 
 
+@pytest.mark.parametrize(("delivered", "reported"), [("YUY2", "YUY2"), (None, "MJPG")])
+def test_the_extracted_config_reports_the_fourcc_that_the_camera_delivers(delivered, reported):
+    """Fix lane I: the config that OpenCV reports after the open has the FOURCC of `CAP_PROP_FOURCC`, not the default
+    of the config; a backend that gives 0 keeps the default (MJPG)."""
+    from skellycam.core.camera.opencv.opencv_helpers.opencv_extract_config import extract_config_from_cv2_capture
+
+    config = extract_config_from_cv2_capture(camera_index=0, camera_id="c1", camera_name="camera",
+                                             cv2_capture=fake_capture(delivered))
+    assert config.capture_fourcc == reported
+
+
 def test_the_apply_logs_without_the_trace_level_and_a_failed_apply_releases_the_capture(monkeypatch):
     """Fix lane I: `apply_camera_configuration` works with no `logger.trace` (outside the logging set-up of the
     server); when it raises in `create_cv2_video_capture`, the capture is released."""

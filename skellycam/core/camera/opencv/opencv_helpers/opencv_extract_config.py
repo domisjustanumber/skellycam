@@ -22,6 +22,8 @@ def extract_config_from_cv2_capture(camera_index: CameraIndexInt,
     height = int(cv2_capture.get(cv2.CAP_PROP_FRAME_HEIGHT))
     exposure = int(cv2_capture.get(cv2.CAP_PROP_EXPOSURE))
     framerate = cv2_capture.get(cv2.CAP_PROP_FPS)
+    code = int(cv2_capture.get(cv2.CAP_PROP_FOURCC))
+    fourcc = code.to_bytes(4, "little").decode("ascii", errors="replace")  # the format that the camera delivers
 
     if any([
         width == 0, 
@@ -47,6 +49,7 @@ def extract_config_from_cv2_capture(camera_index: CameraIndexInt,
             exposure=exposure,
             framerate=framerate,
             rotation=rotation,
+            **({"capture_fourcc": fourcc} if fourcc.isalnum() else {}),  # some backends give 0
         )
     except Exception as e:
         logger.error(f"Failed to extract configuration from cv2.VideoCapture object - {type(e).__name__}: {e}")
