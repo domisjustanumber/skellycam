@@ -1,7 +1,10 @@
 // Run: node --experimental-strip-types --test src/store/slices/cameras/rate-choice.test.ts
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { chosenRate, nextRateChecking, normalizeFramerate, rateChoice, rateFallbackText, rateRequestConfigs, withChosenRate } from './rate-choice.ts';
+import {
+    chosenRate, groupRate, nextRateChecking, normalizeFramerate, rateCheckingAtResponse, rateChoice, rateFallbackText,
+    rateRequestConfigs, replacesDesired, withChosenRate,
+} from './rate-choice.ts';
 
 test('a stored "auto" rate (-1 or 0) loads as 30, so saved and new cameras request one rate (camera-requests.md 2.2, 2.8)', () => {
     const stored = (framerate: number) => ({ framerate, exposure: -7 });
@@ -66,11 +69,26 @@ test('T-REQ-90: rateFallbackText reads the live state; nextRateChecking ends whe
     assert.equal(rateFallbackText(group('ready')), null);
     assert.equal(rateFallbackText(group('ready', [fallback])), fallback.text);
     assert.equal(rateFallbackText(group('ready', [{ kind: 'add_light', text: 'add light' }])), null);
-    assert.equal(nextRateChecking(false, false, false, true), true, 'a new fall back item');
+    assert.equal(nextRateChecking(false, true, false, true), true, 'a new fall back item while a camera is busy');
+    assert.equal(nextRateChecking(false, false, false, true), false, 'a new fall back item with no busy camera: no state comes to end it');
     assert.equal(nextRateChecking(true, true, false, false), true, 'a camera is busy');
     assert.equal(nextRateChecking(true, false, true, false), true, 'the apply of the pick runs');
     assert.equal(nextRateChecking(true, false, false, false), false, 'no camera is busy, and no apply runs');
     assert.equal(nextRateChecking(false, true, false, false), false, 'a later search on request, with an old item');
+    // The response of a pick: a camera in AUTO searches after it, so the next live state decides
+    assert.equal(rateCheckingAtResponse(true, true, false), true, 'AUTO: the last live state is from before the reopen');
+    assert.equal(rateCheckingAtResponse(true, false, false), false, 'MANUAL: the apply waited for the rate check');
+    assert.equal(rateCheckingAtResponse(true, false, true), true, 'MANUAL: the last live state still shows a busy camera');
+    // The revert of a failed pick: the rate of the group in the live state at the failure, else the rate before
+    assert.equal(groupRate({ a: { framerate: 29.97 } }, 60), 30);
+    assert.equal(groupRate({ a: { framerate: 60 } }, 30), 60);
+    assert.equal(groupRate({}, 60), 60);
+});
+
+test('T-REQ-98: the response of a pick does not replace the desired configs (camera-requests.md 2.8)', () => {
+    assert.equal(replacesDesired('rate', true), false, 'a pick keeps the unapplied edits');
+    assert.equal(replacesDesired('settings', true), true);
+    assert.equal(replacesDesired('update-cameras', false), false, 'a camera that the request did not send');
 });
 
 test('T-REQ-95: withChosenRate gives each detected camera the current choice (camera-requests.md 2.8)', () => {
