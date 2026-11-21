@@ -92,6 +92,7 @@ These entries wait for a decision of the user. Section is the section or area of
 | [GEH0](entries/GEH0-choices-of-code-step-3.md) | Choices of code step 3: `not_streaming`, held value through the status, search flag, exposure range (`no-value-in-range`), 409 and 422 rules | none | proposed |
 | [QJH6](entries/QJH6-choices-of-the-fix-lane.md) | Choices of the fix lane: held value at the nearest search value, `cameras_left_out`, status locks, failed start keeps the summary, OpenCV mode FOURCC | none | proposed |
 | [VG5F](entries/VG5F-choices-of-the-first-certify-code.md) | Choices of the first certify code: built and not-built checks, plan `total`, `has-sequence`, unfilled keys, session child, phase G | `certify` | proposed |
+| [X8XE](entries/X8XE-choices-of-the-certify-review-fixes-and-format-1-6-0.md) | Certify review fixes and format 1.6.0: wedge after any step, phase G rules, caller watch, time-out grace, run lock, `abandon`; 5 questions | `certify` | proposed |
 
 The entries that are `rejected`, `superseded by XXXX`, `absorbed into <path>#<anchor>`,
 `evidence; used by XXXX` or `done` are in [historical.md](historical.md).

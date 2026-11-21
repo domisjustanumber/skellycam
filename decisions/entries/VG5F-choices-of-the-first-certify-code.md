@@ -27,15 +27,13 @@ check that is not built is `not-run` `not-built`. The agent made these choices w
 11. A ring watch keeps the SHA-256 of each ring frame by source frame number. A frame that the capture check flagged
     counts as damaged in `native-jpeg:valid`. `ring-equals-mkv` compares each MKV block that is not `missing` with
     the ring hash and with the hash set of the record start; with no compared frame it is `not-run` `ring-lapped`.
-12. `gaps-explained` compares the gaps (not in the last three rows) with the change of `replaced_count` from the
-    return of the record start to the return of the stop.
+12. `gaps-explained`: the rule changed in [ADR-X8XE](X8XE-choices-of-the-certify-review-fixes-and-format-1-6-0.md).
 13. A refused run (`cameras-busy`) has no summary item, so its checks have no `module`.
-14. After a cancel, the end of the budget, a time-out or a crash, phase G opens each touched camera whose `opens`
-    did not fail and that was not in use: at most 5 s, in a spawn child, closed with `restore=False`.
-15. After a time-out or a crash, the running check is `fail`; each other check is `not-run` `prior-check-failed`.
-    `full` has one session limit of 240 s in this step.
-16. The report writes schema 1.4.0, no `id`, `commit` and `tree_modified` null, so it is not yet valid as
-    evidence. The exit check of the session child is `session:exit`.
+14. Phase G after a stop, a time-out or a crash: the rules changed in [ADR-X8XE](X8XE-choices-of-the-certify-review-fixes-and-format-1-6-0.md). The plain open closes with
+    `restore=False`.
+15. After a time-out or a crash: the rules changed in [ADR-X8XE](X8XE-choices-of-the-certify-review-fixes-and-format-1-6-0.md). `full` has one session limit of 240 s in this step.
+16. The report has no `id`, and `commit` and `tree_modified` are null, so it is not yet valid as evidence. The
+    schema is in [ADR-X8XE](X8XE-choices-of-the-certify-review-fixes-and-format-1-6-0.md). The exit check of the session child is `session:exit`, with no `module`.
 17. The record holds `controls.exposure` for the route of the settings checks only.
 18. `system_evidence` comes from the `systems` rows of the evidence file.
 
@@ -46,8 +44,8 @@ the decisions of the user, with no change of product code.
 
 ## Consequences
 
-- The supervisor must decide items 3, 5 and 10, and the schema: the local contract clone is at format 1.5.0.
-- The progress gap of 100 ms costs about 0.1 s for each check, about 7.5 s for four cameras. 4.7 does not count it.
+- The user must decide item 3 (question 1 of [ADR-X8XE](X8XE-choices-of-the-certify-review-fixes-and-format-1-6-0.md)).
+- Item 10 changed in [ADR-X8XE](X8XE-choices-of-the-certify-review-fixes-and-format-1-6-0.md).
 
 ## Alternatives rejected
 
