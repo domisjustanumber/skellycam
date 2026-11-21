@@ -45,7 +45,7 @@ Marks:
 - **[ux x.y]**: section x.y of [`unix-capture.md`](unix-capture.md). **[cert x.y]**: section x.y of
   [`certify.md`](certify.md).
 - **[UI 11-20]**: a decision of the user of 2026-11-20 on the UI, relayed by the supervisor, that
-  this spec must agree with. No entry on this branch holds it yet (section 6).
+  this spec must agree with. [ADR-F2KY](../decisions/entries/F2KY-rulings-of-the-user-after-the-third-consistency-check.md) holds it, or cites the entry that holds it (section 6).
 - **[cap x.y]**: section x.y of [`windows-capture.md`](windows-capture.md). **[Dn]**, **[Un]**,
   **[Wn]**: the marks of that spec.
 - **[M file]**: measured; the file holds the result. Each such file is on branch `dom/research` at
@@ -55,7 +55,12 @@ Marks:
 
 The tests have the IDs T-REQ-nn. The kinds are those of [cap 16.1], plus **ui-unit**: a test of a
 pure TypeScript function that runs with `node --experimental-strip-types --test`, as the script
-`test:recording-shutdown` of `skellycam-ui/package.json`. **ui-manual** is a check that a person makes
+`test:recording-shutdown` of `skellycam-ui/package.json`. Step 1 adds the script `test:cameras`:
+`node --experimental-strip-types --test "src/store/slices/**/*.test.ts"`. It runs each ui-unit test of
+this spec and the existing `camera-labels.test.ts`, which runs nowhere today. Step 1 also adds a CI
+step `npm run test:cameras` to each job of `.github/workflows/player.yml` that runs
+`npm run test:player:unit`, and adds `skellycam-ui/src/store/slices/**` and
+`specs/camera-requests.md` to the paths of its `push` and `pull_request` triggers [ADR-AC5B](../decisions/entries/AC5B-choices-of-the-third-consistency-check.md). **ui-manual** is a check that a person makes
 in the running app.
 
 In the UI, each text that names a camera uses the form `Camera <list number> · <name>`
@@ -76,6 +81,12 @@ This spec uses British spelling.
   shows eight plain steps with no time label, for now (item 10 of [ADR-BVK7](../decisions/entries/BVK7-certify-rulings-of-the-user-one-test-one-row.md)). A value below 0 in a request
   is a log2 value: the source sets the step `v + 12`, clamped to 0 to 7, and the config stores that
   step. The status reports `exposure_unit`, so that a client knows the scale [ADR-FC1C](../decisions/entries/FC1C-choices-of-the-spec-integration.md).
+- The `MANUAL` clamp: a `MANUAL` value above -5 becomes -5 (`MAX_MANUAL_EXPOSURE` of
+  `camera_config.py`, applied in `CameraGroupManager.create_or_update_camera_group`; item 5 of
+  [ADR-6T78](../decisions/entries/6T78-choices-of-the-sfn26-integration.md)). It applies only to a
+  route whose unit is a time. Until step 7b no route without a time unit exists, so the clamp of the
+  main process stays as it is. Step 7b moves the clamp into the source, which knows its route, and a
+  step value 0 to 7 is then never clamped [ADR-AC5B](../decisions/entries/AC5B-choices-of-the-third-consistency-check.md).
 - `AUTO`: SkellyCam finds a manual value with the exposure search of 1.3. The search runs at each
   open of the camera, at a change of the frame rate and when the user asks (1.2) [G1]. Each search is
   one shot on the open stream. SkellyCam holds its value until the next search. The camera control
@@ -161,6 +172,13 @@ with the guard of the frame rate [E2]:
      search sets no value: the restore of the close sets the controls [ux 4.7] (1.9).
 7. A hang of a set call is a hang of [cap 6.6]: the camera fails or dies, and the process ends hard.
    A stall of 2 s is a stall of [cap 9.5]. The search then has no restore step.
+
+   This replaces the restore of `_recommend` that came from sfn26 (`camera_loop.py`, about lines 298
+   to 324; [ADR-EQY4](../decisions/entries/EQY4-base-the-work-on-upstream-sfn26-without-rust.md)). That
+   code set back the read state, with `before.auto`, on each exception, also on `_Stop`. The new
+   rule: a failed search sets the held value again as a manual value (item 6); a camera that closes
+   gets no set from the search; no exposure call of the search or of an open has `auto=True`. Only the
+   restore at the close may set `auto=True` [ux 4.7] [ADR-AC5B](../decisions/entries/AC5B-choices-of-the-third-consistency-check.md).
 8. The search ends with the result value set. The config stores `exposure_mode: "AUTO"`,
    `exposure: <result>` and `exposure_found_at_fps: <the mode rate>` [E3] [A3].
 
@@ -249,9 +267,16 @@ The limits [B3]:
   warm-up.
 - The search keeps its own limit of 20 s from its first set (1.3 item 6) [A2].
 - The check after the search has the early decision of [cap 10.2].
-- The apply request does not wait for the search (below) [H1]. It answers when each camera has
-  ended its warm-up, as today: about 1 s to open and 3 s of warm-up at 30 fps, so about 4 s for one
+- The apply request does not wait for the search (below) [H1]. It answers when each camera in `AUTO`
+  is `adjusting`, `ready`, `too_slow`, `failed` or `dead`, and each other camera is in a state of
+  `SETTLED_STATES` (`camera_status.py`), as today. Today the wait ends at `waiting`; for a camera in
+  `AUTO` it now goes on until the camera is `adjusting`, which comes when no selected camera is
+  `starting` [ADR-AC5B](../decisions/entries/AC5B-choices-of-the-third-consistency-check.md). That is about 1 s to open and 3 s of warm-up at 30 fps, so about 4 s for one
   camera. With more cameras it is longer: certify measured 5.8 s for three cameras [cert 4.7].
+- Each wait of the main process uses `PARENT_WAIT_LIMIT_S` (30 s, `camera_group.py`): the wait of
+  the apply above, the wait of the endpoint of 1.5 for the end of each search (the search limit is
+  20 s), and the waits of the reopen of the fall back of 2.4, which waits as an apply. A camera
+  process that gives no answer in that time is `failed` by `_give_up`, as today [ADR-AC5B](../decisions/entries/AC5B-choices-of-the-third-consistency-check.md).
 - A client that waits for the end of a search waits until no camera is `adjusting` or `checking`. It
   must allow 25 s from the apply response, at 30 fps and at 60 fps: the search limit of 20 s holds at
   each rate, and the check takes about 2.5 s at 30 fps and 1.3 s at 60 fps. The clock starts at the
@@ -267,8 +292,8 @@ The limits [B3]:
 What a client sees [H1]:
 
 - An apply request, or another request that opens cameras, does not wait for the searches. It
-  answers when each camera is open and streaming, as today. Each camera in `AUTO` is then
-  `adjusting`. Its config in the response holds the value of the open (the held value, or -7) and its
+  answers when each camera is open and streaming. Each camera in `AUTO` is then `adjusting` (or
+  already `ready` or `too_slow`, or `failed` or `dead`), by the wait rule above. Its config in the response holds the value of the open (the held value, or -7) and its
   old `exposure_found_at_fps`.
 - The found values and the warnings arrive through the live status: the `app_state` message of the
   websocket, which the server sends each second when the state changes. The state holds `configs`
@@ -301,7 +326,7 @@ A failed search at an open [H3]:
 - A search that finds too little light holds its result with the flag `add_light` (1.3 item 5)
   [Q6]. The check then judges the result.
 - A search never makes a camera `failed` [H3]. A camera that is `too_slow` keeps its preview and
-  counts as streaming [UI 11-20]. Its row shows the text of 1.5a.
+  counts as streaming (Q10 of [ADR-VYS7](../decisions/entries/VYS7-answers-of-the-user-to-the-step-4b-spec-and-go-ahead-for-its-tests.md)). Its row shows the text of 1.5a.
 - A hang, a stall or a removed device during the search: 1.3 item 7.
 
 Pause [K1]:
@@ -310,8 +335,9 @@ Pause [K1]:
   freeze the image on the screen. It works at all times, also while a camera is `adjusting` and
   during a recording. It sends no request, and it does not touch the cameras [K1].
 - Thus a search goes on while the display is frozen, and it ends as usual.
-- The public pause route `GET /camera/group/all/pause_unpause` goes [K1]. The internal pause that the
-  record start uses stays [cap 9.4].
+- The public pause route `PUT /camera/group/all/pause` (and the older
+  `GET /camera/group/all/pause_unpause`) is removed [K1] ([ADR-V8RS](../decisions/entries/V8RS-pause-freezes-the-ui-display-only.md)). The internal pause that the record start
+  uses stays [cap 9.4].
 
 ### 1.4 States and the other cameras
 
@@ -324,8 +350,10 @@ Pause [K1]:
 - At an open, all cameras in `AUTO` that open together search at the same time (1.3b) [G2].
 - After the search, the camera sets its result value. Its state goes to `checking`, and the check of
   [cap 10.2] decides `ready` or `too_slow`, as after a live change.
-- A `too_slow` camera keeps its tile and counts as streaming [UI 11-20]. This agrees with
+- A `too_slow` camera keeps its tile and counts as streaming (Q10 of [ADR-VYS7](../decisions/entries/VYS7-answers-of-the-user-to-the-step-4b-spec-and-go-ahead-for-its-tests.md)). This agrees with
   [cap 8.1] (`too_slow`: preview yes, in the gate yes).
+- Code: `STATES` and `GATE_STATES` of `camera_status.py` have no `adjusting` today. Step 3 adds it to
+  both, and not to `SETTLED_STATES`.
 - Known weak point: the OpenCV source is a pull source. Its `source_frame_number` counts only the
   frames that the loop grabs. Thus with the OpenCV source (the temporary source of [cap 14.2] on
   Windows), a slow camera of the group can make the measured rate of another camera low, and that
@@ -344,6 +372,10 @@ Config:
   search at each open. It sends `MANUAL` to keep its value.
 - `exposure`: for `MANUAL` the value to set. For `AUTO` the held value (1.3a).
 - `exposure_found_at_fps`: 1.3a. The name is a decision [G5].
+- `same_config` (`camera_group.py`) compares the configs with `CameraConfig.__eq__` over all fields.
+  It ignores `exposure_found_at_fps`, `camera_index` and `camera_name`: a request that differs only
+  in them is the same config (no effect on the camera, not refused in a state of [cap 8.3]). An
+  accepted request still stores the `camera_index` and `camera_name` of the request [H6] [ADR-AC5B](../decisions/entries/AC5B-choices-of-the-third-consistency-check.md).
 
 New endpoint. Its path is a decision [G5]. Its body, its response and its codes are [A11]:
 
@@ -355,7 +387,7 @@ POST /camera/group/exposure/auto
   `{"camera_ids": ["a1b2"]}` limits it to those cameras ("Search again"). A camera ID that is not
   selected gets HTTP 422.
 - It sets each camera to `AUTO` and runs the search on each, at the same time. It returns when each
-  search has ended.
+  search has ended, and it waits at most `PARENT_WAIT_LIMIT_S` (30 s) for that (1.3b).
 - Response 200:
 
   ```json
@@ -384,16 +416,28 @@ POST /camera/group/exposure/auto
   `MANUAL` to `AUTO`: its response has the camera in `adjusting`.
 - New route `GET /camera/group/state` [B15]: it returns `CameraGroupManager.to_state_dict()`, the
   object that the `app_state` message of the websocket sends as `state` (`camera_groups`, with
-  `configs`, `cameras` and `paused` of each group). A client with no websocket reads the result of a
-  search there (1.3b). `paused` is true only during the internal pause of a record start. The
-  display freeze of the UI never sets it [K1, B19].
+  `id`, `configs`, `cameras`, `alive`, `recording_in_progress` and the fields of [recorder.md](recorder.md)
+  8.4 of each group). A client with no websocket reads the result of a search there (1.3b). The state
+  has no field `paused`: [ADR-V8RS](../decisions/entries/V8RS-pause-freezes-the-ui-display-only.md) removed it, and `CameraGroupState` has none. The display freeze
+  of the UI is not in the state [K1].
 
 Status ([cap 8.4]) adds `exposure_search` (the name is a decision [G5]): null before the first
 search, else the `results` object of one camera above. `"state"` is `"running"`, `"done"` or
 `"failed"`. It also has `count`: the number of searches that the camera started since the group
 started (1 after the search at its first open). The main process keeps it for each camera ID for the
-life of the group: a reopen of the camera, which starts a new camera process, keeps the count [B20]
-(changed on 2026-11-20, [ADR-FC1C](../decisions/entries/FC1C-choices-of-the-spec-integration.md)). A client counts the searches with it.
+life of the group [B20] (changed on 2026-11-20, [ADR-FC1C](../decisions/entries/FC1C-choices-of-the-spec-integration.md)). A reopen for a size or rate change runs
+inside the same camera process (`CameraLoop._reopen`); only "apply again" starts a new camera
+process [cap 8.2]. Both keep the count. The store [ADR-AC5B](../decisions/entries/AC5B-choices-of-the-third-consistency-check.md): the shared counter `search_count`
+(`multiprocessing.Value("q", 0)`) of `CameraStatus`, which the main process creates with the status.
+The camera process adds one at the start of each search. `reset_for_start` does not clear it, and the
+status of an unselected camera is kept (`removed_statuses` of `camera_manager.py`), so a reselect
+keeps it too. A new group starts at 0. A client counts the searches with it.
+
+`reason` of `exposure_search` has a fixed vocabulary [ADR-AC5B](../decisions/entries/AC5B-choices-of-the-third-consistency-check.md): `null` (the search found a value), or,
+with `state` `"failed"`, one of `no-value-kept-rate` (no value kept the rate; at 60 fps this value
+starts the fall back of 2.4), `set-failed` (a set call returned an error), `readback-differs` (the
+read-back differed from the value), `timed-out` (the limit of 20 s) and `camera-closed` (the group
+closed the camera, or it was unselected).
 
 Warnings ([cap 11.3] form: `kind`, `camera_ids`, `text`, `control`). The kinds `add_light` and
 `exposure_search_failed` are a decision [G5]. Their texts are [A11]. They are not texts of a slow
@@ -407,8 +451,28 @@ camera, so they stay [H5]:
   `Camera a1b2 has no manual exposure. SkellyCam does not set its exposure.` The kind is a decision
   [K3]. The text is [B21]. Certify records the same case with its reason code `no-manual-exposure`.
 
+The text of `exposure_search_failed` names the reason: `no exposure from -12 to -5 keeps 30 fps`
+(`no-value-kept-rate`), `the camera refused exposure -9 (<error text>)` (`set-failed`), `exposure -9
+read back as -8` (`readback-differs`), `it took more than 20 s` (`timed-out`). `camera-closed` gives
+no warning, because the camera closes [ADR-AC5B](../decisions/entries/AC5B-choices-of-the-third-consistency-check.md).
+
 The search response carries them. For a search that an apply starts, the live state carries them
-[H1]. The status `warnings` of the camera keeps them until the next exposure change of that camera.
+[H1].
+
+The owners and the lifetimes of the status `warnings` [ADR-AC5B](../decisions/entries/AC5B-choices-of-the-third-consistency-check.md):
+
+- The camera process owns `add_light`, `exposure_search_failed` and `no_manual_exposure`. It writes
+  them into a new array `CameraStatus.camera_warnings`. `add_light` and `exposure_search_failed`
+  clear at the next search or the next exposure change of that camera. `no_manual_exposure` comes
+  again at each open.
+- The main process owns `rate_fallback` and `start_failure`. It writes them into a new array
+  `CameraStatus.group_warnings`. `rate_fallback` clears at the next apply request of the user, not
+  at the reopen or the "apply again" of the fall back itself (2.4). `start_failure` clears at the next
+  apply request of the user too.
+- The array `CameraStatus.warnings` keeps its job: the items of the recording that runs, written by
+  the main process at the record start and cleared at the stop [cap 8.4, 11.3].
+- `serialize()` joins the three arrays into the one list `warnings`. A record start, a stop and
+  "apply again" (`reset_for_start`) clear neither `camera_warnings` nor `group_warnings`.
 
 Failure codes are decided. [ux 4.6.3] holds the list. A camera that fails the start-up rate check
 has the code `rate-low`. A failed search, too little light and a camera with no manual exposure are
@@ -417,6 +481,12 @@ warnings, not failures, so they have no failure code.
 ### 1.5a The texts of a slow camera
 
 In every case, the text of a slow camera is exactly `Camera is slow. Try adding more light` [G3].
+A slow camera is one whose rate is below the limit (code `rate-low`). A camera whose rate is above
+the limit (code `rate-high`) is not slow. It keeps its own text: the server reason
+`declared 30.00 fps, measured 31.42 fps. The camera delivers more frames than its mode rate`, and in
+the row `The camera delivers more frames than its mode rate` [ADR-AC5B](../decisions/entries/AC5B-choices-of-the-third-consistency-check.md). `slow_reason` of
+`rate_check.py` serves both directions today (`camera_loop.py` start-up rate check); the code
+chooses the text by the direction.
 It replaces the texts of [Q8], the `too_slow` row text of [UI 11-20] and the texts of [A12]: "Add
 light or lower the exposure, or set the exposure to Auto.", "Add light, then run the exposure search
 again.", "Too slow at this exposure: lower the exposure" and "Too slow at this exposure: add light,
@@ -430,8 +500,8 @@ then search again".
 - The server reason keeps the declared and the measured rates of D25 before the text. The numbers
   stay in the detail of the API and in the log, not in the row of the UI [H5]. The text
   replaces the hints of D25.
-- The addition ` Or choose 30 fps.` of [Q8] goes, because the text is exact [G3]. At 60 fps the fall
-  back of 2.4 runs.
+- The addition ` Or choose 30 fps.` of [Q8] goes, because the fall back of 2.4 is automatic at
+  60 fps. This removal is not ruled by the user: it stays proposed ([B8], [ADR-4Z7T](../decisions/entries/4Z7T-choices-after-the-search-at-each-open.md)).
 - A camera in `AUTO` has no start-up rate check (1.3b). Thus in practice only a camera in `MANUAL`
   gets the server reason. A camera in `AUTO` that is slow is `too_slow` after its search and its
   check, and its row has the text.
@@ -459,9 +529,16 @@ The rule for a camera whose source is OpenCV [Q11, K2]:
   The rule below applies only to a camera whose source is OpenCV on Linux or macOS. The native
   sources end the exception of [Q11] for a native camera; the OpenCV source keeps it for now (item 9
   of [ADR-BVK7](../decisions/entries/BVK7-certify-rulings-of-the-user-one-test-one-row.md)).
-- On the OpenCV source of Linux and macOS, the forced auto exposure of the camera stays. This is an
-  exception to the rule of the user that the camera never sets its own exposure [E1]. The user knows
-  it is an exception.
+- On the OpenCV source of Linux and macOS, the OpenCV source leaves the exposure to the camera. This
+  is an exception to the rule of the user that the camera never sets its own exposure [E1]. The user
+  knows it is an exception.
+- The code changes for this [ADR-AC5B](../decisions/entries/AC5B-choices-of-the-third-consistency-check.md). Today `_apply_exposure` of `opencv_apply_config.py` forces
+  the auto exposure of the camera only on Linux. On macOS it sets the camera's auto exposure for
+  `AUTO` and a manual value for `MANUAL`. The new rule: the Linux branch covers macOS too
+  (`sys.platform` `linux` or `darwin`), for each mode.
+- On Windows, `_apply_exposure` makes no exposure call for `AUTO`, as for `RECOMMEND` today; it no
+  longer sets the camera's own auto exposure. The loop sets the held value as a manual value at step
+  5 of [cap 9.1], and the search runs (1.3b). This is case 1 of T-CAP-104 on Windows.
 - For such a camera, the UI shows the exposure row as exactly "Exposure is set by the camera on this
   system" (item 9 of [ADR-BVK7](../decisions/entries/BVK7-certify-rulings-of-the-user-one-test-one-row.md)) and hides
   the mode choice and the link "Search again". The endpoint of 1.5 gives HTTP 422 for it. A config
@@ -487,7 +564,8 @@ What the OpenCV source can do:
 - Camera settings (`CameraGridSettingsModal.tsx`): the row "Exposure" keeps the two choices Manual
   and Auto. Manual shows the value selector, as today. On a route with no time unit (1.1), Manual
   shows eight plain steps from darkest to brightest, with no time label (item 10 of [ADR-BVK7](../decisions/entries/BVK7-certify-rulings-of-the-user-one-test-one-row.md)); Auto
-  shows "Auto: step 6 of 8" (the step index plus 1), and the chip is `E:6/8` [ADR-FC1C](../decisions/entries/FC1C-choices-of-the-spec-integration.md). Auto shows the held value as text, "Auto: -8",
+  shows "Auto: step 6 of 8" (the step index plus 1), Manual shows "step 6 of 8", and the chip is
+  `E:6/8` [ADR-F2KY](../decisions/entries/F2KY-rulings-of-the-user-after-the-third-consistency-check.md). Auto shows the held value as text, "Auto: -8",
   and the link "Search again", which runs the search for this camera only [Q2]. With no held value,
   the text is "Auto: no value found yet" [B9], and the link reads "Search". The link is disabled
   while the camera does not stream or a recording runs.
@@ -510,7 +588,8 @@ What the OpenCV source can do:
     failed" for `exposure_search_failed`, each with its text as the tooltip;
   - the text of 1.5a for a `too_slow` camera, in each mode [G3];
   - "Setting exposure…" for a camera in `adjusting`.
-  A pure function `exposureRowText(config, modeRate, state, warnings)` in
+  - the `rate-high` text of 1.5a for a `too_slow` camera whose `measured_fps` is above its mode rate.
+  A pure function `exposureRowText(config, modeRate, state, warnings, measuredFps)` in
   `skellycam-ui/src/store/slices/cameras/exposure-row.ts` gives these texts. The row text "Found at
   30 fps: search again" of the earlier draft goes, because each change of the rate searches again
   (1.3a) [B9].
@@ -519,10 +598,10 @@ What the OpenCV source can do:
   [G2, B14].
 - Pause [K1]: the pause button, the menu item and Shift+Space freeze the image of each tile. They
   work at all times, also while a camera is `adjusting` and during a recording, and they send no
-  request. The guard "Stop Recording & Pause Cameras" goes, because a pause no longer stops a
-  recording. A pure function `displayedFrame(frozen, shownFrame, newFrame)` in
-  `skellycam-ui/src/store/slices/cameras/display-freeze.ts` gives the frame to show [B19]. The store
-  keeps the live state while the display is frozen.
+  request. The code does this already: `MainTabPanel.tsx` calls `setStreamPaused` of
+  `ServerContextProvider.tsx` with `selectIsPaused`, and the guard "Stop Recording & Pause Cameras"
+  is already gone. No new function `displayedFrame` comes; the freeze stays `setStreamPaused` [ADR-AC5B](../decisions/entries/AC5B-choices-of-the-third-consistency-check.md).
+  The store keeps the live state while the display is frozen.
 - The UI reads each search result from the live state, not from a response [H1]. A pure function
   `copyHeldValues(desired, state)` in `skellycam-ui/src/store/slices/cameras/exposure-row.ts` copies
   `exposure` and `exposure_found_at_fps` of each camera whose `exposure_search.state` is `"done"`
@@ -531,7 +610,15 @@ What the OpenCV source can do:
   detail of the API and in the log [H5].
 - Camera names in the UI: a tooltip or a line that shows a text of the server replaces each camera ID
   of the item's `camera_ids` with `Camera <list number> · <name>`, and drops the word "Camera" or
-  "camera" just before the ID. A pure function `labelText(text, cameras)` does it [A13].
+  "camera" just before the ID. A pure function `labelText(text, cameras)` does it [A13]. It replaces
+  `withCameraLabels` of `skellycam-ui/src/store/slices/cameras/camera-labels.ts` (today the form
+  `Camera 5 (USB Camera)`) in its three callers: `CameraConfigSidebarPanel.tsx`, `CameraTreeItem.tsx`
+  and `RecordingInfoPanel.tsx`. `camera-labels.test.ts` changes to the new form [ADR-AC5B](../decisions/entries/AC5B-choices-of-the-third-consistency-check.md). The form
+  `Camera <n> · <name>` is the ruling Q13 of [ADR-VYS7](../decisions/entries/VYS7-answers-of-the-user-to-the-step-4b-spec-and-go-ahead-for-its-tests.md).
+- "Update Cameras" [ADR-F2KY](../decisions/entries/F2KY-rulings-of-the-user-after-the-third-consistency-check.md): one button at the top of the camera list adds the ticked cameras, closes
+  the unticked cameras and retries the failed cameras, and does not reopen the other cameras. It is
+  disabled during a recording, with the text "Stop the recording first" (the English text of the key
+  `stopRecordingFirst`, which reads "Stop recording first" today).
 - A camera on the OpenCV source of Linux or macOS: 1.7. A camera with no working exposure control:
   its exposure row says "No manual exposure on this camera" and has no mode choice (1.9) [K3, B21].
 
@@ -539,7 +626,8 @@ What the OpenCV source can do:
 
 - A camera with no working exposure control (`present: false`; on macOS no route that sets the
   exposure [ux 4.4.6]; or, outside certify, a model whose evidence gives each exposure route the
-  result `no` [cert 2.5]; an `unproven` route still gives the control) [K3]:
+  result `no` [cert 2.5]; an `unproven` route still gives the control, a proposed choice, item 12 of
+  [ADR-FC1C](../decisions/entries/FC1C-choices-of-the-spec-integration.md)) [K3]:
   - it has no `MANUAL` and no `AUTO`; its search is skipped, and it is never `adjusting`;
   - at each open, the warning `no_manual_exposure` comes (1.5), and the camera goes from `waiting`
     to `ready` with its start-up rate check, as a camera in `MANUAL` [B21];
@@ -600,10 +688,11 @@ times out" and "unselect".
 Change to section 8.3: add the row "| `adjusting` | blocked | refused | no effect | allowed |".
 
 Change to section 8.4: add "`exposure_search` is null or the result object of `camera-requests.md`
-1.5. `warnings` also holds the items `add_light` and `exposure_search_failed` until the next
-exposure change of the camera, and `rate_fallback` until the next apply request. The route
-`GET /camera/group/state` returns the same state as the `app_state` message of the websocket
-(`camera-requests.md` 1.5)."
+1.5. `warnings` also holds the items of the camera process (`add_light`, `exposure_search_failed`,
+`no_manual_exposure`) and of the main process (`rate_fallback`, `start_failure`), with the owners and
+lifetimes of `camera-requests.md` 1.5. The route `GET /camera/group/state` returns the same state as
+the `app_state` message of the websocket (`camera-requests.md` 1.5)." (Changed on 2026-11-20,
+[ADR-AC5B](../decisions/entries/AC5B-choices-of-the-third-consistency-check.md).)
 
 Change to section 9.1, step 5: "Set every control of the config (section 11). A camera in `AUTO`
 sets its held value as a manual value. Its exposure search runs after the warm-up, in the state
@@ -644,7 +733,7 @@ control is not refused. The value is ignored, and the warning `no_manual_exposur
 (`camera-requests.md` 1.9). The HTTP 422 stays for gain and focus."
 
 Change to section 9.4: add "This pause is internal. The public pause route
-`GET /camera/group/all/pause_unpause` is removed. The pause of the UI is a display freeze and does not
+`PUT /camera/group/all/pause` (and the older `GET /camera/group/all/pause_unpause`) is removed. The pause of the UI is a display freeze and does not
 touch the cameras (`camera-requests.md` 1.3b)."
 
 Change to section 12, row `set controls`: "each control set and read-back at start". The example
@@ -691,7 +780,7 @@ the text of a slow camera.
 | T-REQ-03 | fake | The C922 pattern: mode 60 fps; `rate_by_exposure` 60 at -7 only, 29.7 at each other value; brightness nearest to 127.5 at -6; press the button. | Result -7 (-6 did not keep the rate; -8 did not keep it, so no offset). A rate is measured at each of the 8 values. |
 | T-REQ-04 | fake | Brightness 50 at -5, darker below; rate 30 at each value; press the button. | Result -6; `add_light` true; the response and the status `warnings` hold `add_light` with the text of 1.5; the camera is `ready`. |
 | T-REQ-05 | fake | The generic camera: 25.76 fps at each value; `ready` with `MANUAL -7`; press the button. | The search fails; the last set is `MANUAL -7`; the warning `exposure_search_failed` with its text; the camera then runs the check of [cap 10.2] and is `too_slow`, and it stays in the gate with its preview. |
-| T-REQ-06 | fake | Connect one fake with `AUTO`, `exposure` -7 and `exposure_found_at_fps` `None`, with the brightness and the rates of T-REQ-01. | One set of -7 at step 5; no start-up rate check; the states `starting`, `waiting`, `adjusting`, `checking`, `ready`; the apply answers before the first set of the search, with the camera `adjusting`, `exposure` -7 and `exposure_found_at_fps` `None`; then the sets -12 to -5, then -9; open count 1; the ring gets frames during the search; at the end, the live state holds `AUTO`, -9, `exposure_found_at_fps` 30 and `exposure_search.count` 1 [G1, G2, B1, H1, B20]. |
+| T-REQ-06 | fake | Connect one fake with `AUTO`, `exposure` -7 and `exposure_found_at_fps` `None`, with the brightness and the rates of T-REQ-01. | One set of -7 at step 5; no start-up rate check; the states `starting`, `waiting`, `adjusting`, `checking`, `ready`; the apply answers only when the camera is `adjusting` (or later), not at `waiting`; the fake holds its frames after the first set of the search until the response is read, so the response has the camera in `adjusting`, with `exposure` -7 and `exposure_found_at_fps` `None` in its config; then the sets -12 to -5, then -9; open count 1; the ring gets frames during the search; at the end, the live state holds `AUTO`, -9, `exposure_found_at_fps` 30 and `exposure_search.count` 1 [G1, G2, B1, H1, B20]. |
 | T-REQ-07 | fake | The image follows a new exposure only from the 3rd frame after the set; frames that arrived before the set returned have the old brightness; press the button. | Result as in T-REQ-01; the brightness of each trial is the value of the 10th frame that arrived after the set returned. |
 | T-REQ-08 | fake | One value at 10 fps, the others at 30, on the virtual clock; press the button. | The search leaves the slow value at `t_a + 30 / (0.97 x 30)` s, ±25 ms; that trial has `kept_rate: false`. |
 | T-REQ-09 | fake | Each value at 5 fps (the fake still delivers); press the button. | The search fails at 20 s (±0.25 s) of the virtual clock; the old setting is set again. |
@@ -699,22 +788,22 @@ the text of a slow camera.
 | T-REQ-11 | fake | A recording runs with two fakes. Press the button; send "Search again" for one camera; send an apply with `AUTO` for one camera. | Each gets 409; the fakes get no set call; the configs do not change. |
 | T-REQ-12 | fake | Connect, reopen by a size change, reopen by a rate change, and "apply again" after a fail, each with one fake in `AUTO` held at -9 (`exposure_found_at_fps` 30) and the brightness of T-REQ-01 at each rate. In the reopens, the request holds `exposure` -5. | Each open gives one set of -9 at step 5, not -5 [A8], then a search after the warm-up [G1]; each ends with -9 and `exposure_found_at_fps` at the mode rate of that open. |
 | T-REQ-13 | fake | Three fakes `ready`: two `MANUAL`, one `AUTO`; press the button; then press it again while it runs. | Each camera searches one time and ends in `AUTO` with its own value; the response has `results` for the three; the second press gets 409; `exposure_search.count` of each camera is one more than before the press [B20]. |
-| T-REQ-14 | fake | Apply requests with `RECOMMEND`, `AUTO`, `MANUAL`, `CAMERA`; a connect with `RECOMMEND`; a new `CameraConfig()`. | `RECOMMEND` is stored as `AUTO`, and the connect searches [G6]; `CAMERA` gets 422; the default is `AUTO`, -7, `exposure_found_at_fps` `None` [G1, H7]. |
+| T-REQ-14 | fake | Apply requests with `RECOMMEND`, `AUTO`, `MANUAL`, `CAMERA`; a connect with `RECOMMEND`; a new `CameraConfig()`. | `RECOMMEND` is stored as `AUTO`, and the connect searches [G6]; `CAMERA` gets 422; the default is `AUTO`, -7, `exposure_found_at_fps` `None` [G1, H7]; an apply of the current config with another `exposure_found_at_fps`, `camera_index` and `camera_name` while the camera is `adjusting` gets no 409 and no set call, and the new `camera_index` and `camera_name` are stored (1.5). |
 | T-REQ-15 | fake | A spy on `set_controls` of the fake in each test of this table and in T-CAP-41. | No call with `ControlSetting(auto=True)` for exposure, except the restore at the close of [ux 4.7], which comes after the last frame is taken and only for a camera whose exposure was in auto before the open [K4]. |
 | T-REQ-16 | fake | `ready` with `AUTO -9`, found at 30; apply `MANUAL -7`. | One live set of -7; no search; state `checking`, then `ready`; `exposure_found_at_fps` is `None`. |
-| T-REQ-17 | fake | `live_set_faults`: the set of -9 returns an error; press the button. | The search fails; the last set is the old setting; `exposure_search_failed` names the error; the camera stays open. |
+| T-REQ-17 | fake | `live_set_faults`: the set of -9 returns an error; then the set of -9 reads back -8; then each value is slow so that the search passes 20 s (virtual clock); press the button each time. | The search fails each time; the last set is the old setting; `exposure_search.reason` is `set-failed`, `readback-differs`, `timed-out`; `exposure_search_failed` has the text of 1.5 for each reason; the camera stays open. |
 | T-REQ-18 | fake | Three fakes search; one gives device removed during its search. | That camera is `dead`, with no restore set; the two others end their searches; `camera_failures` holds it. |
 | T-REQ-19 | fake | Cameras in `MANUAL` that fail the start-up rate check at 30 and at 60; one camera in `AUTO` at 30 that delivers 25.76 fps at each value. | The two reasons have the form `declared 30.00 fps, measured 25.76 fps. Camera is slow. Try adding more light`, to the character, with no ` Or choose 30 fps.` [G3, H5, B8]; the `AUTO` camera gets no start-up reason, and it is `too_slow` after its search and its check (1.3b). |
 | T-REQ-20 | fake | A fake with no exposure control (`present: false`); connect it in `AUTO`; press the button; apply `MANUAL -7` for it. | No search and no `adjusting` at the connect; the start-up rate check judges it as for `MANUAL`; the warning `no_manual_exposure` with the text of 1.5 at the open; the button skips it and names it with the warning; the apply gets no 422, and the fake gets no exposure set [K3, B21]. |
-| T-REQ-21 | fake | (1) The OpenCV fake with the platform read as Linux, then as macOS: press the button; send "Search again"; apply `AUTO` on a running camera; connect a fake in `AUTO`. (2) A native fake source with the platform read as Linux, then as macOS: connect in `AUTO`. | (1) The button and "Search again" get 422 with the text of 1.5; the apply sets no value through a search; the connect runs no search, and no camera is `adjusting` (1.7). (2) The camera searches at the open as on Windows, with the same states [K2]. |
+| T-REQ-21 | fake | (1) The OpenCV fake with the platform read as Linux, then as macOS: press the button; send "Search again"; apply `AUTO` on a running camera; connect a fake in `AUTO`. (2) A native fake source with the platform read as Linux, then as macOS: connect in `AUTO`. | (1) The button and "Search again" get 422 with the text of 1.5; the apply sets no value through a search; `_apply_exposure` sets the camera's auto exposure for `MANUAL` and `AUTO` on both systems (1.7); the connect runs no search, and no camera is `adjusting` (1.7). (2) The camera searches at the open as on Windows, with the same states [K2]. |
 | T-REQ-22 | fake | "Search again" for one of three `ready` fakes; then the body with a camera ID that is not selected. | Only that camera searches; the others get no set call; the second request gets 422. |
-| T-REQ-42 | fake | Three fakes connect in `AUTO` at 30 (a new group), each with its own brightness model; one fake takes 1 s longer to open. During the searches, a record start. | No camera is `adjusting` before the last camera leaves `starting`; then the three are `adjusting` together; the apply answers then, with the three in `adjusting`, and not after the searches; the record start gets 409 that names each camera and `adjusting`; during its search, the status of each camera has `exposure_search.state` `"running"`; the rings get frames; the live state holds the three results after the last search [G2, B1, H1]. |
+| T-REQ-42 | fake | Three fakes connect in `AUTO` at 30 (a new group), each with its own brightness model; one fake takes 1 s longer to open. During the searches, a record start. | No camera is `adjusting` before the last camera leaves `starting`; then the three are `adjusting` together; the apply answers only after each camera is `adjusting` (the fakes hold their frames after the first set of each search until the response is read), with the three in `adjusting`, and not after the searches; the record start gets 409 that names each camera and `adjusting`; during its search, the status of each camera has `exposure_search.state` `"running"`; the rings get frames; the live state holds the three results after the last search [G2, B1, H1]. |
 | T-REQ-43 | fake | Two fakes `ready` in `AUTO`, held at -9 and -8. An apply adds a third fake in `AUTO` ("Update Cameras"). | Only the third camera searches; the two others get no set call and stay `ready` at -9 and -8; their rings get frames during the search; a record start during the search gets 409 that names the third camera [H2]. |
 | T-REQ-44 | fake | The generic camera (25.76 fps at each value) connects in `AUTO` held at -7, found at 30. | No `failed` state and no start-up reason; the search fails with `exposure_search_failed`; the last set is -7; `exposure_found_at_fps` stays 30; the check gives `too_slow`; the camera stays in the gate with its preview [H3]. |
 | T-REQ-45 | fake | One fake in `MANUAL -6`: connect; a reopen by a rate change; "apply again" after a fail. | No search in any case; one set of -6 at each open; the start-up rate check of [cap 10.1] judges each open; `waiting`, then `ready` [G1]. |
 | T-REQ-46 | fake | On the virtual clock: one fake in `AUTO` whose warm-up ends 4 s after the open, and whose search takes 13 s (one value kept, each other value slow). | The camera does not fail with "not ready in 15 s"; the search ends with the kept value; the limit of 20 s of the search counts from its first set [B3]. |
-| T-REQ-47 | fake | One fake connects in `AUTO` with the model of T-REQ-01. A client with no websocket reads `GET /camera/group/state` each 0.5 s from the apply to the end of the check. A hook calls `CameraGroupManager.to_state_dict()` in the same handler as each read. | Each body equals the dict of the hook of the same read; the camera is `adjusting` with `exposure_search.state` `"running"`, then `checking`, then `ready`; the last read holds `configs` with -9 and `exposure_found_at_fps` 30; `paused` stays false [H1, B15, B19]. |
-| T-REQ-48 | fake | A group runs. Send `GET /camera/group/all/pause_unpause`. Then start and stop a recording. | The route gives 404, and no camera pauses; the record start still uses its internal pause, so `paused` is true during it and false after [K1, B19]. |
+| T-REQ-47 | fake | One fake connects in `AUTO` with the model of T-REQ-01. A client with no websocket reads `GET /camera/group/state` each 0.5 s from the apply to the end of the check. A hook calls `CameraGroupManager.to_state_dict()` in the same handler as each read. | Each body equals the dict of the hook of the same read; the camera is `adjusting` with `exposure_search.state` `"running"`, then `checking`, then `ready`; the last read holds `configs` with -9 and `exposure_found_at_fps` 30; no body has a field `paused` [H1, B15, K1]. |
+| T-REQ-48 | fake | A group runs. Send `GET`, `PUT` and `POST` to `/camera/group/all/pause`, and `GET` to `/camera/group/all/pause_unpause`. | No pause route exists: each request gets 404 or 405, and no camera pauses [K1]. The tests of `skellycam/tests/test_camera_control_contract.py` and `test_camera_router.py` hold these cases already; T-REQ-48 cites them. |
 | T-REQ-49 | ui-unit | `copyHeldValues(desired, state)`: a camera with `exposure_search.state` `"running"`; the same camera with `"done"`, `exposure` -9 and `exposure_found_at_fps` 30 in `configs`; a camera with `"failed"`; a camera in `MANUAL`. | Only the `"done"` camera changes its desired config: -9 and 30; the others do not change [B14]. |
 | T-REQ-62 | fake | Two fakes `adjusting` at an open. Unselect one; then close the group while the other searches. | The unselected camera closes, its search stops, and it gets no set of the old value: only the restore of the close [ux 4.7]; the other search goes on until the group closes; then that search fails with no restore set of its own; no camera is `failed` [H3]. |
 | T-REQ-63 | fake | A set call of the search hangs (`live_set_faults` hang). | The camera fails or dies by [cap 6.6], the process ends hard, and no restore set comes (1.3 item 7). |
@@ -722,15 +811,15 @@ the text of a slow camera.
 | T-REQ-65 | fake | Two fakes at 30 fps, push sources, on the virtual clock; B delivers 15 fps at -5 and -6. A searches while B is at -6 (a new search on B at the same time). | The trials of A keep the rate at each value; A gets no early decision for a frame that arrived in time and waited at the gate [cap 10.2 agent 88]. |
 | T-REQ-66 | fake | One fake `starting`, then `waiting`; press the button and send "Search again" in each state. | 409 each time; the detail names the camera and its state (1.5). |
 | T-REQ-67 | fake | One fake `starting`, then `waiting`; apply 60 in each state. | 409 each time; nothing reopens (2.7). |
-| T-REQ-68 | fake | A search ends with `add_light`. Then a live change of gain (3c), an apply with the same config, and an apply with `MANUAL -7`. | `add_light` stays in the status `warnings` after the first two; it goes after the apply with `MANUAL -7` (1.5). |
+| T-REQ-68 | fake | A search ends with `add_light`. Then a live change of gain (3c), an apply with the same config, a record start and stop, and an apply with `MANUAL -7`. Then a fall back of 2.4 writes `rate_fallback`; its reopen and its "apply again" run; then a new apply request. | `add_light` stays in the status `warnings` after the first three; it goes after the apply with `MANUAL -7`; `rate_fallback` survives the reopen and the "apply again" of the fall back, and goes at the new apply request; the record items of `warnings` still clear at the stop (1.5). |
 | T-REQ-69 | fake | Three fakes: one `ready`, one `failed`, one `dead`; press the button. | Only the `ready` camera searches; the response detail names the two others as "not streaming" (1.9). |
 | T-REQ-70 | ui-unit | `normalizeExposureMode(config)` with `RECOMMEND`, `AUTO` and `MANUAL`, as the store loads saved settings. | `AUTO`, `AUTO`, `MANUAL`; the other fields do not change [G6]. |
-| T-REQ-71 | ui-unit | `displayedFrame(frozen, shownFrame, newFrame)`: frozen false; frozen true; frozen true while the state of the camera is `adjusting`, and during a recording. | The new frame; the shown frame; the shown frame in both cases. The function makes no request, and the store state still changes when a new state arrives [K1, B19]. |
+| T-REQ-71 | ui-manual | The pause button while the cameras stream, while a camera is `adjusting`, and during a recording. | The tiles keep the shown frame (`setStreamPaused` of `MainTabPanel.tsx`); no request goes to the server; the camera rows still change when a new live state arrives; un-pause shows the current frame [K1]. |
 | T-REQ-72 | fake | Run `await CameraGroupManager.search_exposure(camera_ids=None)` with no HTTP server, then `POST /camera/group/exposure/auto` on a second group with the same fakes. | The two responses are equal, apart from the measured times; the states and the `count` move in the same way [B18]. |
-| T-REQ-27 | ui-unit | `exposureRowText`: `MANUAL -8`; `AUTO -8` found at 30 with mode rate 30; `AUTO` with no held value; a camera in `adjusting`; `too_slow` in `MANUAL` and in `AUTO`; an `add_light` warning; `MANUAL` step 2 and `AUTO` step 5 on a route with `exposure_unit` `ev`. | `E:-8`; `E:-8 auto`; "Auto: no value found yet"; "Setting exposure…"; `Camera is slow. Try adding more light` for both `too_slow` cases, to the character [G3]; "Add light"; `E:3/8` and "Auto: step 6 of 8", with no time label. No case gives a "Found at" text [B9]. |
-| T-REQ-74 | fake | One fake in `AUTO` at 30 fps; connect; then a reopen by a size change, a reopen by a rate change and "apply again" after a fail, each with a new camera process. | `exposure_search.count` is 1, 2, 3, 4 after each search; it never goes back to 1 while the group runs; a new group starts at 1 (1.5). |
-| T-REQ-75 | fake | A native fake whose exposure route has no time unit (`exposure_unit` `native`), with a brightness model; connect in `AUTO`; then apply `MANUAL` with `exposure` -7, then with 2. | The search sets the steps 0 to 7 in order and stores a step; the status reports `exposure_unit` `native`; `MANUAL -7` stores the step 5; `MANUAL 2` stores the step 2 (1.1, 1.3). |
-| T-REQ-28 | ui-unit | `labelText` with the text `Camera a1b2: add light. ...` and the list where a1b2 is number 2, "Logitech C922"; a text with two IDs. | `Camera 2 · Logitech C922: add light. ...`; each ID replaced. |
+| T-REQ-27 | ui-unit | `exposureRowText`: `MANUAL -8`; `AUTO -8` found at 30 with mode rate 30; `AUTO` with no held value; a camera in `adjusting`; `too_slow` in `MANUAL` and in `AUTO`; an `add_light` warning; `MANUAL` step 2 and `AUTO` step 5 on a route with `exposure_unit` `ev`; `too_slow` with `measuredFps` 31.42 at mode rate 30. | `E:-8`; `E:-8 auto`; "Auto: no value found yet"; "Setting exposure…"; `Camera is slow. Try adding more light` for both `too_slow` cases, to the character [G3]; "Add light"; `E:3/8` and "Auto: step 6 of 8", with no time label; `The camera delivers more frames than its mode rate` for the fast camera. No case gives a "Found at" text [B9]. |
+| T-REQ-74 | fake | One fake in `AUTO` at 30 fps; connect; then a reopen by a size change and a reopen by a rate change (each in the same camera process), "apply again" after a fail (a new camera process), and an unselect and a reselect. | `exposure_search.count` is 1, 2, 3, 4, 5 after each search; it never goes back to 1 while the group runs; a new group starts at 1 (1.5). |
+| T-REQ-75 | fake | Step 7b (it needs the clamp in the source, 1.1). A native fake whose exposure route has no time unit (`exposure_unit` `native`), with a brightness model; connect in `AUTO`; then apply `MANUAL` with `exposure` -7, then with 2. | The search sets the steps 0 to 7 in order and stores a step; the status reports `exposure_unit` `native`; `MANUAL -7` stores the step 5; `MANUAL 2` stores the step 2 (1.1, 1.3). |
+| T-REQ-28 | ui-unit | `labelText` with the text `Camera a1b2: add light. ...` and the list where a1b2 is number 2, "Logitech C922"; a text with two IDs; the cases of today's `camera-labels.test.ts`. | `Camera 2 · Logitech C922: add light. ...`; each ID replaced; an unknown ID stays; no file imports `withCameraLabels` (1.8). |
 | T-REQ-29 | ui-manual | The app with three cameras in `AUTO`: a connect; the button; "Search again"; a switch to Auto while not streaming, then a connect; a restart of the app, then a connect. | At each connect, "Setting exposure…" shows over each preview, and the record button is disabled with that tooltip until each search ends [G2]; the button and link states and tooltips of 1.8; after the restart, the held value comes back from the stored settings, and the connect sets it first and then searches [B2]. |
 | T-REQ-23 | hardware | Windows. The C922, the C930e and the Kiyo Pro at 1280x720 30 fps, `ready` in `MANUAL -7`; press the button. Then close, and connect the three in `AUTO`. | Each camera ends `ready` with its 10.2 check passed; no reopen during a search (open count 1); each search under 20 s. At the connect, the apply answers in about 4 s with the three `adjusting`; the three search at the same time after their warm-up; the time from the apply to its response, and to the end of each search in the live state, is recorded (1.3b) [H1]. The trials of each camera are recorded, so that the 10 frames to settle and the 30-frame window can be confirmed [Q4]. |
 | T-REQ-24 | hardware | Windows. The C922 alone at 1280x720 60 fps in `MANUAL -7`; press the button. | The result keeps 58.2 fps or more, or the search fails with its text. The trials are recorded (the notes predict -7). |
@@ -776,8 +865,10 @@ to it. In short:
 
 1. When: the group rate of the request is 60 fps, and one selected camera fails at 60 fps: a camera in
    `MANUAL` (or with no working exposure control) at the stage `set mode` or `rate check`; a camera
-   in `AUTO` whose search finds no value that holds 60 fps [H4]; or (not decided) a camera in `AUTO`
-   whose check after its search fails [B7].
+   in `AUTO` whose search finds no value that holds 60 fps [H4]; or a camera in `AUTO` whose check
+   after its search fails [B7]. The last case is decided by [F2] and [Q10]: the group runs at 60 fps
+   only when each selected camera passes a real 60 fps rate check, and the server falls the group
+   back to 30 fps one time [ADR-AC5B](../decisions/entries/AC5B-choices-of-the-third-consistency-check.md).
 2. What: the main process applies the configs from before the request, at 30 fps, to each selected
    camera, one time for the group. Each camera reopens at 30 fps, and each camera in `AUTO` searches
    again.
@@ -803,7 +894,8 @@ The detail:
   - a selected camera fails at the stage `set mode` or `rate check` [A17];
   - the search of a camera in `AUTO` finds no value that keeps 60 fps [H4]. The fall back then starts
     at once, with no check of that camera;
-  - the check of [cap 10.2] after the search of a camera in `AUTO` fails [B7] (not decided).
+  - the check of [cap 10.2] after the search of a camera in `AUTO` fails [B7], decided by [F2] and
+    [Q10] (item 1 above). The fall back then starts when the check fails.
 
   For a new group, the configs from before the request are the configs of the request with
   `framerate` 30. Each camera then reopens at 30 fps (`failed` cameras by "apply again" [cap 8.3]),
@@ -853,7 +945,11 @@ tile shows its state:
 How the result is kept [A18]:
 
 - The main process keeps nothing new. The `rate_fallback` items of the response, or of the status
-  `warnings`, are the result. The status keeps them until the next apply request [B17].
+  `warnings`, are the result. The status keeps them until the next apply request of the user [B17].
+  The reopen and the "apply again" of the fall back itself do not clear them: they are in
+  `CameraStatus.group_warnings`, which `reset_for_start` does not clear (1.5) [ADR-AC5B](../decisions/entries/AC5B-choices-of-the-third-consistency-check.md).
+- The main process tells "no value kept 60 fps" from other failures by `exposure_search.reason`
+  `no-value-kept-rate` (1.5) [ADR-AC5B](../decisions/entries/AC5B-choices-of-the-third-consistency-check.md).
 - The UI keeps the last `rate_fallback` text for the app run and shows it under the selector. It
   clears the text at the next pick of the rate or at a new detection.
 - The 60 fps choice stays available after a fall back. A new pick runs the check again, for example
@@ -880,7 +976,8 @@ How the result is kept [A18]:
 ### 2.7 Refusals
 
 - During a take: HTTP 409 by D36 [F4]. The UI disables the selector while a recording runs, with the
-  tooltip `stopRecordingFirst`, as the "Update Cameras" button [UI 11-20].
+  tooltip `stopRecordingFirst` ("Stop the recording first"), as the "Update Cameras" button
+  [UI 11-20] (1.8).
 - While a camera is `starting`, `waiting` or `adjusting`: HTTP 409 [agent 45 of cap]. The UI disables
   the selector in that time.
 
@@ -907,7 +1004,8 @@ Change to section 7.5, item "Auto rate": add "The UI does not send the auto rate
 Change to section 7.5: add the item "**Fall back to 30 fps**: a request whose group rate is 60 fps
 falls back to the configs from before the request, one time, when a selected camera fails at
 `set mode` or `rate check`, or when a camera in `AUTO` finds no exposure that keeps 60 fps or fails
-the check after its search (`camera-requests.md` 2.4)."
+the check after its search (`camera-requests.md` 2.4)." The last case is decided by [F2] and [Q10]
+(2.4 item 1); W 7.5 and W 8.2 state it [ADR-AC5B](../decisions/entries/AC5B-choices-of-the-third-consistency-check.md).
 
 Change to section 8.2: add the rows "| `failed` at 60 fps (stage `set mode` or `rate check`) | the
 fall back of `camera-requests.md` 2.4 | `starting` at 30 fps |" and "| `adjusting`, `checking` or
@@ -925,7 +1023,7 @@ Change to section 16.2, T-CAP-20 item (3): "apply a request that gives all three
 |---|---|---|---|
 | T-REQ-30 | fake | Three fakes `ready` at 30 in `MANUAL -7`, each with 60 in its modes and delivering 60; apply 60 for each. | Each camera reopens one time; the group rate is 60; no `rate_fallback`; each is `ready`. |
 | T-REQ-31 | fake | As T-REQ-30, but one fake delivers 29.66 fps in its 60 mode. | Each camera reopens two times (60, then 30); the response has configs at 30 and one `rate_fallback` item for that camera with "29.66"; `camera_failures` is empty; each is `ready`. |
-| T-REQ-32 | fake | Three fakes `ready` at 30 in `AUTO`, each with 60 in its modes and the brightness of T-REQ-01; one delivers 29.66 fps at each value in its 60 mode; apply 60 for each. | The apply answers with the three at 60 in `adjusting`; each camera searches at 60; the search of the slow camera fails because no value keeps 60 fps, and the one fall back of the group starts with no check of that camera and with no new request [H4, B17]; each camera reopens at 30 and searches again [G1]; the live state then has the configs at 30 with `exposure_found_at_fps` 30, and the status `warnings` of the slow camera hold one `rate_fallback` item, with no sentence on a value found at another rate [B9]. |
+| T-REQ-32 | fake | Three fakes `ready` at 30 in `AUTO`, each with 60 in its modes and the brightness of T-REQ-01; one delivers 29.66 fps at each value in its 60 mode; apply 60 for each. | The apply answers with the three at 60 in `adjusting`; each camera searches at 60; the search of the slow camera fails because no value keeps 60 fps, and the one fall back of the group starts with no check of that camera and with no new request [H4, B17]; each camera reopens at 30 and searches again [G1]; the live state then has the configs at 30 with `exposure_found_at_fps` 30, and the status `warnings` of the slow camera hold one `rate_fallback` item, with no sentence on a value found at another rate [B9]. Second case: the slow camera keeps 60 fps at -7 in its search, then delivers 29.66 fps in the check of [cap 10.2]: the same one fall back starts when the check fails [B7, F2, Q10]. |
 | T-REQ-33 | fake | As T-REQ-30, but one fake is in use at the reopen. | No fall back; that camera is `failed`, stage `open`; the two others run at 60. |
 | T-REQ-34 | fake | As T-REQ-31, and the slow fake also fails at 30. | One fall back only; that camera is `failed`, stage `rate check`, at 30; the others run at 30. |
 | T-REQ-35 | fake | A new group (no group runs) connects at 60 in `MANUAL -7`; one fake delivers 29.66 at 60. | The group runs at 30; the response has `rate_fallback`. |
@@ -1015,8 +1113,9 @@ each camera:
   [cap 7.1] says for a hang [A23]. The hub calls are a seam (one function for each IOCTL), so that a
   test can give the bytes.
 - Linux and macOS: the functions of sfn26, called in `detect_available_cameras` (as today).
-- The UI does not show the link yet (3.5 and 3.6 give the label).
-- A virtual camera gets `unknown` with no lookup.
+- The UI label is built in step 5 [L1] (3.5 and 3.6 give the label).
+- A virtual camera gets `unknown` with no lookup. Today the lookup runs for virtual cameras too
+  (`_add_usb_links` of `detect_cameras_devices.py`); the code changes to this rule.
 
 ### 3.5 What the label shows
 
@@ -1078,12 +1177,12 @@ No spec and no test now.
 
 | ID | Kind | Set-up | Pass criterion |
 |---|---|---|---|
-| T-REQ-50 | fake | Linux function with a `sysfs` tree in a temporary folder: `speed` 1.5, 12, 480, 5000, 10000, 20000; a camera with no `speed`; `/dev/video9` with no folder. Runs on each OS. | `USB 1`, `USB 1`, `USB 2`, `USB 3`, `USB 3`, `USB 3`, `unknown`, `unknown`. |
-| T-REQ-51 | fake | macOS function with a stand-in `ioreg` plist: location IDs with `USBSpeed` 4 and 3; the unique ID `FaceTime HD Camera`; an `ioreg` call that times out. Runs on each OS. | `USB 3`, `USB 2`, `unknown`, `unknown`. |
-| T-REQ-52 | fake | Windows parse: a Media Foundation link with `#{e5323777-f976-4f5b-9b55-b94699c46e44}\global`; a `root#image#` link. Runs on each OS (pure). | The instance, `vid` and `pid` of the link; the second gives `unknown`. |
+| T-REQ-50 | fake | Extends `skellycam/tests/test_usb_connection.py`. Linux function with a `sysfs` tree in a temporary folder: `speed` 1.5, 12, 480, 5000, 10000, 20000; a camera with no `speed`; `/dev/video9` with no folder. Runs on each OS. | `USB 1`, `USB 1`, `USB 2`, `USB 3`, `USB 3`, `USB 3`, `unknown`, `unknown`. |
+| T-REQ-51 | fake | Extends `skellycam/tests/test_usb_connection.py`. macOS function with a stand-in `ioreg` plist: location IDs with `USBSpeed` 4 and 3; the unique ID `FaceTime HD Camera`; an `ioreg` call that times out. Runs on each OS. | `USB 3`, `USB 2`, `unknown`, `unknown`. |
+| T-REQ-52 | fake | Extends `skellycam/tests/test_usb_connection.py` (the parse is the regex `WINDOWS_DEVICE_PATH` of `usb_connection.py`). Windows parse: a Media Foundation link with `#{e5323777-f976-4f5b-9b55-b94699c46e44}\global`; a `root#image#` link. Runs on each OS (pure). | The instance, `vid` and `pid` of the link; the second gives `unknown`. |
 | T-REQ-53 | fake | Windows decode with the IOCTL seam: V2 flag 1 set; flag clear and speed byte 2; speed byte 0; USB IDs at the port that differ from the camera. Runs on each OS (pure). | `USB 3`, `USB 2`, `USB 1`, `unknown`. Only the two connection-information codes are sent; no descriptor request. |
-| T-REQ-54 | fake | Detection with a lookup that raises, with a virtual camera by its name, and with a camera whose link starts with `\\?\root#` and whose name does not contain "virtual". | The detection returns each camera; the field is `unknown` for each; the two virtual cameras have `virtual: true` and get no lookup call [G9]. |
-| T-REQ-55 | fake | Windows only [U18]: the detection child with a lookup that hangs. | That camera has `unknown`; the detection returns within the limit of [cap 7.1] plus 2 s. |
+| T-REQ-54 | fake | Extends `skellycam/tests/test_usb_connection.py`. Detection with a lookup that raises, with a virtual camera by its name, and with a camera whose link starts with `\\?\root#` and whose name does not contain "virtual". | The detection returns each camera; the field is `unknown` for each; the two virtual cameras have `virtual: true` and get no lookup call [G9]. |
+| T-REQ-55 | fake | Windows only [U18]: the detection child with a lookup that hangs. | That camera has `unknown`; the detection returns within 9 s: `STEP_LIMIT_S` (7 s, `media_foundation/detect.py`) plus 2 s. |
 | T-REQ-59 | ui-unit | `linkChip` with `USB 3`, `USB 2`, `USB 1`, `unknown`, and `unknown` with `virtual: true`. | The chips `USB 3`, `USB 2`, `USB 1`, `USB ?`, `virtual`, with the tooltips of 3.5. |
 | T-REQ-56 | hardware | Windows. The Kiyo Pro in a USB 3 port, then the same Kiyo Pro in a USB 2 port (or behind a USB 2 hub); the C922 and the C930e. Compare with the output of the research script. | `USB 3`, then `USB 2`; `USB 2` for the C922 and the C930e; each value agrees with the speed of the research script. |
 | T-REQ-57 | hardware | Linux and macOS (phase 0, the user): the same cameras and ports as T-REQ-56. Compare with `lsusb -t` (Linux) or `system_profiler SPUSBDataType` (macOS). | Each value agrees with the speed that the system tool gives. |
@@ -1156,7 +1255,8 @@ The answers [Hn] of section 5b decided some of them. Each such choice has its ma
    makes a camera `failed` (1.3b). **Accepted by [H3].**
 7. At 60 fps, the fall back also runs when a camera in `AUTO` finds no value that keeps 60 fps, or
    fails the check after its search; the text then uses its trial with the highest rate (2.4).
-   **The first case is accepted by [H4]. The second case and the text stay proposed.**
+   **The first case is accepted by [H4]. The second case is decided by [F2] and [Q10] (2.4). The
+   text stays proposed.**
 8. The server reason keeps the declared and measured rates before the text of [G3]; " Or choose
    30 fps." goes; the warnings keep their own texts (1.5, 1.5a). **Accepted by [H5], except the
    removal of " Or choose 30 fps.", which stays proposed.**
@@ -1181,7 +1281,8 @@ The answers [Hn] of section 5b decided some of them. Each such choice has its ma
 18. `CameraGroupManager.search_exposure(camera_ids=None)` starts a search in the process of the
     manager (certify); the endpoint calls it (1.5).
 19. The field `paused` of the state means the internal pause of a record start only; the display
-    freeze of the UI is the pure function `displayedFrame` (1.5, 1.8).
+    freeze of the UI is the pure function `displayedFrame` (1.5, 1.8). **Withdrawn:
+    [ADR-V8RS](../decisions/entries/V8RS-pause-freezes-the-ui-display-only.md) removed the field, and the freeze stays `setStreamPaused` (1.8) [ADR-AC5B](../decisions/entries/AC5B-choices-of-the-third-consistency-check.md).**
 20. `exposure_search.count`: the number of searches since the camera process started (1.5).
     **Changed by [ADR-FC1C](../decisions/entries/FC1C-choices-of-the-spec-integration.md): since the group started, kept by the main process for each camera ID.**
 21. A camera with no working exposure control: the text of `no_manual_exposure`, the row text "No
@@ -1302,16 +1403,23 @@ which supersedes ADR-379P and keeps H1 to H7). The body of this spec applies eac
 
 ## 6. Other decisions of the same day that this spec must agree with
 
-These decisions of the user of 2026-11-20 on the UI were relayed by the supervisor. No entry on this
-branch holds them yet. This spec agrees with them:
+These decisions of the user of 2026-11-20 on the UI were relayed by the supervisor. [ADR-F2KY](../decisions/entries/F2KY-rulings-of-the-user-after-the-third-consistency-check.md) holds
+them, or cites the entry that holds them. This spec agrees with them:
 
-- A `too_slow` camera keeps its tile and counts as streaming. Its row says "Too slow at this
-  exposure: lower the exposure" (1.4, 1.5a). **The row text is replaced by [G3]: "Camera is slow.
-  Try adding more light".**
-- The "Update Cameras" button is disabled during a recording (1.8, 2.7).
+- A `too_slow` camera keeps its tile and counts as streaming (Q10 of [ADR-VYS7](../decisions/entries/VYS7-answers-of-the-user-to-the-step-4b-spec-and-go-ahead-for-its-tests.md)). Its row says
+  "Too slow at this exposure: lower the exposure" (1.4, 1.5a). **The row text is replaced by [G3]:
+  "Camera is slow. Try adding more light".**
+- The "Update Cameras" button is disabled during a recording, with the text "Stop the recording
+  first" (1.8, 2.7) [ADR-F2KY](../decisions/entries/F2KY-rulings-of-the-user-after-the-third-consistency-check.md). One "Update Cameras" button at the top adds, closes and retries
+  cameras and does not reopen the others (1.8).
+- A virtual camera shows greyed with the label `virtual`, and it cannot be selected ([G9], [Q12],
+  3.5).
+- On a control route with no time unit, the exposure shows as "step k of 8", the chip `E:k/8`, and
+  in Auto "Auto: step k of 8" (1.8).
 - Camera failure reasons will get a fixed failure code beside the text. Not accepted yet (1.5).
   **Now decided: [ux 4.6.3] holds the codes (1.5).**
-- The label form for a camera everywhere in the UI is `Camera <list number> · <name>` (0, 1.8).
+- The label form for a camera everywhere in the UI is `Camera <list number> · <name>` (0, 1.8;
+  Q13 of [ADR-VYS7](../decisions/entries/VYS7-answers-of-the-user-to-the-step-4b-spec-and-go-ahead-for-its-tests.md)).
 
 ## 7. What must be tried on real cameras before the code is trusted
 
@@ -1371,12 +1479,13 @@ of the UI (`camera-requests.md` 8.1)."
 The user decided: when a take ends by itself with an error, the record button returns to "Start",
 and the error and the summary of the take show at once, with no click on "Stop" [ADR-H0BQ](../decisions/entries/H0BQ-user-rulings-of-the-spec-integration.md). The server side
 is [`recorder.md`](recorder.md) 8.4: the live state gets `take_state` `"ended_with_error"` and
-`ended_take`.
+`ended_take_summary`. The behaviour is the ruling of the user; the two fields are a proposed design
+(item 16 of [ADR-FC1C](../decisions/entries/FC1C-choices-of-the-spec-integration.md)).
 
 - The recording slice reads `take_state` of each group from each live state. A change to
   `"ended_with_error"` sets `isRecording` false, clears `recordingName`, `startedAt` and `duration`,
-  and sets `completionData` from `ended_take.summary`, as a stop response does.
-- The UI shows the error text of `ended_take.take_error` with the camera label of 1.8, and the summary
+  and sets `completionData` from `ended_take_summary.summary`, as a stop response does.
+- The UI shows the error text of `ended_take_summary.take_error` with the camera label of 1.8, and the summary
   dialog of a stop.
 - It shows them one time for each take: a pure function `endedTakeNotice(previous, state)` in
   `skellycam-ui/src/store/slices/recording/ended-take.ts` gives the notice only when the group moves
@@ -1385,5 +1494,5 @@ is [`recorder.md`](recorder.md) 8.4: the live state gets `take_state` `"ended_wi
 
 | ID | Kind | Set-up | Pass criterion |
 |---|---|---|---|
-| T-REQ-73 | ui-unit | `endedTakeNotice`: a state with `take_state` `"recording"`; then `"ended_with_error"` with `ended_take`; the same state again; then `"none"`. | `null`; the notice with the error text, the camera label and the summary; `null`; `null` (8.4). |
+| T-REQ-73 | ui-unit | `endedTakeNotice`: a state with `take_state` `"recording"`; then `"ended_with_error"` with `ended_take_summary`; the same state again; then `"none"`. | `null`; the notice with the error text, the camera label and the summary; `null`; `null` (8.4). |
 | T-REQ-76 | ui-manual | The app with two cameras records; the writer of one is held past the stall limit (a test build), or the disk is removed. | Within about 1 s, the record button shows "Start", and the error and the summary show with no click on "Stop" (8.4). |

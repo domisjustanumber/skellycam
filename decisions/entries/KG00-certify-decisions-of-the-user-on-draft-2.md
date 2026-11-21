@@ -19,9 +19,10 @@ The user decided these points on 2026-11-20. The spec [`specs/certify.md`](../..
    - C5: the file `camera_evidence.json` in the package, with the states `verified` and `known-bad`.
      `verified` needs 3 full reports from 2 systems, or 1 maintainer report. A maintainer accepts each
      row in a pull request.
-   - C6: on Linux and macOS, native capture is the default only on a verified OS, or after a local
-     passed full run. Elsewhere OpenCV stays, and the app prompts for a certify run of an unknown
-     camera or OS.
+   - C6: on Linux and macOS, native capture is the default only for a camera model with a `verified`
+     row, or after a local passed full run of that model. A `verified` OS alone turns on nothing
+     (changed on 2026-11-20 by [ADR-F2KY](F2KY-rulings-of-the-user-after-the-third-consistency-check.md)). Elsewhere OpenCV stays, and the app prompts for a certify run
+     of an unknown camera or OS.
    - C7: a camera that is not well after the run gets a cleanup row, and the app shows "Camera
      <name>: wedged, please replug".
    - C8: the disk benchmark in full: 1 GiB, 4 MiB blocks, fsync each second, at most 30 s, in the

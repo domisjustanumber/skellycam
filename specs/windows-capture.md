@@ -27,7 +27,7 @@ the controls at the close and the main-process stall watch. Their changes to thi
 sections 1.3, 3, 4.3, 6.6, 6.7, 6.9, 7.1, 7.5, 8.1 to 8.4, 9.1, 9.3, 9.4, 9.5, 10.1, 10.4, 11.1 to
 11.3, 11.5, 12, 14.1, 16.2, 16.3, 16.5, 16.6 and 20. They replace D29, the text of 10.4 and the
 `AUTO` and `RECOMMEND` modes of 11.1. The tests T-CAP-18, T-CAP-20, T-CAP-34, T-CAP-41, T-CAP-42,
-T-CAP-53, T-CAP-55, T-CAP-77, T-CAP-104 and T-CAP-105 change with them. T-CAP-92 to T-CAP-98 are
+T-CAP-53, T-CAP-55, T-CAP-77, T-CAP-94, T-CAP-104 and T-CAP-105 change with them. T-CAP-92 to T-CAP-98 are
 retired: the certify checks are the hardware tests of Linux and macOS (item 10 of ADR-22EJ).
 
 ## 0. How to read this spec
@@ -84,7 +84,7 @@ Each step has its own tests and its own camera run [D2].
 - The USB link display [D45]. (Changed on 2026-11-20: detection gives the USB link of each camera, and
   a failed start gets an explanation that uses the Windows event-log check, ports from `sfn26`
   [ADR-EQY4](../decisions/entries/EQY4-base-the-work-on-upstream-sfn26-without-rust.md). The USB link
-  label of the UI is in [`camera-requests.md`](camera-requests.md) part 3. The UI does not show the link yet.)
+  label of the UI is in [`camera-requests.md`](camera-requests.md) part 3, and step 5 builds it (L1).)
 - A change of the UVC power line frequency control and a flicker measurement [D44]. The "Add light"
   text of the exposure search is in [`camera-requests.md`](camera-requests.md) 1.5 (2026-11-20).
 - Linux and macOS native capture (phase 7) and the hardware runs of phase 0 [D5, D46].
@@ -192,6 +192,8 @@ proven calls of the prototype [D7]. The layout [agent 1]:
 | `skellycam/core/camera/capture/camera_loop.py` | The shared loop. It replaces `opencv/opencv_camera_loop.py`. Note, 2026-11-20: the old loop, its worker method and its own helpers are deleted ([ADR-037V](../decisions/entries/037V-completion-of-w8-the-phase-2-loop-and-its-tests.md)). |
 | `skellycam/core/camera/capture/exposure_search.py` | The exposure search of [`camera-requests.md`](camera-requests.md) 1.3: the values, the choice, the flag `add_light`. Pure functions, with the frame feed of the loop. |
 | `skellycam/core/camera/capture/bounded.py` | The generic bounded call of 6.6, with no COM and with a limit argument ([`unix-capture.md`](unix-capture.md) 4.1). |
+| `skellycam/core/camera/capture/failure_codes.py` | The failure codes and their default by stage ([`unix-capture.md`](unix-capture.md) 4.1, 4.6.3). Pure. |
+| `skellycam/core/camera/capture/camera_checks.py` | The reader of the record of checked models ([`unix-capture.md`](unix-capture.md) 4.1, 4.9). On Windows the source choice does not read it (14.2). |
 | `skellycam/core/camera/capture/rate_check.py` | The rate formula, the limits, the early decision (section 10). Pure functions. |
 | `skellycam/core/camera/capture/modes.py` | `supported_modes`, the mode choice, the auto rate, the rate tolerance, the group rate rule (section 7). Pure functions. |
 | `skellycam/core/camera/capture/media_foundation/` | `com.py` (interface declarations), `bounded.py` (a wrapper of the generic bounded call that joins the MTA in each worker), `errors.py` (HRESULT to reason, pure), `detect.py`, `source.py` (`MediaFoundationSource`). Windows only: the whole package, and each module can import `comtypes`. Its tests run on Windows only (16.1) [U18]. |
@@ -540,8 +542,8 @@ Measured: stop to released took 272 to 1,122 ms on the four test cameras
   `skellycam/core/device_detection/usb_connection.py` is ported from `sfn26`
   ([ADR-EQY4](../decisions/entries/EQY4-base-the-work-on-upstream-sfn26-without-rust.md)). Today
   `_add_usb_links` of `detect_cameras_devices.py` calls it after the detection child returns, with no
-  time limit. [`camera-requests.md`](camera-requests.md) 3.4 moves the lookup into the detection child, bounded at 1 s for each camera.
-  The UI does not show the link yet.
+  time limit, also for a virtual camera. [`camera-requests.md`](camera-requests.md) 3.4 moves the lookup into the detection child, bounded at 1 s for each camera,
+  and runs no lookup for a virtual camera. The UI label is built in step 5 (L1).
 - The main process keeps the last detection result, by `camera_id`, for the whole-request check of
   8.3 and 7.5 [U17]. When that result does not hold each selected camera of a request, the apply
   request runs the detection first [agent 79].
@@ -636,7 +638,8 @@ fields of `CameraMode` [ring 9] plus the rounded rate:
   each camera ([`camera-requests.md`](camera-requests.md) 2.2). The API keeps -1 and 0 for other consumers.
 - **Fall back to 30 fps**: a request whose group rate is 60 fps falls back to the configs from before
   the request, one time, when a selected camera fails at `set mode` or `rate check`, or when a camera
-  in `AUTO` finds no exposure that keeps 60 fps ([`camera-requests.md`](camera-requests.md) 2.4).
+  in `AUTO` finds no exposure that keeps 60 fps or fails the check after its search
+  ([`camera-requests.md`](camera-requests.md) 2.4).
 - **Stored rate** [D17]: the config stores the mode rate, so -1 becomes the real rate.
 - **Tolerance** [D17]: frame rates compare with a relative tolerance of 0.0001
   (`math.isclose(a, b, rel_tol=1e-4)`).
@@ -707,7 +710,7 @@ fields of `CameraMode` [ring 9] plus the rounded rate:
 | `ready`, `too_slow`, `checking` | the button "Auto-set exposure", "Search again", or a change of the mode from `MANUAL` to `AUTO` | `adjusting` |
 | `adjusting` | the search ended (with its result, or with the old setting after a failure) | `checking` |
 | `failed` at 60 fps (stage `set mode` or `rate check`) | the fall back of [`camera-requests.md`](camera-requests.md) 2.4 | `starting` at 30 fps |
-| `adjusting` at 60 fps (a camera in `AUTO` whose search keeps no value) | the fall back of [`camera-requests.md`](camera-requests.md) 2.4 | `starting` at 30 fps |
+| `adjusting`, `checking` or `too_slow` at 60 fps (a camera in `AUTO` whose search keeps no value, or whose check after its search fails) | the fall back of [`camera-requests.md`](camera-requests.md) 2.4 | `starting` at 30 fps |
 | `ready`, `too_slow`, `checking` | live change of exposure, gain or focus [D31] | `checking` |
 | `checking` | rate check passed | `ready` |
 | `checking` | rate check failed | `too_slow` [D32] |
@@ -801,10 +804,12 @@ A camera that dies while no recording runs is treated as a `failed` camera [U6].
   through the config from 3c [D30, D43] [agent 31].
 - `warnings` holds the items of 11.3 for the recording that runs [agent 33].
 - `exposure_search` is null or the result object of [`camera-requests.md`](camera-requests.md) 1.5. `warnings` also holds the items
-  `add_light` and `exposure_search_failed` until the next exposure change of the camera, and
-  `rate_fallback` until the next apply request. The route `GET /camera/group/state` returns the same
+  of the camera process (`add_light`, `exposure_search_failed`, `no_manual_exposure`) and the items of
+  the main process (`rate_fallback`, `start_failure`). The owners, the storage and the lifetimes of
+  these items are in [`camera-requests.md`](camera-requests.md) 1.5 [ADR-AC5B](../decisions/entries/AC5B-choices-of-the-third-consistency-check.md). The route `GET /camera/group/state` returns the same
   state as the `app_state` message of the websocket ([`camera-requests.md`](camera-requests.md) 1.5).
-- `diagnostics` holds the keys of [`unix-capture.md`](unix-capture.md) 4.6.2, and `failure` holds the failure code (section 12).
+- `diagnostics` holds only the counter subset of [`unix-capture.md`](unix-capture.md) 4.2 item 2. The full dict of 4.6.2 goes to the
+  main process as a message, not through the status. `failure` holds the failure code (section 12).
 - The response of `/camera/group/apply` adds `camera_failures`: a dict from `camera_id` to the
   failure object of section 12 [agent 21].
 
@@ -855,8 +860,8 @@ Reason: on the C930e the gain read 6 before the stream started and 0 after it st
 - Cameras wait paused until all are ready [D21]. The state of a camera that waits is `waiting` (8.1). "All" means every selected camera that has not
   failed [D23].
 - A camera that waits keeps its stream. Its waiting place keeps the newest frame only.
-- The pause of a record start is internal. The public pause route `GET /camera/group/all/pause_unpause`
-  is removed. The pause of the UI is a display freeze and does not touch the cameras ([`camera-requests.md`](camera-requests.md) 1.3b).
+- The pause of a record start is internal. The public pause route `PUT /camera/group/all/pause` (and
+  the older `GET /camera/group/all/pause_unpause`) is removed ([ADR-V8RS](../decisions/entries/V8RS-pause-freezes-the-ui-display-only.md)). The pause of the UI is a display freeze and does not touch the cameras ([`camera-requests.md`](camera-requests.md) 1.3b).
 
 ### 9.5 Stall watch
 
@@ -867,10 +872,13 @@ Reason: on the C930e the gain read 6 before the stream started and 0 after it st
 - A started camera that fails is `dead` at once, before its files and its close [agent 82].
 - The watch restarts after each wait of the loop in the recorder ([`recorder.md`](recorder.md) 5.2), and after each wait at the
   gate [agent 32]. This applies to each source, push and pull (E of [ADR-JMS0](../decisions/entries/JMS0-review-decisions.md), 2026-11-20).
-- The main process also watches each camera ([`unix-capture.md`](unix-capture.md) 4.10): the Media Foundation callback adds one to
-  the shared counter `delivered_count` for each delivered frame. A camera in `waiting`, `adjusting`,
-  `checking`, `too_slow`, `ready` or `recording` whose counter did not change for 2 s, and that reported
-  no failure, is removed from the gate, marked `dead` with the code `stalled`, and its process ends.
+- The main process also watches each camera ([`unix-capture.md`](unix-capture.md) 4.10) [ADR-AC5B](../decisions/entries/AC5B-choices-of-the-third-consistency-check.md): the shared loop adds one to the
+  shared counter `alive_count` at each loop pass, for each source (OpenCV and Media Foundation
+  alike). A camera in `waiting`, `adjusting`, `checking`, `too_slow` or `ready` (also with a
+  recording) whose counter did not change for 2 s, with its process alive, no failure reported and no
+  close started, is removed from the gate, marked `dead` with the code `stalled`, and its process ends.
+  The rule of this section normally comes first for a `read_frame` that returns; the two give the same
+  code `stalled`. The main-process watch also catches a `read_frame` that never returns.
 
 ## 10. Rate check
 
@@ -927,6 +935,10 @@ The reason gives the declared rate and the measured rate [D25], then the text of
 [`camera-requests.md`](camera-requests.md) 1.5a:
 
 `declared 30.00 fps, measured 25.76 fps. Camera is slow. Try adding more light`
+
+This text is for a rate below the limit (code `rate-low`). A rate above the limit (code `rate-high`)
+has its own text: `declared 30.00 fps, measured 31.42 fps. The camera delivers more frames than its
+mode rate` ([`camera-requests.md`](camera-requests.md) 1.5a) [ADR-AC5B](../decisions/entries/AC5B-choices-of-the-third-consistency-check.md).
 
 ### 10.5 Why the median is forbidden, and the numbers [D22]
 
@@ -1237,7 +1249,8 @@ Limits produced by the fake source:
 Switches of the hardware tests [agent 73]:
 
 - `SKELLYCAM_HARDWARE=1`: each hardware test runs; without it, each is skipped [agent 2].
-- `SKELLYCAM_HARDWARE_DARK=1`: T-CAP-55 and T-CAP-96 run; they need a dark room.
+- `SKELLYCAM_HARDWARE_DARK=1`: T-CAP-55 runs; it needs a dark room. (T-CAP-96 is retired, item 10 of
+  ADR-22EJ.)
 - `SKELLYCAM_HARDWARE_UNPLUG=1`: T-CAP-58 and T-CAP-95 run; they need a person who unplugs a camera.
 - `SKELLYCAM_HARDWARE_RESULTS`: the file of the recorded results (JSON lines). The default is a file
   in the temporary folder of the system. It is not in the repository.
@@ -1622,7 +1635,7 @@ Reasons:
 | T-CAP-93 | not applicable: Windows runs T-CAP-54 | runs (phase 0) | runs (phase 0) |
 | T-CAP-94 | not applicable: Windows runs T-CAP-53 | runs (phase 0) | runs (phase 0) |
 | T-CAP-95 | not applicable: Windows runs T-CAP-58 | runs (phase 0) | runs (phase 0) |
-| T-CAP-96 | not applicable: Windows runs T-CAP-55 | runs (phase 0) | runs (phase 0) |
+| T-CAP-96 | not applicable: Windows runs T-CAP-55 | retired (item 10 of ADR-22EJ) | retired (item 10 of ADR-22EJ) |
 | T-CAP-97 | not applicable: Windows runs T-CAP-57 | runs (phase 0) | runs (phase 0) |
 | T-CAP-98 | not applicable: Windows runs T-CAP-60 | runs (phase 0) | runs (phase 0) |
 | T-CAP-99 | runs | runs | runs |
@@ -2037,8 +2050,8 @@ and D38 replace the two older plan statements of 1.4.
   (Note: the "Add light" advice of the exposure search is in [`camera-requests.md`](camera-requests.md) 1.5, [ADR-JK79](../decisions/entries/JK79-exposure-search-at-each-open-and-camera-requests.md).)
 - D45: Not in phase 3 (later, with the camera identity work of phase 5): the USB link display (USB 2
   or 3 per camera) and the Windows event-log check that explains a start failure as a USB removal.
-  (Changed on 2026-11-20: both are ported from `sfn26`; the UI does not show the link yet [ADR-EQY4](../decisions/entries/EQY4-base-the-work-on-upstream-sfn26-without-rust.md).
-  The UI label of the link is in [`camera-requests.md`](camera-requests.md) part 3, [ADR-JK79](../decisions/entries/JK79-exposure-search-at-each-open-and-camera-requests.md).)
+  (Changed on 2026-11-20: both are ported from `sfn26` [ADR-EQY4](../decisions/entries/EQY4-base-the-work-on-upstream-sfn26-without-rust.md).
+  The UI label of the link is in [`camera-requests.md`](camera-requests.md) part 3, [ADR-JK79](../decisions/entries/JK79-exposure-search-at-each-open-and-camera-requests.md); step 5 builds it (L1).)
 - D46: The start-up rules (warm-up, rate check, failed-camera flag, one rate per group) apply to the
   OpenCV source too (Linux, macOS), but the rate check runs there only when OpenCV reports a real
   frame rate (> 0) for the camera. Linux and macOS behaviour is not tested until phase 0.

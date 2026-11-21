@@ -46,7 +46,7 @@ spec [`specs/unix-capture.md`](../../specs/unix-capture.md) builds on them.
     justified dependency; byte-true MJPG, with a DHT inserted when the camera sends none; no mode
     below 30 fps; one group rate, 60 fps only when proven; virtual cameras shown, not selectable; a
     USB link label; a hung camera costs the others at most 100 ms; `spawn` on each system; a fixed
-    failure code; no hot-unplug test; OpenCV stays as the fallback until a system is verified.
+    failure code; no hot-unplug test; OpenCV stays as the fallback until a model passes.
 12. A camera that failed is never opened again in the same certify run.
 13. The certify spec owns the names and values of each key, value, check name and reason code that
     certify reads; the capture spec uses them.

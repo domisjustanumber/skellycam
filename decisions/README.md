@@ -60,6 +60,7 @@ These entries are `accepted`.
 | [XT31](entries/XT31-kit-adoption-choices-camera-media-check-and-fills.md) | Supersedes NMM1, 4A7H: kit adoption choices; the media check refuses PNG, GIF, WebP, SVG with an allow by path; index limit 24,000 | accepted |
 | [6T78](entries/6T78-choices-of-the-sfn26-integration.md) | Choices of the `sfn26` integration: OpenCV helpers stay ours, kept and dropped items, forms of the four ports, Rust removal | accepted |
 | [82AA](entries/82AA-stop-last-frame-survivor-files-and-stuck-writer-limit.md) | The stop sets the last frame with no pause, plus 2, under its lock; a surviving process leaves its files to the repair step; the stuck-writer limit is 15 s | accepted |
+| [F2KY](entries/F2KY-rulings-of-the-user-after-the-third-consistency-check.md) | Native capture turns on per camera model, not per OS; one Update Cameras button, off in a take; audio line; step k of 8 | accepted |
 
 ### Evidence
 
@@ -87,6 +88,7 @@ These entries wait for a decision of the user. Section is the section or area of
 | [8CP7](entries/8CP7-certify-spec-draft-3-choices-of-the-agent.md) | Certify spec draft 3 on format 1.4.0, tests T-CERT-01 to 67, 15 agent choices: split checks, model item, gate roll-ups, local record, macOS probes | `certify` | proposed |
 | [FC1C](entries/FC1C-choices-of-the-spec-integration.md) | Spec integration choices: hash set, route results, no record in certify, model turn-on, waits, steps, quick order, take error state | none | proposed |
 | [F8C0](entries/F8C0-third-review-choices.md) | Choices of the third review fixes: start and stop with no lost take, no stop pause, exit through the take level, Ctrl-C, dead-server end, summary rate | `recorder` | proposed |
+| [AC5B](entries/AC5B-choices-of-the-third-consistency-check.md) | Choices of the third spec check: loop-pass stall counter, diagnostics message, code table, warning owners, apply wait, search reason, `ended_take_summary` | none | proposed |
 
 The entries that are `rejected`, `superseded by XXXX`, `absorbed into <path>#<anchor>`,
 `evidence; used by XXXX` or `done` are in [historical.md](historical.md).

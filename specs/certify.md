@@ -119,7 +119,7 @@ A certificate must test the product, not a copy. Each check on Windows uses only
 | A take | `CameraGroup.start_recording`, `stop_recording`, `TakeSummary`; the files of rec 6 |
 | File checks | `sidecar.read_strict`, the manifest, `stop_stats.stop_response_fields` |
 | Frames | `FrameRingReader` of the JPEG ring; `cv2.imdecode` in memory (`IMREAD_REDUCED_GRAYSCALE_8` for the brightness) |
-| Source facts | The `diagnostics` dict in the camera status, with the keys of [ux 4.6.2] (section 10.3) |
+| Source facts | The full `diagnostics` dict from `CameraGroupManager.diagnostics()`, with the keys of [ux 4.6.2] (section 10.3, [ux 4.2 item 2]) |
 | The controls before the run, and their restore | The product: the source keeps the "before" values at its first control read (`c_before`, `c_before_auto`) and sets them back at its own close [U] [ux 4.7] |
 | A plain open (phase G of `full`), the cycles | `MediaFoundationSource.open`, `set_controls`, `close` in the session child |
 | Disk | `start_take`, `CameraTakeWriter`, `finish` with synthetic JPEG frames; `folder_files.file_system` |
@@ -191,6 +191,9 @@ This spec owns the local record. The details [A]:
   OS key of 11.2, and the level. A camera with no USB ids has `device` `nousb:<cleaned name>` (9.4).
   A newer row for the same key replaces the older one. A `quick` row marks the model as checked; a
   `full` row also gives the local pass of 11.3.
+- **The container** [ADR-AC5B](../decisions/entries/AC5B-choices-of-the-third-consistency-check.md). The file is one JSON object `{"format": 1, "rows": [ ... ]}`, with
+  one object of the form below for each row. A missing file or a file that cannot be read means "no
+  rows". The reader logs that one time; it never raises for the file.
 - **A row.**
 
   ```json
@@ -217,8 +220,10 @@ This spec owns the local record. The details [A]:
       hold passed, and the image check is `not-run` (for example `too-dark`). `no`: a check failed.
       A route whose checks did not run for another reason (`not-applicable`, `prior-failure`) is
       left out.
-    - The product chooses among the routes whose result is `works`; when several work, the one that
-      works on the most models of the shipped file; with no `works` route, an `unproven` route by the
+    - The product chooses the route of the local row first: a route whose result is `works` in the
+      local row of the model wins [ux 4.4.6]. Else it chooses among the routes whose result is
+      `works` in the shipped file; when several work, the one that works on the most models of the
+      shipped file; with no `works` route, an `unproven` route by the
       same rule. An `unproven` control is offered in the UI. Only a control whose routes are all `no`
       is absent [U] [ux 4.4.6, 4.9].
   - Certify never applies the record to itself: in a certify run, each control is tried again,
@@ -615,12 +620,15 @@ does not declare gives `not-run` with `no-mode`, never `fail` [A]. Rates above
 | `<label>:rate:1920x1080@30` | An apply of this camera alone at the mode, manual -7. The product start-up check. | `mode_fps`, `measured_fps`, `luma_mean`, `jpeg_kb_mean`, `seconds_to_ready` | `pass`; `fail` with `rate-low`, `rate-high`, `usb-bandwidth`, `not-ready`; `not-run` with `too-dark` or `no-mode` |
 | `<label>:modes:granted:1920x1080@30` | The granted mode equals the request (D-1). | as 4.2 | `pass`; `fail` with `mode-not-granted`; `not-run` with `no-mode` |
 | `<label>:rate:<largest>`, `<label>:modes:granted:<largest>` | The same at the largest size. | the same | the same |
-| `<label>:exposure:<base>` | Live changes through apply, manual, from -11 to -3. Each step is the check of cap 10.2. Stop after two steps in a row that end `too_slow`. | `fps_at_m11` ... `fps_at_m3`, `state_at_m11` ..., `luma_at_m11` ..., `cliff` (the longest exposure that ends `ready`) | `record-only` |
+| `<label>:exposure:<base>` | Live changes through apply, manual, from -11 to -5. Each step is the check of cap 10.2. Stop after two steps in a row that end `too_slow`. | `fps_at_m11` ... `fps_at_m5`, `state_at_m11` ..., `luma_at_m11` ..., `cliff` (the longest exposure up to -5 that ends `ready`) | `record-only` |
 | `<label>:exposure:<base>:readback` | Each set value of the sweep reads back. | `readback_failures` | `pass`; `fail` with `exposure-not-applied`; `not-run` with `no-manual-exposure` |
 | `<label>:settings-stick:each-open` | At each open of the run, the configured exposure reads back (`full` only). | `opens`, `readback_failures` | `pass`; `fail` with `setting-lost-on-reopen` |
 
 - The sweep answers "where is the 30 fps cliff?" Logitech: 30 fps to -5, 16 fps at -4; Kiyo Pro:
   28.7 fps at -6, 23.1 at -5 [M cap 10.5].
+- The sweep ends at -5 because of the `MANUAL` clamp of the product: a `MANUAL` value above -5
+  becomes -5 on a route with a time unit [req 1.1]. Thus -4 and -3 would test -5 again, and the sweep
+  cannot see a cliff above -5 [ADR-AC5B](../decisions/entries/AC5B-choices-of-the-third-consistency-check.md).
 - The sweep needs `measured_fps` after `too_slow`. The 3a run found that it keeps the old passing
   value [M `research/usb_cameras/docs/hardware_run_3a_20261120.md`]. That fault must be fixed first
   (section 13).
@@ -643,7 +651,8 @@ the 60 fps fall back with the warning `rate_fallback` [req 2.4]. Certify starts 
 product with no HTTP: an apply of `CameraGroupManager` that opens the camera in `AUTO`, or
 `await CameraGroupManager.search_exposure(camera_ids=[...])` for a camera that streams [req 1.5].
 `exposure_search.count` is the number of searches of the camera since the group started; the main
-process keeps it for each camera ID, also across a reopen [req 1.5]. Certify never calls the pause
+process keeps it for each camera ID, also across a reopen for a size or rate change (inside the same
+camera process) and across "apply again" (a new camera process) [req 1.5]. Certify never calls the pause
 route (it is removed [U]).
 
 Certify waits until the state of the camera is neither `adjusting` nor `checking`, at most 25 s from
@@ -1069,8 +1078,9 @@ coded by certify [ux 4.4.10, 4.6.4] [U].
 
 ### 10.3 Diagnostics that certify reads [A]
 
-The product path can show only what the source reports. Each source gives `diagnostics() -> dict`,
-which the camera status carries [ux 4.2 item 2]. The keys are the keys of [ux 4.6.2], with the IDs
+The product path can show only what the source reports. Each source gives `diagnostics() -> dict`.
+The camera process sends the full dict to the main process, and certify reads it with
+`CameraGroupManager.diagnostics()`; the camera status carries only the counter subset [ux 4.2 item 2]. The keys are the keys of [ux 4.6.2], with the IDs
 D-1 to D-11 of that table, and the rules of [ux 4.6.1]: fixed keys, `null` when a source cannot fill a
 key, no path, no serial, no camera name and no free text. Media Foundation gives the same keys where it
 can (parity column of [ux 4.6.2]).
@@ -1347,7 +1357,7 @@ no YAML library and must not add one for this [A]. The app never downloads it.
  ],
  "cameras": [
   {"device": "046d:085c", "model": "Logitech C922", "backend": "media-foundation", "os": "Windows",
-   "abi": "lp64", "state": "verified", "source": "maintainer", "limits": ["rate-60-at-m7-only"],
+   "os_key": "11 26H2", "abi": "lp64", "state": "verified", "source": "maintainer", "limits": ["rate-60-at-m7-only"],
    "jpeg_reference": {"dqt_sha256": "<hex>", "dqt_distinct": 1, "dht_present": false},
    "reports": ["<report id>"]},
   {"device": "046d:085c", "model": "Logitech C922", "backend": "avfoundation", "os": "macOS",
@@ -1360,10 +1370,10 @@ no YAML library and must not add one for this [A]. The app never downloads it.
                   "a1-cmio-native:gain": "pass", "a6-ep0-device:exposure": "pass"},
    "reports": ["<report id>"]},
   {"device": "1532:0e05", "model": "Razer Kiyo Pro", "backend": "media-foundation", "os": "Windows",
-   "state": "verified", "source": "maintainer", "limits": ["rate-60-not-delivered", "wedge-risk", "name-generic"],
+   "os_key": "11 26H2", "abi": "lp64", "state": "verified", "source": "maintainer", "limits": ["rate-60-not-delivered", "wedge-risk", "name-generic"],
    "reports": ["<report id>"]},
   {"device": "4c4a:4a55", "model": "USB Camera", "backend": "media-foundation", "os": "Windows",
-   "state": "known-bad", "source": "maintainer", "limits": ["rate-below-declared"], "reports": ["<report id>"]}
+   "os_key": "11 26H2", "abi": "lp64", "state": "known-bad", "source": "maintainer", "limits": ["rate-below-declared"], "reports": ["<report id>"]}
  ]
 }
 ```
@@ -1402,7 +1412,7 @@ no YAML library and must not add one for this [A]. The app never downloads it.
   delivers 30").
 - Linux and macOS: "when a system passes, native capture can be used there at once" [U]. Native
   capture turns on for a camera model (model, backend, OS key, ABI), never for a whole system or OS
-  key [ADR-FC1C](../decisions/entries/FC1C-choices-of-the-spec-integration.md): it is the default for a model only with a `verified` row of the model in the file, or
+  key [ADR-F2KY](../decisions/entries/F2KY-rulings-of-the-user-after-the-third-consistency-check.md): it is the default for a model only with a `verified` row of the model in the file, or
   with a local pass of the model (below, [C 7.2]). An OS key that is `verified` in `systems` turns no
   model on by itself. Each other model keeps OpenCV, and the app prompts the person to run certify
   for an unknown camera or OS version (11.4) [ux 4.9].
@@ -1564,21 +1574,21 @@ This section is for the freemocap session, which coordinates the checks of the m
 | A restore of the "before" values at each close, on by default, on the three systems, with its result in the diagnostics (`restore_ok`, `restore_failed`) | None | Step 7s [ux 4.7]. The user decided that the product restores at its own close [U]; [ux 4.7] has it on by default, with the keys `restore_ok` and `restore_failed`. |
 | The state `adjusting`, `exposure_search` in the status, and a new search when the frame rate changes | No `adjusting` state; the search runs at an apply with `RECOMMEND` | Step 7s and the Media Foundation change of [ux 4.5]; the rule is a decision of the user [U] (5.3) |
 | A count of frames that skellycam encoded and decoded (`encoded_by_skellycam`, `decoded_by_skellycam`) | None | Step 7s, the shared loop [ux 4.2 item 3]; 3b for the encoder |
-| The diagnostics dict of [ux 4.6.2] in the camera status | None | Step 7s [ux 4.2 item 2] |
+| The diagnostics dict of [ux 4.6.2], sent to the main process (`CameraGroupManager.diagnostics()`) | None | Step 7s [ux 4.2 item 2] |
 | The local record `camera_checks.json` in the skellycam base folder, with the gate and the routes of each model (2.5, 11.3) | None | The certify step |
 | A public enumeration with no activation, bounded, for the plan | `MediaFoundationBackend.devices()` in the detection child only | The certify step |
 | The full mode list with formats (`capture_modes`) | MJPG only | 3c |
 | Uncompressed modes | Not built | 3b |
 | Gain and focus through the config; white balance and power line read | Exposure only | 3c |
 | Control ranges (min, max, step, default: `GetRange`) | Not read | Not in the 3c spec. Add to 3c. |
-| USB link per camera | Not built (D45) | The port of `usb_connection.py` of upstream `sfn26` [P §14], with 5d |
+| USB link per camera | Built: `usb_connection.py` is ported from upstream `sfn26`, and `_add_usb_links` of `detect_cameras_devices.py` fills `usb_link` after detection, with no time limit | Step 5: the bounded lookup in the detection child and the UI label [req 3.4, 3.5] |
 | The model name (USB product string) | Friendly name only | 5d (`device.model`, rec 6.7) |
 | Stage times (open, first frame, ready, close) in the status | Log only | The certify step |
 | A discontinuity count in the status or `CameraTakeResult` | Not counted | The certify step |
 | `measured_fps` after `too_slow` | Keeps the old value (3a fault) | A fix before 5.2 |
 | The fake source and a synthetic frame source in the package | In `skellycam/tests/` | The certify step |
 | A SemVer version and the build commit with no git (C 2.5) | `2.0.0a6`; no commit metadata | The certify step |
-| The evidence file, its checker, the `evidence` field of detection | None | The certify step (section 11) |
+| The evidence file, its checker, the `evidence` field of detection | None | The file and its checker: the certify step (section 11). The `evidence` field of `CameraDeviceInfo`: step 7s [ux 4.2 item 8] |
 | The native V4L2 and AVFoundation sources, with the diagnostics D-1 to D-11 of 10.3 | Research code only | Phase 7, moved up [U]; spec [ux] |
 
 ## 14. Questions for the user
@@ -1596,9 +1606,10 @@ important is first.
    otherwise `partial` (3.4).
 2. A skellycam upgrade does not make a row of `camera_checks.json` stale; only a new OS key, ABI or
    backend does (2.5). Yes?
-3. A model counts as checked only when its summary item ended `pass`, `partial` or `fail`; an item
-   `skipped` (busy) or `record-only`, and an interrupted run, write nothing, so the app checks that
-   model again at its next open. Yes?
+3. A model counts as checked only when its summary item ended `pass` or `fail`, or `partial` with at
+   least one unit whose `<label>:opens` is `pass` or `fail` (2.5); an item `skipped` (busy), a
+   `partial` item where no unit judged `opens`, and an interrupted run write nothing, so the app checks
+   that model again at its next open. Yes?
 4. A full run checks the camera block (phases C, D and F) of one camera for each model; each other
    camera of that model gets its quick checks, the group checks, and `not-run` with `same-model` for
    the block. A run with more than four different models then goes above 11 minutes (about 18
@@ -1784,7 +1795,7 @@ tests only the self-check.
 | T-CERT-42 | 3 OS. The pop-up flow: a fake enumeration with three cameras, two of one model; the record holds the third model; `certify_plan("quick")`, then `certify("quick", cameras=details.unchecked labels)`. | `details.unchecked` has one item (the first camera of the unchecked model); the run checks only that camera; no `partial-run` in `evidence.reasons`; after the run, `certify_plan("quick")` gives an empty `details.unchecked`. |
 | T-CERT-43 | 3 OS. Cameras busy: an open camera group in the app state of skellycam in the calling process; then a fake camera that a second process holds. | First case: each check `not-run` `cameras-busy`, `cameras-busy` in `evidence.reasons`, no source created. Second case: only that camera is busy (its checks `not-run` `camera-in-use`); the run continues and is not refused. |
 | T-CERT-44 | 3 OS. The summary item rule of 3.4, as a table test over the results and reasons of the checks of the five groups for one and two units of a model; a model with no sequence number; a failed check of the full camera block; a failed probe; a `full` and a `quick` report. | Each case gives the item of the first of the four rules that applies (`skipped`, `fail`, `pass`, `partial`); no item is `record-only`; `time-gaps` takes the place of `sequence` for the model with no sequence number; a failed full block check or probe never changes the item; no check holds the item; the `full` items have `gate` `<model>:gate`, and the `quick` items have no `gate` field. |
-| T-CERT-45 | 3 OS. SkellyCam Auto with a fake status that has `exposure_search` and `count` [req 1.5]: a fake that searches at the open and after the change to 60; one whose `count` does not rise after the change; one that does not search at the open; one whose search ends `failed`; one that stays `adjusting` for 30 s; one whose camera process is replaced at the rate change (a reopen); `search_exposure()` called in process. | `pass`; `fail` `auto-not-searched` for the two; `fail` `auto-search-failed`; `fail` `timed-out` 25 s after the apply response; the reopened camera `pass` (its `count` rose by one across the new process); certify reads `exposure`, `exposure_found_at_fps` and `exposure_search`, and never calls HTTP or the pause route. The rule that no source sets the camera's own auto is tested by its owner (T-REQ-15); this test cites it. |
+| T-CERT-45 | 3 OS. SkellyCam Auto with a fake status that has `exposure_search` and `count` [req 1.5]: a fake that searches at the open and after the change to 60; one whose `count` does not rise after the change; one that does not search at the open; one whose search ends `failed`; one that stays `adjusting` for 30 s; one that reopens at the rate change inside the same camera process; one whose camera process is replaced by "apply again"; `search_exposure()` called in process. | `pass`; `fail` `auto-not-searched` for the two; `fail` `auto-search-failed`; `fail` `timed-out` 25 s after the apply response; the reopened camera and the replaced process `pass` (each `count` rose by one); certify reads `exposure`, `exposure_found_at_fps` and `exposure_search`, and never calls HTTP or the pause route. The rule that no source sets the camera's own auto is tested by its owner (T-REQ-15); this test cites it. |
 | T-CERT-46 | 3 OS. The diagnostics reader: the fake Media Foundation, V4L2 and AVFoundation sources give `diagnostics()` with the keys of [ux 4.6.2], one with a missing key and one with a value outside the vocabulary; `frame_log` with 64 rows. | Each number of 10.2 that has a diagnostics key comes from that key; a missing key gives `null`, never a crash; a value outside the vocabulary is not copied: the number is `null`; `frame_log` is never copied into `numbers`. |
 | T-CERT-47 | 3 OS. The local pass: `full` runs with fakes where each gate check passes; where `native-jpeg:valid` fails; where `settings-stick:readback` fails only; where `settings-stick:image-effect` is `not-run` `too-dark` only; where a `cycles` check hangs; a `quick` run where each check passes. | The `full` row of the first run has each `gate` value `pass` and is a local pass for the model, OS key, backend and ABI; the second and fifth rows have a `gate` value `fail` and are no local pass; the third row is a local pass with `controls.exposure` `{"v4l2": "no"}`; the fourth is a local pass with `{"v4l2": "unproven"}`; the quick row is no local pass. |
 | T-CERT-48 | 3 OS. Native JPEG hash compare: a fake source whose frames have no DHT, so the shared loop inserts one; a fake whose ring slot differs in one byte from the hashed bytes of the same `source_frame_number`; hashes after the first `ready`, then a live change to -8, then a record start. | The first passes with `dht_inserted` > 0 and `hash_equal_source_ring` true; the second fails with `jpeg-damaged`; `source-equals-ring` uses the set of the first `ready`, read before the live change; the live change does not re-arm the set; the set of the record start is compared with the MKV blocks; each hash is compared with the slot of its own frame number. |

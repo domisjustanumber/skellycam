@@ -27,7 +27,8 @@ Choices of the supervisor (the review items):
    removes a control.
 4. N5: native capture turns on for a camera model (model, backend, OS key, ABI), never for an OS key.
    This follows item 2 of ADR-BVK7; C6 of
-   [ADR-KG00](KG00-certify-decisions-of-the-user-on-draft-2.md) named a verified OS.
+   [ADR-KG00](KG00-certify-decisions-of-the-user-on-draft-2.md) named a verified OS. Decided by the
+   user: item 1 of [ADR-F2KY](F2KY-rulings-of-the-user-after-the-third-consistency-check.md).
 5. N6: the bullet "never `skipped` with `reviewed`" goes. N7: no manual exposure is `not-run` with
    `no-manual-exposure`, never `fail`.
 6. N8: a client waits 25 s from the apply response at 30 and 60 fps, and 45 s more after a fall back
@@ -42,14 +43,14 @@ Choices of the supervisor (the review items):
    after it, and the re-check gives only cleanup rows; `section` is `null`; the keyword options of
    `certify_plan` are declared.
 10. The change texts of A and B are applied in W and `recorder.md`. W and the code hold the facts:
-    the USB link is ported as `usb_connection.py`, the event-log check is ported, the UI does not show
-    the link yet. A's T-CAP list wins; case 1 of T-CAP-104 changes; T-CAP-96 is retired.
+    the USB link is ported as `usb_connection.py`, the event-log check is ported; step 5 builds the UI
+    label of the link (L1). A's T-CAP list wins; case 1 of T-CAP-104 changes; T-CAP-96 is retired.
 
 Choices of the agent:
 
 11. On a route with no time unit, `exposure` holds the step index 0 to 7 (0 the darkest); a value
-    below 0 sets the step `v + 12`, clamped. The search tries the steps 0 to 7. The UI shows "Auto:
-    step k of 8" and `E:k/8`. Certify sets the steps 5 and 4 in place of -7 and -8.
+    below 0 sets the step `v + 12`, clamped. The search tries the steps 0 to 7. The UI texts are item 4 of
+    [ADR-F2KY](F2KY-rulings-of-the-user-after-the-third-consistency-check.md). Certify sets the steps 5 and 4 in place of -7 and -8.
 12. With no `works` route, the product uses an `unproven` route by the same rule.
 13. Where no sequence number exists, `<label>:time-gaps` (`long_intervals` 0 over the quick take,
     else `frame-gaps`, not calibrated) takes the place of `<label>:sequence` in the gate and the item.
@@ -58,7 +59,7 @@ Choices of the agent:
 15. Quick order: detection, the apply, the retries, the settings change, the take, the close, then
     `self:hang-100ms` (only with 10 s left; a retry only with 14 s left). A check that runs at the end
     of the budget is stopped and is `not-run` with `over-budget`. Estimate: min(30, ⌈20 + N/4⌉ + 10).
-16. The group state gets `take_state` (`none`, `recording`, `ended_with_error`) and `ended_take`; the
+16. The group state gets `take_state` (`none`, `recording`, `ended_with_error`) and `ended_take_summary`; the
     UI reads them through `endedTakeNotice`.
 17. Contract commit `9e6d575` (skellycertify ADR-T191): a `full` camera item has `gate`; a reviewed
     row of a `partial` item keeps `not_passed`; the cleaned camera name holds no markup, link or IPv4
