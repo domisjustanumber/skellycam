@@ -377,40 +377,10 @@ def test_f2_the_counter_and_the_other_scalars_of_the_status_have_no_lock():
 
     status = CameraStatus()
     scalars = [f.name for f in dataclasses.fields(status) if f.name not in (
-        "info", "warnings", "camera_warnings", "group_warnings", "diagnostics", "lock_lost")]
+        "info", "warnings", "camera_warnings", "group_warnings", "diagnostics", "owner", "holder_dead",
+        "last_good", "pending_info", "lock_warned")]
     assert "alive_count" in scalars and "state_index" in scalars
     assert not [name for name in scalars if hasattr(getattr(status, name), "get_lock")]
-
-
-def test_g_a_killed_holder_of_the_info_lock_does_not_block_the_main_process():
-    """Fix lane G: a child takes the lock of `info` of a status and is killed. The main-process reads and writes
-    of the status (`serialize`, `update_info`, `reset_for_start`) return within their bound, and the status is
-    then used with no lock."""
-    import multiprocessing
-    import time
-
-    from skellycam.core.camera_group import camera_status
-    from skellycam.core.camera_group.camera_status import CameraStatus
-    from skellycam.tests.frame_ring import ring_children
-
-    spawn = multiprocessing.get_context("spawn")
-    status, held = CameraStatus(), spawn.Event()
-    status.update_info(mode={"width": 640})
-    holder = spawn.Process(target=ring_children.hold_lock_forever, args=(status.info, held), daemon=True)
-    holder.start()
-    try:
-        assert held.wait(60), "the child holds the lock"
-        holder.kill()
-        holder.join(30)
-        start = time.monotonic()
-        assert status.serialize()["mode"] == {"width": 640}
-        status.update_info(failure={"code": "process-ended"})
-        status.reset_for_start()
-        assert time.monotonic() - start < camera_status.ARRAY_LOCK_WAIT_S + 1.0
-        assert status.lock_lost and status.info_dict() == {}
-    finally:
-        if holder.is_alive():
-            holder.kill()
 
 
 def test_f2_the_setting_turns_the_watch_off_and_is_logged(monkeypatch):

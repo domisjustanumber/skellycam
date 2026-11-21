@@ -63,7 +63,7 @@ class CameraManager:
         # camera, so that it gates on that camera when it is selected again (5.2, 8.3).
         orchestrator = dataclasses.replace(
             self.orchestrator, camera_statuses={**self.orchestrator.camera_statuses, **self.removed_statuses})
-        return CameraWorker.create(
+        worker = CameraWorker.create(
             camera_id=camera_id,
             ipc=self.ipc,
             worker_registry=self.worker_registry,
@@ -74,6 +74,8 @@ class CameraManager:
             recording_info_subscription=topics[TopicTypes.RECORDING_INFO].get_subscription(),
             source_factory=self.source_factory,
         )
+        orchestrator.camera_statuses[camera_id].owner = worker.worker  # the status tells a slow lock from a dead one
+        return worker
 
     def restart_camera(self, camera_id: CameraIdString, config: CameraConfig) -> None:
         """"Apply again" for a `failed` or `dead` camera, or a camera selected again after an unselect: a new

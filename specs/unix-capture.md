@@ -1337,9 +1337,13 @@ The signal and the watch [ADR-AC5B](../decisions/entries/AC5B-choices-of-the-thi
   The limit is 3 s, over the 2 s of the in-process rule of [W 9.5]: that rule finishes the files and
   closes the camera, and it must come first; the watch kills the process, with no restore (4.7) and no
   clean finish of the files [ADR-Q2NY](../decisions/entries/Q2NY-choices-of-code-step-2.md). The counter has no lock: a process
-  stopped inside its add keeps the lock. Each other scalar of `CameraStatus` has no lock too. The wait
-  for the lock of a JSON array of `CameraStatus` is at most 0.5 s: after it, the array is used with no
-  lock, because a process that ends while it holds a lock keeps it for ever [ADR-QJH6](../decisions/entries/QJH6-choices-of-the-fix-lane.md).
+  stopped inside its add keeps the lock. Each other scalar of `CameraStatus` has no lock too. A process
+  that ends while it holds a lock keeps it for ever, so each wait for the lock of a JSON array of
+  `CameraStatus` is at most 0.5 s. After that wait, only that one call goes on with no lock. The main
+  process stops the wait for a status only when the camera process of that status has ended; "apply
+  again" then gives the new camera process new arrays. Each read tolerates torn JSON: it reads again up
+  to 3 times, then gives the last good value. A main-process write of `info` with no lock stays in the
+  main process until a write with the lock [ADR-QJH6](../decisions/entries/QJH6-choices-of-the-fix-lane.md).
 - The setting `SKELLYCAM_STALL_WATCH=0` turns the watch off. The group reads it when it is made, and logs
   at its start that the watch is off [ADR-Q2NY](../decisions/entries/Q2NY-choices-of-code-step-2.md).
 - When it trips, the main process removes the camera from the gate, marks it `dead` with the failure
