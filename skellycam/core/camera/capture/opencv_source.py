@@ -69,7 +69,7 @@ class OpenCVSource:
         """camera-requests.md 1.7: the exposure search runs on the OpenCV source of Windows only."""
         return sys.platform == "win32"
 
-    def exposure_range(self) -> tuple[int, int] | None:
+    def exposure_range(self) -> tuple[int, int, int] | None:
         return None  # OpenCV gives no range: the search tries each value of camera-requests.md 1.3
 
     def read_frame(self, timeout_s: float) -> CapturedFrame | None:

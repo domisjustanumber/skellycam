@@ -226,7 +226,7 @@ class FakeScript:
     hold_after_change: bool = False  # the first read after a live change waits until release()
     hold_first_change: bool = False  # as hold_after_change, for the first live change of each open only
     rate_by_exposure: tuple = ()  # (exposure, rate) pairs: the delivered rate at that exposure value
-    exposure_range: tuple | None = (-13, 0)  # (min, max) that the camera reports; None: no range
+    exposure_range: tuple | None = (-13, 0)  # (min, max) or (min, max, step) of the camera; None: no range
     out_of_range: str = "refuse"  # an exposure set outside the range: "refuse" (an error) or "clamp" (to the range)
     reported_range: bool = True  # False: `exposure_range()` gives None (as OpenCV), but the camera keeps its range
     raise_on_set: tuple = ()  # (value, n): the n-th exposure set of that value raises a RuntimeError (no CaptureFailure)
@@ -451,7 +451,7 @@ class FakeSource:
                 self._restore.changed(changes)
             if fault == "error":
                 raise types.CaptureFailure("set controls", "the camera refused the value")
-            low, high = self.script.exposure_range or (None, None)
+            low, high = (self.script.exposure_range or (None, None))[:2]
             setting = changes.get("exposure")
             if setting is not None and setting.value is not None and self.script.raise_on_set:
                 self._value_sets = getattr(self, "_value_sets", {})
@@ -509,7 +509,11 @@ class FakeSource:
         return {**data, **(self.script.diagnostics or {})}
 
     def exposure_range(self):
-        return self.script.exposure_range if self.script.reported_range else None
+        """(min, max, step) or None, as each product source (the step is 1 when the script gives none)."""
+        if self.script.exposure_range is None or not self.script.reported_range:
+            return None
+        low, high, *step = self.script.exposure_range
+        return (low, high, step[0] if step else 1)
 
     @property
     def replaced_count(self):

@@ -163,7 +163,7 @@ def test_t_req_17_a_failed_set_ends_the_search(error, readback, reason, detail):
     that gives its range (with no range the value is skipped [GEH0])."""
     from skellycam.core.camera.capture.exposure_search import ExposureSearch
 
-    search = ExposureSearch(30.0, T0, (-13, 0))
+    search = ExposureSearch(30.0, T0, (-13, 0, 1))
     search.set_done(search.take_pending(), T0, error=error, readback=readback)
     assert (search.result["state"], search.result["reason"], search.detail) == ("failed", reason, detail)
     assert search.pending is None
@@ -172,8 +172,8 @@ def test_t_req_17_a_failed_set_ends_the_search(error, readback, reason, detail):
 MODEL_WIDE = {**MODEL, -4: 250, -3: 252, -2: 254}
 
 
-@pytest.mark.parametrize(("exposure_range", "tried", "chosen"), [((-11, -2), list(range(-11, -4)), -9),
-                                                                 ((-7, 3), [-7, -6, -5], -7)])
+@pytest.mark.parametrize(("exposure_range", "tried", "chosen"), [((-11, -2, 1), list(range(-11, -4)), -9),
+                                                                 ((-7, 3, 1), [-7, -6, -5], -7)])
 def test_the_search_tries_only_the_values_in_the_range_of_the_camera(exposure_range, tried, chosen):
     """camera-requests.md 1.3 item 1 [GEH0]: the lab cameras have -11 to -2, the generic camera -7 to 3. The search
     tries the values of -12 to -5 in that range, in the same order, and finds a value (-7 to 3: -7 is nearest to
@@ -188,7 +188,7 @@ def test_a_range_with_no_value_of_the_search_fails_at_once():
     no set, and the text of 1.5."""
     from skellycam.core.camera.capture.exposure_search import ExposureSearch, failed_text
 
-    search = ExposureSearch(30.0, None, (-4, 3))
+    search = ExposureSearch(30.0, None, (-4, 3, 1))
     assert (search.result["state"], search.result["reason"], search.take_pending()) == ("failed", "no-value-in-range",
                                                                                        None)
     assert failed_text("a1b2", search.detail, -4) == (
@@ -269,7 +269,7 @@ def test_with_a_range_a_refused_value_inside_it_still_fails_and_the_step_grid_is
     GetRange is left out: the range -11 to -2 with the step 2 gives -11, -9, -7, -5."""
     from skellycam.core.camera.capture.exposure_search import ExposureSearch
 
-    search = ExposureSearch(30.0, T0, (-11, -2))
+    search = ExposureSearch(30.0, T0, (-11, -2, 1))
     search.set_done(search.take_pending(), T0, error="refused")
     assert search.result["reason"] == "set-failed"
     assert ExposureSearch(30.0, T0, (-11, -2, 2)).values == (-11, -9, -7, -5)

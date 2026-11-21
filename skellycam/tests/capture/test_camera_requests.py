@@ -1245,3 +1245,66 @@ def test_the_loop_starts_no_search_in_a_take(guard):
     loop.status.search_requested.value = True
     loop._requested_search()
     assert loop.search is None and loop.status.state == "ready" and loop.status.search_count.value == 0
+
+
+
+# ---------------------------------------------------------------------------
+# The shape of the range at an open (the real-camera run of 2026-11-21) [GEH0]
+# ---------------------------------------------------------------------------
+
+def test_the_fake_gives_the_range_in_the_shape_of_the_product_sources():
+    """[GEH0]: `exposure_range()` gives (min, max, step) or None on each source; the fake too (step 1 by default)."""
+    from skellycam.tests.capture.fake_source import FakeSource
+
+    assert FakeSource(FakeScript(exposure_range=(-11, -2))).exposure_range() == (-11, -2, 1)
+    assert FakeSource(FakeScript(exposure_range=(-11, -2, 2))).exposure_range() == (-11, -2, 2)
+    assert FakeSource(FakeScript(exposure_range=None)).exposure_range() is None
+    assert FakeSource(FakeScript(exposure_range=(-11, -2), reported_range=False)).exposure_range() is None
+
+
+@pytest.mark.parametrize(("held", "opened"), [(-9, -9), (-12, -11), (-1, -2)])
+def test_an_open_in_auto_sets_the_held_value_inside_the_reported_range(monkeypatch, held, opened):
+    """camera-requests.md 1.3a [GEH0]: a connect in `AUTO` on a camera that reports -11 to -2 (step 1): a held value
+    inside the range opens at that value; below it at -11; above it at -2. The camera does not fail, and it then
+    searches -11 to -5."""
+    script = FakeScript(brightness=MODEL, exposure_range=(-11, -2, 1))
+    with capture_app(monkeypatch, [script]) as app:
+        camera_id = app.factory.camera_ids[0]
+        app.detect()
+        response = app.apply([auto(app, camera_id, exposure=held, exposure_found_at_fps=30.0)])
+        assert response.status_code == 200 and not response.json()["camera_failures"], response.text
+        assert response.json()["camera_configs"][camera_id]["exposure"] == opened
+        app.wait_state(camera_id, "ready", "too_slow")
+        assert open_sets(app, camera_id) == [(False, opened)]
+        assert search_values(app, camera_id) == list(range(-11, -4)) + [-9]
+
+
+def test_a_reopen_in_auto_sets_the_held_value_inside_the_reported_range(monkeypatch):
+    """camera-requests.md 1.3a [A8, GEH0]: a camera `ready` in `AUTO` on a camera that reports -11 to -2; a reopen for
+    a resolution change opens with the held value inside the range, and searches again."""
+    modes = ((640, 480, 30, 1, "MJPG"), (320, 240, 30, 1, "MJPG"))
+    with capture_app(monkeypatch, [FakeScript(modes=modes, brightness=MODEL, exposure_range=(-11, -2, 1))]) as app:
+        camera_id = app.factory.camera_ids[0]
+        app.detect()
+        assert app.apply([auto(app, camera_id)]).status_code == 200
+        app.wait_state(camera_id, "ready", "too_slow")
+        response = app.apply([auto(app, camera_id, width=320, height=240)])
+        assert response.status_code == 200 and not response.json()["camera_failures"], response.text
+        app.wait_state(camera_id, "ready", "too_slow")
+        assert open_sets(app, camera_id) == [(False, -7), (False, -9)]
+        assert app.status(camera_id)["exposure_search"]["count"] == 2
+        assert app.group.configs[camera_id].resolution.width == 320
+
+
+def test_the_refusal_of_a_changed_config_names_the_search(monkeypatch):
+    """[GEH0]: the 409 for a changed config of a camera in `adjusting` says that the camera sets its exposure."""
+    with capture_app(monkeypatch, [FakeScript(brightness=MODEL, hold_first_change=True)]) as app:
+        camera_id = app.factory.camera_ids[0]
+        app.detect()
+        assert app.apply([auto(app, camera_id)]).status_code == 200
+        refused = app.apply([auto(app, camera_id, rotation=0)])
+        assert refused.status_code == 409, refused.text
+        assert "cannot take a changed config while it starts or sets its exposure" in refused.text
+        assert f"camera {camera_id} is adjusting" in refused.text
+        app.factory.sources[camera_id].release()
+        app.wait_state(camera_id, "ready", "too_slow")
