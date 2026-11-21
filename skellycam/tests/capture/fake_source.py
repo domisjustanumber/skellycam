@@ -51,7 +51,8 @@ def product_types():
         ControlValue=source.ControlValue, CaptureFailure=source.CaptureFailure,
         WaitingPlace=source.CaptureWaitingPlace, FIRST_FRAME_TIMEOUT_S=source.FIRST_FRAME_TIMEOUT_S,
         BOUNDED_CALL_LIMIT_S=source.BOUNDED_CALL_LIMIT_S, NativeMode=modes.NativeMode,
-        choose_mode=modes.choose_mode, NO_SAMPLE_NS=ring.NO_SAMPLE_NS, empty_diagnostics=source.empty_diagnostics)
+        choose_mode=modes.choose_mode, NO_SAMPLE_NS=ring.NO_SAMPLE_NS, empty_diagnostics=source.empty_diagnostics,
+        ControlRestore=source.ControlRestore)
 
 
 def spec_camera_id(link):
@@ -343,6 +344,7 @@ class FakeSource:
         self.slow_finished_ns = None
         self.cut_frames = []
         self.removed_frame = None
+        self._restore = None  # the product `ControlRestore` of the open (unix-capture.md 4.7)
 
     # ----- the capture interface (4.1) -----
 
@@ -376,6 +378,8 @@ class FakeSource:
             self._controls = {name: [present, auto, value] for name, present, auto, value in self.script.controls}
             for name, value in self.script.reset_on_stream:
                 self._controls[name][2] = value
+            restore = getattr(types, "ControlRestore", None)  # the stand-ins of the self-tests have none
+            self._restore = restore(self.camera_id) if restore is not None else None
             t0 = self.clock.now_ns()
             self.log.first_read_sample_ns.value = t0
             self._event("read_sample", None)
@@ -434,6 +438,9 @@ class FakeSource:
                 self._live_changes += 1
                 faults = self.script.live_set_faults
                 fault = faults[self._live_changes - 1] if self._live_changes <= len(faults) else None
+            if self._restore is not None:
+                self._restore.read(self._read_back())
+                self._restore.changed(changes)
             if fault == "error":
                 raise types.CaptureFailure("set controls", "the camera refused the value")
             for name, setting in changes.items():
@@ -460,6 +467,8 @@ class FakeSource:
         with self._lock:
             self.log.closes.value += 1
         self._maybe_hang("close", "close")
+        if self._restore is not None and self._opened and not self._ended:  # the restore of 4.7, before the stream stops; never after a removal
+            self._restore.restore(self.set_controls)
         if self.script.close_delay_s:
             self._wait(self.script.close_delay_s)
         self._stop.set()
@@ -471,7 +480,10 @@ class FakeSource:
 
     def diagnostics(self):
         """The null source keys of unix-capture.md 4.6.2, `frames`, and the keys of the script."""
-        return {**self.types.empty_diagnostics(), "frames": len(self.log.taken), **(self.script.diagnostics or {})}
+        data = {**self.types.empty_diagnostics(), "frames": len(self.log.taken)}
+        if self._restore is not None:
+            self._restore.fill(data)
+        return {**data, **(self.script.diagnostics or {})}
 
     @property
     def replaced_count(self):

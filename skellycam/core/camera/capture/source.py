@@ -4,6 +4,8 @@ This module does not import `comtypes`. Each system can import it.
 """
 
 import dataclasses
+import logging
+import os
 import threading
 from collections import deque
 from dataclasses import dataclass
@@ -14,6 +16,7 @@ import numpy as np
 
 from skellycam.core.camera.capture.failure_codes import default_code
 
+logger = logging.getLogger(__name__)
 FIRST_FRAME_TIMEOUT_S = 5.0
 BOUNDED_CALL_LIMIT_S = 5.0
 
@@ -182,6 +185,61 @@ DIFFERENCES_KEPT = 256
 def empty_diagnostics(backend: str | None = None) -> dict:
     """Every source key, null (4.6.1)."""
     return {**dict.fromkeys(SOURCE_KEYS), "backend": backend}
+
+
+RESTORE_SETTING = "SKELLYCAM_RESTORE_CONTROLS"  # "0" turns the restore off, for a debug run only (4.7)
+
+
+class ControlRestore:
+    """The restore of the controls at the close (unix-capture.md 4.7), for one open of one camera.
+
+    The source gives each read-back to `read` (the first one is the "before" state, taken before any set),
+    each `changes` to `changed` before it sets them, and calls `restore` in its close, before the stream
+    stops. `restore` sets each changed control back to its "before" value and auto flag (the one set that
+    may turn the camera's own auto exposure on again), and reads it back. A failed restore is logged and
+    counted; the close goes on. A hung call raises (6.6)."""
+
+    def __init__(self, camera_id: str):
+        self.camera_id = camera_id
+        self.before: ControlState | None = None
+        self.names: set[str] = set()
+        self.ok: bool | None = None
+        self.failed: int | None = None
+
+    def read(self, state: ControlState) -> None:
+        if self.before is None:
+            self.before = dict(state)
+
+    def changed(self, changes: dict) -> None:
+        self.names.update(changes)
+
+    def restore(self, set_controls) -> None:
+        """`set_controls(changes) -> ControlState` sets the changes and reads the controls back."""
+        if os.environ.get(RESTORE_SETTING) == "0" or not self.before:
+            return
+        failed = 0
+        for name in sorted(self.names):
+            before = self.before.get(name)
+            if before is None or not before.present:
+                continue
+            try:
+                got = set_controls({name: ControlSetting(auto=before.auto, value=before.value)}).get(name)
+                problem = None if got is not None and got.auto == before.auto and (
+                    before.auto or got.value == before.value) else f"it read back {got}"
+            except CaptureFailure as failure:
+                if failure.hung:
+                    raise
+                problem = failure.reason
+            if problem is not None:
+                failed += 1
+                logger.warning(f"Camera {self.camera_id}: the restore of {name} at the close failed: {problem}")
+        self.ok, self.failed = failed == 0, failed
+
+    def fill(self, diagnostics: dict) -> None:
+        diagnostics.update(restore_ok=self.ok, restore_failed=self.failed)
+        for name, value in (self.before or {}).items():
+            if name in CONTROL_NAMES:
+                diagnostics.update({f"{name}_before": value.value, f"{name}_before_auto": value.auto})
 
 
 class FrameLog:

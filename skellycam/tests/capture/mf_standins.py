@@ -140,7 +140,6 @@ def run(case):
     source = mf.MediaFoundationSource()
     source.open(CaptureRequest(camera_id=camera_id, width=640, height=480, framerate=30.0))
     frames = [source.read_frame(1.0) for _ in range(10)]
-    source.set_controls({})  # the first read of the controls, before any set (unix-capture.md 4.7)
     source.set_controls({"exposure": ControlSetting(auto=False, value=-7)})
     source.set_controls({"gain": ControlSetting(auto=False, value=20)})
     calls.add("close")
