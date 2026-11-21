@@ -90,3 +90,16 @@ def test_t_unx_27_a_failed_restore_is_logged_and_the_close_goes_on(monkeypatch):
     assert source._stop.is_set() and log.closes.value == 1
     lines = [m for m in logs.messages(logging.WARNING) if "restore" in m and camera_id in m]
     assert len(lines) == 1 and "exposure" in lines[0], lines
+
+
+def test_f7_no_restore_when_the_loop_failed(monkeypatch):
+    """F7: the in-process stall rule (W 9.5) ends a camera whose exposure the open changed; it sets no error of
+    the source. The close of that camera sets no control: a possibly wedged camera gets no set and no
+    read-back."""
+    with one_camera(monkeypatch, FakeScript(controls=AUTO_BEFORE)) as (app, camera_id, _):
+        source, log = app.factory.sources[camera_id], app.factory.logs[camera_id]
+        source.stop_now()
+        app.wait_state(camera_id, "dead")
+        app.wait(lambda: log.closes.value == 1, "the close of the dead camera")
+    assert not [t for t, _ in exposure_sets(log) if t >= close_time(log)]
+    assert source.diagnostics()["restore_ok"] is None

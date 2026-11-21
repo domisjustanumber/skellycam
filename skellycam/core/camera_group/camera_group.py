@@ -1,5 +1,6 @@
 import asyncio
 import logging
+import os
 import queue
 import threading
 import time
@@ -70,9 +71,10 @@ TAKE_START_LIMIT_S = 10.0  # each camera starts its writer within this time of t
 PARENT_WAIT_LIMIT_S = 30.0
 # The main-process stall watch (unix-capture.md 4.10): the states it watches, its limit, the wait before a kill.
 WATCHED_STATES = ("waiting", "adjusting", "checking", "too_slow", "ready")
-STALL_WATCH_S = 2.0
-STALL_REASON = "no loop pass for 2 s"
+STALL_WATCH_S = 3.0  # over the 2 s of the in-process rule (W 9.5), which closes the camera and its files cleanly
+STALL_REASON = "no loop pass for 3 s"
 KILL_AFTER_S = 1.0
+STALL_WATCH_SETTING = "SKELLYCAM_STALL_WATCH"  # "0" turns the watch off; read when a group is made
 MICROPHONE_REFUSED = "audio recording returns in step 5b; start again with no microphone"  # recorder.md 10 item 13
 WRITER = f"skellycam {__version__.lstrip('v')}"  # SFF-712
 
@@ -126,6 +128,8 @@ class CameraGroup:
     take_error: tuple | None = None  # (text, camera_id) of the first stall or write error of the take (5.3, 5.4)
     camera_diagnostics: dict = field(default_factory=dict)  # the newest diagnostics of each camera (unix 4.2 item 2)
     _passes: dict = field(default_factory=dict)  # camera_id: (alive_count, time.monotonic() of its last change)
+    stall_watch: bool = True
+    _closing: bool = False  # `close` runs: the watch thread reads the queues but watches no camera (F4)
     _end_lock: Any = field(default_factory=asyncio.Lock)
     _ring_lock: Any = field(default_factory=threading.RLock)
     _stop_watch: Any = field(default_factory=threading.Event)
@@ -180,12 +184,15 @@ class CameraGroup:
             ipc=ipc,
             cameras=cameras,
             configs=dict(camera_configs),
+            stall_watch=os.environ.get(STALL_WATCH_SETTING) != "0",
         )
 
     async def start(self) -> dict:
         """Start each camera. Return the failure object of each camera that failed (8.4, section 12)."""
         self.started = True
         self._loop = asyncio.get_running_loop()
+        if not self.stall_watch:
+            logger.warning(f"The main-process stall watch is off ({STALL_WATCH_SETTING}=0)")
         logger.info(f"Starting camera group ID: {self.id} with cameras: {list(self.configs.keys())}")
         await asyncio.to_thread(self.cameras.start)  # the spawn takes seconds: not on the loop (sfn26 a4d610f62)
         threading.Thread(target=self._watch_workers, name=f"camera group {self.id} watch", daemon=True).start()
@@ -305,8 +312,9 @@ class CameraGroup:
             if status is None:
                 continue
             status.should_close.value = True
-            status.update_info(failure=dict(camera_id=camera_id, stage=stage, reason=reason,
-                                            code="open-failed" if stage == "open" else "not-ready"))
+            code = "open-failed" if stage == "open" else "not-ready"
+            status.update_info(failure=dict(camera_id=camera_id, stage=stage, reason=reason, code=code))
+            self._note_failure(camera_id, code)
             status.set_state("failed")
             logger.error(f"Camera {camera_id} failed during {stage}: {reason}")
 
@@ -332,6 +340,8 @@ class CameraGroup:
             except Exception as error:
                 logger.exception(f"Camera group {self.id}: the watch could not read the camera queues: {error}")
             for camera_id, worker in list(self.cameras.camera_workers.items()):
+                if self._closing:
+                    break
                 try:
                     self._watch_camera(camera_id, worker)
                 except Exception as error:
@@ -353,8 +363,10 @@ class CameraGroup:
         status = self.cameras.orchestrator.camera_statuses.get(camera_id)
         if status is None:
             return
-        count, now = status.alive_count.value, time.monotonic()
-        watched = (status.state in WATCHED_STATES and not status.should_close.value and not status.closing.value
+        # No lock: a process suspended or ended inside `alive_count += 1` keeps the lock (review of 2026-11-20).
+        count, now = status.alive_count.get_obj().value, time.monotonic()
+        watched = (self.stall_watch and status.state in WATCHED_STATES and not status.should_pause.value
+                   and not status.should_close.value and not status.closing.value
                    and not status.info_dict().get("failure"))
         seen = self._passes.get(camera_id)
         if not watched or seen is None or seen[0] != count:
@@ -365,13 +377,18 @@ class CameraGroup:
         del self._passes[camera_id]
         status.should_close.value = True
         status.update_info(failure=dict(camera_id=camera_id, stage="streaming", reason=STALL_REASON, code="stalled"))
+        self._note_failure(camera_id, "stalled")
         status.set_state("dead")  # out of the gate (5.2)
         logger.error(f"Camera {camera_id} failed during streaming: {STALL_REASON}")
-        threading.Thread(target=self._end_process, args=(worker,), name=f"end camera {camera_id}", daemon=True).start()
+        threading.Thread(target=self._end_process, args=(worker, status), name=f"end camera {camera_id}",
+                         daemon=True).start()
 
     @staticmethod
-    def _end_process(worker) -> None:
-        """Terminate, then kill after 1 s (4.10). Off the watch thread, so the watch of the others goes on."""
+    def _end_process(worker, status) -> None:
+        """Terminate, then kill after 1 s (4.10). Off the watch thread, so the watch of the others goes on. As
+        `_end_stuck_camera`: `terminate` waits for no save of a take, and the registry logs no crash."""
+        status.recording_in_progress.value = False  # the take level completes its files after the end (7.4)
+        worker.worker.mark_stopping()
         worker.worker.terminate()
         worker.join(timeout=KILL_AFTER_S)
         if worker.is_alive():
@@ -398,6 +415,7 @@ class CameraGroup:
         stage, state = ("open", "failed") if status.state in ("starting", None) else ("streaming", "dead")
         reason = f"camera process ended (exit code {worker.worker.exitcode})"
         status.update_info(failure=dict(camera_id=camera_id, stage=stage, reason=reason, code="process-ended"))
+        self._note_failure(camera_id, "process-ended")
         status.set_state(state)
         logger.warning(f"Camera {camera_id} failed during {stage}: {reason}")
 
@@ -430,6 +448,13 @@ class CameraGroup:
             status = statuses.get(message.camera_id)
             if status is not None:
                 status.diagnostics = {key: message.diagnostics.get(key) for key in COUNTER_KEYS}
+
+    def _note_failure(self, camera_id: CameraIdString, code: str) -> None:
+        """A failure that the main process sets also goes into the kept diagnostics (F10)."""
+        self.camera_diagnostics[camera_id] = {**self.camera_diagnostics.get(camera_id, {}), "fail_code": code}
+        status = self.cameras.orchestrator.camera_statuses.get(camera_id)
+        if status is not None:
+            status.diagnostics = {**status.diagnostics, "fail_code": code}
 
     def diagnostics(self, camera_id: CameraIdString) -> dict:
         """The newest full diagnostics dict of a camera; `{}` before its first message (unix-capture.md 4.2)."""
@@ -748,7 +773,9 @@ class CameraGroup:
                             status.recording_in_progress.value = False  # a process that ended hard left it set
                         info = status.info_dict() if status is not None else {}
                         exitcode = None if worker is None else worker.worker.exitcode
-                        dead[camera_id] = "hang" if info.get("hung") else f"exit code {exitcode}"
+                        failure = info.get("failure") or {}
+                        dead[camera_id] = ("hang" if info.get("hung") else failure.get("reason")
+                                           if failure.get("code") == "stalled" else f"exit code {exitcode}")
                         pending.discard(camera_id)
                 elif status is None or now - max(status.writer_progress_at.value, started) > TAKE_STALL_LIMIT_S + STALL_MARGIN_S:
                     stuck.append(camera_id)
@@ -787,6 +814,7 @@ class CameraGroup:
             if not ended:
                 logger.error(f"The process of camera {camera_id} still runs after a kill; its files stay as they are")
         status.update_info(failure=dict(camera_id=camera_id, stage="recording", reason="disk stall", code="disk-stall"))
+        self._note_failure(camera_id, "disk-stall")
         status.set_state("failed")
         logger.error(f"Camera {camera_id} failed during recording: disk stall")
         return ended
@@ -803,12 +831,16 @@ class CameraGroup:
             except Exception as e:
                 logger.error(f"Error stopping recording during close: {type(e).__name__} - {e}")
 
-        self._stop_watch.set()
+        self._closing = True  # the watch thread goes on reading the queues: each close dict arrives (F4)
         self.ipc.should_continue = False
         with self._ring_lock:
             for ring in self.rings.values():
                 ring.set_closed()
-        await asyncio.to_thread(self.cameras.close)  # the joins take seconds: not on the loop
+        try:
+            await asyncio.to_thread(self.cameras.close)  # the joins take seconds: not on the loop
+        finally:
+            self._stop_watch.set()
+            self._take_diagnostics()  # a dict that came after the last round of the watch
 
         try:
             with self._ring_lock:

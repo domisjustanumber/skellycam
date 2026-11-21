@@ -24,6 +24,7 @@ from skellycam.core.ipc.frame_ring import NO_SAMPLE_NS
 logger = logging.getLogger(__name__)
 FIRST = com.MF_SOURCE_READER_FIRST_VIDEO_STREAM
 FLAGS_AUTO, FLAGS_MANUAL = 1, 2  # CameraControl_Flags_Auto, CameraControl_Flags_Manual
+READERF_CURRENTMEDIATYPECHANGED = 0x20  # mfreadwrite.h: `format_changes` (unix-capture.md D-3)
 SAMPLE_TIME_LIMIT_NS = 200_000_000  # 4.2: a sample time more than 200 ms before its arrival is not used
 
 # The controls of step 3a (11.4): name: (index into the control interfaces (0 IAMCameraControl,
@@ -89,6 +90,7 @@ class MediaFoundationSource:
         self._times, self._controls, self._failed_calls, self._failed_call = {}, {}, 0, None
         self._frame_log, self._discontinuities, self._zero_bytes = FrameLog(), 0, 0
         self._restore = ControlRestore("")
+        self._ranges, self._format_changes = {}, 0
 
     @property
     def replaced_count(self) -> int:
@@ -133,6 +135,7 @@ class MediaFoundationSource:
         """On the worker of a bounded call. The first read of an open comes before any set (unix-capture.md 4.7)."""
         if self._restore.before is None:
             self._restore.read({name: _read_control(interfaces, name)[0] for name in CONTROLS})
+            self._ranges = {name: _read_range(interfaces, name) for name in CONTROLS}
         self._restore.changed(changes)
         for name, setting in changes.items():
             _set_control(interfaces, name, setting)
@@ -141,13 +144,13 @@ class MediaFoundationSource:
                           for name, (value, via) in read.items()}
         return {name: value for name, (value, _) in read.items()}
 
-    def close(self) -> None:
+    def close(self, restore: bool = True) -> None:
         """Close in the order of 6.9. Each step is bounded; a hung step stops the close there."""
         if self._hung:
             return  # a hung call can still use these objects; the camera process ends hard (6.6)
         t0 = time.perf_counter_ns()
         try:
-            self._close()
+            self._close(restore)
         finally:
             self._times["t_close_ms"] = (time.perf_counter_ns() - t0) / 1e6
 
@@ -166,7 +169,12 @@ class MediaFoundationSource:
         data.update(clock="unknown", tstamp_src="unknown", ts_conversion="100ns-units",
                     sample_time_kept=self._sample_time_ok, frames=self._count, sequence_available=False,
                     discontinuity_flags=self._discontinuities, zero_bytes=self._zero_bytes, native_domain="hresult",
-                    failed_calls=self._failed_calls, call=self._failed_call, id_source="mf-link", **self._times)
+                    failed_calls=self._failed_calls, call=self._failed_call, id_source="mf-link",
+                    format_changes=self._format_changes, **self._times)
+        for name, values in dict(self._ranges).items():
+            if values is not None:
+                data.update(zip((f"{name}_min", f"{name}_max", f"{name}_step", f"{name}_default",
+                                 f"{name}_auto_supported"), values))
         self._frame_log.fill(data)
         self._restore.fill(data)
         for name, (value, path) in dict(self._controls).items():
@@ -180,7 +188,7 @@ class MediaFoundationSource:
                         native_code=getattr(failure, "native_code", None))
         return data
 
-    def _close(self) -> None:
+    def _close(self, restore: bool) -> None:
         with self._lock:
             self._closing = True
             interfaces, self._interfaces = self._interfaces, (None, None, None)
@@ -191,7 +199,7 @@ class MediaFoundationSource:
                 raise CaptureFailure("close", f"a ReadSample issue did not return in {BOUNDED_CALL_LIMIT_S:g} s",
                                      hung=True)
             time.sleep(0.001)
-        if self._error is None:  # unix-capture.md 4.7: between step 1 and step 2; never for a failed stream
+        if restore and self._error is None:  # 4.7: between step 1 and step 2; never after a failure
             self._restore.restore(lambda changes: self._call(
                 "close", "a control call", lambda: self._set_and_read(interfaces, changes)))
         if self._reader is not None:
@@ -223,6 +231,7 @@ class MediaFoundationSource:
         self._request, self._mode, self._last_failure, self._times, self._controls = request, None, None, {}, {}
         self._frame_log, self._discontinuities, self._zero_bytes = FrameLog(), 0, 0
         self._restore = ControlRestore(request.camera_id)
+        self._ranges, self._format_changes = {}, 0
 
         def find():
             found = com.enumerate_devices("open")
@@ -268,6 +277,7 @@ class MediaFoundationSource:
             finally:
                 com.release(reader)
         mode = self._mode = self._call("set mode", "the mode set", set_mode)
+        self._frame_log = FrameLog(round(1e9 * mode.fps_den / mode.fps_num))
 
         reader = com.ref(self._reader, com.IMFSourceReader)
 
@@ -312,6 +322,7 @@ class MediaFoundationSource:
             return self._fail(CaptureFailure("streaming", hresult_reason(E_FAIL)))
         if flags & com.MF_SOURCE_READERF_ENDOFSTREAM:
             return self._fail(CaptureFailure("streaming", "end of stream"))
+        self._format_changes += bool(flags & READERF_CURRENTMEDIATYPECHANGED)
         if sample:  # a null sample is a stream tick, not a frame
             self._place.put(self._frame(arrival_ns, com.borrow(sample, com.IMFSample)))
             self._first.set()
@@ -415,6 +426,16 @@ def _end(pointer, shutdown):
         shutdown()
     finally:
         com.release(pointer)
+
+
+def _read_range(interfaces, name):
+    """(min, max, step, default, auto supported) by `IAM...::GetRange`, or None (the KS route has no range here)."""
+    kind, prop = CONTROLS[name]
+    iam = interfaces[kind]
+    values = [c_long() for _ in range(5)]
+    if iam is None or iam.GetRange(prop, *(byref(v) for v in values)) & 0x80000000:
+        return None
+    return (*(v.value for v in values[:4]), bool(values[4].value & FLAGS_AUTO))
 
 
 def _read_control(interfaces, name):

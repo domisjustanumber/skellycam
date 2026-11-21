@@ -42,7 +42,7 @@ def bare_group(workers, statuses, loop=None):
                                 recording_finished_subscription=queue.Queue(), diagnostics_subscription=queue.Queue())
     group.cameras = SimpleNamespace(camera_workers=workers, orchestrator=SimpleNamespace(camera_statuses=statuses))
     group.configs, group.rings, group.ring_infos, group.ring_readers, group.finished = {}, {}, {}, {}, []
-    group.camera_diagnostics, group._passes = {}, {}
+    group.camera_diagnostics, group._passes, group.stall_watch, group._closing = {}, {}, True, False
     group._ring_lock, group._stop_watch, group._loop = threading.RLock(), threading.Event(), loop
     return group
 

@@ -15,6 +15,8 @@ import json
 import pickle
 import time
 
+import pytest
+
 from skellycam.tests.capture.capture_session import (
     CaptureApp, OpenCVFakeFactory, Spies, block_payloads, capture_app, capture_logs, product, ready_app_steps)
 from skellycam.tests.capture.fake_source import FakeScript
@@ -27,6 +29,7 @@ def diagnostics_of(app, camera_id):
     return app.group.diagnostics(camera_id)
 
 
+@pytest.mark.capture_timing  # real camera processes: a new dict each second of real time
 def test_t_unx_70_the_diagnostics_path_with_process_workers(monkeypatch):
     """T-UNX-70: a fake whose dict has 64 `frame_log` rows (and 60 hash keys of the loop) in a real camera
     process. A new dict comes each second; the accessors give the full newest dict, under 32 KiB, whole;
@@ -188,3 +191,58 @@ def test_t_unx_72_frame_hashes(monkeypatch, tmp_path):
             for sfn, digest in record_set:
                 assert digest == sha256(ring_now[sfn]["payload"]) == sha256(recorded[sfn]["payload"]), sfn
                 assert digest in blocks, sfn
+
+
+@pytest.mark.capture_timing
+def test_f4_the_close_dict_reaches_the_main_process(monkeypatch):
+    """F4 (the experiment `close_dict_lost.py`): with real camera processes, the dict that each camera sends at
+    its close reaches the main process: after the close of the group, `CameraGroupManager.diagnostics()` holds
+    `restore_ok`, `restore_failed` and `t_close_ms` of each camera."""
+    scripts = [FakeScript(controls=(("exposure", True, True, -6),)), FakeScript(controls=(("exposure", True, True, -6),))]
+    with capture_app(monkeypatch, scripts, workers="process") as app:
+        ready_app_steps(app)
+        assert app.client.delete("/skellycam/camera/group/close/all").status_code == 200
+        found = app.manager.diagnostics()
+    assert set(found) == set(app.factory.camera_ids)
+    for camera_id, data in found.items():
+        assert (data["restore_ok"], data["restore_failed"]) == (True, 0), (camera_id, data["restore_ok"])
+        assert isinstance(data["t_close_ms"], float), (camera_id, data["t_close_ms"])
+
+
+def test_f10_a_failure_of_the_main_process_sets_fail_code(monkeypatch):
+    """F10: a camera process that ends with no final state (`_mark_ended`): the dict that the main process keeps
+    and the counter subset of the status get `fail_code` `process-ended`."""
+    with capture_app(monkeypatch, [FakeScript(exit_at="frame:300"), FakeScript()], workers="process") as app:
+        ready_app_steps(app)
+        ended = app.factory.camera_ids[0]
+        app.wait_state(ended, "dead", timeout=30)
+        app.wait(lambda: app.group.diagnostics(ended).get("fail_code") == "process-ended", "the fail code")
+        assert app.status(ended)["diagnostics"]["fail_code"] == "process-ended"
+
+
+def test_f10_a_restart_clears_the_counters_and_a_reopen_the_hashes(monkeypatch):
+    """F10: "apply again" (`reset_for_start`) clears the counter subset of the status; a reopen clears the D-11
+    hashes of the earlier open until its own first `ready`."""
+    from skellycam.core.camera_group.camera_status import CameraStatus
+
+    status = CameraStatus()
+    status.diagnostics = {"frames": 3}
+    status.reset_for_start()
+    assert status.diagnostics == {}
+    modes = ((640, 480, 30, 1, "MJPG"), (320, 240, 30, 1, "MJPG"))
+    with capture_app(monkeypatch, [FakeScript(modes=modes)]) as app:
+        ready_app_steps(app)
+        camera_id = app.factory.camera_ids[0]
+        app.wait(lambda: diagnostics_of(app, camera_id).get("sha256_29"), "30 hashes")
+        loop_module = product("skellycam.core.camera.capture.camera_loop")
+        seen = []
+        start_up = loop_module.CameraLoop._start_up
+
+        def spy(loop):
+            result = start_up(loop)
+            seen.append((loop.hash_trigger, list(loop.hashes)))  # at the end of the open, before `ready`
+            return result
+        monkeypatch.setattr(loop_module.CameraLoop, "_start_up", spy)
+        assert app.apply([app.config(camera_id, width=320, height=240)]).status_code == 200
+        app.wait_state(camera_id, "ready")
+    assert seen == [(None, [])], seen

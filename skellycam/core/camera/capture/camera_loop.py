@@ -73,6 +73,7 @@ NUMBER_OF_FRAMES_TO_SETTLE = 10  # 11.1: frames at each value before the sample
 TARGET_BRIGHTNESS = 127.5  # 11.1: half of 255
 DIAGNOSTICS_INTERVAL_NS = 1_000_000_000  # unix-capture.md 4.2 item 2: one dict each second
 DIAGNOSTICS_LIMIT_BYTES = 32 * 1024  # the pickled message; a larger dict is not sent
+DIAGNOSTICS_FLUSH_S = 1.0  # the longest wait of a camera process for its close dict to reach the pipe
 
 
 class _Stop(Exception):
@@ -244,6 +245,7 @@ class CameraLoop:
     def _start_up(self) -> None:
         self.started = False
         self.encoded = self.decoded_closed = self.dht_inserted = 0  # the counters of D-10 and D-11 count each open
+        self._arm_hashes(None)  # the hashes of an earlier open go; the first `ready` arms a new set
         self.stage = "open"
         self.status.set_state("starting")
         self.status.update_info(failure=None, measured_fps=None)
@@ -530,6 +532,7 @@ class CameraLoop:
         """A change of resolution or rate reopens only this camera and recreates its rings (D31, ring 7.5)."""
         self.status.set_state("starting")  # the stall watch is off during the close (unix-capture.md 4.10)
         self._stop_control()
+        self.status.set_state("starting")  # again: a live change of the control thread can set `checking` (F3)
         self._close_rings()
         self._add_replaced()
         self.source.close()
@@ -549,8 +552,10 @@ class CameraLoop:
             self.status.update_info(writer_failure=text)
             return
         try:
+            self.status.alive_count.value += 1  # the file open can take long; the watch is off in the pause too
             self.take_writer = start_take_writer(self.camera_id, spec, self.status.writer_progress_at,
                                                  self.status.alive_count)
+            self.status.alive_count.value += 1
         except Exception as error:  # the camera runs on; the record start fails with this text (ADR-P5VE)
             text = f"camera {self.camera_id}: the take writer did not start: {error}"
             logger.error(text)
@@ -679,6 +684,7 @@ class CameraLoop:
         os._exit(1)
 
     def _end(self, hung: bool) -> None:
+        self.status.closing.value = True  # the stall watch is off in each close, also from the group flags (F9)
         if hung:
             self.hard_end()
         try:
@@ -689,12 +695,13 @@ class CameraLoop:
                 self._add_replaced()
                 if self.source is not None:
                     try:
-                        self.source.close()
+                        self.source.close(restore=not self.failed)  # 4.7: a failed camera gets no restore
                     except CaptureFailure as failure:
                         self._fail(failure)
                         hung = failure.hung
                     if not hung:
                         self._publish_diagnostics()  # at the close
+                        self._flush_diagnostics()
             if self.end_state:
                 self.status.set_state(self.end_state)
             self._close_rings()
@@ -736,7 +743,7 @@ class CameraLoop:
 
     # ----- diagnostics (unix-capture.md 4.2 items 2 and 3) -----
 
-    def _arm_hashes(self, trigger: str) -> None:
+    def _arm_hashes(self, trigger: str | None) -> None:
         """D-11: a new set of 30 hashes replaces the old set."""
         self.hashes, self.dqt_hashes, self.dht_present, self.hash_trigger = [], [], None, trigger
 
@@ -755,6 +762,19 @@ class CameraLoop:
         for i in range(HASH_COUNT):
             data[f"sha256_frame_{i:02d}"], data[f"sha256_{i:02d}"] = hashes[i] if i < len(hashes) else (None, None)
         return data
+
+    def _flush_diagnostics(self) -> None:
+        """A camera process waits at most 1 s until its close dict is in the pipe; then it exits anyway, so a full
+        pipe never blocks the exit (the main process reads during the group close). THREAD workers share the
+        queue object with the main process: nothing to flush."""
+        if parent_process() is None:
+            return
+        deadline = time.monotonic() + DIAGNOSTICS_FLUSH_S
+        for subscription in getattr(self.ipc.pubsub.topics.get(TopicTypes.DIAGNOSTICS), "subscriptions", ()):
+            subscription.close()  # the feeder thread writes what waits, then ends
+            feeder = getattr(subscription, "_thread", None)  # shortcut: a private name of multiprocessing.Queue
+            if feeder is not None:
+                feeder.join(max(0.0, deadline - time.monotonic()))
 
     def _publish_diagnostics(self) -> None:
         """The full dict to the main process. A dict over 32 KiB (pickled) is not sent, and is logged one time."""

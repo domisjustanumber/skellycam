@@ -345,6 +345,7 @@ class FakeSource:
         self.cut_frames = []
         self.removed_frame = None
         self._restore = None  # the product `ControlRestore` of the open (unix-capture.md 4.7)
+        self.t_close_ms = None
 
     # ----- the capture interface (4.1) -----
 
@@ -462,12 +463,14 @@ class FakeSource:
                 self.log.first_sfn_after_readback = self._next_sfn
             return self._read_back()
 
-    def close(self):
+    def close(self, restore=True):
         self._event("close", None)
+        t0 = time.perf_counter_ns()
         with self._lock:
             self.log.closes.value += 1
         self._maybe_hang("close", "close")
-        if self._restore is not None and self._opened and not self._ended:  # the restore of 4.7, before the stream stops; never after a removal
+        # the restore of 4.7, before the stream stops; never after a removal or a failure of the loop
+        if restore and self._restore is not None and self._opened and not self._ended:
             self._restore.restore(self.set_controls)
         if self.script.close_delay_s:
             self._wait(self.script.close_delay_s)
@@ -476,11 +479,12 @@ class FakeSource:
         if self._thread is not None and self._thread is not threading.current_thread():
             self._thread.join(timeout=2.0)
         self._opened = False
+        self.t_close_ms = (time.perf_counter_ns() - t0) / 1e6
         self.clock.leave()
 
     def diagnostics(self):
         """The null source keys of unix-capture.md 4.6.2, `frames`, and the keys of the script."""
-        data = {**self.types.empty_diagnostics(), "frames": len(self.log.taken)}
+        data = {**self.types.empty_diagnostics(), "frames": len(self.log.taken), "t_close_ms": self.t_close_ms}
         if self._restore is not None:
             self._restore.fill(data)
         return {**data, **(self.script.diagnostics or {})}

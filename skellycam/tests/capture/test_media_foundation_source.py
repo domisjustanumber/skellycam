@@ -40,6 +40,10 @@ def test_t_unx_76_media_foundation_diagnostics():
     # the last read-back is that of the restore at the close (4.7): the value of before the open
     assert (data["exposure_present"], data["exposure_value"], data["control_path"]) == (True, -6, "iam")
     assert data["focus_present"] is False and data["fail_code"] is None
+    # F10: the range of IAMCameraControl::GetRange; the keys that Media Foundation cannot fill are null (4.6.2)
+    assert [data[f"exposure_{k}"] for k in ("min", "max", "step", "default", "auto_supported")] == [-13, -1, 1, -6, True]
+    assert (data["long_intervals"], data["format_changes"]) == (0, 0)
+    assert all(data[k] is None for k in ("error_flag_frames", "drops_reported", "long_intervals_with_seq_gap"))
 
 
 def restore_sets(result):
@@ -78,3 +82,35 @@ def test_t_unx_78_a_failed_restore_is_recorded_and_the_close_goes_on():
     assert ["flush"] in calls and ["shutdown"] in calls and ["shutdown-object"] in calls
     data = result["diagnostics"]
     assert (data["restore_ok"], data["restore_failed"]) == (False, 1)
+
+
+def test_f7_no_restore_after_a_stream_error():
+    """F7 (reviewer list): a removal HRESULT in `OnReadSample` before the close: the close sets no control."""
+    sets, _, calls = restore_sets(run_case("after-error"))
+    assert sets == [], calls
+
+
+def test_f7_no_restore_after_a_hang():
+    """F7 (reviewer list): a control `Set` that does not return makes the source hung; the close then touches
+    no interface: no restore set, and it returns at once."""
+    result = run_case("after-hang")
+    assert result["set_failure"] == ["set controls", "hung"]
+    calls = result["calls"][result["calls"].index(["close"]):]
+    assert not [call for call in calls if call[0] == "set"], calls
+    assert result["close_s"] < 0.5
+
+
+def test_f7_no_restore_when_the_loop_failed():
+    """F7: the shared loop closes a camera whose loop failed (for example the in-process stall rule, which sets
+    no error of the source) with `restore=False`: no set and no read-back at the close."""
+    sets, _, calls = restore_sets(run_case("loop-failed"))
+    assert sets == [], calls
+
+
+def test_f7_a_hanging_restore_ends_the_close_as_hung_within_its_bound():
+    """F7 (reviewer list): the restore `Set` of gain does not return. The close stops there as hung (stage
+    `close`, code `hung`) within the bound of one call (5 s), and goes to no later step (W 6.6, 6.9)."""
+    result = run_case("restore-hangs")
+    assert result["close_failure"] == ["close", "hung", True]
+    assert 5.0 <= result["close_s"] <= 6.0, result["close_s"]
+    assert ["flush"] not in result["calls"]

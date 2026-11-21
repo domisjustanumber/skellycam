@@ -83,6 +83,7 @@ class CameraStatus:
                      self.error):
             flag.value = False
         self.info.value = b""
+        self.diagnostics = {}
         self.set_warning_items([])
         self.set_state("starting")
 

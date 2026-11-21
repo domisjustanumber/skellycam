@@ -9,7 +9,9 @@ sample each 33 ms on its own thread, as the work queue of Media Foundation does.
 `IAMVideoProcAmp` keep a value and flags for each property and record each `Set`.
 
 Cases: `diagnostics`; `restore` (the restore at the close, on by default); `restore-off`
-(`SKELLYCAM_RESTORE_CONTROLS=0`); `restore-fails` (the restore `Set` of gain fails).
+(`SKELLYCAM_RESTORE_CONTROLS=0`); `restore-fails` (the restore `Set` of gain fails); `after-error` (a removal
+HRESULT in `OnReadSample` before the close); `after-hang` (the `Set` of gain does not return); `restore-hangs`
+(the restore `Set` of gain does not return); `loop-failed` (the close of a camera whose loop failed).
 """
 
 import ctypes
@@ -30,8 +32,16 @@ class Calls(list):
 class Control:
     """IAMCameraControl or IAMVideoProcAmp: {property: [value, flags]}."""
 
-    def __init__(self, calls, kind, values, fail_sets=()):
+    def __init__(self, calls, kind, values, fail_sets=(), hang_sets=(), ranges=None):
         self.calls, self.kind, self.values, self.fail_sets, self.sets = calls, kind, values, fail_sets, 0
+        self.hang_sets, self.ranges = hang_sets, ranges or {}
+
+    def GetRange(self, prop, low, high, step, default, caps):  # noqa: N802
+        if prop not in self.ranges:
+            return E_FAIL
+        for ref, value in zip((low, high, step, default, caps), self.ranges[prop]):
+            ref._obj.value = value
+        return 0
 
     def Get(self, prop, value, flags):  # noqa: N802 - COM name
         if prop not in self.values:
@@ -44,6 +54,8 @@ class Control:
         self.calls.add("set", self.kind, prop, value, flags)
         if (prop, self.sets) in self.fail_sets:
             return E_FAIL
+        if (prop, self.sets) in self.hang_sets:
+            threading.Event().wait()  # a driver call that does not return
         self.values[prop] = [value, flags]
         return 0
 
@@ -74,12 +86,14 @@ class Sample:
 
 class Reader:
     def __init__(self, calls, callback):
-        self.calls, self.callback, self.stopped = calls, callback, False
+        self.calls, self.callback, self.stopped, self.fail = calls, callback, False, False
 
     def ReadSample(self, *args):  # noqa: N802
         def deliver():
             time.sleep(0.033)
-            if not self.stopped:
+            if self.fail:
+                self.callback.OnReadSample(None, 0xC00D3EA2, 0, 0, 0, None)  # the device went away
+            elif not self.stopped:
                 self.callback.OnReadSample(None, 0, 0, 0, 0, Sample(time.perf_counter_ns()))
         threading.Thread(target=deliver, daemon=True).start()
         return 0
@@ -110,8 +124,10 @@ def install(case):
     calls = Calls()
     link = fake_link(0)
     # exposure (IAMCameraControl 4) in auto at -6, focus (6) absent, gain (IAMVideoProcAmp 9) manual at 10
-    camera = Control(calls, "camera", {4: [-6, 1]})
-    procamp = Control(calls, "procamp", {9: [10, 2]}, fail_sets=((9, 2),) if case == "restore-fails" else ())
+    camera = Control(calls, "camera", {4: [-6, 1]}, ranges={4: (-13, -1, 1, -6, 3)})
+    hang = {"after-hang": ((9, 1),), "restore-hangs": ((9, 2),)}.get(case, ())
+    procamp = Control(calls, "procamp", {9: [10, 2]}, fail_sets=((9, 2),) if case == "restore-fails" else (),
+                      hang_sets=hang)
     reader = {}
 
     def create_reader(media_source, callback, stage):
@@ -126,25 +142,40 @@ def install(case):
     for name, value in names.items():
         setattr(com, name, value)
     mf._set_mode = lambda reader_, request: NativeMode(640, 480, 30, 1, "MJPG")
-    return mf, detect.camera_id_of(link), calls
+    return mf, detect.camera_id_of(link), calls, reader
 
 
 def run(case):
     import os
 
-    from skellycam.core.camera.capture.source import CaptureRequest, ControlSetting
+    from skellycam.core.camera.capture.source import CaptureFailure, CaptureRequest, ControlSetting
 
     if case == "restore-off":
         os.environ["SKELLYCAM_RESTORE_CONTROLS"] = "0"
-    mf, camera_id, calls = install(case)
+    mf, camera_id, calls, reader = install(case)
     source = mf.MediaFoundationSource()
     source.open(CaptureRequest(camera_id=camera_id, width=640, height=480, framerate=30.0))
     frames = [source.read_frame(1.0) for _ in range(10)]
     source.set_controls({"exposure": ControlSetting(auto=False, value=-7)})
-    source.set_controls({"gain": ControlSetting(auto=False, value=20)})
+    result = {}
+    try:
+        source.set_controls({"gain": ControlSetting(auto=False, value=20)})
+    except CaptureFailure as failure:
+        result["set_failure"] = [failure.stage, failure.code]
+    if case == "after-error":
+        reader["reader"].fail = True
+        deadline = time.monotonic() + 2.0
+        while source._error is None and time.monotonic() < deadline:
+            time.sleep(0.01)
     calls.add("close")
-    source.close()
-    return dict(frames=sum(frame is not None for frame in frames), diagnostics=source.diagnostics(), calls=calls)
+    t0 = time.monotonic()
+    try:
+        source.close(restore=case != "loop-failed")
+    except CaptureFailure as failure:
+        result["close_failure"] = [failure.stage, failure.code, failure.hung]
+    result["close_s"] = time.monotonic() - t0
+    return dict(frames=sum(frame is not None for frame in frames), diagnostics=source.diagnostics(), calls=calls,
+                **result)
 
 
 if __name__ == "__main__":

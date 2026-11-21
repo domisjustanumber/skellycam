@@ -93,7 +93,8 @@ class CaptureSource(Protocol):
 
     def set_controls(self, changes: dict[str, ControlSetting]) -> ControlState: ...
 
-    def close(self) -> None: ...
+    def close(self, restore: bool = True) -> None: ...
+    # `restore=False`: the loop failed (unix-capture.md 4.7): no set and no read-back at the close
 
     @property
     def replaced_count(self) -> int: ...
@@ -246,14 +247,18 @@ class FrameLog:
     """D-2 and D-3 of the frames of one open: `frame_log` (the last 64 rows), the sample-minus-arrival
     percentiles of the last 256 differences, and `later_than_arrival`. The percentiles run only in `fill`."""
 
-    def __init__(self):
+    def __init__(self, period_ns: int | None = None):
         self.rows = deque(maxlen=FRAME_LOG_ROWS)
         self.differences = deque(maxlen=DIFFERENCES_KEPT)
         self.later_than_arrival = 0
+        self.period_ns, self.last_arrival_ns, self.long_intervals = period_ns, None, 0  # D-3: over 1.5 periods
 
     def add(self, source_frame_number: int, sequence: int | None, raw_ts_ns: int | None, arrival_ns: int,
             bytesused: int) -> None:
         self.rows.append([source_frame_number, sequence, raw_ts_ns, arrival_ns, bytesused])
+        if self.period_ns and self.last_arrival_ns is not None:
+            self.long_intervals += arrival_ns - self.last_arrival_ns > 1.5 * self.period_ns
+        self.last_arrival_ns = arrival_ns
         if raw_ts_ns is not None:
             self.differences.append(raw_ts_ns - arrival_ns)
             self.later_than_arrival += raw_ts_ns > arrival_ns
@@ -261,6 +266,8 @@ class FrameLog:
     def fill(self, diagnostics: dict) -> None:
         diagnostics["frame_log"] = [list(row) for row in list(self.rows)]
         diagnostics["later_than_arrival"] = self.later_than_arrival
+        if self.period_ns:
+            diagnostics["long_intervals"] = self.long_intervals
         values = sorted(self.differences)
         for p in (5, 50, 95):
             diagnostics[f"sample_minus_arrival_p{p}_ms"] = (

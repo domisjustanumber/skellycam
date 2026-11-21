@@ -113,7 +113,8 @@ class OpenCVSource:
                 "focus": ControlValue(present=focus != -1, auto=focus != -1 and bool(capture.get(cv2.CAP_PROP_AUTOFOCUS)),
                                       value=int(focus) if focus != -1 else None)}
 
-    def close(self) -> None:
+    def close(self, restore: bool = True) -> None:
+        """The OpenCV source has no restore (unix-capture.md 4.7): it cannot read the auto flag."""
         if self._capture is not None:
             self._capture.release()
             self._capture = None
