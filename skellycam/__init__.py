@@ -31,11 +31,12 @@ from skellylogs import LogLevels
 LOG_LEVEL = LogLevels.TRACE
 
 
-def certify(level: str, progress=None, cancel=None, *, cameras=None, recording_folder=None, test_media_dir=None) -> dict:
-    """The certify run of skellycam (specs/certify.md 1; contract `report-format.md` 2.1). Imported on call."""
+def certify(level: str, progress=None, cancel=None, *, cameras=None, recording_folder=None, test_media_dir=None,
+            abandon=None) -> dict:
+    """The certify run of skellycam (specs/certify.md 1; contract `report-format.md` 2.1, 2.4). Imported on call."""
     from skellycam.core.certify.run import certify as run
     return run(level, progress, cancel, cameras=cameras, recording_folder=recording_folder,
-               test_media_dir=test_media_dir)
+               test_media_dir=test_media_dir, abandon=abandon)
 
 
 def certify_plan(level: str, *, cameras=None, recording_folder=None, test_media_dir=None) -> dict:

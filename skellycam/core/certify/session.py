@@ -49,7 +49,7 @@ TIME_UNIT_RATIO, UNITLESS_RATIO = 0.85, 0.97  # 4.3; not calibrated
 TIME_UNITS = ("log2-s", "100us", "seconds")
 NEAR_ARRIVAL_MS = 200.0  # 10.2, cap 4.2
 END_ROWS = 3  # 4.5: a gap in the last three rows is in `end_gaps`
-WEDGED = ("hung", "process-ended", "device-removed")
+WEDGED = {"hung": "hung", "process-ended": "crashed", "device-removed": "device-removed"}  # code: reason (10.5)
 
 
 class Stopped(Exception):
@@ -146,6 +146,10 @@ class Session:
         self.watches: dict[str, RingWatch] = {}
         self.live: list[Unit] = []  # the cameras that are `ready`
         self.facts: dict[str, dict] = {}  # numbers that later checks of a camera use
+        self.wedged: dict[str, str] = {}  # label: the reason of the wedge (2.3)
+        self.sent_before: set[str] = set()
+        self.touched: list[Unit] = []
+        self.failed: set[str] = set()  # cameras whose loop failed: the product does not restore them (unix 4.7)
 
     # ----- helpers -----
 
@@ -172,10 +176,52 @@ class Session:
     def prior(self, unit, reason):
         self.fact("prior", (unit.label, reason))
 
+    def wedge_code(self, unit) -> str | None:
+        """`hung`, `process-ended` or `device-removed` from the status of the camera or its last dict, else None."""
+        group = self.group()
+        status = group.cameras.orchestrator.camera_statuses.get(unit.camera_id) if group is not None else None
+        code = (status.info_dict().get("failure") or {}).get("code") if status is not None else None
+        code = code or self.diagnostics(unit).get("fail_code")
+        return code if code in WEDGED else None
+
+    def scan(self, units, running=None) -> list:
+        """2.3, 8.3: a camera that hung, whose process ended or that was removed is wedged. It is never opened again,
+        its later checks are `prior-failure`, and phase G gives `camera-wedged`. `running(unit)` names the check that
+        ran when the wedge came: it is `fail` with the wedge reason. Returns the units that are wedged."""
+        found = []
+        for unit in units:
+            if unit.label not in self.wedged:
+                code = self.wedge_code(unit)
+                if code is None:
+                    continue
+                self.wedged[unit.label] = WEDGED[code]
+                self.fact("release", (unit.label, "camera-wedged"))
+                self.prior(unit, "prior-failure")
+                name = running(unit) if running is not None else None
+                if name:
+                    self.done(row(name, "fail", WEDGED[code], unit.module))
+            found.append(unit)
+        return found
+
+    def send_before(self, unit):
+        """8.3: the first "before" values of a camera go to the caller as soon as the diagnostics hold them, so that
+        phase G can set them back after a kill."""
+        if unit.label in self.sent_before:
+            return
+        data = self.diagnostics(unit)
+        before = {name: dict(value=data.get(f"{name}_before"), auto=data.get(f"{name}_before_auto"))
+                  for name in CONTROL_NAMES if data.get(f"{name}_before_auto") is not None}
+        if before:
+            self.sent_before.add(unit.label)
+            self.fact("before", (unit.label, before))
+
     async def wait_states(self, units, states, limit_s=SETTLE_LIMIT_S):
         deadline = time.monotonic() + limit_s
         while time.monotonic() < deadline:
-            if all(self.status(unit).get("state") in states for unit in units):
+            wedged = {unit.label for unit in self.scan(units)}
+            for unit in units:
+                self.send_before(unit)
+            if all(unit.label in wedged or self.status(unit).get("state") in states for unit in units):
                 return
             await asyncio.sleep(0.01)
 
@@ -224,6 +270,7 @@ class Session:
         for unit in usable:
             for name in catalog.camera_names(unit.label, unit.base, self.level, self.unix)["open"]:
                 self.begin(name)
+        self.touched = usable
         self.fact("touched", [unit.label for unit in usable])
         t0 = time.monotonic()
         refused = None
@@ -252,9 +299,12 @@ class Session:
                 if info is not None and unit.label not in self.watches:
                     with contextlib.suppress(FileNotFoundError, OSError, ValueError):
                         self.watches[unit.label] = RingWatch(info.jpeg_ring_name)
+                self.send_before(unit)
+            self.scan(units)  # a wedge in the open reaches the caller at once, also when a kill comes next
             await asyncio.sleep(0.005)
 
     def judge_open(self, unit, seconds, refused):
+        self.send_before(unit)
         status = self.status(unit) if refused is None else {}
         failure = status.get("failure") or {}
         code, state = failure.get("code"), status.get("state")
@@ -264,21 +314,24 @@ class Session:
         opened = dict(seconds_to_first_frame=None if first_frame is None else round(first_frame / 1000, 3),
                       seconds_to_ready=seconds, stage=(failure.get("stage") or "").replace(" ", "-") or None)
         rate_failed = code in ("rate-low", "rate-high")
-        if refused is not None:
-            self.done(row(names[0], "fail", "open-failed", unit.module, **opened))
+        if refused is not None:  # the apply of certify was refused or failed: no camera is to blame
+            self.done(row(names[0], "not-run", refused, unit.module, **opened))
             self.prior(unit, "prior-check-failed")
             return
         if code == "camera-in-use":
             self.done(row(names[0], "not-run", "camera-in-use", unit.module, **opened))
             self.prior(unit, "camera-in-use")
             return
+        if failure:
+            self.failed.add(unit.label)
         if state == "ready" or rate_failed:
             self.done(row(names[0], "pass", None, unit.module, **opened))
         else:
-            reason = "crashed" if code == "process-ended" else code or ("not-ready" if state else "open-failed")
+            reason = WEDGED.get(code) or code or ("not-ready" if state else "open-failed")
             self.done(row(names[0], "fail", reason, unit.module, exit_code=_number(failure.get("reason")), **opened))
             self.prior(unit, "prior-failure" if code in WEDGED else "prior-check-failed")
-            if code in WEDGED:
+            if code in WEDGED and unit.label not in self.wedged:
+                self.wedged[unit.label] = reason
                 self.fact("release", (unit.label, "camera-wedged"))
             return
         mode = status.get("mode") or {}
@@ -316,12 +369,9 @@ class Session:
         for unit in self.live:
             names = catalog.camera_names(unit.label, unit.base, self.level, self.unix)
             data = await self.wait_hashes(unit)
+            self.send_before(unit)
             watch = self.watches[unit.label]
             facts = self.facts[unit.label]
-            before = {name: dict(value=data.get(f"{name}_before"), auto=data.get(f"{name}_before_auto"))
-                      for name in CONTROL_NAMES if data.get(f"{name}_before_auto") is not None}
-            if before:
-                self.fact("before", (unit.label, before))
             payloads = list(watch.first)
             facts["luma_m7"] = luma(list(watch.last))
             numbers = dict(facts["rate"], luma_mean=facts["luma_m7"],
@@ -334,6 +384,8 @@ class Session:
                         dqt_distinct=data.get("dqt_distinct"), dqt_sha256=data.get("dqt_sha256"))
             facts["jpeg"] = jpeg
             self.begin(names["ready"][0])
+            if self.scan([unit], running=lambda u: names["ready"][0]):
+                continue
             native = mode.get("format") == "MJPG" and data.get("delivered") == "jpeg"
             self.done(row(names["ready"][0], "pass" if native else "fail", None if native else "no-native-jpeg",
                           unit.module, **jpeg))
@@ -360,6 +412,7 @@ class Session:
         if not manual:
             return
         group = self.group()
+        wedged_before = set(self.wedged)
         opened_at = {unit.label: group.configs[unit.camera_id].exposure for unit in manual}
         for unit in manual:
             for name in catalog.camera_names(unit.label, unit.base, self.level, self.unix)["settings"]:
@@ -371,8 +424,13 @@ class Session:
         luma_m8 = {u.label: luma(list(self.watches[u.label].last)) for u in manual}
         await asyncio.to_thread(time.sleep, 1.1)  # the control thread reads the controls each second (cap 11.4)
         later = {u.label: ((self.status(u).get("controls") or {}).get("exposure") or {}).get("value") for u in manual}
+        self.scan(manual)
         for unit in manual:
             names = catalog.camera_names(unit.label, unit.base, self.level, self.unix)["settings"]
+            if unit.label in self.wedged:  # the wedge came in the change: the running check is the read-back
+                if unit.label not in wedged_before:
+                    self.done(row(names[0], "fail", self.wedged[unit.label], unit.module))
+                continue
             data = self.diagnostics(unit)
             m7, m8 = self.facts[unit.label]["luma_m7"], luma_m8[unit.label]
             ratio = round(m8 / m7, 3) if m7 and m8 is not None else None
@@ -406,10 +464,13 @@ class Session:
     async def take_step(self):
         """4.5: a take of 3 s with each camera that is `ready`, then the checks of its files."""
         group = self.group()
-        takers = [u for u in self.live if self.status(u).get("state") == "ready"]
+        self.scan(self.live)
+        takers = [u for u in self.live if u.label not in self.wedged and self.status(u).get("state") == "ready"]
         for unit in self.live:
             if unit not in takers:
                 self.prior(unit, "prior-check-failed")
+                if self.status(unit).get("failure"):
+                    self.failed.add(unit.label)
         if group is None or not takers:
             self.fact("prior", ("group", "prior-check-failed"))
             return
@@ -422,6 +483,8 @@ class Session:
             self.begin(name)
         statuses = group.cameras.orchestrator.camera_statuses
         before = {u.label: self.diagnostics(u) for u in takers}
+        # 4.5: the replaced count of a window that holds each row of the take (from before the start to after the stop)
+        replaced_start = {u.label: statuses[u.camera_id].replaced_count.value for u in takers}
         try:
             await self.manager.start_recording_all_groups(
                 RecordingInfo(recording_name="take", recording_directory=str(self.work)))
@@ -432,14 +495,17 @@ class Session:
             for unit in takers:
                 self.prior(unit, "prior-check-failed")
             return
-        replaced_start = {u.label: statuses[u.camera_id].replaced_count.value for u in takers}
         await asyncio.to_thread(self.sleep, TAKE_S)
         summary = (await self.manager.stop_recording_all_groups())[0]
         replaced = {u.label: statuses[u.camera_id].replaced_count.value - replaced_start[u.label] for u in takers}
         after = {u.label: self.diagnostics(u) for u in takers}
         files = self.take_files(summary, takers)
         self.group_take_rows(summary, takers, files)
+        rows_complete = lambda u: catalog.camera_names(u.label, u.base, self.level, self.unix)["take"][3]  # noqa: E731
+        wedged = {u.label for u in self.scan(takers, running=rows_complete)}
         for unit in takers:
+            if unit.label in wedged:
+                continue
             self.camera_take_rows(unit, files.get(unit.camera_id), replaced[unit.label], after[unit.label])
             self.clock_rows(unit, before[unit.label], after[unit.label])
 
@@ -551,7 +617,7 @@ class Session:
         self.done(row(names[4], "fail" if failures else "pass", "frame-not-decodable" if failures else None,
                       unit.module, **dict(numbers, decode_failures=failures)))
         self.begin(names[5])
-        explained = gaps == replaced
+        explained = catalog.gaps_explained(gaps, replaced)
         self.done(row(names[5], "pass" if explained else "fail", None if explained else "gaps-unexplained", unit.module,
                       **numbers))
 
@@ -602,13 +668,23 @@ class Session:
         self.done(row(names[4], "not-run", "has-sequence" if available else "not-built", unit.module))
 
     async def close_step(self):
-        """Phase G of quick (8.3): the close restores each camera; its result comes from the close dict."""
-        if not self.manager.camera_groups:
-            return
+        """Phase G of quick (8.3): the close restores each camera. `camera-not-restored`: a restore that failed, or a
+        camera whose loop failed after its controls were set, because the product does not restore it
+        (unix-capture.md 4.7). (The close dict of a good camera can come after the close returns, so a missing
+        `restore_ok` alone proves nothing.) A wedge code in the last dict gives `camera-wedged`."""
         group = self.group()
+        if group is None:
+            return
         await self.manager.close_all_camera_groups()
-        for unit in self.units:  # also a camera that left the group before the take: its close dict is here
-            if group.camera_diagnostics.get(unit.camera_id, {}).get("restore_ok") is False:
+        for unit in self.touched:  # also a camera that left the group before the take: its last dict is here
+            data = group.camera_diagnostics.get(unit.camera_id, {})
+            if unit.label in self.wedged:
+                continue
+            if data.get("fail_code") in WEDGED:
+                self.wedged[unit.label] = WEDGED[data["fail_code"]]
+                self.fact("release", (unit.label, "camera-wedged"))
+            elif data.get("restore_ok") is False or (unit.label in self.failed and data.get("restore_ok") is not True and any(
+                    data.get(f"{name}_before_auto") is not None for name in CONTROL_NAMES)):
                 self.fact("release", (unit.label, "camera-not-restored"))
 
 

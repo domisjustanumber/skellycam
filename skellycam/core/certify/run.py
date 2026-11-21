@@ -1,5 +1,5 @@
 """The caller part of a certify run of skellycam (specs/certify.md 2.1, 2.5, 4.1, 8.3, 9; contract `report-format.md`
-of `skellycertify`, format 1.4.0): the plan, the progress, the cancel, the time limits, phase G, the local record and
+of `skellycertify`, format 1.6.0): the plan, the progress, the cancel, the time limits, phase G, the local record and
 the module report.
 
 The caller imports no `comtypes` and opens no camera. The camera steps (`session.py`) run in a spawn session child
@@ -9,6 +9,7 @@ a thread of the test process) or a picklable `source_factory` (fake sources in t
 
 import asyncio
 import contextlib
+import dataclasses
 import datetime
 import getpass
 import logging
@@ -34,16 +35,21 @@ from skellycam.core.certify.session import Stopped, Unit, run_session
 
 logger = logging.getLogger(__name__)
 
-SCHEMA = "skellycertify.report/1.4.0"
+SCHEMA = "skellycertify.report/1.6.0"
 LEVELS = ("quick", "full")
 QUICK_BUDGET_S = 30.0  # 4.1
 FULL_SESSION_LIMIT_S = 240.0  # 9.3: the limit of a camera block, for the session of this step
 DETECT_LIMIT_S = 20.0  # 9.3
 RECHECK_LIMIT_S = 5.0  # 8.3: after a cancel, at most 5 s for each touched camera
+RECHECK_CRASH_LIMIT_S = 20.0  # 8.3: after a crash or a time-out, at most 20 s for each camera
+GRACE_S = 12.0  # 9.3: after a time-out, the camera processes get this long to finish and restore
 EXIT_LIMIT_S = 5.0
+ACK_POLL_S = 1.0  # the session child looks for a dead caller at least this often
+CALLER_GONE_CLOSE_S = 15.0  # the session child closes its group within this time after its caller died
+LOCK_FILE = "certify.lock"  # 9.5: one run at a time, beside the record in the base folder
 PROGRESS_GAP_S = 0.1  # 9.6: at most 10 messages each second
 MARKER = ".skellycam-certify"  # 9.5
-STOPS = ("cancelled", "over-budget")
+STOPS = {"cancelled": "cancelled", "abandoned": "cancelled", "over-budget": "over-budget"}  # stop: reason
 QUESTIONS = [{"section": None, "id": "lit-as-usual", "text": "Was the room lit as it is when you record?"},
              {"section": None, "id": "all-cameras", "text": "Were all the cameras that you record with attached?"}]
 QUESTION_FULL = {"section": None, "id": "camera-ok-after",
@@ -56,10 +62,10 @@ SEMVER = re.compile(r"^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-[0-9A-Za-z.-]
 # ---------------------------------------------------------------------------
 
 def certify(level: str, progress=None, cancel=None, *, cameras=None, recording_folder=None,
-            test_media_dir=None) -> dict:
+            test_media_dir=None, abandon=None) -> dict:
     """Run the certify checks of skellycam and return one module report. skellycam reads and writes nothing in
-    `test_media_dir` (2.4)."""
-    return run(level, progress, cancel, cameras=cameras, recording_folder=recording_folder)
+    `test_media_dir` (2.4). `abandon` (C 1.6.0 2.4) stops the run as a cancel does, and the run stores no result."""
+    return run(level, progress, cancel, cameras=cameras, recording_folder=recording_folder, abandon=abandon)
 
 
 def certify_plan(level: str, *, cameras=None, recording_folder=None, test_media_dir=None) -> dict:
@@ -195,6 +201,9 @@ class _Progress:
         except Exception as error:  # C 2.3: stop calling it and go on
             logger.warning(f"certify: the progress callable raised {type(error).__name__}; no more progress")
             self.broken = True
+        except BaseException:  # for example KeyboardInterrupt: it goes to the caller, and the run stops its session
+            self.broken = True
+            raise
 
 
 # ---------------------------------------------------------------------------
@@ -208,10 +217,29 @@ def kill_tree(pid: int) -> None:
         processes = parent.children(recursive=True) + [parent]
     except psutil.NoSuchProcess:
         return
+    _kill(processes)
+
+
+def _kill(processes) -> None:
     for process in processes:
         with contextlib.suppress(psutil.NoSuchProcess):
             process.kill()
     psutil.wait_procs(processes, timeout=5)
+
+
+def _watch_caller(parent, kill, manager, loop_box) -> None:
+    """2.1: the session child must not outlive its caller. On the death of the caller: set the kill flag (each camera
+    loop ends and its close restores the camera), close the group within a limit, and end the child."""
+    from multiprocessing.connection import wait
+
+    wait([parent.sentinel])
+    logger.warning("certify: the caller of the session ended; the session closes its cameras and ends")
+    kill.value = True
+    loop = loop_box.get("loop")
+    if loop is not None and loop.is_running():
+        with contextlib.suppress(Exception):
+            asyncio.run_coroutine_threadsafe(manager.close_all_camera_groups(), loop).result(CALLER_GONE_CLOSE_S)
+    os._exit(3)
 
 
 def _session_child(events, acks, units, work, level, unix, source_factory) -> None:
@@ -223,7 +251,9 @@ def _session_child(events, acks, units, work, level, unix, source_factory) -> No
     if source_factory is None:  # 2.1: certify always uses the native source
         os.environ["SKELLYCAM_WINDOWS_CAPTURE"] = "media_foundation"
     # The product makes a camera group only in a main process (`parent_process() is None`, the pubsub guards). The
-    # session child is the main process of its camera processes (2.1), so it clears its own parent mark.
+    # session child is the main process of its camera processes (2.1), so it clears its own parent mark. It keeps the
+    # handle of its caller first: `_watch_caller` ends the child when the caller dies.
+    parent = multiprocessing.parent_process()
     multiprocessing.process._parent_process = None
     from skellylogs import configure_logging
     from skellylogs.handlers.websocket_log_queue_handler import create_websocket_log_queue
@@ -239,14 +269,29 @@ def _session_child(events, acks, units, work, level, unix, source_factory) -> No
         registry.start_heartbeat()
         manager = CameraGroupManager(global_kill_flag=kill, worker_registry=registry, source_factory=source_factory)
         manager.detected_cameras = {unit.camera_id: unit.device for unit in units}
+        loop_box = {}
+        if parent is not None:
+            threading.Thread(target=_watch_caller, args=(parent, kill, manager, loop_box), name="certify caller watch",
+                             daemon=True).start()
 
         def begin(name):
             events.put(("begin", name))
-            if not acks.get():
+            while True:  # a bounded wait: a caller that died gives no answer
+                try:
+                    ok = acks.get(timeout=ACK_POLL_S)
+                    break
+                except queue.Empty:
+                    if parent is not None and not parent.is_alive():
+                        raise Stopped() from None
+            if not ok:
                 raise Stopped()
 
-        asyncio.run(run_session(manager, units, work, level, unix, begin, lambda r: events.put(("done", r)),
-                                lambda kind, value: events.put(("fact", (kind, value))), time.sleep))
+        async def main():
+            loop_box["loop"] = asyncio.get_running_loop()
+            await run_session(manager, units, work, level, unix, begin, lambda r: events.put(("done", r)),
+                              lambda kind, value: events.put(("fact", (kind, value))), time.sleep)
+
+        asyncio.run(main())
     except Stopped:
         pass
     except BaseException as caught:  # a fault of the session: its class name is the reason (15)
@@ -266,15 +311,38 @@ class _ChildSession:
         self.process = context.Process(target=_session_child, name="skellycam certify session",
                                        args=(self.events, self.acks, units, work, level, unix, source_factory))
         self.process.start()
+        self.tree: dict[int, psutil.Process] = {}  # each process of the tree that the caller has seen
+        self.closed = False
 
     def alive(self):
         return self.process.is_alive()
 
+    def remember(self):
+        """Keep the camera processes of the child: after the child ends, its children have no parent to find."""
+        with contextlib.suppress(psutil.Error):
+            for process in psutil.Process(self.process.pid).children(recursive=True):
+                self.tree.setdefault(process.pid, process)
+
     def ack(self, ok):
         self.acks.put(ok)
 
-    def stop(self):
-        kill_tree(self.process.pid)
+    def _left(self):
+        return [p for p in self.tree.values() if p.is_running()]
+
+    def stop(self, mode="kill"):
+        """`kill`: the tree at once (a cancel, the end of the budget, C 2.4). `grace`: 9.3, the main process of the
+        child first; each camera process sees the dead server, finishes its files and restores its camera; after
+        GRACE_S the rest of the tree is killed. Nothing is left after a stop."""
+        self.remember()
+        if self.process.is_alive():
+            if mode == "kill":
+                kill_tree(self.process.pid)
+            else:
+                self.process.kill()
+        if mode == "grace":
+            with contextlib.suppress(psutil.Error):
+                psutil.wait_procs(self._left(), timeout=GRACE_S)
+        _kill(self._left())
 
     def exit_code(self):
         return self.process.exitcode
@@ -284,11 +352,13 @@ class _ChildSession:
         self.process.join(EXIT_LIMIT_S)
         hung = self.process.is_alive()
         if hung:
-            kill_tree(self.process.pid)
+            self.stop("kill")
         self.process.join(EXIT_LIMIT_S)
-        for channel in (self.events, self.acks):
-            channel.close()
-            channel.cancel_join_thread()
+        if not self.closed:
+            self.closed = True
+            for channel in (self.events, self.acks):
+                channel.close()
+                channel.cancel_join_thread()
         return hung
 
 
@@ -324,10 +394,13 @@ class _ThreadSession:
     def alive(self):
         return self.thread.is_alive()
 
+    def remember(self):
+        pass
+
     def ack(self, ok):
         self.acks.put(ok)
 
-    def stop(self):
+    def stop(self, mode="kill"):
         self.stopped.set()
         self.acks.put(False)
 
@@ -339,61 +412,105 @@ class _ThreadSession:
         return False
 
 
-def _drive(session, rows, reporter, cancel, deadline, over):
-    """Serve the session until its end, a cancel or the end of the time (9.3). Returns (running check, stop cause,
-    error class name, facts)."""
-    current, stop, error = None, None, None
-    facts = dict(touched=[], before={}, release={}, prior={})
+class _Stops:
+    """The stop of the caller: `abandoned` (C 1.6.0 2.4: it wins over a cancel), `cancelled`, or None."""
+
+    def __init__(self, cancel, abandon):
+        self.cancel, self.abandon = cancel, abandon
+
+    def cause(self):
+        if self.abandon is not None and _is_set(self.abandon):
+            return "abandoned"
+        if self.cancel is not None and _is_set(self.cancel):
+            return "cancelled"
+        return None
+
+
+@dataclasses.dataclass
+class _Driven:
+    current: str | None
+    stop: str | None
+    error: str | None
+    facts: dict
+    pending: list  # each check that started and has no result, in order
+
+
+def _drive(session, rows, reporter, stops, deadline, over) -> _Driven:
+    """Serve the session until its end, a stop of the caller or the end of the time (9.3)."""
+    out = _Driven(None, None, None, dict(touched=[], before={}, release={}, prior={}), [])
+    stopped = False
+
+    def handle(kind, value, *, before_stop):
+        if kind == "begin":
+            if out.stop is not None:
+                session.ack(False)
+                return
+            out.current = value
+            reporter.send("running", rows, step=value)
+            cause = stops.cause()
+            if cause is not None:  # a stop during the progress call: the check does not start
+                out.stop = cause
+                return
+            out.pending.append(value)
+            session.ack(True)
+        elif kind == "done" and (out.stop is None or before_stop):  # C 2.4: a check that had ended keeps its result
+            rows[value["name"]] = value
+            if value["name"] in out.pending:
+                out.pending.remove(value["name"])
+        elif kind == "fact":
+            name, item = value
+            if name == "touched":
+                out.facts["touched"] += item
+            elif name in ("before", "release", "prior"):
+                out.facts[name].setdefault(item[0], item[1])
+
+    last_seen = 0.0
     while True:
-        if stop is None and ((cancel is not None and _is_set(cancel)) or time.monotonic() > deadline):
-            stop = "cancelled" if cancel is not None and _is_set(cancel) else over
-            session.stop()
+        if out.stop is None:
+            cause = stops.cause() or (over if time.monotonic() > deadline else None)
+            if cause is not None:
+                out.stop = cause
+        if out.stop is not None and not stopped:
+            stopped = True
+            while True:  # the events that came before the stop
+                try:
+                    kind, value = session.events.get_nowait()
+                except (queue.Empty, EOFError, OSError):
+                    break
+                if kind == "end":
+                    break
+                handle(kind, value, before_stop=True)
+            session.stop("grace" if out.stop == "timed-out" else "kill")
+        if time.monotonic() - last_seen > 1.0:
+            session.remember()
+            last_seen = time.monotonic()
         try:
             kind, value = session.events.get(timeout=0.2)
         except queue.Empty:
             if not session.alive():
-                if stop is None:
-                    stop = "crashed"
+                out.stop = out.stop or "crashed"
                 break
             continue
         except (EOFError, OSError):
-            stop = stop or "crashed"
+            out.stop = out.stop or "crashed"
             break
-        if kind == "begin":
-            if stop is not None:
-                session.ack(False)
-                continue
-            current = value
-            reporter.send("running", rows, step=value)
-            if cancel is not None and _is_set(cancel):  # a cancel during the progress call: the check does not start
-                stop = "cancelled"
-                session.stop()
-                continue
-            session.ack(True)
-        elif kind == "done" and stop is None:
-            rows[value["name"]] = value
-        elif kind == "fact":
-            name, item = value
-            if name == "touched":
-                facts["touched"] += item
-            elif name in ("before", "release", "prior"):
-                facts[name].setdefault(item[0], item[1])
-        elif kind == "end":
-            if value is not None and stop is None:
-                stop, error = "crashed", value
+        if kind == "end":
+            if value is not None and out.stop is None:
+                out.stop, out.error = "crashed", value
             break
-    return current, stop, error, facts
+        handle(kind, value, before_stop=False)
+    return out
 
 
-def _is_set(cancel) -> bool:
+def _is_set(flag) -> bool:
     try:
-        return bool(cancel.is_set())
+        return bool(flag.is_set())
     except Exception:
         return False
 
 
 # ---------------------------------------------------------------------------
-# Phase G after a cancel, a time-out or a crash (8.3)
+# Phase G after a stop, a time-out or a crash (8.3)
 # ---------------------------------------------------------------------------
 
 def recheck(source, request, before) -> str:
@@ -429,9 +546,9 @@ def _recheck_child(source_factory, config, request, before, sender) -> None:
         sender.send("replug")
 
 
-def _recheck(unit: Unit, before: dict, source_factory, manager) -> str:
-    """One camera, at most RECHECK_LIMIT_S: in a spawn child (its process tree is killed at the limit), or in a
-    thread with the source factory of the test manager."""
+def _recheck(unit: Unit, before: dict, source_factory, manager, limit_s: float) -> str:
+    """One camera, at most `limit_s` from the start of its child: in a spawn child (its process tree is killed at the
+    limit), or in a thread with the source factory of the test manager."""
     from skellycam.core.camera.config.camera_config import CameraConfig
     from skellycam.core.camera.config.image_resolution import ImageResolution
 
@@ -449,7 +566,7 @@ def _recheck(unit: Unit, before: dict, source_factory, manager) -> str:
                 box.append("replug")
         thread = threading.Thread(target=target, name="certify recheck", daemon=True)
         thread.start()
-        thread.join(RECHECK_LIMIT_S)
+        thread.join(limit_s)
         return box[0] if box else "replug"
     context = multiprocessing.get_context("spawn")
     receiver, sender = context.Pipe(duplex=False)
@@ -458,7 +575,7 @@ def _recheck(unit: Unit, before: dict, source_factory, manager) -> str:
     child.start()
     sender.close()
     try:
-        return receiver.recv() if receiver.poll(RECHECK_LIMIT_S) else "replug"
+        return receiver.recv() if receiver.poll(limit_s) else "replug"
     except EOFError:
         return "replug"
     finally:
@@ -473,7 +590,7 @@ def _recheck(unit: Unit, before: dict, source_factory, manager) -> str:
 # ---------------------------------------------------------------------------
 
 def _work_folder(recording_folder) -> Path:
-    """9.5: a new marked work folder; earlier marked folders of certify go first."""
+    """9.5: a new marked work folder; earlier marked folders of certify go first (the run lock makes them old)."""
     root = Path(recording_folder) if recording_folder is not None else Path(tempfile.gettempdir())
     root.mkdir(parents=True, exist_ok=True)
     for old in root.glob("skellycam-certify-*"):
@@ -485,6 +602,21 @@ def _work_folder(recording_folder) -> Path:
     return work
 
 
+def _run_lock(checks_path: Path, stack: contextlib.ExitStack) -> bool:
+    """9.5: one run at a time. The lock file is beside the record in the base folder; the OS frees it when the
+    process ends. False when another run holds it."""
+    from skellycam.core.take_recorder import folder_files
+
+    path = checks_path.with_name(LOCK_FILE)
+    try:
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.touch(exist_ok=True)
+        stack.enter_context(folder_files.take_lock(path, 0.0))
+        return True
+    except (TimeoutError, OSError):
+        return False
+
+
 def _group_open() -> bool:
     """9.7: a camera group of skellycam is open in the calling process."""
     module = __import__("sys").modules.get("skellycam.core.camera_group.camera_group_manager")
@@ -492,31 +624,37 @@ def _group_open() -> bool:
     return bool(manager is not None and manager.camera_groups)
 
 
-def _detect(backend, cancel):
-    """(the `detect` row, the devices). Windows: the product detection, which has its own child (cap 7.1)."""
+def _detect(backend, stops, deadline, over, modes=True):
+    """(the `detect` row or None, the devices). Windows: the product detection, which has its own child (cap 7.1). It
+    ends at its limit of 20 s, at the end of the budget or at a stop of the caller."""
     if backend != "media-foundation":
         return dict(name="detect", result="not-run", reason="not-built"), []
-    from skellycam.core.camera.capture.media_foundation.detect import detect_media_foundation_cameras
+    from skellycam.core.camera.capture.media_foundation import detect
 
     box = {}
 
     def target():
         try:
-            box["devices"] = detect_media_foundation_cameras()
+            box["devices"] = detect.detect_media_foundation_cameras(modes=modes)
         except BaseException as error:
             box["error"] = error
     t0 = time.monotonic()
+    limit = min(DETECT_LIMIT_S, max(0.0, deadline - t0))
     thread = threading.Thread(target=target, name="certify detection", daemon=True)
     thread.start()
-    while thread.is_alive() and time.monotonic() - t0 < DETECT_LIMIT_S and not (cancel is not None and _is_set(cancel)):
-        thread.join(0.25)
-    if "devices" not in box:
-        error = box.get("error")
-        code = getattr(error, "code", None)
-        reason = ("cancelled" if cancel is not None and _is_set(cancel) and error is None else
-                  "timed-out" if error is None or code == "hung" else "crashed")
-        return dict(name="detect", result="not-run" if reason == "cancelled" else "fail", reason=reason), []
-    return None, box["devices"]
+    while thread.is_alive() and time.monotonic() - t0 < limit and stops.cause() is None:
+        thread.join(0.05)
+    if "devices" in box:
+        return None, box["devices"]
+    error = box.get("error")
+    if error is not None:
+        return dict(name="detect", result="fail", reason="timed-out" if getattr(error, "code", None) == "hung"
+                    else "crashed"), []
+    if stops.cause() is not None:
+        return dict(name="detect", result="not-run", reason="cancelled"), []
+    if limit < DETECT_LIMIT_S:
+        return dict(name="detect", result="not-run", reason=over), []
+    return dict(name="detect", result="fail", reason="timed-out"), []
 
 
 def _detect_row(devices, seconds):
@@ -556,80 +694,123 @@ def _host() -> dict:
     return dict(os=os_info, cpu=dict(name=cpu), memory_bytes=memory)
 
 
-def run(level, progress=None, cancel=None, *, cameras=None, recording_folder=None, devices=None, manager=None,
-        source_factory=None, sleep=time.sleep, checks_path=None, evidence_path=camera_checks.EVIDENCE_PATH,
-        os_key=None, abi=None, budget_s=None, private_terms=None) -> dict:
+def run(level, progress=None, cancel=None, *, cameras=None, recording_folder=None, abandon=None, devices=None,
+        manager=None, source_factory=None, sleep=time.sleep, checks_path=None,
+        evidence_path=camera_checks.EVIDENCE_PATH, os_key=None, abi=None, budget_s=None, private_terms=None) -> dict:
     """`certify()` with the seams of the tests: `devices` (the detection result), `manager` (a session in a thread
     of this process), `source_factory` (the fakes of a session child), the paths of the record and the evidence
-    file, the OS key and the ABI, and the budget of quick."""
+    file, the OS key and the ABI, and `budget_s` (the budget of quick, or the session limit of full)."""
     _check_level(level)
+    start = time.monotonic()
     created = datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
     backend = catalog.system_backend()
+    if checks_path is None:
+        from skellycam.system.default_paths import get_default_skellycam_base_folder_path
+        checks_path = Path(get_default_skellycam_base_folder_path()) / camera_checks.CHECKS_FILE
+    checks_path = Path(checks_path)
     reporter = _Progress(progress, level)
     reporter.send("starting", {})
-    work = _work_folder(recording_folder)
-    out = dict(rows={"detect": None}, reasons=[], cleanup=[], notices=[], summary=[], context=None)
-    try:
-        _run(out, level, reporter, cancel, cameras, devices, manager, source_factory, sleep, checks_path,
-             evidence_path, os_key, abi, budget_s, private_terms, backend, work)
-    finally:
-        reporter.send("cleaning-up", out["rows"])
-        shutil.rmtree(work, ignore_errors=True)
-        if work.exists():
-            out["cleanup"].append(_row("delete-work-folder", "fail", "not-deleted"))
+    stops = _Stops(cancel, abandon)
+    limit = budget_s if budget_s is not None else QUICK_BUDGET_S if level == "quick" else FULL_SESSION_LIMIT_S
+    out = dict(rows={"detect": None}, reasons=[], cleanup=[], notices=[], summary=[], context=None, stop=None)
+    work = None
+    with contextlib.ExitStack() as stack:
+        locked = _run_lock(checks_path, stack)
+        try:
+            if locked:
+                work = _work_folder(recording_folder)
+            _run(out, level, reporter, stops, cameras, devices, manager, source_factory, sleep, checks_path,
+                 evidence_path, os_key, abi, private_terms, backend, work, not locked, start + limit,
+                 "over-budget" if level == "quick" else "timed-out")
+        finally:
+            reporter.send("cleaning-up", out["rows"])
+            if work is not None:
+                shutil.rmtree(work, ignore_errors=True)
+                if work.exists():
+                    out["cleanup"].append(_row("delete-work-folder", "fail", "not-deleted"))
     report = _report(level, created, out, backend)
     reporter.send("done", out["rows"])
     return report
 
 
-def _run(out, level, reporter, cancel, cameras, devices, manager, source_factory, sleep, checks_path, evidence_path,
-         os_key, abi, budget_s, private_terms, backend, work):
+def _unit_of(name, units):
+    return next((unit.label for unit in units if name.startswith(unit.label + ":")), None)
+
+
+def _run(out, level, reporter, stops, cameras, devices, manager, source_factory, sleep, checks_path, evidence_path,
+         os_key, abi, private_terms, backend, work, locked_out, deadline, over):
     unix = backend != "media-foundation"
-    busy = _group_open()
+    busy = locked_out or _group_open()
     reporter.send("running", out["rows"], step="detect")
     t0 = time.monotonic()
     detect_row = None
     if devices is None:
-        detect_row, devices = (None, _enumerate(backend)) if busy else _detect(backend, cancel)
+        detect_row, devices = _detect(backend, stops, deadline, over, modes=not busy)
     context = out["context"] = _Context(level, devices, cameras, backend, checks_path, evidence_path, os_key, abi,
                                         private_terms)
     planned = catalog.planned_checks(level, context.unit_specs(), backend)
     modules = dict(planned)
     rows = out["rows"] = {name: None for name, _ in planned}
     reporter.total = len(rows)
-    if busy:  # 9.7: the run is refused; it opens no camera. No summary item, so no `module` (C 3.4)
+    if busy:  # 9.5, 9.7: the run is refused; it opens no camera. No summary item, so no `module` (C 3.4)
         out["rows"] = {name: _row(name, "not-run", "cameras-busy") for name in rows}
         out["reasons"].append("cameras-busy")
         return
     rows["detect"] = detect_row or _detect_row(devices, time.monotonic() - t0)
-    stop = "cancelled" if rows["detect"]["reason"] == "cancelled" else None
+    stop = stops.cause() if rows["detect"]["reason"] == "cancelled" else None
+    if rows["detect"]["reason"] == over:
+        stop = over
     if rows["detect"]["result"] == "pass" and not any(not d.virtual for d in devices):
         out["reasons"].append("no-camera")
     units = [Unit(label=c["label"], camera_id=c["raw"].camera_id, index=c["raw"].index, base=c["base"],
                   module=c["module"], device=c["raw"]) for c in context.units]
     facts = dict(touched=[], before={}, release={}, prior={})
     if units and stop is None:
-        limit = (QUICK_BUDGET_S if budget_s is None else budget_s) if level == "quick" else FULL_SESSION_LIMIT_S
         session = (_ThreadSession(manager, units, work, level, unix, sleep) if manager is not None else
                    _ChildSession(units, work, level, unix, source_factory))
-        current, stop, error, facts = _drive(session, rows, reporter, cancel, time.monotonic() + limit,
-                                             "over-budget" if level == "quick" else "timed-out")
-        if session.finish() and stop is None:
-            rows["session:exit"] = _row("session:exit", "record-only", "hung-at-exit")
-        exit_code = session.exit_code()
-        if stop in ("crashed", "timed-out") and current is not None and rows.get(current) is None:
-            numbers = {"exit_code": exit_code} if exit_code is not None and error is None else {}
-            rows[current] = _row(current, "fail", error or stop, modules.get(current), **numbers)
+        try:
+            driven = _drive(session, rows, reporter, stops, deadline, over)
+            if session.finish() and driven.stop is None:
+                rows["session:exit"] = _row("session:exit", "record-only", "hung-at-exit")
+        finally:  # never leave the session behind (2.1): after an end it is a no-op
+            session.stop("grace")
+        stop, facts = driven.stop, driven.facts
+        if stop in ("crashed", "timed-out"):
+            _blame(rows, modules, driven, units, session.exit_code())
+    judged = {unit.label for unit in units if rows.get(f"{unit.label}:opens") is not None}
     computed = {name for name in rows if name.endswith(":units") or ":gate" in name}
     _fill(rows, modules, context, level, stop, facts["prior"], skip=computed)
     if stop not in STOPS:
         _computed_rows(rows, context, level, reporter)
     _fill(rows, modules, context, level, stop, facts["prior"], skip=set())
     out["summary"] = _summary(rows, context, level, unix)
-    _phase_g(rows, context, units, facts, stop, source_factory, manager, out["cleanup"], out["notices"])
-    if stop == "cancelled":
+    _phase_g(context, units, facts, stop, judged, source_factory, manager, out["cleanup"], out["notices"])
+    out["stop"] = stop
+    if stop in ("cancelled", "abandoned"):
         out["reasons"].append("cancelled")
-    _write_record(rows, context, level, out["summary"], checks_path)
+    if stop in ("crashed", "timed-out", "abandoned"):  # C 1.6.0 2.4; a fault of the run blames no model
+        return
+    try:
+        _write_record(rows, context, level, out["summary"], checks_path)
+    except Exception as error:  # C 2.5: a failed cleanup step is a row, and the report still returns
+        logger.exception("certify: the record of checked models could not be written")
+        out["cleanup"].append(_row("write-record", "fail", type(error).__name__))
+
+
+def _blame(rows, modules, driven, units, exit_code):
+    """A crash or a time-out in the session: the running check is `fail` only when the checks that ran belong to one
+    camera (or to the group); when they belong to several cameras (one apply for all), none is blamed: each is
+    `not-run` with the cause."""
+    pending = [name for name in driven.pending if rows.get(name) is None]
+    if not pending and driven.current is not None and rows.get(driven.current) is None:
+        pending = [driven.current]
+    cause = driven.error or driven.stop
+    if len({_unit_of(name, units) for name in pending}) == 1:
+        numbers = {"exit_code": exit_code} if exit_code is not None and driven.error is None else {}
+        rows[pending[0]] = _row(pending[0], "fail", cause, modules.get(pending[0]), **numbers)
+    for name in pending:
+        if rows.get(name) is None:
+            rows[name] = _row(name, "not-run", cause, modules.get(name))
 
 
 def _row(name, result, reason=None, module=None, **numbers) -> dict:
@@ -659,7 +840,7 @@ def _fill(rows, modules, context, level, stop, prior, skip):
         elif name in block:
             reason = "not-built" if block[name] in first else "same-model"
         elif stop in STOPS:
-            reason = stop
+            reason = STOPS[stop]
         elif unit_label in prior:
             reason = prior[unit_label]
         elif name.startswith("group:") and "group" in prior:
@@ -697,9 +878,10 @@ def _computed_rows(rows, context, level, reporter):
 
 
 def _summary(rows, context, level, unix) -> list:
+    """One `camera` item for each model (3.4), with the private key `_model` that the record uses."""
     items = []
     for model, m in context.models.items():
-        item = dict(group="camera", name=m["module"], device=m["device"])
+        item = dict(group="camera", name=m["module"], device=m["device"], _model=model)
         if model in context.reviewed:
             items.append(dict(item, result="skipped", reason="reviewed"))
             continue
@@ -715,20 +897,29 @@ def _summary(rows, context, level, unix) -> list:
     return items
 
 
-def _phase_g(rows, context, units, facts, stop, source_factory, manager, cleanup, notices):
-    """8.3: a cleanup row and a notice for each camera that is not healthy after the run. After a cancel, the end of
-    the budget, a time-out or a crash, each touched camera that did not fail is opened again, at most 5 s each."""
+def _phase_g(context, units, facts, stop, judged, source_factory, manager, cleanup, notices):
+    """8.3: a cleanup row and a notice for each camera that is not healthy after the run.
+
+    After a stop, a time-out or a crash, each touched camera that is not wedged is judged again:
+    - a camera whose `opens` has no result was in the middle of its open: it is never opened again, and it is
+      `camera-not-restored` (its settings are not known);
+    - a camera in use by another program, or one with no known "before" values (no control was set), needs nothing;
+    - else a plain open of at most 5 s (20 s after a crash or a time-out) sets each control back.
+    """
     states = {label: "replug" if code == "camera-wedged" else "not-restored"
               for label, code in facts["release"].items()}
     if stop is not None:
+        limit = RECHECK_CRASH_LIMIT_S if stop in ("crashed", "timed-out") else RECHECK_LIMIT_S
         for unit in units:
-            opens = rows.get(f"{unit.label}:opens") or {}
-            if (unit.label not in facts["touched"] or unit.label in states or unit.base is None
-                    or opens.get("result") == "fail" or opens.get("reason") == "camera-in-use"):
+            if unit.label not in facts["touched"] or unit.label in states or unit.base is None:
                 continue
-            state = _recheck(unit, facts["before"].get(unit.label, {}), source_factory, manager)
-            if state in ("replug", "not-restored"):
-                states[unit.label] = state
+            before = facts["before"].get(unit.label)
+            if unit.label not in judged:
+                states[unit.label] = "not-restored"
+            elif before:
+                state = _recheck(unit, before, source_factory, manager, limit)
+                if state in ("replug", "not-restored"):
+                    states[unit.label] = state
     names = {c["label"]: c["name"] for c in context.cameras}
     for unit in units:
         state = states.get(unit.label)
@@ -740,13 +931,13 @@ def _phase_g(rows, context, units, facts, stop, source_factory, manager, cleanup
 
 
 def _write_record(rows, context, level, summary, checks_path):
-    """2.5: one row for each model by the rule of `catalog.writes_row`."""
-    by_name = {item["name"]: item for item in summary if item.get("reason") != "reviewed"}
+    """2.5: one row for each model by the rule of `catalog.writes_row`, from the summary item of that model."""
+    by_model = {item["_model"]: item for item in summary if item.get("reason") != "reviewed"}
     out = []
     date = datetime.date.today().isoformat()
     for model, m in context.models.items():
         units = _selected(context, model)
-        item = by_name.get(m["module"])
+        item = by_model.get(model)
         if not units or item is None:
             continue
         opens = [(rows.get(f"{c['label']}:opens") or {}).get("result") for c in units]
@@ -762,9 +953,6 @@ def _write_record(rows, context, level, summary, checks_path):
         out.append(catalog.record_row(m["record_key"], context.backend, context.os_key, context.abi, level,
                                       item["result"], _version(), date, gate, controls))
     if out:
-        if checks_path is None:
-            from skellycam.system.default_paths import get_default_skellycam_base_folder_path
-            checks_path = Path(get_default_skellycam_base_folder_path()) / camera_checks.CHECKS_FILE
         catalog.write_record(checks_path, out)
 
 
@@ -784,8 +972,9 @@ def _report(level, created, out, backend) -> dict:
                     "abi": context.abi if context else None},
         "evidence": {"valid": not evidence, "reasons": list(dict.fromkeys(evidence))},
     }
-    if out["summary"]:
-        report["summary"] = out["summary"]
+    summary = [{k: v for k, v in item.items() if not k.startswith("_")} for item in out["summary"]]
+    if summary:
+        report["summary"] = summary
     if out["notices"]:
         report["notices"] = out["notices"]
     return report

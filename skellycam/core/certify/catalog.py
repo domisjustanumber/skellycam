@@ -195,8 +195,20 @@ def _suffix(name: str, unit_label: str) -> str:
     return name[len(unit_label) + 1:]
 
 
-def _group(suffix: str) -> str:
-    return "modes:granted" if suffix.startswith("modes:granted") else suffix
+def _base_granted(unit: dict) -> str | None:
+    """The name of the `modes:granted` check of `<base>`: the first one of the unit (the rows are in plan order)."""
+    return next((name for name in unit if ":modes:granted" in name), None)
+
+
+def _group(name: str, unit_label: str, unit: dict) -> str:
+    """The item group of a check: only the mode check of `<base>` is in `modes:granted` (3.4, 11.3)."""
+    return "modes:granted" if name == _base_granted(unit) else _suffix(name, unit_label)
+
+
+def gaps_explained(gaps: int, replaced: int) -> bool:
+    """4.5: each gap of the source frame numbers needs a replaced frame. The replaced count comes from a window that
+    holds each row of the take and some frames more, so the rule is "not more gaps than replaced frames"."""
+    return gaps <= replaced
 
 
 def _ok(row: dict, unit: dict, unit_label: str) -> bool:
@@ -224,7 +236,7 @@ def item_result(units: list, unix: bool = False) -> str:
         return "skipped"
     for unit in units:
         lab = _label_of(unit)
-        if not busy(unit) and any(row["result"] == "fail" and _group(_suffix(name, lab)) in FATAL
+        if not busy(unit) and any(row["result"] == "fail" and _group(name, lab, unit) in FATAL
                                   for name, row in unit.items()):
             return "fail"
     for unit in units:
@@ -232,7 +244,7 @@ def item_result(units: list, unix: bool = False) -> str:
         if busy(unit):
             return "partial"
         for name, row in unit.items():
-            if _group(_suffix(name, lab)) in groups and not _ok(row, unit, lab):
+            if _group(name, lab, unit) in groups and not _ok(row, unit, lab):
                 return "partial"
     return "pass"
 
@@ -257,12 +269,12 @@ def gate_rows(model: str, units: list, module: str | None) -> list:
         if step == "sequence":
             sequence = unit.get(f"{lab}:sequence")
             pick = ("time-gaps",) if sequence is None or sequence["reason"] == "no-sequence" else ("sequence",)
-        return [row for name, row in unit.items() if _group(_suffix(name, lab)) in pick]
+        return [row for name, row in unit.items() if _group(name, lab, unit) in pick]
 
     rows = [_roll_up(f"{model}:gate:{step}", [row for unit in ran for row in required(unit, step)], module)
             for step in GATE_STEPS[:-1]]
-    hang = next((row["reason"] for unit in units for row in unit.values() if row["reason"] in ("hung", "crashed")),
-                None)
+    hang = next((row["reason"] for unit in units for row in unit.values()
+                 if row["result"] == "fail" and row["reason"] in ("hung", "crashed")), None)
     rows.append(dict(name=f"{model}:gate:no-hang", result="fail" if hang else "pass", reason=hang, module=module))
     rows.append(_roll_up(f"{model}:gate", rows, module))
     return rows

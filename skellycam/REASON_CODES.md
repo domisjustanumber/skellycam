@@ -17,8 +17,8 @@ The common codes of the contract keep the meaning of the contract (section 5.3):
 | `crashed` | The child process or the camera process ended with no result. `numbers.exit_code` holds its exit code when it is known. |
 | `bad-output` | The child process gave output that is not a result. |
 | `hung-at-exit` | The session child gave its result and did not end. Certify stopped it. |
-| `cancelled` | The caller set `cancel`, so the check did not run to its end. |
-| `cameras-busy` | A camera group of skellycam was open in the calling process, so certify refused the run. |
+| `cancelled` | The caller set `cancel` or `abandon`, so the check did not run to its end. |
+| `cameras-busy` | A camera group of skellycam was open in the calling process, or another certify run held the run lock, so certify refused the run. |
 | `not-built` | The check, or the source fact that it reads, does not exist in this version of skellycam. |
 | `over-budget` | The check did not run because the time limit of the quick run was used up. |
 | `no-version` | `package.version` is not a SemVer version. |
