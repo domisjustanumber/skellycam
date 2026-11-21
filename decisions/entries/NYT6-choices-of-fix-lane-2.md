@@ -26,6 +26,7 @@ items. The agent chose these details:
    failure clears it; at the first read of an open, a record that is not empty replaces the values that the camera
    reads. "Apply again" keeps it; `CameraGroupManager.restore_records` keeps it to the next group, in memory. The
    camera process finds it through `RESTORE_RECORDS` of `capture/source.py` (`unix-capture.md` 4.7).
+7. The exit of `skellycam/__main__.py` has no fixed wait of 1 s before `WorkerRegistry.shutdown_all()`.
 
 ## Reason
 
@@ -40,6 +41,9 @@ items. The agent chose these details:
    the next open read that value as "before" (real cameras). The main process makes and keeps the status, so the
    record survives the camera process with no new channel. 4.7 [U] forbids an open only to restore, so the close
    of the next open restores.
+7. Nothing reads the wait: `uvicorn.Server.serve()` (0.54.0) returns only after its `shutdown()` (connections
+   closed, tasks done, lifespan end), so `should_exit` had no reader; `shutdown_all()` sets the kill flag and
+   waits for each worker itself.
 
 ## Consequences
 
