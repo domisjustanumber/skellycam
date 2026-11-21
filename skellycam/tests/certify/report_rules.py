@@ -1,12 +1,14 @@
-"""The rules of a module report of `report-format.md` format 1.4.0 (repository `skellycertify`) that code can
+"""The rules of a module report of `report-format.md` format 1.6.0 (repository `skellycertify`) that code can
 check (specs/certify.md T-CERT-03, T-CERT-04, T-CERT-67, T-CERT-70). Test code only.
 
 `problems(report)` gives one text for each broken rule; an empty list means that the report obeys each rule
 below. The rules: the fields of C 3.1 and their forms (C 3.2, C 3.3), the check form of C 3.4 (name pattern,
 unique names, one result, a reason for `fail` and `not-run`, flat `numbers`, `module` length), the summary items
-of C 3.7 (group, name, device, result, `reason` only for `skipped`, `gate` names a roll-up check of the report,
-one `camera` item for each `device`), `notices` of C 3.8, `cleanup` as check objects, `evidence` of C 7.1, and
-the privacy rules 1 to 7, 9, 10 and 19 of C 6 on each string of the JSON object. The Markdown rules (8, 17, 20)
+of C 3.7 (group, name, device of the form `vvvv:pppp` for a camera, result, `reason` only for `skipped`, and
+`not-installed` only for a `component`, `gate` names a roll-up check of the report, one `camera` item for each
+`device`), `notices` of C 3.8, `cleanup` as `fail` check objects, `test_media` of C 3.9,
+`host.gpus[].shared_memory_bytes` of C 3.3, `evidence` of C 7.1 (with the reasons that the package fields give),
+and the privacy rules 1 to 7, 9, 10 and 19 of C 6 on each string of the JSON object. The Markdown rules (8, 17, 20)
 apply to the report file, which the app writes; `markdown_problems(text)` checks rules 17 and 20 on a value that
 the Markdown part shows.
 """
@@ -14,12 +16,14 @@ the Markdown part shows.
 import json
 import re
 
-SCHEMA = "skellycertify.report/1.4.0"
+SCHEMA = "skellycertify.report/1.6.0"
 NAME = re.compile(r"^[A-Za-z0-9][A-Za-z0-9_.:@-]{0,127}$")
 REASON = re.compile(r"^[A-Za-z0-9][A-Za-z0-9_-]{0,79}$")
 RESULTS = ("pass", "fail", "not-run", "record-only")
 ITEM_RESULTS = ("pass", "fail", "record-only", "partial", "skipped")
-GROUPS = ("ep", "gpu-jpeg", "camera", "benchmark")
+GROUPS = ("ep", "gpu-jpeg", "camera", "benchmark", "component")
+DEVICE = re.compile(r"^[0-9a-f]{4}:[0-9a-f]{4}$")
+ROLL_UP_REASONS = (None, "gate-check-failed", "gate-check-not-run")
 CREATED = re.compile(r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$")
 UUID4 = re.compile(r"^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$")
 SEMVER = re.compile(r"^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-[0-9A-Za-z.-]+)?(?:\+[0-9A-Za-z.-]+)?$")
@@ -112,6 +116,10 @@ def problems(report) -> list[str]:
             out.append("host.memory_bytes")
         if "gpus" in host and host["gpus"] is not None and not isinstance(host["gpus"], list):
             out.append("host.gpus")
+        for gpu in host.get("gpus") or []:
+            shared = gpu.get("shared_memory_bytes") if isinstance(gpu, dict) else None
+            if shared is not None and not (isinstance(shared, int) and not isinstance(shared, bool) and shared >= 0):
+                out.append("host.gpus[].shared_memory_bytes")
     checks = report.get("checks") or []
     names = [c.get("name") for c in checks if isinstance(c, dict)]
     for i, check in enumerate(checks):
@@ -121,6 +129,19 @@ def problems(report) -> list[str]:
         out.append(f"names not unique: {duplicates}")
     for i, check in enumerate(report.get("cleanup") or []):
         _check(check, f"cleanup[{i}]", out)
+        if check.get("result") != "fail":
+            out.append(f"cleanup[{i}]: a cleanup row is `fail`")
+    media = report.get("test_media", [])
+    if not isinstance(media, list) or len(media) > 50:
+        out.append("test_media")
+    for i, item in enumerate(media if isinstance(media, list) else []):
+        ok = (isinstance(item, dict) and isinstance(item.get("name"), str) and 1 <= len(item["name"]) <= 120
+              and not PATH.search(item["name"]) and isinstance(item.get("sha256"), str)
+              and re.fullmatch(r"[0-9a-f]{64}", item["sha256"]) and isinstance(item.get("bytes"), int)
+              and not isinstance(item.get("bytes"), bool) and item["bytes"] >= 0
+              and item.get("source") in ("bundled", "shared"))
+        if not ok:
+            out.append(f"test_media[{i}]: form of C 3.9")
     items = report.get("summary") or []
     item_names = set()
     devices = []
@@ -136,17 +157,23 @@ def problems(report) -> list[str]:
             out.append(f"summary[{i}]: device {device!r}")
         if item.get("group") == "camera":
             devices.append(device)
+            if device is not None and not DEVICE.match(str(device)):
+                out.append(f"summary[{i}]: camera device {device!r} is not vvvv:pppp")
         if item.get("result") not in ITEM_RESULTS:
             out.append(f"summary[{i}]: result {item.get('result')!r}")
         if item.get("result") == "skipped":
-            if item.get("reason") not in ("busy", "reviewed"):
+            allowed = ("busy", "reviewed", "not-installed") if item.get("group") == "component" else ("busy", "reviewed")
+            if item.get("reason") not in allowed:
                 out.append(f"summary[{i}]: skipped with reason {item.get('reason')!r}")
         elif item.get("reason") is not None:
             out.append(f"summary[{i}]: a reason for {item.get('result')}")
         if "gate" in item:
             gate = item["gate"]
-            if not isinstance(gate, str) or not NAME.match(gate) or gate not in names:
+            target = next((c for c in checks if c.get("name") == gate), None)
+            if not isinstance(gate, str) or not NAME.match(gate) or target is None:
                 out.append(f"summary[{i}]: gate {gate!r} is not a check of the report")
+            elif target.get("reason") not in ROLL_UP_REASONS or target.get("result") not in ("pass", "fail", "not-run"):
+                out.append(f"summary[{i}]: gate {gate!r} is not a roll-up check")
     camera_devices = [d for d in devices if d is not None]
     if len(camera_devices) != len(set(camera_devices)):
         out.append("two camera items for one device")
@@ -170,6 +197,15 @@ def problems(report) -> list[str]:
         out.append("evidence.reasons")
     elif evidence.get("valid") is not (not reasons):
         out.append("evidence.valid is not 'no reasons'")
+    else:  # C 7.1: the reasons that the package fields and the checks give
+        version = str(package.get("version"))
+        needed = {"no-version": not SEMVER.match(version),
+                  "no-commit": not (isinstance(commit, str) and re.fullmatch(r"[0-9a-f]{40}", commit)),
+                  "modified-tree": package.get("tree_modified") is not False,
+                  "cancelled": any(c.get("reason") == "cancelled" for c in checks if isinstance(c, dict))}
+        for reason, due in needed.items():
+            if due and reason not in reasons:
+                out.append(f"evidence.reasons lacks {reason}")
     keys = []
     for text in _strings(report, keys):
         if PATH.search(text):
