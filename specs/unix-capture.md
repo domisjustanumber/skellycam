@@ -1347,11 +1347,13 @@ The signal and the watch [ADR-AC5B](../decisions/entries/AC5B-choices-of-the-thi
   main-process write of `info` with no lock stays in the main process until a write with the lock. The
   heartbeat value (its one writer: the heartbeat thread), the global kill flag, the shutdown flag of the
   group and the first frame of a take (their writers: the main process only) have no lock either. The
-  last frame of a take is read and written with no lock (one aligned 8-byte value; the margin of + 2
-  covers the race), except in its two check-then-set blocks. Each of these waits at most 0.5 s for the
-  lock: the end of a take then ends with the `take_error` "no lock of the last frame of the take in
-  0.5 s", and a camera that ends with no take level ends its part of the take alone with the error
-  "camera `<id>`: no lock of the last frame of the take in 0.5 s". A failed read of the app state is
+  last frame of a take is read and written with no lock (one aligned 8-byte value), except in three
+  places. The read of each frame decision keeps the lock, because the end of a take holds it from its
+  read of the gate count to its write: its first wait in a stretch with no lock is at most 1.5 s, and
+  the next reads try with no wait until the lock comes again. The two check-then-set blocks wait at most
+  0.5 s for the lock: the end of a take then ends with the `take_error` "no lock of the last frame of the
+  take in 0.5 s", and a camera that ends with no take level ends its part of the take alone with the
+  error "camera `<id>`: no lock of the last frame of the take in 0.5 s". A failed read of the app state is
   logged, and the websocket sends the state at the next tick; it sets no kill flag
   [ADR-QJH6](../decisions/entries/QJH6-choices-of-the-fix-lane.md).
 - The setting `SKELLYCAM_STALL_WATCH=0` turns the watch off. The group reads it when it is made, and logs

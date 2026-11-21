@@ -21,7 +21,8 @@ The fix lane makes small fixes. The supervisor gave each rule. The agent made th
    main-process write of `info` with no lock stays in the main process until a write with the lock. The
    heartbeat value, the global kill flag, the group flags and the first frame of a take have no lock. The
    last frame is read and written with no lock, except in its two check-then-set blocks, which wait at
-   most 0.5 s for its lock and then end the take (or the part of one camera) as an error. A failed read of
+   most 0.5 s for its lock and then end the take (or the part of one camera) as an error, and in the read
+   of each frame decision, which waits at most 1.5 s one time in each stretch with no lock. A failed read of
    the app state sets no kill flag ([`unix-capture.md`](../../specs/unix-capture.md) 4.10).
 4. I. The opened mode of the OpenCV source (the `mode` of the status) has the FOURCC of `CAP_PROP_FOURCC`,
    or `BGR` when the backend gives 0 or a negative value
@@ -46,7 +47,9 @@ The fix lane makes small fixes. The supervisor gave each rule. The agent made th
    2.2 % torn reads with no lock for good after one slow holder, and a decode error in the websocket
    sender ended the app: thus no flag for good while the process lives, and readers that never raise. The
    second check of the fix lane found that a camera killed with the lock of the last frame stopped each
-   other camera at its next frame, and that a restart could start on arrays with a lost lock.
+   other camera at its next frame, and that a restart could start on arrays with a lost lock. The read of
+   each frame decision keeps the lock: with no lock there, the test of a slow stop (round 4: the main
+   process busy for up to 1 s between its read of the gate count and its write) gave rows that differ.
 4. I. The FOURCC in the config of `extract_config_from_cv2_capture` reached no reader: the opened mode does.
 5. H. The supervisor found the earlier rule a fault: a failed start dropped a summary that no client had
    fetched, and logged "A new take starts" for a take that did not start.

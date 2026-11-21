@@ -14,6 +14,9 @@ logger = logging.getLogger(__name__)
 
 CAMERA_STATE_TIMEOUT_SECONDS = 10.0
 FRAME_LOCK_WAIT_S = 0.5  # the two check-then-set blocks of the last frame wait this long for its lock (unix 4.10)
+# The read of each frame decision waits this long for that lock, once in each stretch with no lock: longer than a
+# busy end of a take holds it (round 4: up to 1 s), shorter than the in-process stall rule of 2 s (W 9.5).
+FRAME_READ_WAIT_S = 1.5
 
 
 @dataclass
@@ -21,12 +24,13 @@ class CameraOrchestrator:
     camera_statuses: dict[CameraIdString, CameraStatus]
     first_recording_frame_number: SharedValue  # no lock: the main process is its one writer
     last_recording_frame_number: Synchronized
+    frame_lock_lost: bool = False  # per process: the lock of the last frame did not come in FRAME_READ_WAIT_S
 
     @property
     def last_frame(self) -> int:
-        """The last frame of the take, read and written with no lock: one aligned 8-byte value, and the + 2 margin
-        of the end covers the race. A camera killed while it held the lock would else stop each camera at its next
-        frame. Only the two check-then-set blocks take the lock, with a bounded wait (unix-capture.md 4.10)."""
+        """The last frame of the take, read and written with no lock (one aligned 8-byte value). The two
+        check-then-set blocks and the read of each frame decision take the lock, with a bounded wait: a camera
+        killed while it held the lock keeps it for ever (unix-capture.md 4.10)."""
         return self.last_recording_frame_number.get_obj().value
 
     @last_frame.setter
@@ -114,12 +118,30 @@ class CameraOrchestrator:
     def should_record_frame_number(self, frame_number: int | np.integer) -> tuple[bool, bool]:
         """(record, finish). A take records the group frames first to last - 1. With no take (first is -1)
         no frame is recorded: a stale last frame must not record again (open work, T-CAP-85 case 2)."""
-        first, last = self.first_recording_frame_number.value, self.last_frame
+        first, last = self.first_recording_frame_number.value, self._decision_last_frame()
         if first == -1:
             return False, False
         if last != -1 and frame_number >= last:
             return False, True
         return frame_number >= first, False
+
+    def _decision_last_frame(self) -> int:
+        """The last frame under its lock: the end of a take holds that lock from its read of the gate count to its
+        write of the last frame, so no camera decides a new frame between them (round 4 of the fixes; the + 2
+        margin covers one frame, not a busy main process). The first wait of a stretch with no lock is
+        FRAME_READ_WAIT_S; the next reads try with no wait until the lock comes again, then read with no lock."""
+        lock = self.last_recording_frame_number.get_lock()
+        if not lock.acquire(timeout=0 if self.frame_lock_lost else FRAME_READ_WAIT_S):
+            if not self.frame_lock_lost:
+                logger.error(f"No lock of the last frame of the take in {FRAME_READ_WAIT_S:g} s; the frame decisions go "
+                             f"on with no lock")
+            self.frame_lock_lost = True
+            return self.last_frame
+        try:
+            self.frame_lock_lost = False
+            return self.last_frame
+        finally:
+            lock.release()
 
     def take_frame_count(self) -> int:
         """The group frames of the take that the stop ended (recorder.md 7.6): first to last - 1."""

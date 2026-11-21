@@ -241,14 +241,17 @@ def test_experiment_3_a_swap_of_the_arrays_during_a_read_raises_nothing():
 @pytest.mark.capture_timing
 def test_experiment_4_a_dead_holder_of_the_last_frame_blocks_no_frame_decision():
     """F1: a camera killed while it held the lock of the last frame of the take. The decision of each frame
-    (`should_record_frame_number`, in each camera process) reads with no lock and returns at once."""
-    from skellycam.core.camera_group.camera_orchestrator import CameraOrchestrator
+    (`should_record_frame_number`, in each camera process) waits at most FRAME_READ_WAIT_S one time, then reads
+    with no lock and no wait until the lock comes again."""
+    from skellycam.core.camera_group.camera_orchestrator import FRAME_READ_WAIT_S, CameraOrchestrator
 
     orchestrator = CameraOrchestrator.from_statuses({})
     kill_holder(orchestrator.last_recording_frame_number)
     orchestrator.first_recording_frame_number.value = 3
     started = time.monotonic()
     assert orchestrator.should_record_frame_number(5) == (True, False)
+    assert time.monotonic() - started < FRAME_READ_WAIT_S + 0.5
+    started = time.monotonic()
     orchestrator.last_frame = 5
     assert orchestrator.should_record_frame_number(5) == (False, True)
     assert orchestrator.take_frame_count() == 2
