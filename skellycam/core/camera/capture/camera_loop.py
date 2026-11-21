@@ -201,7 +201,7 @@ class CameraLoop:
         frame = self.source.read_frame(max(wake - perf_counter_ns(), 0) / 1e9)
         if frame is None:
             if perf_counter_ns() - since >= STALL_NS:
-                raise CaptureFailure(self.stage, "no frame for 2 s")
+                raise CaptureFailure(self.stage, "no frame for 2 s", code="stalled")
             check = self.check
             now = perf_counter_ns()
             if check is not None and check["deadline"] is not None and now >= check["deadline"]:
@@ -228,7 +228,7 @@ class CameraLoop:
         self.last_arrival, self.last_number = perf_counter_ns(), -1
         rate = opened.fps_num / opened.fps_den if opened.fps_num > 0 else 0.0
         if rate and not at_floor(rate):
-            raise CaptureFailure("set mode", NO_FLOOR_MODE)  # 14.1: OpenCV reports a rate under the floor
+            raise CaptureFailure("set mode", NO_FLOOR_MODE, code="below-floor")  # 14.1: OpenCV reports a rate under the floor
         # D22; with no reported rate (OpenCV), the requested rate and 30 for "auto" (ADR-PDD3 W2)
         self.reference_rate = rate or (config.framerate if config.framerate > 0 else rate_check.AUTO_REFERENCE_FPS)
         self.status.update_info(mode=dict(width=opened.width, height=opened.height, fps_num=opened.fps_num,
@@ -262,7 +262,8 @@ class CameraLoop:
         measured = rate_check.measured_rate(*window_start, frame.source_frame_number, frame.arrival_ns)
         self.status.update_info(measured_fps=measured)
         if not rate_check.within_limit(measured, self.reference_rate):
-            raise CaptureFailure("rate check", rate_check.slow_reason(self.reference_rate, measured))
+            raise CaptureFailure("rate check", rate_check.slow_reason(self.reference_rate, measured),
+                                 code="rate-low" if rate_check.is_slow(measured, self.reference_rate) else "rate-high")
         self.started = True
         self.stage = "streaming"
         self.status.set_state("waiting")
@@ -272,7 +273,7 @@ class CameraLoop:
         if not self.ipc.should_continue or self.status.should_close.value:
             raise _Stop()
         if perf_counter_ns() >= deadline:
-            raise CaptureFailure("warm-up", "not ready in 15 s")
+            raise CaptureFailure("warm-up", "not ready in 15 s", code="not-ready")
 
     def _read_in_start(self, deadline: int) -> CapturedFrame | None:
         """A start-up read: the 15 s limit is checked between the steps and on each warm-up frame (9.3)."""
@@ -612,7 +613,7 @@ class CameraLoop:
         report = CameraSetupFailure(camera_id=self.camera_id, stage=stage, reason=failure.reason)
         self.ipc.report_setup_failure(report)
         self.status.update_info(failure=dict(camera_id=report.camera_id, stage=report.stage,
-                                             reason=report.reason[:2048]))
+                                             reason=report.reason[:2048], code=failure.code))
         if at_end and not self.started:
             self.end_state = "failed"
         else:

@@ -297,7 +297,8 @@ class CameraGroup:
             if status is None:
                 continue
             status.should_close.value = True
-            status.update_info(failure=dict(camera_id=camera_id, stage=stage, reason=reason))
+            status.update_info(failure=dict(camera_id=camera_id, stage=stage, reason=reason,
+                                            code="open-failed" if stage == "open" else "not-ready"))
             status.set_state("failed")
             logger.error(f"Camera {camera_id} failed during {stage}: {reason}")
 
@@ -356,7 +357,7 @@ class CameraGroup:
             return
         stage, state = ("open", "failed") if status.state in ("starting", None) else ("streaming", "dead")
         reason = f"camera process ended (exit code {worker.worker.exitcode})"
-        status.update_info(failure=dict(camera_id=camera_id, stage=stage, reason=reason))
+        status.update_info(failure=dict(camera_id=camera_id, stage=stage, reason=reason, code="process-ended"))
         status.set_state(state)
         logger.warning(f"Camera {camera_id} failed during {stage}: {reason}")
 
@@ -728,7 +729,7 @@ class CameraGroup:
                 ended = not worker.is_alive()
             if not ended:
                 logger.error(f"The process of camera {camera_id} still runs after a kill; its files stay as they are")
-        status.update_info(failure=dict(camera_id=camera_id, stage="recording", reason="disk stall"))
+        status.update_info(failure=dict(camera_id=camera_id, stage="recording", reason="disk stall", code="disk-stall"))
         status.set_state("failed")
         logger.error(f"Camera {camera_id} failed during recording: disk stall")
         return ended

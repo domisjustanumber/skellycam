@@ -200,6 +200,7 @@ def test_a_stuck_camera_whose_process_does_not_end_is_killed_and_reported(monkey
     assert group._end_stuck_camera("cam0") is False
     assert worker.calls == ["terminate", "join", "kill", "join"]
     assert status.state == "failed" and status.info_dict()["failure"]["reason"] == "disk stall"
+    assert status.info_dict()["failure"]["code"] == "disk-stall"
 
 
 @pytest.mark.parametrize("case", ["cameras starting", "every camera failed", "every camera died in a take"])

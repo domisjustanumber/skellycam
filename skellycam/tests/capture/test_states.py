@@ -79,7 +79,8 @@ def test_t_cap_14_not_ready_in_15_s(monkeypatch):
     with one_camera(monkeypatch, FakeScript(first_frame_delay_s=0.2, rate=5.0)) as (app, camera_id, response):
         status = app.status(camera_id)
         assert status["state"] == "failed"
-        assert status["failure"] == {"camera_id": camera_id, "stage": "warm-up", "reason": "not ready in 15 s"}
+        assert status["failure"] == {"camera_id": camera_id, "stage": "warm-up", "reason": "not ready in 15 s",
+                                     "code": "not-ready"}
         open_ns = next(t for name, t, _ in app.factory.logs[camera_id].events if name == "open")
         elapsed = (app.clock.now_ns() - open_ns) / 1e9
         assert 15.0 <= elapsed <= 15.5, f"failed {elapsed:.3f} s after the open"
@@ -112,7 +113,7 @@ def test_t_cap_19_a_camera_in_use_fails_alone(monkeypatch, tmp_path):
         spies = Spies(monkeypatch, app)
         response, good, failed = start_with_one_in_use(app)
         assert app.status(failed)["failure"] == {"camera_id": failed, "stage": "open",
-                                                 "reason": "in use by another program"}
+                                                 "reason": "in use by another program", "code": "open-failed"}
         assert response.json()["camera_failures"][failed]["reason"] == "in use by another program"
         for camera_id in good:
             count = len(spies.of("jpeg", camera_id))
@@ -502,7 +503,7 @@ def test_t_cap_83_floor_of_30_fps(monkeypatch, case):
         if outcome == "set mode":
             assert status["state"] == "failed"
             assert status["failure"] == {"camera_id": camera_id, "stage": "set mode",
-                                         "reason": "no mode at 30 fps or more"}
+                                         "reason": "no mode at 30 fps or more", "code": "below-floor"}
         else:
             assert status["state"] == "ready"
             assert (status["mode"]["fps_num"], status["mode"]["fps_den"]) == (30000, 1001)

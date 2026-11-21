@@ -56,7 +56,7 @@ class MediaFoundationBackend:
             if activate is not match:
                 com.release(activate)
         if match is None:
-            raise CaptureFailure("detection", "camera not found")
+            raise CaptureFailure("detection", "camera not found", code="not-found")
         media_source = reader = None
         try:
             media_source = com.activate_source(match, "detection")
@@ -125,11 +125,13 @@ def _child_result(receiver, child):
     while True:
         if not receiver.poll(STEP_LIMIT_S):
             child.kill()
-            raise CaptureFailure("detection", f"the detection process did not answer in {STEP_LIMIT_S:g} s")
+            raise CaptureFailure("detection", f"the detection process did not answer in {STEP_LIMIT_S:g} s",
+                                 code="hung")
         try:
             kind, result = receiver.recv()
         except EOFError:
-            raise CaptureFailure("detection", f"the detection process ended with code {child.exitcode}") from None
+            raise CaptureFailure("detection", f"the detection process ended with code {child.exitcode}",
+                                 code="process-ended") from None
         if kind != "alive":
             return kind, result
 

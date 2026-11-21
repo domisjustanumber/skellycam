@@ -81,18 +81,18 @@ def choose_mode(native: list[NativeMode], request: CaptureRequest) -> NativeMode
     if request.framerate in (-1, 0):
         rate = auto_rate([m.fps for m in sized])
         if rate is None:
-            raise CaptureFailure("set mode", NO_FLOOR_MODE)
+            raise CaptureFailure("set mode", NO_FLOOR_MODE, code="below-floor")
         return next(m for m in sized if m.fps == rate)
     near = [m for m in sized if abs(m.fps - request.framerate) <= 0.5]
     if not near and sized and not any(at_floor(m.fps) for m in sized):
-        raise CaptureFailure("set mode", NO_FLOOR_MODE)  # U11: the size has no mode at the floor at all
+        raise CaptureFailure("set mode", NO_FLOOR_MODE, code="below-floor")  # U11: the size has no mode at the floor at all
     if not near:
         listed = json.dumps([mode.model_dump() for mode in supported_modes(native)])
         raise CaptureFailure("set mode", f"no {request.capture_fourcc} mode at {request.width}x{request.height} "
-                                         f"near {request.framerate:g} fps; the camera has {listed}")
+                                         f"near {request.framerate:g} fps; the camera has {listed}", code="no-mode")
     chosen = min(near, key=lambda m: abs(m.fps - request.framerate))  # a tie: the first in the list (D15)
     if not at_floor(chosen.fps):
-        raise CaptureFailure("set mode", NO_FLOOR_MODE)
+        raise CaptureFailure("set mode", NO_FLOOR_MODE, code="below-floor")
     return chosen
 
 

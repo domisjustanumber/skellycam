@@ -497,7 +497,7 @@ def test_t_rec_48_stall_watch_stall_end_and_failed_state(monkeypatch, tmp_path):
         assert [len(take_rows(tmp_path, cid, "take3")) for cid in (held_id, other)] == [frame_count] * 2
         status = app.status(held_id)
         assert status["state"] == "failed" and status["failure"] == {
-            "camera_id": held_id, "stage": "recording", "reason": "disk stall"}, status
+            "camera_id": held_id, "stage": "recording", "reason": "disk stall", "code": "disk-stall"}, status
         assert app.state(other) == "ready"
         key = camera_key_of(tmp_path, held_id, "take3")
         assert [w["camera_key"] for w in take_warnings(tmp_path, "camera_file_short", "take3")] == [key]
@@ -1242,6 +1242,7 @@ def test_the_stop_costs_no_source_frame_before_the_last_rows(monkeypatch, tmp_pa
 # Fix round 4 (2026-11-20)
 # ---------------------------------------------------------------------------
 
+@pytest.mark.capture_timing  # real time: a stop that comes late under load moves the last frame (recorder.md 12.1)
 @pytest.mark.parametrize("fps", [30, 60])
 @pytest.mark.parametrize("delay", [0.05, 0.2, 1.0])
 def test_a_slow_stop_ends_each_camera_at_the_last_frame(monkeypatch, tmp_path, fps, delay):

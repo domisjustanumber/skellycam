@@ -91,7 +91,8 @@ class OpenCVSource:
         capture = self._capture
         for name, setting in changes.items():
             if name != "exposure":
-                raise CaptureFailure("set controls", f"Camera {self.config.camera_id} has no {name} control")
+                raise CaptureFailure("set controls", f"Camera {self.config.camera_id} has no {name} control",
+                                     code="control-failed")
             if sys.platform == "linux":  # 14.1: the forced auto exposure on Linux stays until phase 7
                 capture.set(cv2.CAP_PROP_AUTO_EXPOSURE, AUTO_EXPOSURE_SETTING)
                 self._exposure_auto = True

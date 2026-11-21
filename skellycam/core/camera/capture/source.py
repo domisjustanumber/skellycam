@@ -11,6 +11,8 @@ from typing import Protocol
 
 import numpy as np
 
+from skellycam.core.camera.capture.failure_codes import default_code
+
 FIRST_FRAME_TIMEOUT_S = 5.0
 BOUNDED_CALL_LIMIT_S = 5.0
 
@@ -66,15 +68,16 @@ ControlState = dict[str, ControlValue]
 
 
 class CaptureFailure(Exception):
-    """A failure of a source, with a stage of section 12."""
+    """A failure of a source, with a stage of section 12 and a code of unix-capture.md 4.6.3."""
 
-    def __init__(self, stage: str, reason: str, *, hung: bool = False):
+    def __init__(self, stage: str, reason: str, *, hung: bool = False, code: str | None = None):
         super().__init__(reason)
         self.stage, self.reason, self.hung = stage, reason, hung
+        self.code = code or default_code(stage, hung)
 
     def __reduce__(self):
-        # Exception pickles only `args`; keep the stage and `hung` across a process boundary.
-        return partial(CaptureFailure, hung=self.hung), (self.stage, self.reason)
+        # Exception pickles only `args`; keep the stage, `hung` and the code across a process boundary.
+        return partial(CaptureFailure, hung=self.hung, code=self.code), (self.stage, self.reason)
 
 
 class CaptureSource(Protocol):

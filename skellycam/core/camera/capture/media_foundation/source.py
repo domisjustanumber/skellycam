@@ -14,7 +14,7 @@ from ctypes import byref, c_long, c_ulong, c_void_p, sizeof, string_at
 from comtypes import COMObject
 
 from skellycam.core.camera.capture.media_foundation import bounded, com, detect
-from skellycam.core.camera.capture.media_foundation.errors import E_FAIL, check, hresult_reason
+from skellycam.core.camera.capture.media_foundation.errors import E_FAIL, check, failure, hresult_reason
 from skellycam.core.camera.capture.modes import choose_mode
 from skellycam.core.camera.capture.source import (
     BOUNDED_CALL_LIMIT_S, FIRST_FRAME_TIMEOUT_S, CapturedFrame, CaptureFailure, CaptureRequest, CaptureWaitingPlace,
@@ -169,7 +169,7 @@ class MediaFoundationSource:
                 if len(keep) != 1 or activate is not keep[0][1]:
                     com.release(activate)
             if not keep:
-                raise CaptureFailure("open", "camera not found")
+                raise CaptureFailure("open", "camera not found", code="not-found")
             if len(keep) > 1:  # D13, agent 12
                 raise CaptureFailure("open", f"{len(keep)} devices have the camera_id {request.camera_id}: "
                                              + ", ".join(link for link, _ in keep))
@@ -217,9 +217,9 @@ class MediaFoundationSource:
         self._call("start stream", "the first ReadSample", start)
 
         if not self._first.wait(FIRST_FRAME_TIMEOUT_S):  # a wait, not a hung call (6.4)
-            raise CaptureFailure("first frame", f"no frame in {FIRST_FRAME_TIMEOUT_S:g} s")
+            raise CaptureFailure("first frame", f"no frame in {FIRST_FRAME_TIMEOUT_S:g} s", code="first-frame-timeout")
         if self._count == 0:
-            raise CaptureFailure("first frame", self._error.reason)
+            raise CaptureFailure("first frame", self._error.reason, code=self._error.code)
         return OpenedMode(width=mode.width, height=mode.height, fps_num=mode.fps_num, fps_den=mode.fps_den,
                           format=mode.format, device_path=link)
 
@@ -234,7 +234,7 @@ class MediaFoundationSource:
 
     def _on_sample(self, arrival_ns, hr, flags, sample):
         if hr & 0x80000000:
-            return self._fail(CaptureFailure("streaming", hresult_reason(hr)))
+            return self._fail(failure(hr, "streaming"))
         if flags & com.MF_SOURCE_READERF_ERROR:
             return self._fail(CaptureFailure("streaming", hresult_reason(E_FAIL)))
         if flags & com.MF_SOURCE_READERF_ENDOFSTREAM:
@@ -281,7 +281,7 @@ class MediaFoundationSource:
             with self._lock:
                 self._issuing -= 1
         if hresult & 0x80000000:
-            self._fail(CaptureFailure("streaming", hresult_reason(hresult)))
+            self._fail(failure(hresult, "streaming"))
 
     def _fail(self, failure):
         """Keep the first error; the marker wakes the loop (4.3), and no new read is issued."""
@@ -312,7 +312,7 @@ def _set_mode(reader, request):
     finally:
         com.release(current)
     if got != chosen:
-        raise CaptureFailure("set mode", f"the camera set {got} instead of {chosen}")
+        raise CaptureFailure("set mode", f"the camera set {got} instead of {chosen}", code="no-mode")
     return chosen
 
 
@@ -360,10 +360,10 @@ def _read_control(interfaces, name):
 def _set_control(interfaces, name, setting):
     """Set one control through the interface that read it. The read-back follows in `set_controls`."""
     if name not in CONTROLS:
-        raise CaptureFailure("set controls", f"no {name} control")
+        raise CaptureFailure("set controls", f"no {name} control", code="control-failed")
     before, via = _read_control(interfaces, name)
     if not before.present:
-        raise CaptureFailure("set controls", f"no {name} control")
+        raise CaptureFailure("set controls", f"no {name} control", code="control-failed")
     value = before.value if setting.value is None else setting.value
     flags = FLAGS_AUTO if setting.auto else FLAGS_MANUAL
     kind, prop = CONTROLS[name]
