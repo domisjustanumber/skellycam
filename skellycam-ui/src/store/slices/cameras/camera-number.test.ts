@@ -1,7 +1,8 @@
 // Run: node --experimental-strip-types --test src/store/slices/cameras/camera-number.test.ts
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
 import test from 'node:test';
-import { withDetectionNumbers } from './camera-number.ts';
+import { applyRequestBody, withDetectionNumbers } from './camera-number.ts';
 
 const stored = { camera_id: 'a1b2', camera_index: 0, camera_name: 'Old name', exposure: -7, use_this_camera: true };
 
@@ -15,4 +16,16 @@ test('T-REQ-60: the request config gets the number and the name of the current d
 
 test('a camera that is not in the current detection keeps its number and name', () => {
     assert.deepEqual(withDetectionNumbers({ a1b2: stored }, [{ id: 'ffff', index: 2, name: 'Other' }]), { a1b2: stored });
+});
+
+test('the apply request body holds the numbers and the names of the current detection', () => {
+    assert.deepEqual(applyRequestBody({ a1b2: stored }, [{ id: 'a1b2', index: 2, name: 'Logitech C922' }]), {
+        camera_configs: { a1b2: { ...stored, camera_index: 2, camera_name: 'Logitech C922' } },
+    });
+});
+
+test('the apply thunk sends the body of applyRequestBody', () => {
+    const thunks = readFileSync(new URL('./cameras-thunks.ts', import.meta.url), 'utf8');
+    assert.match(thunks, /const request(: \w+)? = applyRequestBody\(onlyConfigs \?\? selectSelectedCameraConfigs\(state\), state\.cameras\.cameras\);/);
+    assert.match(thunks, /body: JSON\.stringify\(request\)/);
 });

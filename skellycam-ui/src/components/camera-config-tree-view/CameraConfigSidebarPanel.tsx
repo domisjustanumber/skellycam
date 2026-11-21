@@ -59,7 +59,7 @@ export const CameraConfigSidebarPanel: React.FC = () => {
             try {
                 const response = await dispatch(camerasConnectOrUpdate(Object.fromEntries([
                     ...[...changes.close, ...changes.tooSlow].map(id => config(id, false)),
-                    ...[...changes.retry, ...changes.add].map(id => config(id, true)),
+                    ...[...changes.retry, ...changes.add, ...changes.renumber].map(id => config(id, true)),
                 ]))).unwrap();
                 if (changes.tooSlow.length > 0) {
                     await dispatch(camerasConnectOrUpdate(Object.fromEntries(changes.tooSlow.map(id => config(id, true))))).unwrap();
@@ -147,7 +147,7 @@ export const CameraConfigSidebarPanel: React.FC = () => {
                                         className={isUpdating ? 'disabled primary' : 'primary'}
                                         disabled={isUpdating}
                                         tooltip={true}
-                                        tooltipText="Open, close or retry only the changed cameras"
+                                        tooltipText="Open, close or retry only the changed cameras, and send new camera numbers"
                                         tooltipPosition="pos-bottom-right"
                                     />
                                 )}
