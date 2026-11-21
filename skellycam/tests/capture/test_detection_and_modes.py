@@ -290,6 +290,7 @@ def test_t_cap_106_one_camera_id_for_a_mixed_case_link(kind):
 
 
 @WINDOWS_ONLY
+@pytest.mark.capture_timing
 def test_the_device_list_activates_no_camera():
     """Review item 4: the check after a failed start lists the devices only. It activates no camera (a camera
     that streams in the group must not be opened again), so the mode list of a device is never read: the fake
@@ -301,3 +302,21 @@ def test_the_device_list_activates_no_camera():
     infos = detect.detect_media_foundation_cameras(backend=backend, modes=False)
     assert [info.path for info in infos] == links
     assert all(not info.modes_read and info.supported_modes == [] for info in infos)
+
+
+@WINDOWS_ONLY
+def test_the_device_list_looks_up_no_usb_link(monkeypatch):
+    """Fix lane I: `detect_available_cameras(modes=False)` (the check after a failed start, which uses the links of the
+    detection before) looks up no USB link; the full detection does."""
+    from skellycam.core.camera.capture import camera_checks
+    from skellycam.core.device_detection import detect_cameras_devices
+
+    detect = product(DETECT_MODULE)
+    looked_up = []
+    monkeypatch.setattr(detect, "detect_media_foundation_cameras", lambda modes: [
+        detect_cameras_devices.CameraDeviceInfo(index=0, name="Camera 0", path=fake_link(0))])
+    monkeypatch.setattr(camera_checks, "mark_devices", lambda cameras: cameras)
+    monkeypatch.setattr(detect_cameras_devices, "usb_link", lambda path: looked_up.append(path) or "USB 2")
+    assert detect_cameras_devices.detect_available_cameras(modes=False)[0].usb_link != "USB 2"
+    assert looked_up == []
+    assert detect_cameras_devices.detect_available_cameras()[0].usb_link == "USB 2"
