@@ -26,6 +26,7 @@ from skellycam.core.camera.opencv.opencv_helpers.create_cv2_video_capture import
     create_cv2_video_capture,
     opened_device_path,
 )
+from skellycam.core.camera.opencv.opencv_helpers.opencv_extract_config import capture_fourcc
 from skellycam.core.camera.opencv.opencv_helpers.opencv_apply_config import (
     AUTO_EXPOSURE_SETTING,
     MANUAL_EXPOSURE_SETTING,
@@ -61,7 +62,8 @@ class OpenCVSource:
         fps = Fraction(reported).limit_denominator(1001) if reported > 0 else Fraction(0)  # 0: no reported rate (D46)
         return OpenedMode(width=int(self._capture.get(cv2.CAP_PROP_FRAME_WIDTH)),
                           height=int(self._capture.get(cv2.CAP_PROP_FRAME_HEIGHT)),
-                          fps_num=fps.numerator, fps_den=fps.denominator, format="BGR",
+                          fps_num=fps.numerator, fps_den=fps.denominator,
+                          format=capture_fourcc(self._capture) or "BGR",  # the status mode (8.4); frames are BGR
                           device_path=opened_device_path(opened.camera_index))
 
     @property

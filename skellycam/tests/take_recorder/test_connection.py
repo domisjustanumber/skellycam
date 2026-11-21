@@ -1021,28 +1021,6 @@ def test_a_start_that_fails_before_its_specs_went_out_ends_no_camera(monkeypatch
     assert take_manifest(tmp_path)["state"] == "finished"
 
 
-def test_the_app_state_shows_a_recording_until_the_stored_summary_is_fetched(monkeypatch, tmp_path):
-    """Third review, S3: after a take that an error ended, the app state says that a recording runs until
-    the stop request fetched the stored summary; then it says not, and a second stop gets 409."""
-    module = group_module()
-    monkeypatch.setattr(module, "TAKE_QUEUE_SECONDS", 0.2)
-    monkeypatch.setattr(module, "TAKE_STALL_LIMIT_S", 1.0)
-    with capture_app(monkeypatch, [FakeScript(), FakeScript()]) as app:
-        spies = Spies(monkeypatch, app)
-        hold = WriterHold(monkeypatch, app.factory.camera_ids[0])
-        ready_app_steps(app)
-        assert app.record_start(tmp_path).status_code == 200
-        record_until(app, spies, 30)
-        hold.start()
-        app.wait(lambda: hold.stalled.is_set(), "`give` raises RecorderStalled")
-        hold.stop()
-        app.wait(lambda: app.group.take is None, "the error end")
-        assert app.group.to_state().recording_in_progress
-        assert app.record_stop().status_code == 200
-        assert not app.group.to_state().recording_in_progress
-        assert app.record_stop().status_code == 409
-
-
 def test_a_second_start_waits_for_the_finish_of_a_failed_start(monkeypatch, tmp_path):
     """Third review, S7: a second record start comes while the first start, which failed, finishes its folder
     (slow here: 1 s). It waits for that finish, then records normally: the finish of the first start does
@@ -1488,6 +1466,34 @@ def test_a_second_shutdown_request_starts_no_second_close(monkeypatch, tmp_path)
     assert not [m for m in logs.messages(logging.ERROR) if "No recording runs" in m]
 
 
+@pytest.mark.capture_timing
+def test_a_shutdown_during_a_take_ends_each_camera_process_within_its_bound(monkeypatch, tmp_path):
+    """Fix lane D: `/shutdown` during a take of three cameras with PROCESS workers and fake sources. Each camera
+    process has ended, and the kill flag is set, within 3 s of the request (measured 2026-11-21: 0.27 s to
+    0.29 s, also with a diagnostics dict of 600 `frame_log` rows). A real camera can add the time of its own
+    close steps."""
+    from fastapi import FastAPI
+    from fastapi.testclient import TestClient
+
+    import skellycam.core.camera_group.camera_group_manager as manager_module
+    from skellycam.api.http.app.shutdown import shutdown_router
+
+    monkeypatch.setattr(logging.Logger, "api", logging.Logger.info, raising=False)
+    with capture_app(monkeypatch, [FakeScript() for _ in range(3)], workers="process") as app:
+        ready_app_steps(app)
+        monkeypatch.setattr(manager_module, "_CAMERA_GROUP_MANAGER", app.manager)
+        server = FastAPI()
+        server.state.global_kill_flag = app.kill
+        server.include_router(shutdown_router, prefix="/skellycam")
+        assert app.record_start(tmp_path).status_code == 200
+        time.sleep(1.0)
+        processes = [worker.worker for worker in app.group.cameras.camera_workers.values()]
+        with TestClient(server) as client:
+            assert client.get("/skellycam/shutdown").status_code == 200
+            app.wait(lambda: app.kill.value and not any(p.is_alive() for p in processes), "the end", timeout=3.0)
+    assert take_manifest(tmp_path)["state"] == "finished"
+
+
 def test_the_kill_flag_is_set_when_the_close_before_exit_fails(monkeypatch):
     """Round 5, item 7: the background close of the shutdown endpoint raises; its `finally` still sets the kill
     flag, so the app ends."""
@@ -1533,6 +1539,89 @@ def test_a_failed_start_keeps_the_unfetched_summary(monkeypatch, tmp_path):
         assert app.record_start(tmp_path, name="bad/name").status_code == 422
         stopped = app.record_stop()
         assert stopped.status_code == 200 and stopped.json()[0]["recording_name"] == "take", stopped.text
+
+
+def live_state(app):
+    """The group of the live state, as the state route and the `app_state` message give it."""
+    return next(iter(app.manager.to_state_dict()["camera_groups"].values()))
+
+
+def end_by_a_stall(monkeypatch, app, name="take"):
+    """Start a take of two fakes, then hold the writer of the first camera past the stall limit; return its ID."""
+    module = group_module()
+    monkeypatch.setattr(module, "TAKE_QUEUE_SECONDS", 0.2)
+    monkeypatch.setattr(module, "TAKE_STALL_LIMIT_S", 1.0)
+    spies = Spies(monkeypatch, app)
+    held = app.factory.camera_ids[0]
+    hold = WriterHold(monkeypatch, held)
+    ready_app_steps(app)
+    assert app.record_start(app.directory, name=name).status_code == 200
+    assert (live_state(app)["take_state"], live_state(app)["recording_in_progress"]) == ("recording", True)
+    record_until(app, spies, 30)
+    hold.start()
+    app.wait(lambda: hold.stalled.is_set(), "`give` raises RecorderStalled")
+    hold.stop()
+    app.wait(lambda: live_state(app)["take_state"] == "ended_with_error", "the error end")
+    return held
+
+
+def test_t_rec_50_the_live_state_of_a_take_that_an_error_ended(monkeypatch, tmp_path):
+    """T-REC-50 (recorder.md 8.4): a stall ends the take. The live state has `take_state` "ended_with_error",
+    `recording_in_progress` false and `ended_take_summary` with the error text, the camera and the stop fields, as
+    JSON; the stop request returns that summary once, and the state is then "none". A new take gives "recording",
+    then "none"."""
+    import json
+
+    with capture_app(monkeypatch, [FakeScript(), FakeScript()]) as app:
+        app.directory = tmp_path
+        held = end_by_a_stall(monkeypatch, app)
+        state = live_state(app)
+        assert not state["recording_in_progress"]
+        ended = state["ended_take_summary"]
+        assert (ended["take_error"], ended["camera_id"]) == (f"disk stall on camera {held}", held), ended
+        assert ended["summary"]["recording_name"] == "take" and "number_of_frames" in ended["summary"]
+        json.dumps(state, allow_nan=False)  # the route and the websocket send it as JSON
+        stopped = app.record_stop()
+        assert stopped.status_code == 200 and stopped.json()[0]["recording_name"] == "take", stopped.text
+        assert (live_state(app)["take_state"], live_state(app)["ended_take_summary"]) == ("none", None)
+        assert app.record_stop().status_code == 409
+        assert app.record_start(tmp_path, name="take2").status_code == 200
+        assert live_state(app)["take_state"] == "recording"
+        assert app.record_stop().status_code == 200
+        assert live_state(app)["take_state"] == "none"
+
+
+def test_t_rec_51_ended_with_error_stays_until_a_record_start_that_succeeds(monkeypatch, tmp_path):
+    """T-REC-51 (recorder.md 8.4; a stall in place of the write error: the same take level end): no stop request.
+    A record start refused with 409, and a record start that fails after `start_take` (a 500 of the writer wait,
+    fix lane H), keep "ended_with_error" and the summary. A record start that succeeds gives "recording" and no
+    summary; its stop ends the new take normally."""
+    module = group_module()
+    with capture_app(monkeypatch, [FakeScript(), FakeScript()]) as app:
+        app.directory = tmp_path
+        end_by_a_stall(monkeypatch, app)
+        assert app.record_start(tmp_path).status_code == 409  # the take folder holds files
+        assert live_state(app)["take_state"] == "ended_with_error"
+        await_writers = module.CameraGroup._await_writers
+
+        during = []
+
+        async def no_writer(group):
+            during.append(group.to_state().take_state)
+            raise RuntimeError("test: no writer started")
+
+        monkeypatch.setattr(module.CameraGroup, "_await_writers", no_writer)
+        assert app.record_start(tmp_path, name="failed").status_code == 500
+        assert during == ["ended_with_error"]  # also during the start: the UI shows no old take again
+        state = live_state(app)
+        assert state["take_state"] == "ended_with_error"
+        assert state["ended_take_summary"]["summary"]["recording_name"] == "take"
+        monkeypatch.setattr(module.CameraGroup, "_await_writers", await_writers)
+        assert app.record_start(tmp_path, name="take2").status_code == 200
+        assert (live_state(app)["take_state"], live_state(app)["ended_take_summary"]) == ("recording", None)
+        stopped = app.record_stop()
+        assert stopped.status_code == 200 and stopped.json()[0]["recording_name"] == "take2", stopped.text
+        assert live_state(app)["take_state"] == "none"
 
 
 def test_t_req_61_take_orders_the_cameras_by_the_camera_index_of_the_request(monkeypatch, tmp_path):

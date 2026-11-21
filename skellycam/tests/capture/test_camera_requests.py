@@ -1262,11 +1262,12 @@ def test_the_fake_gives_the_range_in_the_shape_of_the_product_sources():
     assert FakeSource(FakeScript(exposure_range=(-11, -2), reported_range=False)).exposure_range() is None
 
 
-@pytest.mark.parametrize(("held", "opened"), [(-9, -9), (-12, -11), (-1, -2)])
+@pytest.mark.parametrize(("held", "opened"), [(-9, -9), (-12, -11), (-1, -5), (-3, -5)])
 def test_an_open_in_auto_sets_the_held_value_inside_the_reported_range(monkeypatch, held, opened):
-    """camera-requests.md 1.3a [GEH0]: a connect in `AUTO` on a camera that reports -11 to -2 (step 1): a held value
-    inside the range opens at that value; below it at -11; above it at -2. The camera does not fail, and it then
-    searches -11 to -5."""
+    """camera-requests.md 1.3a [GEH0, fix lane E]: a connect in `AUTO` on a camera that reports -11 to -2 (step 1): a
+    held value that is a search value in the range opens at that value; another value opens at the nearest search
+    value in the range (-11 to -5): -12 at -11, -1 and -3 at -5, not at -2 (a 250 ms exposure, 4 fps, seen on a real
+    camera). The camera does not fail, and it then searches -11 to -5."""
     script = FakeScript(brightness=MODEL, exposure_range=(-11, -2, 1))
     with capture_app(monkeypatch, [script]) as app:
         camera_id = app.factory.camera_ids[0]
@@ -1308,3 +1309,22 @@ def test_the_refusal_of_a_changed_config_names_the_search(monkeypatch):
         assert f"camera {camera_id} is adjusting" in refused.text
         app.factory.sources[camera_id].release()
         app.wait_state(camera_id, "ready", "too_slow")
+
+
+def test_a_camera_that_was_never_in_the_running_group_gets_a_left_out_warning(monkeypatch):
+    """windows-capture.md 11.3 (fix lane F): an apply to a running group that selects a camera that was never in it
+    answers 200 with one `cameras_left_out` item; the camera stays out. The next apply has no such item."""
+    with capture_app(monkeypatch, [FakeScript(), FakeScript()]) as app:
+        first, second = app.factory.camera_ids
+        app.detect()
+        assert app.apply([app.config(first)]).status_code == 200
+        app.wait_state(first, "ready")
+        response = app.apply([app.config(first), app.config(second)])
+        assert response.status_code == 200, response.text
+        items = [item for item in response.json()["warnings"] if item["kind"] == "cameras_left_out"]
+        assert items == [dict(kind="cameras_left_out", camera_ids=[second],
+                              text=f"Camera {second} cannot join a running group: close the cameras and open them "
+                                   f"again")]
+        assert second not in app.group.configs
+        response = app.apply([app.config(first)])
+        assert not [item for item in response.json()["warnings"] if item["kind"] == "cameras_left_out"]

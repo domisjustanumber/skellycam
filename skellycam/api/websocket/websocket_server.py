@@ -269,7 +269,12 @@ class WebsocketServer:
         previous_state: dict | None = None
         try:
             while self.should_continue:
-                state_dict = self._cgm.to_state_dict()
+                try:
+                    state_dict = self._cgm.to_state_dict()
+                except Exception as error:  # one state read: the next tick reads again; no kill of the app for it
+                    logger.exception(f"The app state could not be read; the next tick tries again: {error!r}")
+                    await asyncio.sleep(1.0)
+                    continue
                 if previous_state is None or state_dict != previous_state:
                     state_message = {
                         "message_type": WebsocketMessageType.APP_STATE,
@@ -289,6 +294,8 @@ class WebsocketServer:
             else:
                 raise
         except Exception as e:
+            # A fault of the sender itself (a send that fails, not a disconnect): the client would lose the state
+            # with no sign, so the app ends, as for the other tasks of this connection.
             logger.exception(f"Error in state sender: {e.__class__}: {e}")
             self.global_kill_flag.value = True
             raise

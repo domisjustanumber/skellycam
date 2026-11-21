@@ -3,7 +3,6 @@ Consolidated FastAPI app factory with proper lifecycle management.
 """
 import logging
 import multiprocessing
-from multiprocessing.sharedctypes import Synchronized
 from contextlib import asynccontextmanager
 from pathlib import Path
 from typing import AsyncGenerator
@@ -20,6 +19,7 @@ from skellycam.api.routers import SKELLYCAM_ROUTERS
 from skellycam.api.server_constants import APP_URL
 from skellycam.core.camera_group.camera_group_manager import close_camera_groups_before_exit
 from skellycam.core.ipc.process_management.worker_registry import WorkerRegistry
+from skellycam.core.types.type_overloads import SharedValue
 from skellycam.system.default_paths import (
     SKELLYCAM_FAVICON_ICO_PATH,
     get_default_skellycam_base_folder_path,
@@ -64,7 +64,11 @@ async def app_lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     shutdown_telemetry()
 
     # A running take ends through the take level before the kill flag (recorder.md 8.1). Ctrl-C comes here
-    # too: uvicorn ends the server, and __main__ sets the flag after it.
+    # too: uvicorn ends the server, and __main__ sets the flag after it. A close of `/shutdown` that runs ends
+    # first: two closes at the same time race. The second call then closes only a group whose close raised.
+    shutdown_task = getattr(app.state, "shutdown_task", None)
+    if shutdown_task is not None:
+        await shutdown_task
     await close_camera_groups_before_exit()
 
     # Then set the flag — __main__ owns the WorkerRegistry and calls shutdown_all()
@@ -75,7 +79,7 @@ async def app_lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
 
 def create_fastapi_app(
         *,
-        global_kill_flag: Synchronized,
+        global_kill_flag: SharedValue,
         worker_registry: WorkerRegistry,
 ) -> FastAPI:
     """

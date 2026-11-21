@@ -2,13 +2,13 @@ import atexit
 import logging
 import multiprocessing
 import multiprocessing.queues
-from multiprocessing.sharedctypes import Synchronized
 import signal
 import threading
 import time
 from typing import Callable
 
 from skellycam.core.ipc.process_management.managed_worker import (
+    SharedValue,
     ManagedWorker,
     ManagedProcess,
     ManagedThread,
@@ -30,12 +30,14 @@ class WorkerRegistry:
     def __init__(
         self,
         *,
-        global_kill_flag: Synchronized,
+        global_kill_flag: SharedValue,
         worker_mode: WorkerMode,
     ) -> None:
         self._global_kill_flag = global_kill_flag
         self._worker_mode = worker_mode
-        self._heartbeat_timestamp = multiprocessing.Value("d", time.perf_counter())
+        # No lock: the heartbeat thread is its one writer, and each camera reads it at each loop pass; a camera
+        # killed inside a locked read kept the lock, and the heartbeat stopped for each camera (unix 4.10).
+        self._heartbeat_timestamp = multiprocessing.Value("d", time.perf_counter(), lock=False)
         self._workers: list[ManagedWorker] = []
         self._heartbeat_thread: threading.Thread | None = None
         self._monitor_thread: threading.Thread | None = None
@@ -48,7 +50,7 @@ class WorkerRegistry:
         return self._worker_mode
 
     @property
-    def heartbeat_timestamp(self) -> Synchronized:
+    def heartbeat_timestamp(self) -> SharedValue:
         """The shared heartbeat value. Pass to CameraGroupIPC so children can monitor parent liveness."""
         return self._heartbeat_timestamp
 
@@ -82,8 +84,7 @@ class WorkerRegistry:
 
     def _heartbeat_loop(self) -> None:
         while not self._heartbeat_stop.is_set():
-            with self._heartbeat_timestamp.get_lock():
-                self._heartbeat_timestamp.value = time.perf_counter()
+            self._heartbeat_timestamp.value = time.perf_counter()
             self._heartbeat_stop.wait(timeout=1.0)
 
     def _child_monitor_loop(self) -> None:
@@ -140,7 +141,7 @@ class WorkerRegistry:
     def create_worker(
         self,
         *,
-        shutdown_flag: Synchronized,
+        shutdown_flag: SharedValue,
         worker_mode: WorkerMode,
         target: Callable[..., None],
         name: str,

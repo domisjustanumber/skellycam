@@ -1,7 +1,6 @@
 import asyncio
 import logging
 import multiprocessing
-from multiprocessing.sharedctypes import Synchronized
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from collections.abc import Callable
@@ -34,6 +33,7 @@ from skellycam.core.types.type_overloads import (
     CameraIdString,
     FrameNumberInt,
     MultiframeTimestampFloat,
+    SharedValue,
     TopicSubscriptionQueue,
 )
 from skellycam.core.take_recorder import TakeSummary  # noqa: TC001 — beartype checks annotations at runtime
@@ -43,7 +43,7 @@ logger = logging.getLogger(__name__)
 
 @dataclass
 class CameraGroupManager:
-    global_kill_flag: Synchronized
+    global_kill_flag: SharedValue
     worker_registry: WorkerRegistry
     source_factory: Callable | None = None  # ADR-HP7D item 10; None: the source of 14.2
     detected_cameras: dict[CameraIdString, CameraDeviceInfo] = field(default_factory=dict)  # U17 (c)
@@ -82,8 +82,8 @@ class CameraGroupManager:
                 await camera_group.close()
             except Exception as close_err:
                 logger.error(f"Error closing failed camera group {camera_group.id}: {close_err}")
-            del self.camera_groups[camera_group.id]
-            del self.camera_group_framerate_subscriptions[camera_group.id]
+            self.camera_groups.pop(camera_group.id, None)  # a close of all groups can have removed it first
+            self.camera_group_framerate_subscriptions.pop(camera_group.id, None)
             raise
 
         logger.info(
@@ -241,7 +241,7 @@ class CameraGroupManager:
             raise RequestRefused(422, "the exposure search does not run on the OpenCV source of this system: "
                                  + ", ".join(opencv))
         lacking = {camera_id: item for camera_id in named for item in statuses[camera_id].warning_items(
-            statuses[camera_id].camera_warnings) if item["kind"] == "no_manual_exposure"}  # 1.9 [K3]: skipped
+            "camera_warnings") if item["kind"] == "no_manual_exposure"}  # 1.9 [K3]: skipped
         streaming = [camera_id for camera_id in named if camera_id not in opencv and camera_id not in lacking
                      and statuses[camera_id].state in ("ready", "too_slow", "checking")]
         self.searching = True
@@ -280,10 +280,12 @@ class CameraGroupManager:
         try:
             # sfn26 43e2b968a: a group whose close raises stays listed, so that a retry closes it
             for camera_group_id in list(self.camera_groups):
-                group = self.camera_groups[camera_group_id]
+                group = self.camera_groups.get(camera_group_id)
+                if group is None:  # a second close, or the teardown of a failed start, removed it first
+                    continue
                 await group.close()
                 self.closed_diagnostics.update({camera_id: group.diagnostics(camera_id) for camera_id in group.camera_ids})
-                self.camera_groups.pop(camera_group_id)
+                self.camera_groups.pop(camera_group_id, None)
                 self.camera_group_framerate_subscriptions.pop(camera_group_id, None)
                 logger.info(f"Closed camera group ID: {camera_group_id}")
         finally:

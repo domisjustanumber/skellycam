@@ -17,7 +17,7 @@ import cv2
 import numpy as np
 
 from skellycam.core.camera.capture import rate_check
-from skellycam.core.camera.capture.exposure_search import ExposureSearch, add_light_text, failed_text
+from skellycam.core.camera.capture.exposure_search import ExposureSearch, add_light_text, failed_text, search_values
 from skellycam.core.camera.capture.modes import NO_FLOOR_MODE, at_floor, rates_equal
 from skellycam.core.camera.capture.source import (
     BOUNDED_CALL_LIMIT_S,
@@ -31,6 +31,7 @@ from skellycam.core.camera.capture.source import (
 )
 from skellycam.core.camera.config.camera_config import CameraConfig
 from skellycam.core.camera.config.image_resolution import ImageResolution
+from skellycam.core.camera_group.camera_orchestrator import FRAME_LOCK_WAIT_S
 from skellycam.core.camera_group.camera_group_ipc import CameraGroupIPC
 from skellycam.core.camera_group.camera_orchestrator import CameraOrchestrator
 from skellycam.core.camera_group.camera_setup_failure import CameraSetupFailure
@@ -151,6 +152,7 @@ class CameraLoop:
         self.hung = threading.Event()
         self._failure_lock = threading.Lock()
         self.failed = False
+        self.lost_heartbeat = False  # not a camera fault: the close restores the controls (unix-capture.md 4.7)
         self.end_state: str | None = None  # the state that the end sets after the close
         # The diagnostics of the loop (unix-capture.md 4.2 item 3, 4.6.2 D-10, D-11)
         self.next_diagnostics_ns = 0
@@ -169,13 +171,17 @@ class CameraLoop:
     # ----- the run -----
 
     def run(self) -> None:
-        hung = False
+        hung = lost = False
         try:
             self._start_up()
             while self.ipc.should_continue and not self.status.should_close.value:
                 self._pass()
+            # The loop left with no stop flag and the group running: the heartbeat was lost. Read here, not in the
+            # `finally`: no second read of the clock (a heartbeat that came back would hide the reason), and a
+            # re-select clears the stop flag after the end; another BaseException is no lost heartbeat.
+            lost = not self.status.should_close.value and self.ipc.running
         except _Stop:
-            pass
+            lost = not self.status.should_close.value and self.ipc.running
         except _Hung:
             hung = True
         except CaptureFailure as failure:
@@ -185,9 +191,7 @@ class CameraLoop:
             logger.exception(f"Camera {self.camera_id} loop error: {error}")
             self._fail(CaptureFailure(self.stage, f"{type(error).__name__}: {error}"), at_end=True)
         finally:
-            # The loop left with no failure, no stop flag and the group running: the heartbeat was lost. No second
-            # read of the clock (a heartbeat that came back would hide the reason).
-            if not hung and not self.failed and not self.status.should_close.value and self.ipc.running:
+            if lost and not self.failed:
                 self._lost_heartbeat()
             self._end(hung)
 
@@ -195,6 +199,7 @@ class CameraLoop:
         """Decision L: no heartbeat of the server for 10 s. This camera ends; its take files are finished and its
         camera released by `_end`. A live main process gets the reason in the status and ends the take with it."""
         text = "lost the server's heartbeat"
+        self.lost_heartbeat = True
         if self.take_writer is not None:
             self.ipc.pubsub.topics[TopicTypes.RECORDING_FINISHED].publish(
                 RecordingFinishedMessage(camera_id=self.camera_id, error=f"camera {self.camera_id} {text}"))
@@ -336,7 +341,7 @@ class CameraLoop:
         exposure = readback.get("exposure")
         self.no_exposure = exposure is not None and not exposure.present
         text = f"Camera {self.camera_id} has no manual exposure. SkellyCam does not set its exposure."
-        self.status.replace_warning_items(self.status.camera_warnings, ("no_manual_exposure",), [
+        self.status.replace_warning_items("camera_warnings", ("no_manual_exposure",), [
             dict(kind="no_manual_exposure", camera_ids=[self.camera_id], control="exposure", text=text)
         ] if self.no_exposure else [])  # it comes again at each open (1.5)
         self.exposure_range = None if self.no_exposure else getattr(self.source, "exposure_range", lambda: None)()
@@ -344,12 +349,15 @@ class CameraLoop:
             logger.warning(text)
         else:
             if self.config.exposure_mode == "AUTO" and self.exposure_range is not None:
-                # 1.3a [GEH0]: the held value is set inside the range of the camera, and the config stores the read-back
+                # 1.3a: the held value is set at the nearest search value (with none, inside the range of the
+                # camera), and the config stores the read-back
                 low, high, _ = self.exposure_range  # (min, max, step), the one shape of each source
-                if not low <= value <= high:
-                    logger.info(f"Camera {self.camera_id}: the held exposure {value} is outside the range {low} to "
-                                f"{high} of the camera; it opens at {min(max(value, low), high)}")
-                    value = min(max(value, low), high)
+                values = search_values(self.exposure_range)
+                opened_at = min(values, key=lambda v: abs(v - value)) if values else min(max(value, low), high)
+                if opened_at != value:
+                    logger.info(f"Camera {self.camera_id}: the held exposure {value} is not a search value in the "
+                                f"range {low} to {high} of the camera; it opens at {opened_at}")
+                    value = opened_at
             readback = self.source.set_controls({"exposure": ControlSetting(auto=False, value=value)})
         self._publish_controls(readback)
         exposure = readback.get("exposure")
@@ -389,7 +397,7 @@ class CameraLoop:
         """The one-shot search on the open stream, in the state `adjusting`. A check that runs stops (1.5)."""
         self.check = None
         self.status.search_count.value += 1
-        self.status.replace_warning_items(self.status.camera_warnings, SEARCH_WARNINGS, [])
+        self.status.replace_warning_items("camera_warnings", SEARCH_WARNINGS, [])
         self.search_before = {name: getattr(self.config, name) for name in HELD_FIELDS}
         while not self.search_replies.empty():  # a late reply of an earlier search
             self.search_replies.get_nowait()
@@ -455,7 +463,7 @@ class CameraLoop:
             texts = [("exposure_search_failed", failed_text(self.camera_id, search.detail, before["exposure"]))]
         for _, text in texts:
             logger.warning(text)
-        self.status.replace_warning_items(self.status.camera_warnings, SEARCH_WARNINGS, [
+        self.status.replace_warning_items("camera_warnings", SEARCH_WARNINGS, [
             dict(kind=kind, camera_ids=[self.camera_id], control="exposure", text=text) for kind, text in texts])
         # `held`: the main process copies the held value into its config once for each search (camera_group.py)
         self.status.update_info(exposure_search=result, held=dict(
@@ -646,7 +654,7 @@ class CameraLoop:
         elif requested.exposure_mode == "MANUAL" and (current.exposure_mode, current.exposure) != ("MANUAL", requested.exposure):
             changes["exposure"] = ControlSetting(auto=False, value=requested.exposure)
         if changes:
-            self.status.replace_warning_items(self.status.camera_warnings, SEARCH_WARNINGS, [])  # 1.5: an exposure change
+            self.status.replace_warning_items("camera_warnings", SEARCH_WARNINGS, [])  # 1.5: an exposure change
             # A failed change publishes self.config: it must hold the request's number and name (camera-requests.md 8.1)
             self.config = current.model_copy(update=dict(camera_index=requested.camera_index,
                                                          camera_name=requested.camera_name))
@@ -682,7 +690,7 @@ class CameraLoop:
         if self.take_writer is not None:
             self._end_take()
         orchestrator = self.orchestrator
-        if orchestrator.first_recording_frame_number.value == -1 or orchestrator.last_recording_frame_number.value != -1:
+        if orchestrator.first_recording_frame_number.value == -1 or orchestrator.last_frame != -1:
             # The take ended (or its start failed) before this spec came: no writer (ADR-P5VE).
             text = f"camera {self.camera_id}: the take ended before its writer started"
             logger.warning(text)
@@ -731,19 +739,27 @@ class CameraLoop:
         camera finishes its pair with the same rows (placeholders to that frame, 7.3) and its `# end` line."""
         writer, self.take_writer = self.take_writer, None
         try:
-            if self.orchestrator.last_recording_frame_number.value == -1:
-                if self.ipc.should_continue:
+            if self.orchestrator.last_frame == -1:
+                lock = self.orchestrator.last_recording_frame_number.get_lock()
+                # A bounded wait (unix-capture.md 4.10): a camera killed while it held the lock keeps it for ever.
+                locked = not self.ipc.should_continue and lock.acquire(timeout=FRAME_LOCK_WAIT_S)
+                if not locked:
                     error = writer.abandon()
+                    if not self.ipc.should_continue:  # with no lock: this camera ends its part of the take alone
+                        error = error or (f"camera {self.camera_id}: no lock of the last frame of the take in "
+                                          f"{FRAME_LOCK_WAIT_S:g} s")
+                        logger.error(error)
                     if error is not None:  # the take level ends the take with this error (recorder.md 5.4)
                         self.ipc.pubsub.topics[TopicTypes.RECORDING_FINISHED].publish(
                             RecordingFinishedMessage(camera_id=self.camera_id, error=error))
                     return
-                last = self.orchestrator.last_recording_frame_number
-                with last.get_lock():
-                    if last.value == -1:
+                try:
+                    if self.orchestrator.last_frame == -1:
                         # The gate lets another camera be one frame ahead, in hand but not yet counted: + 2.
                         latest = max(self.orchestrator.largest_gate_count(), self.gate_count)
-                        last.value = max(latest + 2, self.orchestrator.first_recording_frame_number.value)
+                        self.orchestrator.last_frame = max(latest + 2, self.orchestrator.first_recording_frame_number.value)
+                finally:
+                    lock.release()
             result = writer.end(self.orchestrator.take_frame_count())
             self.ipc.pubsub.topics[TopicTypes.RECORDING_FINISHED].publish(
                 RecordingFinishedMessage(camera_id=self.camera_id, result=result))
@@ -756,7 +772,7 @@ class CameraLoop:
         number = self.gate_count
         orchestrator = self.orchestrator
         while self.ipc.should_continue and not self.status.should_close.value:
-            last = orchestrator.last_recording_frame_number.value
+            last = orchestrator.last_frame
             # With no camera left in the gate, the last group frame of the stop is the one to reach.
             group = max(orchestrator.largest_gate_count(), last - 1 if last != -1 else -1)
             while number < group:
@@ -836,7 +852,8 @@ class CameraLoop:
                 self._add_replaced()
                 if self.source is not None:
                     try:
-                        self.source.close(restore=not self.failed)  # 4.7: a failed camera gets no restore
+                        # 4.7: a failed camera gets no restore; a lost heartbeat is no camera fault
+                        self.source.close(restore=not self.failed or self.lost_heartbeat)
                     except CaptureFailure as failure:
                         self._fail(failure)
                         hung = failure.hung

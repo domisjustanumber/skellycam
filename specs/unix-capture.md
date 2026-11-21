@@ -1260,6 +1260,8 @@ the record), 6 (the citation of 0) and 7 (4.4.10 filled) are applied here.
   the stall rule of [W 9.5], which sets no error of the source): the loop calls `close(restore=False)`,
   so a camera that can be wedged gets no set and no read-back [ADR-Q2NY](../decisions/entries/Q2NY-choices-of-code-step-2.md). A restore call that
   hangs ends the close as hung, within the bound of one call [W 6.6].
+- A lost heartbeat of the server ([`recorder.md`](recorder.md) section 9) is not a camera fault. The
+  close of that camera restores the controls. No other failure of the loop gets the restore.
 
 ### 4.8 Threads
 
@@ -1307,7 +1309,7 @@ No thread spins [W 4.3].
 
 The signal and the watch [ADR-AC5B](../decisions/entries/AC5B-choices-of-the-third-consistency-check.md):
 
-- The signal: a shared counter `alive_count` (`multiprocessing.Value("q", 0)`) in `CameraStatus`.
+- The signal: a shared counter `alive_count` (`multiprocessing.Value("q", 0, lock=False)`) in `CameraStatus`.
   The main process creates it with the status. The shared camera loop adds one at the start of each
   loop pass (`CameraLoop._pass`). While frames arrive, a pass takes at most about 50 ms, also when the
   camera is paused (a sleep of 50 ms), waits at the gate (1 ms) or is `waiting`. Thus the counter
@@ -1334,8 +1336,26 @@ The signal and the watch [ADR-AC5B](../decisions/entries/AC5B-choices-of-the-thi
   (the ready limit of [W 9.3] applies) and during the close (the bounded steps of [W 6.6, 6.9] apply).
   The limit is 3 s, over the 2 s of the in-process rule of [W 9.5]: that rule finishes the files and
   closes the camera, and it must come first; the watch kills the process, with no restore (4.7) and no
-  clean finish of the files [ADR-Q2NY](../decisions/entries/Q2NY-choices-of-code-step-2.md). The watch reads the counter with no lock (a process
-  stopped inside its add keeps the lock).
+  clean finish of the files [ADR-Q2NY](../decisions/entries/Q2NY-choices-of-code-step-2.md). The counter has no lock: a process
+  stopped inside its add keeps the lock. Each other scalar of `CameraStatus` has no lock too. A process
+  that ends while it holds a lock keeps it for ever. Thus, for the lock of each JSON array of
+  `CameraStatus`, the first call of a stretch with no lock waits at most 0.5 s and logs one line; the
+  next calls try with no wait until the lock comes again. A call with no lock goes on with no lock. The
+  main process stops the tries for a status only when the camera process of that status has ended.
+  "Apply again" always gives the new camera process new arrays. The arrays go by name, not by object.
+  Each read tolerates torn JSON: it reads again up to 3 times, then gives the last good value. A
+  main-process write of `info` with no lock stays in the main process until a write with the lock. The
+  heartbeat value (its one writer: the heartbeat thread), the global kill flag, the shutdown flag of the
+  group and the first frame of a take (their writers: the main process only) have no lock either. The
+  last frame of a take is read and written with no lock (one aligned 8-byte value), except in three
+  places. The read of each frame decision keeps the lock, because the end of a take holds it from its
+  read of the gate count to its write: its first wait in a stretch with no lock is at most 1.5 s, and
+  the next reads try with no wait until the lock comes again. The two check-then-set blocks wait at most
+  0.5 s for the lock: the end of a take then ends with the `take_error` "no lock of the last frame of the
+  take in 0.5 s", and a camera that ends with no take level ends its part of the take alone with the
+  error "camera `<id>`: no lock of the last frame of the take in 0.5 s". A failed read of the app state is
+  logged, and the websocket sends the state at the next tick; it sets no kill flag
+  [ADR-QJH6](../decisions/entries/QJH6-choices-of-the-fix-lane.md).
 - The setting `SKELLYCAM_STALL_WATCH=0` turns the watch off. The group reads it when it is made, and logs
   at its start that the watch is off [ADR-Q2NY](../decisions/entries/Q2NY-choices-of-code-step-2.md).
 - When it trips, the main process removes the camera from the gate, marks it `dead` with the failure

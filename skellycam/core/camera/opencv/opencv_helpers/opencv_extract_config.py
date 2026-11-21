@@ -12,6 +12,13 @@ from skellycam.core.camera.config.exposure_modes import ExposureModes
 logger = logging.getLogger(__name__)
 
 
+def capture_fourcc(cv2_capture) -> str | None:
+    """The FOURCC that the camera delivers (`CAP_PROP_FOURCC`), or None: some backends give 0 or a negative value."""
+    code = int(cv2_capture.get(cv2.CAP_PROP_FOURCC)) & 0xFFFFFFFF
+    text = code.to_bytes(4, "little").decode("ascii", errors="replace")
+    return text if text.isalnum() else None
+
+
 def extract_config_from_cv2_capture(camera_index: CameraIndexInt,
                                     camera_id: str,
                                     camera_name: str,
@@ -22,6 +29,7 @@ def extract_config_from_cv2_capture(camera_index: CameraIndexInt,
     height = int(cv2_capture.get(cv2.CAP_PROP_FRAME_HEIGHT))
     exposure = int(cv2_capture.get(cv2.CAP_PROP_EXPOSURE))
     framerate = cv2_capture.get(cv2.CAP_PROP_FPS)
+    fourcc = capture_fourcc(cv2_capture)
 
     if any([
         width == 0, 
@@ -47,6 +55,7 @@ def extract_config_from_cv2_capture(camera_index: CameraIndexInt,
             exposure=exposure,
             framerate=framerate,
             rotation=rotation,
+            **({"capture_fourcc": fourcc} if fourcc else {}),
         )
     except Exception as e:
         logger.error(f"Failed to extract configuration from cv2.VideoCapture object - {type(e).__name__}: {e}")

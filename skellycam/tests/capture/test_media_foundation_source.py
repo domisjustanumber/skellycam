@@ -129,11 +129,12 @@ def test_t_req_15_no_auto_set_outside_the_close_and_the_exposure_range():
 
 
 
-@pytest.mark.parametrize(("held", "opened"), [(-9, -9), (-15, -13), (0, -1)])
+@pytest.mark.parametrize(("held", "opened"), [(-9, -9), (-15, -12), (0, -5)])
 def test_an_auto_open_on_media_foundation_sets_the_held_value_inside_the_range(held, opened):
-    """camera-requests.md 1.3a [GEH0] (the fault of the real-camera run of 2026-11-21): the open steps of the shared
-    loop in AUTO on `MediaFoundationSource` over the stand-ins (GetRange -13 to -1, step 1): no error; the held value
-    inside the range opens at that value, below it at -13, above it at -1; the config stores the read-back."""
+    """camera-requests.md 1.3a [GEH0, fix lane E] (the fault of the real-camera run of 2026-11-21): the open steps of
+    the shared loop in AUTO on `MediaFoundationSource` over the stand-ins (GetRange -13 to -1, step 1): no error; a
+    held value that is a search value opens at that value; another value at the nearest search value in the range
+    (-12 to -5): below them at -12, above them at -5; the config stores the read-back."""
     result = run_case(f"auto-open:{held}")
     assert result["error"] is None, result
     assert result["exposure_range"] == [-13, -1, 1]

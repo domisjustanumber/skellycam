@@ -207,7 +207,7 @@ class TestCameraOrchestratorPause:
             # Simulate camera loop responding
             s.is_paused.value = False
 
-        assert orch.any_cameras_paused is False
+        assert not any(s.is_paused.value for s in orch.camera_statuses.values())
 
 
 def test_the_frame_count_of_a_take_is_last_minus_first() -> None:

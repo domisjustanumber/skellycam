@@ -39,7 +39,7 @@ async def main() -> None:
 
         loop.set_exception_handler(_suppress_connection_reset)
 
-    global_kill_flag = multiprocessing.Value("b", False)
+    global_kill_flag = multiprocessing.Value("b", False, lock=False)  # no lock: main-process writers only (unix 4.10)
     worker_registry = WorkerRegistry(
         global_kill_flag=global_kill_flag,
         worker_mode=WorkerMode.PROCESS,

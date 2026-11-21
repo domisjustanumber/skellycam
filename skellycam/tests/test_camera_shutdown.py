@@ -169,3 +169,124 @@ def test_stopped_group_is_not_reported_alive_with_lingering_workers(manager, pau
     manager.ipc.should_continue = False
     assert not group.alive
     assert not group.to_state().alive
+
+
+class SlowSpawnWorker:
+    """A fake camera worker whose start takes 0.2 s, as the spawn stagger on Windows; `first` is set when a start
+    begins."""
+
+    def __init__(self, first):
+        self.started, self.first = False, first
+        self.worker = Mock(spec=ManagedWorker, pid=None)
+        self.worker.is_alive.return_value = False
+
+    def start(self):
+        self.first.set()
+        time.sleep(0.2)
+        self.started = True
+
+
+async def test_a_close_during_the_spawn_waits_for_it_and_no_camera_starts_after_it(manager):
+    """Fix lane A: the close waits for the spawn loop (no "dictionary changed size during iteration", no orphan),
+    and the spawn loop stops at the close."""
+    import threading
+
+    first = threading.Event()
+    workers = {f"camera{number}": SlowSpawnWorker(first) for number in range(4)}
+    manager.camera_workers.update(workers)
+    group = CameraGroup(ipc=manager.ipc, configs={}, cameras=manager)
+    spawn = asyncio.create_task(asyncio.to_thread(group._spawn, manager.start))
+    assert await asyncio.to_thread(first.wait, 5)  # the first camera starts
+    await asyncio.wait_for(group.close(), timeout=5)
+    await asyncio.wait_for(spawn, timeout=1)  # no error
+    assert 1 <= sum(worker.started for worker in workers.values()) < 4
+    assert not manager.camera_workers
+
+
+async def test_two_closes_at_once_close_the_camera_processes_one_time(manager):
+    """Fix lane A: a second close waits for the first, then returns."""
+    worker = Mock(spec=ManagedWorker, pid=123)
+    worker.is_alive.return_value = False
+    worker.join.side_effect = lambda timeout: time.sleep(0.2)
+    manager.camera_workers["camera1"] = CameraWorker(camera_id="camera1", worker=worker, ipc=manager.ipc,
+                                                     orchestrator=manager.orchestrator)
+    group = CameraGroup(ipc=manager.ipc, configs={}, cameras=manager)
+    await asyncio.wait_for(asyncio.gather(group.close(), group.close()), timeout=5)
+    worker.mark_stopping.assert_called_once()
+    assert not manager.camera_workers
+
+
+def test_a_restart_after_an_unselect_joins_the_old_process_first(manager, monkeypatch):
+    """Fix lane I: "apply again" of an unselected camera joins its old process (and kills it when it still runs)
+    before `reset_for_start` clears the stop flag; else an old loop could go on."""
+    from skellycam.core.ipc.process_management.managed_worker import ManagedProcess
+
+    old = Mock(spec=ManagedProcess)
+    status = manager.orchestrator.camera_statuses["camera1"]
+    flags_at_join = []
+    old.join.side_effect = lambda timeout: flags_at_join.append(bool(status.should_close.value))
+    old.is_alive.return_value = True
+    manager.camera_workers["camera1"] = CameraWorker(camera_id="camera1", worker=old, ipc=manager.ipc,
+                                                     orchestrator=manager.orchestrator)
+    manager.remove_camera("camera1")
+    new = Mock(spec=CameraWorker)
+    monkeypatch.setattr(manager, "_create_worker", lambda camera_id, config: new)
+    from skellycam.core.camera.config.camera_config import CameraConfig
+
+    manager.restart_camera("camera1", CameraConfig(camera_id="camera1", camera_index=0))
+    assert flags_at_join == [True, True, True]  # the join of the unselect, then the restart: join, kill, join
+    old.kill.assert_called_once()
+    new.start.assert_called_once()
+    assert not status.should_close.value and "camera1" not in manager.removed_workers
+
+
+async def test_the_end_of_a_take_waits_at_most_its_bound_for_the_lock_of_the_last_frame(manager, monkeypatch):
+    """unix-capture.md 4.10: another holder keeps the lock of the last frame (as a camera process killed inside
+    its locked read). The end of the take does not block the event loop: after FRAME_LOCK_WAIT_S it ends the take as
+    an error with that reason."""
+    import threading
+
+    from skellycam.core.camera_group import camera_group as group_module
+
+    group = CameraGroup(ipc=manager.ipc, configs={}, cameras=manager)
+    from skellycam.core.take_recorder import TakeSummary
+
+    take = Mock(rec="take")
+    group.take, group.recording_ids = take, ["camera1"]
+    take.finish.return_value = TakeSummary(stop_response={}, results=[], warnings=[])
+    monkeypatch.setattr(group, "_collect_results", lambda: ({}, {}, set()))
+    held, release = threading.Event(), threading.Event()
+
+    def hold():
+        with manager.orchestrator.last_recording_frame_number.get_lock():
+            held.set()
+            release.wait(10)
+
+    holder = threading.Thread(target=hold, daemon=True)
+    holder.start()
+    try:
+        assert held.wait(5)
+        await asyncio.wait_for(group._end_take(), timeout=group_module.FRAME_LOCK_WAIT_S + 2.0)
+    finally:
+        release.set()
+        holder.join(5)
+    error = take.finish.call_args.kwargs["ended_by_error"]
+    assert error == f"no lock of the last frame of the take in {group_module.FRAME_LOCK_WAIT_S:g} s"
+    assert group.take is None
+
+
+def test_the_close_ends_an_unselected_camera_process_that_outlived_its_join(manager):
+    """Review of the fix lane: the process of an unselected camera that still runs after the join of the unselect
+    goes through the close phases (terminate, then kill) at the group close."""
+    from skellycam.core.ipc.process_management.managed_worker import ManagedProcess
+
+    old = Mock(spec=ManagedProcess, pid=123)
+    old.is_alive.return_value = True
+    old.kill.side_effect = lambda: setattr(old.is_alive, "return_value", False)
+    manager.camera_workers["camera1"] = CameraWorker(camera_id="camera1", worker=old, ipc=manager.ipc,
+                                                     orchestrator=manager.orchestrator)
+    manager.remove_camera("camera1")
+    manager.close()
+    old.terminate.assert_called_once()
+    old.kill.assert_called_once()
+    assert not manager.removed_workers and manager.removed_statuses["camera1"].closed.value

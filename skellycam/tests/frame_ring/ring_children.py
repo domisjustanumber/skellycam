@@ -7,6 +7,8 @@ import random
 import time
 import zlib
 
+CHILD_DEADLINE_S = 60.0  # each child that waits to be killed ends by itself after this
+
 from skellycam.tests.frame_ring.ring_spec import (
     arrival_for,
     as_bytes,
@@ -157,16 +159,18 @@ def hold_lock_forever(value, held):
     2026-11-21: a reader killed inside `phase.value` keeps the lock, and each later write waits for ever)."""
     value.get_lock().acquire()
     held.set()
-    while True:
-        time.sleep(1)
+    deadline = time.monotonic() + CHILD_DEADLINE_S
+    while time.monotonic() < deadline:  # a child that nobody kills ends by itself
+        time.sleep(0.5)
 
 
 def hold_event_lock_forever(event, held):
     """Take the lock of the condition of a shared Event, as `Event.is_set()` does on entry, and keep it."""
     event._cond.acquire()
     held.set()
-    while True:
-        time.sleep(1)
+    deadline = time.monotonic() + CHILD_DEADLINE_S
+    while time.monotonic() < deadline:  # a child that nobody kills ends by itself
+        time.sleep(0.5)
 
 
 def hammer_reader(name, stop):

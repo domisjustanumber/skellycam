@@ -121,8 +121,10 @@ def create_cv2_video_capture(config: CameraConfig, retry_count: int = 5) -> tupl
             )
     if not isinstance(capture, cv2.VideoCapture) or not capture.isOpened():
         raise FailedToOpenCameraException(f"Failed to open camera {config.camera_index} after {retry_count} attempts.")
-    extracted_config = apply_camera_configuration(cv2_vid_capture=capture,
-                                                  prior_config=None,
-                                                  config=config)
+    try:
+        extracted_config = apply_camera_configuration(cv2_vid_capture=capture, prior_config=None, config=config)
+    except Exception:
+        capture.release()  # else the device stays open in this process
+        raise
     logger.info(f"Created `cv2.VideoCapture` object for Camera: {config.camera_index}")
     return capture, extracted_config

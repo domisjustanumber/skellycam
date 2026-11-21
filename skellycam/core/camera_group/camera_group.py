@@ -8,13 +8,12 @@ from fractions import Fraction
 from pathlib import Path
 
 from skellycam.core.camera_group.camera_setup_failure import CameraSetupFailedException
-from multiprocessing.sharedctypes import Synchronized
 from dataclasses import dataclass, field
 from collections.abc import Callable
 from typing import Any
 
 import numpy as np
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, TypeAdapter
 
 from skellycam import __version__
 from skellycam.core.camera.camera_manager import CameraManager
@@ -23,6 +22,7 @@ from skellycam.core.camera.capture.source import COUNTER_KEYS
 from skellycam.core.camera.capture.camera_loop import needs_reopen
 from skellycam.core.camera.config.camera_config import CameraConfigs, CameraConfig, validate_camera_configs
 from skellycam.core.camera_group.camera_group_ipc import CameraGroupIPC
+from skellycam.core.camera_group.camera_orchestrator import FRAME_LOCK_WAIT_S
 from skellycam.core.camera_group.camera_status import SETTLED_STATES
 from skellycam.core.ipc.pubsub.pubsub_manager import TopicTypes
 from skellycam.core.ipc.pubsub.pubsub_topics import (
@@ -54,6 +54,7 @@ from skellycam.core.types.type_overloads import (
     CameraGroupIdString,
     FrameNumberInt,
     MultiframeTimestampFloat,
+    SharedValue,
 )
 from skellycam.utilities.wait_functions import await_10ms
 
@@ -115,7 +116,9 @@ class CameraGroupState(BaseModel):
     configs: dict[CameraIdString, CameraConfig]
     cameras: dict[CameraIdString, CameraState]
     alive: bool
-    recording_in_progress: bool
+    recording_in_progress: bool  # only for `take_state` "recording" (recorder.md 8.4)
+    take_state: str = "none"  # "none", "recording" or "ended_with_error" (recorder.md 8.4)
+    ended_take_summary: dict | None = None  # take_error, camera_id and summary while "ended_with_error"
 
 
 @dataclass
@@ -131,6 +134,7 @@ class CameraGroup:
     finished: list = field(default_factory=list)  # the result messages that the watch took from their queue
     take: Take | None = None  # the take that runs
     ended_take: TakeSummary | None = None  # a take that an error ended; the next stop request returns it
+    ended_take_summary: dict | None = None  # the live state of that take (recorder.md 8.4)
     take_error: tuple | None = None  # (text, camera_id) of the first stall or write error of the take (5.3, 5.4)
     camera_diagnostics: dict = field(default_factory=dict)  # the newest diagnostics of each camera (unix 4.2 item 2)
     _passes: dict = field(default_factory=dict)  # camera_id: (alive_count, time.monotonic() of its last change)
@@ -139,6 +143,8 @@ class CameraGroup:
     _closing: bool = False  # `close` runs: the watch thread reads the queues but watches no camera (F4)
     _end_lock: Any = field(default_factory=asyncio.Lock)
     _ring_lock: Any = field(default_factory=threading.RLock)
+    _life_lock: Any = field(default_factory=threading.Lock)  # a spawn and a close of camera processes, one at a time
+    _cameras_closed: bool = False
     _stop_watch: Any = field(default_factory=threading.Event)
     _loop: Any = None  # the event loop of `start`: a ring reader is closed only on it (ADR-BM73)
 
@@ -159,9 +165,9 @@ class CameraGroup:
             and all(
                 status.connected.value and not status.closed.value
                 and not status.closing.value and not status.error.value
-                for status in self.cameras.orchestrator.camera_statuses.values()
+                for status in list(self.cameras.orchestrator.camera_statuses.values())
             )
-            and all(worker.is_alive() for worker in self.cameras.camera_workers.values())
+            and all(worker.is_alive() for worker in list(self.cameras.camera_workers.values()))
         )
 
     @classmethod
@@ -169,8 +175,8 @@ class CameraGroup:
         cls,
         *,
         camera_configs: CameraConfigs,
-        heartbeat_timestamp: Synchronized,
-        global_kill_flag: Synchronized,
+        heartbeat_timestamp: SharedValue,
+        global_kill_flag: SharedValue,
         worker_registry: WorkerRegistry,
         source_factory: Callable | None = None,
     ) -> "CameraGroup":
@@ -206,7 +212,7 @@ class CameraGroup:
         if not self.stall_watch:
             logger.warning(f"The main-process stall watch is off ({STALL_WATCH_SETTING}=0)")
         logger.info(f"Starting camera group ID: {self.id} with cameras: {list(self.configs.keys())}")
-        await asyncio.to_thread(self.cameras.start)  # the spawn takes seconds: not on the loop (sfn26 a4d610f62)
+        await asyncio.to_thread(self._spawn, self.cameras.start)  # seconds: not on the loop (sfn26 a4d610f62)
         threading.Thread(target=self._watch_workers, name=f"camera group {self.id} watch", daemon=True).start()
         configs, _ = await self._await_results(list(self.configs))
         if not self.ipc.running:
@@ -221,17 +227,19 @@ class CameraGroup:
     async def apply(self, requested: CameraConfigs) -> tuple[dict, list]:
         """Apply a checked request to each camera on its own (8.3, U10). Return the failures and the warnings.
 
-        A camera that was unselected and is selected again starts again (8.3). Each other camera of the
-        request that is not in the group is left out, as before phase 3: the other camera processes have
-        no status for it, so it cannot join their gate.
+        A camera that was unselected and is selected again starts again (8.3). Each other selected camera of
+        the request that is not in the group is left out, as before phase 3: the other camera processes have
+        no status for it, so it cannot join their gate. The warnings then have one `cameras_left_out` item.
         """
         statuses = self.cameras.orchestrator.camera_statuses
-        restart, changed, removed = [], {}, []
+        restart, changed, removed, left_out = [], {}, [], []
         for camera_id, config in requested.items():
             if camera_id not in self.configs:
                 if config.use_this_camera and camera_id in self.cameras.removed_statuses:
                     self.configs[camera_id] = config
                     restart.append(camera_id)
+                elif config.use_this_camera:
+                    left_out.append(camera_id)
                 continue
             worker = self.cameras.camera_workers.get(camera_id)
             if not config.use_this_camera:
@@ -246,14 +254,14 @@ class CameraGroup:
                     update=dict(camera_index=config.camera_index, camera_name=config.camera_name))
         # The joins of a camera process take seconds: not on the event loop, which serves the preview.
         for camera_id in removed:
-            await asyncio.to_thread(self.cameras.remove_camera, camera_id)
+            await asyncio.to_thread(self._spawn, self.cameras.remove_camera, camera_id)
             with self._ring_lock:
                 self._close_rings([camera_id])
             del self.configs[camera_id]
         for camera_id in restart:
             with self._ring_lock:
                 self._close_rings([camera_id])
-            await asyncio.to_thread(self.cameras.restart_camera, camera_id, requested[camera_id])
+            await asyncio.to_thread(self._spawn, self.cameras.restart_camera, camera_id, requested[camera_id])
         if changed:
             self.ipc.pubsub.topics[TopicTypes.UPDATE_CAMERA_SETTINGS].publish(
                 UpdateCamerasSettingsMessage(requested_configs=changed))
@@ -266,6 +274,11 @@ class CameraGroup:
             self._open_rings(new_rings)
         self.configs.update(configs)
         await self._await_settled(list(new_rings))
+        if left_out:  # windows-capture.md 11.3
+            text = (f"{'Camera' if len(left_out) == 1 else 'Cameras'} {', '.join(left_out)} cannot join a running "
+                    f"group: close the cameras and open them again")
+            warnings.append(dict(kind="cameras_left_out", camera_ids=left_out, text=text))
+            logger.warning(text)
         logger.info(f"Applied camera configs - {list(requested.keys())}")
         return self._failures(reopened), warnings
 
@@ -321,6 +334,19 @@ class CameraGroup:
                 self._give_up(pending, "warm-up")
                 return
             await await_10ms()
+
+    def _spawn(self, call: Callable, *args) -> None:
+        """A start, restart or unselect of camera processes, never during a close; none after a close."""
+        with self._life_lock:
+            if self.ipc.running:
+                call(*args)
+
+    def _close_cameras(self) -> None:
+        """A second close waits for the first, then has nothing to do. A close that raised can run again."""
+        with self._life_lock:
+            if not self._cameras_closed:
+                self.cameras.close()
+                self._cameras_closed = True
 
     def _give_up(self, camera_ids, stage: str, limit_s: float = PARENT_WAIT_LIMIT_S) -> None:
         """A camera process that gives no answer within `limit_s` is `failed`, and it must close."""
@@ -381,8 +407,8 @@ class CameraGroup:
         status = self.cameras.orchestrator.camera_statuses.get(camera_id)
         if status is None:
             return
-        # No lock: a process suspended or ended inside `alive_count += 1` keeps the lock (review of 2026-11-20).
-        count, now = status.alive_count.get_obj().value, time.monotonic()
+        # The counter has no lock: a process suspended or ended inside `alive_count += 1` kept it (review of 2026-11-20).
+        count, now = status.alive_count.value, time.monotonic()
         watched = (self.stall_watch and status.state in WATCHED_STATES and not status.should_pause.value
                    and not status.should_close.value and not status.closing.value
                    and not status.info_dict().get("failure"))
@@ -603,14 +629,9 @@ class CameraGroup:
             except ValueError as error:  # a bad name, a FAT disk (D3), a camera that the format refuses
                 raise RequestRefused(422, str(error))
             specs = {camera_id: take.camera_spec(camera_id) for camera_id in self.recording_ids}  # before any goes out
-            orchestrator.last_recording_frame_number.value = -1
+            orchestrator.last_frame = -1
             orchestrator.first_recording_frame_number.value = orchestrator.largest_gate_count() + 3  # [M7, review B4]
             self.take = take
-            if self.ended_take is not None:  # its files and manifest are finished; only the stop response goes
-                logger.warning(f"A new take starts: the summary of the take "
-                               f"{self.ended_take.stop_response.get('recording_name')} that an error ended was not "
-                               f"fetched by a stop request")
-                self.ended_take = None
             for camera_id in self.recording_ids:
                 statuses[camera_id].update_info(writer_failure=None)
             sent = True  # from here, a camera can have a writer
@@ -624,13 +645,18 @@ class CameraGroup:
                 if sent:
                     # Each camera with a writer ends it at its next frame, with no row; a camera that gets its take
                     # spec from now on refuses it (`CameraLoop._start_take`).
-                    orchestrator.last_recording_frame_number.value = orchestrator.first_recording_frame_number.value
+                    orchestrator.last_frame = orchestrator.first_recording_frame_number.value
                 # No wait: a camera that still opens its files cannot unpause in time, and the group runs on.
                 await orchestrator.unpause(await_unpaused=False)
             finally:
                 if take is not None:
                     await self._finish_failed_start(take, error, wait=sent)
             raise
+        if self.ended_take is not None:  # its files and manifest are finished; only the stop response goes (8.4)
+            logger.warning(f"A new take starts: the summary of the take "
+                           f"{self.ended_take.stop_response.get('recording_name')} that an error ended was not "
+                           f"fetched by a stop request")
+            self.ended_take = self.ended_take_summary = None
         try:
             await orchestrator.unpause(await_unpaused=True)
         except (RuntimeError, TimeoutError) as error:  # each writer started: the take runs on
@@ -660,7 +686,7 @@ class CameraGroup:
         finally:
             self.recording_ids = ids
             orchestrator.first_recording_frame_number.value = -1
-            orchestrator.last_recording_frame_number.value = -1
+            orchestrator.last_frame = -1
 
     def _take_camera(self, camera_id: CameraIdString, device) -> TakeCamera:
         """The take facts of one camera (recorder.md 4.2, 6.7) from its config, status and detection."""
@@ -712,7 +738,7 @@ class CameraGroup:
             if self.take is None:
                 if self.ended_take is None:
                     raise RequestRefused(409, "No recording runs")
-                summary, self.ended_take = self.ended_take, None
+                summary, self.ended_take, self.ended_take_summary = self.ended_take, None, None
                 return summary
             return await self._end_take()
 
@@ -720,7 +746,11 @@ class CameraGroup:
         """A stall or a write error ends the take at once for every camera (5.3, 5.4) [C5]."""
         async with self._end_lock:
             if self.take is not None:
-                self.ended_take = await self._end_take()
+                error, camera_id = self.take_error or (None, None)  # `_end_take` clears it
+                summary = await self._end_take()
+                self.ended_take, self.ended_take_summary = summary, dict(  # JSON gives a NaN statistic as null
+                    take_error=error, camera_id=camera_id,
+                    summary=TypeAdapter(dict).dump_python(summary.stop_response, mode="json"))
 
     async def _end_take(self) -> TakeSummary:
         """8.1, under `_end_lock`: set the last frame, wait for each camera (D1), then `Take.finish`."""
@@ -734,8 +764,14 @@ class CameraGroup:
             # The read of the gate count and the write of the last frame are under the lock of the last frame: a
             # camera reads that value with its lock, so it decides no new frame between them. A last frame that a
             # camera set first (the end with no take level) stays.
-            last = orchestrator.last_recording_frame_number
-            with last.get_lock():
+            # The wait for that lock is bounded (unix-capture.md 4.10): a camera killed while it held the lock keeps it
+            # for ever. With no lock in FRAME_LOCK_WAIT_S the take ends as an error; the values go with no lock.
+            last, lock = orchestrator.last_recording_frame_number.get_obj(), orchestrator.last_recording_frame_number.get_lock()
+            locked = lock.acquire(timeout=FRAME_LOCK_WAIT_S)
+            try:
+                if not locked and self.take_error is None:
+                    self.take_error = (f"no lock of the last frame of the take in {FRAME_LOCK_WAIT_S:g} s", None)
+                    logger.error(f"The take ends: {self.take_error[0]}")
                 if last.value == -1:
                     count = orchestrator.largest_gate_count()
                     if count == -1:  # no camera left in the gate: the take ends after the latest group frame
@@ -743,9 +779,12 @@ class CameraGroup:
                                     if camera_id in statuses) - 1
                     # At least the first frame: when no camera reached it, the take has no row, not a negative count.
                     last.value = max(count + 2, orchestrator.first_recording_frame_number.value)
-            # A camera that the pause endpoint paused records to the last frame (round 4, item 2). No wait.
+            finally:
+                if locked:
+                    lock.release()
+            # A guard: a camera that is still paused records to the last frame. No wait.
             await orchestrator.unpause(await_unpaused=False)
-            frame_count = orchestrator.take_frame_count()
+            frame_count = last.value - orchestrator.first_recording_frame_number.value  # recorder.md 7.6
             results, dead, running = await asyncio.to_thread(self._collect_results)
             error, error_camera = self.take_error or (None, None)
             summary = await asyncio.to_thread(
@@ -754,7 +793,7 @@ class CameraGroup:
         finally:
             self.take = self.take_error = None
             orchestrator.first_recording_frame_number.value = -1
-            orchestrator.last_recording_frame_number.value = -1
+            orchestrator.last_frame = -1  # the take ended: no camera decides on it
             for status in list(statuses.values()):
                 status.set_warning_items([])
         logger.info(f"Stopped recording for camera group ID: {self.id} with recording name: {take.rec}")
@@ -856,7 +895,7 @@ class CameraGroup:
             for ring in self.rings.values():
                 ring.set_closed()
         try:
-            await asyncio.to_thread(self.cameras.close)  # the joins take seconds: not on the loop
+            await asyncio.to_thread(self._close_cameras)  # the joins take seconds: not on the loop
         finally:
             self._stop_watch.set()
             self._take_diagnostics()  # a dict that came after the last round of the watch
@@ -876,12 +915,12 @@ class CameraGroup:
         statuses = self.cameras.orchestrator.camera_statuses
         for camera_id in item["camera_ids"]:
             if camera_id in statuses:
-                statuses[camera_id].replace_warning_items(statuses[camera_id].group_warnings, (item["kind"],), [item])
+                statuses[camera_id].replace_warning_items("group_warnings", (item["kind"],), [item])
 
     def clear_group_warnings(self) -> None:
         """At each apply request of the user (camera-requests.md 1.5); the fall back of step 4 must not call it."""
         for status in list(self.cameras.orchestrator.camera_statuses.values()):
-            status.set_warning_items([], status.group_warnings)
+            status.set_warning_items([], "group_warnings")
 
     async def search_exposure(self, camera_ids: list) -> dict:
         """camera-requests.md 1.5: each camera of `camera_ids` (checked by the manager) searches on its open stream;
@@ -916,7 +955,7 @@ class CameraGroup:
             results={camera_id: statuses[camera_id].serialize()["exposure_search"] for camera_id in searched},
             camera_failures=self._failures(camera_ids),
             warnings=[item for camera_id in searched for item in statuses[camera_id].warning_items(
-                statuses[camera_id].camera_warnings) if item["kind"] in ("add_light", "exposure_search_failed")])
+                "camera_warnings") if item["kind"] in ("add_light", "exposure_search_failed")])
 
     def adopt_search_results(self) -> None:
         """Copy the held value of each ended search into `configs`, once for each search (camera-requests.md 1.3b):
@@ -929,14 +968,17 @@ class CameraGroup:
 
     def to_state(self) -> CameraGroupState:
         self.adopt_search_results()
+        # "ended_with_error" stays during a record start, until it succeeds (recorder.md 8.4)
+        take_state = "ended_with_error" if self.ended_take is not None else "none" if self.take is None else "recording"
         return CameraGroupState(
             id=self.id,
             configs=self.configs,
             cameras={
                 camera_id: worker.to_state()
-                for camera_id, worker in self.cameras.camera_workers.items()
+                for camera_id, worker in list(self.cameras.camera_workers.items())
             },
             alive=self.alive,
-            # Also when each camera died during the take, and until the stop fetched the summary of an error end.
-            recording_in_progress=self.take is not None or self.ended_take is not None,
+            recording_in_progress=take_state == "recording",  # also when each camera died during the take
+            take_state=take_state,
+            ended_take_summary=self.ended_take_summary if take_state == "ended_with_error" else None,
         )

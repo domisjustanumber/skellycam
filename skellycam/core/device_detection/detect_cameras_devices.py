@@ -111,13 +111,16 @@ def detect_available_cameras(backend_id: CameraBackendInt|None=None, filter_virt
     Returns a list of CameraInfo objects for each detected camera.
 
     On Windows, detection uses Media Foundation, also while the OpenCV source is chosen (7.1, D11). With `modes`
-    False it lists the devices only and activates none; elsewhere detection activates no camera in any case.
+    False it lists the devices only and activates none; elsewhere detection activates no camera in any case. With
+    `modes` False no USB link is looked up either: the caller (the check after a failed start) uses the links of the
+    detection before.
     """
     if platform.system() == "Windows":
         # Windows only, and it can load comtypes (U18): import it only here.
         from skellycam.core.camera.capture.media_foundation.detect import detect_media_foundation_cameras
         from skellycam.core.camera.capture.camera_checks import mark_devices
-        return mark_devices(_add_usb_links(detect_media_foundation_cameras(modes=modes)))
+        cameras = detect_media_foundation_cameras(modes=modes)
+        return mark_devices(_add_usb_links(cameras) if modes else cameras)
     if backend_id is None:
         backend = determine_opencv_camera_backend()
     else:
@@ -137,7 +140,8 @@ def detect_available_cameras(backend_id: CameraBackendInt|None=None, filter_virt
         if any(camera.camera_id == device.camera_id for camera in cameras):
             raise ValueError(f"Detected devices have colliding camera IDs: {device.camera_id}. Device paths: {[camera.path for camera in cameras]} and {device.path}")
         cameras.append(device)
-    _add_usb_links(cameras)
+    if modes:
+        _add_usb_links(cameras)
     logger.debug(f"Detected {len(cameras)} cameras:\n {tabulate([camera.model_dump() for camera in cameras], headers='keys')}\n)")
     return cameras
 

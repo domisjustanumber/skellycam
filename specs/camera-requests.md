@@ -238,9 +238,13 @@ Who does what:
   it from the live state (1.3b) [H1, B14]. Thus the held value is kept across a close and across a
   restart of the app.
 - At an open, a camera in `AUTO` sets its held value as a manual value at step 5 of [cap 9.1]. Then
-  it searches after the warm-up (1.3b) [G1]. A held value outside the exposure range of the camera is set
-  at the nearest end of the range, and the config stores the read-back value: a new camera (-7) on a camera
+  it searches after the warm-up (1.3b) [G1]. The held value is set inside the search values: the values of
+  1.3 item 1 that are in the exposure range of the camera. A held value that is not one of them is set at
+  the nearest of them. When the range has no search value, a held value outside the range is set at the
+  nearest end of the range. The config stores the read-back value. Examples: a new camera (-7) on a camera
   whose range starts at -6 opens at -6, then searches -6 and -5 [ADR-GEH0](../decisions/entries/GEH0-choices-of-code-step-3.md).
+  A held value of -1 on a camera with the range -11 to -2 opens at -5, not at -2: -2 is a 250 ms exposure
+  (4 fps), and the warm-up fails (seen on a real camera) [ADR-QJH6](../decisions/entries/QJH6-choices-of-the-fix-lane.md).
 - The held value is not a start point of the search: the search tries -12 to -5 in order [E6]. The
   held value has two uses [B2]:
   - the warm-up and the first frames of the preview are near the last result;
@@ -1511,8 +1515,11 @@ is [`recorder.md`](recorder.md) 8.4: the live state gets `take_state` `"ended_wi
 - The UI shows the error text of `ended_take_summary.take_error` with the camera label of 1.8, and the summary
   dialog of a stop.
 - It shows them one time for each take: a pure function `endedTakeNotice(previous, state)` in
-  `skellycam-ui/src/store/slices/recording/ended-take.ts` gives the notice only when the group moves
-  to `"ended_with_error"`, and `null` while the state stays there.
+  `skellycam-ui/src/store/slices/recording/ended-take.ts` gives the notice only when the group is in
+  `"ended_with_error"` with a take (its folder, else its name) that no notice showed yet. It gives `null`
+  while the state stays there, and when a record start that fails gives the old take again. A record
+  start that succeeds (`"recording"`) clears the shown take, so a later take in the same folder shows its
+  notice [ADR-QJH6](../decisions/entries/QJH6-choices-of-the-fix-lane.md).
 - The UI sends no stop request for such a take.
 
 | ID | Kind | Set-up | Pass criterion |

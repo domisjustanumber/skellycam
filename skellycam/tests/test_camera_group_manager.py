@@ -110,6 +110,25 @@ class TestCloseAll:
         assert manager.closing is False
 
 
+    @pytest.mark.asyncio
+    async def test_a_group_removed_during_the_close_raises_no_key_error(self, manager):
+        """Fix lane A: the teardown of a failed start (or a second close) removes the group first."""
+        from unittest.mock import AsyncMock, Mock
+
+        from skellycam.core.camera_group.camera_group import CameraGroup
+
+        async def removed_meanwhile():
+            manager.camera_groups.pop("g1")
+            manager.camera_groups.pop("g2")
+
+        second = Mock(spec=CameraGroup, id="g2", camera_ids=[], close=AsyncMock())
+        manager.camera_groups.update(g1=Mock(spec=CameraGroup, id="g1", camera_ids=[],
+                                             close=AsyncMock(side_effect=removed_meanwhile)), g2=second)
+        await manager.close_all_camera_groups()
+        assert manager.camera_groups == {}
+        second.close.assert_not_awaited()
+
+
 class TestSingletonFactory:
     def test_returns_same_instance(self, kill_flag, worker_registry):
         """get_or_create_camera_group_manager returns the same instance on repeated calls."""

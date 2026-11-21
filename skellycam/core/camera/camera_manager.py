@@ -29,6 +29,7 @@ class CameraManager:
     # The status of an unselected camera. The other camera processes keep it, so a camera that is
     # selected again joins their gate with it (8.3).
     removed_statuses: dict[CameraIdString, CameraStatus] = field(default_factory=dict)
+    removed_workers: dict[CameraIdString, CameraWorker] = field(default_factory=dict)  # a restart joins them first
 
     @property
     def all_ready(self) -> bool:
@@ -62,7 +63,7 @@ class CameraManager:
         # camera, so that it gates on that camera when it is selected again (5.2, 8.3).
         orchestrator = dataclasses.replace(
             self.orchestrator, camera_statuses={**self.orchestrator.camera_statuses, **self.removed_statuses})
-        return CameraWorker.create(
+        worker = CameraWorker.create(
             camera_id=camera_id,
             ipc=self.ipc,
             worker_registry=self.worker_registry,
@@ -73,19 +74,28 @@ class CameraManager:
             recording_info_subscription=topics[TopicTypes.RECORDING_INFO].get_subscription(),
             source_factory=self.source_factory,
         )
+        orchestrator.camera_statuses[camera_id].owner = worker.worker  # the status tells a slow lock from a dead one
+        return worker
 
     def restart_camera(self, camera_id: CameraIdString, config: CameraConfig) -> None:
         """"Apply again" for a `failed` or `dead` camera, or a camera selected again after an unselect: a new
         camera process with the same status (8.2, 8.3, D23)."""
         if camera_id in self.removed_statuses:
             self.orchestrator.camera_statuses[camera_id] = self.removed_statuses.pop(camera_id)
+            old = self.removed_workers.pop(camera_id, None)
         else:
-            # The old process can still hold the device, for example while its close steps run (6.9).
-            worker = self.camera_workers[camera_id].worker
+            old = self.camera_workers[camera_id]
+        if old is not None:
+            # The old process can still hold the device, for example while its close steps run (6.9), and
+            # `reset_for_start` clears its stop flag, so an old loop that still runs would go on.
+            worker = old.worker
             worker.join(timeout=2 * BOUNDED_CALL_LIMIT_S)
             if worker.is_alive() and isinstance(worker, ManagedProcess):
+                logger.error(f"The old process of camera {camera_id} still runs; it is killed before the restart")
                 worker.kill()
                 worker.join(timeout=BOUNDED_CALL_LIMIT_S)
+            elif worker.is_alive():
+                logger.error(f"The old thread of camera {camera_id} still runs; a thread cannot be killed")
         self.orchestrator.camera_statuses[camera_id].reset_for_start()
         self.camera_workers[camera_id] = self._create_worker(camera_id, config)
         self.camera_workers[camera_id].start()
@@ -94,7 +104,7 @@ class CameraManager:
         """Unselect (8.3, agent 24): close the camera and remove it from the gate and the record check."""
         status = self.orchestrator.camera_statuses[camera_id]
         status.should_close.value = True
-        worker = self.camera_workers.pop(camera_id)
+        worker = self.removed_workers[camera_id] = self.camera_workers.pop(camera_id)
         worker.worker.mark_stopping()
         worker.join(timeout=2 * BOUNDED_CALL_LIMIT_S)
         status.set_state("failed")  # not in the gate of the other camera processes, which keep this status
@@ -112,9 +122,11 @@ class CameraManager:
 
         for status in self.orchestrator.camera_statuses.values():
             status.set_state("starting")  # each camera, so that no camera joins the gate before the others start
-        for worker in self.camera_workers.values():
+        for worker in list(self.camera_workers.values()):
             if isinstance(worker.worker, ManagedProcess):  # threads do not import again
                 time.sleep(_SPAWN_STAGGER_SECONDS)
+            if not self.ipc.running:  # a close started: it waits for this loop (CameraGroup._life_lock)
+                break
             worker.start()
 
     async def pause(self, await_paused: bool) -> None:
@@ -143,21 +155,24 @@ class CameraManager:
         self.ipc.should_continue = False
         self.orchestrator.close()
 
+        # An unselected camera whose process outlived the join of the unselect ends here too
+        workers = list(self.camera_workers.values()) + list(self.removed_workers.values())
+
         # Mark all workers as intentionally terminated before shutdown
         # so the child monitor doesn't trigger a cascade kill
-        for camera_worker in self.camera_workers.values():
+        for camera_worker in workers:
             camera_worker.worker.mark_stopping()
 
-        for camera_worker in self.camera_workers.values():
+        for camera_worker in workers:
             camera_worker.worker.wait_for_recording_save()
 
         # Phase 1: Wait for all processes to exit on their own (parallel)
-        for camera_worker in self.camera_workers.values():
+        for camera_worker in workers:
             if camera_worker.worker.pid is not None:
                 camera_worker.worker.join(timeout=3.0)
 
         # Phase 2: SIGTERM any stragglers (parallel)
-        still_alive = [w for w in self.camera_workers.values() if w.worker.is_alive()]
+        still_alive = [w for w in workers if w.worker.is_alive()]
         if still_alive:
             logger.warning(
                 f"{len(still_alive)} camera process(es) didn't exit in time, sending SIGTERM"
@@ -168,7 +183,7 @@ class CameraManager:
                 camera_worker.worker.join(timeout=3.0)
 
         # Phase 3: SIGKILL any remaining (parallel)
-        still_alive = [w for w in self.camera_workers.values() if w.worker.is_alive()]
+        still_alive = [w for w in workers if w.worker.is_alive()]
         if still_alive:
             logger.error(
                 f"{len(still_alive)} camera process(es) didn't respond to SIGTERM, sending SIGKILL"
@@ -178,7 +193,7 @@ class CameraManager:
             for camera_worker in still_alive:
                 camera_worker.worker.join(timeout=2.0)
 
-        zombies = [w for w in self.camera_workers.values() if w.worker.is_alive()]
+        zombies = [w for w in workers if w.worker.is_alive()]
         if zombies:
             raise RuntimeError(
                 f"{len(zombies)} camera process(es) could not be killed: "
@@ -187,10 +202,11 @@ class CameraManager:
 
         # A forcibly stopped or never-started worker cannot acknowledge closure.
         # Only update these flags after confirming that every worker has exited.
-        for status in self.orchestrator.camera_statuses.values():
+        for status in list(self.orchestrator.camera_statuses.values()) + list(self.removed_statuses.values()):
             status.signal_closing()
             status.closed.value = True
         self.camera_workers.clear()
+        self.removed_workers.clear()
         logger.success("Camera manager closed all camera processes successfully.")
 
     def to_state(self) -> dict[CameraIdString, CameraState]:
