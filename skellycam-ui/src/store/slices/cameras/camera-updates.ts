@@ -9,6 +9,7 @@ interface CameraForUpdate {
     index?: number;  // the current detection
     name?: string;
     actualConfig?: { camera_index: number; camera_name: string };  // what the server applied
+    desiredConfig?: { framerate: number };
 }
 
 export interface CameraChanges { retry: string[]; close: string[]; add: string[]; renumber: string[] }
@@ -16,8 +17,11 @@ export interface CameraChanges { retry: string[]; close: string[]; add: string[]
 /**
  * The differences between the camera list and the server's camera group that "Update Cameras" sends.
  * `groupIds`: each camera of the server's groups; one with no row (unplugged, then detected again) is closed.
+ * `groupConfigs`: the configs of the live state; a camera whose desired rate is not the rate of the group is sent again,
+ * so that a request never holds two rates (camera-requests.md 2.8).
  */
-export function pendingCameraChanges(cameras: CameraForUpdate[], groupIds: string[] = []): CameraChanges {
+export function pendingCameraChanges(cameras: CameraForUpdate[], groupIds: string[] = [],
+                                     groupConfigs: Record<string, { framerate: number }> = {}): CameraChanges {
     const rowIds = new Set(cameras.map(cam => cam.id));
     return {
         retry: cameras.filter(cam => cam.selected && cam.connectionStatus === 'error').map(cam => cam.id),
@@ -27,8 +31,10 @@ export function pendingCameraChanges(cameras: CameraForUpdate[], groupIds: strin
         ],
         add: cameras.filter(cam => cam.selected && !cam.deviceInfo.virtual && !cam.inGroup).map(cam => cam.id),
         // A re-detection gave an open camera a new number or name: send it again, live with no reopen (camera-requests.md 8.1)
-        renumber: cameras.filter(cam => cam.selected && cam.inGroup && cam.connectionStatus !== 'error' && cam.actualConfig
-            && (cam.actualConfig.camera_index !== cam.index || cam.actualConfig.camera_name !== cam.name)).map(cam => cam.id),
+        renumber: cameras.filter(cam => cam.selected && cam.inGroup && cam.connectionStatus !== 'error' && (cam.actualConfig
+            && (cam.actualConfig.camera_index !== cam.index || cam.actualConfig.camera_name !== cam.name)
+            || cam.desiredConfig && cam.id in groupConfigs && Math.abs(cam.desiredConfig.framerate - groupConfigs[cam.id].framerate) > 0.5))
+            .map(cam => cam.id),
     };
 }
 

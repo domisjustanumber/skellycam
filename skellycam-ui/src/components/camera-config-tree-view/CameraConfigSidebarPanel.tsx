@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback, useState } from 'react';
+import React, { useEffect, useCallback, useId, useState } from 'react';
 import { useAppDispatch, useAppSelector, selectCameras, selectConnectedCameras, selectIsLoading, detectCameras } from '@/store';
 import { camerasConnectOrUpdate, closeCameras, searchExposure } from '@/store/slices/cameras/cameras-thunks';
 import { savedSettingsCleared, displayPauseToggled, cameraErrorCleared, frameRateChosen } from '@/store/slices/cameras/cameras-slice';
@@ -13,7 +13,7 @@ import { useRecordingGuard } from '@/components/RecordingGuardProvider';
 import { pendingCameraChanges, updateRequestConfigs } from '@/store/slices/cameras/camera-updates';
 import { labelText } from '@/store/slices/cameras/camera-labels';
 import { searchBlocked } from '@/store/slices/cameras/exposure-row';
-import { checkingRate, chosenRate, rateChoice, rateRequestConfigs } from '@/store/slices/cameras/rate-choice';
+import { chosenRate, rateChoice, rateRequestConfigs } from '@/store/slices/cameras/rate-choice';
 import SegmentedControl from '@/components/ui-components/SegmentedControl';
 
 
@@ -57,7 +57,7 @@ export const CameraConfigSidebarPanel: React.FC = () => {
         requestGuardedAction('Stop Recording & Update Camera Config', () => dispatch(camerasConnectOrUpdate({ kind: 'connect' })));
     }, [dispatch, requestGuardedAction]);
 
-    const changes = pendingCameraChanges(cameras, Object.keys(groupConfigs));
+    const changes = pendingCameraChanges(cameras, Object.keys(groupConfigs), groupConfigs);
     const hasChanges = Object.values(changes).some(ids => ids.length > 0);
 
     // Send only the differences (specs/windows-capture.md 8.3): the server keeps each camera that a request does
@@ -92,18 +92,22 @@ export const CameraConfigSidebarPanel: React.FC = () => {
 
     // The one frame rate of the group (camera-requests.md 2.1, 2.5, 2.7, 2.8)
     const rateNote = useAppSelector((state) => state.cameras.rateNote);
+    const rateChecking = useAppSelector((state) => state.cameras.rateChecking);
+    const rateReasonId = useId();
     const rate = chosenRate(cameras);
     const { can60, reasons } = rateChoice(cameras);
     const rateDisabledText = isRecording ? t('stopRecordingFirst') : searchBlocked(groups) ? t('settingExposure') : undefined;
+    const rateReason = rateDisabledText ?? (can60 ? undefined : reasons.join(' '));
     const handleRate = async (value: string) => {
         const picked = Number(value);
-        if (picked === rate) return;
-        dispatch(frameRateChosen(picked));
-        if (connectedCameras.length === 0) return;  // no camera streams: the next connect sends the choice (2.4)
+        if (picked === rate || rateDisabledText || (picked === 60 && !can60)) return;
+        const send = connectedCameras.length > 0;  // no camera streams: the next connect sends the choice (2.4)
+        dispatch(frameRateChosen({ rate: picked, check: send && picked === 60 }));
+        if (!send) return;
         try {
-            await dispatch(camerasConnectOrUpdate({ configs: rateRequestConfigs(cameras, groupConfigs, picked), kind: 'settings' })).unwrap();
+            await dispatch(camerasConnectOrUpdate({ configs: rateRequestConfigs(groupConfigs, picked), kind: 'settings' })).unwrap();
         } catch {
-            // the store keeps the error; the error line shows it
+            dispatch(frameRateChosen({ rate, check: false }));  // the server keeps its rate; the error line shows why
         }
     };
 
@@ -139,16 +143,16 @@ export const CameraConfigSidebarPanel: React.FC = () => {
                                 </span>
                             )}
                     <div className="flex-1" />
-                    <span title={rateDisabledText ?? (can60 ? undefined : reasons.join(' '))}>
+                    <span title={rateReason}>
                         <SegmentedControl
-                            className={rateDisabledText ? 'disabled' : ''}
                             options={[
-                                { label: '30 fps', value: '30' },
-                                { label: '60 fps', value: '60', disabled: !can60 },
+                                { label: '30 fps', value: '30', disabled: !!rateDisabledText },
+                                { label: '60 fps', value: '60', disabled: !!rateDisabledText || !can60 },
                             ]}
                             value={String(rate)}
                             onChange={handleRate}
                             size="sm"
+                            describedBy={rateReason ? rateReasonId : undefined}
                         />
                     </span>
                     {/* Buttons: Detect + Connect OR Pause/Stop (when connected) */}
@@ -223,10 +227,13 @@ export const CameraConfigSidebarPanel: React.FC = () => {
                     </div>
 
             </div>
-            {(checkingRate(groups, rate) || rateNote) && (
+            {(rateChecking || rateNote) && (
                 <p className="text sm text-gray p-1" style={{ whiteSpace: 'normal' }}>
-                    {checkingRate(groups, rate) ? t('checkingSixtyFps') : rateNote}
+                    {rateChecking ? t('checkingSixtyFps') : rateNote}
                 </p>
+            )}
+            {rateReason && (
+                <p id={rateReasonId} className="text sm text-gray p-1" style={{ whiteSpace: 'normal' }}>{rateReason}</p>
             )}
             {cameraError && (
                 <p role="alert" className="text sm text-error p-1" style={{ whiteSpace: 'normal' }}>{labelText(cameraError, cameras)}</p>

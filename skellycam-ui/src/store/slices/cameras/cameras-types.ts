@@ -102,6 +102,7 @@ export interface CamerasState {
     error: string | null;
     rateNote: string | null;        // the text under the rate selector: a fall back to 30 fps, or why 60 fps went (2.4, 2.5)
     rateFallbackSeen: string | null;  // the rate_fallback text of the last live state: only a new one changes the rate
+    rateChecking: boolean;          // "Checking 60 fps…" (rate-choice.ts nextRateChecking)
 }
 
 // ==================== API Types ====================

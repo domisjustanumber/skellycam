@@ -11,7 +11,8 @@ export function normalizeFramerate<T extends { framerate?: number }>(config: T):
 /** Within 0.5 fps of 60: a 60 fps mode (camera-requests.md 2.5). */
 const near60 = (fps: number) => Math.abs(fps - 60) <= 0.5;
 
-const BUSY_STATES = ['starting', 'waiting', 'adjusting', 'checking'];
+/** The states of a camera that opens, searches or checks (camera-requests.md 2.4). */
+export const BUSY_STATES = ['starting', 'waiting', 'adjusting', 'checking'];
 
 interface RateCamera {
     id: string;
@@ -54,14 +55,21 @@ export function chosenRate(cameras: { selected: boolean; desiredConfig: { framer
     return camera && near60(camera.desiredConfig.framerate) ? 60 : 30;
 }
 
-/** The apply request of a pick: each camera of the server's group with the new rate; "Update Cameras" adds the others. */
+/**
+ * The apply request of a pick: the applied config of each camera of the server's group with the new rate, and no
+ * pending edit; "Update Cameras" adds the other cameras (camera-requests.md 2.8).
+ */
 export function rateRequestConfigs<C extends { framerate: number; use_this_camera: boolean }>(
-    cameras: { id: string; desiredConfig: C }[],
     groupConfigs: Record<string, C>,
     rate: number,
 ): Record<string, C> {
-    return Object.fromEntries(Object.keys(groupConfigs).map(id =>
-        [id, { ...(cameras.find(cam => cam.id === id)?.desiredConfig ?? groupConfigs[id]), framerate: rate, use_this_camera: true }]));
+    return Object.fromEntries(Object.entries(groupConfigs).map(([id, config]) => [id, { ...config, framerate: rate, use_this_camera: true }]));
+}
+
+/** A detection keeps one rate: each detected camera gets the choice of the list before it, else of the new list (2.8). */
+export function withChosenRate<T extends { selected: boolean; desiredConfig: { framerate: number } }>(previous: T[], detected: T[]): T[] {
+    const rate = chosenRate(previous.length > 0 ? previous : detected);
+    return detected.map(cam => ({ ...cam, desiredConfig: { ...cam.desiredConfig, framerate: rate } }));
 }
 
 /** The text of the first `rate_fallback` item of the live state, or null (camera-requests.md 2.4, 2.8). */
@@ -75,8 +83,10 @@ export function rateFallbackText(groups: LiveGroup[]): string | null {
     return null;
 }
 
-/** "Checking 60 fps…": a camera starts, waits, searches or checks after a pick of 60 or during a fall back (2.4, 2.8). */
-export function checkingRate(groups: LiveGroup[], choice: number): boolean {
-    const busy = groups.some(group => Object.values(group.cameras ?? {}).some(camera => BUSY_STATES.includes(camera.status?.state ?? '')));
-    return busy && (choice === 60 || rateFallbackText(groups) !== null);
+/**
+ * "Checking 60 fps…" (camera-requests.md 2.8): from a sent pick of 60 or a new fall back item, until no camera is busy
+ * and no apply request of the UI runs.
+ */
+export function nextRateChecking(checking: boolean, busy: boolean, applying: boolean, newFallback: boolean): boolean {
+    return newFallback || (checking && (busy || applying));
 }

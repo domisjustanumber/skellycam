@@ -19,10 +19,12 @@ import {
     PersistedCameraSettingsMap,
 } from './camera-settings-storage';
 import { cameraStatesFromAppState, NOT_IN_GROUP, statusesAfterApply } from './camera-state';
-import { chosenRate, rateChoice, rateFallbackText } from './rate-choice';
+import { BUSY_STATES, chosenRate, nextRateChecking, rateChoice, rateFallbackText, withChosenRate } from './rate-choice';
 import { labelText } from './camera-labels';
 
 /** One rate for each camera (camera-requests.md 2.2, 2.8): the desired config of each camera gets it. */
+const anyBusy = (state: CamerasState) => state.cameras.some(camera => BUSY_STATES.includes(camera.state ?? ''));
+
 function setRate(state: CamerasState, rate: number): void {
     state.cameras.forEach(camera => {
         camera.desiredConfig.framerate = rate;
@@ -55,6 +57,7 @@ const initialState: CamerasState = {
     error: null,
     rateNote: null,
     rateFallbackSeen: null,
+    rateChecking: false,
 };
 
 export const cameraSlice = createSlice({
@@ -85,10 +88,11 @@ export const cameraSlice = createSlice({
         },
 
         // ========== Frame rate (camera-requests.md 2.8) ==========
-        // A pick of the one rate selector; the panel sends it at once while cameras stream
-        frameRateChosen: (state, action: PayloadAction<number>) => {
-            setRate(state, action.payload);
+        // A pick of the one rate selector; the panel sends it at once while cameras stream (`check`: a sent pick of 60)
+        frameRateChosen: (state, action: PayloadAction<{ rate: number; check: boolean }>) => {
+            setRate(state, action.payload.rate);
             state.rateNote = null;
+            state.rateChecking = action.payload.check;
             persistAllCameraSettings(state);
         },
 
@@ -158,7 +162,7 @@ export const cameraSlice = createSlice({
             })
             .addCase(detectCameras.fulfilled, (state, action) => {
                 state.isLoading = false;
-                state.cameras = action.payload;
+                state.cameras = withChosenRate(state.cameras, action.payload);  // one rate also for a new camera (2.8)
                 state.rateNote = null;  // a detection clears the note under the rate selector (2.4)
                 persistAllCameraSettings(state);
             })
@@ -175,6 +179,7 @@ export const cameraSlice = createSlice({
             .addCase(camerasConnectOrUpdate.fulfilled, (state, action) => {
                 state.isLoading = false;
                 const { camera_configs: configs, camera_failures: failures, sentIds } = action.payload;
+                state.rateChecking = nextRateChecking(state.rateChecking, anyBusy(state), false, false);
                 const after = statusesAfterApply(state.cameras, configs, failures, sentIds);
                 state.cameras.forEach(camera => {
                     const { status, sent } = after[camera.id];
@@ -190,6 +195,7 @@ export const cameraSlice = createSlice({
             .addCase(camerasConnectOrUpdate.rejected, (state, action) => {
                 state.isLoading = false;
                 state.error = action.error.message || 'Failed to connect to cameras';
+                state.rateChecking = false;
             })
 
 
@@ -211,7 +217,9 @@ export const cameraSlice = createSlice({
                 adoptHeldValues(state, action.payload.state);  // a search at an open: no response carries it [B14]
                 // 2.4: a new fall back to 30 fps. An item seen before (a state from before a pick or a detection) is old.
                 const fallback = rateFallbackText(Object.values(action.payload.state.camera_groups));
-                if (fallback && fallback !== state.rateFallbackSeen) {
+                const newFallback = fallback !== null && fallback !== state.rateFallbackSeen;
+                state.rateChecking = nextRateChecking(state.rateChecking, anyBusy(state), state.isLoading, newFallback);
+                if (fallback && newFallback) {
                     setRate(state, 30);
                     state.rateNote = labelText(fallback, state.cameras);
                     persistAllCameraSettings(state);

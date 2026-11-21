@@ -32,6 +32,10 @@ interface SegmentedControlProps {
    * Optional value for controlled mode.
    */
   value?: string;
+  /**
+   * Optional id of the text that describes the control, for example why an option is disabled.
+   */
+  describedBy?: string;
 }
 
 const SegmentedControl: React.FC<SegmentedControlProps> = ({
@@ -41,6 +45,7 @@ const SegmentedControl: React.FC<SegmentedControlProps> = ({
   className = "",
   size = "md",
   value: controlledValue,
+  describedBy,
 }) => {
   const isControlled = controlledValue !== undefined;
   const [activeValue, setActiveValue] = useState(
@@ -65,6 +70,8 @@ const SegmentedControl: React.FC<SegmentedControlProps> = ({
   return (
     <div
       className={`segmented-control-container br-1-1 gap-1 p-1 bg-middark flex flex-row main-segmented-control ${className}`}
+      role="group"
+      aria-describedby={describedBy}
     >
       {options.map((option) => (
         <button
