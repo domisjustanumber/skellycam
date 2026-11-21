@@ -561,9 +561,9 @@ class CameraGroup:
         statuses = self.cameras.orchestrator.camera_statuses
         if recording_info.mic_device_index >= 0:
             raise RequestRefused(422, MICROPHONE_REFUSED)  # [C1]
-        blocking = [f"camera {camera_id} is {status.serialize()['state']}"
+        blocking = [f"camera {camera_id} is {'adjusting' if status.search_requested.value else status.serialize()['state']}"
                     for camera_id, status in list(statuses.items())
-                    if not status.ready]
+                    if not status.ready or status.search_requested.value]  # a search that is asked for (1.5)
         if blocking or self.take is not None:  # a recording starts only when each selected camera is `ready` (8.3)
             raise RequestRefused(409, "A recording needs each selected camera ready: " + "; ".join(blocking or ["a recording runs"]))
         folder = Path(recording_info.recording_directory) / recording_info.recording_name
@@ -873,6 +873,35 @@ class CameraGroup:
         """At each apply request of the user (camera-requests.md 1.5); the fall back of step 4 must not call it."""
         for status in list(self.cameras.orchestrator.camera_statuses.values()):
             status.set_warning_items([], status.group_warnings)
+
+    async def search_exposure(self, camera_ids: list) -> dict:
+        """camera-requests.md 1.5: each camera of `camera_ids` (checked by the manager) searches on its open stream;
+        return when each search has ended, within PARENT_WAIT_LIMIT_S. The response of the endpoint."""
+        statuses = self.cameras.orchestrator.camera_statuses
+        counts = {camera_id: statuses[camera_id].search_count.value for camera_id in camera_ids}
+        for camera_id in camera_ids:
+            statuses[camera_id].search_requested.value = True
+        deadline = time.monotonic() + PARENT_WAIT_LIMIT_S
+
+        def ended(camera_id):
+            status = statuses[camera_id]
+            search = status.serialize()["exposure_search"] or {}
+            return status.state in ("failed", "dead") or (not status.search_requested.value and (
+                status.search_count.value == counts[camera_id] or search.get("state") != "running"))
+
+        while self.ipc.running and not all(ended(camera_id) for camera_id in camera_ids):
+            if time.monotonic() >= deadline:
+                self._give_up([camera_id for camera_id in camera_ids if not ended(camera_id)], "streaming")
+                break
+            await await_10ms()
+        self.adopt_search_results()
+        searched = [camera_id for camera_id in camera_ids if statuses[camera_id].search_count.value > counts[camera_id]]
+        return dict(
+            camera_configs={camera_id: config.model_dump(mode="json") for camera_id, config in self.configs.items()},
+            results={camera_id: statuses[camera_id].serialize()["exposure_search"] for camera_id in searched},
+            camera_failures=self._failures(camera_ids),
+            warnings=[item for camera_id in searched for item in statuses[camera_id].warning_items(
+                statuses[camera_id].camera_warnings) if item["kind"] in ("add_light", "exposure_search_failed")])
 
     def adopt_search_results(self) -> None:
         """Copy the held value of each ended search into `configs`, once for each search (camera-requests.md 1.3b):

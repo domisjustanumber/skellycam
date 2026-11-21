@@ -259,7 +259,9 @@ class CameraLoop:
         deadline = perf_counter_ns() + READY_LIMIT_NS
         config = self.config
         self.source = self.source_factory(config)
-        self.status.update_info(source=getattr(self.source, "name", "fake"))
+        # `searches`: false for the OpenCV source of Linux and macOS (camera-requests.md 1.7); the endpoint reads it
+        self.status.update_info(source=getattr(self.source, "name", "fake"),
+                                searches=getattr(self.source, "searches", True))
         opened = self.source.open(CaptureRequest(camera_id=self.camera_id, width=config.resolution.width,
                                                  height=config.resolution.height, framerate=config.framerate,
                                                  capture_fourcc=config.capture_fourcc))
@@ -557,16 +559,36 @@ class CameraLoop:
             spec = self.recording_sub.get().take_specs.get(self.camera_id)
             if spec is not None:
                 self._start_take(spec)
+        if self.status.search_requested.value:
+            self._requested_search()
         while not self.signals.empty():
             _, after_ns, config = self.signals.get_nowait()
             self.config = config
             self.check = dict(after=after_ns, first=None, start=None, deadline=None)
             self.status.set_state("checking")
 
+    def _requested_search(self) -> None:
+        """The button or "Search again" (camera-requests.md 1.2 (c)): the camera goes to `AUTO` and searches. Never
+        during a take, and only on a stream that runs (1.5); the main process checks the states first."""
+        if (self.search is None and self.take_writer is None and not self.status.should_pause.value
+                and self.status.state in ("ready", "too_slow", "checking")):
+            self._start_search()
+            self.config = self.config.model_copy(update=dict(exposure_mode="AUTO"))
+        self.status.search_requested.value = False  # last: the main process then sees the new count and state
+
     def _apply_change(self, requested: CameraConfig) -> None:
         current = self.config
         if needs_reopen(requested, current):
             self._reopen(requested)
+            return
+        if requested.exposure_mode == "AUTO" and current.exposure_mode != "AUTO" and self.search is None \
+                and getattr(self.source, "searches", True):
+            # camera-requests.md 1.2 (c): a switch to AUTO searches on the open stream; the response sees `adjusting`
+            self._start_search()  # it keeps the MANUAL setting of before, for a failed search (1.3 item 6)
+            self.config = requested.model_copy(update=dict(
+                framerate=current.framerate, resolution=current.resolution, exposure=current.exposure,
+                exposure_found_at_fps=current.exposure_found_at_fps))
+            self._publish_config()
             return
         adopted = requested.model_copy(update=dict(framerate=current.framerate, resolution=current.resolution))
         if requested.exposure_mode == "MANUAL":

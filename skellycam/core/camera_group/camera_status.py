@@ -48,6 +48,8 @@ class CameraStatus:
     group_warnings: Any = field(default_factory=lambda: multiprocessing.Array("c", INFO_SIZE))
     # camera-requests.md 1.5 [B20, FC1C]: the searches since the group started; the camera process adds one.
     search_count: Synchronized = field(default_factory=lambda: multiprocessing.Value("q", 0))
+    # camera-requests.md 1.2 (c): the main process asks for a search on the open stream; the camera process clears it.
+    search_requested: Synchronized = field(default_factory=lambda: multiprocessing.Value("b", False))
     # The main process only: the counter subset of the newest diagnostics of the camera (unix-capture.md 4.2 item 2).
     diagnostics: dict = field(default_factory=dict)
 

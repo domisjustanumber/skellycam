@@ -146,6 +146,20 @@ async def camera_group_apply_post_endpoint(
         raise HTTPException(status_code=500, detail=str(e))
 
 
+class ExposureSearchRequest(BaseModel):
+    camera_ids: list[CameraIdString] | None = None  # None: each selected camera (camera-requests.md 1.5)
+
+
+@camera_router.post("/group/exposure/auto", summary="Run the exposure search")
+async def camera_group_exposure_auto(request: Request, request_body: ExposureSearchRequest | None = Body(None)) -> dict:
+    """The button "Auto-set exposure (all cameras)" and "Search again" (camera-requests.md 1.5) [A11, G5]."""
+    try:
+        return await get_or_create_camera_group_manager(app=request.app).search_exposure(
+            request_body.camera_ids if request_body is not None else None)
+    except RequestRefused as e:
+        raise HTTPException(status_code=e.status_code, detail=e.detail)
+
+
 @camera_router.get("/group/state", summary="The live state of the camera groups")
 def camera_group_state(request: Request) -> dict:
     """The state that the `app_state` message of the websocket sends (camera-requests.md 1.5) [B15]."""

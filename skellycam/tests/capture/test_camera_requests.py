@@ -522,3 +522,320 @@ def test_t_req_68_add_light_stays_until_the_next_exposure_change(monkeypatch, tm
         assert app.apply([app.config(camera_id)]).status_code == 200
         app.wait_state(camera_id, "ready")
         assert kinds() == []
+
+
+# ---------------------------------------------------------------------------
+# 1.2 (c), 1.5: the search on request (T-REQ-01, 02, 04, 05, 10, 11, 13, 16, 17, 22, 66, 69, 72)
+# ---------------------------------------------------------------------------
+
+def press(app, camera_ids=None):
+    """POST /camera/group/exposure/auto: the button (no body), or "Search again" (`camera_ids`)."""
+    body = None if camera_ids is None else {"camera_ids": list(camera_ids)}
+    return app.client.post("/skellycam/camera/group/exposure/auto", json=body)
+
+
+def ready_manual(app, **changes):
+    ready_app_steps(app, [app.config(camera_id, **changes) for camera_id in app.factory.camera_ids])
+
+
+def test_t_req_01_a_switch_to_auto_searches_on_the_open_stream(monkeypatch):
+    """T-REQ-01, 1.2 (c), 1.3: one fake `ready` in `MANUAL -7`; apply `AUTO`. The response has the camera in
+    `adjusting`; the fake gets the sets -12 to -5 in order, then -9; the config holds `AUTO`, -9, 30; no
+    `add_light`; the states `adjusting`, `checking`, `ready`."""
+    with capture_app(monkeypatch, [FakeScript(brightness=MODEL, hold_first_change=True)], track=True) as app:
+        camera_id = app.factory.camera_ids[0]
+        ready_manual(app)
+        response = app.apply([auto(app, camera_id, exposure=-7)])
+        assert response.status_code == 200 and app.state(camera_id) == "adjusting", response.text
+        app.factory.sources[camera_id].release()
+        app.wait_state(camera_id, "ready")
+        assert exposure_sets(app, camera_id) == [(False, -7)] + SEARCH + [(False, -9)]
+        held = group_state(app)["configs"][camera_id]
+        assert (held["exposure_mode"], held["exposure"], held["exposure_found_at_fps"]) == ("AUTO", -9, 30.0)
+        assert not app.status(camera_id)["warnings"]
+        assert run_of_states(app, camera_id)[-4:] == ["ready", "adjusting", "checking", "ready"]
+
+
+def test_t_req_02_the_button_searches_with_no_reopen(monkeypatch):
+    """T-REQ-02, 1.3 [E7]: -6 and -5 at 15 fps; press the button. The open count stays 1; the ring name does not
+    change; the ring gets frames during the search; `ready`, `adjusting`, `checking`, `ready`; the result is -9;
+    the trials of -6 and -5 have `kept_rate` false. The response has the configs and the results."""
+    from skellycam.tests.capture.capture_session import Spies
+
+    script = FakeScript(brightness=MODEL, rate_by_exposure=((-6, 15.0), (-5, 15.0)))
+    with capture_app(monkeypatch, [script], track=True) as app:
+        spies = Spies(monkeypatch, app)
+        camera_id = app.factory.camera_ids[0]
+        ready_manual(app)
+        ring = app.ring_name(camera_id)
+        response = press(app)
+        assert response.status_code == 200, response.text
+        body = response.json()
+        result = body["results"][camera_id]
+        assert (result["state"], result["chosen"], result["count"]) == ("done", -9, 1)
+        assert [t["kept_rate"] for t in result["trials"]][-2:] == [False, False]
+        config = body["camera_configs"][camera_id]
+        assert (config["exposure_mode"], config["exposure"], config["exposure_found_at_fps"]) == ("AUTO", -9, 30.0)
+        assert body["camera_failures"] == {} and body["warnings"] == []
+        app.wait_state(camera_id, "ready")
+        assert app.factory.logs[camera_id].opens.value == 1 and app.ring_name(camera_id) == ring
+        sets = [t for name, t, detail in app.factory.logs[camera_id].events if name == "set_controls" and detail]
+        assert any(sets[1] < e["arrival_ns"] < sets[-1] for e in spies.of("jpeg")), "no ring frame in the search"
+        assert run_of_states(app, camera_id)[-4:] == ["ready", "adjusting", "checking", "ready"]
+
+
+def test_t_req_04_add_light_in_the_response_and_the_status(monkeypatch):
+    """T-REQ-04, 1.3 item 5 [Q6]: brightness 50 at -5, darker below; press the button. The result is -6 with
+    `add_light`; the response and the status `warnings` hold `add_light`; the camera is `ready`."""
+    dark = tuple((value, 50 - 5 * (-5 - value)) for value in range(-12, -4))
+    with capture_app(monkeypatch, [FakeScript(brightness=dark)]) as app:
+        camera_id = app.factory.camera_ids[0]
+        ready_manual(app)
+        response = press(app)
+        assert response.status_code == 200, response.text
+        body = response.json()
+        assert (body["results"][camera_id]["chosen"], body["results"][camera_id]["add_light"]) == (-6, True)
+        assert [w["kind"] for w in body["warnings"]] == ["add_light"]
+        app.wait_state(camera_id, "ready")
+        assert body["warnings"][0] in app.status(camera_id)["warnings"]
+
+
+def test_t_req_05_a_failed_search_sets_the_old_manual_value_again(monkeypatch):
+    """T-REQ-05, 1.3 item 6: the camera slows to 25.76 fps after it is `ready` in `MANUAL -7`; press the button.
+    The search fails; the last set is `MANUAL -7`; the config is `MANUAL -7` again; `exposure_search_failed` with
+    its text; the check gives `too_slow`, and the camera keeps its preview."""
+    script = FakeScript(brightness=MODEL, rate_windows=((6.0, 1000.0, 25.76),))
+    with capture_app(monkeypatch, [script]) as app:
+        camera_id = app.factory.camera_ids[0]
+        ready_manual(app)
+        app.wait(lambda: app.clock.now_ns() > app.clock.START_NS + 6.5e9, "the camera is slow")
+        response = press(app)
+        assert response.status_code == 200, response.text
+        body = response.json()
+        assert (body["results"][camera_id]["state"], body["results"][camera_id]["reason"]) == (
+            "failed", "no-value-kept-rate")
+        assert exposure_sets(app, camera_id)[-1] == (False, -7)
+        config = body["camera_configs"][camera_id]
+        assert (config["exposure_mode"], config["exposure"]) == ("MANUAL", -7)
+        assert [w["kind"] for w in body["warnings"]] == ["exposure_search_failed"]
+        assert body["warnings"][0]["text"].endswith("keeps 30 fps. The exposure is -7 again.")
+        app.wait_state(camera_id, "too_slow")
+        assert camera_id in (app.group.read_latest_ring_frames() or {})
+
+
+def test_t_req_10_a_switch_of_one_camera_leaves_the_others(monkeypatch, tmp_path):
+    """T-REQ-10, 1.2, 1.4: two fakes `ready` in `MANUAL`; apply B with `AUTO` only. During the search of B a record
+    start gets 409 that names B and `adjusting`, and an apply that changes the size of B gets 409. Only B
+    searches; A gets no set call; the rings of A and B get frames during the search."""
+    from skellycam.tests.capture.capture_session import Spies
+
+    modes = ((640, 480, 30, 1, "MJPG"), (320, 240, 30, 1, "MJPG"))
+    scripts = [FakeScript(modes=modes), FakeScript(modes=modes, brightness=MODEL, hold_first_change=True)]
+    with capture_app(monkeypatch, scripts) as app:
+        spies = Spies(monkeypatch, app)
+        a, b = app.factory.camera_ids
+        ready_manual(app)
+        before = len(app.factory.logs[a].settings)
+        assert app.apply([auto(app, b)]).status_code == 200
+        assert app.state(b) == "adjusting"
+        refused = app.record_start(tmp_path)
+        assert refused.status_code == 409 and f"camera {b} is adjusting" in refused.text, refused.text
+        assert app.apply([auto(app, b, width=320, height=240)]).status_code == 409
+        app.factory.sources[b].release()
+        app.wait_state(b, "ready")
+        assert not [s for s in app.factory.logs[a].settings[before:] if s]
+        sets = [t for name, t, detail in app.factory.logs[b].events if name == "set_controls" and detail]
+        for camera_id in (a, b):
+            assert any(sets[1] < e["arrival_ns"] < sets[-1] for e in spies.of("jpeg", camera_id)), camera_id
+
+
+def test_t_req_11_no_search_during_a_take(monkeypatch, tmp_path):
+    """T-REQ-11, 1.1 [E3, G4], 1.5 [D36]: a recording runs with two fakes. The button, "Search again" for one
+    camera and an apply with `AUTO` for one camera each get 409; the fakes get no set call; the configs do not
+    change."""
+    with capture_app(monkeypatch, [FakeScript(brightness=MODEL), FakeScript(brightness=MODEL)]) as app:
+        a, b = app.factory.camera_ids
+        ready_manual(app)
+        configs = dict(app.group.configs)
+        before = {camera_id: len(app.factory.logs[camera_id].settings) for camera_id in (a, b)}
+        assert app.record_start(tmp_path).status_code == 200
+        try:
+            assert press(app).status_code == 409
+            assert press(app, [a]).status_code == 409
+            assert app.apply([auto(app, a)]).status_code == 409
+            for camera_id in (a, b):
+                assert not [s for s in app.factory.logs[camera_id].settings[before[camera_id]:] if s]
+            assert app.group.configs == configs
+        finally:
+            assert app.record_stop().status_code == 200
+
+
+def test_t_req_13_and_22_the_button_and_search_again(monkeypatch):
+    """T-REQ-13 and T-REQ-22, 1.2 (c), 1.5 [B20]: three fakes `ready`, two in `MANUAL` and one in `AUTO`. "Search
+    again" for one camera searches only that camera; a camera ID that is not selected gets 422. The button
+    searches each camera one time, each ends in `AUTO` with its own value, the response has `results` for the
+    three, a second press while it runs gets 409, and each `exposure_search.count` is one more than before."""
+    import threading
+
+    models = [MODEL, tuple((value, min(gray + 40, 255)) for value, gray in MODEL), MODEL]
+    with capture_app(monkeypatch, [FakeScript(brightness=model) for model in models]) as app:
+        ids = app.factory.camera_ids
+        app.detect()
+        assert app.apply([app.config(ids[0]), app.config(ids[1]), auto(app, ids[2])]).status_code == 200
+        for camera_id in ids:
+            app.wait_state(camera_id, "ready")
+        before = {camera_id: len(app.factory.logs[camera_id].settings) for camera_id in ids}
+        again = press(app, [ids[0]])
+        assert again.status_code == 200 and list(again.json()["results"]) == [ids[0]], again.text
+        assert all(not [s for s in app.factory.logs[c].settings[before[c]:] if s] for c in ids[1:])
+        assert press(app, ["ffff"]).status_code == 422
+        app.wait_state(ids[0], "ready")
+        counts = {camera_id: (app.status(camera_id)["exposure_search"] or {"count": 0})["count"] for camera_id in ids}
+        responses = []
+        thread = threading.Thread(target=lambda: responses.append(press(app)))
+        thread.start()
+        app.wait(lambda: any(app.state(camera_id) == "adjusting" for camera_id in ids), "a search runs")
+        second = press(app)
+        thread.join(60)
+        assert second.status_code == 409, second.text
+        body = responses[0].json()
+        assert responses[0].status_code == 200 and sorted(body["results"]) == sorted(ids), body
+        configs = body["camera_configs"]
+        assert [configs[c]["exposure_mode"] for c in ids] == ["AUTO"] * 3
+        assert [configs[c]["exposure"] for c in ids] == [-9, -10, -9]
+        assert [body["results"][c]["count"] for c in ids] == [counts[c] + 1 for c in ids]
+
+
+def test_t_req_16_a_switch_to_manual_is_a_live_set(monkeypatch):
+    """T-REQ-16, 1.3a, 11.2: `ready` in `AUTO` held at -9 found at 30; apply `MANUAL -7`. One live set of -7; no
+    search; `checking`, then `ready`; `exposure_found_at_fps` is None."""
+    with capture_app(monkeypatch, [FakeScript(brightness=MODEL)], track=True) as app:
+        camera_id = app.factory.camera_ids[0]
+        app.detect()
+        assert app.apply([auto(app, camera_id, exposure=-9, exposure_found_at_fps=30.0)]).status_code == 200
+        app.wait_state(camera_id, "ready")
+        count = len(exposure_sets(app, camera_id))
+        response = app.apply([app.config(camera_id, exposure=-7, exposure_found_at_fps=30.0)])
+        assert response.status_code == 200, response.text
+        app.wait_state(camera_id, "ready")
+        assert exposure_sets(app, camera_id)[count:] == [(False, -7)]
+        config = response.json()["camera_configs"][camera_id]
+        assert (config["exposure_mode"], config["exposure"], config["exposure_found_at_fps"]) == ("MANUAL", -7, None)
+        assert run_of_states(app, camera_id)[-3:] == ["ready", "checking", "ready"]
+
+
+def test_t_req_17_failed_sets_and_the_limit_with_the_loop(monkeypatch):
+    """T-REQ-17, 1.3 item 6, 1.5: the set of -9 returns an error; then the set of -9 reads back -8; then each
+    value is slow so that the search passes 20 s. Each search fails with `set-failed`, `readback-differs`,
+    `timed-out` and the text of 1.5; the last set is the old setting; the camera stays open."""
+    faults = (None, None, None, "error", None, None, None, None, "readback:-8")
+    with capture_app(monkeypatch, [FakeScript(brightness=MODEL, live_set_faults=faults)]) as app:
+        camera_id = app.factory.camera_ids[0]
+        ready_manual(app)
+        texts = {"set-failed": "the camera refused exposure -9 (the camera refused the value)",
+                 "readback-differs": "exposure -9 read back as -8", "timed-out": "it took more than 20 s"}
+        for reason in ("set-failed", "readback-differs", "timed-out"):
+            if reason == "timed-out":
+                app.factory.sources[camera_id].slow_period(rate=5.0, seconds=60.0)
+            response = press(app)
+            assert response.status_code == 200, response.text
+            body = response.json()
+            assert (body["results"][camera_id]["state"], body["results"][camera_id]["reason"]) == ("failed", reason)
+            assert body["warnings"][0]["text"] == (f"Camera {camera_id}: the exposure search failed: {texts[reason]}. "
+                                                   f"The exposure is -7 again.")
+            assert exposure_sets(app, camera_id)[-1] == (False, -7)
+            app.wait_state(camera_id, "ready", "too_slow")
+
+
+def test_t_req_66_no_search_while_a_camera_starts(monkeypatch):
+    """T-REQ-66, 1.5: one fake held in `starting`, and one in `waiting`. The button and "Search again" get 409;
+    the detail names the camera and its state."""
+    import threading
+
+    scripts = [FakeScript(hold_opens=(1,)), FakeScript()]
+    with capture_app(monkeypatch, scripts) as app:
+        held, other = app.factory.camera_ids
+        app.detect()
+        thread = threading.Thread(target=lambda: app.apply([app.config(held), app.config(other)]))
+        thread.start()
+        try:
+            app.wait(lambda: app.group_or_none() is not None and app.state(other) == "waiting", "one camera waits")
+            for camera_ids in (None, [other]):
+                refused = press(app, camera_ids)
+                assert refused.status_code == 409, refused.text
+                assert f"camera {held} is starting" in refused.text and f"camera {other} is waiting" in refused.text
+        finally:
+            app.factory.sources[held].release()
+            thread.join(60)
+
+
+def test_t_req_69_the_button_skips_a_camera_that_does_not_stream(monkeypatch):
+    """T-REQ-69, 1.9: three fakes, one `ready`, one `failed`, one `dead`; press the button. Only the `ready` camera
+    searches; the response names the two others as "not streaming"."""
+    scripts = [FakeScript(brightness=MODEL), FakeScript(fail_opens=(1,)), FakeScript()]
+    with capture_app(monkeypatch, scripts) as app:
+        good, failed, dead = app.factory.camera_ids
+        app.detect()
+        assert app.apply([app.config(camera_id) for camera_id in (good, failed, dead)]).status_code == 200
+        app.wait_state(good, "ready")
+        app.factory.sources[dead].stop_now()
+        app.wait_state(dead, "dead")
+        response = press(app)
+        assert response.status_code == 200, response.text
+        body = response.json()
+        assert list(body["results"]) == [good]
+        assert sorted(body["not_streaming"]) == sorted([failed, dead])
+
+
+def test_t_req_72_the_manager_call_and_the_route_give_the_same_response(monkeypatch):
+    """T-REQ-72, 1.5 [B18]: `await CameraGroupManager.search_exposure(camera_ids=None)` with no HTTP request, then
+    `POST /camera/group/exposure/auto` on a second group with the same fakes. The two responses are equal, apart
+    from the measured rates; the count moves in the same way."""
+    def strip(body):
+        for result in body["results"].values():
+            for trial in result["trials"]:
+                trial.pop("measured_fps")
+        return body
+
+    bodies = []
+    for via in ("manager", "route"):
+        with capture_app(monkeypatch, [FakeScript(brightness=MODEL)]) as app:
+            ready_manual(app)
+            if via == "manager":
+                body = app.client.portal.call(app.manager.search_exposure)
+                body = __import__("json").loads(__import__("json").dumps(body, default=lambda o: o.model_dump(mode="json")))
+            else:
+                response = press(app)
+                assert response.status_code == 200, response.text
+                body = response.json()
+            bodies.append(strip(body))
+    first, second = bodies
+    for body in bodies:
+        body.pop("group_id", None)
+        for config in body["camera_configs"].values():
+            config.pop("camera_name", None)
+    assert first == second
+
+
+def test_t_req_21_the_opencv_source_of_linux_and_macos_does_not_search(monkeypatch):
+    """T-REQ-21 (1), 1.7 [Q11, K2]: the OpenCV fake as on Linux and macOS (`OpenCVSource.searches` false; the unit
+    test above checks it by the platform). A connect in `AUTO` runs no search, and the camera is never `adjusting`;
+    the button and "Search again" get 422 with the text of 1.5."""
+    from skellycam.core.camera.capture import opencv_source
+    from skellycam.tests.capture.capture_session import CaptureApp, OpenCVFakeFactory
+
+    monkeypatch.setattr(opencv_source.OpenCVSource, "searches", property(lambda source: False))
+    factory = OpenCVFakeFactory(monkeypatch)
+    app = CaptureApp(monkeypatch, factory)
+    try:
+        camera_id = factory.camera_ids[0]
+        app.detect()
+        assert app.apply([app.config(camera_id, exposure_mode="AUTO")]).status_code == 200
+        app.wait_state(camera_id, "ready", "failed")
+        assert app.state(camera_id) == "ready" and app.status(camera_id)["exposure_search"] is None
+        for camera_ids in (None, [camera_id]):
+            refused = press(app, camera_ids)
+            assert refused.status_code == 422, refused.text
+            assert "the exposure search does not run on the OpenCV source of this system" in refused.text
+    finally:
+        app.close()

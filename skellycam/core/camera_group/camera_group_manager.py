@@ -49,6 +49,7 @@ class CameraGroupManager:
     detected_cameras: dict[CameraIdString, CameraDeviceInfo] = field(default_factory=dict)  # U17 (c)
     closing: bool = False
     closed_diagnostics: dict = field(default_factory=dict)  # the last dicts of each camera of a closed group (F4)
+    searching: bool = False  # an exposure search of the endpoint runs (camera-requests.md 1.5)
     camera_groups: dict[CameraGroupIdString, CameraGroup] = field(default_factory=dict)
     camera_group_framerate_subscriptions: dict[CameraGroupIdString, TopicSubscriptionQueue] = field(
         default_factory=dict
@@ -211,6 +212,39 @@ class CameraGroupManager:
         for item in warnings:
             logger.warning(item["text"])
         return warnings, rates_known
+
+    async def search_exposure(self, camera_ids: list | None = None) -> dict:
+        """`POST /camera/group/exposure/auto` (camera-requests.md 1.5) [B18]: with no IDs each selected camera that
+        streams, else the named cameras. 409 and 422 by the rules of 1.5; a camera that does not stream is named in
+        `not_streaming`."""
+        if not self.camera_groups:
+            raise RequestRefused(409, "No camera group runs")
+        group = next(iter(self.camera_groups.values()))
+        statuses = group.cameras.orchestrator.camera_statuses
+        unknown = [camera_id for camera_id in camera_ids or () if camera_id not in group.configs]
+        if unknown:
+            raise RequestRefused(422, "These cameras are not selected: " + ", ".join(unknown))
+        if group.take is not None or any(status.recording_in_progress.value for status in list(statuses.values())):
+            raise RequestRefused(409, "A recording runs: the exposure cannot change")  # D36, 1.1 [G4]
+        blocked = [f"camera {camera_id} is {status.state}" for camera_id, status in list(statuses.items())
+                   if status.state in ("starting", "waiting", "adjusting")]
+        if self.searching or blocked:
+            raise RequestRefused(409, "An exposure search cannot start now: " + "; ".join(blocked or ["a search runs"]))
+        named = list(camera_ids or group.configs)
+        opencv = [camera_id for camera_id in named if statuses[camera_id].info_dict().get("searches") is False]
+        if opencv and (camera_ids or len(opencv) == len(named)):  # 1.7 [K2]: the button skips them when others can
+            raise RequestRefused(422, "the exposure search does not run on the OpenCV source of this system: "
+                                 + ", ".join(opencv))
+        streaming = [camera_id for camera_id in named if camera_id not in opencv
+                     and statuses[camera_id].state in ("ready", "too_slow", "checking")]
+        self.searching = True
+        try:
+            response = await group.search_exposure(streaming)
+        finally:
+            self.searching = False
+        response["not_streaming"] = [camera_id for camera_id in named if camera_id not in opencv
+                                     and camera_id not in streaming]
+        return response
 
     def get_camera_group(self, camera_group_id: CameraGroupIdString) -> CameraGroup:
         """Retrieve a camera group by its ID."""
