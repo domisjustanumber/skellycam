@@ -1488,6 +1488,34 @@ def test_a_second_shutdown_request_starts_no_second_close(monkeypatch, tmp_path)
     assert not [m for m in logs.messages(logging.ERROR) if "No recording runs" in m]
 
 
+@pytest.mark.capture_timing
+def test_a_shutdown_during_a_take_ends_each_camera_process_within_its_bound(monkeypatch, tmp_path):
+    """Fix lane D: `/shutdown` during a take of three cameras with PROCESS workers and fake sources. Each camera
+    process has ended, and the kill flag is set, within 3 s of the request (measured 2026-11-21: 0.27 s to
+    0.29 s, also with a diagnostics dict of 600 `frame_log` rows). A real camera can add the time of its own
+    close steps."""
+    from fastapi import FastAPI
+    from fastapi.testclient import TestClient
+
+    import skellycam.core.camera_group.camera_group_manager as manager_module
+    from skellycam.api.http.app.shutdown import shutdown_router
+
+    monkeypatch.setattr(logging.Logger, "api", logging.Logger.info, raising=False)
+    with capture_app(monkeypatch, [FakeScript() for _ in range(3)], workers="process") as app:
+        ready_app_steps(app)
+        monkeypatch.setattr(manager_module, "_CAMERA_GROUP_MANAGER", app.manager)
+        server = FastAPI()
+        server.state.global_kill_flag = app.kill
+        server.include_router(shutdown_router, prefix="/skellycam")
+        assert app.record_start(tmp_path).status_code == 200
+        time.sleep(1.0)
+        processes = [worker.worker for worker in app.group.cameras.camera_workers.values()]
+        with TestClient(server) as client:
+            assert client.get("/skellycam/shutdown").status_code == 200
+            app.wait(lambda: app.kill.value and not any(p.is_alive() for p in processes), "the end", timeout=3.0)
+    assert take_manifest(tmp_path)["state"] == "finished"
+
+
 def test_the_kill_flag_is_set_when_the_close_before_exit_fails(monkeypatch):
     """Round 5, item 7: the background close of the shutdown endpoint raises; its `finally` still sets the kill
     flag, so the app ends."""
