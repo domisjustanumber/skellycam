@@ -279,7 +279,8 @@ def fake_capture(fourcc="YUY2"):
     import cv2
 
     values = {cv2.CAP_PROP_FRAME_WIDTH: 640, cv2.CAP_PROP_FRAME_HEIGHT: 480, cv2.CAP_PROP_EXPOSURE: -6,
-              cv2.CAP_PROP_FPS: 30.0, cv2.CAP_PROP_FOURCC: float(cv2.VideoWriter.fourcc(*fourcc) if fourcc else 0)}
+              cv2.CAP_PROP_FPS: 30.0, cv2.CAP_PROP_FOURCC: float(
+                  fourcc if isinstance(fourcc, int) else cv2.VideoWriter.fourcc(*fourcc) if fourcc else 0)}
 
     class Capture(cv2.VideoCapture):
         released = 0
@@ -306,15 +307,25 @@ def fake_capture(fourcc="YUY2"):
     return Capture()
 
 
-@pytest.mark.parametrize(("delivered", "reported"), [("YUY2", "YUY2"), (None, "MJPG")])
-def test_the_extracted_config_reports_the_fourcc_that_the_camera_delivers(delivered, reported):
-    """Fix lane I: the config that OpenCV reports after the open has the FOURCC of `CAP_PROP_FOURCC`, not the default
-    of the config; a backend that gives 0 keeps the default (MJPG)."""
+@pytest.mark.parametrize(("delivered", "reported", "mode"), [("YUY2", "YUY2", "YUY2"), (None, "MJPG", "BGR"),
+                                                             (-1, "MJPG", "BGR")])
+def test_the_opened_mode_reports_the_fourcc_that_the_camera_delivers(monkeypatch, delivered, reported, mode):
+    """windows-capture.md 14 (e): the opened mode of the OpenCV source (the `mode` of the status, 8.4) and the config
+    that OpenCV reports have the FOURCC of `CAP_PROP_FOURCC`. A backend that gives 0 or a negative value fails no
+    open: the mode says `BGR` and the config keeps its default (MJPG)."""
+    from skellycam.core.camera.capture import opencv_source
+    from skellycam.core.camera.capture.source import CaptureRequest
+    from skellycam.core.camera.config.camera_config import CameraConfig
     from skellycam.core.camera.opencv.opencv_helpers.opencv_extract_config import extract_config_from_cv2_capture
 
     config = extract_config_from_cv2_capture(camera_index=0, camera_id="c1", camera_name="camera",
                                              cv2_capture=fake_capture(delivered))
     assert config.capture_fourcc == reported
+    monkeypatch.setattr(opencv_source, "create_cv2_video_capture", lambda config: (fake_capture(delivered), config))
+    monkeypatch.setattr(opencv_source, "opened_device_path", lambda index: str(index))
+    source = opencv_source.OpenCVSource(CameraConfig(camera_id="c1", camera_index=0))
+    opened = source.open(CaptureRequest(camera_id="c1", width=640, height=480, framerate=30.0, capture_fourcc="MJPG"))
+    assert opened.format == mode
 
 
 def test_the_apply_logs_without_the_trace_level_and_a_failed_apply_releases_the_capture(monkeypatch):

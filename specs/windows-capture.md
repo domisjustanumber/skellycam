@@ -1540,7 +1540,9 @@ Reasons:
 - (d) OpenCV gives no sample time (`NO_SAMPLE_NS`) and no in-use reason; they come from Media
   Foundation.
 - (e) Uncompressed modes, the full mode list and the `IAM`/`IKsControl` controls come through the
-  Media Foundation source. The OpenCV source gives BGR and no mode list.
+  Media Foundation source. The OpenCV source gives BGR and no mode list. Its opened mode (the `mode`
+  of the status, 8.4) has the FOURCC that `CAP_PROP_FOURCC` gives, or `BGR` when the backend gives 0 or a
+  negative value [ADR-QJH6](../decisions/entries/QJH6-choices-of-the-fix-lane.md).
 - (f) The DirectShow device path exists on Windows only (U1).
 - (g) On Linux and macOS, the limit of libjpeg warnings already works in the camera process; T-RING-46
   runs there in the ring tests.

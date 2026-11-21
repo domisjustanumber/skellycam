@@ -22,7 +22,10 @@ The fix lane makes small fixes. The supervisor gave each rule. The agent made th
    heartbeat value, the global kill flag, the group flags and the first frame of a take have no lock
    either. The end of a take waits at most 0.5 s for the lock of the last frame, then ends as an error
    ([`unix-capture.md`](../../specs/unix-capture.md) 4.10).
-4. H. A record start that fails after `start_take` returned keeps `"ended_with_error"` and the summary
+4. I. The opened mode of the OpenCV source (the `mode` of the status) has the FOURCC of `CAP_PROP_FOURCC`,
+   or `BGR` when the backend gives 0 or a negative value
+   ([`windows-capture.md`](../../specs/windows-capture.md) 14 (e)).
+5. H. A record start that fails after `start_take` returned keeps `"ended_with_error"` and the summary
    of the earlier take, as a refusal before it does. Only a record start that succeeds drops that
    summary ([`recorder.md`](../../specs/recorder.md) 8.4). `ended_take_summary.summary` gives a NaN
    statistic as null, as the stop response does.
@@ -39,7 +42,8 @@ The fix lane makes small fixes. The supervisor gave each rule. The agent made th
    needs no lock. A JSON array needs its lock against a torn read. The review of the fix lane measured
    2.2 % torn reads with no lock for good after one slow holder, and a decode error in the websocket
    sender ended the app: thus no flag for good while the process lives, and readers that never raise.
-4. H. The supervisor found the earlier rule a fault: a failed start dropped a summary that no client had
+4. I. The FOURCC in the config of `extract_config_from_cv2_capture` reached no reader: the opened mode does.
+5. H. The supervisor found the earlier rule a fault: a failed start dropped a summary that no client had
    fetched, and logged "A new take starts" for a take that did not start.
 
 ## Alternatives rejected
