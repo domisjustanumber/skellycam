@@ -3,8 +3,10 @@
 One loop in each camera process serves each source (D6). The loop reads the time only through the
 module name `perf_counter_ns`, so that a test can give it a virtual clock (ADR-HP7D item 12).
 """
+import hashlib
 import logging
 import os
+import pickle
 import queue
 import threading
 import time
@@ -18,11 +20,13 @@ from skellycam.core.camera.capture import rate_check
 from skellycam.core.camera.capture.modes import NO_FLOOR_MODE, at_floor, rates_equal
 from skellycam.core.camera.capture.source import (
     BOUNDED_CALL_LIMIT_S,
+    HASH_COUNT,
     CapturedFrame,
     CaptureFailure,
     CaptureRequest,
     ControlSetting,
     ControlState,
+    empty_diagnostics,
 )
 from skellycam.core.camera.config.camera_config import CameraConfig
 from skellycam.core.camera.config.image_resolution import ImageResolution
@@ -40,7 +44,11 @@ from skellycam.core.ipc.frame_ring import (
     rotation_to_cw_deg,
 )
 from skellycam.core.ipc.pubsub.pubsub_manager import TopicTypes
-from skellycam.core.ipc.pubsub.pubsub_topics import DeviceExtractedConfigMessage, RecordingFinishedMessage
+from skellycam.core.ipc.pubsub.pubsub_topics import (
+    DeviceExtractedConfigMessage,
+    DiagnosticsMessage,
+    RecordingFinishedMessage,
+)
 from skellycam.core.take_recorder import (
     CameraTakeWriter,
     RecorderFrame,
@@ -63,6 +71,8 @@ RECOMMEND_OFFSET = -1  # 11.1, decision H: one step darker than the nearest valu
 MIN_EXPOSURE = -12  # 11.1: the lowest value of the search, in log base 2 seconds
 NUMBER_OF_FRAMES_TO_SETTLE = 10  # 11.1: frames at each value before the sample
 TARGET_BRIGHTNESS = 127.5  # 11.1: half of 255
+DIAGNOSTICS_INTERVAL_NS = 1_000_000_000  # unix-capture.md 4.2 item 2: one dict each second
+DIAGNOSTICS_LIMIT_BYTES = 32 * 1024  # the pickled message; a larger dict is not sent
 
 
 class _Stop(Exception):
@@ -133,6 +143,15 @@ class CameraLoop:
         self._failure_lock = threading.Lock()
         self.failed = False
         self.end_state: str | None = None  # the state that the end sets after the close
+        # The diagnostics of the loop (unix-capture.md 4.2 item 3, 4.6.2 D-10, D-11)
+        self.next_diagnostics_ns = 0
+        self.diagnostics_logged = False  # one log line for a dict over the limit or a failed dict
+        self.failure_code = self.failure_stage = None
+        self.encoded = self.decoded_closed = self.dht_inserted = 0
+        self.hash_trigger: str | None = None
+        self.hashes: list[tuple[int, str]] = []  # (source_frame_number, SHA-256) of the bytes of the ring and recorder
+        self.dqt_hashes: list[str] = []
+        self.dht_present: bool | None = None
 
     # ----- the run -----
 
@@ -171,6 +190,10 @@ class CameraLoop:
     def _pass(self) -> None:
         if self.hung.is_set():
             raise _Hung()
+        now = perf_counter_ns()
+        if now >= self.next_diagnostics_ns:
+            self.next_diagnostics_ns = now + DIAGNOSTICS_INTERVAL_NS
+            self._publish_diagnostics()
         self._check_updates()
         if self.status.state == "waiting":
             self._wait_pass()
@@ -215,6 +238,7 @@ class CameraLoop:
 
     def _start_up(self) -> None:
         self.started = False
+        self.encoded = self.decoded_closed = self.dht_inserted = 0  # the counters of D-10 and D-11 count each open
         self.stage = "open"
         self.status.set_state("starting")
         self.status.update_info(failure=None, measured_fps=None)
@@ -268,6 +292,8 @@ class CameraLoop:
         self.stage = "streaming"
         self.status.set_state("waiting")
         self.control = _ControlThread(self)
+        self._publish_diagnostics()  # at the end of the open
+        self.next_diagnostics_ns = perf_counter_ns() + DIAGNOSTICS_INTERVAL_NS
 
     def _check_deadline_of_start(self, deadline: int) -> None:
         if not self.ipc.should_continue or self.status.should_close.value:
@@ -342,6 +368,7 @@ class CameraLoop:
         self.status.frame_count.value = count
         self.ring_count = 0
         self.status.connected.value = True
+        self._arm_hashes("ready")  # the first move to `ready` of this open (D-11); a live change does not arm
         self.status.set_state("ready")
 
     def _attach_rings(self) -> None:
@@ -369,6 +396,7 @@ class CameraLoop:
             image = frame.payload
             payload = cv2.imencode(".jpg", image, JPEG_Q90)[1].tobytes()
             delivered_len = len(payload)
+            self.encoded += 1
         else:
             payload, delivered_len = frame.payload, frame.delivered_len
         payload, flags = check_jpeg(payload, delivered_len=delivered_len, driver_error=frame.driver_error)
@@ -376,6 +404,10 @@ class CameraLoop:
             flags |= FrameFlag.DISCONTINUITY  # D34
         if not flags & ERROR_FLAGS:
             self.last_good_payload = payload
+        if flags & FrameFlag.DHT_INSERTED:
+            self.dht_inserted += 1
+        if len(self.hashes) < HASH_COUNT and (self.hash_trigger == "ready" or (self.hash_trigger and should_record)):
+            self._hash(payload, frame.source_frame_number, flags)
         fields = dict(frame_number=self.ring_count, arrival_ns=frame.arrival_ns, sample_ns=frame.sample_ns,
                       source_frame_number=frame.source_frame_number, flags=int(flags),
                       rotation_cw_deg=rotation_to_cw_deg(self.config.rotation))
@@ -518,6 +550,7 @@ class CameraLoop:
             self.status.update_info(writer_failure=text)
             return
         self.take_failed = False
+        self._arm_hashes("recording")  # D-11: the recorded frames of each record start
         self.status.recording_in_progress.value = True  # the main process unpauses when each camera has it
 
     def _give(self, frame: RecorderFrame | None) -> None:
@@ -614,11 +647,13 @@ class CameraLoop:
         self.ipc.report_setup_failure(report)
         self.status.update_info(failure=dict(camera_id=report.camera_id, stage=report.stage,
                                              reason=report.reason[:2048], code=failure.code))
+        self.failure_code, self.failure_stage = failure.code, report.stage
         if at_end and not self.started:
             self.end_state = "failed"
         else:
             self.status.set_state("dead" if self.started else "failed")
         logger.warning(str(report))
+        self._publish_diagnostics()
 
     def _finish_take(self) -> None:
         if self.take_writer is None:
@@ -651,6 +686,8 @@ class CameraLoop:
                     except CaptureFailure as failure:
                         self._fail(failure)
                         hung = failure.hung
+                    if not hung:
+                        self._publish_diagnostics()  # at the close
             if self.end_state:
                 self.status.set_state(self.end_state)
             self._close_rings()
@@ -667,6 +704,7 @@ class CameraLoop:
     def _close_rings(self) -> None:
         if self.decode_stage is not None:
             self.decode_stage.stop()
+            self.decoded_closed += self.decode_stage.decoded
             self.decode_stage = None
         if self.bgr_ring_writer is not None:
             self.bgr_ring_writer.close()
@@ -689,6 +727,45 @@ class CameraLoop:
             if threading.current_thread() is not control.thread:
                 control.thread.join(BOUNDED_CALL_LIMIT_S + 1.0)
 
+    # ----- diagnostics (unix-capture.md 4.2 items 2 and 3) -----
+
+    def _arm_hashes(self, trigger: str) -> None:
+        """D-11: a new set of 30 hashes replaces the old set."""
+        self.hashes, self.dqt_hashes, self.dht_present, self.hash_trigger = [], [], None, trigger
+
+    def _hash(self, payload: bytes, source_frame_number: int, flags: int) -> None:
+        self.hashes.append((source_frame_number, hashlib.sha256(payload).hexdigest()))
+        self.dqt_hashes.append(hashlib.sha256(dqt_segments(payload)).hexdigest())
+        if not flags & ERROR_FLAGS:
+            self.dht_present = bool(self.dht_present) or not flags & FrameFlag.DHT_INSERTED
+
+    def _loop_diagnostics(self) -> dict:
+        stage, hashes, dqt = self.decode_stage, list(self.hashes), list(self.dqt_hashes)
+        data = dict(decoded_by_skellycam=self.decoded_closed + (stage.decoded if stage is not None else 0),
+                    encoded_by_skellycam=self.encoded, dht_inserted=self.dht_inserted,
+                    sha256_trigger=self.hash_trigger, dqt_sha256=dqt[0] if dqt else None,
+                    dqt_distinct=len(set(dqt)) if dqt else None, dht_present=self.dht_present)
+        for i in range(HASH_COUNT):
+            data[f"sha256_frame_{i:02d}"], data[f"sha256_{i:02d}"] = hashes[i] if i < len(hashes) else (None, None)
+        return data
+
+    def _publish_diagnostics(self) -> None:
+        """The full dict to the main process. A dict over 32 KiB (pickled) is not sent, and is logged one time."""
+        try:
+            data = self.source.diagnostics() if self.source is not None else empty_diagnostics()
+            data.update(self._loop_diagnostics())
+            if data.get("fail_code") is None and self.failure_code is not None:
+                data.update(fail_code=self.failure_code, fail_stage=self.failure_stage)
+            message = DiagnosticsMessage(camera_id=self.camera_id, diagnostics=data)
+            size = len(pickle.dumps(message))
+            if size > DIAGNOSTICS_LIMIT_BYTES:
+                raise ValueError(f"the diagnostics have {size} bytes, over the limit of {DIAGNOSTICS_LIMIT_BYTES}")
+            self.ipc.pubsub.topics[TopicTypes.DIAGNOSTICS].publish(message, print_log=False)
+        except Exception as error:  # the diagnostics never stop a camera
+            if not self.diagnostics_logged:
+                self.diagnostics_logged = True
+                logger.warning(f"Camera {self.camera_id}: diagnostics not sent: {type(error).__name__}: {error}")
+
     # ----- publishing -----
 
     def _publish_config(self, failed_change: str | None = None) -> None:
@@ -698,6 +775,20 @@ class CameraLoop:
     def _publish_controls(self, readback: ControlState) -> None:
         self.status.update_info(controls={name: dict(present=value.present, auto=value.auto, value=value.value)
                                           for name, value in readback.items()})
+
+
+def dqt_segments(payload: bytes) -> bytes:
+    """The DQT segments of a JPEG before its first SOS (D-11 `dqt_sha256`)."""
+    found, i, n = [], 2, len(payload)
+    while i + 4 <= n and payload[i] == 0xFF and payload[i + 1] != 0xDA:
+        if payload[i + 1] == 0xFF:  # a fill byte before a marker
+            i += 1
+            continue
+        end = i + 2 + int.from_bytes(payload[i + 2:i + 4], "big")
+        if payload[i + 1] == 0xDB:
+            found.append(payload[i:end])
+        i = end
+    return b"".join(found)
 
 
 class _ControlThread:

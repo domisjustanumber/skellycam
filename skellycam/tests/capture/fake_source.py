@@ -51,7 +51,7 @@ def product_types():
         ControlValue=source.ControlValue, CaptureFailure=source.CaptureFailure,
         WaitingPlace=source.CaptureWaitingPlace, FIRST_FRAME_TIMEOUT_S=source.FIRST_FRAME_TIMEOUT_S,
         BOUNDED_CALL_LIMIT_S=source.BOUNDED_CALL_LIMIT_S, NativeMode=modes.NativeMode,
-        choose_mode=modes.choose_mode, NO_SAMPLE_NS=ring.NO_SAMPLE_NS)
+        choose_mode=modes.choose_mode, NO_SAMPLE_NS=ring.NO_SAMPLE_NS, empty_diagnostics=source.empty_diagnostics)
 
 
 def spec_camera_id(link):
@@ -232,6 +232,8 @@ class FakeScript:
     close_delay_s: float = 0.0  # the close of the source takes this long (clock time)
     exit_at: str | None = None  # "open", or "frame:<n>": the camera process ends there with os._exit(3)
     name: str | None = None  # the friendly name in the detection result; None: "Fake camera <index>"
+    no_dht: bool = False  # each JPEG has no DHT segment, as many UVC cameras send it
+    diagnostics: dict | None = None  # keys that `diagnostics()` adds to the null source keys and `frames`
 
 
 class FakeLog:
@@ -278,6 +280,17 @@ def synthetic_jpeg(width, height, gray=None):
             image = np.full((height, width, 3), gray, np.uint8)
         _JPEG_CACHE[key] = cv2.imencode(".jpg", image, [int(cv2.IMWRITE_JPEG_QUALITY), 90])[1].tobytes()
     return _JPEG_CACHE[key]
+
+
+def without_dht(jpeg):
+    """The JPEG with each DHT segment before SOS removed (a decoder then needs the standard tables)."""
+    parts, i = [jpeg[:2]], 2
+    while jpeg[i + 1] != 0xDA:
+        end = i + 2 + int.from_bytes(jpeg[i + 2:i + 4], "big")
+        if jpeg[i + 1] != 0xC4:
+            parts.append(jpeg[i:end])
+        i = end
+    return b"".join(parts) + jpeg[i:]
 
 
 def with_comment(jpeg, frame_number):
@@ -456,6 +469,10 @@ class FakeSource:
         self._opened = False
         self.clock.leave()
 
+    def diagnostics(self):
+        """The null source keys of unix-capture.md 4.6.2, `frames`, and the keys of the script."""
+        return {**self.types.empty_diagnostics(), "frames": len(self.log.taken), **(self.script.diagnostics or {})}
+
     @property
     def replaced_count(self):
         if self._place is None:
@@ -612,7 +629,8 @@ class FakeSource:
     def _make_frame(self, k, arrival):
         types = self.types
         width, height = self._mode.width, self._mode.height
-        payload = with_comment(synthetic_jpeg(width, height, self._gray()), k)
+        jpeg = synthetic_jpeg(width, height, self._gray())
+        payload = with_comment(without_dht(jpeg) if self.script.no_dht else jpeg, k)
         if k in self.script.cut_off_frames or self._cut_next:
             self._cut_next = False
             self.cut_frames.append(k)

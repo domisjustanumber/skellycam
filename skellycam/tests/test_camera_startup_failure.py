@@ -26,6 +26,7 @@ def ipc():
         group_id='test', pubsub=PubSubTopicManager(topics={}),
         extracted_config_subscription=multiprocessing.Queue(),
         recording_finished_subscription=multiprocessing.Queue(),
+        diagnostics_subscription=multiprocessing.Queue(),
         global_kill_flag=multiprocessing.Value('b', False),
         heartbeat_timestamp=multiprocessing.Value('d', time.perf_counter()),
     )
@@ -105,7 +106,8 @@ def test_worker_setup_reports_original_open_error(monkeypatch):
         response = app.apply([app.config(camera_id)])
         assert response.status_code == 200, response.text
         app.wait_state(camera_id, 'failed')
-        failure = {'camera_id': camera_id, 'stage': 'open', 'reason': 'FailedToOpenCameraException: camera access denied'}
+        failure = {'camera_id': camera_id, 'stage': 'open', 'reason': 'FailedToOpenCameraException: camera access denied',
+                   'code': 'open-failed'}
         assert response.json()['camera_failures'][camera_id] == failure
         assert app.status(camera_id)['failure'] == failure
         assert not app.kill.value

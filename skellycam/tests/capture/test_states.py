@@ -397,6 +397,7 @@ def test_t_cap_38_failure_object_first_failure_and_order():
     ipc = CameraGroupIPC(group_id="t-cap-38", pubsub=PubSubTopicManager(topics={}),
                          extracted_config_subscription=multiprocessing.Queue(),
                          recording_finished_subscription=multiprocessing.Queue(),
+                         diagnostics_subscription=multiprocessing.Queue(),
                          global_kill_flag=multiprocessing.Value("b", False),
                          heartbeat_timestamp=multiprocessing.Value("d", time.perf_counter()))
     first = CameraSetupFailure(camera_id="a1b2", stage="open", reason="in use by another program")

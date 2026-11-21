@@ -74,6 +74,7 @@ Choices of the agent:
 22. `test:cameras` runs `src/store/slices/**/*.test.ts` in the jobs of `player.yml`, whose triggers
     get the slices and A.
 23. The sentence of W 16.2 on the two pause test files stays: both files still check the 404.
+24. Step 2: the diagnostics use their own topic `TopicTypes.DIAGNOSTICS`, not that of items 2, 12.
 
 ## Reason
 

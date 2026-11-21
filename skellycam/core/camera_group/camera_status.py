@@ -36,6 +36,8 @@ class CameraStatus:
     info: Any = field(default_factory=lambda: multiprocessing.Array("c", INFO_SIZE))
     # JSON that only the main process writes: the warning items of the recording that runs (11.3).
     warnings: Any = field(default_factory=lambda: multiprocessing.Array("c", INFO_SIZE))
+    # The main process only: the counter subset of the newest diagnostics of the camera (unix-capture.md 4.2 item 2).
+    diagnostics: dict = field(default_factory=dict)
 
     @property
     def state(self) -> str | None:
@@ -115,4 +117,5 @@ class CameraStatus:
             "measured_fps": info.get("measured_fps"),
             "warnings": self.warning_items(),
             "controls": info.get("controls"),
+            "diagnostics": self.diagnostics,
         }

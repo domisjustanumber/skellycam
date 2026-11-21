@@ -15,6 +15,7 @@ from skellycam.core.camera.capture.source import (
     CaptureFailure,
     CaptureRequest,
     ControlSetting,
+    empty_diagnostics,
     ControlState,
     ControlValue,
     OpenedMode,
@@ -120,3 +121,6 @@ class OpenCVSource:
     @property
     def replaced_count(self) -> int:
         return 0  # a pull source keeps no waiting place (4.4)
+
+    def diagnostics(self) -> dict:
+        return empty_diagnostics("opencv")  # unix-capture.md 4.2 item 2: `backend`, null for each other key

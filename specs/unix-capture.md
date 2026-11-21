@@ -728,12 +728,11 @@ fake-layer tests run on Windows, Linux and macOS, as the parity ruling asks [U].
    so the JSON breaks (`camera_status.py`). The path [ADR-AC5B](../decisions/entries/AC5B-choices-of-the-third-consistency-check.md):
    - The camera process sends the full dict (the source keys and the keys of the shared loop, item 3)
      to the main process one time per second, and at the end of `open`, at a failure and at the
-     close. It uses the existing channel that carries a take error from the camera loop: the topic
-     `TopicTypes.RECORDING_FINISHED`, read in the main process from
-     `CameraGroupIPC.recording_finished_subscription` by `CameraGroup._take_finished` in the watch
-     thread (`_watch_workers`). The message kind `diagnostics` is a `RecordingFinishedMessage` with
-     the new field `diagnostics: dict | None = None` set, and `result` and `error` `None`.
-     `_take_finished` reads that field first, and never puts such a message in `finished`.
+     close. It uses its own topic, `TopicTypes.DIAGNOSTICS`, with the message `DiagnosticsMessage`
+     (`camera_id`, `diagnostics: dict`), through the same pubsub mechanism as a take error. The main
+     process reads it from `CameraGroupIPC.diagnostics_subscription` by `CameraGroup._take_diagnostics`
+     in the watch thread (`_watch_workers`). Thus no diagnostics message goes into `finished`
+     [ADR-AC5B](../decisions/entries/AC5B-choices-of-the-third-consistency-check.md) item 24.
    - The pickled message is at most 32 KiB. The largest dict (about 150 keys, 64 `frame_log` rows and
      60 hash keys) is about 14 kB. A dict over the limit is not sent, and the camera process logs it
      one time.
@@ -1572,7 +1571,7 @@ facts of macOS only.
 | T-UNX-67 | fake | An evidence row `known-bad` for a camera model and the native backend. | Default: that camera opens with OpenCV; the others native [U]. |
 | T-UNX-68 | fake | "Apply again" for a camera whose old process is still alive. | `previous-process-alive`, stage `open`; no open of the camera. |
 | T-UNX-69 | fake | The source parts of 4.5 (the camera requests spec owns the tests of the search, T-REQ-01, 06, 12, 19, 41): a native camera with no manual exposure at open; a changed config for a camera in `adjusting`; a start-up rate failure of a camera in Manual. | The camera with no manual exposure opens with the warning `no_manual_exposure` and never enters `adjusting`; the changed config gets 409; the reason has the form of [req 1.5a], with `declared_fps` and `measured_fps`. |
-| T-UNX-70 | fake | A fake source and the OpenCV fake in real camera processes: `CameraStatus.serialize()`, the `app_state` message, `CameraGroup.diagnostics(camera_id)` and `CameraGroupManager.diagnostics()`; a fake whose dict has 64 `frame_log` rows and 60 hash keys; a fake whose dict is over 32 KiB. | A new dict comes each second through the message kind `diagnostics` (4.2 item 2); `serialize()` and `app_state` hold only the counter subset, with no `frame_log` and no hash key; the accessors return the full newest dict; the 64-row dict is under 32 KiB and arrives whole; the dict over the limit is not sent and gives one log line; `CameraStatus.info` holds no diagnostics; no diagnostics message goes into `finished`; the OpenCV dict has `backend` `opencv` and null for every other source key. |
+| T-UNX-70 | fake | A fake source and the OpenCV fake in real camera processes: `CameraStatus.serialize()`, the `app_state` message, `CameraGroup.diagnostics(camera_id)` and `CameraGroupManager.diagnostics()`; a fake whose dict has 64 `frame_log` rows and 60 hash keys; a fake whose dict is over 32 KiB. | A new dict comes each second through the topic `TopicTypes.DIAGNOSTICS` (4.2 item 2); `serialize()` and `app_state` hold only the counter subset, with no `frame_log` and no hash key; the accessors return the full newest dict; the 64-row dict is under 32 KiB and arrives whole; the dict over the limit is not sent and gives one log line; `CameraStatus.info` holds no diagnostics; no diagnostics message goes into `finished`; the OpenCV dict has `backend` `opencv` and null for every other source key. |
 | T-UNX-71 | fake | MJPG passthrough with the fake source; the OpenCV fake (re-encode); a BGR ring on. | `encoded_by_skellycam` 0 and the frame count; `decoded_by_skellycam` counts the decode stage. |
 | T-UNX-72 | fake | D-11: a camera reaches `ready`, gets a live change that ends in `ready` again, then records; one camera sends no DHT. | 30 hashes after the first `ready` with their `source_frame_number`; the live change does not replace them; a new set at the record start; each hash equals the SHA-256 of the ring slot and of the MKV block of that frame; no warm-up frame is hashed; `dht_inserted` counts the DHT camera. |
 | T-UNX-73 | fake | The OpenCV source on Linux with a native detection result; on macOS with a device order. | Linux: `cv2.VideoCapture('/dev/videoN', CAP_V4L2)` of the detected node; macOS: the index of the matching `uniqueID`. |

@@ -5,6 +5,7 @@ This module does not import `comtypes`. Each system can import it.
 
 import dataclasses
 import threading
+from collections import deque
 from dataclasses import dataclass
 from functools import partial
 from typing import Protocol
@@ -81,7 +82,7 @@ class CaptureFailure(Exception):
 
 
 class CaptureSource(Protocol):
-    """The four calls of 4.1 and `replaced_count`."""
+    """The four calls of 4.1, `replaced_count` and `diagnostics()` (unix-capture.md 4.2 item 2)."""
 
     def open(self, request: CaptureRequest) -> OpenedMode: ...
 
@@ -93,6 +94,8 @@ class CaptureSource(Protocol):
 
     @property
     def replaced_count(self) -> int: ...
+
+    def diagnostics(self) -> dict: ...
 
 
 class CaptureWaitingPlace:
@@ -131,3 +134,76 @@ class CaptureWaitingPlace:
             if frame is None and self._error is not None:
                 raise self._error
             return frame
+
+
+# ----- diagnostics (specs/unix-capture.md 4.6) -----
+
+CONTROL_NAMES = ("exposure", "gain", "focus", "white_balance", "power_line")
+_CONTROL_FIELDS = ("present", "min", "max", "step", "default", "auto_supported", "native_id", "value", "auto", "set_rc",
+                   "get_rc", "before", "before_auto", "route_proven")
+HASH_COUNT = 30  # D-11
+# The keys of the shared loop (4.2 item 3): D-10 and D-11.
+LOOP_KEYS = ("decoded_by_skellycam", "encoded_by_skellycam",
+             *(f"sha256_{i:02d}" for i in range(HASH_COUNT)), *(f"sha256_frame_{i:02d}" for i in range(HASH_COUNT)),
+             "sha256_trigger", "dht_inserted", "dqt_sha256", "dqt_distinct", "dht_present")
+SOURCE_KEYS = (
+    "backend",
+    "requested_fourcc", "granted_fourcc", "requested_w", "requested_h", "granted_w", "granted_h", "requested_fps_num",
+    "requested_fps_den", "granted_fps_num", "granted_fps_den", "delivered", "video_settings",
+    "bytesused_equals_payload",  # D-1
+    "clock", "tstamp_src", "ts_conversion", "sample_time_kept", "sample_minus_arrival_p5_ms",
+    "sample_minus_arrival_p50_ms", "sample_minus_arrival_p95_ms", "later_than_arrival", "frame_log",  # D-2
+    "frames", "sequence_available", "sequence_gaps", "sequence_lost", "discontinuity_flags", "error_flag_frames",
+    "zero_bytes", "drops_reported", "poll_timeouts", "format_changes", "long_intervals",
+    "long_intervals_with_seq_gap",  # D-3
+    *(f"{c}_{f}" for c in CONTROL_NAMES for f in _CONTROL_FIELDS),
+    "exposure_unit", "exposure_native_at_m7", "control_path", "ae_off_ok", "af_off_ok", "ae_back_on_after_s",
+    "restore_ok", "restore_failed",  # D-4
+    "fail_code", "native_code", "native_domain", "call", "fail_stage", "failed_calls", "busy_call",  # D-5
+    "t_enumerate_ms", "t_open_ms", "t_set_mode_ms", "t_buffers_ms", "t_stream_on_ms", "t_first_frame_ms",
+    "t_controls_ms", "t_close_ms",  # D-6
+    "id_source", "has_serial",  # D-7
+    "access", "tcc", "center_stage", "portrait", "studio_light", "reactions", "edge_light",  # D-8
+    "usb_alt",  # D-9
+    "kernel", "driver", "nodrop_param", "clock_param", "hwtimestamps_param", "buffers_requested", "buffers_granted",
+    "interval_types", "nodes_seen", "nodes_skipped_meta", "modes_listed", "mjpg_sizes",  # Linux
+    "macos", "subtypes", "notifications_seen", "sync_clock_is_host",  # macOS
+)
+DIAGNOSTIC_KEYS = SOURCE_KEYS + LOOP_KEYS
+# The subset of `CameraStatus.serialize()` and `app_state` (4.2 item 2): no `frame_log`, no hash.
+COUNTER_KEYS = ("backend", "frames", "sequence_gaps", "sequence_lost", "discontinuity_flags", "error_flag_frames",
+                "zero_bytes", "drops_reported", "poll_timeouts", "format_changes", "long_intervals",
+                "long_intervals_with_seq_gap", "later_than_arrival", "decoded_by_skellycam", "encoded_by_skellycam",
+                "dht_inserted", "restore_ok", "restore_failed", "fail_code")
+FRAME_LOG_ROWS = 64
+DIFFERENCES_KEPT = 256
+
+
+def empty_diagnostics(backend: str | None = None) -> dict:
+    """Every source key, null (4.6.1)."""
+    return {**dict.fromkeys(SOURCE_KEYS), "backend": backend}
+
+
+class FrameLog:
+    """D-2 and D-3 of the frames of one open: `frame_log` (the last 64 rows), the sample-minus-arrival
+    percentiles of the last 256 differences, and `later_than_arrival`. The percentiles run only in `fill`."""
+
+    def __init__(self):
+        self.rows = deque(maxlen=FRAME_LOG_ROWS)
+        self.differences = deque(maxlen=DIFFERENCES_KEPT)
+        self.later_than_arrival = 0
+
+    def add(self, source_frame_number: int, sequence: int | None, raw_ts_ns: int | None, arrival_ns: int,
+            bytesused: int) -> None:
+        self.rows.append([source_frame_number, sequence, raw_ts_ns, arrival_ns, bytesused])
+        if raw_ts_ns is not None:
+            self.differences.append(raw_ts_ns - arrival_ns)
+            self.later_than_arrival += raw_ts_ns > arrival_ns
+
+    def fill(self, diagnostics: dict) -> None:
+        diagnostics["frame_log"] = [list(row) for row in list(self.rows)]
+        diagnostics["later_than_arrival"] = self.later_than_arrival
+        values = sorted(self.differences)
+        for p in (5, 50, 95):
+            diagnostics[f"sample_minus_arrival_p{p}_ms"] = (
+                values[min(len(values) - 1, len(values) * p // 100)] / 1e6 if values else None)

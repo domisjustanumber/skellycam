@@ -39,9 +39,10 @@ def wait_for(predicate, what):
 def bare_group(workers, statuses, loop=None):
     group = CameraGroup.__new__(CameraGroup)  # no camera process, no ring
     group.ipc = SimpleNamespace(group_id="g1", take_setup_failure=lambda: None,
-                                recording_finished_subscription=queue.Queue())
+                                recording_finished_subscription=queue.Queue(), diagnostics_subscription=queue.Queue())
     group.cameras = SimpleNamespace(camera_workers=workers, orchestrator=SimpleNamespace(camera_statuses=statuses))
     group.configs, group.rings, group.ring_infos, group.ring_readers, group.finished = {}, {}, {}, {}, []
+    group.camera_diagnostics = {}
     group._ring_lock, group._stop_watch, group._loop = threading.RLock(), threading.Event(), loop
     return group
 

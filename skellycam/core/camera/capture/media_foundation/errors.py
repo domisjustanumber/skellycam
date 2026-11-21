@@ -48,7 +48,10 @@ def hresult_code(hresult: int, stage: str) -> str:
 
 
 def failure(hresult: int, stage: str) -> CaptureFailure:
-    return CaptureFailure(stage, hresult_reason(hresult), code=hresult_code(hresult, stage))
+    """The failure of an HRESULT. `native_code` is for the diagnostics of the source (unix-capture.md D-5)."""
+    result = CaptureFailure(stage, hresult_reason(hresult), code=hresult_code(hresult, stage))
+    result.native_code = hresult & 0xFFFFFFFF
+    return result
 
 
 def check(hresult: int, stage: str) -> None:

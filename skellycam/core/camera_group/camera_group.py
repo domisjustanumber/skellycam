@@ -18,6 +18,7 @@ from pydantic import BaseModel, ConfigDict
 from skellycam import __version__
 from skellycam.core.camera.camera_manager import CameraManager
 from skellycam.core.camera.camera_worker import CameraState
+from skellycam.core.camera.capture.source import COUNTER_KEYS
 from skellycam.core.camera.capture.camera_loop import needs_reopen
 from skellycam.core.camera.config.camera_config import CameraConfigs, CameraConfig, validate_camera_configs
 from skellycam.core.camera_group.camera_group_ipc import CameraGroupIPC
@@ -118,6 +119,7 @@ class CameraGroup:
     take: Take | None = None  # the take that runs
     ended_take: TakeSummary | None = None  # a take that an error ended; the next stop request returns it
     take_error: tuple | None = None  # (text, camera_id) of the first stall or write error of the take (5.3, 5.4)
+    camera_diagnostics: dict = field(default_factory=dict)  # the newest diagnostics of each camera (unix 4.2 item 2)
     _end_lock: Any = field(default_factory=asyncio.Lock)
     _ring_lock: Any = field(default_factory=threading.RLock)
     _stop_watch: Any = field(default_factory=threading.Event)
@@ -320,6 +322,7 @@ class CameraGroup:
                 while self.ipc.take_setup_failure() is not None:
                     pass  # the status of each camera holds its failure
                 self._take_finished()
+                self._take_diagnostics()
             except Exception as error:
                 logger.exception(f"Camera group {self.id}: the watch could not read the camera queues: {error}")
             for camera_id, worker in list(self.cameras.camera_workers.items()):
@@ -377,6 +380,23 @@ class CameraGroup:
                     future.add_done_callback(self._log_failed_end)
             else:
                 self.finished.append(message)
+
+    def _take_diagnostics(self) -> None:
+        """Keep the newest diagnostics of each camera; the status gets the counter subset (unix-capture.md 4.2)."""
+        statuses = self.cameras.orchestrator.camera_statuses
+        while True:
+            try:
+                message = self.ipc.diagnostics_subscription.get_nowait()
+            except queue.Empty:
+                return
+            self.camera_diagnostics[message.camera_id] = message.diagnostics
+            status = statuses.get(message.camera_id)
+            if status is not None:
+                status.diagnostics = {key: message.diagnostics.get(key) for key in COUNTER_KEYS}
+
+    def diagnostics(self, camera_id: CameraIdString) -> dict:
+        """The newest full diagnostics dict of a camera; `{}` before its first message (unix-capture.md 4.2)."""
+        return self.camera_diagnostics.get(camera_id, {})
 
     @staticmethod
     def _log_failed_end(future) -> None:

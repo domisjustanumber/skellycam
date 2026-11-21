@@ -318,6 +318,11 @@ class CameraGroupManager:
                 return camera_group
         return None
 
+    def diagnostics(self) -> dict:
+        """`{camera_id: dict}` of each camera of each group, the full newest dict (unix-capture.md 4.2 item 2)."""
+        return {camera_id: group.diagnostics(camera_id) for group in list(self.camera_groups.values())
+                for camera_id in group.camera_ids}
+
     def to_state_dict(self) -> dict[CameraGroupIdString, dict]:
         """Convert the CameraGroupManager to a serializable state dictionary."""
         return {

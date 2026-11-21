@@ -40,6 +40,14 @@ class RecordingFinishedMessage(TopicMessageABC):
     error: str | None = None
 
 @dataclass
+class DiagnosticsMessage(TopicMessageABC):
+    """The diagnostics of one camera (unix-capture.md 4.2 item 2): one time per second, at the end of the open,
+    at a failure and at the close. The main process keeps the newest of each camera."""
+    camera_id: CameraIdString
+    diagnostics: dict
+
+
+@dataclass
 class FramerateMessage(TopicMessageABC):
     current_framerate: CurrentFramerate
 
@@ -68,6 +76,11 @@ class RecordingInfoTopic(PubSubTopicABC):
 @dataclass
 class RecordingFinishedTopic(PubSubTopicABC):
     message_type: Type[RecordingFinishedMessage] = RecordingFinishedMessage
+
+
+@dataclass
+class DiagnosticsTopic(PubSubTopicABC):
+    message_type: Type[DiagnosticsMessage] = DiagnosticsMessage
 
 
 @dataclass
