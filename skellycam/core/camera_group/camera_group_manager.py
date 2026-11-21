@@ -20,7 +20,7 @@ from skellycam.core.camera.capture.modes import (
 )
 from skellycam.core.camera.capture.source import CaptureFailure, CaptureRequest
 from skellycam.core.camera.config.camera_config import CameraConfigs, MAX_MANUAL_EXPOSURE
-from skellycam.core.camera_group.camera_group import FALLING_BACK, CameraGroup, RequestRefused, same_config
+from skellycam.core.camera_group.camera_group import REQUEST_RUNS, CameraGroup, RequestRefused, same_config
 from skellycam.core.camera_group.camera_start_failure import describe_start_failure
 from skellycam.core.device_detection.detect_cameras_devices import CameraDeviceInfo, detect_available_cameras
 from skellycam.core.ipc.pubsub.pubsub_manager import TopicTypes
@@ -58,6 +58,7 @@ class CameraGroupManager:
     async def create_and_start_camera_group(self, camera_configs: CameraConfigs) -> CameraGroup:
         """Create a camera group with the provided configuration settings."""
         camera_group, _ = await self._create_and_start(camera_configs)
+        camera_group.request_runs = False
         return camera_group
 
     async def _create_and_start(self, camera_configs: CameraConfigs) -> tuple:
@@ -72,6 +73,7 @@ class CameraGroupManager:
             camera_group.ipc.pubsub.get_subscription(TopicTypes.FRAMERATE)
         )
         self.camera_groups[camera_group.id] = camera_group
+        camera_group.request_runs = True  # camera-requests.md 2.4a item 7: before the first wait; the caller clears it
         try:
             failures = await self.camera_groups[camera_group.id].start()
         except Exception:
@@ -93,6 +95,16 @@ class CameraGroupManager:
         return camera_group, failures
 
     async def create_or_update_camera_group(self, camera_configs: CameraConfigs) -> tuple[CameraGroup, dict, list]:
+        """One change of the cameras at a time (camera-requests.md 2.4a item 7) [ADR-1T0S]: the request sets
+        `request_runs` of its group with no wait after its whole-request check, and this call clears it at the end."""
+        flagged = []
+        try:
+            return await self._create_or_update(camera_configs, flagged)
+        finally:
+            for camera_group in flagged:
+                camera_group.request_runs = False
+
+    async def _create_or_update(self, camera_configs: CameraConfigs, flagged: list) -> tuple[CameraGroup, dict, list]:
         """Check the request as a whole (8.3), then apply it to each camera on its own (U10).
 
         Return the group, the failure object of each camera that failed (8.4) and the warnings (11.3).
@@ -115,6 +127,8 @@ class CameraGroupManager:
         warnings, rates_known = self._check_request(camera_configs, camera_group)
         before, counts = {}, {}  # camera-requests.md 2.4a [ADR-1T0S]: for the fall back to 30 fps
         if camera_group is not None:  # camera-requests.md 1.5 [AC5B]: each apply request of the user clears them
+            camera_group.request_runs = True  # 2.4a item 7: no wait since the check
+            flagged.append(camera_group)
             camera_group.clear_group_warnings()
             camera_group.fall_back_armed = None
             camera_group.request_count += 1  # 2.4a item 7: a fall back of an earlier request does not run
@@ -125,6 +139,7 @@ class CameraGroupManager:
         if camera_group is None:
             selected = {camera_id: config for camera_id, config in camera_configs.items() if config.use_this_camera}
             camera_group, failures = await self._create_and_start(selected)
+            flagged.append(camera_group)  # `_create_and_start` set `request_runs`
         else:
             failures, change_warnings = await camera_group.apply(camera_configs)
             warnings += change_warnings
@@ -216,8 +231,8 @@ class CameraGroupManager:
         if problems:
             raise RequestRefused(422, "; ".join(problems))
         if camera_group is not None:
-            if camera_group.falling_back:  # camera-requests.md 2.4a item 7 [ADR-1T0S]
-                raise RequestRefused(409, FALLING_BACK)
+            if camera_group.request_runs:  # camera-requests.md 2.4a item 7 [ADR-1T0S]
+                raise RequestRefused(409, REQUEST_RUNS)
             statuses = camera_group.cameras.orchestrator.camera_statuses
             recording = [camera_id for camera_id, status in list(statuses.items())
                          if status.recording_in_progress.value]
@@ -255,8 +270,9 @@ class CameraGroupManager:
             raise RequestRefused(409, "A recording runs: the exposure cannot change")  # D36, 1.1 [G4]
         blocked = [f"camera {camera_id} is {status.state}" for camera_id, status in list(statuses.items())
                    if status.state in ("starting", "waiting", "adjusting")]
-        if self.searching or blocked:
-            raise RequestRefused(409, "An exposure search cannot start now: " + "; ".join(blocked or ["a search runs"]))
+        if self.searching or blocked or group.request_runs:  # 1.5; 2.4a item 7 [ADR-1T0S]: a change of the cameras runs
+            raise RequestRefused(409, "An exposure search cannot start now: " + "; ".join(
+                blocked + ([REQUEST_RUNS] if group.request_runs else []) or ["a search runs"]))
         named = list(camera_ids or group.configs)
         opencv = [camera_id for camera_id in named if statuses[camera_id].info_dict().get("searches") is False]
         if opencv and (camera_ids or len(opencv) == len(named)):  # 1.7 [K2]: the button skips them when others can

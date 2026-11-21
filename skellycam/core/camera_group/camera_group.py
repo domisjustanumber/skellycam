@@ -82,7 +82,7 @@ STALL_WATCH_S = 3.0  # over the 2 s of the in-process rule (W 9.5), which closes
 STALL_REASON = "no loop pass for 3 s"
 KILL_AFTER_S = 1.0
 STALL_WATCH_SETTING = "SKELLYCAM_STALL_WATCH"  # "0" turns the watch off; read when a group is made
-FALLING_BACK = "The group falls back to 30 fps. Send the request again when the cameras are ready."  # 2.4a item 7
+REQUEST_RUNS = "Another change of the cameras runs now. Send the request again when the cameras are ready."  # 2.4a 7
 MICROPHONE_REFUSED = "audio recording returns in step 5b; start again with no microphone"  # recorder.md 10 item 13
 WRITER = f"skellycam {__version__.lstrip('v')}"  # SFF-712
 
@@ -144,7 +144,8 @@ class CameraGroup:
     # (camera-requests.md 2.4a items 5 and 7)
     fall_back_armed: tuple | None = None
     request_count: int = 0  # one more at each apply request of the user (2.4a item 7)
-    falling_back: bool = False  # a fall back runs: each apply request and record start gets 409 (2.4a item 7)
+    # A user apply with its start-up fall back, or a fall back, runs: an apply, a record start and a search get 409 (2.4a 7)
+    request_runs: bool = False
     stall_watch: bool = True
     _closing: bool = False  # `close` runs: the watch thread reads the queues but watches no camera (F4)
     _end_lock: Any = field(default_factory=asyncio.Lock)
@@ -608,8 +609,8 @@ class CameraGroup:
                     if not status.ready or status.search_requested.value]  # a search that is asked for (1.5)
         if blocking or self.take is not None:  # a recording starts only when each selected camera is `ready` (8.3)
             raise RequestRefused(409, "A recording needs each selected camera ready: " + "; ".join(blocking or ["a recording runs"]))
-        if self.falling_back:
-            raise RequestRefused(409, FALLING_BACK)
+        if self.request_runs:
+            raise RequestRefused(409, REQUEST_RUNS)
         self.fall_back_armed = None  # camera-requests.md 2.4a item 9: a rate change never disturbs a recording
         folder = Path(recording_info.recording_directory) / recording_info.recording_name
         if folder.is_dir() and any(folder.iterdir()):
@@ -946,20 +947,21 @@ class CameraGroup:
             logger.warning(f"The fall back of camera group {self.id} to 30 fps does not run during a take, a record start "
                            f"or a close")
             return {}, []
-        self.falling_back = True
+        runs, self.request_runs = self.request_runs, True  # inside a user apply (the start-up path) it is set already
         try:
             items = []
             for camera_id, (measured, exposure, fps) in slow.items():
                 text = f"The group runs at 30 fps. Camera {camera_id} " + (
                     "could not set its 60 fps mode." if fps is None else f"found no exposure that keeps {fps:g} fps."
-                    if measured is None else f"measured {measured:.2f} fps in its {fps:g} fps mode at exposure {exposure:g}.")
+                    if measured is None else f"measured {measured:.2f} fps in its {fps:g} fps mode"
+                    + ("." if exposure is None else f" at exposure {exposure:g}."))
                 items.append(dict(kind="rate_fallback", camera_ids=[camera_id], text=text))
                 logger.warning(text)
                 self.add_group_warning(items[-1])
             failures, warnings = await self.apply(configs)
             return failures, items + warnings
         finally:
-            self.falling_back = False
+            self.request_runs = runs
 
     def _watch_fall_back(self) -> None:
         """camera-requests.md 2.4a item 5 [ADR-1T0S]: after an apply request at 60 fps, a camera in `AUTO` whose search
@@ -993,9 +995,9 @@ class CameraGroup:
         """On the event loop, as `_end_after_error`; no response carries the result, so the log gets a failure. The check
         of the request count and the flag of `fall_back` come with no wait between them (2.4a item 7)."""
         try:
-            if request != self.request_count:
+            if request != self.request_count or self.request_runs:
                 logger.warning(f"The fall back of camera group {self.id} to 30 fps does not run: a later request of the "
-                               f"user replaced the request at 60 fps")
+                               f"user replaced the request at 60 fps, or runs now")
             else:
                 await self.fall_back(configs, slow)
         except Exception as error:
