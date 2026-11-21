@@ -163,6 +163,12 @@ def run_of_states(app, camera_id):
     return [state for i, state in enumerate(states) if i == 0 or states[i - 1] != state]
 
 
+def wait_run_end(app, camera_id, state):
+    """Wait (bounded) until the tracker saw `state` as the last state of the camera. The tracker keeps a state only
+    at the next read of a fake, so it can be one state behind the status when `wait_state` returns."""
+    app.wait(lambda: run_of_states(app, camera_id)[-1:] == [state], f"the tracker sees camera {camera_id} {state}")
+
+
 def open_sets(app, camera_id):
     """The first exposure set of each open, from the events of the fake."""
     firsts, opened = [], False
@@ -202,6 +208,7 @@ def test_t_req_06_a_connect_in_auto_answers_in_adjusting_and_searches(monkeypatc
         app.wait_state(camera_id, "ready")
         assert exposure_sets(app, camera_id) == [(False, -7)] + SEARCH + [(False, -9)]
         assert app.factory.logs[camera_id].opens.value == 1
+        wait_run_end(app, camera_id, "ready")
         assert run_of_states(app, camera_id) == ["starting", "waiting", "adjusting", "checking", "ready"]
         sets = [t for name, t, detail in app.factory.logs[camera_id].events if name == "set_controls" and detail]
         assert any(sets[1] < e["arrival_ns"] < sets[-1] for e in spies.of("jpeg")), "no ring frame in the search"
@@ -555,6 +562,7 @@ def test_t_req_01_a_switch_to_auto_searches_on_the_open_stream(monkeypatch):
         held = group_state(app)["configs"][camera_id]
         assert (held["exposure_mode"], held["exposure"], held["exposure_found_at_fps"]) == ("AUTO", -9, 30.0)
         assert not app.status(camera_id)["warnings"]
+        wait_run_end(app, camera_id, "ready")
         assert run_of_states(app, camera_id)[-4:] == ["ready", "adjusting", "checking", "ready"]
 
 
@@ -583,6 +591,7 @@ def test_t_req_02_the_button_searches_with_no_reopen(monkeypatch):
         assert app.factory.logs[camera_id].opens.value == 1 and app.ring_name(camera_id) == ring
         sets = [t for name, t, detail in app.factory.logs[camera_id].events if name == "set_controls" and detail]
         assert any(sets[1] < e["arrival_ns"] < sets[-1] for e in spies.of("jpeg")), "no ring frame in the search"
+        wait_run_end(app, camera_id, "ready")
         assert run_of_states(app, camera_id)[-4:] == ["ready", "adjusting", "checking", "ready"]
 
 
@@ -724,6 +733,7 @@ def test_t_req_16_a_switch_to_manual_is_a_live_set(monkeypatch):
         assert exposure_sets(app, camera_id)[count:] == [(False, -7)]
         config = response.json()["camera_configs"][camera_id]
         assert (config["exposure_mode"], config["exposure"], config["exposure_found_at_fps"]) == ("MANUAL", -7, None)
+        wait_run_end(app, camera_id, "ready")
         assert run_of_states(app, camera_id)[-3:] == ["ready", "checking", "ready"]
 
 
