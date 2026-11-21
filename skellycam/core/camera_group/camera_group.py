@@ -69,6 +69,10 @@ TAKE_START_LIMIT_S = 10.0  # each camera starts its writer within this time of t
 # The parent waits this long for a camera process at the start, as sfn26 549217112. The camera process has its own
 # limit of 15 s (9.3); this one ends a wait on a camera process that does not answer at all.
 PARENT_WAIT_LIMIT_S = 30.0
+# The endpoint of the exposure search waits for its worst case (camera-requests.md 1.3b) [GEH0]: the limit of 20 s of a
+# search, the last set (a bounded call of 5 s, 6.6) and one more set of the held value after a failed last set (5 s),
+# with a margin of 5 s.
+SEARCH_WAIT_LIMIT_S = 20.0 + 2 * 5.0 + 5.0
 # The main-process stall watch (unix-capture.md 4.10): the states it watches, its limit, the wait before a kill.
 WATCHED_STATES = ("waiting", "adjusting", "checking", "too_slow", "ready")
 # camera-requests.md 1.3b [H1, AC5B]: the apply waits for a camera in AUTO until it is in one of these states.
@@ -137,6 +141,11 @@ class CameraGroup:
     _ring_lock: Any = field(default_factory=threading.RLock)
     _stop_watch: Any = field(default_factory=threading.Event)
     _loop: Any = None  # the event loop of `start`: a ring reader is closed only on it (ADR-BM73)
+
+    @property
+    def take_busy(self) -> bool:
+        """A record start, a stop or an error end runs (it holds the lock of the take)."""
+        return self._end_lock.locked()
 
     @property
     def id(self) -> CameraGroupIdString:
@@ -876,12 +885,13 @@ class CameraGroup:
 
     async def search_exposure(self, camera_ids: list) -> dict:
         """camera-requests.md 1.5: each camera of `camera_ids` (checked by the manager) searches on its open stream;
-        return when each search has ended, within PARENT_WAIT_LIMIT_S. The response of the endpoint."""
+        return when each search has ended, within SEARCH_WAIT_LIMIT_S. The response of the endpoint. A camera whose
+        process is alive and still `adjusting` at the limit is not marked `failed`: its result comes in the live state."""
         statuses = self.cameras.orchestrator.camera_statuses
         counts = {camera_id: statuses[camera_id].search_count.value for camera_id in camera_ids}
         for camera_id in camera_ids:
             statuses[camera_id].search_requested.value = True
-        deadline = time.monotonic() + PARENT_WAIT_LIMIT_S
+        deadline = time.monotonic() + SEARCH_WAIT_LIMIT_S
 
         def ended(camera_id):
             status = statuses[camera_id]
@@ -890,8 +900,13 @@ class CameraGroup:
                 status.search_count.value == counts[camera_id] or search.get("state") != "running"))
 
         while self.ipc.running and not all(ended(camera_id) for camera_id in camera_ids):
+            for camera_id in camera_ids:
+                worker = self.cameras.camera_workers.get(camera_id)
+                if worker is not None and worker.worker.exitcode is not None:
+                    self._mark_ended(camera_id, worker)
             if time.monotonic() >= deadline:
-                self._give_up([camera_id for camera_id in camera_ids if not ended(camera_id)], "streaming")
+                self._give_up([camera_id for camera_id in camera_ids if not ended(camera_id)
+                               and statuses[camera_id].state != "adjusting"], "streaming")
                 break
             await await_10ms()
         self.adopt_search_results()

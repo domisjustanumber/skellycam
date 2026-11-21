@@ -12,6 +12,7 @@ import IconButton from "@/components/ui-components/IconButton";
 import { useRecordingGuard } from '@/components/RecordingGuardProvider';
 import { pendingCameraChanges, updateRequestConfigs } from '@/store/slices/cameras/camera-updates';
 import { labelText } from '@/store/slices/cameras/camera-labels';
+import { searchBlocked } from '@/store/slices/cameras/exposure-row';
 
 
 export const CameraConfigSidebarPanel: React.FC = () => {
@@ -74,7 +75,8 @@ export const CameraConfigSidebarPanel: React.FC = () => {
 
     // The button "Auto-set exposure (all cameras)" (camera-requests.md 1.2 (c), 1.8): each selected camera that
     // streams searches; disabled during a recording and with no streaming camera.
-    const searchDisabledText = isRecording ? t('stopRecordingFirst') : connectedCameras.length === 0 ? t('connectCamerasFirst') : undefined;
+    const searchDisabledText = isRecording ? t('stopRecordingFirst') : connectedCameras.length === 0 ? t('connectCamerasFirst')
+        : searchBlocked(groups) ? t('settingExposure') : undefined;  // 1.5: a camera starts, waits or searches
     const handleSearchExposure = async () => {
         setIsSearching(true);
         try {

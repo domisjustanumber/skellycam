@@ -13,10 +13,11 @@ import pytest
 HARDWARE = os.environ.get("SKELLYCAM_HARDWARE", "") == "1"
 
 
-@pytest.fixture
+@pytest.fixture(autouse=True)
 def no_camera_auto_exposure(monkeypatch):
-    """T-REQ-15 (specs/camera-requests.md 1.1, 1.3 item 7): a spy on `set_controls` of each fake. No exposure set
-    has `auto=True`, except the restore at the close (unix-capture.md 4.7) [K4]."""
+    """T-REQ-15 (specs/camera-requests.md 1.1, 1.3 item 7), for each test of this folder: a spy on `set_controls` of
+    each fake in this process. No exposure set has `auto=True`, except the restore at the close (unix-capture.md
+    4.7) [K4]."""
     import threading
 
     from skellycam.tests.capture.fake_source import FakeSource

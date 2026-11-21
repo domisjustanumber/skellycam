@@ -14,12 +14,12 @@ T0 = 1_000_000_000_000
 MODEL = {-12: 10, -11: 20, -10: 40, -9: 70, -8: 110, -7: 150, -6: 190, -5: 230}  # T-REQ-01
 
 
-def simulate(brightness, rates=None, mode_rate=30.0, lag=0, until_s=60.0):
+def simulate(brightness, rates=None, mode_rate=30.0, lag=0, until_s=60.0, exposure_range=None):
     """Run one search. Returns (search, the sets in order, the frames of each trial as (sfn, brightness))."""
     from skellycam.core.camera.capture.exposure_search import ExposureSearch
 
     rates = rates or {}
-    search = ExposureSearch(mode_rate, T0)
+    search = ExposureSearch(mode_rate, T0, exposure_range)
     now, sfn, value, sets, set_at = T0, 0, -7, [], []  # set_at: (sfn of the first frame after the set, value)
     seen = []
     while search.result is None and now < T0 + until_s * 1e9:
@@ -166,3 +166,61 @@ def test_t_req_17_a_failed_set_ends_the_search(error, readback, reason, detail):
     search.set_done(search.take_pending(), T0, error=error, readback=readback)
     assert (search.result["state"], search.result["reason"], search.detail) == ("failed", reason, detail)
     assert search.pending is None
+
+
+MODEL_WIDE = {**MODEL, -4: 250, -3: 252, -2: 254}
+
+
+@pytest.mark.parametrize(("exposure_range", "tried", "chosen"), [((-11, -2), list(range(-11, -4)), -9),
+                                                                 ((-7, 3), [-7, -6, -5], -7)])
+def test_the_search_tries_only_the_values_in_the_range_of_the_camera(exposure_range, tried, chosen):
+    """camera-requests.md 1.3 item 1 [GEH0]: the lab cameras have -11 to -2, the generic camera -7 to 3. The search
+    tries the values of -12 to -5 in that range, in the same order, and finds a value (-7 to 3: -7 is nearest to
+    127.5; its darker step -8 was not tried, so -7 stays)."""
+    search, sets, _ = simulate(MODEL_WIDE, exposure_range=exposure_range)
+    assert sets == tried
+    assert (search.result["state"], search.result["chosen"]) == ("done", chosen)
+
+
+def test_a_range_with_no_value_of_the_search_fails_at_once():
+    """camera-requests.md 1.3 item 6, 1.5 [GEH0]: no value of -12 to -5 in the range: the reason `no-value-in-range`,
+    no set, and the text of 1.5."""
+    from skellycam.core.camera.capture.exposure_search import ExposureSearch, failed_text
+
+    search = ExposureSearch(30.0, None, (-4, 3))
+    assert (search.result["state"], search.result["reason"], search.take_pending()) == ("failed", "no-value-in-range",
+                                                                                       None)
+    assert failed_text("a1b2", search.detail, -4) == (
+        "Camera a1b2: the exposure search failed: no exposure from -12 to -5 is in the range of the camera (-4 to 3). "
+        "The exposure is -4 again.")
+
+
+def test_the_limit_of_20_s_starts_at_the_first_set():
+    """camera-requests.md 1.3 item 6 [A2]: the limit counts from the first set, not from the start of the search."""
+    from skellycam.core.camera.capture.exposure_search import ExposureSearch
+
+    search = ExposureSearch(30.0)
+    assert search.wake_ns is None
+    search.tick(T0 + 100 * 10**9)
+    assert search.result is None
+    assert search.take_pending(T0) == -12
+    search.tick(T0 + 19_900_000_000)
+    assert search.result is None
+    search.tick(T0 + 20_000_000_000)
+    assert search.result["reason"] == "timed-out"
+
+
+def test_a_measuring_frame_that_does_not_decode_passes_to_the_next_frame():
+    """camera-requests.md 1.3 item 2.3 [GEH0]: the 10th frame after the set has error flags (the brightness call gives
+    None): the 11th frame measures, and the rate window starts there. No brightness 0."""
+    from skellycam.core.camera.capture.exposure_search import ExposureSearch
+
+    search = ExposureSearch(30.0, T0)
+    search.set_done(search.take_pending(), T0)
+    period = round(1e9 / 30)
+    for sfn in range(60):
+        search.frame(sfn, T0 + (sfn + 1) * period, lambda sfn=sfn: None if sfn == 9 else 100.0 + sfn)
+        if search.trials:
+            break
+    assert search.trials[0]["brightness"] == 110.0 and search.trials[0]["kept_rate"]
+    assert sfn == 10 + 30, "the window starts at the 11th frame"

@@ -3,7 +3,7 @@ import { useAppDispatch, useAppSelector } from '@/store';
 import { cameraDesiredConfigUpdated, configCopiedToAll } from '@/store/slices/cameras/cameras-slice';
 import { savedSettingsCleared } from '@/store/slices/cameras/cameras-slice';
 import { camerasConnectOrUpdate, searchExposure } from '@/store/slices/cameras/cameras-thunks';
-import { serverStatusOf } from '@/store/slices/cameras/exposure-row';
+import { searchBlocked, serverStatusOf } from '@/store/slices/cameras/exposure-row';
 import { useServer } from '@/services/server';
 import { useTranslation } from 'react-i18next';
 import { selectCameras } from '@/store/slices/cameras';
@@ -116,7 +116,8 @@ export const CameraGridSettingsModal: React.FC<CameraGridSettingsModalProps> = (
     const isManual = config.exposure_mode === 'MANUAL';
     const hasHeldValue = config.exposure_found_at_fps != null;
     const noManualExposure = (serverStatusOf(groups, camera.id)?.warnings ?? []).some(item => item.kind === 'no_manual_exposure');
-    const canSearch = connectedCameraIds.includes(camera.id) && !isRecording;  // the link is off with no stream or in a take
+    // the link is off with no stream, in a take, and while a camera starts, waits or searches (1.5: else 409)
+    const canSearch = connectedCameraIds.includes(camera.id) && !isRecording && !searchBlocked(groups);
 
     return (
    

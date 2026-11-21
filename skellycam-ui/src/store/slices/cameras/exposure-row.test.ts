@@ -2,7 +2,7 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import test from 'node:test';
-import { anyAdjusting, copyHeldValues, exposureRowText, normalizeExposureMode, serverStatusOf } from './exposure-row.ts';
+import { anyAdjusting, copyHeldValues, exposureRowText, normalizeExposureMode, searchBlocked, serverModeRate, serverStatusOf } from './exposure-row.ts';
 
 test('T-REQ-70: a stored RECOMMEND loads as AUTO; AUTO and MANUAL stay; the other fields do not change', () => {
     const stored = (exposure_mode: string) => ({ exposure_mode, exposure: -8, resolution: { width: 1280, height: 720 } });
@@ -63,4 +63,13 @@ test('the record button waits while a camera is adjusting; serverStatusOf finds 
     assert.equal(anyAdjusting([group('ready'), { configs: {} }]), false);
     assert.equal(serverStatusOf([group('checking')], 'a')?.state, 'checking');
     assert.equal(serverStatusOf([group('checking')], 'b'), undefined);
+});
+
+test('the search buttons wait while a camera starts, waits or searches; the mode rate comes from the server', () => {
+    const group = (state: string, extra = {}) => ({ configs: { a: { exposure: -7, framerate: 30 } }, cameras: { a: { status: { state, ...extra } } } });
+    for (const state of ['starting', 'waiting', 'adjusting']) assert.equal(searchBlocked([group(state)]), true, state);
+    for (const state of ['ready', 'too_slow', 'checking', 'failed']) assert.equal(searchBlocked([group(state)]), false, state);
+    assert.equal(serverModeRate([group('ready', { mode: { fps_num: 30000, fps_den: 1001 } })], 'a', 60), 30000 / 1001);
+    assert.equal(serverModeRate([group('ready')], 'a', 60), 30);
+    assert.equal(serverModeRate([], 'a', 60), 60);
 });

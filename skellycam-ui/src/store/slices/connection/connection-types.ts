@@ -9,6 +9,7 @@ export interface CameraProcessSnapshot {
         failure?: { stage: string; reason: string } | null;
         warnings?: { kind: string; camera_ids: string[]; text: string }[];  // 8.4, camera-requests.md 1.5
         measured_fps?: number | null;
+        mode?: { fps_num: number; fps_den: number } | null;
         exposure_search?: { state: string; count?: number } | null;  // camera-requests.md 1.5
     };
 }

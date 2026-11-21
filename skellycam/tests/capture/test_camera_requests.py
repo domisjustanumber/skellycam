@@ -497,6 +497,8 @@ def test_t_req_18_a_camera_removed_during_its_search(monkeypatch):
         close = [t for name, t, _ in log.events if name == "close"][-1]
         assert not [d for name, t, d in log.events if name == "set_controls" and d and t >= close]
         assert app.status(good)["exposure_search"]["state"] == "done"
+        status = app.status(removed)  # [GEH0]: its own failure code, not `camera-closed`
+        assert status["exposure_search"]["reason"] == status["failure"]["code"] != "camera-closed", status
 
 
 def test_t_req_68_add_light_stays_until_the_next_exposure_change(monkeypatch, tmp_path):
@@ -600,10 +602,11 @@ def test_t_req_04_add_light_in_the_response_and_the_status(monkeypatch):
         assert body["warnings"][0] in app.status(camera_id)["warnings"]
 
 
-def test_t_req_05_a_failed_search_sets_the_old_manual_value_again(monkeypatch):
+def test_t_req_05_a_failed_search_sets_the_old_value_again(monkeypatch):
     """T-REQ-05, 1.3 item 6: the camera slows to 25.76 fps after it is `ready` in `MANUAL -7`; press the button.
-    The search fails; the last set is `MANUAL -7`; the config is `MANUAL -7` again; `exposure_search_failed` with
-    its text; the check gives `too_slow`, and the camera keeps its preview."""
+    The search fails; the last set is -7; the config is `AUTO -7` (Auto is the stored mode; the camera keeps its held
+    value [GEH0]); `exposure_search_failed` with its text; the check gives `too_slow`, and the camera keeps its
+    preview."""
     script = FakeScript(brightness=MODEL, rate_windows=((6.0, 1000.0, 25.76),))
     with capture_app(monkeypatch, [script]) as app:
         camera_id = app.factory.camera_ids[0]
@@ -616,7 +619,7 @@ def test_t_req_05_a_failed_search_sets_the_old_manual_value_again(monkeypatch):
             "failed", "no-value-kept-rate")
         assert exposure_sets(app, camera_id)[-1] == (False, -7)
         config = body["camera_configs"][camera_id]
-        assert (config["exposure_mode"], config["exposure"]) == ("MANUAL", -7)
+        assert (config["exposure_mode"], config["exposure"]) == ("AUTO", -7)
         assert [w["kind"] for w in body["warnings"]] == ["exposure_search_failed"]
         assert body["warnings"][0]["text"].endswith("keeps 30 fps. The exposure is -7 again.")
         app.wait_state(camera_id, "too_slow")
@@ -872,3 +875,228 @@ def test_t_req_20_a_camera_with_no_manual_exposure(monkeypatch):
         applied = app.apply([app.config(lacking)])
         assert applied.status_code == 200, applied.text
         assert not [s for s in app.factory.logs[lacking].settings if "exposure" in s]
+
+
+
+# ---------------------------------------------------------------------------
+# Review fixes of 2026-11-21 [GEH0]: the range of the camera, the take, the order of the updates, the stored mode
+# ---------------------------------------------------------------------------
+
+def search_values(app, camera_id):
+    """The exposure values that the fake got after the first set of the open."""
+    return [value for _, value in exposure_sets(app, camera_id)[1:]]
+
+
+@pytest.mark.parametrize("out_of_range", ["refuse", "clamp"])
+def test_the_search_keeps_to_the_range_of_the_camera(monkeypatch, out_of_range):
+    """camera-requests.md 1.3 item 1 [GEH0]: a fake with the range -11 to -2 (the lab cameras), whose sets outside it
+    are refused or clamped. The search tries -11 to -5, never -12, and finds a value."""
+    script = FakeScript(brightness=MODEL, exposure_range=(-11, -2), out_of_range=out_of_range)
+    with capture_app(monkeypatch, [script]) as app:
+        camera_id = app.factory.camera_ids[0]
+        app.detect()
+        assert app.apply([auto(app, camera_id)]).status_code == 200
+        app.wait_state(camera_id, "ready", "too_slow")
+        search = app.status(camera_id)["exposure_search"]
+        assert (search["state"], search["chosen"]) == ("done", -9), search
+        assert search_values(app, camera_id) == list(range(-11, -4)) + [-9]
+
+
+def test_the_generic_range_tries_minus_7_to_minus_5(monkeypatch):
+    """camera-requests.md 1.3 item 1 [GEH0]: the range -7 to 3 of the generic camera: the search tries -7, -6, -5."""
+    script = FakeScript(brightness=MODEL, exposure_range=(-7, 3), out_of_range="clamp")
+    with capture_app(monkeypatch, [script]) as app:
+        camera_id = app.factory.camera_ids[0]
+        app.detect()
+        assert app.apply([auto(app, camera_id)]).status_code == 200
+        app.wait_state(camera_id, "ready", "too_slow")
+        assert search_values(app, camera_id)[:3] == [-7, -6, -5]
+        assert app.status(camera_id)["exposure_search"]["state"] == "done"
+
+
+def test_a_new_camera_opens_inside_the_range_and_a_range_with_no_value_fails(monkeypatch):
+    """camera-requests.md 1.3a, 1.3 item 6 [GEH0]: a new camera (AUTO, -7, no held value) on a camera whose range starts
+    at -6 opens at -6 (the held value is set inside the range) and searches -6 and -5. A camera whose range has no
+    value of -12 to -5 (-4 to 3) opens at -4; its search fails with `no-value-in-range` and sets -4 again; the camera
+    keeps running."""
+    scripts = [FakeScript(brightness=MODEL, exposure_range=(-6, 3)),
+               FakeScript(brightness=MODEL, exposure_range=(-4, 3))]
+    with capture_app(monkeypatch, scripts) as app:
+        narrow, none = app.factory.camera_ids
+        app.detect()
+        assert app.apply([auto(app, narrow), auto(app, none)]).status_code == 200
+        for camera_id in (narrow, none):
+            app.wait_state(camera_id, "ready", "too_slow")
+        assert exposure_sets(app, narrow)[:3] == [(False, -6), (False, -6), (False, -5)]
+        assert open_sets(app, none) == [(False, -4)]
+        status = app.status(none)
+        assert (status["exposure_search"]["state"], status["exposure_search"]["reason"]) == ("failed", "no-value-in-range")
+        assert exposure_sets(app, none)[-1] == (False, -4)
+        item = next(w for w in status["warnings"] if w["kind"] == "exposure_search_failed")
+        assert item["text"] == (f"Camera {none}: the exposure search failed: no exposure from -12 to -5 is in the range "
+                                f"of the camera (-4 to 3). The exposure is -4 again.")
+        held = group_state(app)["configs"][none]
+        assert (held["exposure_mode"], held["exposure"], held["exposure_found_at_fps"]) == ("AUTO", -4, None)
+
+
+def test_no_switch_to_auto_during_a_record_start(monkeypatch, tmp_path):
+    """camera-requests.md 1.1 [G4], 1.5 [GEH0]: an apply of `AUTO` that comes while a slow record start runs gets
+    409, and the fake gets no exposure set after the first recorded frame."""
+    import threading
+
+    from skellycam.core.camera_group import camera_group as group_module
+    from skellycam.tests.capture.capture_session import Spies
+
+    with capture_app(monkeypatch, [FakeScript(brightness=MODEL)]) as app:
+        spies = Spies(monkeypatch, app)
+        camera_id = app.factory.camera_ids[0]
+        ready_manual(app)
+        gate, start_take = threading.Event(), group_module.start_take
+
+        def slow_start_take(*args, **kwargs):
+            gate.wait(30)
+            return start_take(*args, **kwargs)
+
+        monkeypatch.setattr(group_module, "start_take", slow_start_take)
+        started = []
+        thread = threading.Thread(target=lambda: started.append(app.record_start(tmp_path)))
+        thread.start()
+        try:
+            app.wait(lambda: app.group.take_busy, "the record start runs")
+            refused = app.apply([auto(app, camera_id)])
+            assert refused.status_code == 409, refused.text
+            assert press(app).status_code == 409
+        finally:
+            gate.set()
+            thread.join(60)
+        assert started[0].status_code == 200, started[0].text
+        app.wait(lambda: spies.of("record", camera_id), "a recorded frame")
+        first = spies.of("record", camera_id)[0]["arrival_ns"]
+        assert app.record_stop().status_code == 200
+        log = app.factory.logs[camera_id]
+        assert not [d for name, t, d in log.events if name == "set_controls" and "exposure" in d and t >= first]
+
+
+def bare_loop(config, state="ready"):
+    """A `CameraLoop` with no source, rings or threads, for the unit tests of its update order."""
+    import queue
+
+    from skellycam.core.camera.capture.camera_loop import CameraLoop
+    from skellycam.core.camera_group.camera_status import CameraStatus
+
+    loop = CameraLoop.__new__(CameraLoop)
+    loop.status, loop.config, loop.camera_id = CameraStatus(), config, "a1b2"
+    loop.status.set_state(state)
+    loop.update_sub, loop.recording_sub, loop.signals, loop.search_replies = (queue.Queue() for _ in range(4))
+    loop.search = loop.search_before = loop.search_final = loop.take_writer = loop.check = loop.exposure_range = None
+    loop.no_exposure, loop.reference_rate = False, 30.0
+    return loop
+
+
+def test_a_queued_live_change_lands_before_a_requested_search():
+    """[GEH0] (review item 3): a live change waits in `signals` when "Search again" comes. The change lands first, and
+    the search then starts: the state is `adjusting`, no check runs, and the mode is AUTO."""
+    from skellycam.core.camera.config.camera_config import CameraConfig
+
+    manual = CameraConfig(camera_id="a1b2", exposure_mode="MANUAL", exposure=-6)
+    loop = bare_loop(manual.model_copy(update=dict(exposure=-7)))
+    loop.signals.put(("check", 0, manual))
+    loop.status.search_requested.value = True
+    loop._check_updates()
+    assert loop.status.state == "adjusting" and loop.check is None and loop.search is not None
+    assert (loop.config.exposure_mode, loop.config.exposure, loop.search_before["exposure"]) == ("AUTO", -6, -6)
+    loop.signals.put(("check", 0, manual))  # a change during the search does nothing
+    loop._check_updates()
+    assert loop.status.state == "adjusting" and loop.check is None and loop.config.exposure_mode == "AUTO"
+
+
+def test_only_the_reply_of_the_last_set_ends_the_search():
+    """[GEH0] (review item 6): a late reply of a value tried before the result does not end the search; the reply of
+    the last set does. A new search empties the replies of an earlier one."""
+    from skellycam.core.camera.config.camera_config import CameraConfig
+
+    loop = bare_loop(CameraConfig(camera_id="a1b2", exposure_mode="AUTO", exposure=-7))
+    loop._start_search()
+    loop.search.result = dict(state="done", chosen=-9, add_light=False, reason=None, trials=[])
+    loop.search_final = -9
+    loop.search_replies.put((-5, 1, None, -5))
+    loop._search_step()
+    assert loop.search is not None and loop.status.state == "adjusting"
+    loop.search_replies.put((-9, 2, None, -9))
+    loop._search_step()
+    assert loop.search is None and loop.status.state == "checking" and loop.config.exposure == -9
+    loop.search_replies.put((-9, 3, None, -9))
+    loop._start_search()
+    assert loop.search_replies.empty()
+
+
+def test_the_brightness_is_measured_on_the_checked_frame():
+    """[GEH0] (review item 7): a truncated JPEG (error flags of the check) and bytes that do not decode give no
+    brightness, not 0; a good frame gives the mean of its image."""
+    from skellycam.core.camera.capture.camera_loop import CameraLoop
+    from skellycam.core.ipc.frame_ring import check_jpeg
+    from skellycam.tests.capture.fake_source import synthetic_jpeg
+
+    good = synthetic_jpeg(64, 48, gray=100)
+    cut = good[:len(good) // 2]
+    payload, flags = check_jpeg(cut, delivered_len=len(cut), driver_error=False)
+    assert flags and CameraLoop._brightness(None, payload, None, flags) is None
+    assert CameraLoop._brightness(None, b"\xff\xd8not a jpeg\xff\xd9", None, 0) is None
+    payload, flags = check_jpeg(good, delivered_len=len(good), driver_error=False)
+    assert abs(CameraLoop._brightness(None, payload, None, flags) - 100) < 2
+
+
+def test_a_failed_switch_to_auto_keeps_the_stored_mode_auto(monkeypatch):
+    """[GEH0] (review item 4), 1.1 [G1]: a camera `ready` in `MANUAL -7` slows to 25.76 fps; an apply switches it to
+    `AUTO`. The search fails, and the mode stays AUTO on both sides with the value -7. A second apply with AUTO (as
+    "Update Cameras") starts no new search."""
+    script = FakeScript(brightness=MODEL, rate_windows=((6.0, 1000.0, 25.76),))
+    with capture_app(monkeypatch, [script]) as app:
+        camera_id = app.factory.camera_ids[0]
+        ready_manual(app)
+        app.wait(lambda: app.clock.now_ns() > app.clock.START_NS + 6.5e9, "the camera is slow")
+        assert app.apply([auto(app, camera_id)]).status_code == 200
+        app.wait(lambda: app.status(camera_id)["exposure_search"]["state"] == "failed", "the search fails")
+        app.wait_state(camera_id, "too_slow", "ready")
+        held = group_state(app)["configs"][camera_id]
+        assert (held["exposure_mode"], held["exposure"]) == ("AUTO", -7)
+        count = app.status(camera_id)["exposure_search"]["count"]
+        again = app.apply([auto(app, camera_id)])
+        assert again.status_code == 200, again.text
+        assert again.json()["camera_configs"][camera_id]["exposure_mode"] == "AUTO"
+        assert app.status(camera_id)["exposure_search"]["count"] == count
+
+
+def test_the_state_route_runs_on_the_event_loop():
+    """[GEH0] (review item 5): `GET /camera/group/state` writes `configs` (the held values): it is a coroutine
+    function, so it runs on the event loop, as each other writer."""
+    import inspect
+
+    from skellycam.api.http.cameras.camera_router import camera_group_state
+
+    assert inspect.iscoroutinefunction(camera_group_state)
+
+
+def test_the_endpoint_does_not_fail_a_camera_that_still_searches(monkeypatch):
+    """[GEH0] (review item 8): the wait of the endpoint covers the worst case of a search; at its limit, a camera whose
+    process is alive and still `adjusting` is not marked `failed`. "Apply again" clears a request of a search."""
+    from skellycam.core.camera.capture.exposure_search import LIMIT_NS
+    from skellycam.core.camera.capture.source import BOUNDED_CALL_LIMIT_S
+    from skellycam.core.camera_group import camera_group as group_module
+    from skellycam.core.camera_group.camera_status import CameraStatus
+
+    assert group_module.SEARCH_WAIT_LIMIT_S >= LIMIT_NS / 1e9 + 2 * BOUNDED_CALL_LIMIT_S
+    status = CameraStatus()
+    status.search_requested.value = True
+    status.reset_for_start()
+    assert not status.search_requested.value
+    monkeypatch.setattr(group_module, "SEARCH_WAIT_LIMIT_S", 0.5)
+    with capture_app(monkeypatch, [FakeScript(brightness=MODEL, hold_first_change=True)]) as app:
+        camera_id = app.factory.camera_ids[0]
+        ready_manual(app)
+        response = press(app)
+        assert response.status_code == 200, response.text
+        status = app.status(camera_id)
+        assert status["state"] == "adjusting" and status["failure"] is None, status
+        app.factory.sources[camera_id].release()
+        app.wait_state(camera_id, "ready")

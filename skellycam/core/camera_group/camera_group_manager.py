@@ -202,6 +202,8 @@ class CameraGroupManager:
             if recording:  # D36
                 raise RequestRefused(409, "A recording runs: no change is possible; recording cameras: "
                                           + ", ".join(recording))
+            if camera_group.take is not None or camera_group.take_busy:  # D36, 1.1 [G4]: also in a record start [GEH0]
+                raise RequestRefused(409, "A recording runs or starts: no change is possible")
             blocked = [f"camera {camera_id} is {statuses[camera_id].state}"
                        for camera_id, config in camera_configs.items()
                        if camera_id in camera_group.configs
@@ -224,7 +226,8 @@ class CameraGroupManager:
         unknown = [camera_id for camera_id in camera_ids or () if camera_id not in group.configs]
         if unknown:
             raise RequestRefused(422, "These cameras are not selected: " + ", ".join(unknown))
-        if group.take is not None or any(status.recording_in_progress.value for status in list(statuses.values())):
+        if group.take is not None or group.take_busy or any(
+                status.recording_in_progress.value for status in list(statuses.values())):
             raise RequestRefused(409, "A recording runs: the exposure cannot change")  # D36, 1.1 [G4]
         blocked = [f"camera {camera_id} is {status.state}" for camera_id, status in list(statuses.items())
                    if status.state in ("starting", "waiting", "adjusting")]

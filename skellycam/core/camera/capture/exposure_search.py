@@ -35,11 +35,15 @@ class ExposureSearch:
     """One search on the open stream. `pending` is the value to set next (None while a set runs or after the end);
     `result` is None until the end, then the `exposure_search` object of 1.5 without `count`."""
 
-    def __init__(self, mode_rate: float, start_ns: int):
+    def __init__(self, mode_rate: float, start_ns: int | None = None, exposure_range: tuple | None = None):
+        """`start_ns`: the time of the first set; None: the first `take_pending(now_ns)` sets it (1.3 item 6).
+        `exposure_range`: (min, max) of the camera; the search tries only the values in it (1.3 item 1)."""
         self.mode_rate = mode_rate
-        self.limit_ns = start_ns + LIMIT_NS
+        self.limit_ns = None if start_ns is None else start_ns + LIMIT_NS
+        low, high = exposure_range or (VALUES[0], VALUES[-1])
+        self.values = tuple(value for value in VALUES if low <= value <= high)
         self.trials: list[dict] = []
-        self.pending: int | None = VALUES[0]
+        self.pending: int | None = self.values[0] if self.values else None
         self.result: dict | None = None
         self.detail: str | None = None  # the reason text of a failure (1.5)
         self._value: int | None = None
@@ -48,11 +52,15 @@ class ExposureSearch:
         self._a: tuple[int, int, float] | None = None  # (s_a, t_a, brightness of the 10th frame)
         self._deadline: int | None = None
         self._last: tuple[int, int] | None = None
+        if not self.values:
+            self.fail("no-value-in-range", f"no exposure from {VALUES[0]} to {VALUES[-1]} is in the range of the "
+                                           f"camera ({low} to {high})")
 
     @property
-    def wake_ns(self) -> int:
+    def wake_ns(self) -> int | None:
         """The latest time for the next decision with no frame: the early deadline, or the limit of 20 s."""
-        return min(self._deadline or self.limit_ns, self.limit_ns)
+        times = [t for t in (self._deadline, self.limit_ns) if t is not None]
+        return min(times) if times else None
 
     def set_done(self, value: int, returned_ns: int, error: str | None = None, readback: int | None = None) -> None:
         """The set of `value` returned at `returned_ns`, with an error text, or with its read-back value."""
@@ -65,16 +73,18 @@ class ExposureSearch:
         else:
             self._value, self._returned_ns, self._first, self._a, self._deadline = value, returned_ns, None, None, None
 
-    def frame(self, sfn: int, arrival_ns: int, brightness: Callable[[], float]) -> None:
-        """A taken frame: its `source_frame_number`, its arrival and a call that gives the mean of its image."""
+    def frame(self, sfn: int, arrival_ns: int, brightness: Callable[[], float | None]) -> None:
+        """A taken frame: its `source_frame_number`, its arrival and a call that gives the mean of its image, or None
+        for a frame with error flags or that does not decode: the next frame then measures (1.3 item 2.3)."""
         if self.result is not None or self._returned_ns is None or arrival_ns <= self._returned_ns:
             return
         self._last = (sfn, arrival_ns)
         if self._first is None:
             self._first = sfn
         if self._a is None:
-            if sfn >= self._first + SETTLE_FRAMES - 1:
-                self._a = (sfn, arrival_ns, float(brightness()))
+            mean = brightness() if sfn >= self._first + SETTLE_FRAMES - 1 else None
+            if mean is not None:
+                self._a = (sfn, arrival_ns, float(mean))
                 self._deadline = early_deadline_ns(arrival_ns, self.mode_rate)
             return
         if sfn >= self._a[0] + RATE_FRAMES:
@@ -90,25 +100,26 @@ class ExposureSearch:
         self.tick(now_ns)
 
     def tick(self, now_ns: int) -> None:
-        if self.result is None and now_ns >= self.limit_ns:
+        if self.result is None and self.limit_ns is not None and now_ns >= self.limit_ns:
             self.fail("timed-out", "it took more than 20 s")
 
-    def cancel(self) -> None:
-        """The group closed the camera, or it was unselected: no warning, and the search sets nothing (1.9)."""
+    def cancel(self, reason: str = "camera-closed") -> None:
+        """The group closed the camera, or it was unselected: no warning, and the search sets nothing (1.9). A camera
+        that failed or died gives its failure code as the reason [GEH0]."""
         if self.result is None:
-            self.fail("camera-closed", None)
+            self.fail(reason, None)
 
     def _trial(self, measured: float, early: bool = False) -> None:
         kept = not early and not rate_check.is_slow(measured, self.mode_rate)
         self.trials.append(dict(value=self._value, brightness=self._a[2], measured_fps=measured, kept_rate=kept))
-        index = VALUES.index(self._value) + 1
+        index = self.values.index(self._value) + 1
         self._returned_ns, self._a, self._deadline = None, None, None
-        if index < len(VALUES):
-            self.pending = VALUES[index]
+        if index < len(self.values):
+            self.pending = self.values[index]
             return
         chosen, add_light, reason = choose(self.trials)
         if reason is not None:
-            self.fail(reason, f"no exposure from {VALUES[0]} to {VALUES[-1]} keeps {self.mode_rate:g} fps")
+            self.fail(reason, f"no exposure from {self.values[0]} to {self.values[-1]} keeps {self.mode_rate:g} fps")
         else:
             self.result = dict(state="done", chosen=chosen, add_light=add_light, reason=None, trials=self.trials)
 
@@ -116,8 +127,11 @@ class ExposureSearch:
         self.pending, self.detail = None, detail
         self.result = dict(state="failed", chosen=None, add_light=False, reason=reason, trials=self.trials)
 
-    def take_pending(self) -> int | None:
+    def take_pending(self, now_ns: int | None = None) -> int | None:
+        """The value to set now. The first value taken with `now_ns` starts the limit of 20 s (1.3 item 6)."""
         value, self.pending = self.pending, None
+        if value is not None and self.limit_ns is None and now_ns is not None:
+            self.limit_ns = now_ns + LIMIT_NS
         return value
 
 

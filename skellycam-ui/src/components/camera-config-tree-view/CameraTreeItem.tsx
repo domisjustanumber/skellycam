@@ -11,7 +11,7 @@ import { Camera } from "@/store/slices/cameras/cameras-types";
 import { selectCameras } from "@/store/slices/cameras/cameras-selectors";
 import { cameraLabel, labelText, linkChip } from "@/store/slices/cameras/camera-labels";
 import { useServer } from "@/services/server";
-import { exposureRowText, serverStatusOf } from "@/store/slices/cameras/exposure-row";
+import { exposureRowText, serverModeRate, serverStatusOf } from "@/store/slices/cameras/exposure-row";
 
 interface CameraTreeItemProps {
     camera: Camera;
@@ -75,7 +75,8 @@ export const CameraTreeItem: React.FC<CameraTreeItemProps> = ({ camera }) => {
 
     const server = serverStatusOf(groups, camera.id);
     const warnings = server?.warnings ?? [];
-    const exposureRow = exposureRowText(camera.desiredConfig, camera.desiredConfig.framerate, camera.state, warnings,
+    const modeRate = serverModeRate(groups, camera.id, camera.desiredConfig.framerate);  // the rate-high text compares with it
+    const exposureRow = exposureRowText(camera.desiredConfig, modeRate, camera.state, warnings,
                                         server?.measured_fps);
     const configSummary = [...getConfigSummary(camera.desiredConfig), ...(exposureRow.chip ? [exposureRow.chip] : [])];
     // The chips "Add light" and "Exposure search failed" show the text of their warning as the tooltip (1.8)

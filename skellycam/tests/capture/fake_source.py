@@ -226,6 +226,8 @@ class FakeScript:
     hold_after_change: bool = False  # the first read after a live change waits until release()
     hold_first_change: bool = False  # as hold_after_change, for the first live change of each open only
     rate_by_exposure: tuple = ()  # (exposure, rate) pairs: the delivered rate at that exposure value
+    exposure_range: tuple | None = (-13, 0)  # (min, max) that the camera reports; None: no range
+    out_of_range: str = "refuse"  # an exposure set outside the range: "refuse" (an error) or "clamp" (to the range)
     brightness: tuple = ()  # (exposure, mean gray) pairs: the image follows the exposure
     hang_at: str | None = None  # "open", "set_controls" or "close": hangs when the hang is armed
     hang_armed: bool = False  # armed from the start; else FakeLog.arm_hang()
@@ -447,6 +449,12 @@ class FakeSource:
                 self._restore.changed(changes)
             if fault == "error":
                 raise types.CaptureFailure("set controls", "the camera refused the value")
+            low, high = self.script.exposure_range or (None, None)
+            setting = changes.get("exposure")
+            if low is not None and setting is not None and setting.value is not None and not low <= setting.value <= high:
+                if self.script.out_of_range == "refuse":
+                    raise types.CaptureFailure("set controls", f"exposure {setting.value} is out of range")
+                changes = {**changes, "exposure": type(setting)(auto=setting.auto, value=min(max(setting.value, low), high))}
             for name, setting in changes.items():
                 control = self._controls.get(name)
                 if control is None or not control[0]:
@@ -492,6 +500,9 @@ class FakeSource:
         if self._restore is not None:
             self._restore.fill(data)
         return {**data, **(self.script.diagnostics or {})}
+
+    def exposure_range(self):
+        return self.script.exposure_range
 
     @property
     def replaced_count(self):

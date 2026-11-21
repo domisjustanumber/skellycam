@@ -95,7 +95,7 @@ class CameraStatus:
         """A new camera process for "apply again" (8.3): the gate count stays (5.3), the rest starts again."""
         for flag in (self.connected, self.grabbing_frame, self.closing, self.closed, self.recording_in_progress,
                      self.is_recording_frame, self.should_pause, self.should_close, self.is_paused, self.updating,
-                     self.error):
+                     self.error, self.search_requested):
             flag.value = False
         self.info.value = b""
         self.diagnostics = {}

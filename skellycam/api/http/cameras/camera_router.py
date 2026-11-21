@@ -161,7 +161,7 @@ async def camera_group_exposure_auto(request: Request, request_body: ExposureSea
 
 
 @camera_router.get("/group/state", summary="The live state of the camera groups")
-def camera_group_state(request: Request) -> dict:
+async def camera_group_state(request: Request) -> dict:
     """The state that the `app_state` message of the websocket sends (camera-requests.md 1.5) [B15]."""
     return get_or_create_camera_group_manager(app=request.app).to_state_dict()
 
