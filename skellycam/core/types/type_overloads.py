@@ -1,9 +1,13 @@
 import enum
 import multiprocessing.queues
 import threading
+from ctypes import _SimpleCData
+from multiprocessing.sharedctypes import Synchronized
 
 import numpy as np
 
+# A shared Value with its lock, or with no lock (a killed holder keeps a lock for ever: unix-capture.md 4.10)
+SharedValue = Synchronized | _SimpleCData
 CameraIdString = str
 CameraGroupIdString = str
 CameraNameString = str

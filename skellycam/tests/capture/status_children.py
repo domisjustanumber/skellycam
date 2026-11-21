@@ -25,3 +25,12 @@ def write_info(status, done):
     """A new camera process: one write of `info` with its lock."""
     status.update_info(mode={"width": 320})
     done.set()
+
+
+def read_heartbeat_forever(heartbeat, reading):
+    """A camera process: read the heartbeat in a tight loop, as each loop pass does, until it is killed."""
+    from skellycam.utilities.check_main_processs_heartbeat import check_main_process_heartbeat
+
+    reading.set()
+    while True:
+        check_main_process_heartbeat(heartbeat_timestamp=heartbeat)

@@ -7,7 +7,7 @@ from multiprocessing.sharedctypes import Synchronized
 import numpy as np
 
 from skellycam.core.camera_group.camera_status import CameraStatus
-from skellycam.core.types.type_overloads import CameraIdString
+from skellycam.core.types.type_overloads import CameraIdString, SharedValue
 from skellycam.utilities.wait_functions import await_10ms
 
 logger = logging.getLogger(__name__)
@@ -18,7 +18,7 @@ CAMERA_STATE_TIMEOUT_SECONDS = 10.0
 @dataclass
 class CameraOrchestrator:
     camera_statuses: dict[CameraIdString, CameraStatus]
-    first_recording_frame_number: Synchronized
+    first_recording_frame_number: SharedValue  # no lock: the main process is its one writer
     last_recording_frame_number: Synchronized
 
     @property
@@ -28,7 +28,7 @@ class CameraOrchestrator:
     @classmethod
     def from_statuses(cls, camera_statuses: dict[CameraIdString, CameraStatus]) -> 'CameraOrchestrator':
         return cls(camera_statuses=camera_statuses,
-                   first_recording_frame_number=multiprocessing.Value("q", -1),
+                   first_recording_frame_number=multiprocessing.Value("q", -1, lock=False),
                    last_recording_frame_number=multiprocessing.Value("q", -1))
 
     @property

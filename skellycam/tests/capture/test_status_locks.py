@@ -132,3 +132,37 @@ def test_a_dead_holder_then_a_restart_with_new_arrays():
     finally:
         if holder.is_alive():
             holder.kill()
+
+
+@pytest.mark.capture_timing
+def test_a_killed_reader_of_the_heartbeat_does_not_stop_the_heartbeat():
+    """unix-capture.md 4.10: the heartbeat value, the kill flag and the group flags have no lock. A camera process
+    killed while it reads the heartbeat (each loop pass reads it) leaves no lock, and the heartbeat thread beats on."""
+    from skellycam.core.camera_group.camera_group_ipc import CameraGroupIPC
+    from skellycam.core.ipc.process_management.managed_worker import WorkerMode
+    from skellycam.core.ipc.process_management.worker_registry import WorkerRegistry
+
+    flags = [f.default_factory() for f in __import__("dataclasses").fields(CameraGroupIPC)
+             if f.name in ("should_pause", "shutdown_camera_group_flag")]
+    assert len(flags) == 2 and not [flag for flag in flags if hasattr(flag, "get_lock")]
+    registry = WorkerRegistry(global_kill_flag=multiprocessing.Value("b", False, lock=False),
+                              worker_mode=WorkerMode.THREAD)
+    heartbeat = registry.heartbeat_timestamp
+    assert not hasattr(heartbeat, "get_lock")
+    reading = SPAWN.Event()
+    reader = start(status_children.read_heartbeat_forever, heartbeat, reading)
+    try:
+        assert reading.wait(60)
+        time.sleep(0.2)
+        reader.kill()
+        reader.join(30)
+        registry._start_heartbeat_writer()
+        before = heartbeat.value
+        deadline = time.monotonic() + 5
+        while heartbeat.value == before and time.monotonic() < deadline:
+            time.sleep(0.05)
+        assert heartbeat.value > before, "the heartbeat thread stopped"
+    finally:
+        registry._stop_threads()
+        if reader.is_alive():
+            reader.kill()

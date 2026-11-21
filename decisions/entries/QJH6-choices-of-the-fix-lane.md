@@ -19,8 +19,8 @@ The fix lane makes small fixes. The supervisor gave each rule. The agent made th
    the wait for a status only when its camera process has ended; `reset_for_start` then gives new arrays,
    which go to the new process when it is spawned. A read gives the last good JSON after 3 torn reads. A
    main-process write of `info` with no lock stays in the main process until a write with the lock. The
-   main process, the heartbeat thread and the group flags use Values with no lock too, and the end of a
-   take waits at most 0.5 s for the lock of the last frame
+   heartbeat value, the global kill flag, the group flags and the first frame of a take have no lock
+   either. The end of a take waits at most 0.5 s for the lock of the last frame, then ends as an error
    ([`unix-capture.md`](../../specs/unix-capture.md) 4.10).
 4. H. A record start that fails after `start_take` returned keeps `"ended_with_error"` and the summary
    of the earlier take, as a refusal before it does. Only a record start that succeeds drops that

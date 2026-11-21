@@ -1343,7 +1343,11 @@ The signal and the watch [ADR-AC5B](../decisions/entries/AC5B-choices-of-the-thi
   process stops the wait for a status only when the camera process of that status has ended; "apply
   again" then gives the new camera process new arrays. Each read tolerates torn JSON: it reads again up
   to 3 times, then gives the last good value. A main-process write of `info` with no lock stays in the
-  main process until a write with the lock [ADR-QJH6](../decisions/entries/QJH6-choices-of-the-fix-lane.md).
+  main process until a write with the lock. The heartbeat value (its one writer: the heartbeat thread),
+  the global kill flag, the shutdown flag of the group and the first frame of a take (their writers: the
+  main process only) have no lock either. The end of a take waits at most 0.5 s for the lock of the last
+  frame; with no lock in that time, the take ends with the `take_error` "no lock of the last frame of the
+  take in 0.5 s" [ADR-QJH6](../decisions/entries/QJH6-choices-of-the-fix-lane.md).
 - The setting `SKELLYCAM_STALL_WATCH=0` turns the watch off. The group reads it when it is made, and logs
   at its start that the watch is off [ADR-Q2NY](../decisions/entries/Q2NY-choices-of-code-step-2.md).
 - When it trips, the main process removes the camera from the gate, marks it `dead` with the failure

@@ -1,5 +1,5 @@
 import multiprocessing
-from multiprocessing.sharedctypes import Synchronized
+from skellycam.core.types.type_overloads import SharedValue
 import time
 
 import logging
@@ -13,7 +13,7 @@ HEARTBEAT_TIMEOUT_SECONDS: Final[float] = 10.0
 _last_report = 0.0
 
 
-def check_main_process_heartbeat(*, heartbeat_timestamp: Synchronized) -> bool:
+def check_main_process_heartbeat(*, heartbeat_timestamp: SharedValue) -> bool:
     """Check if main process is still alive based on heartbeat. A lost heartbeat ends only the cameras (each
     camera loop ends itself, decision L): it sets no global kill flag, so a live main process stays up."""
     global _last_report

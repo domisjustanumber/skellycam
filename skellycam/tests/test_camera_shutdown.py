@@ -233,3 +233,38 @@ def test_a_restart_after_an_unselect_joins_the_old_process_first(manager, monkey
     old.kill.assert_called_once()
     new.start.assert_called_once()
     assert not status.should_close.value and "camera1" not in manager.removed_workers
+
+
+async def test_the_end_of_a_take_waits_at_most_its_bound_for_the_lock_of_the_last_frame(manager, monkeypatch):
+    """unix-capture.md 4.10: another holder keeps the lock of the last frame (as a camera process killed inside
+    its locked read). The end of the take does not block the event loop: after FRAME_LOCK_WAIT_S it ends the take as
+    an error with that reason."""
+    import threading
+
+    from skellycam.core.camera_group import camera_group as group_module
+
+    group = CameraGroup(ipc=manager.ipc, configs={}, cameras=manager)
+    from skellycam.core.take_recorder import TakeSummary
+
+    take = Mock(rec="take")
+    group.take, group.recording_ids = take, ["camera1"]
+    take.finish.return_value = TakeSummary(stop_response={}, results=[], warnings=[])
+    monkeypatch.setattr(group, "_collect_results", lambda: ({}, {}, set()))
+    held, release = threading.Event(), threading.Event()
+
+    def hold():
+        with manager.orchestrator.last_recording_frame_number.get_lock():
+            held.set()
+            release.wait(10)
+
+    holder = threading.Thread(target=hold, daemon=True)
+    holder.start()
+    try:
+        assert held.wait(5)
+        await asyncio.wait_for(group._end_take(), timeout=group_module.FRAME_LOCK_WAIT_S + 2.0)
+    finally:
+        release.set()
+        holder.join(5)
+    error = take.finish.call_args.kwargs["ended_by_error"]
+    assert error == f"no lock of the last frame of the take in {group_module.FRAME_LOCK_WAIT_S:g} s"
+    assert group.take is None

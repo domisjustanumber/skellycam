@@ -24,8 +24,6 @@ import atexit
 import logging
 import multiprocessing
 import multiprocessing.queues
-from ctypes import _SimpleCData
-from multiprocessing.sharedctypes import Synchronized
 import os
 import signal
 import threading
@@ -37,9 +35,9 @@ from skellycam import LOG_LEVEL
 from skellycam.utilities.utf8_console import utf8_console
 from skellylogs import configure_logging
 
+from skellycam.core.types.type_overloads import SharedValue
+
 logger = logging.getLogger(__name__)
-# A shared Value with its lock, or with no lock (the scalars of CameraStatus, fix lane G)
-SharedValue = Synchronized | _SimpleCData
 
 # The stall limit of a take (10 s) plus the margin of recorder.md 5.3 item 4 (5 s): a writer with no progress
 # for that time is stuck by that rule.

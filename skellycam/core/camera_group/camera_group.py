@@ -8,7 +8,6 @@ from fractions import Fraction
 from pathlib import Path
 
 from skellycam.core.camera_group.camera_setup_failure import CameraSetupFailedException
-from multiprocessing.sharedctypes import Synchronized
 from dataclasses import dataclass, field
 from collections.abc import Callable
 from typing import Any
@@ -54,6 +53,7 @@ from skellycam.core.types.type_overloads import (
     CameraGroupIdString,
     FrameNumberInt,
     MultiframeTimestampFloat,
+    SharedValue,
 )
 from skellycam.utilities.wait_functions import await_10ms
 
@@ -80,6 +80,7 @@ AUTO_SETTLED_STATES = ("adjusting", "ready", "too_slow", "failed", "dead")
 STALL_WATCH_S = 3.0  # over the 2 s of the in-process rule (W 9.5), which closes the camera and its files cleanly
 STALL_REASON = "no loop pass for 3 s"
 KILL_AFTER_S = 1.0
+FRAME_LOCK_WAIT_S = 0.5  # the end of a take waits this long for the lock of the last frame
 STALL_WATCH_SETTING = "SKELLYCAM_STALL_WATCH"  # "0" turns the watch off; read when a group is made
 MICROPHONE_REFUSED = "audio recording returns in step 5b; start again with no microphone"  # recorder.md 10 item 13
 WRITER = f"skellycam {__version__.lstrip('v')}"  # SFF-712
@@ -174,8 +175,8 @@ class CameraGroup:
         cls,
         *,
         camera_configs: CameraConfigs,
-        heartbeat_timestamp: Synchronized,
-        global_kill_flag: Synchronized,
+        heartbeat_timestamp: SharedValue,
+        global_kill_flag: SharedValue,
         worker_registry: WorkerRegistry,
         source_factory: Callable | None = None,
     ) -> "CameraGroup":
@@ -763,8 +764,14 @@ class CameraGroup:
             # The read of the gate count and the write of the last frame are under the lock of the last frame: a
             # camera reads that value with its lock, so it decides no new frame between them. A last frame that a
             # camera set first (the end with no take level) stays.
-            last = orchestrator.last_recording_frame_number
-            with last.get_lock():
+            # The wait for that lock is bounded (unix-capture.md 4.10): a camera killed while it held the lock keeps it
+            # for ever. With no lock in FRAME_LOCK_WAIT_S the take ends as an error; the values go with no lock.
+            last, lock = orchestrator.last_recording_frame_number.get_obj(), orchestrator.last_recording_frame_number.get_lock()
+            locked = lock.acquire(timeout=FRAME_LOCK_WAIT_S)
+            try:
+                if not locked and self.take_error is None:
+                    self.take_error = (f"no lock of the last frame of the take in {FRAME_LOCK_WAIT_S:g} s", None)
+                    logger.error(f"The take ends: {self.take_error[0]}")
                 if last.value == -1:
                     count = orchestrator.largest_gate_count()
                     if count == -1:  # no camera left in the gate: the take ends after the latest group frame
@@ -772,9 +779,12 @@ class CameraGroup:
                                     if camera_id in statuses) - 1
                     # At least the first frame: when no camera reached it, the take has no row, not a negative count.
                     last.value = max(count + 2, orchestrator.first_recording_frame_number.value)
+            finally:
+                if locked:
+                    lock.release()
             # A guard: a camera that is still paused records to the last frame. No wait.
             await orchestrator.unpause(await_unpaused=False)
-            frame_count = orchestrator.take_frame_count()
+            frame_count = last.value - orchestrator.first_recording_frame_number.value  # recorder.md 7.6
             results, dead, running = await asyncio.to_thread(self._collect_results)
             error, error_camera = self.take_error or (None, None)
             summary = await asyncio.to_thread(
@@ -783,7 +793,7 @@ class CameraGroup:
         finally:
             self.take = self.take_error = None
             orchestrator.first_recording_frame_number.value = -1
-            orchestrator.last_recording_frame_number.value = -1
+            orchestrator.last_recording_frame_number.get_obj().value = -1  # the take ended: no camera decides on it
             for status in list(statuses.values()):
                 status.set_warning_items([])
         logger.info(f"Stopped recording for camera group ID: {self.id} with recording name: {take.rec}")

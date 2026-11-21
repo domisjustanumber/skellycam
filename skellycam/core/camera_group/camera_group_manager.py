@@ -1,7 +1,6 @@
 import asyncio
 import logging
 import multiprocessing
-from multiprocessing.sharedctypes import Synchronized
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from collections.abc import Callable
@@ -34,6 +33,7 @@ from skellycam.core.types.type_overloads import (
     CameraIdString,
     FrameNumberInt,
     MultiframeTimestampFloat,
+    SharedValue,
     TopicSubscriptionQueue,
 )
 from skellycam.core.take_recorder import TakeSummary  # noqa: TC001 — beartype checks annotations at runtime
@@ -43,7 +43,7 @@ logger = logging.getLogger(__name__)
 
 @dataclass
 class CameraGroupManager:
-    global_kill_flag: Synchronized
+    global_kill_flag: SharedValue
     worker_registry: WorkerRegistry
     source_factory: Callable | None = None  # ADR-HP7D item 10; None: the source of 14.2
     detected_cameras: dict[CameraIdString, CameraDeviceInfo] = field(default_factory=dict)  # U17 (c)
