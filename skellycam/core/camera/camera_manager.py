@@ -155,21 +155,24 @@ class CameraManager:
         self.ipc.should_continue = False
         self.orchestrator.close()
 
+        # An unselected camera whose process outlived the join of the unselect ends here too
+        workers = list(self.camera_workers.values()) + list(self.removed_workers.values())
+
         # Mark all workers as intentionally terminated before shutdown
         # so the child monitor doesn't trigger a cascade kill
-        for camera_worker in self.camera_workers.values():
+        for camera_worker in workers:
             camera_worker.worker.mark_stopping()
 
-        for camera_worker in self.camera_workers.values():
+        for camera_worker in workers:
             camera_worker.worker.wait_for_recording_save()
 
         # Phase 1: Wait for all processes to exit on their own (parallel)
-        for camera_worker in self.camera_workers.values():
+        for camera_worker in workers:
             if camera_worker.worker.pid is not None:
                 camera_worker.worker.join(timeout=3.0)
 
         # Phase 2: SIGTERM any stragglers (parallel)
-        still_alive = [w for w in self.camera_workers.values() if w.worker.is_alive()]
+        still_alive = [w for w in workers if w.worker.is_alive()]
         if still_alive:
             logger.warning(
                 f"{len(still_alive)} camera process(es) didn't exit in time, sending SIGTERM"
@@ -180,7 +183,7 @@ class CameraManager:
                 camera_worker.worker.join(timeout=3.0)
 
         # Phase 3: SIGKILL any remaining (parallel)
-        still_alive = [w for w in self.camera_workers.values() if w.worker.is_alive()]
+        still_alive = [w for w in workers if w.worker.is_alive()]
         if still_alive:
             logger.error(
                 f"{len(still_alive)} camera process(es) didn't respond to SIGTERM, sending SIGKILL"
@@ -190,7 +193,7 @@ class CameraManager:
             for camera_worker in still_alive:
                 camera_worker.worker.join(timeout=2.0)
 
-        zombies = [w for w in self.camera_workers.values() if w.worker.is_alive()]
+        zombies = [w for w in workers if w.worker.is_alive()]
         if zombies:
             raise RuntimeError(
                 f"{len(zombies)} camera process(es) could not be killed: "
@@ -203,6 +206,7 @@ class CameraManager:
             status.signal_closing()
             status.closed.value = True
         self.camera_workers.clear()
+        self.removed_workers.clear()
         logger.success("Camera manager closed all camera processes successfully.")
 
     def to_state(self) -> dict[CameraIdString, CameraState]:

@@ -172,14 +172,16 @@ def test_stopped_group_is_not_reported_alive_with_lingering_workers(manager, pau
 
 
 class SlowSpawnWorker:
-    """A fake camera worker whose start takes 0.2 s, as the spawn stagger on Windows."""
+    """A fake camera worker whose start takes 0.2 s, as the spawn stagger on Windows; `first` is set when a start
+    begins."""
 
-    def __init__(self):
-        self.started = False
+    def __init__(self, first):
+        self.started, self.first = False, first
         self.worker = Mock(spec=ManagedWorker, pid=None)
         self.worker.is_alive.return_value = False
 
     def start(self):
+        self.first.set()
         time.sleep(0.2)
         self.started = True
 
@@ -187,11 +189,14 @@ class SlowSpawnWorker:
 async def test_a_close_during_the_spawn_waits_for_it_and_no_camera_starts_after_it(manager):
     """Fix lane A: the close waits for the spawn loop (no "dictionary changed size during iteration", no orphan),
     and the spawn loop stops at the close."""
-    workers = {f"camera{number}": SlowSpawnWorker() for number in range(4)}
+    import threading
+
+    first = threading.Event()
+    workers = {f"camera{number}": SlowSpawnWorker(first) for number in range(4)}
     manager.camera_workers.update(workers)
     group = CameraGroup(ipc=manager.ipc, configs={}, cameras=manager)
     spawn = asyncio.create_task(asyncio.to_thread(group._spawn, manager.start))
-    await asyncio.sleep(0.3)  # the second camera starts
+    assert await asyncio.to_thread(first.wait, 5)  # the first camera starts
     await asyncio.wait_for(group.close(), timeout=5)
     await asyncio.wait_for(spawn, timeout=1)  # no error
     assert 1 <= sum(worker.started for worker in workers.values()) < 4
@@ -268,3 +273,20 @@ async def test_the_end_of_a_take_waits_at_most_its_bound_for_the_lock_of_the_las
     error = take.finish.call_args.kwargs["ended_by_error"]
     assert error == f"no lock of the last frame of the take in {group_module.FRAME_LOCK_WAIT_S:g} s"
     assert group.take is None
+
+
+def test_the_close_ends_an_unselected_camera_process_that_outlived_its_join(manager):
+    """Review of the fix lane: the process of an unselected camera that still runs after the join of the unselect
+    goes through the close phases (terminate, then kill) at the group close."""
+    from skellycam.core.ipc.process_management.managed_worker import ManagedProcess
+
+    old = Mock(spec=ManagedProcess, pid=123)
+    old.is_alive.return_value = True
+    old.kill.side_effect = lambda: setattr(old.is_alive, "return_value", False)
+    manager.camera_workers["camera1"] = CameraWorker(camera_id="camera1", worker=old, ipc=manager.ipc,
+                                                     orchestrator=manager.orchestrator)
+    manager.remove_camera("camera1")
+    manager.close()
+    old.terminate.assert_called_once()
+    old.kill.assert_called_once()
+    assert not manager.removed_workers
