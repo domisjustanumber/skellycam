@@ -1,7 +1,7 @@
 // Run: node --experimental-strip-types --test src/store/slices/cameras/camera-updates.test.ts
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { missingFromGroup, pendingCameraChanges, updateRequestConfigs } from './camera-updates.ts';
+import { closeAllAndConnect, missingFromGroup, pendingCameraChanges, updateRequestConfigs } from './camera-updates.ts';
 
 const cam = (id: string, over: object) => ({
     id, selected: true, inGroup: true, connectionStatus: 'connected', deviceInfo: {}, ...over,
@@ -76,4 +76,16 @@ test('T5: the fall back (close all, then connect the selected) runs only when a 
     assert.deepEqual(missingFromGroup(sent, { a: {}, c: {} }), []);
     assert.deepEqual(missingFromGroup(sent, { a: {} }), ['c']);
     assert.deepEqual(missingFromGroup({ b: { use_this_camera: false } }, {}), [], 'a close-only request (untick all) needs no fall back');
+});
+
+test('the close-all fall back runs only for a call meant to add cameras: "Update Cameras" and Connect with no group', () => {
+    const sent = { a: { use_this_camera: true }, n: { use_this_camera: true } };
+    const leftOut = { a: {} };   // the server left out the new camera n
+    const allIn = { a: {}, n: {} };
+    assert.equal(closeAllAndConnect('update-cameras', sent, leftOut), true);
+    assert.equal(closeAllAndConnect('connect', sent, leftOut), true);
+    assert.equal(closeAllAndConnect('settings', sent, leftOut), false, 'a settings apply stays a live change');
+    for (const kind of ['update-cameras', 'connect', 'settings'] as const) {
+        assert.equal(closeAllAndConnect(kind, sent, allIn), false, kind);
+    }
 });

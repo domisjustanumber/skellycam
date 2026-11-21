@@ -1,8 +1,8 @@
 import React, { useEffect, useCallback, useState } from 'react';
 import { useAppDispatch, useAppSelector, selectCameras, selectConnectedCameras, selectIsLoading, detectCameras } from '@/store';
 import { camerasConnectOrUpdate, closeCameras } from '@/store/slices/cameras/cameras-thunks';
-import { savedSettingsCleared, displayPauseToggled } from '@/store/slices/cameras/cameras-slice';
-import { selectIsPaused } from '@/store/slices/cameras/cameras-selectors';
+import { savedSettingsCleared, displayPauseToggled, cameraErrorCleared } from '@/store/slices/cameras/cameras-slice';
+import { selectError, selectIsPaused } from '@/store/slices/cameras/cameras-selectors';
 import { CameraTreeItem } from './CameraTreeItem';
 import { NoCamerasPlaceholder } from './NoCamerasPlaceholder';
 import { useServer } from '@/services/server/ServerContextProvider';
@@ -17,7 +17,8 @@ import { labelText } from '@/store/slices/cameras/camera-labels';
 export const CameraConfigSidebarPanel: React.FC = () => {
     const [isStoppingCameras, setIsStoppingCameras] = useState(false);
     const [isUpdating, setIsUpdating] = useState(false);
-    const [updateError, setUpdateError] = useState<string | null>(null);
+    // The error of each apply (Update Cameras, Connect, the menu, the settings) and of Detect: the store keeps it
+    const cameraError = useAppSelector(selectError);
     const dispatch = useAppDispatch();
     const { isConnected } = useServer();
     const { t } = useTranslation();
@@ -33,7 +34,7 @@ export const CameraConfigSidebarPanel: React.FC = () => {
     const hasGroup = cameras.some(cam => cam.inGroup) || Object.keys(groupConfigs).length > 0;
     // An error line is about the selection it was sent with: a new selection clears it
     const selectionKey = cameras.map(cam => `${cam.id}:${cam.selected}`).join();
-    useEffect(() => setUpdateError(null), [selectionKey]);
+    useEffect(() => { dispatch(cameraErrorCleared()); }, [selectionKey, dispatch]);
 
     useEffect(() => {
         if (isConnected && cameras.length === 0) {
@@ -47,8 +48,9 @@ export const CameraConfigSidebarPanel: React.FC = () => {
         }
     }, [isStoppingCameras, hasGroup]);
 
+    // Connect shows only with no group: it may close all and connect the selected (the empty group of an untick-all)
     const handleUpdate = useCallback(() => {
-        requestGuardedAction('Stop Recording & Update Camera Config', () => dispatch(camerasConnectOrUpdate()));
+        requestGuardedAction('Stop Recording & Update Camera Config', () => dispatch(camerasConnectOrUpdate({ kind: 'connect' })));
     }, [dispatch, requestGuardedAction]);
 
     const changes = pendingCameraChanges(cameras, Object.keys(groupConfigs));
@@ -58,24 +60,23 @@ export const CameraConfigSidebarPanel: React.FC = () => {
     // not name, so open unchanged cameras are not closed or reopened. The thunk runs the close-all fall back.
     // Disabled during a recording (ADR-F2KY), so no recording guard.
     const handleUpdateCameras = async () => {
-        setUpdateError(null);
         setIsUpdating(true);
         try {
-            await dispatch(camerasConnectOrUpdate(updateRequestConfigs(cameras, changes, groupConfigs))).unwrap();
-        } catch (error) {
-            setUpdateError((error as { message?: string })?.message ?? String(error));
+            const configs = updateRequestConfigs(cameras, changes, groupConfigs);
+            await dispatch(camerasConnectOrUpdate({ configs, kind: 'update-cameras' })).unwrap();
+        } catch {
+            // the store keeps the error; the error line shows it
         } finally {
             setIsUpdating(false);
         }
     };
 
     const handleDetect = useCallback(() => {
-        setUpdateError(null);
         requestGuardedAction('Stop Recording & Detect Cameras', () => dispatch(detectCameras({ filterVirtual: true })));
     }, [dispatch, requestGuardedAction]);
 
     const handleStop = useCallback(() => {
-        setUpdateError(null);
+        dispatch(cameraErrorCleared());
         requestGuardedAction('Stop Recording & Close Cameras', () => {
             setIsStoppingCameras(true);
             dispatch(closeCameras());
@@ -164,8 +165,8 @@ export const CameraConfigSidebarPanel: React.FC = () => {
                     </div>
 
             </div>
-            {updateError && (
-                <p role="alert" className="text sm text-error p-1" style={{ whiteSpace: 'normal' }}>{labelText(updateError, cameras)}</p>
+            {cameraError && (
+                <p role="alert" className="text sm text-error p-1" style={{ whiteSpace: 'normal' }}>{labelText(cameraError, cameras)}</p>
             )}
 
             {/* Camera list */}

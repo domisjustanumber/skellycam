@@ -37,6 +37,22 @@ test('T-REQ-28: an unknown id and other text stay as they are', () => {
     assert.equal(labelText('camera c3c6 is failed', []), 'camera c3c6 is failed');
 });
 
+test('an id that no camera word leads stays: a bare state, a JSON number, a GUID part, an exit code', () => {
+    const cams = [{ id: 'dead', index: 1, name: 'A' }, { id: '1280', index: 2, name: 'B' }, { id: 'f976', index: 3, name: 'C' }, { id: '0001', index: 4, name: 'D' }];
+    for (const text of [
+        'dead',
+        'set mode: no MJPG mode at 1280x720 near 60 fps; the camera has [{"width": 1280, "height": 720, "framerates": [30.0]}]',
+        'open: MFCreateDeviceSource failed for /usb#vid_046d&pid_085e&mi_00#7&2a1b3c4d&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}/global',
+        'streaming: camera process ended (exit code 0001)',
+    ]) assert.equal(labelText(text, cams), text);
+    // the server texts that name cameras
+    assert.equal(labelText('Camera dead runs at 29.97 fps, camera 1280 at 30 fps. The group runs at 29.97 fps.', cams),
+        'Camera 1 · A runs at 29.97 fps, Camera 2 · B at 30 fps. The group runs at 29.97 fps.');
+    assert.equal(labelText("all cameras of a group must request one frame rate, or each 'auto': camera dead -1, camera 1280 30", cams),
+        "all cameras of a group must request one frame rate, or each 'auto': Camera 1 · A -1, Camera 2 · B 30");
+    assert.equal(labelText('cameras dead, 1280 and f976 are not streaming', cams), 'Camera 1 · A, Camera 2 · B and Camera 3 · C are not streaming');
+});
+
 test('T-REQ-28: no file imports withCameraLabels', () => {
     const src = new URL('../../../', import.meta.url);
     const hits = (readdirSync(src, { recursive: true }) as string[])
@@ -59,6 +75,6 @@ test('T-REQ-59: linkChip gives the chip and the tooltip of 3.5', () => {
     assert.deepEqual(shown({ virtual: true }), ['virtual', 'A virtual camera: it has no USB link']);
 });
 
-test('linkChip shows no chip while the server sends no usb_link (safe default)', () => {
+test('linkChip shows no chip for a detection with no usb_link (a server older than the field)', () => {
     assert.equal(linkChip({}), null);
 });

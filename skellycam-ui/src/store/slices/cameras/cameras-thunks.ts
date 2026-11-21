@@ -14,9 +14,10 @@ import {
 } from './cameras-types';
 import { selectSelectedCameraConfigs } from './cameras-selectors';
 import { applyRequestBody } from './camera-number';
-import { missingFromGroup } from './camera-updates';
+import { ApplyKind, closeAllAndConnect } from './camera-updates';
 import { cameraStatesFromAppState, NOT_IN_GROUP } from './camera-state';
 import { normalizeExposureMode } from './exposure-row';
+import { normalizeFramerate } from './rate-choice';
 import { errorDetail } from '../error-detail';
 import {
     loadPersistedCameraSettings,
@@ -81,7 +82,7 @@ export const detectCameras = createAsyncThunk<
 
             // Priority: existing in-memory state > persisted localStorage > defaults
             const desiredConfig: CameraConfig = existing?.desiredConfig
-                ?? (saved ? { ...defaultConfig, ...normalizeExposureMode(saved.desiredConfig) } : { ...defaultConfig });
+                ?? (saved ? { ...defaultConfig, ...normalizeFramerate(normalizeExposureMode(saved.desiredConfig)) } : { ...defaultConfig });
 
             // A virtual camera (e.g. NDI) is never ticked, also over a stored selection: the server refuses it
             const selected: boolean = !serverCamera.virtual && (existing?.selected ?? saved?.selected ?? true);
@@ -126,20 +127,23 @@ export type ConnectResult = ConnectCamerasResponse & { sentIds: string[] };
 
 export const camerasConnectOrUpdate = createAsyncThunk<
     ConnectResult,
-    Record<string, CameraConfig> | undefined,  // only these cameras ("Update Cameras"); undefined: each selected camera
+    // configs: only these cameras ("Update Cameras"), else each selected camera; kind: see closeAllAndConnect
+    { configs?: Record<string, CameraConfig>; kind?: ApplyKind } | undefined,
     { state: RootState }
 >(
     'cameras/connect',
-    async (onlyConfigs, { getState, dispatch }) => {
+    async ({ configs: onlyConfigs, kind = 'settings' } = {}, { getState, dispatch }) => {
         const configs = onlyConfigs ?? selectSelectedCameraConfigs(getState());
         if (Object.keys(configs).length === 0) {
             throw new Error('No cameras selected for connection');
         }
         const response = await applyConfigs(configs, getState().cameras.cameras);
-        if (missingFromGroup(configs, response.camera_configs).length === 0) {
+        if (!closeAllAndConnect(kind, configs, response.camera_configs)) {
             return { ...response, sentIds: Object.keys(configs) };
         }
         // The server left out a camera to open (a new camera in a running or empty group): close all, connect the selected.
+        // shortcut: today's server cannot add a new camera to a running group, so this reopens every camera; drop it when
+        // the server can add one.
         await dispatch(closeCameras()).unwrap();
         const all = selectSelectedCameraConfigs(getState());
         return { ...(await applyConfigs(all, getState().cameras.cameras)), sentIds: Object.keys(all) };

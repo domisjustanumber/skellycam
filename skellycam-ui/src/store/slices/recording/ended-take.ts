@@ -26,3 +26,27 @@ export function takeErrorText(notice: EndedTakeNotice, cameras: { id: string; in
     const camera = cameras.find(cam => cam.id === notice.cameraId);
     return camera && !text.includes(cameraLabel(camera)) ? `${cameraLabel(camera)}: ${text}` : text;
 }
+
+/** The changes of the recording slice for one app state; the slice assigns them. parseSummary checks the stop fields. */
+export function recordingAfterAppState<C>(
+    recording: { takeStates: Record<string, GroupTakeState>; endedTake: EndedTakeNotice | null },
+    groups: Record<string, GroupTakeState & { recording_in_progress: boolean }>,
+    parseSummary: (summary: unknown) => C | null,
+): {
+    isRecording: boolean; takeStates: Record<string, GroupTakeState>; endedTake?: EndedTakeNotice | null;
+    recordingName?: null; startedAt?: null; duration?: number; completionData?: C | null;
+} {
+    const takeStates = Object.fromEntries(Object.entries(groups).map(([id, group]) => [id, { take_state: group.take_state }]));
+    const isRecording = Object.values(groups).some(group => group.recording_in_progress);
+    // A take that ended by itself with an error: Start again, the error and the summary at once, no stop request
+    // (camera-requests.md 8.4). With no take_state from the server nothing else changes.
+    const notice = endedTakeNotice(recording.takeStates, groups);
+    if (notice) {
+        return { isRecording: false, takeStates, endedTake: notice, recordingName: null, startedAt: null, duration: 0,
+            completionData: parseSummary(notice.summary) };
+    }
+    const ended = recording.endedTake;
+    // The line goes at a new take, at the stop request of 8.2, or when the group closes
+    return ended && groups[ended.groupId]?.take_state !== 'ended_with_error'
+        ? { isRecording, takeStates, endedTake: null } : { isRecording, takeStates };
+}

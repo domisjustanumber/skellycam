@@ -1,5 +1,6 @@
 // cameras-types.ts
 import { z } from 'zod';
+import type { WireConfig } from './camera-number';
 
 // ==================== Constants ====================
 export const PIXEL_FORMATS = ['RGB', 'BGR', 'GRAY'] as const;
@@ -79,7 +80,7 @@ export interface Camera {
     // Device info (from detection)
     deviceInfo: {
         virtual?: boolean;
-        usbLink?: string;           // 'USB 1' | 'USB 2' | 'USB 3' | 'unknown'; absent from a server before camera-requests.md 3.2
+        usbLink?: string;           // 'USB 1' | 'USB 2' | 'USB 3' | 'unknown' (detect_cameras_devices.py sends it)
         vendorId?: string;
         productId?: string;
     };
@@ -113,12 +114,12 @@ export interface DetectCamerasResponse {
         vendor_id?: string;
         product_id?: string;
         virtual?: boolean;
-        usb_link?: string;
+        usb_link?: string;          // the server sends it for each camera; optional only for an older server
     }>;
 }
 
 export interface CamerasConnectOrUpdateRequest {
-    camera_configs: Record<string, CameraConfig>;
+    camera_configs: Record<string, WireConfig<CameraConfig>>;  // Auto goes as RECOMMEND (camera-number.ts)
 }
 
 export interface ConnectCamerasResponse {

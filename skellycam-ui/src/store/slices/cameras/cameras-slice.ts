@@ -16,7 +16,7 @@ import {
     buildPersistedEntry,
     PersistedCameraSettingsMap,
 } from './camera-settings-storage';
-import { cameraStatesFromAppState, NOT_IN_GROUP } from './camera-state';
+import { cameraStatesFromAppState, NOT_IN_GROUP, statusesAfterApply } from './camera-state';
 
 // Persist all current camera desired configs + selection to localStorage
 function persistAllCameraSettings(state: CamerasState): void {
@@ -41,6 +41,10 @@ export const cameraSlice = createSlice({
         // Q495: pause freezes the display only; the cameras and a recording go on. Un-pause shows the current frame.
         displayPauseToggled(state) {
             state.isPaused = !state.isPaused;
+        },
+        // The camera list shows `error`; a new selection, Detect or Close makes it stale
+        cameraErrorCleared(state) {
+            state.error = null;
         },
         // ========== Selection ==========
         cameraSelectionToggled: (state, action: PayloadAction<string>) => {
@@ -133,29 +137,17 @@ export const cameraSlice = createSlice({
             })
             .addCase(camerasConnectOrUpdate.fulfilled, (state, action) => {
                 state.isLoading = false;
-                const sent = new Set(action.payload.sentIds);
+                const { camera_configs: configs, camera_failures: failures, sentIds } = action.payload;
+                const after = statusesAfterApply(state.cameras, configs, failures, sentIds);
                 state.cameras.forEach(camera => {
-                    if (!(camera.id in action.payload.camera_configs)) Object.assign(camera, NOT_IN_GROUP);
-                    else camera.inGroup = true;
+                    const { status, sent } = after[camera.id];
+                    Object.assign(camera, status);
+                    const config = configs[camera.id] as CameraConfig | undefined;
+                    if (!config) return;
+                    camera.actualConfig = config;
+                    if (sent) camera.desiredConfig = { ...config };  // a camera not in the request keeps its unsaved edits
+                    camera.hasConfigMismatch = !areConfigsEqual(camera.actualConfig, camera.desiredConfig);
                 });
-                // Update both actual and desired configs from server response
-                Object.entries(action.payload.camera_configs).forEach(
-                    ([cameraId, config]) => {
-                        const camera = state.cameras.find(cam => cam.id === cameraId);
-                        if (camera && !sent.has(cameraId)) {
-                            // not in the request: keep its unsaved edits and its status
-                            camera.actualConfig = config as CameraConfig;
-                            camera.hasConfigMismatch = !areConfigsEqual(camera.actualConfig, camera.desiredConfig);
-                        } else if (camera) {
-                            camera.actualConfig = config as CameraConfig;
-                            camera.desiredConfig = { ...config as CameraConfig };
-                            camera.hasConfigMismatch = false;
-                            const failure = action.payload.camera_failures?.[cameraId];
-                            camera.connectionStatus = failure ? 'error' : 'connected';
-                            camera.failure = failure ? `${failure.stage}: ${failure.reason}` : undefined;
-                        }
-                    }
-                );
                 persistAllCameraSettings(state);
             })
             .addCase(camerasConnectOrUpdate.rejected, (state, action) => {
@@ -195,6 +187,7 @@ export const cameraSlice = createSlice({
 
 export const {
     displayPauseToggled,
+    cameraErrorCleared,
     cameraSelectionToggled,
     cameraDesiredConfigUpdated,
     configCopiedToAll,

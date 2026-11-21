@@ -53,3 +53,14 @@ export function updateRequestConfigs<C extends { use_this_camera: boolean }>(
 export function missingFromGroup(sent: Record<string, { use_this_camera: boolean }>, responseConfigs: Record<string, unknown>): string[] {
     return Object.entries(sent).filter(([id, config]) => config.use_this_camera && !(id in responseConfigs)).map(([id]) => id);
 }
+
+/**
+ * The kind of an apply call: "Update Cameras", Connect with no group, or any other apply (settings, menu, grid,
+ * welcome), which must stay a live change.
+ */
+export type ApplyKind = 'update-cameras' | 'connect' | 'settings';
+
+/** Whether the thunk closes all cameras and connects the selected ones: only for a call meant to add cameras. */
+export function closeAllAndConnect(kind: ApplyKind, sent: Record<string, { use_this_camera: boolean }>, responseConfigs: Record<string, unknown>): boolean {
+    return kind !== 'settings' && missingFromGroup(sent, responseConfigs).length > 0;
+}

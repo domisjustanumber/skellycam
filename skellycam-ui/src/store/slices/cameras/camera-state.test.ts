@@ -1,7 +1,7 @@
 // Run: node --experimental-strip-types --test src/store/slices/cameras/camera-state.test.ts
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { cameraStatesFromAppState, NOT_IN_GROUP } from './camera-state.ts';
+import { cameraStatesFromAppState, NOT_IN_GROUP, statusesAfterApply } from './camera-state.ts';
 
 const group = (alive: boolean, cameras: Record<string, { state?: string | null; failure?: { stage: string; reason: string } | null } | null>) => ({
     alive,
@@ -48,4 +48,27 @@ test('starting, waiting, an unknown state, a null state and a camera with no pro
 test('a camera in no group is not in the result; NOT_IN_GROUP resets every live field', () => {
     assert.deepEqual(cameraStatesFromAppState([]), {});
     assert.deepEqual(NOT_IN_GROUP, { inGroup: false, connectionStatus: 'available', failure: undefined, state: undefined });
+});
+
+test('after an apply: only the sent cameras change; a response never claims a camera streams (review items 7 and 8)', () => {
+    const live = (connectionStatus: 'available' | 'connected' | 'error', state?: string, failure?: string) =>
+        ({ inGroup: true, connectionStatus, failure, state });
+    const cameras = [
+        { id: 'slow', ...live('connected', 'too_slow') },      // sent again, now fails
+        { id: 'ready', ...live('connected', 'ready') },        // sent: a live change
+        { id: 'retry', ...live('error', 'failed', 'open: busy') },  // sent: a retry
+        { id: 'new', ...NOT_IN_GROUP },                         // sent: added
+        { id: 'other', ...live('connected', 'ready') },        // not sent
+        { id: 'closed', ...live('connected', 'ready') },       // sent with use_this_camera false: not in the response
+    ];
+    const result = statusesAfterApply(cameras, { slow: {}, ready: {}, retry: {}, new: {}, other: {} },
+        { slow: { stage: 'warm-up', reason: 'not ready in 15 s' } }, ['slow', 'ready', 'retry', 'new', 'closed']);
+    assert.deepEqual(result.slow, { status: { inGroup: true, connectionStatus: 'error', failure: 'warm-up: not ready in 15 s', state: 'failed' }, sent: true },
+        'no too_slow line beside the failure');
+    assert.deepEqual(result.ready, { status: live('connected', 'ready'), sent: true });
+    assert.deepEqual(result.retry, { status: { inGroup: true, connectionStatus: 'available', failure: undefined, state: undefined }, sent: true },
+        'restarting: not streaming until the app state says so');
+    assert.deepEqual(result.new, { status: { inGroup: true, connectionStatus: 'available', failure: undefined, state: undefined }, sent: true });
+    assert.deepEqual(result.other, { status: live('connected', 'ready'), sent: false });
+    assert.deepEqual(result.closed, { status: NOT_IN_GROUP, sent: true });
 });
