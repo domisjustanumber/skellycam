@@ -152,6 +152,10 @@ class CameraLoop:
         self.hashes: list[tuple[int, str]] = []  # (source_frame_number, SHA-256) of the bytes of the ring and recorder
         self.dqt_hashes: list[str] = []
         self.dht_present: bool | None = None
+        for subscription in getattr(self.ipc.pubsub.topics.get(TopicTypes.DIAGNOSTICS), "subscriptions", ()):
+            # The main process stops reading at the group close: an exit must not wait to flush a full pipe of
+            # diagnostics (multiprocessing joins the feeder thread of each queue at the exit). A lost dict is no loss.
+            subscription.cancel_join_thread()
 
     # ----- the run -----
 
