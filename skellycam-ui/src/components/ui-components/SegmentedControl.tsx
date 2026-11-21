@@ -4,6 +4,7 @@ interface SegmentedControlOption {
   label: string;
   value: string;
   iconClass?: string;
+  disabled?: boolean;
 }
 
 interface SegmentedControlProps {
@@ -72,7 +73,8 @@ const SegmentedControl: React.FC<SegmentedControlProps> = ({
             activeValue === option.value
               ? "active text-white bg-dark"
               : "idle text-gray"
-          }`}
+          }${option.disabled ? " disabled" : ""}`}
+          disabled={option.disabled}
           onClick={() => handleClick(option.value)}
         >
           {option.iconClass && <i className={option.iconClass} />}

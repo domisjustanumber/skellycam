@@ -1076,8 +1076,8 @@ The rules above do not give these points. Each item is a proposed choice of
   `Camera 3 · Logitech C930e has 59.94 fps, not 60 fps, at 1280x720`. The UI keeps `supported_modes` of
   the detection result (`Camera.deviceInfo.supportedModes`). The reasons are in English only, as the
   texts of the server.
-- The note under the selector: when a live state holds a `rate_fallback` item and no apply request of
-  the UI runs, the UI sets `framerate` 30 in the desired config of each camera. It keeps the text of the
+- The note under the selector: when a live state holds a `rate_fallback` item whose text the last live
+  state did not hold, the UI sets `framerate` 30 in the desired config of each camera. It keeps the text of the
   item, in the label form of 1.8, as the note. A pure function `rateFallbackText(groups)` gives the text
   of the first `rate_fallback` item, or null. The note stays for the app run. A pick or a detection
   clears it. The tick of 2.5 puts its reason in the same note.

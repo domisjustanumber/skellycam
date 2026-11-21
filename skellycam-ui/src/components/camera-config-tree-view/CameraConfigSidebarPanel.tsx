@@ -1,7 +1,7 @@
 import React, { useEffect, useCallback, useState } from 'react';
 import { useAppDispatch, useAppSelector, selectCameras, selectConnectedCameras, selectIsLoading, detectCameras } from '@/store';
 import { camerasConnectOrUpdate, closeCameras, searchExposure } from '@/store/slices/cameras/cameras-thunks';
-import { savedSettingsCleared, displayPauseToggled, cameraErrorCleared } from '@/store/slices/cameras/cameras-slice';
+import { savedSettingsCleared, displayPauseToggled, cameraErrorCleared, frameRateChosen } from '@/store/slices/cameras/cameras-slice';
 import { selectError, selectIsPaused } from '@/store/slices/cameras/cameras-selectors';
 import { CameraTreeItem } from './CameraTreeItem';
 import { NoCamerasPlaceholder } from './NoCamerasPlaceholder';
@@ -13,6 +13,8 @@ import { useRecordingGuard } from '@/components/RecordingGuardProvider';
 import { pendingCameraChanges, updateRequestConfigs } from '@/store/slices/cameras/camera-updates';
 import { labelText } from '@/store/slices/cameras/camera-labels';
 import { searchBlocked } from '@/store/slices/cameras/exposure-row';
+import { checkingRate, chosenRate, rateChoice, rateRequestConfigs } from '@/store/slices/cameras/rate-choice';
+import SegmentedControl from '@/components/ui-components/SegmentedControl';
 
 
 export const CameraConfigSidebarPanel: React.FC = () => {
@@ -88,6 +90,23 @@ export const CameraConfigSidebarPanel: React.FC = () => {
         }
     };
 
+    // The one frame rate of the group (camera-requests.md 2.1, 2.5, 2.7, 2.8)
+    const rateNote = useAppSelector((state) => state.cameras.rateNote);
+    const rate = chosenRate(cameras);
+    const { can60, reasons } = rateChoice(cameras);
+    const rateDisabledText = isRecording ? t('stopRecordingFirst') : searchBlocked(groups) ? t('settingExposure') : undefined;
+    const handleRate = async (value: string) => {
+        const picked = Number(value);
+        if (picked === rate) return;
+        dispatch(frameRateChosen(picked));
+        if (connectedCameras.length === 0) return;  // no camera streams: the next connect sends the choice (2.4)
+        try {
+            await dispatch(camerasConnectOrUpdate({ configs: rateRequestConfigs(cameras, groupConfigs, picked), kind: 'settings' })).unwrap();
+        } catch {
+            // the store keeps the error; the error line shows it
+        }
+    };
+
     const handleDetect = useCallback(() => {
         requestGuardedAction('Stop Recording & Detect Cameras', () => dispatch(detectCameras({ filterVirtual: true })));
     }, [dispatch, requestGuardedAction]);
@@ -120,6 +139,18 @@ export const CameraConfigSidebarPanel: React.FC = () => {
                                 </span>
                             )}
                     <div className="flex-1" />
+                    <span title={rateDisabledText ?? (can60 ? undefined : reasons.join(' '))}>
+                        <SegmentedControl
+                            className={rateDisabledText ? 'disabled' : ''}
+                            options={[
+                                { label: '30 fps', value: '30' },
+                                { label: '60 fps', value: '60', disabled: !can60 },
+                            ]}
+                            value={String(rate)}
+                            onChange={handleRate}
+                            size="sm"
+                        />
+                    </span>
                     {/* Buttons: Detect + Connect OR Pause/Stop (when connected) */}
                     <div data-onboarding="connect-cameras" className="button-group flex items-center gap-1 pos-rel">
                            
@@ -192,6 +223,11 @@ export const CameraConfigSidebarPanel: React.FC = () => {
                     </div>
 
             </div>
+            {(checkingRate(groups, rate) || rateNote) && (
+                <p className="text sm text-gray p-1" style={{ whiteSpace: 'normal' }}>
+                    {checkingRate(groups, rate) ? t('checkingSixtyFps') : rateNote}
+                </p>
+            )}
             {cameraError && (
                 <p role="alert" className="text sm text-error p-1" style={{ whiteSpace: 'normal' }}>{labelText(cameraError, cameras)}</p>
             )}

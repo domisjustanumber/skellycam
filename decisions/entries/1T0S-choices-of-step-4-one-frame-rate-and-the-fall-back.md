@@ -49,9 +49,9 @@ The agent made these choices where the spec gave no rule. Sections 2.4a and 2.8 
     `SegmentedControl` gets an optional `disabled` field for each option.
 11. `rateChoice` treats an empty `supported_modes` as no 60 fps mode. It gives a reason text for a camera
     with 59.94 fps against 60. The reasons are in English only.
-12. The UI takes a `rate_fallback` item of the live state only while no apply request of the UI runs. It
-    then sets 30 in each desired config and keeps the text as the note under the selector until the next
-    pick or detection.
+12. The UI takes a `rate_fallback` item of the live state only when the last live state did not hold its
+    text. It then sets 30 in each desired config and keeps the text as the note under the selector until
+    the next pick or detection.
 13. "Checking 60 fps…" shows while a camera of the group is `starting`, `waiting`, `adjusting` or
     `checking`, and the choice is 60 fps or the live state holds a `rate_fallback` item.
 14. New tests T-REQ-77 to T-REQ-83 for these choices.
@@ -67,7 +67,9 @@ The agent made these choices where the spec gave no rule. Sections 2.4a and 2.8 
    before the search writes `running`, so it can show a stale result for a short time.
 6. The end of a take after an error uses the same path, so the fall back has no new thread.
 9. The smallest request that changes only the rate, with no other camera opened or closed.
-12. A live state that was sent before the server cleared the item must not undo a new pick.
+12. A live state that was sent before the server cleared the item must not undo a new pick, and the
+    item, which stays on the server until the next apply request, must not bring back a note that a
+    detection cleared.
 13. The spec wants the text during the whole check, also during the fall back.
 
 ## Alternatives rejected
