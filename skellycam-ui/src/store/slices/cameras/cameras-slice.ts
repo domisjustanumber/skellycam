@@ -19,7 +19,10 @@ import {
     PersistedCameraSettingsMap,
 } from './camera-settings-storage';
 import { cameraStatesFromAppState, NOT_IN_GROUP, statusesAfterApply } from './camera-state';
-import { BUSY_STATES, chosenRate, nextRateChecking, rateChoice, rateFallbackText, withChosenRate } from './rate-choice';
+import {
+    BUSY_STATES, chosenRate, nextRateChecking, rateCheckingAtResponse, rateChoice, rateFallbackText, replacesDesired,
+    withChosenRate,
+} from './rate-choice';
 import { labelText } from './camera-labels';
 
 /** One rate for each camera (camera-requests.md 2.2, 2.8): the desired config of each camera gets it. */
@@ -179,7 +182,9 @@ export const cameraSlice = createSlice({
             .addCase(camerasConnectOrUpdate.fulfilled, (state, action) => {
                 state.isLoading = false;
                 const { camera_configs: configs, camera_failures: failures, sentIds } = action.payload;
-                state.rateChecking = nextRateChecking(state.rateChecking, anyBusy(state), false, false);
+                const kind = action.meta.arg?.kind ?? 'settings';
+                const autoSent = sentIds.some(id => (configs[id] as CameraConfig | undefined)?.exposure_mode === 'AUTO');
+                state.rateChecking = rateCheckingAtResponse(state.rateChecking, autoSent, anyBusy(state));
                 const after = statusesAfterApply(state.cameras, configs, failures, sentIds);
                 state.cameras.forEach(camera => {
                     const { status, sent } = after[camera.id];
@@ -187,7 +192,8 @@ export const cameraSlice = createSlice({
                     const config = configs[camera.id] as CameraConfig | undefined;
                     if (!config) return;
                     camera.actualConfig = config;
-                    if (sent) camera.desiredConfig = { ...config };  // a camera not in the request keeps its unsaved edits
+                    // a camera not in the request, and each camera of a pick, keeps its unsaved edits (camera-requests.md 2.8)
+                    if (replacesDesired(kind, sent)) camera.desiredConfig = { ...config };
                     camera.hasConfigMismatch = !areConfigsEqual(camera.actualConfig, camera.desiredConfig);
                 });
                 persistAllCameraSettings(state);

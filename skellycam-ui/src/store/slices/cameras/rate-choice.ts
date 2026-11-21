@@ -84,9 +84,25 @@ export function rateFallbackText(groups: LiveGroup[]): string | null {
 }
 
 /**
- * "Checking 60 fps…" (camera-requests.md 2.8): from a sent pick of 60 or a new fall back item, until no camera is busy
- * and no apply request of the UI runs.
+ * "Checking 60 fps…" at a live state (camera-requests.md 2.8): from a sent pick of 60, or a new fall back item while a
+ * camera is busy, until no camera is busy and no apply request of the UI runs.
  */
 export function nextRateChecking(checking: boolean, busy: boolean, applying: boolean, newFallback: boolean): boolean {
-    return newFallback || (checking && (busy || applying));
+    return (newFallback && busy) || (checking && (busy || applying));
+}
+
+/** "Checking 60 fps…" at the response of a pick: a camera in AUTO searches after it, so the next live state decides. */
+export function rateCheckingAtResponse(checking: boolean, autoSent: boolean, busy: boolean): boolean {
+    return autoSent ? checking : nextRateChecking(checking, busy, false, false);
+}
+
+/** The rate of the server's group (60 or 30), else `fallback`: the choice after a failed pick (2.8). */
+export function groupRate(groupConfigs: Record<string, { framerate: number }>, fallback: number): number {
+    const config = Object.values(groupConfigs)[0];
+    return config ? (near60(config.framerate) ? 60 : 30) : fallback;
+}
+
+/** Whether a response replaces the desired config of a camera: only a sent camera, and not for a pick (2.8). */
+export function replacesDesired(kind: string, sent: boolean): boolean {
+    return sent && kind !== 'rate';
 }

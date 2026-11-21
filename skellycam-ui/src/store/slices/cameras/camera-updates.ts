@@ -64,9 +64,9 @@ export function missingFromGroup(sent: Record<string, { use_this_camera: boolean
  * The kind of an apply call: "Update Cameras", Connect with no group, or any other apply (settings, menu, grid,
  * welcome), which must stay a live change.
  */
-export type ApplyKind = 'update-cameras' | 'connect' | 'settings';
+export type ApplyKind = 'update-cameras' | 'connect' | 'settings' | 'rate';  // 'rate': a pick of the rate selector
 
 /** Whether the thunk closes all cameras and connects the selected ones: only for a call meant to add cameras. */
 export function closeAllAndConnect(kind: ApplyKind, sent: Record<string, { use_this_camera: boolean }>, responseConfigs: Record<string, unknown>): boolean {
-    return kind !== 'settings' && missingFromGroup(sent, responseConfigs).length > 0;
+    return (kind === 'update-cameras' || kind === 'connect') && missingFromGroup(sent, responseConfigs).length > 0;
 }

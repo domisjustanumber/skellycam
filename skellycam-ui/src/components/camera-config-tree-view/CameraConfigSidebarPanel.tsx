@@ -13,7 +13,9 @@ import { useRecordingGuard } from '@/components/RecordingGuardProvider';
 import { pendingCameraChanges, updateRequestConfigs } from '@/store/slices/cameras/camera-updates';
 import { labelText } from '@/store/slices/cameras/camera-labels';
 import { searchBlocked } from '@/store/slices/cameras/exposure-row';
-import { chosenRate, rateChoice, rateRequestConfigs } from '@/store/slices/cameras/rate-choice';
+import { chosenRate, groupRate, rateChoice, rateRequestConfigs } from '@/store/slices/cameras/rate-choice';
+import { useStore } from 'react-redux';
+import type { RootState } from '@/store/types';
 import SegmentedControl from '@/components/ui-components/SegmentedControl';
 
 
@@ -94,6 +96,7 @@ export const CameraConfigSidebarPanel: React.FC = () => {
     const rateNote = useAppSelector((state) => state.cameras.rateNote);
     const rateChecking = useAppSelector((state) => state.cameras.rateChecking);
     const rateReasonId = useId();
+    const store = useStore<RootState>();
     const rate = chosenRate(cameras);
     const { can60, reasons } = rateChoice(cameras);
     const rateDisabledText = isRecording ? t('stopRecordingFirst') : searchBlocked(groups) ? t('settingExposure') : undefined;
@@ -105,9 +108,11 @@ export const CameraConfigSidebarPanel: React.FC = () => {
         dispatch(frameRateChosen({ rate: picked, check: send && picked === 60 }));
         if (!send) return;
         try {
-            await dispatch(camerasConnectOrUpdate({ configs: rateRequestConfigs(groupConfigs, picked), kind: 'settings' })).unwrap();
+            await dispatch(camerasConnectOrUpdate({ configs: rateRequestConfigs(groupConfigs, picked), kind: 'rate' })).unwrap();
         } catch {
-            dispatch(frameRateChosen({ rate, check: false }));  // the server keeps its rate; the error line shows why
+            // the server keeps its rate (read now: a fall back can have come meanwhile); the error line shows why
+            const live = Object.assign({}, ...store.getState().connection.cameraGroups.map(group => group.configs));
+            dispatch(frameRateChosen({ rate: groupRate(live, rate), check: false }));
         }
     };
 
