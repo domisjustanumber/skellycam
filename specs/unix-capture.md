@@ -1262,6 +1262,17 @@ the record), 6 (the citation of 0) and 7 (4.4.10 filled) are applied here.
   hangs ends the close as hung, within the bound of one call [W 6.6].
 - A lost heartbeat of the server ([`recorder.md`](recorder.md) section 9) is not a camera fault. The
   close of that camera restores the controls. No other failure of the loop gets the restore.
+- The "before" values survive the camera process [ADR-NYT6](../decisions/entries/NYT6-choices-of-fix-lane-2.md).
+  Before its first set of an open, the source writes them, with the names of the controls that it
+  changes, into the shared record `controls_before` of `CameraStatus` (a JSON array that the main
+  process makes with the status). It adds each newly changed name before that set. A restore with no
+  failure clears the record. A camera process that ends with no restore (a kill, a hang, a failed loop)
+  leaves the record. At the first read of a later open, a record that is not empty gives the "before"
+  values and the changed names, in place of the values that the camera reads then: those can be the
+  values that this app set. Thus the "before" values stay the values of the first open, and the close of
+  the next open restores them. "Apply again" keeps the record (`reset_for_start`), and
+  `CameraGroupManager` keeps it from a group close to the next group, for the life of the app. A group
+  close does not restore a camera whose process ended: the rule above forbids an open only to restore.
 
 ### 4.8 Threads
 

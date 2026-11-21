@@ -191,7 +191,7 @@ def kill_holder(array):
 @pytest.mark.capture_timing
 def test_experiment_1_a_restart_right_after_a_dead_holder_of_camera_warnings_gives_new_arrays():
     """F2 of the second review: the old process was killed while it held the lock of `camera_warnings`, and no read
-    found that before `reset_for_start`. The restart gives four new arrays; each later `serialize` of the new
+    found that before `reset_for_start`. The restart gives new arrays (ARRAYS); each later `serialize` of the new
     process takes no wait."""
     from types import SimpleNamespace
 

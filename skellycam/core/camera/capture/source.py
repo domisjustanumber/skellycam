@@ -193,6 +193,10 @@ def empty_diagnostics(backend: str | None = None) -> dict:
 
 
 RESTORE_SETTING = "SKELLYCAM_RESTORE_CONTROLS"  # "0" turns the restore off, for a debug run only (4.7)
+# 4.7 [NYT6]: camera_id -> the keeper of the shared record of the "before" values (the status of the camera, which
+# the camera process puts here), with `restore_record()` and `set_restore_record(record)`. The record survives the
+# camera process.
+RESTORE_RECORDS: dict = {}
 
 
 class ControlRestore:
@@ -210,13 +214,24 @@ class ControlRestore:
         self.names: set[str] = set()
         self.ok: bool | None = None
         self.failed: int | None = None
+        self._keeper = RESTORE_RECORDS.get(camera_id)
 
     def read(self, state: ControlState) -> None:
         if self.before is None:
             self.before = dict(state)
+            record = self._keeper.restore_record() if self._keeper is not None else None
+            if record:  # an earlier open got no restore: the camera can hold values that this app set (4.7)
+                self.before.update({name: ControlValue(*value) for name, value in record["before"].items()})
+                self.names.update(record["names"])
 
     def changed(self, changes: dict) -> None:
+        if set(changes) <= self.names:
+            return
         self.names.update(changes)
+        if self._keeper is not None and self.before is not None:  # before the set (4.7)
+            self._keeper.set_restore_record(dict(
+                before={name: [value.present, value.auto, value.value] for name, value in self.before.items()},
+                names=sorted(self.names)))
 
     def restore(self, set_controls) -> None:
         """`set_controls(changes) -> ControlState` sets the changes and reads the controls back."""
@@ -239,6 +254,8 @@ class ControlRestore:
                 failed += 1
                 logger.warning(f"Camera {self.camera_id}: the restore of {name} at the close failed: {problem}")
         self.ok, self.failed = failed == 0, failed
+        if self.ok and self._keeper is not None:
+            self._keeper.set_restore_record({})  # the camera holds its own values again
 
     def fill(self, diagnostics: dict) -> None:
         diagnostics.update(restore_ok=self.ok, restore_failed=self.failed)

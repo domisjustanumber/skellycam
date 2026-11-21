@@ -220,6 +220,7 @@ class FakeScript:
     sample_offset_ms: float | None = -4.0  # sample time = arrival + offset; None: no sample time
     controls: tuple = (("exposure", True, False, -6), ("gain", True, False, 0), ("focus", True, True, 30))
     reset_on_stream: tuple = ()  # (name, value): the camera sets this when the stream starts (C930e)
+    keeps_controls: bool = False  # the camera keeps its control values from one open to the next (THREAD workers)
     reports_auto: tuple = ()  # control names that read back auto whatever the set (a camera in its own auto)
     live_set_faults: tuple = ()  # for the n-th live change: None, "error" or "readback:<value>"
     rate_after_change: tuple = ()  # the delivered rate after the n-th live change
@@ -260,6 +261,7 @@ class FakeLog:
         self.history = []  # `frames` of each open, in order
         self.taken = []  # frame numbers that read_frame returned, of the last open
         self.first_sfn_after_readback = None  # the next frame number at the first set with changes
+        self.device_controls = None  # the controls that a camera with `keeps_controls` keeps between opens
 
     def arm_hang(self):
         self.hang_armed.value = 1
@@ -383,7 +385,10 @@ class FakeSource:
             self.log.frames, self.log.taken = {}, []
             self.log.history.append(self.log.frames)
             self.log.first_sfn_after_readback = None
-            self._controls = {name: [present, auto, value] for name, present, auto, value in self.script.controls}
+            kept = self.log.device_controls if self.script.keeps_controls else None
+            self._controls = kept or {name: [present, auto, value] for name, present, auto, value in self.script.controls}
+            if self.script.keeps_controls:
+                self.log.device_controls = self._controls
             for name, value in self.script.reset_on_stream:
                 self._controls[name][2] = value
             restore = getattr(types, "ControlRestore", None)  # the stand-ins of the self-tests have none

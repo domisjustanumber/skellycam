@@ -30,6 +30,8 @@ class CameraManager:
     # selected again joins their gate with it (8.3).
     removed_statuses: dict[CameraIdString, CameraStatus] = field(default_factory=dict)
     removed_workers: dict[CameraIdString, CameraWorker] = field(default_factory=dict)  # a restart joins them first
+    # unix-capture.md 4.7 [NYT6]: camera_id -> the restore record that a closed group left; the group manager keeps it
+    restore_records: dict = field(default_factory=dict)
 
     @property
     def all_ready(self) -> bool:
@@ -43,16 +45,20 @@ class CameraManager:
         worker_registry: WorkerRegistry,
         camera_configs: CameraConfigs,
         source_factory: Callable | None = None,
+        restore_records: dict | None = None,
     ) -> "CameraManager":
         logger.info(f"Starting camera manager process with {len(camera_configs)} cameras")
 
         camera_statuses: dict[CameraIdString, CameraStatus] = {
             camera_id: CameraStatus() for camera_id in camera_configs.keys()
         }
+        restore_records = {} if restore_records is None else restore_records
+        for camera_id, status in camera_statuses.items():
+            status.set_restore_record(restore_records.get(camera_id, {}))
         orchestrator = CameraOrchestrator.from_statuses(camera_statuses=camera_statuses)
 
         manager = cls(ipc=ipc, camera_workers={}, orchestrator=orchestrator, worker_registry=worker_registry,
-                      source_factory=source_factory)
+                      source_factory=source_factory, restore_records=restore_records)
         for camera_id, camera_config in camera_configs.items():
             manager.camera_workers[camera_id] = manager._create_worker(camera_id, camera_config)
         return manager
@@ -202,9 +208,10 @@ class CameraManager:
 
         # A forcibly stopped or never-started worker cannot acknowledge closure.
         # Only update these flags after confirming that every worker has exited.
-        for status in list(self.orchestrator.camera_statuses.values()) + list(self.removed_statuses.values()):
+        for camera_id, status in list(self.orchestrator.camera_statuses.items()) + list(self.removed_statuses.items()):
             status.signal_closing()
             status.closed.value = True
+            self.restore_records[camera_id] = status.restore_record()  # for the next group (4.7) [NYT6]
         self.camera_workers.clear()
         self.removed_workers.clear()
         logger.success("Camera manager closed all camera processes successfully.")

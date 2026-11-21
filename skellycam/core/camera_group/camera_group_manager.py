@@ -50,6 +50,7 @@ class CameraGroupManager:
     closing: bool = False
     closed_diagnostics: dict = field(default_factory=dict)  # the last dicts of each camera of a closed group (F4)
     searching: bool = False  # an exposure search of the endpoint runs (camera-requests.md 1.5)
+    restore_records: dict = field(default_factory=dict)  # unix-capture.md 4.7 [NYT6]: from a group to the next
     camera_groups: dict[CameraGroupIdString, CameraGroup] = field(default_factory=dict)
     camera_group_framerate_subscriptions: dict[CameraGroupIdString, TopicSubscriptionQueue] = field(
         default_factory=dict
@@ -67,6 +68,7 @@ class CameraGroupManager:
             global_kill_flag=self.global_kill_flag,
             worker_registry=self.worker_registry,
             source_factory=self.source_factory,
+            restore_records=self.restore_records,
         )
         self.camera_group_framerate_subscriptions[camera_group.id] = (
             camera_group.ipc.pubsub.get_subscription(TopicTypes.FRAMERATE)

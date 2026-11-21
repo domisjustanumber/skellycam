@@ -12,6 +12,8 @@ Each test runs one fake camera through the HTTP endpoints with THREAD workers an
 
 import logging
 
+import pytest
+
 from skellycam.tests.capture.capture_session import capture_logs, one_camera
 from skellycam.tests.capture.fake_source import FakeScript
 
@@ -103,6 +105,32 @@ def test_f7_no_restore_when_the_loop_failed(monkeypatch):
         app.wait(lambda: log.closes.value == 1, "the close of the dead camera")
     assert not [t for t, _ in exposure_sets(log) if t >= close_time(log)]
     assert source.diagnostics()["restore_ok"] is None
+
+
+@pytest.mark.parametrize("next_open", ["apply again", "a new group"])
+def test_the_values_of_before_survive_a_camera_with_no_restore(monkeypatch, next_open):
+    """unix-capture.md 4.7 [NYT6]: a camera that keeps its controls between opens (a real camera) was in auto -6. Its
+    first open sets MANUAL -7; its loop fails, so it gets no restore and stays at manual -7. The next open ("apply
+    again", or a new group after a group close) reads manual -7, but its "before" values stay auto -6, and its
+    close restores auto -6."""
+    script = FakeScript(controls=AUTO_BEFORE, keeps_controls=True)
+    with one_camera(monkeypatch, script) as (app, camera_id, _):
+        log = app.factory.logs[camera_id]
+        app.factory.sources[camera_id].stop_now()
+        app.wait_state(camera_id, "dead")
+        app.wait(lambda: log.closes.value == 1, "the close of the dead camera")
+        assert log.device_controls["exposure"][1:] == [False, -7]  # no restore: the value of this app stays
+        if next_open == "a new group":
+            app.client.delete("/skellycam/camera/group/close/all")
+            assert log.device_controls["exposure"][1:] == [False, -7]  # a group close opens no camera
+        assert app.apply([app.config(camera_id)]).status_code == 200
+        app.wait_state(camera_id, "ready")
+        source = app.factory.sources[camera_id]
+        app.client.delete("/skellycam/camera/group/close/all")
+        app.wait(lambda: log.closes.value == 2, "the close")
+    assert log.device_controls["exposure"][1:] == [True, -6]
+    data = source.diagnostics()
+    assert (data["exposure_before"], data["exposure_before_auto"], data["restore_ok"]) == (-6, True, True)
 
 
 def test_a_lost_heartbeat_still_restores_the_controls_at_the_close(monkeypatch):

@@ -177,6 +177,7 @@ class CameraGroup:
         global_kill_flag: SharedValue,
         worker_registry: WorkerRegistry,
         source_factory: Callable | None = None,
+        restore_records: dict | None = None,
     ) -> "CameraGroup":
         try:
             validate_camera_configs(camera_configs)
@@ -190,6 +191,7 @@ class CameraGroup:
                 worker_registry=worker_registry,
                 camera_configs=camera_configs,
                 source_factory=source_factory,
+                restore_records=restore_records,
             )
         except Exception as e:
             logger.error(f"Error creating camera group: {type(e).__name__} - {e}")
