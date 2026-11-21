@@ -1262,11 +1262,12 @@ def test_the_fake_gives_the_range_in_the_shape_of_the_product_sources():
     assert FakeSource(FakeScript(exposure_range=(-11, -2), reported_range=False)).exposure_range() is None
 
 
-@pytest.mark.parametrize(("held", "opened"), [(-9, -9), (-12, -11), (-1, -2)])
+@pytest.mark.parametrize(("held", "opened"), [(-9, -9), (-12, -11), (-1, -5), (-3, -5)])
 def test_an_open_in_auto_sets_the_held_value_inside_the_reported_range(monkeypatch, held, opened):
-    """camera-requests.md 1.3a [GEH0]: a connect in `AUTO` on a camera that reports -11 to -2 (step 1): a held value
-    inside the range opens at that value; below it at -11; above it at -2. The camera does not fail, and it then
-    searches -11 to -5."""
+    """camera-requests.md 1.3a [GEH0, fix lane E]: a connect in `AUTO` on a camera that reports -11 to -2 (step 1): a
+    held value that is a search value in the range opens at that value; another value opens at the nearest search
+    value in the range (-11 to -5): -12 at -11, -1 and -3 at -5, not at -2 (a 250 ms exposure, 4 fps, seen on a real
+    camera). The camera does not fail, and it then searches -11 to -5."""
     script = FakeScript(brightness=MODEL, exposure_range=(-11, -2, 1))
     with capture_app(monkeypatch, [script]) as app:
         camera_id = app.factory.camera_ids[0]

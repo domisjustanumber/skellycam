@@ -17,7 +17,7 @@ import cv2
 import numpy as np
 
 from skellycam.core.camera.capture import rate_check
-from skellycam.core.camera.capture.exposure_search import ExposureSearch, add_light_text, failed_text
+from skellycam.core.camera.capture.exposure_search import ExposureSearch, add_light_text, failed_text, search_values
 from skellycam.core.camera.capture.modes import NO_FLOOR_MODE, at_floor, rates_equal
 from skellycam.core.camera.capture.source import (
     BOUNDED_CALL_LIMIT_S,
@@ -346,12 +346,15 @@ class CameraLoop:
             logger.warning(text)
         else:
             if self.config.exposure_mode == "AUTO" and self.exposure_range is not None:
-                # 1.3a [GEH0]: the held value is set inside the range of the camera, and the config stores the read-back
+                # 1.3a: the held value is set at the nearest search value (with none, inside the range of the
+                # camera), and the config stores the read-back
                 low, high, _ = self.exposure_range  # (min, max, step), the one shape of each source
-                if not low <= value <= high:
-                    logger.info(f"Camera {self.camera_id}: the held exposure {value} is outside the range {low} to "
-                                f"{high} of the camera; it opens at {min(max(value, low), high)}")
-                    value = min(max(value, low), high)
+                values = search_values(self.exposure_range)
+                opened_at = min(values, key=lambda v: abs(v - value)) if values else min(max(value, low), high)
+                if opened_at != value:
+                    logger.info(f"Camera {self.camera_id}: the held exposure {value} is not a search value in the "
+                                f"range {low} to {high} of the camera; it opens at {opened_at}")
+                    value = opened_at
             readback = self.source.set_controls({"exposure": ControlSetting(auto=False, value=value)})
         self._publish_controls(readback)
         exposure = readback.get("exposure")

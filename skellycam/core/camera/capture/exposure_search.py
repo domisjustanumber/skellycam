@@ -18,6 +18,13 @@ ADD_LIGHT_BELOW = 64.0  # 1.3 item 5 [Q6]: a starting value; T-REQ-25 sets it
 LIMIT_NS = 20_000_000_000  # 1.3 item 6 [A2]: from the first set
 
 
+def search_values(exposure_range: tuple | None) -> tuple:
+    """1.3 item 1: the values of VALUES in the range (min, max, step), on its step grid; with no range, each value."""
+    low, high, step = exposure_range or (VALUES[0], VALUES[-1], 1)
+    step = step if step and step > 0 else 1
+    return tuple(value for value in VALUES if low <= value <= high and (value - low) % step == 0)
+
+
 def early_deadline_ns(t_a: int, mode_rate: float) -> int:
     """1.3 item 2.6 [A1]: frame s_a + 30 cannot arrive in time after t_a + 30 / (0.97 x r)."""
     return t_a + round(RATE_FRAMES / ((1 - rate_check.LIMIT) * mode_rate) * 1e9)
@@ -46,9 +53,8 @@ class ExposureSearch:
         self.mode_rate = mode_rate
         self.limit_ns = None if start_ns is None else start_ns + LIMIT_NS
         self.strict = exposure_range is not None
-        low, high, step = exposure_range or (VALUES[0], VALUES[-1], 1)
-        step = step if step and step > 0 else 1
-        self.values = tuple(value for value in VALUES if low <= value <= high and (value - low) % step == 0)
+        low, high, _ = exposure_range or (VALUES[0], VALUES[-1], 1)
+        self.values = search_values(exposure_range)
         self.skipped: list[int] = []  # values that the camera could not set, with no range (1.3 item 6) [GEH0]
         self.trials: list[dict] = []
         self.pending: int | None = self.values[0] if self.values else None
