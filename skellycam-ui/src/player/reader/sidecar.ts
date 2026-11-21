@@ -114,6 +114,7 @@ export function readSidecar(bytes: Uint8Array): Sidecar {
     if (COLUMNS.some(c => col[c] < 0)) return refuse('invalid', 'missing_metadata');
 
     const footer: string[] = [];
+    let sawEmpty = false;
     for (; li < lines.length; li++) {
         const [a, b] = lines[li];
         if (bytes[a] === 0x23) break;
@@ -141,7 +142,10 @@ export function readSidecar(bytes: Uint8Array): Sidecar {
             if (v === '' ? !(missing || name === 'sample_ns') : !isInt(v)) return refuse('invalid', 'bad_metadata');
             if (v !== '' && (BigInt(v) >= TWO_53 || BigInt(v) <= -TWO_53)) return refuse('invalid', 'bad_time');
         }
+        // SFF-759: byte fields both empty or both set; no row with byte fields after a row with empty ones
         if ((f('byte_offset') === '') !== (f('byte_size') === '')) return refuse('invalid', 'bad_metadata');
+        if (f('byte_offset') !== '' && sawEmpty) return refuse('invalid', 'bad_metadata');
+        sawEmpty ||= f('byte_offset') === '';
         out.sfn.push(f('source_frame_number') === '' ? null : BigInt(f('source_frame_number')));
         out.arrival.push(f('arrival_ns') === '' ? null : BigInt(f('arrival_ns')));
         out.flags.push(Number(flags));

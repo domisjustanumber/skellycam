@@ -1,5 +1,5 @@
 // Unit tests of missing rows, dead cameras, short files and unfinished takes: T-PLAY-17 to T-PLAY-24
-// and T-PLAY-71 (specs/player.md sections 6.7, 6.11, 7.2 and 7.3).
+// and T-PLAY-71, T-PLAY-82 (specs/player.md sections 6.7, 6.11, 7.2 and 7.3).
 import assert from 'node:assert/strict';
 import {readdirSync, readFileSync, statSync} from 'node:fs';
 import path from 'node:path';
@@ -195,4 +195,33 @@ test('T-PLAY-71 write_error_short: a short file with no dead camera', async t =>
     assert.equal(o.shown(3).identity?.row, 79);
     assert.ok(o.player.state.take.warnings.includes('camera_file_short'));
     assert.ok(o.player.state.take.warnings.includes('take_error'));
+});
+
+test('T-PLAY-82 byte fields: the refusals of SFF-759, and a camera file with no block', async t => {
+    // camera 3 of dead_short: rows 80 to 119 are `missing` with empty byte fields and no block
+    const vectors: [string, (p: TakePlan) => void][] = [
+        ['one_empty_byte_field', p => void (camByIndex(p, 3).rows[100].fields = {byte_size: '100'})],
+        ['empty_without_missing', p => void (camByIndex(p, 3).rows[100].fields = {flags: '0'})],
+        // row 78 has no block, so the 79 rows with byte fields and the 79 blocks stay equal
+        ['byte_fields_after_empty', p => markMissing(camByIndex(p, 3), 78, 78, false, 'missing_noblock')],
+    ];
+    for (const [name, change] of vectors) {
+        const p = planOf('dead_short');
+        p.name = `dead_short_${name}`;
+        change(p);
+        const o = await openFixture(t, p);
+        const c3 = o.player.state.cameras[3];
+        assert.deepEqual([c3.state, c3.reason], ['invalid', 'bad_metadata'], name);
+    }
+
+    // a camera file with no block holds no Cluster (SFF-754): it is read, not refused
+    const none = planOf('dead_short');
+    none.name = 'dead_short_no_block';
+    markMissing(camByIndex(none, 3), 0, 119, false, 'missing_noblock');
+    none.warnings[0].detail = 'last_frame=none reason=hang';
+    const o = await openFixture(t, none);
+    const c3 = o.player.state.cameras[3];
+    assert.deepEqual([c3.state, c3.rows, c3.deadFrom], ['repaired', 120, 0]);
+    assert.equal(o.player.state.frameCount, 120);
+    assert.deepEqual(o.shown(3).mark, {kind: 'camera_lost', frame: 0});
 });
