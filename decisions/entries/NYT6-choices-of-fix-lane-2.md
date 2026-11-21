@@ -21,10 +21,10 @@ items. The agent chose these details:
    longest manual exposure is -5. The camera uses -5." (`camera-requests.md` 1.1, 1.5, 1.8).
 5. `alive` of a group is true while the group runs and at least one selected camera lives: its process runs,
    and it is not `failed`, `dead`, closing or closed (`camera-requests.md` 1.5). The specs were silent.
-6. The "before" values and the changed names of the controls live in the shared JSON array `controls_before` of
-   `CameraStatus`. The source writes it before the first set of each newly changed control; a restore with no
-   failure clears it; at the first read of an open, a record that is not empty replaces the values that the camera
-   reads. "Apply again" keeps it; `CameraGroupManager.restore_records` keeps it to the next group, in memory. The
+6. The "before" values, the changed names and the value that this app set last (asked before the set, read back
+   after it) live in the shared JSON array `controls_before` of `CameraStatus`. A restore with no failure clears it.
+   At the first read of an open, a control that still holds the value that this app set last takes its "before"
+   value from the record; the record drops the other controls. A close that raises still keeps the records. "Apply again" keeps it; `CameraGroupManager.restore_records` keeps it to the next group, in memory. The
    camera process finds it through `RESTORE_RECORDS` of `capture/source.py` (`unix-capture.md` 4.7).
 7. The exit of `skellycam/__main__.py` has no fixed wait of 1 s before `WorkerRegistry.shutdown_all()`.
 
@@ -52,7 +52,8 @@ items. The agent chose these details:
    a new limit. One repeat may be too few for the Kiyo Pro at -8 (a miss in four of five opens): T-REQ-23 and
    T-REQ-26 must record the repeats.
 6. A group close does not restore a camera whose process ended. The record is not on disk: a restart of the app
-   loses it, and the next app reads the manual value as "before".
+   loses it. Another unit of the same model in the same USB port (no serial number), or a value that another program
+   set to exactly the last value of this app, still takes the record. A torn record reads as no record.
 
 ## Evidence
 

@@ -108,8 +108,8 @@ def test_f7_no_restore_when_the_loop_failed(monkeypatch):
 
 
 @pytest.mark.parametrize("next_open", ["apply again", "a new group"])
-def test_the_values_of_before_survive_a_camera_with_no_restore(monkeypatch, next_open):
-    """unix-capture.md 4.7 [NYT6]: a camera that keeps its controls between opens (a real camera) was in auto -6. Its
+def test_t_unx_91_the_values_of_before_survive_a_camera_with_no_restore(monkeypatch, next_open):
+    """T-UNX-91, unix-capture.md 4.7 [NYT6]: a camera that keeps its controls between opens (a real camera) was in auto -6. Its
     first open sets MANUAL -7; its loop fails, so it gets no restore and stays at manual -7. The next open ("apply
     again", or a new group after a group close) reads manual -7, but its "before" values stay auto -6, and its
     close restores auto -6."""
@@ -174,3 +174,48 @@ def test_an_end_by_another_base_exception_is_not_a_lost_heartbeat(monkeypatch):
         monkeypatch.setattr(loop_module.CameraLoop, "_pass", interrupted)
         app.wait(lambda: app.status(camera_id)["closed"], "the loop ends")
         assert (app.status(camera_id)["failure"] or {}).get("reason") != "lost the server's heartbeat"
+
+
+def test_t_unx_92_a_record_applies_only_to_controls_that_still_hold_the_value_of_this_app(monkeypatch):
+    """T-UNX-92, unix-capture.md 4.7 [NYT6] (the experiment `stale.py` of the review): the camera starts in auto -6;
+    open 1 sets manual -7 and is killed. (a) The camera still holds -7: open 2 takes auto -6 of the record as its
+    "before" value. (b) Another program set manual -3 meanwhile: open 2 drops the record and restores -3. (c) A record
+    replaces "before" only for its names: a gain in its `before` that is not in `names` stays as read."""
+    from types import SimpleNamespace
+
+    from skellycam.core.camera.capture import source
+    from skellycam.core.camera.capture.source import ControlRestore, ControlSetting, ControlValue
+
+    store = {}
+    monkeypatch.setitem(source.RESTORE_RECORDS, "cam", SimpleNamespace(
+        restore_record=lambda: store.get("r", {}), set_restore_record=lambda r: store.__setitem__("r", r)))
+    device = {}
+
+    def set_controls(changes):
+        for name, setting in changes.items():
+            device[name] = ControlValue(True, setting.auto, setting.value)
+        return dict(device)
+
+    def open_and_set(value):
+        restore = ControlRestore("cam")
+        restore.read(dict(device))
+        restore.changed({"exposure": ControlSetting(False, value)})
+        set_controls({"exposure": ControlSetting(False, value)})
+        return restore
+
+    for other_program, expected in ((None, ControlValue(True, True, -6)), (-3, ControlValue(True, False, -3))):
+        store.clear()
+        device.update(exposure=ControlValue(True, True, -6), gain=ControlValue(True, False, 0))
+        open_and_set(-7)  # killed: no restore
+        if other_program is not None:
+            device["exposure"] = ControlValue(True, False, other_program)
+        open_and_set(-8).restore(set_controls)
+        assert device["exposure"] == expected, other_program
+        assert store["r"] == {}
+
+    store["r"] = dict(before={"exposure": [True, True, -6], "gain": [True, False, 99]}, names=["exposure"],
+                      set={"exposure": [False, -7]})
+    device.update(exposure=ControlValue(True, False, -7), gain=ControlValue(True, False, 0))
+    restore = ControlRestore("cam")
+    restore.read(dict(device))
+    assert restore.before["exposure"] == ControlValue(True, True, -6) and restore.before["gain"] == ControlValue(True, False, 0)

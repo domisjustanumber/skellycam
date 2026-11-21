@@ -1263,16 +1263,23 @@ the record), 6 (the citation of 0) and 7 (4.4.10 filled) are applied here.
 - A lost heartbeat of the server ([`recorder.md`](recorder.md) section 9) is not a camera fault. The
   close of that camera restores the controls. No other failure of the loop gets the restore.
 - The "before" values survive the camera process [ADR-NYT6](../decisions/entries/NYT6-choices-of-fix-lane-2.md).
-  Before its first set of an open, the source writes them, with the names of the controls that it
-  changes, into the shared record `controls_before` of `CameraStatus` (a JSON array that the main
-  process makes with the status). It adds each newly changed name before that set. A restore with no
-  failure clears the record. A camera process that ends with no restore (a kill, a hang, a failed loop)
-  leaves the record. At the first read of a later open, a record that is not empty gives the "before"
-  values and the changed names, in place of the values that the camera reads then: those can be the
-  values that this app set. Thus the "before" values stay the values of the first open, and the close of
-  the next open restores them. "Apply again" keeps the record (`reset_for_start`), and
-  `CameraGroupManager` keeps it from a group close to the next group, for the life of the app. A group
-  close does not restore a camera whose process ended: the rule above forbids an open only to restore.
+  The source keeps the shared record `controls_before` of `CameraStatus` (a JSON array that the main
+  process makes with the status). For each control that this app changed, it holds the name, the
+  "before" value and auto flag, and the value and auto flag that this app set last. Before each set,
+  the source writes the value that it asks for; after the set, the value that the camera read back.
+  A restore with no failure clears the record. A camera process that ends with no restore (a kill, a
+  hang, a failed loop) leaves the record. At the first read of a later open, a control of the record
+  whose current read still holds the value that this app set last (the same auto flag, and with auto
+  off the same value) takes its "before" value from the record, in place of the value that the camera
+  reads then; the record drops each other control. Thus the "before" values stay the values of the
+  first open, the close of the next open restores them, and a value that another program set meanwhile
+  stays. What is left: another unit of the same model in the same USB port (a camera with no serial
+  number has the same `camera_id` there), or a value that another program set to exactly the value that
+  this app set last, takes the "before" values of the record. A record that a kill tore during its
+  write reads as no record. "Apply again" keeps the record (`reset_for_start`), and
+  `CameraGroupManager` keeps it from a group close to the next group, for the life of the app, also
+  when the close raises for a process that cannot be killed. A group close does not restore a camera
+  whose process ended: the rule above forbids an open only to restore.
 
 ### 4.8 Threads
 
@@ -1640,6 +1647,10 @@ facts of macOS only.
 | T-UNX-76 | windows | `MediaFoundationSource.diagnostics()` with the stand-in interfaces of the Windows tests. | Every key of 4.6.2; `id_source` `mf-link`; `native_domain` `hresult`; `clock` `unknown`; `t_*_ms` filled. |
 | T-UNX-77 | windows | Map the HRESULTs of [W 6.7] and `0x800718CF` to codes. | In-use codes give `camera-in-use`; removal codes give `device-removed`; `0x800718CF` gives `usb-bandwidth`; `0x80004005` gives `open-failed` at open and `stream-error` in streaming. |
 | T-UNX-78 | windows | The restore of the Media Foundation source at the close, with stand-in control interfaces. | Each changed control is set back to its "before" value and flags before the flush, and read back; on by default. |
+| T-UNX-91 | fake | A fake camera that keeps its controls between opens, auto -6 before the first open; it opens in `MANUAL -7`, and its loop fails (no restore); then "apply again", and in a second case a group close and a new group. | The camera holds manual -7 after the failure and after the group close; the next open has `exposure_before` auto -6, and its close restores auto -6, `restore_ok` true (4.7) [ADR-NYT6](../decisions/entries/NYT6-choices-of-fix-lane-2.md). |
+| T-UNX-92 | fake | `ControlRestore` with a record: open 1 sets manual -7 and gets no restore; (a) the camera still holds -7; (b) another program set manual -3; (c) a record whose `before` has a control that is not in `names`. | (a) The close of open 2 restores auto -6; (b) it restores -3; the record is empty after each; (c) that control keeps the value that the camera reads (4.7). |
+| T-UNX-93 | fake | A frame decision with no take (first frame -1) while another thread holds the lock of the last frame. | It returns "no record, no finish" in under 0.2 s and starts no stretch with no lock (4.10). |
+| T-UNX-94 | fake | `CameraManager.close()` with a camera process that cannot be killed and a camera with a restore record. | The close raises; `restore_records` holds the record of that camera (4.7). |
 | T-UNX-79 | fake | `capture_timing`. A paused camera process with `V4L2Source` and with `AVFoundationSource` over the fakes, 10 s. | Process CPU under 2 % of one core (the rule of T-CAP-49). Not calibrated on a hosted runner: a failure is recorded and the user decides [A]. |
 
 ### 6.6 Runner and build tests
@@ -1693,7 +1704,7 @@ tests; it does not repeat the certify spec.
 
 | Kind | Linux | macOS | Each OS or Windows |
 |---|---|---|---|
-| fake | 30 (T-UNX-01 to 30) | 31 (T-UNX-31 to 60, 90) | 17 shared (61 to 75, 79, 89), on Windows, Linux and macOS |
+| fake | 30 (T-UNX-01 to 30) | 31 (T-UNX-31 to 60, 90) | 21 shared (61 to 75, 79, 89, 91 to 94), on Windows, Linux and macOS |
 | windows | — | — | 3 (76 to 78) |
 | runner, vivid | 4 (80 to 83) | 4 (84 to 87) | — |
 | build | — | 1 (88) | — |

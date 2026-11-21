@@ -485,7 +485,10 @@ class FakeSource:
                     self.script.hold_first_change and self._live_changes == 1)
             if changes and start is None:
                 self.log.first_sfn_after_readback = self._next_sfn
-            return self._read_back()
+            state = self._read_back()
+            if self._restore is not None:
+                self._restore.after_set(state)
+            return state
 
     def close(self, restore=True):
         self._event("close", None)

@@ -199,6 +199,10 @@ class CameraManager:
             for camera_worker in still_alive:
                 camera_worker.worker.join(timeout=2.0)
 
+        # For the next group, also when the check below raises (unix-capture.md 4.7) [NYT6]
+        for camera_id, status in list(self.orchestrator.camera_statuses.items()) + list(self.removed_statuses.items()):
+            self.restore_records[camera_id] = status.restore_record()
+
         zombies = [w for w in workers if w.worker.is_alive()]
         if zombies:
             raise RuntimeError(
@@ -208,10 +212,9 @@ class CameraManager:
 
         # A forcibly stopped or never-started worker cannot acknowledge closure.
         # Only update these flags after confirming that every worker has exited.
-        for camera_id, status in list(self.orchestrator.camera_statuses.items()) + list(self.removed_statuses.items()):
+        for status in list(self.orchestrator.camera_statuses.values()) + list(self.removed_statuses.values()):
             status.signal_closing()
             status.closed.value = True
-            self.restore_records[camera_id] = status.restore_record()  # for the next group (4.7) [NYT6]
         self.camera_workers.clear()
         self.removed_workers.clear()
         logger.success("Camera manager closed all camera processes successfully.")
