@@ -35,6 +35,12 @@ format 1.6.0 of the contract (skellycertify ADR-9FHP). [`certify.md`](../../spec
 12. Format 1.6.0: the schema id `skellycertify.report/1.6.0`; `abandon` stops as a cancel (`cancelled`) and writes
     no record row; no `test_media` and no `gpus`; `session:exit` has no `module`. The local contract clone is at
     1.7.0, which changes only the `name` of a `test_media` item; skellycam writes 1.6.0 as the user decided.
+13. Second review: the live change skips a wedged or not-ready camera. After the session starts its close, the
+    caller kills nothing before 5 s + 8 s for each camera. A clean close means no reopen in phase G. A crash never
+    blames a camera. A late abandon stops the record write. Camera logs go to `logs` of the work folder.
+14. Proposal (the coordinator chose it, the user has not): a camera with a step running at a stop is not opened
+    again and gets `camera-not-restored`, because the product needs 5 s to declare a hang. Cost: no restore after a
+    cancel during the take.
 
 ## Open work
 
@@ -56,6 +62,7 @@ Each "yes" accepts the recommendation.
    only the notice. Yes?
 5. Product change, not built: `managed_worker` sets an explicit role flag in each camera process, the
    `parent_process()` guards read it, and certify drops its workaround of item 5. Yes?
+6. Accept item 14. Yes?
 
 ## Reason
 

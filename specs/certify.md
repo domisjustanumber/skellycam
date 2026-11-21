@@ -847,7 +847,11 @@ After a stop of the caller, the end of the budget, a time-out or a crash, the ru
 - A camera that hung, whose process ended or that was removed (after any step) is `replug`. It is never opened
   again.
 - A camera whose `opens` has no result was in the middle of its open. It is never opened again. Its settings are
-  not known, so it is `not-restored`, never `healthy`.
+  not known, so it is `not-restored`, never `healthy`. A camera that had a step running at the stop is the same,
+  because the product needs 5 s to declare a hang [A, proposal of ADR-X8XE]. This costs the restore of each camera
+  after a cancel during the take.
+- When the session closed its camera group itself (the close ran to its end), the close restored each camera:
+  phase G takes the result of that close, as in quick with no stop, and opens no camera.
 - A camera that another program holds, or whose first "before" values are not known (no control was set), gets no
   open and no row.
 - Each other touched camera gets the plain open below. The session sends the "before" values of a camera as soon as
@@ -977,6 +981,19 @@ Quick: section 4.7. Full: section 16.
   that is opened again) and the wait for the end of the session child (`EXIT_LIMIT_S`, 5 s). Thus `certify("quick")`
   returns within 30 s + N x 6.5 s + 5 s, which is about 55 s for three cameras. After a crash or a time-out the
   wait of 12 s of the camera processes and 20 s for each camera in phase G apply: about 112 s for three cameras.
+- The close of the group is never cut [A]. When the session starts the close of its camera group, it tells the
+  caller. From then on the caller applies no budget stop and no cancel kill until the close ended or the close limit
+  passed: 5 s + 8 s for each camera, from the bounds of the product close (a join of 3 s, a terminate and 3 s, a
+  kill and 2 s, one camera process after the other). A stop that came in the close stays a stop for the report.
+- The bound above assumes that each process ends when it is killed. A process in a driver call that does not
+  return can add about 27 s (the waits of the kill, the grace and the exit). The worst case for three cameras is
+  then about 77 s.
+- The grace of 12 s at a time-out is 2 s more than the heartbeat limit of 10 s of a camera process: a camera
+  process sees the dead server after 10 s and has about 2 s to finish its files and restore its camera before the
+  rest of the tree is killed. Phase G then judges that camera again.
+- Ctrl+C in a console reaches each process of the console. The camera processes ignore it; the session child ends,
+  and the camera processes restore their cameras through the heartbeat path within about 12 s. The caller then
+  stops the session and gives no report.
 - The session child ends when its caller dies: it sets the kill flag, closes its camera group (the close restores
   each camera) within 15 s, and ends. Each wait of the child for its caller has a time limit. The caller stops the
   session child also when the progress callable or the cancel object raises an exception that is not an
@@ -1018,7 +1035,13 @@ The contract rules 1 to 16 apply [C 6]. In addition:
   `.skellycam-certify`. It deletes nothing else.
 - One run at a time [A] [ADR-X8XE](../decisions/entries/X8XE-choices-of-the-certify-review-fixes-and-format-1-6-0.md). A run holds the OS file lock of `certify.lock` beside `camera_checks.json` in the
   skellycam base folder for its whole time. A second run is refused as in 9.7, with `cameras-busy`, and makes no
-  work folder. The OS frees the lock when the process ends.
+  work folder. The OS frees the lock when the process ends. Another error of the lock file refuses the run with
+  the class name of the error.
+- The work folder can outlive a caller that died. It then holds the take, which is a recording of real frames.
+  The next run in the same recording folder deletes it (it has the marker file).
+- No log file outside the work folder: the session child gives its camera processes the log folder `logs` in the
+  work folder (`SKELLYLOGS_LOG_DIR`), unless the caller set that folder. The session child itself writes no log
+  file.
 - A record write that fails gives the cleanup row `write-record` with the class name of the error; the report
   still returns [C 2.5].
 - The report holds no media and no file name of a take [C 6 rule 7].
