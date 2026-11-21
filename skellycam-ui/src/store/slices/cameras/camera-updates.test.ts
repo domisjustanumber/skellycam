@@ -89,3 +89,14 @@ test('the close-all fall back runs only for a call meant to add cameras: "Update
         assert.equal(closeAllAndConnect(kind, sent, allIn), false, kind);
     }
 });
+
+test('T-REQ-95: a camera of the group whose desired rate differs from the rate of the group is sent again (camera-requests.md 2.8)', () => {
+    const rated = (framerate: number) => ({ desiredConfig: { framerate } });
+    const group = { slow: { framerate: 60 }, same: { framerate: 29.97 } };
+    const changes = pendingCameraChanges([
+        cam('slow', rated(30)),
+        cam('same', rated(30)),
+        cam('new', { inGroup: false, connectionStatus: 'available', ...rated(30) }),
+    ], Object.keys(group), group);
+    assert.deepEqual(changes, { retry: [], close: [], add: ['new'], renumber: ['slow'] });
+});

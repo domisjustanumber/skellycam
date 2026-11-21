@@ -9,6 +9,7 @@ interface CameraForUpdate {
     index?: number;  // the current detection
     name?: string;
     actualConfig?: { camera_index: number; camera_name: string };  // what the server applied
+    desiredConfig?: { framerate: number };
 }
 
 export interface CameraChanges { retry: string[]; close: string[]; add: string[]; renumber: string[] }
@@ -16,8 +17,11 @@ export interface CameraChanges { retry: string[]; close: string[]; add: string[]
 /**
  * The differences between the camera list and the server's camera group that "Update Cameras" sends.
  * `groupIds`: each camera of the server's groups; one with no row (unplugged, then detected again) is closed.
+ * `groupConfigs`: the configs of the live state; a camera whose desired rate is not the rate of the group is sent again,
+ * so that a request never holds two rates (camera-requests.md 2.8).
  */
-export function pendingCameraChanges(cameras: CameraForUpdate[], groupIds: string[] = []): CameraChanges {
+export function pendingCameraChanges(cameras: CameraForUpdate[], groupIds: string[] = [],
+                                     groupConfigs: Record<string, { framerate: number }> = {}): CameraChanges {
     const rowIds = new Set(cameras.map(cam => cam.id));
     return {
         retry: cameras.filter(cam => cam.selected && cam.connectionStatus === 'error').map(cam => cam.id),
@@ -27,8 +31,10 @@ export function pendingCameraChanges(cameras: CameraForUpdate[], groupIds: strin
         ],
         add: cameras.filter(cam => cam.selected && !cam.deviceInfo.virtual && !cam.inGroup).map(cam => cam.id),
         // A re-detection gave an open camera a new number or name: send it again, live with no reopen (camera-requests.md 8.1)
-        renumber: cameras.filter(cam => cam.selected && cam.inGroup && cam.connectionStatus !== 'error' && cam.actualConfig
-            && (cam.actualConfig.camera_index !== cam.index || cam.actualConfig.camera_name !== cam.name)).map(cam => cam.id),
+        renumber: cameras.filter(cam => cam.selected && cam.inGroup && cam.connectionStatus !== 'error' && (cam.actualConfig
+            && (cam.actualConfig.camera_index !== cam.index || cam.actualConfig.camera_name !== cam.name)
+            || cam.desiredConfig && cam.id in groupConfigs && Math.abs(cam.desiredConfig.framerate - groupConfigs[cam.id].framerate) > 0.5))
+            .map(cam => cam.id),
     };
 }
 
@@ -58,9 +64,9 @@ export function missingFromGroup(sent: Record<string, { use_this_camera: boolean
  * The kind of an apply call: "Update Cameras", Connect with no group, or any other apply (settings, menu, grid,
  * welcome), which must stay a live change.
  */
-export type ApplyKind = 'update-cameras' | 'connect' | 'settings';
+export type ApplyKind = 'update-cameras' | 'connect' | 'settings' | 'rate';  // 'rate': a pick of the rate selector
 
 /** Whether the thunk closes all cameras and connects the selected ones: only for a call meant to add cameras. */
 export function closeAllAndConnect(kind: ApplyKind, sent: Record<string, { use_this_camera: boolean }>, responseConfigs: Record<string, unknown>): boolean {
-    return kind !== 'settings' && missingFromGroup(sent, responseConfigs).length > 0;
+    return (kind === 'update-cameras' || kind === 'connect') && missingFromGroup(sent, responseConfigs).length > 0;
 }

@@ -19,6 +19,21 @@ import {
     PersistedCameraSettingsMap,
 } from './camera-settings-storage';
 import { cameraStatesFromAppState, NOT_IN_GROUP, statusesAfterApply } from './camera-state';
+import {
+    BUSY_STATES, chosenRate, nextRateChecking, rateCheckingAtResponse, rateChoice, rateFallbackText, replacesDesired,
+    withChosenRate,
+} from './rate-choice';
+import { labelText } from './camera-labels';
+
+/** One rate for each camera (camera-requests.md 2.2, 2.8): the desired config of each camera gets it. */
+const anyBusy = (state: CamerasState) => state.cameras.some(camera => BUSY_STATES.includes(camera.state ?? ''));
+
+function setRate(state: CamerasState, rate: number): void {
+    state.cameras.forEach(camera => {
+        camera.desiredConfig.framerate = rate;
+        camera.hasConfigMismatch = !areConfigsEqual(camera.actualConfig, camera.desiredConfig);
+    });
+}
 
 /** Copy the held value of each camera whose search is done into its desired config (camera-requests.md 1.3a, 1.8). */
 function adoptHeldValues(state: CamerasState, groups: Parameters<typeof copyHeldValues>[1]): void {
@@ -43,6 +58,9 @@ const initialState: CamerasState = {
     isPaused: false,
     isLoading: false,
     error: null,
+    rateNote: null,
+    rateFallbackSeen: null,
+    rateChecking: false,
 };
 
 export const cameraSlice = createSlice({
@@ -63,7 +81,21 @@ export const cameraSlice = createSlice({
             if (camera && !camera.deviceInfo.virtual) {  // virtual cameras are not supported yet
                 camera.selected = !camera.selected;
                 camera.desiredConfig.use_this_camera = camera.selected;
+                const choice = rateChoice(state.cameras);
+                if (camera.selected && chosenRate(state.cameras) === 60 && !choice.can60) {  // camera-requests.md 2.5
+                    setRate(state, 30);
+                    state.rateNote = choice.reasons.join(' ');
+                }
             }
+            persistAllCameraSettings(state);
+        },
+
+        // ========== Frame rate (camera-requests.md 2.8) ==========
+        // A pick of the one rate selector; the panel sends it at once while cameras stream (`check`: a sent pick of 60)
+        frameRateChosen: (state, action: PayloadAction<{ rate: number; check: boolean }>) => {
+            setRate(state, action.payload.rate);
+            state.rateNote = null;
+            state.rateChecking = action.payload.check;
             persistAllCameraSettings(state);
         },
 
@@ -133,7 +165,8 @@ export const cameraSlice = createSlice({
             })
             .addCase(detectCameras.fulfilled, (state, action) => {
                 state.isLoading = false;
-                state.cameras = action.payload;
+                state.cameras = withChosenRate(state.cameras, action.payload);  // one rate also for a new camera (2.8)
+                state.rateNote = null;  // a detection clears the note under the rate selector (2.4)
                 persistAllCameraSettings(state);
             })
             .addCase(detectCameras.rejected, (state, action) => {
@@ -149,6 +182,9 @@ export const cameraSlice = createSlice({
             .addCase(camerasConnectOrUpdate.fulfilled, (state, action) => {
                 state.isLoading = false;
                 const { camera_configs: configs, camera_failures: failures, sentIds } = action.payload;
+                const kind = action.meta.arg?.kind ?? 'settings';
+                const autoSent = sentIds.some(id => (configs[id] as CameraConfig | undefined)?.exposure_mode === 'AUTO');
+                state.rateChecking = rateCheckingAtResponse(state.rateChecking, autoSent, anyBusy(state));
                 const after = statusesAfterApply(state.cameras, configs, failures, sentIds);
                 state.cameras.forEach(camera => {
                     const { status, sent } = after[camera.id];
@@ -156,7 +192,8 @@ export const cameraSlice = createSlice({
                     const config = configs[camera.id] as CameraConfig | undefined;
                     if (!config) return;
                     camera.actualConfig = config;
-                    if (sent) camera.desiredConfig = { ...config };  // a camera not in the request keeps its unsaved edits
+                    // a camera not in the request, and each camera of a pick, keeps its unsaved edits (camera-requests.md 2.8)
+                    if (replacesDesired(kind, sent)) camera.desiredConfig = { ...config };
                     camera.hasConfigMismatch = !areConfigsEqual(camera.actualConfig, camera.desiredConfig);
                 });
                 persistAllCameraSettings(state);
@@ -164,6 +201,7 @@ export const cameraSlice = createSlice({
             .addCase(camerasConnectOrUpdate.rejected, (state, action) => {
                 state.isLoading = false;
                 state.error = action.error.message || 'Failed to connect to cameras';
+                state.rateChecking = false;
             })
 
 
@@ -183,6 +221,16 @@ export const cameraSlice = createSlice({
                 const live = cameraStatesFromAppState(Object.values(action.payload.state.camera_groups));
                 state.cameras.forEach(camera => Object.assign(camera, live[camera.id] ?? NOT_IN_GROUP));
                 adoptHeldValues(state, action.payload.state);  // a search at an open: no response carries it [B14]
+                // 2.4: a new fall back to 30 fps. An item seen before (a state from before a pick or a detection) is old.
+                const fallback = rateFallbackText(Object.values(action.payload.state.camera_groups));
+                const newFallback = fallback !== null && fallback !== state.rateFallbackSeen;
+                state.rateChecking = nextRateChecking(state.rateChecking, anyBusy(state), state.isLoading, newFallback);
+                if (fallback && newFallback) {
+                    setRate(state, 30);
+                    state.rateNote = labelText(fallback, state.cameras);
+                    persistAllCameraSettings(state);
+                }
+                state.rateFallbackSeen = fallback;
             })
 
             .addCase(searchExposure.rejected, (state, action) => {
@@ -216,6 +264,7 @@ export const {
     displayPauseToggled,
     cameraErrorCleared,
     cameraSelectionToggled,
+    frameRateChosen,
     cameraDesiredConfigUpdated,
     configCopiedToAll,
     savedSettingsCleared,
