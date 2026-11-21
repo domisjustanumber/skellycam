@@ -1350,7 +1350,11 @@ The signal and the watch [ADR-AC5B](../decisions/entries/AC5B-choices-of-the-thi
   last frame of a take is read and written with no lock (one aligned 8-byte value), except in three
   places. The read of each frame decision keeps the lock, because the end of a take holds it from its
   read of the gate count to its write: its first wait in a stretch with no lock is at most 1.5 s, and
-  the next reads try with no wait until the lock comes again. The two check-then-set blocks wait at most
+  the next reads try with no wait until the lock comes again. A frame decision outside a take (the first
+  frame of the take is -1) reads no last frame and takes no lock, so a new camera process does not wait
+  at its first frame [ADR-NYT6](../decisions/entries/NYT6-choices-of-fix-lane-2.md). After a camera
+  process is killed while it holds that lock, each later take of the group ends with the error below
+  until the cameras are closed and opened again. The two check-then-set blocks wait at most
   0.5 s for the lock: the end of a take then ends with the `take_error` "no lock of the last frame of the
   take in 0.5 s", and a camera that ends with no take level ends its part of the take alone with the
   error "camera `<id>`: no lock of the last frame of the take in 0.5 s". A failed read of the app state is

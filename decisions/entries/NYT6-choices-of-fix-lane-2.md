@@ -12,6 +12,10 @@ borderline value"). The agent made these choices:
    starts at the frame that ended the first window, with no new set and no frames to settle. The trial keeps
    the brightness of the first window, and the second window decides. A second miss drops the value. The limit
    of 20 s stays ([`camera-requests.md`](../../specs/camera-requests.md) 1.3 item 2.7).
+2. Frame decision outside a take. `should_record_frame_number` reads the first frame of the take before the lock
+   of the last frame. When it is -1, the decision gives "no record, no finish" and takes no lock
+   ([`unix-capture.md`](../../specs/unix-capture.md) 4.10). The supervisor gave this rule; it is here because no
+   other entry holds it.
 
 ## Reason
 
@@ -19,6 +23,10 @@ borderline value"). The agent made these choices:
    margin of 10 % includes these readings. A slow value at 15 fps or 29.7 fps at 60 fps is far outside it, so the
    search measures it one time, as before. One repeat keeps the cost low. A second window that starts at the
    last frame needs no new set and no new frames to settle, so it costs 30 frames.
+2. A camera process killed while it held the lock of the last frame made each new camera process wait 1.5 s at
+   its first frame, also outside a take. Outside a take the last frame has no use. A take still cannot end
+   normally after such a kill: each later take of the group ends with the error of the lock until the cameras
+   are closed and opened again (4.10).
 
 ## Consequences
 

@@ -258,6 +258,34 @@ def test_experiment_4_a_dead_holder_of_the_last_frame_blocks_no_frame_decision()
     assert time.monotonic() - started < 0.2
 
 
+def test_a_frame_decision_outside_a_take_never_touches_the_last_frame_lock():
+    """unix-capture.md 4.10 [NYT6]: with no take (first is -1), a frame decision reads no last frame and takes no
+    lock. A holder that keeps the lock (a camera killed inside it) makes no wait, and no stretch with no lock starts."""
+    import threading
+
+    from skellycam.core.camera_group.camera_orchestrator import CameraOrchestrator
+
+    orchestrator = CameraOrchestrator.from_statuses({})
+    held, release = threading.Event(), threading.Event()
+
+    def hold():
+        with orchestrator.last_recording_frame_number.get_lock():
+            held.set()
+            release.wait(10)
+
+    holder = threading.Thread(target=hold, daemon=True)
+    holder.start()
+    try:
+        assert held.wait(5)
+        started = time.monotonic()
+        assert orchestrator.should_record_frame_number(5) == (False, False)
+        assert time.monotonic() - started < 0.2
+        assert not orchestrator.frame_lock_lost
+    finally:
+        release.set()
+        holder.join(5)
+
+
 async def test_a_state_read_that_raises_once_does_not_end_the_app_state_sender(monkeypatch):
     """F3 of the second review: a state read that raises (for example during the swap of the arrays) is logged; the
     sender goes on, and the next tick sends a state. The kill flag stays clear."""
