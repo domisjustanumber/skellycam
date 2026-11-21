@@ -1,6 +1,7 @@
 # X8XE — Choices of the certify review fixes and format 1.6.0
 
-**Status:** proposed, 2026-11-21 (agent; the user approved the review fixes and the move to format 1.6.0).
+**Status:** accepted, 2026-11-21 (user; commit to dom/accept-choices; was proposed, 2026-11-21 (agent; the user
+approved the review fixes and the move to format 1.6.0)).
 
 ## Decision
 
@@ -38,7 +39,7 @@ format 1.6.0 of the contract (skellycertify ADR-9FHP). [`certify.md`](../../spec
 13. Second review: the live change skips a wedged or not-ready camera. After the session starts its close, the
     caller kills nothing before 5 s + 8 s for each camera. A clean close means no reopen in phase G. A crash never
     blames a camera. A late abandon stops the record write. Camera logs go to `logs` of the work folder.
-14. Proposal (the coordinator chose it, the user has not): a camera with a step running at a stop is not opened
+14. The coordinator chose it, and the user accepted it on 2026-11-21 (question 6): a camera with a step running at a stop is not opened
     again and gets `camera-not-restored`, because the product needs 5 s to declare a hang. Cost: no restore after a
     cancel during the take.
 
@@ -50,24 +51,30 @@ another job changes now.
 
 ## Questions for the user
 
-Each "yes" accepts the recommendation.
+Each "yes" accepts the recommendation. The user answered "yes" to each question on 2026-11-21.
 
 1. Spec 9.1 says that a model in the record gives a quick `total` of 0; 2.4 and C 2.7 say that a quick run with no
-   `cameras` option checks it again. Keep 2.4: the app uses `details.unchecked` for the pop-up. Yes?
+   `cameras` option checks it again. Keep 2.4: the app uses `details.unchecked` for the pop-up. Yes? Answer: yes.
 2. With no camera to check, the quick plan has `total` 0, but the run still reports `detect` (T-CERT-06 against
-   T-CERT-01 and 66). Accept that difference of one in this case. Yes?
+   T-CERT-01 and 66). Accept that difference of one in this case. Yes? Answer: yes.
 3. A quick run of three cameras sends 63 progress messages; the gap of 100 ms costs about 6 s of the 30 s.
-   Let the checks that only compute from data that the run has (JPEG, records, clock) share one message. Yes?
+   Let the checks that only compute from data that the run has (JPEG, records, clock) share one message. Yes? Answer: yes.
 4. In quick, phase G opens a camera whose loop failed (not wedged) and sets its "before" values back, in place of
-   only the notice. Yes?
+   only the notice. Yes? Answer: yes.
 5. Product change, not built: `managed_worker` sets an explicit role flag in each camera process, the
-   `parent_process()` guards read it, and certify drops its workaround of item 5. Yes?
-6. Accept item 14. Yes?
+   `parent_process()` guards read it, and certify drops its workaround of item 5. Yes? Answer: yes.
+6. Accept item 14. Yes? Answer: yes.
 
 ## Reason
 
 Each fix follows a decision of the user or a rule of the spec or the contract, with the smallest change and no
 change of product code.
+
+## Consequences
+
+- Answers 3 and 4 are decided, not built. Answer 4 replaces item 4 in quick. The code and
+  [`certify.md`](../../specs/certify.md) do not state answers 3 and 4 yet.
+- Answer 5 is decided, not built ([ADR-TFD7](TFD7-search-limit-stop-rate-median-role-flag-and-restore-after-a-failed-loop.md) item 3).
 
 ## Alternatives rejected
 

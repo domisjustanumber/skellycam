@@ -174,7 +174,7 @@ with the guard of the frame rate [E2]:
       a value that kept 30 fps at the next open (the C922 at -7 in one of five opens; the Kiyo Pro at -8
       in four of five), so the chosen value changed between opens. 28.1 fps is the reading of the early
       decision when frame `s_a + 30` comes a little late (29 intervals in `30 / (0.97 x 30)` s). The
-      margin of 10 %, the one repeat and the window of 60 intervals are proposed
+      margin of 10 %, the one repeat and the window of 60 intervals are choices that the user accepted on 2026-11-21
       [ADR-NYT6](../decisions/entries/NYT6-choices-of-fix-lane-2.md). The longer window keeps a value
       that holds 30 fps after one late frame, and it does not give a slow value a second chance: with
       the arrival jitter of T-REQ-80, a value at 29.0 fps is kept in 11.8 % of the runs, 11.3 % with no
@@ -513,7 +513,7 @@ camera, so they stay [H5]:
   [K3]. The text is [B21]. Certify records the same case with its reason code `no-manual-exposure`.
 - `exposure_clamped`, control `exposure` (1.1):
   `Camera a1b2: manual exposure -2 is above the limit -5. The exposure is -5.` The kind and the text
-  are proposed [ADR-NYT6](../decisions/entries/NYT6-choices-of-fix-lane-2.md).
+  are choices that the user accepted on 2026-11-21 [ADR-NYT6](../decisions/entries/NYT6-choices-of-fix-lane-2.md).
 
 The text of `exposure_search_failed` names the reason: `no exposure from -12 to -5 is in the range of
 the camera (-4 to 3)` or `no exposure from -12 to -5 could be set on the camera` (`no-value-in-range`) [ADR-GEH0](../decisions/entries/GEH0-choices-of-code-step-3.md), `no exposure from -11 to -5 keeps 30 fps` with the first and
@@ -1030,8 +1030,8 @@ How the result is kept [A18]:
 
 ### 2.4a The fall back in the code
 
-The rules above do not give these points. Each item is a proposed choice of the agent of step 4
-[ADR-1T0S](../decisions/entries/1T0S-choices-of-step-4-one-frame-rate-and-the-fall-back.md):
+The rules above do not give these points. Each item is a choice of the agent of step 4 that the user
+accepted on 2026-11-21 [ADR-1T0S](../decisions/entries/1T0S-choices-of-step-4-one-frame-rate-and-the-fall-back.md):
 
 1. The group rate of a request is 60 fps when the request selects a camera whose `framerate` is
    within 0.5 fps of 60, the tolerance of 2.5.
@@ -1119,7 +1119,7 @@ The rules above do not give these points. Each item is a proposed choice of the 
 - The per-camera rate control `CameraConfigFramerate.tsx` is not used by any rendered component. It
   goes [A15].
 
-The rules above do not give these points. Each item is a proposed choice of
+The rules above do not give these points. Each item is a choice that the user accepted on 2026-11-21
 [ADR-1T0S](../decisions/entries/1T0S-choices-of-step-4-one-frame-rate-and-the-fall-back.md):
 
 - The selector shows 60 fps when the desired `framerate` of the first selected camera (else of the
