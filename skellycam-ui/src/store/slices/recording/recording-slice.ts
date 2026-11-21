@@ -1,7 +1,8 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { RecordingInfo } from './recording-types';
+import { RecordingInfo, StopRecordingResponseSchema } from './recording-types';
 import { startRecording, stopRecording } from './recording-thunks';
 import { serverStateReceived, serverDisconnected } from '../connection/connection-slice';
+import { recordingAfterAppState } from './ended-take';
 
 const initialState: RecordingInfo = {
     isRecording: false,
@@ -10,6 +11,8 @@ const initialState: RecordingInfo = {
     startedAt: null,
     duration: 0,
     completionData: null,
+    takeStates: {},
+    endedTake: null,
 };
 
 export const recordingSlice = createSlice({
@@ -38,6 +41,7 @@ export const recordingSlice = createSlice({
                 state.startedAt = new Date().toISOString();
                 state.duration = 0;
                 state.completionData = null;
+                state.endedTake = null;
             })
             .addCase(stopRecording.fulfilled, (state, action) => {
                 state.isRecording = false;
@@ -48,8 +52,10 @@ export const recordingSlice = createSlice({
             })
             // Reconcile recording state from the authoritative server snapshot.
             .addCase(serverStateReceived, (state, action) => {
-                const groups = Object.values(action.payload.state.camera_groups);
-                state.isRecording = groups.some(group => group.recording_in_progress);
+                Object.assign(state, recordingAfterAppState(state, action.payload.state.camera_groups, summary => {
+                    const parsed = StopRecordingResponseSchema.safeParse(summary);
+                    return parsed.success ? parsed.data : null;
+                }));
             })
             // On websocket disconnect, clear active-recording state.
             .addCase(serverDisconnected, (state) => {

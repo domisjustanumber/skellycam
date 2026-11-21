@@ -4,6 +4,7 @@ import { RootState } from '@/store/types';
 import {serverUrls} from "@/services";
 import { backendFetch } from '@/services/electron-ipc/backend-fetch';
 import { RecordingCompletionData, StopRecordingResponseSchema } from './recording-types';
+import { errorDetail } from '../error-detail';
 
 const RecordStartRequestSchema = z.object({
     recording_name: z.string(),
@@ -40,8 +41,7 @@ export const startRecording = createAsyncThunk<
 
         if (!response.ok) {
             // the server gives the reason in `detail` (for example the 422 for a microphone)
-            const detail = await response.json().then((b) => b?.detail, () => null);
-            throw new Error(`Failed to start recording: ${typeof detail === 'string' ? detail : response.statusText}`);
+            throw new Error(`Failed to start recording: ${errorDetail(await response.json().catch(() => null), response.statusText)}`);
         }
     }
 );

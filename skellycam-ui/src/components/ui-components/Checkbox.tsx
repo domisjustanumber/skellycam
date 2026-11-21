@@ -17,6 +17,7 @@ interface CheckboxProps {
   inputClassName?: string;
   className?: string;
   disabled?: boolean;
+  inputProps?: React.InputHTMLAttributes<HTMLInputElement>;  // e.g. aria-label when the label is empty
 }
 
 const Checkbox: React.FC<CheckboxProps> = ({
@@ -26,6 +27,7 @@ const Checkbox: React.FC<CheckboxProps> = ({
   inputClassName = "",
   className = "",
   disabled = false,
+  inputProps,
 }) => {
   return (
   <label
@@ -41,6 +43,7 @@ const Checkbox: React.FC<CheckboxProps> = ({
   `}
 >
       <input
+        {...inputProps}
         type="checkbox"
         checked={checked}
         onChange={onChange}

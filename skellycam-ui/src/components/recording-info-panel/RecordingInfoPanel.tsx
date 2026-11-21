@@ -16,7 +16,8 @@ import ButtonSm from "@/components/ui-components/ButtonSm";
 import TextSelector from "@/components/ui-components/TextSelector";
 import { useTranslation } from "react-i18next";
 import { selectCameras } from "@/store/slices/cameras/cameras-selectors";
-import { withCameraLabels } from "@/store/slices/cameras/camera-labels";
+import { labelText } from "@/store/slices/cameras/camera-labels";
+import { takeErrorText } from "@/store/slices/recording/ended-take";
 
 interface RecordingOperation {
     type: 'start' | 'stop';
@@ -57,6 +58,9 @@ export const RecordingInfoPanel: React.FC = () => {
         }
         prevCameraCount.current = connectedCameraIds.length;
     }, [connectedCameraIds]);
+
+    // A failed start is about the cameras it was sent to: a start or a change of the streaming cameras clears it
+    useEffect(() => setStartError(null), [recordingInfo.isRecording, connectedCameraIds]);
 
     useEffect(() => {
         if (pendingOperation) {
@@ -225,7 +229,12 @@ export const RecordingInfoPanel: React.FC = () => {
                     onClick={handleRecordButtonClick}
                 />
             </div>
-            {startError && <p className="text sm text-error">{withCameraLabels(startError, cameras)}</p>}
+            {startError && <p role="alert" className="text sm text-error">{labelText(startError, cameras)}</p>}
+            {recordingInfo.endedTake && (
+                <p role="alert" className="text sm text-error" style={{ whiteSpace: 'normal' }}>
+                    {t('takeEndedWithError', { error: takeErrorText(recordingInfo.endedTake, cameras) })}
+                </p>
+            )}
 
             {/* Microphone: the new recorder refuses a microphone until step 5b */}
             <MicrophoneSelector
@@ -234,7 +243,7 @@ export const RecordingInfoPanel: React.FC = () => {
                 disabled={true}
                 fetchTrigger={micFetchTrigger}
             />
-            <p className="text sm text-gray">Audio comes in step 5b.</p>
+            <p className="text sm text-gray">{t('audioNotAvailableYet')}</p>
         </div>
         
      </div>

@@ -74,6 +74,9 @@ Choices of the agent:
 22. `test:cameras` runs `src/store/slices/**/*.test.ts` in the jobs of `player.yml`, whose triggers
     get the slices and A.
 23. The sentence of W 16.2 on the two pause test files stays: both files still check the 404.
+24. Step 5 UI: "Update Cameras" closes a group camera with no row; only it and Connect with no group
+    close all to add a camera; Auto goes as `RECOMMEND` until the server Auto step; a take error shows
+    while `ended_with_error`.
 
 ## Reason
 

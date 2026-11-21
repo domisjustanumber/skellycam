@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import type { EndedTakeNotice, GroupTakeState } from './ended-take';
 
 const StatsSummarySchema = z.object({
     median: z.number(),
@@ -34,4 +35,7 @@ export const RecordingInfoSchema = z.object({
     completionData: StopRecordingResponseSchema.nullable(),
 });
 
-export type RecordingInfo = z.infer<typeof RecordingInfoSchema>;
+export type RecordingInfo = z.infer<typeof RecordingInfoSchema> & {
+    takeStates: Record<string, GroupTakeState>;  // the take_state of each group in the last app state
+    endedTake: EndedTakeNotice | null;           // a take that ended by itself with an error (camera-requests.md 8.4)
+};

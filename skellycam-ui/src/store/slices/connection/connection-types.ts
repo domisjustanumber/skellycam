@@ -1,4 +1,5 @@
 import { CameraConfig } from '@/store/slices/cameras/cameras-types';
+import type { GroupTakeState } from '@/store/slices/recording/ended-take';
 
 /** One camera process in a group snapshot (server CameraState; `status` is CameraStatus.serialize()). */
 export interface CameraProcessSnapshot {
@@ -6,8 +7,8 @@ export interface CameraProcessSnapshot {
     status?: { state?: string; failure?: { stage: string; reason: string } | null };
 }
 
-/** One camera group as reported in the server's pushed APP_STATE snapshot. */
-export interface CameraGroupSnapshot {
+/** One camera group as reported in the server's pushed APP_STATE snapshot (take_state: recorder.md 8.4, optional). */
+export interface CameraGroupSnapshot extends GroupTakeState {
     id: string;
     configs: Record<string, CameraConfig>;
     cameras: Record<string, CameraProcessSnapshot>;
