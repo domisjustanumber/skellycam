@@ -22,60 +22,56 @@ decisions of the user. This entry does not decide them again:
 - The server applies a request at once. The results come through the live status ([H1]).
 
 The agent made these choices where the spec gave no rule. Sections 2.4a and 2.8 of
-[`camera-requests.md`](../../specs/camera-requests.md) state each one:
+[`camera-requests.md`](../../specs/camera-requests.md) state each one in full:
 
-1. The group rate of a request is 60 fps when the request selects a camera whose `framerate` is within
-   0.5 fps of 60.
-2. The configs from before the request: each camera of the group after the apply gets its config from
-   before the request, else the config of the request. Each gets `framerate` 30.
-3. The fall back is an apply of these configs (`CameraGroup.apply`), with no whole-request check and no
-   clear of the group warnings. It writes the `rate_fallback` items into `group_warnings` before the
-   reopen. A fall back at the start-up also puts them in the apply response. The item has no `control`.
-4. The text forms of `rate_fallback`, also for a camera that failed at `set mode` (no measured rate):
-   `The group runs at 30 fps. Camera a1b2 could not set its 60 fps mode.`
-5. The watch thread of the group finds the fall back that a search starts. It examines only cameras in
-   `AUTO` whose ended search (`held.count` of the status) came after the request at 60 fps. It stops when
-   the fall back starts, when no camera is `starting`, `waiting`, `adjusting` or `checking`, at the next
-   apply request of the user, at a search on request, and at the close.
-6. The watch thread starts the fall back on the event loop of the group. The log gets its failure.
-7. Known limit: the fall back does not refuse an apply request of the user that comes between its start
-   and the reopen.
-8. T-REQ-19 reads the reason at 60 fps in the log, because the fall back replaces the status.
-9. The UI: `chosenRate`, `rateRequestConfigs`, `rateFallbackText` and `checkingRate` in
-   `skellycam-ui/src/store/slices/cameras/rate-choice.ts`. A pick sends each camera of the group with the
-   new rate, and no camera that is not in the group.
-10. The selector is disabled during a recording and while a camera is `starting`, `waiting` or
-    `adjusting`. The option 60 fps is disabled when `can60` is false, with the reasons as its tooltip.
-    `SegmentedControl` gets an optional `disabled` field for each option.
-11. `rateChoice` treats an empty `supported_modes` as no 60 fps mode. It gives a reason text for a camera
-    with 59.94 fps against 60. The reasons are in English only.
-12. The UI takes a `rate_fallback` item of the live state only when the last live state did not hold its
-    text. It then sets 30 in each desired config and keeps the text as the note under the selector until
-    the next pick or detection.
-13. "Checking 60 fps…" shows while a camera of the group is `starting`, `waiting`, `adjusting` or
-    `checking`, and the choice is 60 fps or the live state holds a `rate_fallback` item.
-14. New tests T-REQ-84 to T-REQ-90 for these choices.
+1. A request is at 60 fps when it selects a camera at 60 fps, within 0.5 fps.
+2. The fall back configs: the config of each group camera from before the request, else the config of
+   the request, each at 30 fps.
+3. The fall back is an apply of these configs, with no whole-request check and no clear of the group
+   warnings. Its `rate_fallback` items (no `control`) go into `group_warnings` before the reopen.
+4. The texts of `rate_fallback`, also for a `set mode` failure and for a search with no measured rate.
+   The rates and the exposure come from the time of the failure.
+5. The watch thread of the group finds the fall back that a search of the request starts
+   (`held.count`). It stops at the fall back, when no camera is busy, at an apply request of the user,
+   at a search on request and at the close.
+6. The fall back that the watch finds runs on the event loop of the group.
+7. A request count: a fall back of an older count does not run. While a fall back runs, an apply
+   request and a record start get HTTP 409.
+8. T-REQ-19 reads the reason at 60 fps in the log.
+9. A pick sends each group camera with its applied config and the new rate. A failed pick sets the
+   choice back.
+10. The selector options are disabled buttons during a recording and while a camera is busy; 60 fps
+    also when `can60` is false. The reason is a visible text, named by `aria-describedby`.
+11. An empty `supported_modes` has no 60 fps mode. A reason text for 59.94 against 60. English only.
+12. The UI takes only a new `rate_fallback` text of the live state: 30 fps and a note under the selector.
+13. "Checking 60 fps…" from a sent pick of 60 or a new fall back item until no camera is busy.
+14. A fall back does not run during a take, a record start or a close, as the user decided that a rate
+    change never disturbs a recording.
+15. "Update Cameras" resends a camera whose desired rate differs from its applied rate. A detection gives
+    each camera the current choice.
+
+The tests T-REQ-84 to T-REQ-95 check these choices.
 
 ## Reason
 
-1. 0.5 fps is the tolerance of 2.5 for a 60 fps mode, so the server and the UI agree.
-2. A camera that the request does not name runs at the group rate too: else the group has two rates.
-3. One apply path keeps the waits, the restarts and the states of 8.2 and 8.3. The group warnings must
-   survive the reopen and "apply again" of the fall back (1.5).
-4. A `set mode` failure has no measured rate, and the spec text needs one.
-5. `held.count` is written in the same status write as the search result. The search count goes up
-   before the search writes `running`, so it can show a stale result for a short time.
-6. The end of a take after an error uses the same path, so the fall back has no new thread.
-9. The smallest request that changes only the rate, with no other camera opened or closed.
-12. A live state that was sent before the server cleared the item must not undo a new pick, and the
-    item, which stays on the server until the next apply request, must not bring back a note that a
-    detection cleared.
-13. The spec wants the text during the whole check, also during the fall back.
+1. 0.5 fps is the tolerance of 2.5, so the server and the UI agree.
+2. Else the group has two rates.
+3. One apply path keeps the waits and states of 8.2 and 8.3; the items must survive the reopen (1.5).
+4. The spec text needs a measured rate, and a later read can see the new mode.
+5. `held.count` comes in the same status write as the search result.
+7. Without it, a stale fall back undid a later request of the user (an independent review). The check
+   and the flag are set on the event loop with no wait between them.
+9. A pending edit can make the server refuse the whole pick.
+10. A CSS class still lets Enter and Space work, and a disabled button cannot show a tooltip to the
+    keyboard.
+12. An old live state must not undo a new pick or bring back a cleared note.
+13. A later search on request is not a check of 60 fps.
+14. A late watch round started a fall back during a take in the review.
+15. Else the user gets HTTP 422 with no way to send the rate again.
 
 ## Alternatives rejected
 
 1. A group field for the rate in the API: [Q13] keeps the field of each camera.
-2. A new lock between the fall back and the apply request of the user: a larger change for a short
-   window that 8.3 already narrows.
-3. A fall back after each search at 60 fps, also after "Search again": the spec ties the fall back to a
-   request at 60 fps.
+2. A lock between the fall back and the request of the user: the count and the flag do the same on the
+   one event loop.
+3. A fall back after a search on request at 60 fps: the spec ties the fall back to a request.

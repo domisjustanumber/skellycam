@@ -1002,6 +1002,10 @@ The rules above do not give these points. Each item is a proposed choice of the 
    check and the exposure of its config. A camera in `AUTO` whose check after its search failed gives
    the rate of that check and its held value. A camera that failed at the stage `set mode` has no
    measured rate. Its text is `The group runs at 30 fps. Camera a1b2 could not set its 60 fps mode.`
+   A camera in `AUTO` whose search ran but gave no measured rate has the text
+   `The group runs at 30 fps. Camera a1b2 found no exposure that keeps 60 fps.` The main process reads
+   the mode rate, the measured rate and the exposure when it sees the failure, not when the fall back
+   runs.
 5. A fall back that a search starts: after an apply request at 60 fps, the watch thread of the group
    examines each camera in `AUTO` each 0.1 s (`WATCH_INTERVAL_S`). It starts the fall back when the last
    ended search of a camera came after the request and has the reason `no-value-kept-rate`, or when the
@@ -1012,11 +1016,19 @@ The rules above do not give these points. Each item is a proposed choice of the 
    and at the close. Thus a search on request starts no fall back: it is not a request at 60 fps.
 6. The watch thread starts the fall back on the event loop of the group, as the end of a take after an
    error. The log gets a failure of the fall back.
-7. The fall back does not refuse an apply request of the user that comes between its start and the
-   reopen of the cameras. [cap 8.3] refuses a changed config while a camera is `starting`. This is a
-   known limit.
+7. Each apply request of the user adds one to a request count of the group. The watch keeps the count
+   of the request at 60 fps with its configs. On the event loop, a fall back whose count is not the
+   current count does not run, and the log tells why: a later request of the user replaced that
+   request. The watch clears its configs only when they are still the configs that it read. While a
+   fall back runs, the whole-request check answers each apply request with HTTP 409 and the reason
+   `The group falls back to 30 fps. Send the request again when the cameras are ready.`, and a record
+   start gets HTTP 409. Thus a fall back never replaces a later request of the user, and the
+   `rate_fallback` items keep the lifetimes of 1.5.
 8. T-REQ-19 at 60 fps: the fall back comes after the failure, so the status then holds the result at
    30 fps. The test reads the reason at 60 fps in the log line of the failure.
+9. A recording is never changed by a change of the rate (a decision of the user). A fall back does not
+   run during a take, during a record start (`take_busy`) or during a close. The log tells why. A
+   record start that passes its check clears the configs of the watch.
 
 ### 2.5 When the UI offers 60 fps
 
@@ -1063,14 +1075,22 @@ The rules above do not give these points. Each item is a proposed choice of
   first camera) is within 0.5 fps of 60. Else it shows 30 fps. A pure function `chosenRate(cameras)` in
   `rate-choice.ts` gives the choice.
 - A pick sets the choice (the action `frameRateChosen`) and clears the note under the selector. When
-  the server has a camera group, the UI then sends one apply request at once. It holds each camera of
-  the group: its desired config with the new rate and `use_this_camera` true. The request does not hold
-  a camera that is not in the group: "Update Cameras" adds it. A pure function
-  `rateRequestConfigs(cameras, groupConfigs, rate)` in `rate-choice.ts` gives the configs.
-- The selector is disabled during a recording, with the tooltip `stopRecordingFirst`, and while a
-  camera is `starting`, `waiting` or `adjusting` (2.7), with the tooltip "Setting exposure…", as the
-  button of 1.8. The option 60 fps is disabled when `can60` is false. Its tooltip gives the reasons.
-  `SegmentedControl` gets an optional field `disabled` for each option.
+  a camera streams, the UI then sends one apply request at once. It holds each camera of the group with
+  its applied config (the config of the server) and the new rate. It holds no edit that the user did not
+  apply, and no camera that is not in the group: "Update Cameras" adds it. A pure function
+  `rateRequestConfigs(groupConfigs, rate)` in `rate-choice.ts` gives the configs. When the request
+  fails, the choice goes back to the rate before the pick.
+- The selector is disabled during a recording ("Stop the recording first"), and while a camera is
+  `starting`, `waiting` or `adjusting` (2.7, "Setting exposure…", as the button of 1.8). Each option is
+  then a disabled button, also for the keyboard. The option 60 fps is a disabled button when `can60` is
+  false. The reason is a visible text under the selector, and the selector names it with
+  `aria-describedby`. `SegmentedControl` gets an optional field `disabled` for each option and an
+  optional `describedBy`.
+- "Update Cameras" also sends a camera of the group whose desired rate differs by more than 0.5 fps
+  from its applied rate (`pendingCameraChanges`, the list `rate`). A detection gives each camera the
+  current choice: the rate of `chosenRate` of the camera list before the detection, else of the new
+  list (`withChosenRate` in `rate-choice.ts`). Thus the tick of 2.5 and a new camera never give a
+  request with two rates.
 - `rateChoice`: a camera with an empty `supported_modes` has no 60 fps mode at its size. A camera with
   59.94 fps at its size, when another camera has 60, gets the reason
   `Camera 3 · Logitech C930e has 59.94 fps, not 60 fps, at 1280x720`. The UI keeps `supported_modes` of
@@ -1081,10 +1101,11 @@ The rules above do not give these points. Each item is a proposed choice of
   item, in the label form of 1.8, as the note. A pure function `rateFallbackText(groups)` gives the text
   of the first `rate_fallback` item, or null. The note stays for the app run. A pick or a detection
   clears it. The tick of 2.5 puts its reason in the same note.
-- "Checking 60 fps…" shows under the selector in place of the note while a camera of the group is
-  `starting`, `waiting`, `adjusting` or `checking`, and the choice is 60 fps or the live state holds a
-  `rate_fallback` item. A pure function `checkingRate(groups, choice)` gives it. Thus the text stays
-  during the reopen and the search of a fall back.
+- "Checking 60 fps…" shows under the selector in place of the note from a pick of 60 fps that the UI
+  sends, or from a new `rate_fallback` item, until a live state has no camera that is `starting`,
+  `waiting`, `adjusting` or `checking`, and no apply request of the UI runs. A failed request also ends
+  it. A pure function `nextRateChecking(checking, busy, applying, newFallback)` in `rate-choice.ts`
+  gives the next value. Thus a later search on request or a restart does not show the text.
 
 ### 2.9 Changes to windows-capture.md
 
@@ -1126,13 +1147,18 @@ Change to section 16.2, T-CAP-20 item (3): "apply a request that gives all three
 | T-REQ-38 | ui-unit | `rateChoice`: (1) all with 60 at their sizes; (2) one with 60 at 1280x720 only and set to 1920x1080; (3) one with 59.94 and one with 60; (4) no selected camera. | (1) `can60` true; (2) false, the reason has the label form and 1920x1080; (3) false; (4) false. |
 | T-REQ-39 | ui-manual | The app with the C922 and the Kiyo Pro streaming at 30 in `AUTO`; pick 60; pick 60 again. | "Checking 60 fps…" shows; the previews show while the cameras search at 60, then at 30; then 30 fps is the choice, with the `rate_fallback` text for `Camera n · Razer Kiyo Pro` under the selector; 60 stays available, and the second pick runs the check again. |
 | T-REQ-40 | hardware | Windows. The C922 and the C930e at 1280x720 in `MANUAL -7`; pick 60, then 30. Then the same in `AUTO`. | The result (60 or the fall back) and the time of each change are recorded; no camera stays `failed`. In `AUTO`, the time of each search at 60 fps and at 30 fps is recorded. |
-| T-REQ-84 | fake | One fake in `AUTO` with 30 and 60 in its modes and the brightness of T-REQ-01, `ready` at 60 after an apply of 60. Then it delivers 29.66 fps after each later set (`rate_after_change`); press the button. | The search fails with `no-value-kept-rate`; no fall back: the camera stays at 60 with no new open, and no status has a `rate_fallback` item (2.4a item 5). |
+| T-REQ-84 | fake | One fake in `AUTO` with 30 and 60 in its modes and the brightness of T-REQ-01, `ready` at 60 after an apply of 60. The watch of the group makes no round from the apply until the end of the search below. Then the fake delivers 29.66 fps after each later set (`rate_after_change`); press the button; then the watch makes its rounds again. | The search fails with `no-value-kept-rate`; no fall back: the camera stays at 60 with no new open, and no status has a `rate_fallback` item (2.4a item 5). The test fails when the button search does not stop the watch, at each thread timing. |
 | T-REQ-85 | fake | Three fakes in `MANUAL -7` with 30 and 60 in their modes; C delivers 29.66 fps. All three `ready` at 30; unselect C; apply 60 for A and B; then a request that names only C, at 60. | A and B run at 60 before the last request. After it: one fall back; A, B and C run at 30 and are `ready`; C has one `rate_fallback` item; A and B have none (2.4a item 2). |
 | T-REQ-86 | fake | One fake whose detection lists 60 fps (`detected_modes`), but whose source has 30 fps only; `MANUAL -7`; connect at 60. | The apply answers 200 with the config at 30 and one `rate_fallback` item with the text `The group runs at 30 fps. Camera <id> could not set its 60 fps mode.`; `camera_failures` is empty; the camera is `ready` (2.4a item 4). |
 | T-REQ-87 | ui-unit | `rateChoice`: (1) a selected camera with an empty `supported_modes`; (2) one camera with 59.94 only and one with 60 at 1280x720. | (1) `can60` false, the reason `Camera 1 · Cam A has no 60 fps mode at 1280x720`; (2) false, the reason `Camera 1 · Cam A has 59.94 fps, not 60 fps, at 1280x720` (2.8). |
 | T-REQ-88 | ui-unit | `chosenRate`: the first selected camera at 60, at 59.94, at 30, at 29.97; no selected camera; no camera. | 60, 60, 30, 30, the rate of the first camera, 30 (2.8). |
-| T-REQ-89 | ui-unit | `rateRequestConfigs` with a group of A (selected) and B (unticked, still in the group), and C ticked but not in the group; rate 60. | A and B with `framerate` 60 and `use_this_camera` true, each other field of the desired config kept; no C (2.8). |
-| T-REQ-90 | ui-unit | `rateFallbackText` with no item, with a `rate_fallback` item and with an `add_light` item; `checkingRate` with a camera `adjusting` at the choice 60, at 30, at 30 with a `rate_fallback` item, and with each camera `ready`. | null, the text, null; true, false, true, false (2.8). |
+| T-REQ-89 | ui-unit | `rateRequestConfigs` with the applied configs of A and B (B unticked in the list, still in the group), A with a pending edit in the list, and C ticked but not in the group; rate 60. | A and B with their applied configs, `framerate` 60 and `use_this_camera` true; no pending edit; no C (2.8). |
+| T-REQ-90 | ui-unit | `rateFallbackText` with no item, with a `rate_fallback` item and with an `add_light` item; `nextRateChecking` after a pick (true), with a busy camera, with no busy camera while an apply runs, with no busy camera and no apply, and with an old item and a busy camera. | null, the text, null; true, true, true, false, false (2.8). |
+| T-REQ-91 | fake | One fake in `AUTO` at 30, then an apply of 60 where the search keeps no value but the check passes (`ready`). The watch of the group makes no round until a take runs; then it makes its rounds. During the take, `CameraGroup.fall_back` is also called on the event loop. | The take keeps running at 60 with no new open; no status has a `rate_fallback` item; the log has a line that the fall back did not run; the record start cleared the configs of the watch (2.4a item 9). |
+| T-REQ-92 | fake | One fake in `AUTO` at 30 delivers 29.66 fps; apply 60. The fall back that the search starts waits on the event loop until a request of the user (`MANUAL -9` at 30) has answered. | The request of the user answers 200; the fall back does not run, and the log tells why; the camera runs `MANUAL -9` at 30; no status has a `rate_fallback` item (2.4a item 7). |
+| T-REQ-93 | fake | As T-REQ-92, but the apply of the fall back waits until a request of the user (`MANUAL -9` at 30) has answered; then the fall back ends; then a new request of the user. | The first request of the user gets 409 with the reason of 2.4a item 7; the camera then runs the configs of the fall back, with its `rate_fallback` item; the new request clears the item (2.4a item 7, 1.5). |
+| T-REQ-94 | fake | One camera `ready` at 30. On the event loop, `CameraGroup.fall_back` with a camera that has no measured rate after a search, then with a camera whose mode rate at the failure was 60. | The texts `The group runs at 30 fps. Camera <id> found no exposure that keeps 60 fps.` and `... measured 29.66 fps in its 60 fps mode at exposure -7.` (2.4a item 4). |
+| T-REQ-95 | ui-unit | `pendingCameraChanges` with a group camera whose desired rate is 30 and applied rate 60, one at 30 and 29.97, and one ticked camera not in the group; `withChosenRate` with an old list at 60 and a new list at 30, and with an empty old list. | The first camera is in `rate`, the second is not, the third is in `add`; each new camera gets 60, then the rate of the first selected camera of the new list (2.8). |
 
 ## 3. Part 3: USB link label
 
