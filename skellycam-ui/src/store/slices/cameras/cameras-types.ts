@@ -1,6 +1,5 @@
 // cameras-types.ts
 import { z } from 'zod';
-import type { WireConfig } from './camera-number';
 
 // ==================== Constants ====================
 export const PIXEL_FORMATS = ['RGB', 'BGR', 'GRAY'] as const;
@@ -55,6 +54,7 @@ export const CameraConfigSchema = z.object({
     // Exposure settings
     exposure_mode: z.enum(EXPOSURE_MODES),
     exposure: z.number(),
+    exposure_found_at_fps: z.number().nullable().optional(),  // camera-requests.md 1.3a: the rate of the found value
 
     // Codec settings
     capture_fourcc: z.enum(FOURCC_OPTIONS),
@@ -119,7 +119,7 @@ export interface DetectCamerasResponse {
 }
 
 export interface CamerasConnectOrUpdateRequest {
-    camera_configs: Record<string, WireConfig<CameraConfig>>;  // Auto goes as RECOMMEND (camera-number.ts)
+    camera_configs: Record<string, CameraConfig>;
 }
 
 export interface ConnectCamerasResponse {
@@ -143,8 +143,9 @@ export function createDefaultCameraConfig(
         color_channels: 3,
         pixel_format: 'RGB',
         rotation: -1,
-        exposure_mode: 'MANUAL',
+        exposure_mode: 'AUTO',  // camera-requests.md 1.8 [G1]: a new camera starts in Auto
         exposure: -7,
+        exposure_found_at_fps: null,
         capture_fourcc: 'MJPG',
         writer_fourcc: 'X264',
     };
@@ -179,6 +180,7 @@ export function extractConfigSettings(
         rotation: config.rotation,
         exposure_mode: config.exposure_mode,
         exposure: config.exposure,
+        exposure_found_at_fps: config.exposure_found_at_fps ?? null,  // the held value is kept (1.3a)
         capture_fourcc: config.capture_fourcc,
         writer_fourcc: config.writer_fourcc,
     };

@@ -2,7 +2,10 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '@/store';
 import { cameraDesiredConfigUpdated, configCopiedToAll } from '@/store/slices/cameras/cameras-slice';
 import { savedSettingsCleared } from '@/store/slices/cameras/cameras-slice';
-import { camerasConnectOrUpdate } from '@/store/slices/cameras/cameras-thunks';
+import { camerasConnectOrUpdate, searchExposure } from '@/store/slices/cameras/cameras-thunks';
+import { serverStatusOf } from '@/store/slices/cameras/exposure-row';
+import { useServer } from '@/services/server';
+import { useTranslation } from 'react-i18next';
 import { selectCameras } from '@/store/slices/cameras';
 import ButtonSm from '@/components/ui-components/ButtonSm';
 import { Camera, CameraConfig, ExposureMode, RotationValue, ROTATION_OPTIONS, ROTATION_DEGREE_LABELS } from '@/store/slices/cameras/cameras-types';
@@ -59,6 +62,10 @@ const Row:React.FC<{ label: string; indent?: boolean; children: React.ReactNode 
 export const CameraGridSettingsModal: React.FC<CameraGridSettingsModalProps> = ({ camera, initialPos, onClose }) => {
     const dispatch = useAppDispatch();
     const allCameras = useAppSelector(selectCameras);
+    const groups = useAppSelector(state => state.connection.cameraGroups);
+    const isRecording = useAppSelector(state => state.recording.isRecording);
+    const { connectedCameraIds } = useServer();
+    const { t } = useTranslation();
     const { requestGuardedAction } = useRecordingGuard();
     const otherCamerasCount = allCameras.length - 1;
     const [pos, setPos] = useState(initialPos);
@@ -107,6 +114,9 @@ export const CameraGridSettingsModal: React.FC<CameraGridSettingsModalProps> = (
 
     const config = camera.desiredConfig;
     const isManual = config.exposure_mode === 'MANUAL';
+    const hasHeldValue = config.exposure_found_at_fps != null;
+    const noManualExposure = (serverStatusOf(groups, camera.id)?.warnings ?? []).some(item => item.kind === 'no_manual_exposure');
+    const canSearch = connectedCameraIds.includes(camera.id) && !isRecording;  // the link is off with no stream or in a take
 
     return (
    
@@ -184,8 +194,11 @@ export const CameraGridSettingsModal: React.FC<CameraGridSettingsModalProps> = (
             />
           </Row>
 
-          {/* Exposure mode */}
+          {/* Exposure mode; a camera with no manual exposure has no mode choice (1.9) */}
           <Row label="Exposure">
+            {noManualExposure ? (
+              <p className="text sm text-gray">{t('noManualExposure')}</p>
+            ) : (
             <NameDropdownSelector
               options={["Manual", "Auto"]}
               initialValue={
@@ -199,7 +212,19 @@ export const CameraGridSettingsModal: React.FC<CameraGridSettingsModalProps> = (
                 })
               }
             />
+            )}
           </Row>
+
+          {/* Auto: the held value and the search for this camera only (camera-requests.md 1.8) [Q2, B9] */}
+          {!isManual && !noManualExposure && (
+            <Row label={hasHeldValue ? t('exposureAutoValue', { value: config.exposure }) : t('exposureAutoNoValue')} indent>
+              <ButtonSm
+                text={hasHeldValue ? t('searchExposureAgain') : t('searchExposure')}
+                buttonType={canSearch ? "" : "disabled"}
+                onClick={() => { if (canSearch) dispatch(searchExposure([camera.id])); }}
+              />
+            </Row>
+          )}
 
           {/* Exposure value — only when manual */}
           {isManual && (

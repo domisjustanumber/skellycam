@@ -4,7 +4,13 @@ import type { GroupTakeState } from '@/store/slices/recording/ended-take';
 /** One camera process in a group snapshot (server CameraState; `status` is CameraStatus.serialize()). */
 export interface CameraProcessSnapshot {
     alive: boolean;
-    status?: { state?: string; failure?: { stage: string; reason: string } | null };
+    status?: {
+        state?: string;
+        failure?: { stage: string; reason: string } | null;
+        warnings?: { kind: string; camera_ids: string[]; text: string }[];  // 8.4, camera-requests.md 1.5
+        measured_fps?: number | null;
+        exposure_search?: { state: string; count?: number } | null;  // camera-requests.md 1.5
+    };
 }
 
 /** One camera group as reported in the server's pushed APP_STATE snapshot (take_state: recorder.md 8.4, optional). */

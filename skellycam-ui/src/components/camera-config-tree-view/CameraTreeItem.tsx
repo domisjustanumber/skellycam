@@ -11,6 +11,7 @@ import { Camera } from "@/store/slices/cameras/cameras-types";
 import { selectCameras } from "@/store/slices/cameras/cameras-selectors";
 import { cameraLabel, labelText, linkChip } from "@/store/slices/cameras/camera-labels";
 import { useServer } from "@/services/server";
+import { exposureRowText, serverStatusOf } from "@/store/slices/cameras/exposure-row";
 
 interface CameraTreeItemProps {
     camera: Camera;
@@ -21,9 +22,6 @@ const getConfigSummary = (config: any): string[] => {
     if (!config) return summary;
     if (config.resolution?.width && config.resolution?.height) {
         summary.push(`${config.resolution.width}×${config.resolution.height}`);
-    }
-    if (config.exposure !== undefined && config.exposure_mode === 'MANUAL') {
-        summary.push(`E:${config.exposure}`);
     }
     if (config.rotation) summary.push(ROTATION_DEGREE_LABELS[config.rotation as RotationValue]);
     if (config.capture_fourcc) summary.push(config.capture_fourcc);
@@ -42,6 +40,7 @@ export const CameraTreeItem: React.FC<CameraTreeItemProps> = ({ camera }) => {
     const settingsOpen = openCameraSettingsId === camera.id;
     const cameras = useAppSelector(selectCameras);
     const isRecording = useAppSelector(state => state.recording.isRecording);
+    const groups = useAppSelector(state => state.connection.cameraGroups);
 
     const isStreaming = connectedCameraIds.includes(camera.id);
     const isVirtual = Boolean(camera.deviceInfo.virtual);
@@ -74,7 +73,17 @@ export const CameraTreeItem: React.FC<CameraTreeItemProps> = ({ camera }) => {
         dispatch(closeCameraSettings());
     };
 
-    const configSummary = getConfigSummary(camera.desiredConfig);
+    const server = serverStatusOf(groups, camera.id);
+    const warnings = server?.warnings ?? [];
+    const exposureRow = exposureRowText(camera.desiredConfig, camera.desiredConfig.framerate, camera.state, warnings,
+                                        server?.measured_fps);
+    const configSummary = [...getConfigSummary(camera.desiredConfig), ...(exposureRow.chip ? [exposureRow.chip] : [])];
+    // The chips "Add light" and "Exposure search failed" show the text of their warning as the tooltip (1.8)
+    const warningOf: Record<string, string> = { addLight: 'add_light', exposureSearchFailed: 'exposure_search_failed' };
+    const tooltipOf = (key: string): string | undefined => {
+        const item = warnings.find(warning => warning.kind === warningOf[key]);
+        return item?.text ? labelText(item.text, cameras) : undefined;
+    };
 
     return (
         <div className="camera-item-row br-1 flex flex-col gap-1 m-1">
@@ -140,10 +149,12 @@ export const CameraTreeItem: React.FC<CameraTreeItemProps> = ({ camera }) => {
                         </div>
                     )}
 
-                    {/* A slow camera is not a failure: it keeps streaming (Q10 of ADR-VYS7, G3 of ADR-JK79) */}
-                    {camera.state === 'too_slow' && (
-                        <p className="text sm text-warning" style={{ whiteSpace: 'normal', paddingRight: 24 }}>{t('cameraIsSlow')}</p>
-                    )}
+                    {/* The exposure texts of 1.8; a slow camera is not a failure: it keeps streaming (Q10 of ADR-VYS7, G3) */}
+                    {exposureRow.keys.map(key => key in warningOf ? (
+                        <span key={key} className="camera-config-chip text-warning text-nowrap" title={tooltipOf(key)}>{t(key)}</span>
+                    ) : (
+                        <p key={key} className="text sm text-warning" style={{ whiteSpace: 'normal', paddingRight: 24 }}>{t(key)}</p>
+                    ))}
 
                     {failed && (
                         <p id={`${rowId}-failure`} role="alert" className="text sm text-warning" style={{ whiteSpace: 'normal', paddingRight: 24 }}>

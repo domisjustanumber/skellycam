@@ -151,6 +151,29 @@ export const camerasConnectOrUpdate = createAsyncThunk<
 );
 
 
+/** The response of POST /camera/group/exposure/auto (camera-requests.md 1.5). */
+export interface ExposureSearchResponse {
+    camera_configs: Record<string, CameraConfig>;
+    results: Record<string, { state: string }>;
+    warnings: { kind: string; camera_ids: string[]; text: string }[];
+}
+
+/** The button "Auto-set exposure (all cameras)" (no ids) and "Search again" (one id). The live state shows the rest. */
+export const searchExposure = createAsyncThunk<ExposureSearchResponse, string[] | undefined, { state: RootState }>(
+    'cameras/searchExposure',
+    async (cameraIds) => {
+        const response = await backendFetch(serverUrls.endpoints.exposureAuto, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(cameraIds ? { camera_ids: cameraIds } : null),
+        });
+        if (!response.ok) {
+            throw new Error(errorDetail(await response.json().catch(() => null), response.statusText));
+        }
+        return response.json() as Promise<ExposureSearchResponse>;
+    }
+);
+
 export const closeCameras = createAsyncThunk<void, void, { state: RootState }>(
     'cameras/close',
     async () => {

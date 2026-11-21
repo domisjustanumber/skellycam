@@ -15,6 +15,7 @@ import {RecordingPathModal} from "@/components/recording-info-panel/RecordingPat
 import ButtonSm from "@/components/ui-components/ButtonSm";
 import TextSelector from "@/components/ui-components/TextSelector";
 import { useTranslation } from "react-i18next";
+import { anyAdjusting } from "@/store/slices/cameras/exposure-row";
 import { selectCameras } from "@/store/slices/cameras/cameras-selectors";
 import { labelText } from "@/store/slices/cameras/camera-labels";
 import { takeErrorText } from "@/store/slices/recording/ended-take";
@@ -28,6 +29,8 @@ export const RecordingInfoPanel: React.FC = () => {
     const dispatch = useAppDispatch();
     const recordingInfo = useAppSelector((state) => state.recording);
     const cameras = useAppSelector(selectCameras);
+    // No recording can start while a camera runs its exposure search (camera-requests.md 1.3b) [G2, B14]
+    const adjusting = useAppSelector((state) => anyAdjusting(state.connection.cameraGroups));
     const { t } = useTranslation();
 
     const [createSubfolder, setCreateSubfolder] = useState<boolean>(false);
@@ -224,8 +227,9 @@ export const RecordingInfoPanel: React.FC = () => {
                     isPending={pendingOperation !== null}
                     countdown={countdown}
                     recordingStartTime={recordingStartTime}
-                    disabled={noCamerasConnected && !recordingInfo.isRecording}
-                    tooltipText={noCamerasConnected && !recordingInfo.isRecording ? t('connectCamerasToRecord') : undefined}
+                    disabled={(noCamerasConnected || adjusting) && !recordingInfo.isRecording}
+                    tooltipText={recordingInfo.isRecording ? undefined : noCamerasConnected ? t('connectCamerasToRecord')
+                        : adjusting ? t('settingExposure') : undefined}
                     onClick={handleRecordButtonClick}
                 />
             </div>
