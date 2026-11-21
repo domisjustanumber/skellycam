@@ -54,7 +54,7 @@ The agent made these choices where the spec gave no rule. Sections 2.4a and 2.8 
     the next pick or detection.
 13. "Checking 60 fps…" shows while a camera of the group is `starting`, `waiting`, `adjusting` or
     `checking`, and the choice is 60 fps or the live state holds a `rate_fallback` item.
-14. New tests T-REQ-77 to T-REQ-83 for these choices.
+14. New tests T-REQ-84 to T-REQ-90 for these choices.
 
 ## Reason
 

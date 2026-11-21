@@ -224,8 +224,8 @@ def test_t_req_41_auto_searches_at_60_before_its_check(monkeypatch):
         assert not fallback_items(app, camera_id)
 
 
-def test_t_req_77_a_search_on_request_at_60_gives_no_fall_back(monkeypatch):
-    """T-REQ-77, 2.4a item 5: a fake in `AUTO` is `ready` at 60; then it delivers 29.66 fps after each later set; press
+def test_t_req_84_a_search_on_request_at_60_gives_no_fall_back(monkeypatch):
+    """T-REQ-84, 2.4a item 5: a fake in `AUTO` is `ready` at 60; then it delivers 29.66 fps after each later set; press
     the button. The search fails with `no-value-kept-rate`; no fall back: the camera stays at 60 with no new open, and
     no status has a `rate_fallback` item."""
     script = FakeScript(modes=MODES, brightness=MODEL, rate_after_change=(60.0,) * 9 + (SLOW,) * 8)
@@ -243,8 +243,8 @@ def test_t_req_77_a_search_on_request_at_60_gives_no_fall_back(monkeypatch):
         assert app.state(camera_id) == "too_slow" and not fallback_items(app, camera_id)
 
 
-def test_t_req_78_the_cameras_that_the_request_does_not_name_fall_back_too(monkeypatch):
-    """T-REQ-78, 2.4a item 2: A and B run at 60; C (29.66 fps) was unselected and is selected again by a request that
+def test_t_req_85_the_cameras_that_the_request_does_not_name_fall_back_too(monkeypatch):
+    """T-REQ-85, 2.4a item 2: A and B run at 60; C (29.66 fps) was unselected and is selected again by a request that
     names only C, at 60. One fall back: A, B and C run at 30 and are `ready`; only C has a `rate_fallback` item."""
     scripts = [FakeScript(modes=MODES), FakeScript(modes=MODES), FakeScript(modes=MODES, rate=SLOW)]
     with capture_app(monkeypatch, scripts) as app:
@@ -260,8 +260,8 @@ def test_t_req_78_the_cameras_that_the_request_does_not_name_fall_back_too(monke
         assert not fallback_items(app, a) and not fallback_items(app, b) and len(fallback_items(app, c)) == 1
 
 
-def test_t_req_79_a_failure_at_set_mode_falls_back_with_its_own_text(monkeypatch):
-    """T-REQ-79, 2.4a item 4: the detection lists 60 fps, but the source has 30 fps only; connect at 60. The apply
+def test_t_req_86_a_failure_at_set_mode_falls_back_with_its_own_text(monkeypatch):
+    """T-REQ-86, 2.4a item 4: the detection lists 60 fps, but the source has 30 fps only; connect at 60. The apply
     answers with the config at 30 and the text of a camera with no measured rate; the camera is `ready`."""
     script = FakeScript(modes=((640, 480, 30, 1, "MJPG"),), detected_modes=MODES)
     with capture_app(monkeypatch, [script]) as app:
