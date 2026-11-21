@@ -1,6 +1,6 @@
 # GEH0 — Choices of code step 3 (auto exposure on Windows)
 
-**Status:** proposed, 2026-11-20 (agent).
+**Status:** proposed, 2026-11-20 (agent); items 9 and 12 to 17 changed on 2026-11-21 after the review.
 
 ## Decision
 
@@ -28,13 +28,30 @@ Foundation source and the fake source. The spec does not make these choices. The
 8. When the last set of a search (the result) fails, the search fails with `set-failed` or
    `readback-differs`, and the camera sets the held value one more time.
 9. A switch from `MANUAL` to `AUTO` answers with `AUTO` and the manual value as the held value. A failed
-   search then sets `MANUAL` and its value again (1.3 item 6).
-10. A camera that dies or closes during its search has `exposure_search.state` `failed` with the reason
-    `camera-closed`.
+   search keeps the mode `AUTO` and sets the old value and the old `exposure_found_at_fps` again (1.3 item
+   6): `AUTO` is the stored mode (the ruling of the user, relayed by the review of 2026-11-21).
+10. A camera that the group closes or unselects during its search has the reason `camera-closed`. A camera
+    that fails or dies during its search has its failure code as the reason.
 11. The main process writes `start_failure` into `group_warnings` of each camera that the item names.
 12. The UI copies a held value only when the desired config and the server config are both `AUTO`. After
-    the button, the UI sets each camera with a `done` search to `AUTO` first. The row uses the desired
-    frame rate as the mode rate for the `rate-high` text.
+    the button, the UI sets each camera with a `done` search to `AUTO` first. The row uses the mode rate of
+    the server for the `rate-high` text. "Search again" and the button are off while a camera is `starting`,
+    `waiting` or `adjusting`.
+13. Correction of fact, for the confirmation of the user: the search tries only the values of -12 to -5 in
+    the exposure range of the camera, which the source reads before the first set of the open
+    (`exposure_range()`). Each test camera is outside -12: the C922, the C930e and the Kiyo Pro have -11
+    to -2, and the generic camera has -7 to 3 (the research note `exposure_gain_tradeoff.md` 1.1 of
+    `dom/research`). With no value in the range, the search fails with the new reason `no-value-in-range`.
+    A held value outside the range is set at the nearest end of the range at the open.
+14. An apply and the endpoint get HTTP 409 also while a record start, a stop or an error end holds the lock
+    of the take. The loop starts no search while the camera is paused or has a take writer.
+15. A live change that waits in the queue lands before a requested search starts. During a search, a live
+    change sets no state and starts no check.
+16. Only the reply of the last set ends a search. The brightness comes from the bytes that passed the JPEG
+    check; a frame with error flags or that does not decode gives no brightness, and the next frame
+    measures. The limit of 20 s starts at the first set.
+17. The endpoint waits at most `SEARCH_WAIT_LIMIT_S` (35 s). At that limit, it marks no camera `failed`
+    whose process is alive and `adjusting`. "Apply again" clears `search_requested`.
 
 ## Reason
 
@@ -49,6 +66,9 @@ preview, the text of the OpenCV source of Linux and macOS in the settings, and t
 T-REQ-68.
 
 ## Evidence
+
+Item 13: `research/usb_cameras/docs/exposure_gain_tradeoff.md` section 1.1 on branch `dom/research`, from the
+control lists of the run `suite_20261111T040003Z` (Windows, Media Foundation and DirectShow agree).
 
 Tests: `skellycam/tests/capture/test_camera_requests.py`, `skellycam/tests/capture/test_exposure_search.py`,
 `skellycam-ui/src/store/slices/cameras/exposure-row.test.ts`.
