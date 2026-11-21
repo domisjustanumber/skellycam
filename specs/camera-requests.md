@@ -142,7 +142,8 @@ with the guard of the frame rate [E2]:
    4 is then one step down, and the result is a step.
    The search tries only the values that are in the exposure range of the camera, in the same order.
    The source reads the range before the first set of the open (`exposure_range()`; on Media Foundation
-   `IAMCameraControl::GetRange`). A source that gives no range gets each value. Reason: each test camera
+   `IAMCameraControl::GetRange`). A value that is not on the step grid of the range (min plus a multiple
+   of the step) is left out. A source that gives no range gets each value, with the rule of item 6. Reason: each test camera
    is outside -12 (the C922, the C930e and the Kiyo Pro have -11 to -2; the generic camera has -7 to 3), and
    Media Foundation gives the value to the camera as it is: the set fails, or the camera clamps it [ADR-GEH0](../decisions/entries/GEH0-choices-of-code-step-3.md).
 2. For each value:
@@ -171,9 +172,16 @@ with the guard of the frame rate [E2]:
 6. The search fails in these cases. A failed search sets the old value and the old
    `exposure_found_at_fps` again [E6]. The mode stays `AUTO`: `AUTO` is the stored mode, also after a
    failed switch from `MANUAL` [ADR-GEH0](../decisions/entries/GEH0-choices-of-code-step-3.md):
-   - no value of item 1 is in the range of the camera (`no-value-in-range`) [ADR-GEH0](../decisions/entries/GEH0-choices-of-code-step-3.md);
+   - no value of item 1 is in the range of the camera, or, with no range, no value could be set
+     (`no-value-in-range`) [ADR-GEH0](../decisions/entries/GEH0-choices-of-code-step-3.md);
+   - with no range (a source that gives none, for example OpenCV): a value whose set returns an error
+     or whose read-back differs is not a failure. The search skips it as not supported by the camera,
+     logs it, lists it in `skipped` of its result, and goes on with the next value. With a range, such a
+     set inside the range fails the search as below [ADR-GEH0](../decisions/entries/GEH0-choices-of-code-step-3.md) (a choice of the supervisor);
    - no value kept the rate;
-   - a set call returned an error, or its read-back differed from the value;
+   - a set call returned an error, or its read-back differed from the value (with a range);
+   - the last set (the result, or the held value again) gave no reply within the limit of a bounded call
+     and 1 s (`set-failed`) [ADR-GEH0](../decisions/entries/GEH0-choices-of-code-step-3.md);
    - the search took more than its limit of 20 s [A2];
    - the group closed the camera, or the camera was unselected. Then the camera closes, and the
      search sets no value: the restore of the close sets the controls [ux 4.7] (1.9).
@@ -465,7 +473,7 @@ camera, so they stay [H5]:
   [K3]. The text is [B21]. Certify records the same case with its reason code `no-manual-exposure`.
 
 The text of `exposure_search_failed` names the reason: `no exposure from -12 to -5 is in the range of
-the camera (-4 to 3)` (`no-value-in-range`) [ADR-GEH0](../decisions/entries/GEH0-choices-of-code-step-3.md), `no exposure from -11 to -5 keeps 30 fps` with the first and
+the camera (-4 to 3)` or `no exposure from -12 to -5 could be set on the camera` (`no-value-in-range`) [ADR-GEH0](../decisions/entries/GEH0-choices-of-code-step-3.md), `no exposure from -11 to -5 keeps 30 fps` with the first and
 the last value that the search tried (`no-value-kept-rate`), `the camera refused exposure -9 (<error text>)` (`set-failed`), `exposure -9
 read back as -8` (`readback-differs`), `it took more than 20 s` (`timed-out`). `camera-closed` gives
 no warning, because the camera closes [ADR-AC5B](../decisions/entries/AC5B-choices-of-the-third-consistency-check.md).
