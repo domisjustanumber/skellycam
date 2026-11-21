@@ -28,6 +28,8 @@ class MediaFoundationDeviceInfo(CameraDeviceInfo):
     """`path` is the symbolic link as Media Foundation gives it; `camera_id` hashes it in lower case (7.2).
     `virtual` marks a virtual camera: detection shows it, but a request cannot select it yet."""
     virtual: bool = False
+    backend: str | None = "media-foundation"
+    id_source: str | None = "mf-link"
 
     @computed_field
     @property

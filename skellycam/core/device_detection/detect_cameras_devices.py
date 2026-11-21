@@ -46,6 +46,12 @@ class CameraDeviceInfo(BaseModel):
     virtual: bool = False  # ADR-PDD3 W5: detection shows a virtual camera; a request cannot select it
     modes_read: bool = False  # the native mode list was read: [] then means no mode at the floor (7.5)
     usb_link: str = "unknown"  # "USB 3", "USB 2", "USB 1" or "unknown"
+    # unix-capture.md 4.2 item 8: the native backend, the identity source, and the result of certify for the model
+    backend: str | None = None  # "v4l2", "avfoundation", "media-foundation"; None for the OpenCV detection
+    id_source: str | None = None  # "serial", "id-path", "unique-id", "mf-link"
+    has_serial: bool | None = None
+    evidence: str = "unknown"  # "verified", "known-bad", "unknown" (certify.md 11.2)
+    checked: bool = False  # a row of the record of checked models for the model on this OS key (certify.md 2.5)
 
     @computed_field
     @property
@@ -110,7 +116,8 @@ def detect_available_cameras(backend_id: CameraBackendInt|None=None, filter_virt
     if platform.system() == "Windows":
         # Windows only, and it can load comtypes (U18): import it only here.
         from skellycam.core.camera.capture.media_foundation.detect import detect_media_foundation_cameras
-        return _add_usb_links(detect_media_foundation_cameras(modes=modes))
+        from skellycam.core.camera.capture.camera_checks import mark_devices
+        return mark_devices(_add_usb_links(detect_media_foundation_cameras(modes=modes)))
     if backend_id is None:
         backend = determine_opencv_camera_backend()
     else:
