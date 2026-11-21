@@ -19,6 +19,11 @@ borderline value"). The agent made these choices:
 3. Two texts of [`unix-capture.md`](../../specs/unix-capture.md) 4.10 now state what the code does: a call that
    finds the camera process ended logs one more line, and a write error of `abandon()` replaces the error text of
    a camera that ends its part of the take alone (a correction that the supervisor found).
+4. Clamp warning. The clamp of a `MANUAL` exposure above -5 gives the warning kind `exposure_clamped`, control
+   `exposure`, with the text `Camera <id>: manual exposure <value> is above the limit -5. The exposure is -5.`
+   The main process owns it: it is in the response of the apply request and in `group_warnings` of the camera,
+   and it clears at the next apply request of the user. The UI row shows the plain line "The longest manual
+   exposure is -5. The camera uses -5." ([`camera-requests.md`](../../specs/camera-requests.md) 1.1, 1.5, 1.8).
 
 ## Reason
 
@@ -30,6 +35,8 @@ borderline value"). The agent made these choices:
    its first frame, also outside a take. Outside a take the last frame has no use. A take still cannot end
    normally after such a kill: each later take of the group ends with the error of the lock until the cameras
    are closed and opened again (4.10).
+4. Before, the clamp changed the value with no word. The main process does the clamp, so it owns the item, as
+   it owns `start_failure`. The row line has no camera value, so it needs no translation with a number.
 
 ## Consequences
 

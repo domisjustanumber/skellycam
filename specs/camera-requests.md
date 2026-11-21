@@ -87,6 +87,8 @@ This spec uses British spelling.
   route whose unit is a time. Until step 7b no route without a time unit exists, so the clamp of the
   main process stays as it is. Step 7b moves the clamp into the source, which knows its route, and a
   step value 0 to 7 is then never clamped [ADR-AC5B](../decisions/entries/AC5B-choices-of-the-third-consistency-check.md).
+  Each clamp gives the warning `exposure_clamped` of 1.5 in the response of the apply request and in
+  the status of the camera [ADR-NYT6](../decisions/entries/NYT6-choices-of-fix-lane-2.md).
 - `AUTO`: SkellyCam finds a manual value with the exposure search of 1.3. The search runs at each
   open of the camera, at a change of the frame rate and when the user asks (1.2) [G1]. Each search is
   one shot on the open stream. SkellyCam holds its value until the next search. The camera control
@@ -493,6 +495,9 @@ camera, so they stay [H5]:
 - `no_manual_exposure`, control `exposure` [K3]:
   `Camera a1b2 has no manual exposure. SkellyCam does not set its exposure.` The kind is a decision
   [K3]. The text is [B21]. Certify records the same case with its reason code `no-manual-exposure`.
+- `exposure_clamped`, control `exposure` (1.1):
+  `Camera a1b2: manual exposure -2 is above the limit -5. The exposure is -5.` The kind and the text
+  are proposed [ADR-NYT6](../decisions/entries/NYT6-choices-of-fix-lane-2.md).
 
 The text of `exposure_search_failed` names the reason: `no exposure from -12 to -5 is in the range of
 the camera (-4 to 3)` or `no exposure from -12 to -5 could be set on the camera` (`no-value-in-range`) [ADR-GEH0](../decisions/entries/GEH0-choices-of-code-step-3.md), `no exposure from -11 to -5 keeps 30 fps` with the first and
@@ -509,10 +514,11 @@ The owners and the lifetimes of the status `warnings` [ADR-AC5B](../decisions/en
   them into a new array `CameraStatus.camera_warnings`. `add_light` and `exposure_search_failed`
   clear at the next search or the next exposure change of that camera. `no_manual_exposure` comes
   again at each open.
-- The main process owns `rate_fallback` and `start_failure`. It writes them into a new array
-  `CameraStatus.group_warnings`. `rate_fallback` clears at the next apply request of the user, not
+- The main process owns `rate_fallback`, `start_failure` and `exposure_clamped`. It writes them into a
+  new array `CameraStatus.group_warnings`. `rate_fallback` clears at the next apply request of the user, not
   at the reopen or the "apply again" of the fall back itself (2.4). `start_failure` clears at the next
-  apply request of the user too.
+  apply request of the user too. `exposure_clamped` clears at the next apply request of the user, and
+  that request writes it again when it clamps again [ADR-NYT6](../decisions/entries/NYT6-choices-of-fix-lane-2.md).
 - The array `CameraStatus.warnings` keeps its job: the items of the recording that runs, written by
   the main process at the record start and cleared at the stop [cap 8.4, 11.3].
 - `serialize()` joins the three arrays into the one list `warnings`. A record start, a stop and
@@ -632,6 +638,8 @@ What the OpenCV source can do:
     failed" for `exposure_search_failed`, each with its text as the tooltip;
   - the text of 1.5a for a `too_slow` camera, in each mode [G3];
   - "Setting exposure…" for a camera in `adjusting`.
+  - the line "The longest manual exposure is -5. The camera uses -5." for an `exposure_clamped`
+    warning [ADR-NYT6](../decisions/entries/NYT6-choices-of-fix-lane-2.md).
   - the `rate-high` text of 1.5a for a `too_slow` camera whose `measured_fps` is above its mode rate.
   A pure function `exposureRowText(config, modeRate, state, warnings, measuredFps)` in
   `skellycam-ui/src/store/slices/cameras/exposure-row.ts` gives these texts. The row text "Found at
@@ -829,6 +837,7 @@ the text of a slow camera.
 | T-REQ-08 | fake | One value at 10 fps, the others at 30, on the virtual clock; press the button. | The search leaves the slow value at `t_a + 30 / (0.97 x 30)` s, ±25 ms; that trial has `kept_rate: false`. |
 | T-REQ-09 | fake | Each value at 5 fps (the fake still delivers); press the button. | The search fails at 20 s (±0.25 s) of the virtual clock; the old setting is set again. |
 | T-REQ-77 | fake | The model of T-REQ-01; the first 40 frames after the set of -8 come at 28.1 fps, then 30 fps. Then -8 at 28.1 fps for each frame; then -8 at 25 fps. | First case: -8 is measured again and kept, so the result is -9, not -7; the search takes about 1.0 s more than with no borderline value. Second case: -8 is measured two times and dropped. Third case: -8 is measured one time (25 fps is more than 10 % below 30) and dropped. Each value is set one time (1.3 item 2.7). |
+| T-REQ-78 | fake | One fake; apply `MANUAL -2`; then apply `MANUAL -7`. | The first response has `warnings` with the item `exposure_clamped` (control `exposure`, the text of 1.5); the config holds -5; the status `warnings` hold the same item; after the second apply the status has no `exposure_clamped` (1.1, 1.5). |
 | T-REQ-10 | fake | Two fakes `ready`, A and B in `MANUAL`; apply B with `AUTO` only. During the search of B: a record start; an apply that changes the size of B. | Only B searches; A gets no set call; the rings of A and B get frames at each gate round during the search; the record start gets 409 that names B and `adjusting`; the apply gets 409. |
 | T-REQ-11 | fake | A recording runs with two fakes. Press the button; send "Search again" for one camera; send an apply with `AUTO` for one camera. | Each gets 409; the fakes get no set call; the configs do not change. |
 | T-REQ-12 | fake | Connect, reopen by a size change, reopen by a rate change, and "apply again" after a fail, each with one fake in `AUTO` held at -9 (`exposure_found_at_fps` 30) and the brightness of T-REQ-01 at each rate. In the reopens, the request holds `exposure` -5. | Each open gives one set of -9 at step 5, not -5 [A8], then a search after the warm-up [G1]; each ends with -9 and `exposure_found_at_fps` at the mode rate of that open. |
@@ -861,7 +870,7 @@ the text of a slow camera.
 | T-REQ-70 | ui-unit | `normalizeExposureMode(config)` with `RECOMMEND`, `AUTO` and `MANUAL`, as the store loads saved settings. | `AUTO`, `AUTO`, `MANUAL`; the other fields do not change [G6]. |
 | T-REQ-71 | ui-manual | The pause button while the cameras stream, while a camera is `adjusting`, and during a recording. | The tiles keep the shown frame (`setStreamPaused` of `MainTabPanel.tsx`); no request goes to the server; the camera rows still change when a new live state arrives; un-pause shows the current frame [K1]. |
 | T-REQ-72 | fake | Run `await CameraGroupManager.search_exposure(camera_ids=None)` with no HTTP server, then `POST /camera/group/exposure/auto` on a second group with the same fakes. | The two responses are equal, apart from the measured times; the states and the `count` move in the same way [B18]. |
-| T-REQ-27 | ui-unit | `exposureRowText`: `MANUAL -8`; `AUTO -8` found at 30 with mode rate 30; `AUTO` with no held value; a camera in `adjusting`; `too_slow` in `MANUAL` and in `AUTO`; an `add_light` warning; `MANUAL` step 2 and `AUTO` step 5 on a route with `exposure_unit` `ev`; `too_slow` with `measuredFps` 31.42 at mode rate 30. | `E:-8`; `E:-8 auto`; "Auto: no value found yet"; "Setting exposure…"; `Camera is slow. Try adding more light` for both `too_slow` cases, to the character [G3]; "Add light"; `E:3/8` and "Auto: step 6 of 8", with no time label; `The camera delivers more frames than its mode rate` for the fast camera. No case gives a "Found at" text [B9]. |
+| T-REQ-27 | ui-unit | `exposureRowText`: `MANUAL -8`; `AUTO -8` found at 30 with mode rate 30; `AUTO` with no held value; a camera in `adjusting`; `too_slow` in `MANUAL` and in `AUTO`; an `add_light` warning; an `exposure_clamped` warning; `MANUAL` step 2 and `AUTO` step 5 on a route with `exposure_unit` `ev`; `too_slow` with `measuredFps` 31.42 at mode rate 30. | `E:-8`; `E:-8 auto`; "Auto: no value found yet"; "Setting exposure…"; `Camera is slow. Try adding more light` for both `too_slow` cases, to the character [G3]; "Add light"; "The longest manual exposure is -5. The camera uses -5."; `E:3/8` and "Auto: step 6 of 8", with no time label; `The camera delivers more frames than its mode rate` for the fast camera. No case gives a "Found at" text [B9]. |
 | T-REQ-74 | fake | One fake in `AUTO` at 30 fps; connect; then a reopen by a size change and a reopen by a rate change (each in the same camera process), "apply again" after a fail (a new camera process), and an unselect and a reselect. | `exposure_search.count` is 1, 2, 3, 4, 5 after each search; it never goes back to 1 while the group runs; a new group starts at 1 (1.5). |
 | T-REQ-75 | fake | Step 7b (it needs the clamp in the source, 1.1). A native fake whose exposure route has no time unit (`exposure_unit` `native`), with a brightness model; connect in `AUTO`; then apply `MANUAL` with `exposure` -7, then with 2. | The search sets the steps 0 to 7 in order and stores a step; the status reports `exposure_unit` `native`; `MANUAL -7` stores the step 5; `MANUAL 2` stores the step 2 (1.1, 1.3). |
 | T-REQ-28 | ui-unit | `labelText` with the text `Camera a1b2: add light. ...` and the list where a1b2 is number 2, "Logitech C922"; a text with two IDs; the cases of today's `camera-labels.test.ts`. | `Camera 2 · Logitech C922: add light. ...`; each ID replaced; an unknown ID stays; no file imports `withCameraLabels` (1.8). |

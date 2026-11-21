@@ -32,6 +32,7 @@ test('T-REQ-27: the exposure row texts of 1.8, to the character; no "Found at" t
     assert.deepEqual(texts(exposureRowText(manual, 30, 'too_slow', [], 31.42)), ['E:-8', 'The camera delivers more frames than its mode rate']);
     assert.deepEqual(texts(exposureRowText(auto, 30, 'ready', [{ kind: 'add_light' }], 30)), ['E:-8 auto', 'Add light']);
     assert.deepEqual(texts(exposureRowText(manual, 30, 'ready', [{ kind: 'exposure_search_failed' }], 30)), ['E:-8', 'Exposure search failed']);
+    assert.deepEqual(texts(exposureRowText(manual, 30, 'ready', [{ kind: 'exposure_clamped' }], 30)), ['E:-8', 'The longest manual exposure is -5. The camera uses -5.']);
     assert.deepEqual(texts(exposureRowText(auto, 30, 'ready', [{ kind: 'no_manual_exposure' }], 30)), ['No manual exposure on this camera']);
     assert.ok(!JSON.stringify(en).includes('Found at'));
 });

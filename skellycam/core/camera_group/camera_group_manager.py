@@ -98,6 +98,11 @@ class CameraGroupManager:
         Return the group, the failure object of each camera that failed (8.4) and the warnings (11.3).
         Raise `RequestRefused` (422 or 409) before any change.
         """
+        clamped = [dict(kind="exposure_clamped", camera_ids=[camera_id], control="exposure",  # 1.1, 1.5 [NYT6]
+                        text=f"Camera {camera_id}: manual exposure {config.exposure} is above the limit "
+                             f"{MAX_MANUAL_EXPOSURE}. The exposure is {MAX_MANUAL_EXPOSURE}.")
+                   for camera_id, config in camera_configs.items() if config.use_this_camera
+                   and config.exposure_mode == "MANUAL" and config.exposure > MAX_MANUAL_EXPOSURE]
         camera_configs = {camera_id: config.model_copy(update=dict(exposure=MAX_MANUAL_EXPOSURE))
                           if config.exposure_mode == "MANUAL" and config.exposure > MAX_MANUAL_EXPOSURE else config
                           for camera_id, config in camera_configs.items()}  # sfn26 43e2b968a: the clamp
@@ -122,6 +127,10 @@ class CameraGroupManager:
         else:
             failures, change_warnings = await camera_group.apply(camera_configs)
             warnings += change_warnings
+        for item in clamped:  # the main process owns it (camera-requests.md 1.5)
+            logger.warning(item["text"])
+            warnings.append(item)
+            camera_group.add_group_warning(item)
         if failures:
             # One explanation of the failed start, where it adds a cause to the reasons (port from sfn26)
             # Review item 4: the device list only (no camera is activated); the links of the detection before
