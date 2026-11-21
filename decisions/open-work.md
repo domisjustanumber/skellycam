@@ -3,6 +3,8 @@
 This file holds the open work of the [decision log](README.md). Read the items that apply to your
 task. Delete an item when its work is done. The PR that closes an item records the result.
 
+- **Format pin not on GitHub.** [ADR-3B97](entries/3B97-format-sync-to-the-format-commit-with-f1-to-f10.md):
+  do not merge or push `dom/format-sync` before the user pushes skellyfileformat `c1028ef`.
 - **Images in the camera media check.**
   [ADR-XT31](entries/XT31-kit-adoption-choices-camera-media-check-and-fills.md):
   `tools/check_camera_media.py` must refuse a PNG, GIF, WebP or SVG file, and allow each chart,
