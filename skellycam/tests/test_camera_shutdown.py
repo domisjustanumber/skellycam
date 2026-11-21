@@ -289,4 +289,4 @@ def test_the_close_ends_an_unselected_camera_process_that_outlived_its_join(mana
     manager.close()
     old.terminate.assert_called_once()
     old.kill.assert_called_once()
-    assert not manager.removed_workers
+    assert not manager.removed_workers and manager.removed_statuses["camera1"].closed.value
