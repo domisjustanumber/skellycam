@@ -68,6 +68,11 @@ TAKE_START_LIMIT_S = 10.0  # each camera starts its writer within this time of t
 # The parent waits this long for a camera process at the start, as sfn26 549217112. The camera process has its own
 # limit of 15 s (9.3); this one ends a wait on a camera process that does not answer at all.
 PARENT_WAIT_LIMIT_S = 30.0
+# The main-process stall watch (unix-capture.md 4.10): the states it watches, its limit, the wait before a kill.
+WATCHED_STATES = ("waiting", "adjusting", "checking", "too_slow", "ready")
+STALL_WATCH_S = 2.0
+STALL_REASON = "no loop pass for 2 s"
+KILL_AFTER_S = 1.0
 MICROPHONE_REFUSED = "audio recording returns in step 5b; start again with no microphone"  # recorder.md 10 item 13
 WRITER = f"skellycam {__version__.lstrip('v')}"  # SFF-712
 
@@ -120,6 +125,7 @@ class CameraGroup:
     ended_take: TakeSummary | None = None  # a take that an error ended; the next stop request returns it
     take_error: tuple | None = None  # (text, camera_id) of the first stall or write error of the take (5.3, 5.4)
     camera_diagnostics: dict = field(default_factory=dict)  # the newest diagnostics of each camera (unix 4.2 item 2)
+    _passes: dict = field(default_factory=dict)  # camera_id: (alive_count, time.monotonic() of its last change)
     _end_lock: Any = field(default_factory=asyncio.Lock)
     _ring_lock: Any = field(default_factory=threading.RLock)
     _stop_watch: Any = field(default_factory=threading.Event)
@@ -333,12 +339,43 @@ class CameraGroup:
 
     def _watch_camera(self, camera_id: CameraIdString, worker) -> None:
         if worker.worker.exitcode is None:
+            self._watch_passes(camera_id, worker)
             return
         self._mark_ended(camera_id, worker)
         ring = self.rings.get(camera_id)
         if ring is not None:
             # The readers are read on the event loop (the relay), so they are closed there too (ADR-BM73).
             self._loop.call_soon_threadsafe(self._close_ended_ring, camera_id, ring)
+
+    def _watch_passes(self, camera_id: CameraIdString, worker) -> None:
+        """unix-capture.md 4.10: a live camera process whose loop made no pass for 2 s in a watched state, with
+        no failure and no close, leaves the gate as `dead` with the code `stalled`, and its process ends."""
+        status = self.cameras.orchestrator.camera_statuses.get(camera_id)
+        if status is None:
+            return
+        count, now = status.alive_count.value, time.monotonic()
+        watched = (status.state in WATCHED_STATES and not status.should_close.value and not status.closing.value
+                   and not status.info_dict().get("failure"))
+        seen = self._passes.get(camera_id)
+        if not watched or seen is None or seen[0] != count:
+            self._passes[camera_id] = (count, now)
+            return
+        if now - seen[1] < STALL_WATCH_S:
+            return
+        del self._passes[camera_id]
+        status.should_close.value = True
+        status.update_info(failure=dict(camera_id=camera_id, stage="streaming", reason=STALL_REASON, code="stalled"))
+        status.set_state("dead")  # out of the gate (5.2)
+        logger.error(f"Camera {camera_id} failed during streaming: {STALL_REASON}")
+        threading.Thread(target=self._end_process, args=(worker,), name=f"end camera {camera_id}", daemon=True).start()
+
+    @staticmethod
+    def _end_process(worker) -> None:
+        """Terminate, then kill after 1 s (4.10). Off the watch thread, so the watch of the others goes on."""
+        worker.worker.terminate()
+        worker.join(timeout=KILL_AFTER_S)
+        if worker.is_alive():
+            worker.worker.kill()
 
     def _close_ended_ring(self, camera_id: CameraIdString, ring: FrameRingCreator) -> None:
         """On the event loop: close the rings of a camera whose process ended, if the camera still has that

@@ -41,6 +41,7 @@ class CameraTakeResult:
 
 
 _ABANDON = object()  # the queue marker of `abandon`
+ALIVE_TICK_S = 0.5  # unix-capture.md 4.10: a wait of the loop here adds to `alive_count` at least this often
 
 
 class CameraTakeWriter:
@@ -61,6 +62,7 @@ class CameraTakeWriter:
         self._last_frame_number = None
         self._abandoned = False  # set by `end` when the writer made no progress for the stall limit
         self._shared_progress = None
+        self._alive = None  # the shared `alive_count` of the camera (unix-capture.md 4.10)
         # Progress (D1): the time.monotonic() at which a write call on the MKV or the CSV, or an fsync,
         # last returned. A call that does not return is no progress: the disk took nothing.
         self._progress_at = time.monotonic()
@@ -73,13 +75,16 @@ class CameraTakeWriter:
     def _wait_with_progress(self, started, attempt) -> bool:
         """Call `attempt(timeout)` until it returns True. Return False when the writer made no
         progress for the stall limit, counted from `started` or from its last progress, whichever is
-        later (D1). Each attempt blocks; nothing polls."""
+        later (D1). Each attempt blocks at most ALIVE_TICK_S, and then adds one to `alive_count`: the main-process
+        stall watch then sees a loop that waits here (unix-capture.md 4.10)."""
         while True:
             remaining = max(started, self._progress_at) + self.spec.stall_limit_s - time.monotonic()
             if remaining <= 0:
                 return False
-            if attempt(remaining):
+            if attempt(min(remaining, ALIVE_TICK_S)):
                 return True
+            if self._alive is not None:
+                self._alive.value += 1
 
     def _try_put(self, item, timeout) -> bool:
         try:
@@ -93,11 +98,12 @@ class CameraTakeWriter:
         return not self._thread.is_alive()
 
     @classmethod
-    def start(cls, spec, *, clock=None, progress=None):
+    def start(cls, spec, *, clock=None, progress=None, alive=None):
         """Open the files, write the MKV header and the CSV header, start the writer thread. `progress` is a
-        shared double that gets the time of each progress, for the main process (recorder.md 5.3 item 4)."""
+        shared double that gets the time of each progress, for the main process (recorder.md 5.3 item 4).
+        `alive` is the shared counter of the stall watch of the main process (unix-capture.md 4.10)."""
         self = cls(spec)
-        self._shared_progress = progress
+        self._shared_progress, self._alive = progress, alive
         self._progress()
         self._clock = clock or time.perf_counter_ns
         self._layout = spec.layout

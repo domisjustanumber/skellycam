@@ -31,8 +31,12 @@ class CameraStatus:
     # The time.monotonic() of the last progress of the camera writer of a take [C6DE D1] (recorder.md 5.3).
     writer_progress_at: Synchronized = field(default_factory=lambda: multiprocessing.Value("d", 0.0))
     state_index: Synchronized = field(default_factory=lambda: multiprocessing.Value("b", -1))
+    # One more at each pass of the shared loop and at least each 0.5 s of a wait in the recorder: the signal of
+    # the main-process stall watch (unix-capture.md 4.10).
+    alive_count: Synchronized = field(default_factory=lambda: multiprocessing.Value("q", 0))
     # JSON that the camera process writes: failure, mode, measured_fps, controls, source (8.4), layout, hung
-    # (recorder.md 6.4, 7.4). The main process writes `failure` only after the camera process ended.
+    # (recorder.md 6.4, 7.4). The main process writes `failure` only after the camera process ended, or when
+    # the stall watch ends the process (unix-capture.md 4.10).
     info: Any = field(default_factory=lambda: multiprocessing.Array("c", INFO_SIZE))
     # JSON that only the main process writes: the warning items of the recording that runs (11.3).
     warnings: Any = field(default_factory=lambda: multiprocessing.Array("c", INFO_SIZE))

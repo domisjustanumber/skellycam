@@ -95,11 +95,11 @@ def camera_loop(source_factory: Callable, config: CameraConfig, ipc: CameraGroup
                recording_info_subscription).run()
 
 
-def start_take_writer(camera_id, spec, progress=None) -> CameraTakeWriter:
+def start_take_writer(camera_id, spec, progress=None, alive=None) -> CameraTakeWriter:
     """Start the camera writer of a take (recorder.md 10 item 5). A spec of another camera is refused (D41)."""
     if spec.camera_id != camera_id:
         raise ValueError(f"the take spec of camera {spec.camera_id} came to camera {camera_id}")
-    return CameraTakeWriter.start(spec, progress=progress)
+    return CameraTakeWriter.start(spec, progress=progress, alive=alive)
 
 
 def needs_reopen(requested: CameraConfig, current: CameraConfig) -> bool:
@@ -192,6 +192,7 @@ class CameraLoop:
         self._fail(CaptureFailure(self.stage, text), at_end=not self.started)  # not started: `failed` after its close
 
     def _pass(self) -> None:
+        self.status.alive_count.value += 1  # the main-process stall watch (unix-capture.md 4.10)
         if self.hung.is_set():
             raise _Hung()
         now = perf_counter_ns()
@@ -527,6 +528,7 @@ class CameraLoop:
 
     def _reopen(self, requested: CameraConfig) -> None:
         """A change of resolution or rate reopens only this camera and recreates its rings (D31, ring 7.5)."""
+        self.status.set_state("starting")  # the stall watch is off during the close (unix-capture.md 4.10)
         self._stop_control()
         self._close_rings()
         self._add_replaced()
@@ -547,7 +549,8 @@ class CameraLoop:
             self.status.update_info(writer_failure=text)
             return
         try:
-            self.take_writer = start_take_writer(self.camera_id, spec, self.status.writer_progress_at)
+            self.take_writer = start_take_writer(self.camera_id, spec, self.status.writer_progress_at,
+                                                 self.status.alive_count)
         except Exception as error:  # the camera runs on; the record start fails with this text (ADR-P5VE)
             text = f"camera {self.camera_id}: the take writer did not start: {error}"
             logger.error(text)
