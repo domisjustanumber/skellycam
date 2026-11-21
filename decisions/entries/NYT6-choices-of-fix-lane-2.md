@@ -24,6 +24,10 @@ borderline value"). The agent made these choices:
    The main process owns it: it is in the response of the apply request and in `group_warnings` of the camera,
    and it clears at the next apply request of the user. The UI row shows the plain line "The longest manual
    exposure is -5. The camera uses -5." ([`camera-requests.md`](../../specs/camera-requests.md) 1.1, 1.5, 1.8).
+5. Meaning of `alive`. `alive` of a group in the state is true while the group runs and at least one selected
+   camera lives: its camera process runs, and it is not `failed` or `dead`, not closing and not closed. A
+   camera in `starting` lives ([`camera-requests.md`](../../specs/camera-requests.md) 1.5). The supervisor
+   suggested this meaning; the specs were silent.
 
 ## Reason
 
@@ -37,6 +41,9 @@ borderline value"). The agent made these choices:
    are closed and opened again (4.10).
 4. Before, the clamp changed the value with no word. The main process does the clamp, so it owns the item, as
    it owns `start_failure`. The row line has no camera value, so it needs no translation with a number.
+5. Before, one dead camera made the group not alive while the other cameras still recorded. No code and no UI
+   reads `alive` to decide (the UI type has it, and no component uses it), so the change affects only the
+   clients of the API.
 
 ## Consequences
 

@@ -256,7 +256,9 @@ shows on the tile within about 1 s.
 The group flag `alive` is not a filter for the tiles [Q7]. On `dom/native-jpeg`, `CameraGroup.alive`
 is `False` when a worker process has ended, or when a status is not `connected`, is `closed`, is
 `closing` or has `error`; and `connected` is set only after the camera opens (`camera_loop.py`,
-line 304). One camera in `starting`, `failed` or `dead` thus makes the whole group not alive.
+line 304). One camera in `starting`, `failed` or `dead` thus makes the whole group not alive. Since
+[ADR-NYT6](../decisions/entries/NYT6-choices-of-fix-lane-2.md), `alive` has the meaning of
+[`camera-requests.md`](camera-requests.md) 1.5: at least one selected camera lives.
 
 ## 5. UI
 

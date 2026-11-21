@@ -472,6 +472,28 @@ def test_t_cap_81_dead_without_recording_is_treated_as_failed(monkeypatch, tmp_p
         assert (opens(app, alive), opens(app, dying)) == (1, 2)
 
 
+def test_the_group_stays_alive_while_one_selected_camera_lives(monkeypatch):
+    """camera-requests.md 1.5 [NYT6]: `alive` of the state is true while at least one selected camera lives. One of
+    two fakes dies: the group stays alive, also after the end of its camera process. Both dead: not alive."""
+    with capture_app(monkeypatch, [FakeScript(), FakeScript()]) as app:
+        ready_app_steps(app)
+        living, dying = app.factory.camera_ids
+
+        def alive():
+            response = app.client.get("/skellycam/camera/group/state")
+            assert response.status_code == 200, response.text
+            return response.json()["camera_groups"][app.group.id]["alive"]
+
+        assert alive()
+        app.factory.sources[dying].stop_now()
+        app.wait_state(dying, "dead")
+        app.wait(lambda: not app.worker(dying).is_alive(), "the end of the dead camera")
+        assert alive()
+        app.factory.sources[living].stop_now()
+        app.wait_state(living, "dead")
+        assert not alive()
+
+
 FLOOR_CASES = {
     "25": (FakeScript(modes=((640, 480, 30, 1, "MJPG"),)), 25.0, "refused"),
     "only 15 and 24 detected": (FakeScript(modes=((640, 480, 15, 1, "MJPG"), (640, 480, 24, 1, "MJPG"))), 30.0, "refused"),

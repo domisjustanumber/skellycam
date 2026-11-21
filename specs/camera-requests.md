@@ -460,7 +460,11 @@ POST /camera/group/exposure/auto
 - New route `GET /camera/group/state` [B15]: it returns `CameraGroupManager.to_state_dict()`, the
   object that the `app_state` message of the websocket sends as `state` (`camera_groups`, with
   `id`, `configs`, `cameras`, `alive`, `recording_in_progress` and the fields of [recorder.md](recorder.md)
-  8.4 of each group). A client with no websocket reads the result of a search there (1.3b). The state
+  8.4 of each group). `alive` is true while the group runs and at least one selected camera lives: its
+  camera process runs, and it is not `failed` or `dead`, not closing and not closed. Thus a group whose
+  other cameras still record when one camera dies stays `alive`. The UI reads no field `alive`; it is
+  not a filter for the tiles ([preview-4b.md](preview-4b.md) 4.5) [ADR-NYT6](../decisions/entries/NYT6-choices-of-fix-lane-2.md).
+  A client with no websocket reads the result of a search there (1.3b). The state
   has no field `paused`: [ADR-V8RS](../decisions/entries/V8RS-pause-freezes-the-ui-display-only.md) removed it, and `CameraGroupState` has none. The display freeze
   of the UI is not in the state [K1].
 

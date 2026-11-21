@@ -159,16 +159,14 @@ class CameraGroup:
 
     @property
     def alive(self) -> bool:
-        return (
-            self.ipc.running
-            and bool(self.cameras.camera_workers)
-            and all(
-                status.connected.value and not status.closed.value
-                and not status.closing.value and not status.error.value
-                for status in list(self.cameras.orchestrator.camera_statuses.values())
-            )
-            and all(worker.is_alive() for worker in list(self.cameras.camera_workers.values()))
-        )
+        """The group runs and at least one selected camera lives: its process runs, and it is not `failed` or `dead`,
+        not closing and not closed (camera-requests.md 1.5) [NYT6]."""
+        statuses = self.cameras.orchestrator.camera_statuses
+        return self.ipc.running and any(
+            worker.is_alive() and (status := statuses.get(camera_id)) is not None
+            and status.state not in ("failed", "dead") and not status.closed.value
+            and not status.closing.value and not status.error.value
+            for camera_id, worker in list(self.cameras.camera_workers.items()))
 
     @classmethod
     def create(
