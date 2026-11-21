@@ -944,7 +944,8 @@ through that stop request. The behaviour above is the ruling of the user. The tw
 
 - `CameraGroupState` gets the field `take_state`: `"none"`, `"recording"` or `"ended_with_error"`.
   `recording_in_progress` is true only for `"recording"`.
-- `"recording"` starts when the record start succeeds. A stop request that ends the take gives
+- `"recording"` starts when the record start succeeds; until then a record start keeps
+  `"ended_with_error"` [ADR-QJH6](../decisions/entries/QJH6-choices-of-the-fix-lane.md). A stop request that ends the take gives
   `"none"`. A take that the error of 5.3 or 5.4 ends gives `"ended_with_error"` as soon as
   `Take.finish` returns (8.1 step 5).
 - A record start that fails changes nothing: `"ended_with_error"` and its summary stay. This applies

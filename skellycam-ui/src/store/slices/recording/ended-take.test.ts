@@ -73,3 +73,15 @@ test('reducer: a summary that does not parse gives no summary dialog, but the er
     assert.equal(next.completionData, null);
     assert.notEqual(next.endedTake, null);
 });
+
+test('reducer: a record start that fails and gives the old take again shows no second notice; a new take does', () => {
+    const endedA = { g: { recording_in_progress: false, take_state: 'ended_with_error', ended_take_summary: ended } };
+    const shown = { ...recording, ...recordingAfterAppState({ ...recording, takeStates: { g: { take_state: 'recording' } } }, endedA, keepSummary) };
+    assert.notEqual(shown.endedTake, null);
+    const starting = { ...shown, endedTake: null, ...recordingAfterAppState(shown, { g: { recording_in_progress: true, take_state: 'recording' } }, keepSummary) };
+    const back = recordingAfterAppState(starting, endedA, keepSummary);
+    assert.equal(back.endedTake, undefined, 'no notice of the old take');
+    assert.equal(endedTakeNotice(starting.takeStates, endedA), null);
+    const endedB = { g: { ...endedA.g, ended_take_summary: { ...ended, summary: { ...summary, recording_name: 'take_2' } } } };
+    assert.equal(endedTakeNotice(starting.takeStates, endedB)?.summary, endedB.g.ended_take_summary.summary);
+});

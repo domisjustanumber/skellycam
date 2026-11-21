@@ -27,8 +27,10 @@ The fix lane makes small fixes. The supervisor gave each rule. The agent made th
    ([`windows-capture.md`](../../specs/windows-capture.md) 14 (e)).
 5. H. A record start that fails after `start_take` returned keeps `"ended_with_error"` and the summary
    of the earlier take, as a refusal before it does. Only a record start that succeeds drops that
-   summary ([`recorder.md`](../../specs/recorder.md) 8.4). `ended_take_summary.summary` gives a NaN
-   statistic as null, as the stop response does.
+   summary ([`recorder.md`](../../specs/recorder.md) 8.4). The state stays `"ended_with_error"` during a
+   record start until it succeeds. `ended_take_summary.summary` gives a NaN statistic as null, as the stop
+   response does. The UI shows the notice only for a take (its folder, else its name) that no notice
+   showed yet ([`camera-requests.md`](../../specs/camera-requests.md) 8.4).
 
 ## Reason
 

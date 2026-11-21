@@ -968,7 +968,8 @@ class CameraGroup:
 
     def to_state(self) -> CameraGroupState:
         self.adopt_search_results()
-        take_state = "recording" if self.take is not None else "none" if self.ended_take is None else "ended_with_error"
+        # "ended_with_error" stays during a record start, until it succeeds (recorder.md 8.4)
+        take_state = "ended_with_error" if self.ended_take is not None else "none" if self.take is None else "recording"
         return CameraGroupState(
             id=self.id,
             configs=self.configs,

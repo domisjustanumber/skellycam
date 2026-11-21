@@ -1604,11 +1604,15 @@ def test_t_rec_51_ended_with_error_stays_until_a_record_start_that_succeeds(monk
         assert live_state(app)["take_state"] == "ended_with_error"
         await_writers = module.CameraGroup._await_writers
 
+        during = []
+
         async def no_writer(group):
+            during.append(group.to_state().take_state)
             raise RuntimeError("test: no writer started")
 
         monkeypatch.setattr(module.CameraGroup, "_await_writers", no_writer)
         assert app.record_start(tmp_path, name="failed").status_code == 500
+        assert during == ["ended_with_error"]  # also during the start: the UI shows no old take again
         state = live_state(app)
         assert state["take_state"] == "ended_with_error"
         assert state["ended_take_summary"]["summary"]["recording_name"] == "take"
