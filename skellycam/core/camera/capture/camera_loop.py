@@ -170,13 +170,17 @@ class CameraLoop:
     # ----- the run -----
 
     def run(self) -> None:
-        hung = False
+        hung = lost = False
         try:
             self._start_up()
             while self.ipc.should_continue and not self.status.should_close.value:
                 self._pass()
+            # The loop left with no stop flag and the group running: the heartbeat was lost. Read here, not in the
+            # `finally`: no second read of the clock (a heartbeat that came back would hide the reason), and a
+            # re-select clears the stop flag after the end; another BaseException is no lost heartbeat.
+            lost = not self.status.should_close.value and self.ipc.running
         except _Stop:
-            pass
+            lost = not self.status.should_close.value and self.ipc.running
         except _Hung:
             hung = True
         except CaptureFailure as failure:
@@ -186,9 +190,7 @@ class CameraLoop:
             logger.exception(f"Camera {self.camera_id} loop error: {error}")
             self._fail(CaptureFailure(self.stage, f"{type(error).__name__}: {error}"), at_end=True)
         finally:
-            # The loop left with no failure, no stop flag and the group running: the heartbeat was lost. No second
-            # read of the clock (a heartbeat that came back would hide the reason).
-            if not hung and not self.failed and not self.status.should_close.value and self.ipc.running:
+            if lost and not self.failed:
                 self._lost_heartbeat()
             self._end(hung)
 

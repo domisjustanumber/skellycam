@@ -131,3 +131,18 @@ def test_a_lost_heartbeat_still_restores_the_controls_at_the_close(monkeypatch):
     auto = [s for t, s in exposure_sets(log) if t >= close_time(log) and s.auto]
     assert [(s.auto, s.value) for s in auto] == [(True, -6)]
     assert source.diagnostics()["restore_ok"] is True
+
+
+def test_an_end_by_another_base_exception_is_not_a_lost_heartbeat(monkeypatch):
+    """Fix lane I: a loop that a BaseException other than an `Exception` ends (here `KeyboardInterrupt` in a pass) is
+    not labelled "lost the server's heartbeat"."""
+    import importlib
+
+    loop_module = importlib.import_module("skellycam.core.camera.capture.camera_loop")
+    with one_camera(monkeypatch, FakeScript()) as (app, camera_id, _):
+        def interrupted(loop):
+            raise KeyboardInterrupt("test")
+
+        monkeypatch.setattr(loop_module.CameraLoop, "_pass", interrupted)
+        app.wait(lambda: app.status(camera_id)["closed"], "the loop ends")
+        assert (app.status(camera_id)["failure"] or {}).get("reason") != "lost the server's heartbeat"
