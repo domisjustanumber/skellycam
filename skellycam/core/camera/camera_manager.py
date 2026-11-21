@@ -112,9 +112,11 @@ class CameraManager:
 
         for status in self.orchestrator.camera_statuses.values():
             status.set_state("starting")  # each camera, so that no camera joins the gate before the others start
-        for worker in self.camera_workers.values():
+        for worker in list(self.camera_workers.values()):
             if isinstance(worker.worker, ManagedProcess):  # threads do not import again
                 time.sleep(_SPAWN_STAGGER_SECONDS)
+            if not self.ipc.running:  # a close started: it waits for this loop (CameraGroup._life_lock)
+                break
             worker.start()
 
     async def pause(self, await_paused: bool) -> None:

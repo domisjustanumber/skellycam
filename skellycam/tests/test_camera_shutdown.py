@@ -169,3 +169,43 @@ def test_stopped_group_is_not_reported_alive_with_lingering_workers(manager, pau
     manager.ipc.should_continue = False
     assert not group.alive
     assert not group.to_state().alive
+
+
+class SlowSpawnWorker:
+    """A fake camera worker whose start takes 0.2 s, as the spawn stagger on Windows."""
+
+    def __init__(self):
+        self.started = False
+        self.worker = Mock(spec=ManagedWorker, pid=None)
+        self.worker.is_alive.return_value = False
+
+    def start(self):
+        time.sleep(0.2)
+        self.started = True
+
+
+async def test_a_close_during_the_spawn_waits_for_it_and_no_camera_starts_after_it(manager):
+    """Fix lane A: the close waits for the spawn loop (no "dictionary changed size during iteration", no orphan),
+    and the spawn loop stops at the close."""
+    workers = {f"camera{number}": SlowSpawnWorker() for number in range(4)}
+    manager.camera_workers.update(workers)
+    group = CameraGroup(ipc=manager.ipc, configs={}, cameras=manager)
+    spawn = asyncio.create_task(asyncio.to_thread(group._spawn, manager.start))
+    await asyncio.sleep(0.3)  # the second camera starts
+    await asyncio.wait_for(group.close(), timeout=5)
+    await asyncio.wait_for(spawn, timeout=1)  # no error
+    assert 1 <= sum(worker.started for worker in workers.values()) < 4
+    assert not manager.camera_workers
+
+
+async def test_two_closes_at_once_close_the_camera_processes_one_time(manager):
+    """Fix lane A: a second close waits for the first, then returns."""
+    worker = Mock(spec=ManagedWorker, pid=123)
+    worker.is_alive.return_value = False
+    worker.join.side_effect = lambda timeout: time.sleep(0.2)
+    manager.camera_workers["camera1"] = CameraWorker(camera_id="camera1", worker=worker, ipc=manager.ipc,
+                                                     orchestrator=manager.orchestrator)
+    group = CameraGroup(ipc=manager.ipc, configs={}, cameras=manager)
+    await asyncio.wait_for(asyncio.gather(group.close(), group.close()), timeout=5)
+    worker.mark_stopping.assert_called_once()
+    assert not manager.camera_workers

@@ -82,8 +82,8 @@ class CameraGroupManager:
                 await camera_group.close()
             except Exception as close_err:
                 logger.error(f"Error closing failed camera group {camera_group.id}: {close_err}")
-            del self.camera_groups[camera_group.id]
-            del self.camera_group_framerate_subscriptions[camera_group.id]
+            self.camera_groups.pop(camera_group.id, None)  # a close of all groups can have removed it first
+            self.camera_group_framerate_subscriptions.pop(camera_group.id, None)
             raise
 
         logger.info(
@@ -280,10 +280,12 @@ class CameraGroupManager:
         try:
             # sfn26 43e2b968a: a group whose close raises stays listed, so that a retry closes it
             for camera_group_id in list(self.camera_groups):
-                group = self.camera_groups[camera_group_id]
+                group = self.camera_groups.get(camera_group_id)
+                if group is None:  # a second close, or the teardown of a failed start, removed it first
+                    continue
                 await group.close()
                 self.closed_diagnostics.update({camera_id: group.diagnostics(camera_id) for camera_id in group.camera_ids})
-                self.camera_groups.pop(camera_group_id)
+                self.camera_groups.pop(camera_group_id, None)
                 self.camera_group_framerate_subscriptions.pop(camera_group_id, None)
                 logger.info(f"Closed camera group ID: {camera_group_id}")
         finally:

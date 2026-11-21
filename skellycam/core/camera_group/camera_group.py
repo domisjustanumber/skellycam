@@ -139,6 +139,8 @@ class CameraGroup:
     _closing: bool = False  # `close` runs: the watch thread reads the queues but watches no camera (F4)
     _end_lock: Any = field(default_factory=asyncio.Lock)
     _ring_lock: Any = field(default_factory=threading.RLock)
+    _life_lock: Any = field(default_factory=threading.Lock)  # a spawn and a close of camera processes, one at a time
+    _cameras_closed: bool = False
     _stop_watch: Any = field(default_factory=threading.Event)
     _loop: Any = None  # the event loop of `start`: a ring reader is closed only on it (ADR-BM73)
 
@@ -159,9 +161,9 @@ class CameraGroup:
             and all(
                 status.connected.value and not status.closed.value
                 and not status.closing.value and not status.error.value
-                for status in self.cameras.orchestrator.camera_statuses.values()
+                for status in list(self.cameras.orchestrator.camera_statuses.values())
             )
-            and all(worker.is_alive() for worker in self.cameras.camera_workers.values())
+            and all(worker.is_alive() for worker in list(self.cameras.camera_workers.values()))
         )
 
     @classmethod
@@ -206,7 +208,7 @@ class CameraGroup:
         if not self.stall_watch:
             logger.warning(f"The main-process stall watch is off ({STALL_WATCH_SETTING}=0)")
         logger.info(f"Starting camera group ID: {self.id} with cameras: {list(self.configs.keys())}")
-        await asyncio.to_thread(self.cameras.start)  # the spawn takes seconds: not on the loop (sfn26 a4d610f62)
+        await asyncio.to_thread(self._spawn, self.cameras.start)  # seconds: not on the loop (sfn26 a4d610f62)
         threading.Thread(target=self._watch_workers, name=f"camera group {self.id} watch", daemon=True).start()
         configs, _ = await self._await_results(list(self.configs))
         if not self.ipc.running:
@@ -246,14 +248,14 @@ class CameraGroup:
                     update=dict(camera_index=config.camera_index, camera_name=config.camera_name))
         # The joins of a camera process take seconds: not on the event loop, which serves the preview.
         for camera_id in removed:
-            await asyncio.to_thread(self.cameras.remove_camera, camera_id)
+            await asyncio.to_thread(self._spawn, self.cameras.remove_camera, camera_id)
             with self._ring_lock:
                 self._close_rings([camera_id])
             del self.configs[camera_id]
         for camera_id in restart:
             with self._ring_lock:
                 self._close_rings([camera_id])
-            await asyncio.to_thread(self.cameras.restart_camera, camera_id, requested[camera_id])
+            await asyncio.to_thread(self._spawn, self.cameras.restart_camera, camera_id, requested[camera_id])
         if changed:
             self.ipc.pubsub.topics[TopicTypes.UPDATE_CAMERA_SETTINGS].publish(
                 UpdateCamerasSettingsMessage(requested_configs=changed))
@@ -321,6 +323,19 @@ class CameraGroup:
                 self._give_up(pending, "warm-up")
                 return
             await await_10ms()
+
+    def _spawn(self, call: Callable, *args) -> None:
+        """A start, restart or unselect of camera processes, never during a close; none after a close."""
+        with self._life_lock:
+            if self.ipc.running:
+                call(*args)
+
+    def _close_cameras(self) -> None:
+        """A second close waits for the first, then has nothing to do. A close that raised can run again."""
+        with self._life_lock:
+            if not self._cameras_closed:
+                self.cameras.close()
+                self._cameras_closed = True
 
     def _give_up(self, camera_ids, stage: str, limit_s: float = PARENT_WAIT_LIMIT_S) -> None:
         """A camera process that gives no answer within `limit_s` is `failed`, and it must close."""
@@ -856,7 +871,7 @@ class CameraGroup:
             for ring in self.rings.values():
                 ring.set_closed()
         try:
-            await asyncio.to_thread(self.cameras.close)  # the joins take seconds: not on the loop
+            await asyncio.to_thread(self._close_cameras)  # the joins take seconds: not on the loop
         finally:
             self._stop_watch.set()
             self._take_diagnostics()  # a dict that came after the last round of the watch
@@ -934,7 +949,7 @@ class CameraGroup:
             configs=self.configs,
             cameras={
                 camera_id: worker.to_state()
-                for camera_id, worker in self.cameras.camera_workers.items()
+                for camera_id, worker in list(self.cameras.camera_workers.items())
             },
             alive=self.alive,
             # Also when each camera died during the take, and until the stop fetched the summary of an error end.
