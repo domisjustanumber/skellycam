@@ -67,7 +67,7 @@ def expected_for(name):
 
 def test_t_rec_37_conformance_subset(tmp_path):
     """T-REC-37 (12.3, agent 28): run the conformance subset of skellyfileformat at commit
-    d67679ada704caf55c64c2e279081d317205f354 through `sff_adapter.py`. The results are exactly the
+    c1028ef185be86f0ac6ccf7f9ac2ce76def13f2d through `sff_adapter.py`. The results are exactly the
     expected results of 12.3: each listed test passes, fails or is skipped as listed, each collected
     test is listed, and each row of the table matches a collected test."""
     folder = checkout()
