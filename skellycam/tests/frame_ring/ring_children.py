@@ -152,6 +152,15 @@ def paced_writer(name, payload_size, fps, stop, ready, shape=None):
         writer.close()
 
 
+def hold_lock_forever(value, held):
+    """Take the lock of a shared Value and keep it until the process is killed (the cause of the hang of
+    2026-11-21: a reader killed inside `phase.value` keeps the lock, and each later write waits for ever)."""
+    value.get_lock().acquire()
+    held.set()
+    while True:
+        time.sleep(1)
+
+
 def hammer_reader(name, stop):
     """T-RING-23: a reader that reads the newest frame as fast as it can."""
     reader = ring().FrameRingReader.attach(name)
