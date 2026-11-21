@@ -1309,7 +1309,7 @@ No thread spins [W 4.3].
 
 The signal and the watch [ADR-AC5B](../decisions/entries/AC5B-choices-of-the-third-consistency-check.md):
 
-- The signal: a shared counter `alive_count` (`multiprocessing.Value("q", 0)`) in `CameraStatus`.
+- The signal: a shared counter `alive_count` (`multiprocessing.Value("q", 0, lock=False)`) in `CameraStatus`.
   The main process creates it with the status. The shared camera loop adds one at the start of each
   loop pass (`CameraLoop._pass`). While frames arrive, a pass takes at most about 50 ms, also when the
   camera is paused (a sleep of 50 ms), waits at the gate (1 ms) or is `waiting`. Thus the counter
@@ -1336,8 +1336,10 @@ The signal and the watch [ADR-AC5B](../decisions/entries/AC5B-choices-of-the-thi
   (the ready limit of [W 9.3] applies) and during the close (the bounded steps of [W 6.6, 6.9] apply).
   The limit is 3 s, over the 2 s of the in-process rule of [W 9.5]: that rule finishes the files and
   closes the camera, and it must come first; the watch kills the process, with no restore (4.7) and no
-  clean finish of the files [ADR-Q2NY](../decisions/entries/Q2NY-choices-of-code-step-2.md). The watch reads the counter with no lock (a process
-  stopped inside its add keeps the lock).
+  clean finish of the files [ADR-Q2NY](../decisions/entries/Q2NY-choices-of-code-step-2.md). The counter has no lock: a process
+  stopped inside its add keeps the lock. Each other scalar of `CameraStatus` has no lock too. The wait
+  for the lock of a JSON array of `CameraStatus` is at most 0.5 s: after it, the array is used with no
+  lock, because a process that ends while it holds a lock keeps it for ever [ADR-QJH6](../decisions/entries/QJH6-choices-of-the-fix-lane.md).
 - The setting `SKELLYCAM_STALL_WATCH=0` turns the watch off. The group reads it when it is made, and logs
   at its start that the watch is off [ADR-Q2NY](../decisions/entries/Q2NY-choices-of-code-step-2.md).
 - When it trips, the main process removes the camera from the gate, marks it `dead` with the failure

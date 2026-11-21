@@ -367,18 +367,50 @@ def test_f2_f9_the_watch_is_off_while_paused_when_set_off_and_in_a_close(monkeyp
     assert status.state == "ready" and not ended
 
 
-def test_f2_a_held_lock_of_the_counter_does_not_block_the_watch(monkeypatch):
-    """The experiment `suspend_lock.py`: a camera process suspended or ended inside `alive_count += 1` keeps the
-    lock of the counter (0 of 200 tries on this machine, but possible). The watch reads the counter with no
-    lock, so it does not block, and it trips."""
-    group, status, worker, clock, ended = watch_group(monkeypatch)
-    step(group, worker, clock, 0)
-    status.alive_count.get_lock().acquire()
+def test_f2_the_counter_and_the_other_scalars_of_the_status_have_no_lock():
+    """The experiment `suspend_lock.py`: a camera process suspended or ended inside `alive_count += 1` kept the
+    lock of the counter (0 of 200 tries on this machine, but possible). Each scalar of the status now has no lock
+    (fix lane G), so no read of the main process can wait for it."""
+    import dataclasses
+
+    from skellycam.core.camera_group.camera_status import CameraStatus
+
+    status = CameraStatus()
+    scalars = [f.name for f in dataclasses.fields(status) if f.name not in (
+        "info", "warnings", "camera_warnings", "group_warnings", "diagnostics", "lock_lost")]
+    assert "alive_count" in scalars and "state_index" in scalars
+    assert not [name for name in scalars if hasattr(getattr(status, name), "get_lock")]
+
+
+def test_g_a_killed_holder_of_the_info_lock_does_not_block_the_main_process():
+    """Fix lane G: a child takes the lock of `info` of a status and is killed. The main-process reads and writes
+    of the status (`serialize`, `update_info`, `reset_for_start`) return within their bound, and the status is
+    then used with no lock."""
+    import multiprocessing
+    import time
+
+    from skellycam.core.camera_group import camera_status
+    from skellycam.core.camera_group.camera_status import CameraStatus
+    from skellycam.tests.frame_ring import ring_children
+
+    spawn = multiprocessing.get_context("spawn")
+    status, held = CameraStatus(), spawn.Event()
+    status.update_info(mode={"width": 640})
+    holder = spawn.Process(target=ring_children.hold_lock_forever, args=(status.info, held), daemon=True)
+    holder.start()
     try:
-        step(group, worker, clock, 3.0)
+        assert held.wait(60), "the child holds the lock"
+        holder.kill()
+        holder.join(30)
+        start = time.monotonic()
+        assert status.serialize()["mode"] == {"width": 640}
+        status.update_info(failure={"code": "process-ended"})
+        status.reset_for_start()
+        assert time.monotonic() - start < camera_status.ARRAY_LOCK_WAIT_S + 1.0
+        assert status.lock_lost and status.info_dict() == {}
     finally:
-        status.alive_count.get_lock().release()
-    assert ended
+        if holder.is_alive():
+            holder.kill()
 
 
 def test_f2_the_setting_turns_the_watch_off_and_is_logged(monkeypatch):

@@ -24,6 +24,7 @@ import atexit
 import logging
 import multiprocessing
 import multiprocessing.queues
+from ctypes import _SimpleCData
 from multiprocessing.sharedctypes import Synchronized
 import os
 import signal
@@ -37,6 +38,8 @@ from skellycam.utilities.utf8_console import utf8_console
 from skellylogs import configure_logging
 
 logger = logging.getLogger(__name__)
+# A shared Value with its lock, or with no lock (the scalars of CameraStatus, fix lane G)
+SharedValue = Synchronized | _SimpleCData
 
 # The stall limit of a take (10 s) plus the margin of recorder.md 5.3 item 4 (5 s): a writer with no progress
 # for that time is stuck by that rule.
@@ -58,16 +61,16 @@ class ManagedWorker(abc.ABC):
         self,
         *,
         name: str,
-        shutdown_flag: Synchronized,
+        shutdown_flag: SharedValue,
     ) -> None:
         self._name = name
         self._shutdown_flag = shutdown_flag
         self._intentionally_terminated: bool = False
         self._failure_exitcode: int | None = None
-        self._recording_in_progress: Synchronized | None = None
-        self._writer_progress_at: Synchronized | None = None
+        self._recording_in_progress: SharedValue | None = None
+        self._writer_progress_at: SharedValue | None = None
 
-    def protect_recording(self, recording_in_progress: Synchronized, writer_progress_at: Synchronized | None = None) -> None:
+    def protect_recording(self, recording_in_progress: SharedValue, writer_progress_at: SharedValue | None = None) -> None:
         """Prevent automatic force termination while a camera owns an open writer. `writer_progress_at` is the
         `time.monotonic()` of the last progress of that writer (recorder.md 5.3 item 4)."""
         self._recording_in_progress = recording_in_progress
@@ -216,7 +219,7 @@ def _process_entry_point(
     *,
     target_fn: Callable[..., None],
     name: str,
-    shutdown_flag: Synchronized,
+    shutdown_flag: SharedValue,
     log_queue: multiprocessing.queues.Queue | None,
     worker_kwargs: dict,
 ) -> None:
@@ -289,7 +292,7 @@ class ManagedProcess(ManagedWorker):
         *,
         target: Callable[..., None],
         name: str,
-        shutdown_flag: Synchronized,
+        shutdown_flag: SharedValue,
         log_queue: multiprocessing.queues.Queue | None,
         daemon: bool = True,
         kwargs: dict | None = None,
@@ -357,7 +360,7 @@ class ManagedThread(ManagedWorker):
         *,
         target: Callable[..., None],
         name: str,
-        shutdown_flag: Synchronized,
+        shutdown_flag: SharedValue,
         log_queue: multiprocessing.queues.Queue | None,
         daemon: bool = True,
         kwargs: dict | None = None,

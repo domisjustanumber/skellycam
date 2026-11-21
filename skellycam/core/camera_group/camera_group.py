@@ -403,8 +403,8 @@ class CameraGroup:
         status = self.cameras.orchestrator.camera_statuses.get(camera_id)
         if status is None:
             return
-        # No lock: a process suspended or ended inside `alive_count += 1` keeps the lock (review of 2026-11-20).
-        count, now = status.alive_count.get_obj().value, time.monotonic()
+        # The counter has no lock: a process suspended or ended inside `alive_count += 1` kept it (review of 2026-11-20).
+        count, now = status.alive_count.value, time.monotonic()
         watched = (self.stall_watch and status.state in WATCHED_STATES and not status.should_pause.value
                    and not status.should_close.value and not status.closing.value
                    and not status.info_dict().get("failure"))

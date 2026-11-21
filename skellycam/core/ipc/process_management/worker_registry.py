@@ -9,6 +9,7 @@ import time
 from typing import Callable
 
 from skellycam.core.ipc.process_management.managed_worker import (
+    SharedValue,
     ManagedWorker,
     ManagedProcess,
     ManagedThread,
@@ -140,7 +141,7 @@ class WorkerRegistry:
     def create_worker(
         self,
         *,
-        shutdown_flag: Synchronized,
+        shutdown_flag: SharedValue,
         worker_mode: WorkerMode,
         target: Callable[..., None],
         name: str,

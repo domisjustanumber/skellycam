@@ -13,6 +13,11 @@ The fix lane makes small fixes. The supervisor gave each rule. The agent made th
 2. F. The warning kind for a camera that cannot join a running group is `cameras_left_out`. The item is
    only in the `warnings` of the apply response that selects that camera, not in a status: the camera
    has no status in the group ([`windows-capture.md`](../../specs/windows-capture.md) 11.3).
+3. G. Each scalar of `CameraStatus` is a shared Value with no lock. The wait for the lock of a JSON array
+   of `CameraStatus` (`info` and the three warning arrays) is at most 0.5 s. After a wait that ends with no
+   lock, that status is used with no lock for good, and an error line is logged. The end of the camera
+   process then gives the state and the reason (`process-ended`, as before)
+   ([`unix-capture.md`](../../specs/unix-capture.md) 4.10).
 
 ## Reason
 
@@ -20,7 +25,12 @@ The fix lane makes small fixes. The supervisor gave each rule. The agent made th
    warm-up failed, so the camera never searched (a real-camera run).
 2. F. Before, the apply answered 200 and left the camera out silently. The UI already closes all cameras
    and connects them again in this case, so the item is for the other consumers of the API.
+3. G. A process that is killed while it holds the lock of a shared Value or Array keeps the lock for ever.
+   A main-process read then waits for ever, also on the event loop (the state route and the websocket).
+   One writer at a time sets each scalar, and an aligned scalar is read and written whole, so a scalar
+   needs no lock. A JSON array needs its lock against a torn read.
 
 ## Alternatives rejected
 
 1. F. The item in `group_warnings` of each running camera: it names a camera that is not on that row.
+2. G. A new failure code for a lost lock: the end of the process already gives `process-ended`.
