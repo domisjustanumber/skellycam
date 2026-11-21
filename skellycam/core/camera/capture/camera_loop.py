@@ -146,7 +146,7 @@ class CameraLoop:
         self.search_final_ns = 0  # when the last set of the search went to the control thread
         self.search_replies = queue.Queue()
         self.no_exposure = False  # the camera has no working exposure control (camera-requests.md 1.9) [K3]
-        self.exposure_range: tuple | None = None  # (min, max) of the camera at this open (1.3 item 1) [GEH0]
+        self.exposure_range: tuple | None = None  # (min, max, step) of the camera at this open (1.3 item 1) [GEH0]
         self.signals = queue.Queue()
         self.hung = threading.Event()
         self._failure_lock = threading.Lock()
@@ -345,7 +345,7 @@ class CameraLoop:
         else:
             if self.config.exposure_mode == "AUTO" and self.exposure_range is not None:
                 # 1.3a [GEH0]: the held value is set inside the range of the camera, and the config stores the read-back
-                low, high = self.exposure_range
+                low, high, _ = self.exposure_range  # (min, max, step), the one shape of each source
                 if not low <= value <= high:
                     logger.info(f"Camera {self.camera_id}: the held exposure {value} is outside the range {low} to "
                                 f"{high} of the camera; it opens at {min(max(value, low), high)}")

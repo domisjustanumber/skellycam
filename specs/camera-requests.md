@@ -141,7 +141,8 @@ with the guard of the frame rate [E2]:
    the steps 0 to 7, in that order: the step k takes the place of the value k - 12. The offset of item
    4 is then one step down, and the result is a step.
    The search tries only the values that are in the exposure range of the camera, in the same order.
-   The source reads the range before the first set of the open (`exposure_range()`; on Media Foundation
+   The source reads the range before the first set of the open (`exposure_range()`, which gives
+   `(min, max, step)` or None on each source; on Media Foundation
    `IAMCameraControl::GetRange`). A value that is not on the step grid of the range (min plus a multiple
    of the step) is left out. A source that gives no range gets each value, with the rule of item 6. Reason: each test camera
    is outside -12 (the C922, the C930e and the Kiyo Pro have -11 to -2; the generic camera has -7 to 3), and

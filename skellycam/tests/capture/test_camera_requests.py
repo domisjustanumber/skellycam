@@ -163,6 +163,12 @@ def run_of_states(app, camera_id):
     return [state for i, state in enumerate(states) if i == 0 or states[i - 1] != state]
 
 
+def wait_run_end(app, camera_id, state):
+    """Wait (bounded) until the tracker saw `state` as the last state of the camera. The tracker keeps a state only
+    at the next read of a fake, so it can be one state behind the status when `wait_state` returns."""
+    app.wait(lambda: run_of_states(app, camera_id)[-1:] == [state], f"the tracker sees camera {camera_id} {state}")
+
+
 def open_sets(app, camera_id):
     """The first exposure set of each open, from the events of the fake."""
     firsts, opened = [], False
@@ -202,6 +208,7 @@ def test_t_req_06_a_connect_in_auto_answers_in_adjusting_and_searches(monkeypatc
         app.wait_state(camera_id, "ready")
         assert exposure_sets(app, camera_id) == [(False, -7)] + SEARCH + [(False, -9)]
         assert app.factory.logs[camera_id].opens.value == 1
+        wait_run_end(app, camera_id, "ready")
         assert run_of_states(app, camera_id) == ["starting", "waiting", "adjusting", "checking", "ready"]
         sets = [t for name, t, detail in app.factory.logs[camera_id].events if name == "set_controls" and detail]
         assert any(sets[1] < e["arrival_ns"] < sets[-1] for e in spies.of("jpeg")), "no ring frame in the search"
@@ -555,6 +562,7 @@ def test_t_req_01_a_switch_to_auto_searches_on_the_open_stream(monkeypatch):
         held = group_state(app)["configs"][camera_id]
         assert (held["exposure_mode"], held["exposure"], held["exposure_found_at_fps"]) == ("AUTO", -9, 30.0)
         assert not app.status(camera_id)["warnings"]
+        wait_run_end(app, camera_id, "ready")
         assert run_of_states(app, camera_id)[-4:] == ["ready", "adjusting", "checking", "ready"]
 
 
@@ -583,6 +591,7 @@ def test_t_req_02_the_button_searches_with_no_reopen(monkeypatch):
         assert app.factory.logs[camera_id].opens.value == 1 and app.ring_name(camera_id) == ring
         sets = [t for name, t, detail in app.factory.logs[camera_id].events if name == "set_controls" and detail]
         assert any(sets[1] < e["arrival_ns"] < sets[-1] for e in spies.of("jpeg")), "no ring frame in the search"
+        wait_run_end(app, camera_id, "ready")
         assert run_of_states(app, camera_id)[-4:] == ["ready", "adjusting", "checking", "ready"]
 
 
@@ -724,6 +733,7 @@ def test_t_req_16_a_switch_to_manual_is_a_live_set(monkeypatch):
         assert exposure_sets(app, camera_id)[count:] == [(False, -7)]
         config = response.json()["camera_configs"][camera_id]
         assert (config["exposure_mode"], config["exposure"], config["exposure_found_at_fps"]) == ("MANUAL", -7, None)
+        wait_run_end(app, camera_id, "ready")
         assert run_of_states(app, camera_id)[-3:] == ["ready", "checking", "ready"]
 
 
@@ -1235,3 +1245,66 @@ def test_the_loop_starts_no_search_in_a_take(guard):
     loop.status.search_requested.value = True
     loop._requested_search()
     assert loop.search is None and loop.status.state == "ready" and loop.status.search_count.value == 0
+
+
+
+# ---------------------------------------------------------------------------
+# The shape of the range at an open (the real-camera run of 2026-11-21) [GEH0]
+# ---------------------------------------------------------------------------
+
+def test_the_fake_gives_the_range_in_the_shape_of_the_product_sources():
+    """[GEH0]: `exposure_range()` gives (min, max, step) or None on each source; the fake too (step 1 by default)."""
+    from skellycam.tests.capture.fake_source import FakeSource
+
+    assert FakeSource(FakeScript(exposure_range=(-11, -2))).exposure_range() == (-11, -2, 1)
+    assert FakeSource(FakeScript(exposure_range=(-11, -2, 2))).exposure_range() == (-11, -2, 2)
+    assert FakeSource(FakeScript(exposure_range=None)).exposure_range() is None
+    assert FakeSource(FakeScript(exposure_range=(-11, -2), reported_range=False)).exposure_range() is None
+
+
+@pytest.mark.parametrize(("held", "opened"), [(-9, -9), (-12, -11), (-1, -2)])
+def test_an_open_in_auto_sets_the_held_value_inside_the_reported_range(monkeypatch, held, opened):
+    """camera-requests.md 1.3a [GEH0]: a connect in `AUTO` on a camera that reports -11 to -2 (step 1): a held value
+    inside the range opens at that value; below it at -11; above it at -2. The camera does not fail, and it then
+    searches -11 to -5."""
+    script = FakeScript(brightness=MODEL, exposure_range=(-11, -2, 1))
+    with capture_app(monkeypatch, [script]) as app:
+        camera_id = app.factory.camera_ids[0]
+        app.detect()
+        response = app.apply([auto(app, camera_id, exposure=held, exposure_found_at_fps=30.0)])
+        assert response.status_code == 200 and not response.json()["camera_failures"], response.text
+        assert response.json()["camera_configs"][camera_id]["exposure"] == opened
+        app.wait_state(camera_id, "ready", "too_slow")
+        assert open_sets(app, camera_id) == [(False, opened)]
+        assert search_values(app, camera_id) == list(range(-11, -4)) + [-9]
+
+
+def test_a_reopen_in_auto_sets_the_held_value_inside_the_reported_range(monkeypatch):
+    """camera-requests.md 1.3a [A8, GEH0]: a camera `ready` in `AUTO` on a camera that reports -11 to -2; a reopen for
+    a resolution change opens with the held value inside the range, and searches again."""
+    modes = ((640, 480, 30, 1, "MJPG"), (320, 240, 30, 1, "MJPG"))
+    with capture_app(monkeypatch, [FakeScript(modes=modes, brightness=MODEL, exposure_range=(-11, -2, 1))]) as app:
+        camera_id = app.factory.camera_ids[0]
+        app.detect()
+        assert app.apply([auto(app, camera_id)]).status_code == 200
+        app.wait_state(camera_id, "ready", "too_slow")
+        response = app.apply([auto(app, camera_id, width=320, height=240)])
+        assert response.status_code == 200 and not response.json()["camera_failures"], response.text
+        app.wait_state(camera_id, "ready", "too_slow")
+        assert open_sets(app, camera_id) == [(False, -7), (False, -9)]
+        assert app.status(camera_id)["exposure_search"]["count"] == 2
+        assert app.group.configs[camera_id].resolution.width == 320
+
+
+def test_the_refusal_of_a_changed_config_names_the_search(monkeypatch):
+    """[GEH0]: the 409 for a changed config of a camera in `adjusting` says that the camera sets its exposure."""
+    with capture_app(monkeypatch, [FakeScript(brightness=MODEL, hold_first_change=True)]) as app:
+        camera_id = app.factory.camera_ids[0]
+        app.detect()
+        assert app.apply([auto(app, camera_id)]).status_code == 200
+        refused = app.apply([auto(app, camera_id, rotation=0)])
+        assert refused.status_code == 409, refused.text
+        assert "cannot take a changed config while it starts or sets its exposure" in refused.text
+        assert f"camera {camera_id} is adjusting" in refused.text
+        app.factory.sources[camera_id].release()
+        app.wait_state(camera_id, "ready", "too_slow")

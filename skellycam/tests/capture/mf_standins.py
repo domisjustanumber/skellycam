@@ -153,6 +153,8 @@ def run(case):
     if case == "restore-off":
         os.environ["SKELLYCAM_RESTORE_CONTROLS"] = "0"
     mf, camera_id, calls, reader = install(case)
+    if case.startswith("auto-open"):
+        return auto_open(mf, camera_id, calls, int(case.split(":")[1]))
     source = mf.MediaFoundationSource()
     source.open(CaptureRequest(camera_id=camera_id, width=640, height=480, framerate=30.0))
     frames = [source.read_frame(1.0) for _ in range(10)]
@@ -176,6 +178,30 @@ def run(case):
     result["close_s"] = time.monotonic() - t0
     return dict(frames=sum(frame is not None for frame in frames), diagnostics=source.diagnostics(), calls=calls,
                 **result)
+
+
+def auto_open(mf, camera_id, calls, held):
+    """The steps 5 and 6 of an open of the shared loop (`CameraLoop._set_start_controls`) in AUTO, on the real Media
+    Foundation source over the stand-ins: the held value is set inside the range of GetRange (camera-requests.md
+    1.3a). The loop is bare: no rings, no threads (the loop tests do the rest with the fake)."""
+    from skellycam.core.camera.capture.camera_loop import CameraLoop
+    from skellycam.core.camera.capture.source import CaptureRequest
+    from skellycam.core.camera.config.camera_config import CameraConfig
+    from skellycam.core.camera_group.camera_status import CameraStatus
+
+    source = mf.MediaFoundationSource()
+    source.open(CaptureRequest(camera_id=camera_id, width=640, height=480, framerate=30.0))
+    loop = CameraLoop.__new__(CameraLoop)
+    loop.source, loop.status, loop.camera_id = source, CameraStatus(), camera_id
+    loop.config = CameraConfig(camera_id=camera_id, exposure_mode="AUTO", exposure=held)
+    error = None
+    try:
+        CameraLoop._set_start_controls(loop, 0)
+    except Exception as failure:  # the result names it; the test fails on it
+        error = f"{type(failure).__name__}: {failure}"
+    source.close()
+    return dict(error=error, exposure=loop.config.exposure, exposure_range=source.exposure_range(),
+                sets=[call[1:] for call in calls if call[0] == "set"])
 
 
 if __name__ == "__main__":

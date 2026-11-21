@@ -211,7 +211,8 @@ class CameraGroupManager:
                             or statuses[camera_id].search_requested.value)  # [GEH0]: a search is asked for
                        and config.use_this_camera and not same_config(config, camera_group.configs[camera_id])]
             if blocked:  # agent 45
-                raise RequestRefused(409, "A camera that starts cannot take a changed config: " + "; ".join(blocked))
+                raise RequestRefused(409, "A camera cannot take a changed config while it starts or sets its exposure: "
+                                     + "; ".join(blocked))
         for item in warnings:
             logger.warning(item["text"])
         return warnings, rates_known

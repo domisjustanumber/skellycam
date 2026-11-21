@@ -40,13 +40,14 @@ class ExposureSearch:
 
     def __init__(self, mode_rate: float, start_ns: int | None = None, exposure_range: tuple | None = None):
         """`start_ns`: the time of the first set; None: the first `take_pending(now_ns)` sets it (1.3 item 6).
-        `exposure_range`: (min, max) or (min, max, step) of the camera; the search tries only the values in it, on
-        its step grid (1.3 item 1). With no range, a value that the camera cannot set is skipped (1.3 item 6)."""
+        `exposure_range`: (min, max, step) of the camera, as `exposure_range()` of each source gives it; the search
+        tries only the values in it, on its step grid (1.3 item 1). With no range, a value that the camera cannot set
+        is skipped (1.3 item 6)."""
         self.mode_rate = mode_rate
         self.limit_ns = None if start_ns is None else start_ns + LIMIT_NS
         self.strict = exposure_range is not None
-        low, high, *step = exposure_range or (VALUES[0], VALUES[-1])
-        step = step[0] if step and step[0] and step[0] > 0 else 1
+        low, high, step = exposure_range or (VALUES[0], VALUES[-1], 1)
+        step = step if step and step > 0 else 1
         self.values = tuple(value for value in VALUES if low <= value <= high and (value - low) % step == 0)
         self.skipped: list[int] = []  # values that the camera could not set, with no range (1.3 item 6) [GEH0]
         self.trials: list[dict] = []
