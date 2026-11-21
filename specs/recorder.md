@@ -801,7 +801,8 @@ A frame with no bit of the error mask 0x0F gives one block and one row. `flags` 
      needs no Cues [SFF-794]. It writes no fit lines: they come with step 5b [R1, review S11].
 - A camera file with no block (the process ended before its first block reached the file) keeps only
   the header of 6.3. Its sidecar holds only `missing` rows with empty byte fields [F-2].
-- The manifest gets the warnings `camera_dead` (reason "hang", "disk stall", or the exit code) and
+- The manifest gets the warnings `camera_dead` (reason "hang", "disk stall", the reason of the stall watch of
+  [`unix-capture.md`](unix-capture.md) 4.10, or the exit code) and
   `camera_file_short` with `blocks=<n> rows=<frame count>` [M5, M8, F-5].
 - A write error on one file (5.4) is the second short-file case [M5]. The same steps 1 to 6 apply
   after `end` returned with `files_closed`. The manifest gets `camera_file_short` and `take_error`,

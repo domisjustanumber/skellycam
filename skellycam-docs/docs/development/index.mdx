@@ -90,6 +90,8 @@ All tests should pass without requiring physical cameras — the test suite uses
 
 **Audio not working on Linux** — Make sure you've installed the system packages: `sudo apt install clang portaudio19-dev`.
 
+**A camera stops with "no loop pass for 3 s"** — A blocked console can block the logging of a camera process: for example a console window with selected text on Windows, or an output pipe that nothing reads. Clear the selection, or send the output to a file.
+
 ## Setting Up the Development Environment
 
 If you've already followed the "Install from Source" steps above, your development environment is ready. The `uv sync --group dev` command installs all development tools.

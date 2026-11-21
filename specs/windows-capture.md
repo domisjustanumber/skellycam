@@ -875,10 +875,12 @@ Reason: on the C930e the gain read 6 before the stream started and 0 after it st
 - The main process also watches each camera ([`unix-capture.md`](unix-capture.md) 4.10) [ADR-AC5B](../decisions/entries/AC5B-choices-of-the-third-consistency-check.md): the shared loop adds one to the
   shared counter `alive_count` at each loop pass, for each source (OpenCV and Media Foundation
   alike). A camera in `waiting`, `adjusting`, `checking`, `too_slow` or `ready` (also with a
-  recording) whose counter did not change for 2 s, with its process alive, no failure reported and no
-  close started, is removed from the gate, marked `dead` with the code `stalled`, and its process ends.
-  The rule of this section normally comes first for a `read_frame` that returns; the two give the same
-  code `stalled`. The main-process watch also catches a `read_frame` that never returns.
+  recording) whose counter did not change for 3 s, with its process alive, no failure reported, no
+  pause (`should_pause`) and no close started, is removed from the gate, marked `dead` with the code
+  `stalled`, and its process ends. The rule of this section (2 s) comes first for a `read_frame` that
+  returns; the two give the same code `stalled`. The main-process watch also catches a `read_frame` that
+  never returns; for the OpenCV source a read or a control call that blocks longer than 3 s ends the
+  camera, by design. `SKELLYCAM_STALL_WATCH=0` turns the watch off ([`unix-capture.md`](unix-capture.md) 4.10).
 
 ## 10. Rate check
 
