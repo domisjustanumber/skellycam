@@ -49,10 +49,6 @@ class CameraOrchestrator:
         return all([status.is_paused.value for status in self.camera_statuses.values()])
 
     @property
-    def any_cameras_paused(self):
-        return any([status.is_paused.value for status in self.camera_statuses.values()])
-
-    @property
     def any_cameras_alive(self) -> bool:
         return any([not status.closed.value for status in self.camera_statuses.values()])
 

@@ -772,7 +772,7 @@ class CameraGroup:
                                     if camera_id in statuses) - 1
                     # At least the first frame: when no camera reached it, the take has no row, not a negative count.
                     last.value = max(count + 2, orchestrator.first_recording_frame_number.value)
-            # A camera that the pause endpoint paused records to the last frame (round 4, item 2). No wait.
+            # A guard: a camera that is still paused records to the last frame. No wait.
             await orchestrator.unpause(await_unpaused=False)
             frame_count = orchestrator.take_frame_count()
             results, dead, running = await asyncio.to_thread(self._collect_results)

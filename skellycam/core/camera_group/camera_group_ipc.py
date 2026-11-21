@@ -91,11 +91,6 @@ class CameraGroupIPC:
         live group (round 5). The camera loops use `should_continue`."""
         return not self.shutdown_camera_group_flag.value and not self.global_kill_flag.value
 
-    @property
-    def heartbeat_lost(self) -> bool:
-        """No heartbeat of the main process for HEARTBEAT_TIMEOUT_SECONDS (decision L)."""
-        return not check_main_process_heartbeat(heartbeat_timestamp=self.heartbeat_timestamp)
-
     @should_continue.setter
     def should_continue(self, value: bool) -> None:
         logger.info(f"Setting should_continue to {value} for camera group {self.group_id}")
