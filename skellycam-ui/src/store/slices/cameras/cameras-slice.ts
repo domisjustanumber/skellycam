@@ -16,6 +16,7 @@ import {
     buildPersistedEntry,
     PersistedCameraSettingsMap,
 } from './camera-settings-storage';
+import { cameraStatesFromAppState, NOT_IN_GROUP } from './camera-state';
 
 // Persist all current camera desired configs + selection to localStorage
 function persistAllCameraSettings(state: CamerasState): void {
@@ -132,20 +133,17 @@ export const cameraSlice = createSlice({
             })
             .addCase(camerasConnectOrUpdate.fulfilled, (state, action) => {
                 state.isLoading = false;
-                const named = action.meta.arg;  // undefined: a full apply of the selected cameras
+                const sent = new Set(action.payload.sentIds);
                 state.cameras.forEach(camera => {
-                    camera.inGroup = camera.id in action.payload.camera_configs;
-                    if (!camera.inGroup) {
-                        camera.connectionStatus = 'available';
-                        camera.failure = undefined;
-                    }
+                    if (!(camera.id in action.payload.camera_configs)) Object.assign(camera, NOT_IN_GROUP);
+                    else camera.inGroup = true;
                 });
                 // Update both actual and desired configs from server response
                 Object.entries(action.payload.camera_configs).forEach(
                     ([cameraId, config]) => {
                         const camera = state.cameras.find(cam => cam.id === cameraId);
-                        if (camera && named && !(cameraId in named)) {
-                            // not in a partial request ("Update Cameras"): keep its unsaved edits and its status
+                        if (camera && !sent.has(cameraId)) {
+                            // not in the request: keep its unsaved edits and its status
                             camera.actualConfig = config as CameraConfig;
                             camera.hasConfigMismatch = !areConfigsEqual(camera.actualConfig, camera.desiredConfig);
                         } else if (camera) {
@@ -169,8 +167,7 @@ export const cameraSlice = createSlice({
             // ========== Close Cameras ==========
             .addCase(closeCameras.fulfilled, (state) => {
                 state.cameras.forEach(camera => {
-                    camera.connectionStatus = 'available';
-                    camera.inGroup = false;
+                    Object.assign(camera, NOT_IN_GROUP);
                     camera.metrics = undefined;
                     camera.hasConfigMismatch = false;
                 });
@@ -180,37 +177,14 @@ export const cameraSlice = createSlice({
             // ========== Server state snapshot (authoritative) ==========
             // Reconcile the observed connection state from the pushed snapshot.
             .addCase(serverStateReceived, (state, action) => {
-                const groups = Object.values(action.payload.state.camera_groups);
-                const connectedIds = new Set<string>();
-                const failures = new Map<string, string>();
-                for (const group of groups) {
-                    // `group.alive` is false as soon as one camera process ended, so judge each camera
-                    // by its own state: the other cameras of the group keep streaming.
-                    for (const cameraId of Object.keys(group.configs)) {
-                        const cam = group.cameras?.[cameraId];
-                        const camState = cam?.status?.state;
-                        if (camState === 'failed' || camState === 'dead' || camState === 'too_slow') {
-                            const failure = cam?.status?.failure;
-                            failures.set(cameraId, failure ? `${failure.stage}: ${failure.reason}` : camState);
-                        } else if (group.alive || (cam?.alive && (camState === 'ready' || camState === 'recording'))) {
-                            connectedIds.add(cameraId);
-                        }
-                    }
-                }
-                const groupIds = new Set(groups.flatMap(group => Object.keys(group.configs)));
-                state.cameras.forEach(camera => {
-                    camera.inGroup = groupIds.has(camera.id);
-                    camera.connectionStatus = connectedIds.has(camera.id) ? 'connected'
-                        : failures.has(camera.id) ? 'error' : 'available';
-                    camera.failure = failures.get(camera.id);
-                });
+                const live = cameraStatesFromAppState(Object.values(action.payload.state.camera_groups));
+                state.cameras.forEach(camera => Object.assign(camera, live[camera.id] ?? NOT_IN_GROUP));
             })
 
             // On websocket disconnect, reset to "not connected" so nothing goes stale.
             .addCase(serverDisconnected, (state) => {
                 state.cameras.forEach(camera => {
-                    camera.connectionStatus = 'available';
-                    camera.inGroup = false;
+                    Object.assign(camera, NOT_IN_GROUP);
                     camera.metrics = undefined;
                     camera.hasConfigMismatch = false;
                 });

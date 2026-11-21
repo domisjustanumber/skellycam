@@ -3,7 +3,7 @@ import { z } from 'zod';
 
 // ==================== Constants ====================
 export const PIXEL_FORMATS = ['RGB', 'BGR', 'GRAY'] as const;
-export const EXPOSURE_MODES = ['MANUAL', 'AUTO', 'RECOMMEND'] as const;
+export const EXPOSURE_MODES = ['MANUAL', 'AUTO'] as const;  // a stored RECOMMEND loads as AUTO (normalizeExposureMode)
 export const CONNECTION_STATUS = ['disconnected', 'connecting', 'connected', 'error'] as const;
 
 
@@ -74,10 +74,12 @@ export interface Camera {
     selected: boolean;              // UI selection state
     failure?: string;               // Server failure "stage: reason" while connectionStatus is 'error'
     inGroup?: boolean;              // The server's camera group has this camera (any state)
+    state?: string;                 // The server state of the camera, e.g. 'too_slow' (camera-state.ts)
 
     // Device info (from detection)
     deviceInfo: {
         virtual?: boolean;
+        usbLink?: string;           // 'USB 1' | 'USB 2' | 'USB 3' | 'unknown'; absent from a server before camera-requests.md 3.2
         vendorId?: string;
         productId?: string;
     };
@@ -111,6 +113,7 @@ export interface DetectCamerasResponse {
         vendor_id?: string;
         product_id?: string;
         virtual?: boolean;
+        usb_link?: string;
     }>;
 }
 
@@ -135,7 +138,7 @@ export function createDefaultCameraConfig(
         camera_name: name,
         use_this_camera: true,
         resolution: { width: 1280, height: 720 },
-        framerate: -1,
+        framerate: 30,  // the default UI frame rate (camera-requests.md 2.8)
         color_channels: 3,
         pixel_format: 'RGB',
         rotation: -1,

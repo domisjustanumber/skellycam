@@ -3,6 +3,7 @@ import { useServer } from '@/services/server/ServerContextProvider';
 import { frontendColor, backendColor } from '@/components/framerate-viewer/FrameRateViewer';
 import { useAppSelector } from '@/store/hooks';
 import { selectCameraById, selectIsPaused } from '@/store/slices/cameras/cameras-selectors';
+import { cameraLabel } from '@/store/slices/cameras/camera-labels';
 
 interface CameraViewProps {
     cameraId: string;
@@ -24,7 +25,10 @@ export const CameraView: React.FC<CameraViewProps> = memo(({ cameraId, scale, ma
     const displayFpsRef = useRef<HTMLSpanElement>(null);
     const serverFpsRef = useRef<HTMLSpanElement>(null);
     const { setCanvasForCamera, getFps, getServerFps } = useServer();
-    const cameraIndex = useAppSelector(state => selectCameraById(state, cameraId))?.index;
+    const label = useAppSelector(state => {
+        const camera = selectCameraById(state, cameraId);
+        return camera ? cameraLabel(camera) : cameraId;
+    });
     const isPaused = useAppSelector(selectIsPaused);
 
     useEffect(() => {
@@ -129,7 +133,7 @@ export const CameraView: React.FC<CameraViewProps> = memo(({ cameraId, scale, ma
                     lineHeight: 1.4,
                 }}
             >
-                <div>#{cameraIndex ?? '?'} · {cameraId}</div>
+                <div>{label}</div>
                 <div style={{ fontSize: '10px', marginTop: '2px', display: 'flex', gap: '6px' }}>
                     <span style={{ color: frontendColor }}>
                         D:<span ref={displayFpsRef}>--</span>

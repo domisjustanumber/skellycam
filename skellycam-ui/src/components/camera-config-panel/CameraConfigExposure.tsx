@@ -19,7 +19,7 @@ export const CameraConfigExposure: React.FC<CameraConfigExposureProps> = ({
     onExposureValueChange,
 }) => {
     const { t } = useTranslation();
-    const isDisabled = exposureMode === 'AUTO' || exposureMode === 'RECOMMEND';
+    const isDisabled = exposureMode === 'AUTO';
 
     return (
         <div className="flex flex-col gap-1">
@@ -29,7 +29,6 @@ export const CameraConfigExposure: React.FC<CameraConfigExposureProps> = ({
                     options={[
                         { label: t("manual"), value: "MANUAL" },
                         { label: t("auto"), value: "AUTO" },
-                        { label: t("recommend"), value: "RECOMMEND" },
                     ]}
                     value={exposureMode}
                     onChange={(v) => onExposureModeChange(v as ExposureMode)}

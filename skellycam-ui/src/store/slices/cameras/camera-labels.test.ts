@@ -1,23 +1,64 @@
 // Run: node --experimental-strip-types --test src/store/slices/cameras/camera-labels.test.ts
 import assert from 'node:assert/strict';
+import { readdirSync, readFileSync } from 'node:fs';
 import test from 'node:test';
-import { withCameraLabels } from './camera-labels.ts';
+import { cameraLabel, labelText, linkChip } from './camera-labels.ts';
+
+const en: Record<string, string> = JSON.parse(readFileSync(new URL('../../../i18n/locales/en-english.json', import.meta.url), 'utf8'));
 
 const cameras = [
     { id: 'c3c6', index: 1, name: 'USB Camera' },
     { id: '0a1b', index: 5, name: 'Kiyo Pro' },
+    { id: 'a1b2', index: 2, name: 'Logitech C922' },
 ];
 
-test('each known camera id becomes the camera list label', () => {
-    assert.equal(
-        withCameraLabels('Failed to start recording: A recording needs each selected camera ready: camera c3c6 is failed; camera 0a1b is starting', cameras),
-        'Failed to start recording: A recording needs each selected camera ready: Camera 1 (USB Camera) is failed; Camera 5 (Kiyo Pro) is starting',
-    );
-    assert.equal(withCameraLabels('camera 0a1b: no mode at the floor', cameras), 'Camera 5 (Kiyo Pro): no mode at the floor');
+test('T-REQ-28: the label is "Camera <n> · <name>" (camera-requests.md 1.8)', () => {
+    assert.equal(cameraLabel(cameras[2]), 'Camera 2 · Logitech C922');
+    assert.equal(labelText('Camera a1b2: add light. ...', cameras), 'Camera 2 · Logitech C922: add light. ...');
 });
 
-test('an unknown id and other text stay as they are', () => {
-    assert.equal(withCameraLabels('camera ffff is failed', cameras), 'camera ffff is failed');
-    assert.equal(withCameraLabels('open: device busy', cameras), 'open: device busy');
-    assert.equal(withCameraLabels('each selected camera ready', cameras), 'each selected camera ready');
+test('T-REQ-28: each known id becomes the label, and the word camera before it goes', () => {
+    assert.equal(
+        labelText('Failed to start recording: A recording needs each selected camera ready: camera c3c6 is failed; camera 0a1b is starting', cameras),
+        'Failed to start recording: A recording needs each selected camera ready: Camera 1 · USB Camera is failed; Camera 5 · Kiyo Pro is starting',
+    );
+    assert.equal(labelText('camera 0a1b: no mode at the floor', cameras), 'Camera 5 · Kiyo Pro: no mode at the floor');
+    // the plural of the one-rate 422
+    assert.equal(labelText('cameras c3c6 and 0a1b at 30 fps', cameras), 'Camera 1 · USB Camera and Camera 5 · Kiyo Pro at 30 fps');
+    // the 409 list
+    assert.equal(labelText('recording cameras: c3c6, 0a1b', cameras), 'recording cameras: Camera 1 · USB Camera, Camera 5 · Kiyo Pro');
+});
+
+test('T-REQ-28: an unknown id and other text stay as they are', () => {
+    assert.equal(labelText('camera ffff is failed', cameras), 'camera ffff is failed');
+    assert.equal(labelText('open: device busy', cameras), 'open: device busy');
+    assert.equal(labelText('each selected camera ready', cameras), 'each selected camera ready');
+    assert.equal(labelText('camera c3c6x is failed', cameras), 'camera c3c6x is failed', 'only a whole id');
+    assert.equal(labelText('camera c3c6 is failed', []), 'camera c3c6 is failed');
+});
+
+test('T-REQ-28: no file imports withCameraLabels', () => {
+    const src = new URL('../../../', import.meta.url);
+    const hits = (readdirSync(src, { recursive: true }) as string[])
+        .map(path => path.replaceAll('\\', '/'))
+        .filter(path => /\.tsx?$/.test(path) && !path.endsWith('camera-labels.test.ts'))
+        .filter(path => readFileSync(new URL(path, src), 'utf8').includes('withCameraLabels'));
+    assert.deepEqual(hits, []);
+});
+
+test('T-REQ-59: linkChip gives the chip and the tooltip of 3.5', () => {
+    const shown = (info: { virtual?: boolean; usbLink?: string }) => {
+        const chip = linkChip(info);
+        return chip && [en[chip.text], en[chip.tooltip]];
+    };
+    assert.deepEqual(shown({ usbLink: 'USB 3' }), ['USB 3', 'Connected at USB 3 speed (5 Gbit/s or more)']);
+    assert.deepEqual(shown({ usbLink: 'USB 2' }), ['USB 2', 'Connected at USB 2 speed (480 Mbit/s)']);
+    assert.deepEqual(shown({ usbLink: 'USB 1' }), ['USB 1', 'Connected at USB 1 speed (12 Mbit/s or less)']);
+    assert.deepEqual(shown({ usbLink: 'unknown' }), ['USB ?', 'SkellyCam could not read the USB link of this camera']);
+    assert.deepEqual(shown({ usbLink: 'unknown', virtual: true }), ['virtual', 'A virtual camera: it has no USB link']);
+    assert.deepEqual(shown({ virtual: true }), ['virtual', 'A virtual camera: it has no USB link']);
+});
+
+test('linkChip shows no chip while the server sends no usb_link (safe default)', () => {
+    assert.equal(linkChip({}), null);
 });

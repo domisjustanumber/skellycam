@@ -26,6 +26,8 @@ test('the apply request body holds the numbers and the names of the current dete
 
 test('the apply thunk sends the body of applyRequestBody', () => {
     const thunks = readFileSync(new URL('./cameras-thunks.ts', import.meta.url), 'utf8');
-    assert.match(thunks, /const request(: \w+)? = applyRequestBody\(onlyConfigs \?\? selectSelectedCameraConfigs\(state\), state\.cameras\.cameras\);/);
+    assert.match(thunks, /const request(: \w+)? = applyRequestBody\(configs, cameras\);/);
+    assert.match(thunks, /applyConfigs\(configs, getState\(\)\.cameras\.cameras\)/);
+    assert.match(thunks, /applyConfigs\(all, getState\(\)\.cameras\.cameras\)/, 'the fall back sends the detection numbers too');
     assert.match(thunks, /body: JSON\.stringify\(request\)/);
 });

@@ -14,6 +14,10 @@ import {
 } from './cameras-types';
 import { selectSelectedCameraConfigs } from './cameras-selectors';
 import { applyRequestBody } from './camera-number';
+import { missingFromGroup } from './camera-updates';
+import { cameraStatesFromAppState, NOT_IN_GROUP } from './camera-state';
+import { normalizeExposureMode } from './exposure-row';
+import { errorDetail } from '../error-detail';
 import {
     loadPersistedCameraSettings,
     savePersistedCameraSettings,
@@ -51,6 +55,9 @@ export const detectCameras = createAsyncThunk<
         }
 
         const detectedIds = new Set(data.cameras.map(c => c.camera_id));
+        // The live state of each camera comes from the last app state: a detection does not reset it (the server sends
+        // the app state only when it changes).
+        const live = cameraStatesFromAppState(getState().connection.cameraGroups);
 
         // Prune persisted entries for cameras that are no longer detected
         const prunedPersisted: PersistedCameraSettingsMap = {};
@@ -74,7 +81,7 @@ export const detectCameras = createAsyncThunk<
 
             // Priority: existing in-memory state > persisted localStorage > defaults
             const desiredConfig: CameraConfig = existing?.desiredConfig
-                ?? (saved ? { ...defaultConfig, ...saved.desiredConfig } : { ...defaultConfig });
+                ?? (saved ? { ...defaultConfig, ...normalizeExposureMode(saved.desiredConfig) } : { ...defaultConfig });
 
             // A virtual camera (e.g. NDI) is never ticked, also over a stored selection: the server refuses it
             const selected: boolean = !serverCamera.virtual && (existing?.selected ?? saved?.selected ?? true);
@@ -86,10 +93,11 @@ export const detectCameras = createAsyncThunk<
                 actualConfig: existing?.actualConfig || defaultConfig,
                 desiredConfig,
                 hasConfigMismatch: existing?.hasConfigMismatch ?? false,
-                connectionStatus: 'available',
+                ...(live[cameraId] ?? NOT_IN_GROUP),
                 selected,
                 deviceInfo: {
                     virtual: serverCamera.virtual,
+                    usbLink: serverCamera.usb_link,
                     vendorId: serverCamera.vendor_id,
                     productId: serverCamera.product_id,
                 },
@@ -99,33 +107,42 @@ export const detectCameras = createAsyncThunk<
     }
 );
 
+async function applyConfigs(configs: Record<string, CameraConfig>, cameras: Camera[]): Promise<ConnectCamerasResponse> {
+    // A stored config can hold the number of an earlier detection: the request never sends it (camera-requests.md 8.1)
+    const request: CamerasConnectOrUpdateRequest = applyRequestBody(configs, cameras);
+    const response = await backendFetch(serverUrls.endpoints.camerasConnectOrUpdate, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(request),
+    });
+    if (!response.ok) {
+        throw new Error(errorDetail(await response.json().catch(() => null), response.statusText));
+    }
+    return response.json() as Promise<ConnectCamerasResponse>;
+}
+
+/** The response, and the ids of the cameras that the last request sent: only their status and desired config change. */
+export type ConnectResult = ConnectCamerasResponse & { sentIds: string[] };
+
 export const camerasConnectOrUpdate = createAsyncThunk<
-    ConnectCamerasResponse,
-    Record<string, CameraConfig> | undefined,  // only these cameras (Retry); the server keeps the others as they are
+    ConnectResult,
+    Record<string, CameraConfig> | undefined,  // only these cameras ("Update Cameras"); undefined: each selected camera
     { state: RootState }
 >(
     'cameras/connect',
-    async (onlyConfigs, { getState }) => {
-        const state = getState();
-        // A stored config can hold the number of an earlier detection: the request never sends it (camera-requests.md 8.1)
-        const request: CamerasConnectOrUpdateRequest = applyRequestBody(onlyConfigs ?? selectSelectedCameraConfigs(state), state.cameras.cameras);
-
-        if (Object.keys(request.camera_configs).length === 0) {
+    async (onlyConfigs, { getState, dispatch }) => {
+        const configs = onlyConfigs ?? selectSelectedCameraConfigs(getState());
+        if (Object.keys(configs).length === 0) {
             throw new Error('No cameras selected for connection');
         }
-
-        const response = await backendFetch(serverUrls.endpoints.camerasConnectOrUpdate, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(request),
-        });
-
-        if (!response.ok) {
-            const error = await response.json();
-            throw new Error(error.detail || 'Failed to connect to cameras');
+        const response = await applyConfigs(configs, getState().cameras.cameras);
+        if (missingFromGroup(configs, response.camera_configs).length === 0) {
+            return { ...response, sentIds: Object.keys(configs) };
         }
-
-        return response.json() as Promise<ConnectCamerasResponse>;
+        // The server left out a camera to open (a new camera in a running or empty group): close all, connect the selected.
+        await dispatch(closeCameras()).unwrap();
+        const all = selectSelectedCameraConfigs(getState());
+        return { ...(await applyConfigs(all, getState().cameras.cameras)), sentIds: Object.keys(all) };
     }
 );
 
