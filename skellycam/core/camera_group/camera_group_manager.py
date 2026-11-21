@@ -148,6 +148,11 @@ class CameraGroupManager:
             raise RequestRefused(422, "The request selects no camera")
         problems = [f"camera {camera_id}: {NO_FLOOR_MODE}" for camera_id, config in selected.items()
                     if config.framerate not in (-1, 0) and config.framerate < FLOOR_FPS - 0.5]  # agent 55
+        by_number = {}  # camera-requests.md 8.1: camera_index stays unique in a group
+        for camera_id, config in selected.items():
+            by_number.setdefault(config.camera_index, []).append(camera_id)
+        problems += [" and ".join(f"camera {camera_id}" for camera_id in ids) + f" have the same camera number {number}"
+                     for number, ids in by_number.items() if len(ids) > 1]
         infos = {camera_id: self.detected_cameras.get(camera_id) for camera_id in selected}
         problems += [f"camera {camera_id} is a virtual camera; virtual cameras cannot be selected"
                      for camera_id, info in infos.items() if info is not None and info.virtual]  # ADR-PDD3 W5
