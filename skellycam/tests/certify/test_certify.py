@@ -474,9 +474,10 @@ def test_t_cert_14_native_jpeg(monkeypatch, tmp_path):
 
 def test_t_cert_16_a_cancel_during_the_take(monkeypatch, tmp_path):
     """T-CERT-16, 8.3, 9.3: the cancel comes when the take starts. The checks that ended keep their results; the
-    running and later checks are `not-run` `cancelled`; phase G opens only the touched cameras again, one time
-    each, and gives no cleanup row for a healthy camera; `cancelled` is in `evidence.reasons`; the work folder
-    is gone; the record gets rows by the rule of 2.5."""
+    running and later checks are `not-run` `cancelled`; a thread session closes its group itself (the close
+    restores each camera), so phase G takes the result of that close and opens no camera again (ADR-X8XE); no
+    cleanup row for a healthy camera; `cancelled` is in `evidence.reasons`; the work folder is gone; the record gets
+    rows by the rule of 2.5."""
     cancel = threading.Event()
 
     def progress(message):
@@ -494,7 +495,7 @@ def test_t_cert_16_a_cancel_during_the_take(monkeypatch, tmp_path):
     assert checks["group:take:finished"]["result"] == "not-run" and checks["group:take:finished"]["reason"] == "cancelled"
     assert checks[f"{first}:records:rows-complete"]["reason"] == "cancelled"
     assert "cancelled" in report["evidence"]["reasons"]
-    assert opens == [2, 2], opens
+    assert opens == [1, 1], opens
     assert not report.get("cleanup")
     assert not list((tmp_path / "recordings").iterdir())
     record = json.loads((tmp_path / "camera_checks.json").read_text(encoding="utf-8"))["rows"]
