@@ -487,7 +487,8 @@ class CameraGroup:
                      for name in auto]
             status.set_warning_items(items)
             warnings += items
-        self.recording_ids = list(statuses)
+        # The take order (group_position) is the order of the request's camera_index (camera-requests.md 8.1)
+        self.recording_ids = sorted(statuses, key=lambda camera_id: self.configs[camera_id].camera_index)
         self.take_error = None
         self.finished.clear()  # a late message of an earlier take
         await self.cameras.pause(await_paused=True)  # each camera gives the layout of its last good frame
