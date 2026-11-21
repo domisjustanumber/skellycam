@@ -29,8 +29,7 @@ GOOD = ("C922", "C930e", "Kiyo Pro")
 DEAD = set()  # labels of cameras that this run must not use again (Kiyo Pro rule)
 RESULTS = Path(os.environ.get("SKELLYCAM_HARDWARE_RESULTS",
                               Path(tempfile.gettempdir()) / "skellycam_capture_hardware.jsonl"))
-SLOW_REASON = re.compile(r"^declared (\d+\.\d\d) fps, measured (\d+\.\d\d) fps\. Add light or shorten the exposure, "
-                         r"or choose a rate that the camera reaches\.$")
+SLOW_REASON = re.compile(r"^declared (\d+\.\d\d) fps, measured (\d+\.\d\d) fps\. Camera is slow\. Try adding more light$")
 
 
 def record_result(test_id, **data):

@@ -56,7 +56,7 @@ def test_a_camera_that_cannot_open_is_explained():
 
 
 def test_a_reason_that_already_says_what_to_do_gets_no_explanation():
-    reason = "declared 30.00 fps, measured 25.76 fps. Add light or shorten the exposure."
+    reason = "declared 30.00 fps, measured 25.76 fps. Camera is slow. Try adding more light"
     assert explain_start_failure(failure("1b2b", "rate check", reason), configs("1b2b"),
                                  detected(**{"1b2b": "USB 3"}), usb_disconnects=0) is None
 

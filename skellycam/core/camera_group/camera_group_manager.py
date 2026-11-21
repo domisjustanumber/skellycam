@@ -109,7 +109,11 @@ class CameraGroupManager:
             # 7.1, U17: the check needs the detection data, also to refuse a virtual camera (ADR-PDD3 W5)
             self.detected_cameras = {camera.camera_id: camera
                                      for camera in await asyncio.to_thread(detect_available_cameras)}
+        if camera_group is not None:
+            camera_group.adopt_search_results()
         warnings, rates_known = self._check_request(camera_configs, camera_group)
+        if camera_group is not None:  # camera-requests.md 1.5 [AC5B]: each apply request of the user clears them
+            camera_group.clear_group_warnings()
         started = datetime.now(timezone.utc)
         if camera_group is None:
             selected = {camera_id: config for camera_id, config in camera_configs.items() if config.use_this_camera}
@@ -124,8 +128,10 @@ class CameraGroupManager:
             text = await asyncio.to_thread(describe_start_failure, failures, camera_configs, started,
                                            lambda: detect_available_cameras(modes=False), links)
             if text:
-                warnings.append(dict(kind="start_failure", camera_ids=sorted(failures), text=text))
+                item = dict(kind="start_failure", camera_ids=sorted(failures), text=text)
+                warnings.append(item)
                 logger.warning(text)
+                camera_group.add_group_warning(item)  # the main process owns it (camera-requests.md 1.5)
         if not rates_known:
             # agent 56, ADR-PDD3 W3: different real rates after the open give a warning item and a log record
             rates = {camera_id: config.framerate for camera_id, config in camera_group.configs.items()
@@ -197,7 +203,8 @@ class CameraGroupManager:
                                           + ", ".join(recording))
             blocked = [f"camera {camera_id} is {statuses[camera_id].state}"
                        for camera_id, config in camera_configs.items()
-                       if camera_id in camera_group.configs and statuses[camera_id].state in ("starting", "waiting")
+                       if camera_id in camera_group.configs
+                       and statuses[camera_id].state in ("starting", "waiting", "adjusting")
                        and config.use_this_camera and not same_config(config, camera_group.configs[camera_id])]
             if blocked:  # agent 45
                 raise RequestRefused(409, "A camera that starts cannot take a changed config: " + "; ".join(blocked))

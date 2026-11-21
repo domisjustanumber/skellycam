@@ -59,9 +59,9 @@ class ExposureSearch:
         if self.result is not None:
             return
         if error is not None:
-            self._fail("set-failed", f"the camera refused exposure {value} ({error})")
+            self.fail("set-failed", f"the camera refused exposure {value} ({error})")
         elif readback is not None and readback != value:
-            self._fail("readback-differs", f"exposure {value} read back as {readback}")
+            self.fail("readback-differs", f"exposure {value} read back as {readback}")
         else:
             self._value, self._returned_ns, self._first, self._a, self._deadline = value, returned_ns, None, None, None
 
@@ -84,35 +84,35 @@ class ExposureSearch:
 
     def no_frame(self, now_ns: int) -> None:
         """No frame came by `now_ns` (the loop waited until `wake_ns`)."""
-        if self.result is None and self._a is not None and now_ns >= self._deadline:
+        if self.result is None and self._returned_ns is not None and self._a is not None and now_ns >= self._deadline:
             sfn = self._last[0] if self._last is not None else self._a[0]
             self._trial(rate_check.measured_rate(self._a[0], self._a[1], sfn, now_ns), early=True)
         self.tick(now_ns)
 
     def tick(self, now_ns: int) -> None:
         if self.result is None and now_ns >= self.limit_ns:
-            self._fail("timed-out", "it took more than 20 s")
+            self.fail("timed-out", "it took more than 20 s")
 
     def cancel(self) -> None:
         """The group closed the camera, or it was unselected: no warning, and the search sets nothing (1.9)."""
         if self.result is None:
-            self._fail("camera-closed", None)
+            self.fail("camera-closed", None)
 
     def _trial(self, measured: float, early: bool = False) -> None:
         kept = not early and not rate_check.is_slow(measured, self.mode_rate)
         self.trials.append(dict(value=self._value, brightness=self._a[2], measured_fps=measured, kept_rate=kept))
         index = VALUES.index(self._value) + 1
-        self._returned_ns = None
+        self._returned_ns, self._a, self._deadline = None, None, None
         if index < len(VALUES):
             self.pending = VALUES[index]
             return
         chosen, add_light, reason = choose(self.trials)
         if reason is not None:
-            self._fail(reason, f"no exposure from {VALUES[0]} to {VALUES[-1]} keeps {self.mode_rate:g} fps")
+            self.fail(reason, f"no exposure from {VALUES[0]} to {VALUES[-1]} keeps {self.mode_rate:g} fps")
         else:
             self.result = dict(state="done", chosen=chosen, add_light=add_light, reason=None, trials=self.trials)
 
-    def _fail(self, reason: str, detail: str | None) -> None:
+    def fail(self, reason: str, detail: str | None) -> None:
         self.pending, self.detail = None, detail
         self.result = dict(state="failed", chosen=None, add_light=False, reason=reason, trials=self.trials)
 

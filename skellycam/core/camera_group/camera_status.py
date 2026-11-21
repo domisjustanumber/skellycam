@@ -5,8 +5,9 @@ from dataclasses import dataclass, field
 from typing import Any
 
 # The camera states of specs/windows-capture.md, section 8.1. "recording" is `ready` with a recording that runs.
-STATES = ("starting", "waiting", "failed", "checking", "too_slow", "ready", "recording", "dead")
-GATE_STATES = ("checking", "too_slow", "ready")  # 5.2: only these hold the gate back
+# `adjusting`: the exposure search runs (camera-requests.md 1.4); it is last so that the other indexes stay.
+STATES = ("starting", "waiting", "failed", "checking", "too_slow", "ready", "recording", "dead", "adjusting")
+GATE_STATES = ("checking", "too_slow", "ready", "adjusting")  # 5.2: only these hold the gate back
 SETTLED_STATES = ("waiting", "failed", "checking", "too_slow", "ready", "dead")
 INFO_SIZE = 16384
 
@@ -40,6 +41,13 @@ class CameraStatus:
     info: Any = field(default_factory=lambda: multiprocessing.Array("c", INFO_SIZE))
     # JSON that only the main process writes: the warning items of the recording that runs (11.3).
     warnings: Any = field(default_factory=lambda: multiprocessing.Array("c", INFO_SIZE))
+    # camera-requests.md 1.5 [AC5B]: the items of the camera process (`add_light`, `exposure_search_failed`,
+    # `no_manual_exposure`) and of the main process (`rate_fallback`, `start_failure`). Neither a record start, a
+    # stop nor "apply again" clears them.
+    camera_warnings: Any = field(default_factory=lambda: multiprocessing.Array("c", INFO_SIZE))
+    group_warnings: Any = field(default_factory=lambda: multiprocessing.Array("c", INFO_SIZE))
+    # camera-requests.md 1.5 [B20, FC1C]: the searches since the group started; the camera process adds one.
+    search_count: Synchronized = field(default_factory=lambda: multiprocessing.Value("q", 0))
     # The main process only: the counter subset of the newest diagnostics of the camera (unix-capture.md 4.2 item 2).
     diagnostics: dict = field(default_factory=dict)
 
@@ -69,12 +77,17 @@ class CameraStatus:
             data.update(fields)
             self.info.value = json.dumps(data).encode()[:INFO_SIZE - 1]
 
-    def warning_items(self) -> list:
-        raw = self.warnings.value
+    def warning_items(self, array=None) -> list:
+        raw = (self.warnings if array is None else array).value
         return json.loads(raw) if raw else []
 
-    def set_warning_items(self, items: list) -> None:
-        self.warnings.value = json.dumps(items).encode()[:INFO_SIZE - 1]
+    def set_warning_items(self, items: list, array=None) -> None:
+        (self.warnings if array is None else array).value = json.dumps(items).encode()[:INFO_SIZE - 1]
+
+    def replace_warning_items(self, array, kinds: tuple, items: list) -> None:
+        """Drop the items of `kinds` from `array` (`camera_warnings` or `group_warnings`), then add `items`."""
+        kept = [item for item in self.warning_items(array) if item.get("kind") not in kinds]
+        self.set_warning_items(kept + items, array)
 
     def reset_for_start(self) -> None:
         """A new camera process for "apply again" (8.3): the gate count stays (5.3), the rest starts again."""
@@ -120,7 +133,10 @@ class CameraStatus:
             "failure": info.get("failure"),
             "mode": info.get("mode"),
             "measured_fps": info.get("measured_fps"),
-            "warnings": self.warning_items(),
+            "warnings": self.warning_items() + self.warning_items(self.camera_warnings)
+                        + self.warning_items(self.group_warnings),  # camera-requests.md 1.5 [AC5B]
+            "exposure_search": ({**info["exposure_search"], "count": self.search_count.value}
+                                if info.get("exposure_search") else None),
             "controls": info.get("controls"),
             "diagnostics": self.diagnostics,
         }

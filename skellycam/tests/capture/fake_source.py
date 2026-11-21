@@ -224,6 +224,8 @@ class FakeScript:
     live_set_faults: tuple = ()  # for the n-th live change: None, "error" or "readback:<value>"
     rate_after_change: tuple = ()  # the delivered rate after the n-th live change
     hold_after_change: bool = False  # the first read after a live change waits until release()
+    hold_first_change: bool = False  # as hold_after_change, for the first live change of each open only
+    rate_by_exposure: tuple = ()  # (exposure, rate) pairs: the delivered rate at that exposure value
     brightness: tuple = ()  # (exposure, mean gray) pairs: the image follows the exposure
     hang_at: str | None = None  # "open", "set_controls" or "close": hangs when the hang is armed
     hang_armed: bool = False  # armed from the start; else FakeLog.arm_hang()
@@ -459,7 +461,8 @@ class FakeSource:
                 if self._live_changes <= len(rates):
                     self._rate = rates[self._live_changes - 1]
                     self._interval_index = 0
-                self._hold_next_read = self.script.hold_after_change
+                self._hold_next_read = self.script.hold_after_change or (
+                    self.script.hold_first_change and self._live_changes == 1)
             if changes and start is None:
                 self.log.first_sfn_after_readback = self._next_sfn
             return self._read_back()
@@ -584,6 +587,9 @@ class FakeSource:
                 return round(1e9 / rate)
             self._slow = None
             self.slow_finished_ns = previous_arrival
+        by_exposure = dict(self.script.rate_by_exposure)
+        if self._controls.get("exposure", [0, 0, None])[2] in by_exposure:
+            return round(1e9 / by_exposure[self._controls["exposure"][2]])
         if self.script.intervals_ms:
             value = self.script.intervals_ms[self._interval_index % len(self.script.intervals_ms)]
             self._interval_index += 1

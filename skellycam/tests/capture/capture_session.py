@@ -32,7 +32,7 @@ from skellycam.tests.capture.fake_source import FakeSourceFactory, VirtualClock
 LOOP_MODULE = "skellycam.core.camera.capture.camera_loop"
 SOURCE_MODULE = "skellycam.core.camera.capture.source"
 WAIT_TIMEOUT_S = 60.0
-STATES = ("starting", "waiting", "failed", "checking", "too_slow", "ready", "recording", "dead")
+STATES = ("starting", "waiting", "failed", "checking", "too_slow", "ready", "recording", "dead", "adjusting")
 
 
 def product(name):
@@ -510,9 +510,8 @@ def stop_line_count(messages, camera_id):
 
 
 def slow_text(declared, measured):
-    """The reason of a slow camera, 10.4."""
-    return (f"declared {declared:.2f} fps, measured {measured:.2f} fps. Add light or shorten the exposure, "
-            f"or choose a rate that the camera reaches.")
+    """The reason of a slow camera, 10.4 and camera-requests.md 1.5a."""
+    return f"declared {declared:.2f} fps, measured {measured:.2f} fps. Camera is slow. Try adding more light"
 
 
 # ---------------------------------------------------------------------------

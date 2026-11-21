@@ -272,8 +272,8 @@ def test_t_cap_41_exposure_modes(monkeypatch, no_camera_auto_exposure, mode):
     """T-CAP-41, sections 11.1 and 9.1 [D29, D35, agent 29], changed by camera-requests.md 1.10 (16.2): `MANUAL -7`
     and `AUTO` held at -9, with a brightness model in the fake. The fake gets the values in log2 seconds.
     `MANUAL` opens with one manual set of -7. `AUTO` opens with one manual set of its held value -9 (1.3a) [G1].
-    `RECOMMEND` is read as `AUTO` [G6]. No set has `auto=True` (T-REQ-15). The search after the warm-up is in
-    `test_camera_requests.py`."""
+    `RECOMMEND` is read as `AUTO` [G6]. `AUTO` and `RECOMMEND` then search after the warm-up: -12 to -5, never -4,
+    and the result -7 (-6 is nearest to 127.5, then one step darker). No set has `auto=True` (T-REQ-15)."""
     with capture_app(monkeypatch, [FakeScript(brightness=BRIGHTNESS)]) as app:
         camera_id = app.factory.camera_ids[0]
         exposure = -7 if mode == "MANUAL" else -9
@@ -287,6 +287,13 @@ def test_t_cap_41_exposure_modes(monkeypatch, no_camera_auto_exposure, mode):
         config = response.json()["camera_configs"][camera_id]
         assert (settings[0].auto, settings[0].value) == (False, exposure)
         assert (config["exposure_mode"], config["exposure"]) == ("MANUAL" if mode == "MANUAL" else "AUTO", exposure)
+        app.wait_state(camera_id, "ready")
+        values = [s["exposure"].value for s in app.factory.logs[camera_id].settings if "exposure" in s]
+        if mode == "MANUAL":
+            assert values == [-7]
+        else:
+            assert values == [-9] + list(range(-12, -4)) + [-7], values
+            assert app.group.to_state().configs[camera_id].exposure == -7
 
 
 # ---------------------------------------------------------------------------

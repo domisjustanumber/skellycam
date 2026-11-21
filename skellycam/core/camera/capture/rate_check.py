@@ -22,10 +22,13 @@ def is_slow(measured: float, mode_rate: float) -> bool:
     return measured < (1 - LIMIT) * mode_rate
 
 
+SLOW_TEXT = "Camera is slow. Try adding more light"  # camera-requests.md 1.5a [G3]
+FAST_TEXT = "The camera delivers more frames than its mode rate"  # camera-requests.md 1.5a [AC5B]
+
+
 def slow_reason(declared: float, measured: float) -> str:
-    """The reason of a slow camera (10.4)."""
-    return (f"declared {declared:.2f} fps, measured {measured:.2f} fps. Add light or shorten the exposure, "
-            f"or choose a rate that the camera reaches.")
+    """The reason of a camera that fails the start-up rate check (10.4): the text by the direction (1.5a)."""
+    return f"declared {declared:.2f} fps, measured {measured:.2f} fps. {SLOW_TEXT if measured < declared else FAST_TEXT}"
 
 
 def early_deadline_ns(t_a: int, mode_rate: float) -> int:

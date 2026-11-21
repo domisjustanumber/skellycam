@@ -146,6 +146,12 @@ async def camera_group_apply_post_endpoint(
         raise HTTPException(status_code=500, detail=str(e))
 
 
+@camera_router.get("/group/state", summary="The live state of the camera groups")
+def camera_group_state(request: Request) -> dict:
+    """The state that the `app_state` message of the websocket sends (camera-requests.md 1.5) [B15]."""
+    return get_or_create_camera_group_manager(app=request.app).to_state_dict()
+
+
 @camera_router.post("/group/all/record/start", summary="Start recording")
 async def start_recording(
         request: Request,
