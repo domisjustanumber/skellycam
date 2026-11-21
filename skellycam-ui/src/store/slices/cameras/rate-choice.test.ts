@@ -1,7 +1,7 @@
 // Run: node --experimental-strip-types --test src/store/slices/cameras/rate-choice.test.ts
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { checkingRate, chosenRate, normalizeFramerate, rateChoice, rateFallbackText, rateRequestConfigs } from './rate-choice.ts';
+import { chosenRate, nextRateChecking, normalizeFramerate, rateChoice, rateFallbackText, rateRequestConfigs, withChosenRate } from './rate-choice.ts';
 
 test('a stored "auto" rate (-1 or 0) loads as 30, so saved and new cameras request one rate (camera-requests.md 2.2, 2.8)', () => {
     const stored = (framerate: number) => ({ framerate, exposure: -7 });
@@ -51,25 +51,31 @@ test('T-REQ-88: chosenRate is the rate of the first selected camera, else of the
     assert.equal(chosenRate([]), 30);
 });
 
-test('T-REQ-89: rateRequestConfigs sends each camera of the group with the new rate, and no other camera (camera-requests.md 2.8)', () => {
-    const config = (id: string, use: boolean, framerate = 30) => ({ camera_id: id, use_this_camera: use, framerate, exposure: -8 });
-    const cameras = [
-        { id: 'a', desiredConfig: config('a', true) },
-        { id: 'b', desiredConfig: config('b', false) },  // unticked, still in the group: "Update Cameras" closes it
-        { id: 'c', desiredConfig: config('c', true) },   // ticked, not in the group: "Update Cameras" adds it
-    ];
-    const group = { a: config('a', true), b: config('b', true) };
-    assert.deepEqual(rateRequestConfigs(cameras, group, 60), { a: config('a', true, 60), b: config('b', true, 60) });
+test('T-REQ-89: rateRequestConfigs sends the applied config of each camera of the group with the new rate (camera-requests.md 2.8)', () => {
+    const config = (id: string, framerate = 30, exposure = -8) => ({ camera_id: id, use_this_camera: true, framerate, exposure });
+    // The list has a pending edit of A (-5), B unticked but still in the group, and C ticked but not in the group:
+    // the request holds only the applied configs of the group, A and B.
+    const group = { a: config('a'), b: config('b') };
+    assert.deepEqual(rateRequestConfigs(group, 60), { a: config('a', 60), b: config('b', 60) });
+    assert.deepEqual(group, { a: config('a'), b: config('b') }, 'the applied configs do not change');
 });
 
-test('T-REQ-90: rateFallbackText and checkingRate read the live state (camera-requests.md 2.8)', () => {
+test('T-REQ-90: rateFallbackText reads the live state; nextRateChecking ends when no camera is busy and no apply runs (camera-requests.md 2.8)', () => {
     const fallback = { kind: 'rate_fallback', text: 'The group runs at 30 fps. Camera a measured 29.66 fps in its 60 fps mode at exposure -7.' };
     const group = (state: string, warnings: { kind: string; text: string }[] = []) => [{ configs: { a: {} }, cameras: { a: { status: { state, warnings } } } }];
     assert.equal(rateFallbackText(group('ready')), null);
     assert.equal(rateFallbackText(group('ready', [fallback])), fallback.text);
     assert.equal(rateFallbackText(group('ready', [{ kind: 'add_light', text: 'add light' }])), null);
-    assert.equal(checkingRate(group('adjusting'), 60), true);
-    assert.equal(checkingRate(group('adjusting'), 30), false);
-    assert.equal(checkingRate(group('starting', [fallback]), 30), true, 'the reopen of a fall back');
-    assert.equal(checkingRate(group('ready', [fallback]), 30), false);
+    assert.equal(nextRateChecking(false, false, false, true), true, 'a new fall back item');
+    assert.equal(nextRateChecking(true, true, false, false), true, 'a camera is busy');
+    assert.equal(nextRateChecking(true, false, true, false), true, 'the apply of the pick runs');
+    assert.equal(nextRateChecking(true, false, false, false), false, 'no camera is busy, and no apply runs');
+    assert.equal(nextRateChecking(false, true, false, false), false, 'a later search on request, with an old item');
+});
+
+test('T-REQ-95: withChosenRate gives each detected camera the current choice (camera-requests.md 2.8)', () => {
+    const cam = (framerate: number, selected = true) => ({ selected, desiredConfig: { framerate, exposure: -7 } });
+    assert.deepEqual(withChosenRate([cam(60)], [cam(30), cam(30, false)]), [cam(60), cam(60, false)]);
+    assert.deepEqual(withChosenRate([], [cam(30, false), cam(60), cam(30)]), [cam(60, false), cam(60), cam(60)],
+        'no list before: the rate of the first selected camera of the new list');
 });
