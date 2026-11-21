@@ -16,6 +16,9 @@ borderline value"). The agent made these choices:
    of the last frame. When it is -1, the decision gives "no record, no finish" and takes no lock
    ([`unix-capture.md`](../../specs/unix-capture.md) 4.10). The supervisor gave this rule; it is here because no
    other entry holds it.
+3. Two texts of [`unix-capture.md`](../../specs/unix-capture.md) 4.10 now state what the code does: a call that
+   finds the camera process ended logs one more line, and a write error of `abandon()` replaces the error text of
+   a camera that ends its part of the take alone (a correction that the supervisor found).
 
 ## Reason
 

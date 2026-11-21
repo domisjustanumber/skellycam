@@ -146,8 +146,20 @@ async def test_t_ring_33_interim_relay_sends_the_ring_jpeg(monkeypatch, cleanup)
         messages = {}
 
         def message_ready():
-            messages.update(manager.get_latest_frontend_payloads(if_newer_than={}))
-            return group.id in messages
+            """A payload that holds both cameras at one frame number: the relay sends each camera that has a frame
+            to show, also before the second camera has one."""
+            got = manager.get_latest_frontend_payloads(if_newer_than={}).get(group.id)
+            data = b"" if got is None else bytes(got[2])
+            head = FRONTEND_PAYLOAD_HEADER_FOOTER_DTYPE.itemsize
+            if not data or int(np.frombuffer(data, FRONTEND_PAYLOAD_HEADER_FOOTER_DTYPE, 1)[0]["number_of_cameras"]) != 2:
+                return False
+            first = np.frombuffer(data, FRONTEND_FRAME_HEADER_DTYPE, 1, head)[0]
+            second_at = head + FRONTEND_FRAME_HEADER_DTYPE.itemsize + int(first["jpeg_string_length"])
+            second = np.frombuffer(data, FRONTEND_FRAME_HEADER_DTYPE, 1, second_at)[0]
+            if first["frame_number"] != got[0] or second["frame_number"] != got[0]:
+                return False
+            messages[group.id] = got
+            return True
 
         await wait_until(message_ready, "a websocket message")
         frame_number, _, payload = messages[group.id]

@@ -1340,7 +1340,8 @@ The signal and the watch [ADR-AC5B](../decisions/entries/AC5B-choices-of-the-thi
   stopped inside its add keeps the lock. Each other scalar of `CameraStatus` has no lock too. A process
   that ends while it holds a lock keeps it for ever. Thus, for the lock of each JSON array of
   `CameraStatus`, the first call of a stretch with no lock waits at most 0.5 s and logs one line; the
-  next calls try with no wait until the lock comes again. A call with no lock goes on with no lock. The
+  next calls try with no wait until the lock comes again. A later call of that stretch that finds the
+  camera process ended logs one more line [ADR-NYT6](../decisions/entries/NYT6-choices-of-fix-lane-2.md). A call with no lock goes on with no lock. The
   main process stops the tries for a status only when the camera process of that status has ended.
   "Apply again" always gives the new camera process new arrays. The arrays go by name, not by object.
   Each read tolerates torn JSON: it reads again up to 3 times, then gives the last good value. A
@@ -1357,7 +1358,8 @@ The signal and the watch [ADR-AC5B](../decisions/entries/AC5B-choices-of-the-thi
   until the cameras are closed and opened again. The two check-then-set blocks wait at most
   0.5 s for the lock: the end of a take then ends with the `take_error` "no lock of the last frame of the
   take in 0.5 s", and a camera that ends with no take level ends its part of the take alone with the
-  error "camera `<id>`: no lock of the last frame of the take in 0.5 s". A failed read of the app state is
+  error "camera `<id>`: no lock of the last frame of the take in 0.5 s"; a write error that `abandon()`
+  gives replaces that text [ADR-NYT6](../decisions/entries/NYT6-choices-of-fix-lane-2.md). A failed read of the app state is
   logged, and the websocket sends the state at the next tick; it sets no kill flag
   [ADR-QJH6](../decisions/entries/QJH6-choices-of-the-fix-lane.md).
 - The setting `SKELLYCAM_STALL_WATCH=0` turns the watch off. The group reads it when it is made, and logs

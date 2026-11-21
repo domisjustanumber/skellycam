@@ -231,11 +231,27 @@ def test_experiment_2_a_restart_right_after_a_dead_holder_of_info_lets_the_main_
 
 
 def test_experiment_3_a_swap_of_the_arrays_during_a_read_raises_nothing():
-    """F3: the warning arrays go by name, so a read that comes during the swap of `reset_for_start` cannot raise."""
+    """F3: the swap of `reset_for_start` comes while a read holds the lock of the old array. The read releases the
+    lock that it took (not the lock of the new array), reads the array by name, and raises nothing; the old lock is
+    free and the new lock was never taken."""
+    import contextlib
+
     status = CameraStatus()
-    status.camera_warnings = multiprocessing.Array("c", camera_status.INFO_SIZE)  # the swap
-    assert status.warning_items("camera_warnings") == []
-    assert status.serialize()["warnings"] == []
+    status.set_warning_items([{"kind": "add_light"}], "camera_warnings")
+    old = status.camera_warnings
+    take_lock = status._array_lock
+
+    @contextlib.contextmanager
+    def swap_inside(name):
+        with take_lock(name) as locked:
+            assert locked
+            setattr(status, name, multiprocessing.Array("c", camera_status.INFO_SIZE))  # the swap, inside the window
+            yield locked
+
+    status._array_lock = swap_inside
+    assert status.warning_items("camera_warnings") == []  # the new array, read by name
+    del status._array_lock
+    assert old.get_lock().acquire(timeout=0) and status.camera_warnings.get_lock().acquire(timeout=0)
 
 
 @pytest.mark.capture_timing
