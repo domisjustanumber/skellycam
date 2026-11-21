@@ -403,7 +403,13 @@ class Session:
     async def settings_step(self):
         """4.3: one live change of each camera with manual exposure from -7 to -8."""
         manual, lacking = [], []
+        # N1: a product apply restarts a camera that is `failed` or `dead`; a wedged or not-ready camera gets no change
+        self.scan(self.live)
+        ready = [u for u in self.live if u.label not in self.wedged and self.status(u).get("state") == "ready"]
         for unit in self.live:
+            if unit not in ready and unit.label not in self.wedged:
+                self.prior(unit, "prior-check-failed")
+        for unit in ready:
             warnings = self.status(unit).get("warnings") or []
             (lacking if any(w.get("kind") == "no_manual_exposure" for w in warnings) else manual).append(unit)
         for unit in lacking:
@@ -675,6 +681,7 @@ class Session:
         group = self.group()
         if group is None:
             return
+        self.fact("closing", None)  # 9.3: from here the caller does not kill the tree before the close limit
         await self.manager.close_all_camera_groups()
         for unit in self.touched:  # also a camera that left the group before the take: its last dict is here
             data = group.camera_diagnostics.get(unit.camera_id, {})

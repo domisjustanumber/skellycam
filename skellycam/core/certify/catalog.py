@@ -320,8 +320,12 @@ def write_record(path: Path, rows: list) -> None:
             and tuple(row[f] for f in ("device", "backend", "os_key", "abi", "level")) not in keys]
     path.parent.mkdir(parents=True, exist_ok=True)
     temporary = path.with_name(path.name + ".tmp")
-    temporary.write_text(json.dumps({"format": 1, "rows": kept + list(rows)}, indent=1), encoding="utf-8")
-    os.replace(temporary, path)
+    try:
+        temporary.write_text(json.dumps({"format": 1, "rows": kept + list(rows)}, indent=1), encoding="utf-8")
+        os.replace(temporary, path)
+    except BaseException:
+        temporary.unlink(missing_ok=True)
+        raise
 
 
 # ----- camera names (9.4) -----
