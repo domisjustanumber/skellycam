@@ -22,7 +22,7 @@ repos:
         entry: uv run python tools/check_camera_media.py
         language: system
         verbose: true
-      # A new script for a person to run on a system that is not the test machine (ADR-VV4Q).
+      # A new script that names or guards for a system needs a script-purpose field (ADR-VV4Q, ADR-K3BX, ADR-C307).
       # Only the files that the commit adds. The doc test and CI check each tracked file.
       - id: other-systems
         name: other systems only through certify

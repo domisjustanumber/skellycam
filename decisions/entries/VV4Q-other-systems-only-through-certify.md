@@ -8,8 +8,9 @@
 
 ## Decision
 
-1. The Windows lab machine of the project is the only test machine. A test on another system
-   runs only through the certify process of the project, `skellycam.certify(level)`, and its report.
+1. You can test only on the system on which the repository is checked out. A test on each other
+   system runs only through the certify process of the project, `skellycam.certify(level)`, and
+   its report. Windows is not special: a person on macOS or Linux reaches Windows the same way.
 2. A check on another system, for example a cross-platform codec check, is a part of the certify
    process. An agent does not write a script or a manual step for a person to run on another system
    to test or verify a fact.
@@ -30,6 +31,11 @@
 - The user accepted two questions of the supervisor (relayed): "Is the pre-commit/CI file check the
   primary hook, with the reminder as the only backup?" (item 4), and that the rule lands in
   skellycam now and reaches the kit later (item 5).
+- The user, the same day, corrected item 1: "in this case 'other systems' means any system other
+  than the one the repo is currently checked out. It's quite likely someone will have this repo
+  checked out on a mac or linux machine and need to run checks on windows". The first text of item 1
+  named the Windows lab machine as the only test machine. This commit is not pushed, so the entry
+  changes in place.
 - [`specs/frame-ring.md`](../../specs/frame-ring.md) already put T-RING-34 (Apple Silicon) into the
   certify suite, not into a run by hand.
 

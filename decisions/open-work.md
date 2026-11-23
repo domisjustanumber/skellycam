@@ -12,7 +12,7 @@ task. Delete an item when its work is done. The PR that closes an item records t
   [ADR-VV4Q](entries/VV4Q-other-systems-only-through-certify.md) item 5: the block
   `<!-- kit:other-systems -->` of `AGENTS.md`, the skill `verify-on-other-systems`,
   `tools/check_other_systems.py` and its test go into the shared agents and ADR kit later. Each
-  repository then sets its own `LAB_PLATFORMS`, `EXEMPT_PATHS` and self-test pointer. The design
+  repository then sets its own `EXEMPT_PATHS`, spec path and self-test pointer. The design
   choices of [ADR-K9B7](entries/K9B7-design-of-the-other-systems-rule-skill-and-check.md) wait for
   the user.
 - **The index after the clean-up.**
