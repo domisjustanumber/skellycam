@@ -1522,6 +1522,11 @@ The signal and the watch [ADR-AC5B](../decisions/entries/AC5B-choices-of-the-thi
   process can still start with the old array.
 - Cost: on Linux each camera process imports the package again (as on Windows), so its start takes
   longer. The stagger of the starts stays a Windows rule (`_SPAWN_STAGGER_SECONDS`).
+- Certify on Linux: before, its session child (a `spawn` child) got the kill flag of the fork
+  context, and each run stopped with a `RuntimeError` at its start. With `spawn` as the default it
+  runs. Its session object tells a live child by the sentinel of the process, not by `is_alive()`:
+  `kill_tree` reaps the child with psutil, and on POSIX `is_alive()` of a child that another call
+  reaped stays true, so the run never ended after a cancel.
 
 ## 5. Parity with the Windows spec
 
