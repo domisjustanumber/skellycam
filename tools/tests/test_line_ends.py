@@ -103,6 +103,23 @@ def test_refresh_compares_each_file_with_the_index_before_the_first_delete(tmp_p
     assert cle.changed_paths(tmp_path, ["a.md", "b.md"]) == ["b.md"]
 
 
+def test_refresh_writes_more_paths_than_one_command_line_holds(tmp_path: Path) -> None:
+    """The paths go to git on stdin. Windows refuses a command line of more than 32,767 characters."""
+    git(tmp_path, "init", "-q")
+    git(tmp_path, "config", "core.autocrlf", "true")
+    names = [f"{i:03d}-{'x' * 110}.md" for i in range(320)]
+    assert sum(len(n) + 1 for n in names) > 32_767
+    for name in names:
+        (tmp_path / name).write_bytes(b"a\r\n")
+    git(tmp_path, "add", "-A")
+    git(tmp_path, "commit", "-q", "-m", "before the rule")
+    (tmp_path / ".gitattributes").write_bytes(b"* text=auto eol=lf\n")
+    git(tmp_path, "add", "-A")
+    git(tmp_path, "commit", "-q", "-m", "the rule")
+    assert cle.refresh(tmp_path) == sorted(names)
+    assert {(tmp_path / n).read_bytes() for n in names} == {b"a\n"}
+
+
 def test_the_gitattributes_rule_writes_lf_into_the_index(tmp_path: Path) -> None:
     git(tmp_path, "init", "-q")
     git(tmp_path, "config", "core.autocrlf", "true")

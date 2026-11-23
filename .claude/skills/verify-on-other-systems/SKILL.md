@@ -11,14 +11,14 @@ The rules of [`AGENTS.md`](../../../AGENTS.md#other-systems-only-through-certify
 ## Steps
 
 1. Do not write a script or a manual step for a person to run on another system. Name the check of
-   `skellycam.certify(level)` that gives the fact ([`specs/certify.md`](../../../specs/certify.md)).
+   `skellycam.certify(level)` that gives the fact (`specs/certify.md`).
 2. If no check gives the fact, add a check to the spec and to the self-test. Sections 5.5 and 5.6
    of the skellycertify contract (step 7) tell when a check can exist, its level and its safety
    rules.
 3. Mark the fact `[NV]` (not verified) in the spec, and put it in
    [`open-work.md`](../../../decisions/open-work.md).
 4. Tell the user which certify report will give the result.
-5. Exception: a CI runner with no camera can still run the checks that need no device, for example
+5. Exception: a CI runner with no device can still run the checks that need no device, for example
    the portable tests. Use CI only for what it can check.
 6. A script outside the product code that names or guards for a system has the comment
    `script-purpose: <kind> ...` in one of its first 5 lines. Use one of these kinds:

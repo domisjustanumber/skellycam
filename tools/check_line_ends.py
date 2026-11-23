@@ -72,8 +72,9 @@ def changed_paths(root: Path, paths: list[str]) -> list[str]:
     """The paths whose working file, after the line-end rule, is not the blob of the index."""
     # hash-object reads each file at its path, so it applies the rule of .gitattributes, as git add does.
     worktree = git(root, "hash-object", "--stdin-paths", stdin="\n".join(paths).encode("utf-8")).decode().split()
+    # The whole index, with no pathspec: a list of many paths passes the command-line limit of Windows.
     index = {}
-    for row in git(root, "ls-files", "-s", "-z", "--", *paths).decode("utf-8").split("\0"):
+    for row in git(root, "ls-files", "-s", "-z").decode("utf-8").split("\0"):
         info, _, path = row.partition("\t")
         if path:
             index[path] = info.split()[1]

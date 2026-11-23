@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Each script that names or guards for a system states its purpose (decisions VV4Q, K3BX and C307).
+"""Each script that names or guards for a system states its purpose.
 
 Usage::
 
@@ -32,7 +32,7 @@ the certify contract, ``CERTIFY_CONTRACT``). ``tools/kit_config.py`` reads the t
   lines, a comment (``#`` or ``//``) ``script-purpose: <kind> ...``. ``KINDS`` are:
 
   - ``certify-check <name>``: the script serves this certify check. ``<name>`` must be a check name
-    of ``CERTIFY_SPEC`` (decision K3BX). Else the check must be added to the spec first
+    of ``CERTIFY_SPEC``. Else the check must be added to the spec first
     (``ADD_CHECK_FIRST``).
   - ``local-study (<what>)``: a measurement on the system of the author. Its result is a fact about
     that system only, and it is "not verified" for each other system.
