@@ -46,6 +46,13 @@ def test_t_unx_76_media_foundation_diagnostics():
     assert all(data[k] is None for k in ("error_flag_frames", "drops_reported", "long_intervals_with_seq_gap"))
 
 
+def test_t_unx_76_long_intervals_count_with_the_period_of_the_granted_mode():
+    """T-UNX-76, unix-capture.md 4.6.2 D-2, D-3 [Z7F3]: the Media Foundation source gives `FrameLog` the period of the
+    granted mode (30 fps), so an interval of 150 ms counts in `long_intervals`; `clock` stays `unknown`."""
+    data = run_case("gap")["diagnostics"]
+    assert data["long_intervals"] >= 1 and data["clock"] == "unknown"
+
+
 def restore_sets(result):
     """The `Set` calls of the close (after the `close` mark), and the index of the flush among the calls."""
     calls = result["calls"]

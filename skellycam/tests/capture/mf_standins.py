@@ -85,12 +85,16 @@ class Sample:
 
 
 class Reader:
-    def __init__(self, calls, callback):
+    def __init__(self, calls, callback, gap_at=None):
         self.calls, self.callback, self.stopped, self.fail = calls, callback, False, False
+        self.reads, self.gap_at = 0, gap_at  # "gap": one interval of 150 ms (4.5 periods at 30 fps)
 
     def ReadSample(self, *args):  # noqa: N802
+        self.reads += 1
+        delay = 0.15 if self.reads == self.gap_at else 0.033
+
         def deliver():
-            time.sleep(0.033)
+            time.sleep(delay)
             if self.fail:
                 self.callback.OnReadSample(None, 0xC00D3EA2, 0, 0, 0, None)  # the device went away
             elif not self.stopped:
@@ -132,7 +136,7 @@ def install(case):
     reader = {}
 
     def create_reader(media_source, callback, stage):
-        reader["reader"] = Reader(calls, callback)
+        reader["reader"] = Reader(calls, callback, gap_at=6 if case == "gap" else None)
         return reader["reader"]
 
     names = dict(enumerate_devices=lambda stage: [("Fake camera 0", link, Shuts(calls, "shutdown-object"))],

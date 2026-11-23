@@ -59,6 +59,7 @@ The common codes of the contract keep the meaning of the contract (section 5.3):
 | `disk-stall` | A write of the take did not make progress within the stall limit. |
 | `write-error` | A write of the take failed. |
 | `clock-base-differs` | The time of a frame is not on the clock of its arrival time. |
+| `clock-unknown` | The source cannot tell the clock of its frame times, so the check of the clock base cannot run. |
 | `sample-after-arrival` | A sample time is later than its arrival time. |
 | `sample-too-early` | The 95th percentile of the sample time minus the arrival time is more than 200 ms from zero. |
 | `sequence-unreliable` | A long interval between two frames has no gap of the sequence number. |

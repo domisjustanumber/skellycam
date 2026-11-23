@@ -589,6 +589,25 @@ def test_t_cert_47_a_full_run_and_the_local_pass(monkeypatch, tmp_path):
     assert next(r for r in rows if r["device"] == "feed:0000")["controls"] == {"exposure": {"iam": "works"}}
 
 
+def test_clock_base_of_a_source_that_cannot_tell_its_clock(monkeypatch, tmp_path):
+    """10.2, unix-capture.md 4.6.2 D-2 [Z7F3]: a source whose `clock` is `unknown` (Media Foundation: it reads only
+    `IMFSample::GetSampleTime`, and no attribute names the base) gives `clock:base` `not-run` `clock-unknown`; a source
+    that does not fill the key (null) gives `not-built`. `time-gaps` judges the gaps from `long_intervals`."""
+    unknown = good(diagnostics={**SOURCE_FACTS, "clock": "unknown"})
+    unfilled = good(diagnostics={**SOURCE_FACTS, "clock": None})
+    with capture_app(monkeypatch, [unknown, unfilled]) as app:
+        devices = app.factory.device_infos()
+        report = run_with(app, tmp_path, level="full")
+    assert_valid(report)
+    checks = by_name(report)
+    cannot_tell, not_built = labels(devices)
+    assert (checks[f"{cannot_tell}:clock:base"]["result"], checks[f"{cannot_tell}:clock:base"]["reason"]) == (
+        "not-run", "clock-unknown")
+    assert checks[f"{cannot_tell}:clock:base"]["numbers"]["clock"] == "unknown"
+    assert checks[f"{not_built}:clock:base"]["reason"] == "not-built"
+    assert checks[f"{cannot_tell}:time-gaps"]["result"] == "pass"
+
+
 @pytest.mark.capture_timing
 def test_t_cert_12_a_camera_that_hangs_at_the_open(monkeypatch, tmp_path):
     """T-CERT-12, 2.3, 8.3: `opens` `fail` `hung`; the later checks `not-run` `prior-failure`; never opened again;

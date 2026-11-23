@@ -63,7 +63,7 @@ REASON_CODES = (
     "setting-reverted", "no-image-effect", "no-native-jpeg", "jpeg-damaged", "jpeg-size-differs", "mode-not-granted",
     "take-not-finished", "take-error", "rows-differ", "missing-rows", "gaps-unexplained", "group-rate-off",
     "too-few-frames", "frame-not-decodable", "fat-disk", "disk-stall", "write-error", "clock-base-differs",
-    "sample-after-arrival", "sample-too-early", "sequence-unreliable", "no-sequence", "has-sequence", "frame-gaps",
+    "clock-unknown", "sample-after-arrival", "sample-too-early", "sequence-unreliable", "no-sequence", "has-sequence", "frame-gaps",
     "gate-check-failed", "gate-check-not-run", "no-manual-exposure", "prior-failure", "prior-check-failed",
     "camera-wedged", "camera-not-restored", "not-deleted",
     # the product failure codes of unix-capture.md 4.6.3 that a failed open gives as its reason

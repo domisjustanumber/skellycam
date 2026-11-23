@@ -631,14 +631,16 @@ class Session:
 
     def clock_rows(self, unit, before, data):
         """10.2: the clock, the sequence and the time gaps, from the diagnostics of the source (on Linux and macOS in
-        quick, on each system in full). A key that the source does not fill gives `not-run` `not-built`."""
+        quick, on each system in full). A key that the source does not fill gives `not-run` `not-built`; a `clock` of
+        `unknown` (the source cannot tell its clock: Media Foundation) gives `not-run` `clock-unknown` [Z7F3]."""
         names = catalog.camera_names(unit.label, unit.base, self.level, self.unix)["clock"]
         if not names:
             return
         clock = data.get("clock")
         self.begin(names[0])
         result = (("pass", None) if clock in ("monotonic", "host") else ("fail", "clock-base-differs")
-                  if clock in ("realtime", "device") else ("not-run", "not-built"))
+                  if clock in ("realtime", "device") else ("not-run", "clock-unknown") if clock == "unknown"
+                  else ("not-run", "not-built"))
         self.done(row(names[0], *result, unit.module, clock=clock, tstamp_src=data.get("tstamp_src"),
                       ts_conversion=data.get("ts_conversion"), sample_time_kept=data.get("sample_time_kept")))
         self.begin(names[1])

@@ -174,6 +174,7 @@ class MediaFoundationSource:
             data.update(granted_fourcc=mode.format, granted_w=mode.width, granted_h=mode.height,
                         granted_fps_num=mode.fps_num, granted_fps_den=mode.fps_den,
                         delivered="jpeg" if mode.format == "MJPG" else "decoded")
+        # D-2 [Z7F3]: only GetSampleTime is read, and nothing names its base: the source cannot tell its clock
         data.update(clock="unknown", tstamp_src="unknown", ts_conversion="100ns-units",
                     sample_time_kept=self._sample_time_ok, frames=self._count, sequence_available=False,
                     discontinuity_flags=self._discontinuities, zero_bytes=self._zero_bytes, native_domain="hresult",

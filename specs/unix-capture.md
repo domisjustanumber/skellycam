@@ -1161,6 +1161,14 @@ tests that change.
 | Linux | `kernel`, `driver`, `nodrop_param`, `clock_param`, `hwtimestamps_param`, `buffers_requested`, `buffers_granted`, `interval_types`, `nodes_seen`, `nodes_skipped_meta`, `modes_listed`, `mjpg_sizes` | yes | null | null |
 | macOS | `macos`, `subtypes`, `notifications_seen`, `sync_clock_is_host`, `modes_listed`, `mjpg_sizes` | null | yes | null |
 
+D-2 on Media Foundation [ADR-Z7F3](../decisions/entries/Z7F3-choices-of-fix-lane-3.md): the source reads only `IMFSample::GetSampleTime` (`sample_ns` = 100 x
+its value, [W 4.2]) and no other attribute of the sample. No value that it reads names the base of that
+time, so `clock` is `unknown` (the source cannot tell) and `tstamp_src` is `unknown`. Certify then gives
+`clock:base` `not-run` with `clock-unknown` [cert 10.2]. The values themselves still go to
+`frame_log`, `later_than_arrival` and the percentiles, so `clock:before-arrival` and
+`clock:near-arrival` judge them. `long_intervals` counts with the period of the granted mode, set at the
+mode set of each open. Whether a sample time is on the QPC clock of `perf_counter_ns` is [NV].
+
 D-11 [A]: the shared loop hashes the bytes that it gives to the ring and the recorder (after a DHT
 insertion), for the first 30 frames that it takes after the first move to `ready` of each open and
 after each record start. A live change, which ends in `ready` again, does not re-arm the set. Each new
@@ -1654,7 +1662,7 @@ facts of macOS only.
 | T-UNX-73 | fake | The OpenCV source on Linux with a native detection result; on macOS with a device order. | Linux: `cv2.VideoCapture('/dev/videoN', CAP_V4L2)` of the detected node; macOS: the index of the matching `uniqueID`. |
 | T-UNX-74 | fake | Detection with an evidence file and a local record. | `evidence`, `checked`, `id_source`, `has_serial`, `backend`, `usb_link` in `CameraDeviceInfo`; `system_evidence` in the status. |
 | T-UNX-75 | fake | `capture_timing`. Three fake cameras (pull sources, as the OpenCV source) in real camera processes: the process of one is suspended with `psutil` `suspend()` (it cannot run a loop pass then); a second camera is `waiting`; then the group is in the internal pause of a record start; then a take whose writer of one camera is held for 4 s with progress and then for 4 s with no progress (scaled stall limit); then a reopen by a size change whose close takes 3 s; then the OpenCV fake streams for 10 s. | The main process removes the suspended camera from the gate and ends it 3.0 to 3.5 s after its last loop pass, `dead` with `stalled`; the `waiting` camera, the internal pause, the writer waits, the slow close of the reopen and the OpenCV fake trip nothing; the held writer ends by the rule of recorder.md 5.3, not by this watch; the third camera has no gap longer than 3.5 s (4.10). |
-| T-UNX-76 | windows | `MediaFoundationSource.diagnostics()` with the stand-in interfaces of the Windows tests. | Every key of 4.6.2; `id_source` `mf-link`; `native_domain` `hresult`; `clock` `unknown`; `t_*_ms` filled. |
+| T-UNX-76 | windows | `MediaFoundationSource.diagnostics()` with the stand-in interfaces of the Windows tests; a second case with one interval of 150 ms at 30 fps. | Every key of 4.6.2; `id_source` `mf-link`; `native_domain` `hresult`; `clock` `unknown`; `t_*_ms` filled; the second case counts at least one `long_intervals` [ADR-Z7F3](../decisions/entries/Z7F3-choices-of-fix-lane-3.md). |
 | T-UNX-77 | windows | Map the HRESULTs of [W 6.7] and `0x800718CF` to codes. | In-use codes give `camera-in-use`; removal codes give `device-removed`; `0x800718CF` gives `usb-bandwidth`; `0x80004005` gives `open-failed` at open and `stream-error` in streaming. |
 | T-UNX-78 | windows | The restore of the Media Foundation source at the close, with stand-in control interfaces. | Each changed control is set back to its "before" value and flags before the flush, and read back; on by default. |
 | T-UNX-91 | fake | A fake camera that keeps its controls between opens, auto -6 before the first open; it opens in `MANUAL -7`, and its loop fails (no restore); then "apply again", and in a second case a group close and a new group; in a third case the camera rounds: after a reopen it reads manual -6 (one step from -7). | The camera holds manual -7 after the failure and after the group close; the next open has `exposure_before` auto -6, and its close restores auto -6, `restore_ok` true (4.7) [ADR-NYT6](../decisions/entries/NYT6-choices-of-fix-lane-2.md); the camera that rounds also gets auto -6 back [ADR-Z7F3](../decisions/entries/Z7F3-choices-of-fix-lane-3.md). |

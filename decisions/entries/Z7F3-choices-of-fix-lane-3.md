@@ -26,6 +26,10 @@ The supervisor gave the items. The agent chose these details:
 4. The flag `creating` of `CameraGroupManager`: an apply request that finds no group sets it with no wait after
    that check and clears it at its end; a second such request gets the 409 of `request_runs` with its reason
    ([`camera-requests.md`](../../specs/camera-requests.md) 2.4a item 7).
+5. Media Foundation keeps `clock` `unknown`: the source reads only `IMFSample::GetSampleTime`, and nothing that it
+   reads names the base. Certify gives `clock:base` `not-run` with the new reason `clock-unknown` (not
+   `not-built`, which stays for a null key). `long_intervals` already counted with the mode period (since the
+   step 2 fixes); a test now proves it, and `time-gaps` is marked W in `full` ([`certify.md`](../../specs/certify.md) 10.2, 15).
 
 ## Reason
 
@@ -41,6 +45,8 @@ The supervisor gave the items. The agent chose these details:
    first real certify run of 2026-11-21). A stall can be a wedged camera (the Kiyo Pro), so it gets no call.
 4. A request with no detection result detects before it makes the group (seconds); a second request in that
    time made a second group on the same cameras.
+5. A guess of QPC would be a fact that no code proves. The measured arrival minus sample (0.33 ms and 32 ms,
+   [`certify.md`](../../specs/certify.md) 10.2) agrees with QPC but does not prove the base.
 
 ## Consequences
 
@@ -51,6 +57,7 @@ The supervisor gave the items. The agent chose these details:
    send `retry_camera_ids` to reopen a failed camera. The rate selector no longer reopens a failed camera.
 3. A close dict that comes after the close of the group (no `restore_ok`) of a camera that failed with
    `rate-low` now gives no notice: certify trusts the restore of the product there.
+5. `<model>:gate:timestamps` cannot pass on Media Foundation while `clock:base` is `not-run`.
 
 ## Evidence
 
@@ -65,6 +72,8 @@ The supervisor gave the items. The agent chose these details:
 3. Tests: T-UNX-95 in `skellycam/tests/capture/test_restore.py`; the two cases of
    `test_review_2_a_failed_camera_that_was_set_is_flagged_only_when_the_product_does_not_restore_it`.
 4. Test: `test_t_req_96_two_requests_with_no_group_make_one_group` in `skellycam/tests/capture/test_frame_rate.py`.
+5. Test: `test_clock_base_of_a_source_that_cannot_tell_its_clock` in `skellycam/tests/certify/test_certify.py`;
+   `test_t_unx_76_long_intervals_count_with_the_period_of_the_granted_mode`.
 
 ## Alternatives rejected
 
