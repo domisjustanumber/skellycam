@@ -1332,14 +1332,22 @@ run of 2026-11-23). The agent chose the details [ADR-HQE5](../decisions/entries/
   `/sys/class/video4linux/video<n>/device` (for example `1-2.3:1.0`: the bus, the port chain and the
   interface, A-2). A `/dev/video<n>` path alone is never an input: its number can change. A camera
   with no stable input (the index alone, the USB IDs with the index, a Linux path with no sysfs
-  folder) has no file, and no entry is used for it.
+  folder) has no file, and no entry is used for it. Thus on Linux the key is the USB port, not the
+  camera unit: a replug into the same port keeps the key, and the file of a port that is not used again
+  stays until the salt changes.
 - **Key.** The key is the HMAC-SHA-256 (64 hex digits) of the identity input with the salt of the
-  folder. The salt is 32 random bytes in the file `.salt` of the folder (hex). The main process makes
-  it at the first use (temporary file, then `os.replace`). A salt that is missing or cannot be read
-  means that no entry is used: the main process makes a new salt and removes each entry file, which
-  no key can match now. Thus the name of a file differs on each machine, and a serial number cannot
-  be found from it by a search. The main process computes each key and gives it to the camera
-  process; a camera process never reads the salt.
+  folder. The salt is 32 random bytes in the file `.salt` of the folder (hex). Thus the name of a file
+  differs on each machine, and a serial number cannot be found from it by a search. The main process
+  computes each key and gives it to the camera process; a camera process never reads the salt.
+- **The salt.** A salt that is missing (`FileNotFoundError`) or damaged (not 32 bytes of hex) means
+  that no entry is used: the main process makes a new salt, and only after the new salt is in place
+  it removes each entry file, which no key can match now. A missing salt is created with no replace
+  (a hard link of a temporary file, or an exclusive create): when another server made a salt first,
+  this server reads that salt back and removes nothing. A damaged salt is replaced (temporary file,
+  then `os.replace`). A salt that exists and cannot be read (another `OSError`, for example a sharing
+  violation or a folder in its place) means that no entry is used this time, and nothing is removed
+  or written.
+- **Mode.** On POSIX, `.salt` and each entry file have the mode 0600 (the user only).
 - **Name and form.** `<key>.json`, UTF-8 JSON:
   `{"version": 1, "key": "<64 hex>", "vendor_id": <int or null>, "product_id": <int or null>,
   "written_utc": "<ISO 8601>", "record": {"before": ..., "names": [...], "set": ...}}`. The record is
@@ -1540,10 +1548,13 @@ The signal and the watch [ADR-AC5B](../decisions/entries/AC5B-choices-of-the-thi
   program must call multiprocessing.set_start_method('spawn') before it creates a multiprocessing
   object". The apply request answers at once with that failure, not after the limit of 30 s. Reason:
   with `fork` the known result is a camera process that never answers (below). `spawn` and
-  `forkserver` start: a `forkserver` child is forked from a server process that started before the
-  main process made its objects and threads, so it holds no PyAV object and no lock of a thread of the
-  main process, and each argument goes to it by pickle, as with `spawn`. The default of Python 3.14 on
-  Linux is `forkserver`.
+  `forkserver` start. The server of `forkserver` is a new interpreter that `multiprocessing` starts by
+  exec (at the first start, whenever that comes), not a fork of the main process: it holds no PyAV
+  object and no thread of the main process, and each argument goes to its child by pickle, as with
+  `spawn` (a check under Linux: 43 threads in the main process after PyAV, 1 in the server, and the
+  child ran). The limit: the server imports the main module of the host (`__main__` is loaded first by
+  default), so a main module that starts threads at its import gives those threads to the server. The
+  default of Python 3.14 on Linux is `forkserver`.
 - Not chosen: a `spawn` context object inside skellycam for each object that it shares with a camera
   process. The host makes some of these objects in its own context and gives them to skellycam: the
   kill flag (a `Value` with a lock, through `WorkerRegistry` and `CameraGroupIPC`), the log queue of
@@ -1559,6 +1570,8 @@ The signal and the watch [ADR-AC5B](../decisions/entries/AC5B-choices-of-the-thi
   which the fork does not copy. The camera process never answered, and the group gave it
   `open-failed` after 30 s. A fork of a process with threads can deadlock in this way in each library
   with threads; Python 3.13 warns about it.
+- skellycam needs the start method `spawn` or `forkserver` for its camera processes on each system. A
+  host that sets `fork` gets `start-method-fork` for each camera.
 - What `spawn` asks: each argument of a camera process pickles (Windows asks the same today); each
   shared object comes from the default context, which is then `spawn`; the `parent_process()` guards
   work as on Windows. A camera process opens each shared lock and array by its name while it starts,

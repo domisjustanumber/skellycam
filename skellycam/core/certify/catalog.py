@@ -69,7 +69,7 @@ REASON_CODES = (
     # the product failure codes of unix-capture.md 4.6.3 that a failed open gives as its reason
     "not-found", "no-access", "no-permission", "usb-bandwidth", "no-mode", "below-floor", "open-failed",
     "first-frame-timeout", "not-ready", "control-failed", "device-removed", "stalled",
-    "previous-process-alive", "stream-error", "format-changed")
+    "previous-process-alive", "stream-error", "format-changed", "start-method-fork")
 RISK = ("The full run opens each camera many times and at each of its modes. A camera can stop answering until it is "
         "unplugged and plugged in again. The run puts back the settings of each camera at the end.")
 RISK_MACOS = ("The last part of the full run sends direct USB requests to each camera model and can make a camera stop "

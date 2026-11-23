@@ -398,3 +398,49 @@ def test_t_unx_101_a_camera_process_writes_its_file_and_a_kill_keeps_it(monkeypa
         assert path.exists()
     finally:
         app.close()
+
+
+def test_t_unx_101_a_salt_that_cannot_be_read_removes_no_record(monkeypatch, tmp_path):
+    """T-UNX-101 (the review, pass 2): the salt exists and cannot be read (here a folder in its place). No restore file
+    is used this time, the entry files stay, and the camera opens `ready`; one log line."""
+    factory = FakeSourceFactory([FakeScript(controls=AUTO_BEFORE)], clock=VirtualClock())
+    camera_id = factory.camera_ids[0]
+    (tmp_path / ".salt").mkdir()
+    entry = tmp_path / ("a" * 64 + ".json")
+    entry.write_text("{}", encoding="utf-8")
+    with capture_logs() as logs:
+        app = server(monkeypatch, factory, tmp_path)
+        try:
+            open_all(app)
+            assert app.status(camera_id)["failure"] is None
+        finally:
+            end_server(app)
+    assert entry.exists() and (tmp_path / ".salt").is_dir()
+    assert [m for m in logs.messages(logging.WARNING) if "salt of the restore files" in m] == [
+        "The salt of the restore files cannot be read; no restore file is used this time, and none is removed"]
+
+
+def test_t_unx_101_a_second_server_that_finds_a_new_salt_removes_nothing(tmp_path):
+    """T-UNX-101: two servers start with no salt. The first makes the salt; the second (it found no salt a moment
+    before) creates with no replace, reads the salt of the first back, and removes no entry file."""
+    store = product(STORE_MODULE)
+    first = store.salt_of(tmp_path)
+    entry = tmp_path / ("b" * 64 + ".json")
+    entry.write_text("{}", encoding="utf-8")
+    assert store._new_salt(tmp_path, replace=False) == first
+    assert entry.exists() and store.salt_of(tmp_path) == first
+    assert not list(tmp_path.glob(".salt.*.tmp"))
+
+
+@pytest.mark.skipif(sys.platform == "win32", reason="the mode bits of POSIX")
+def test_t_unx_101_the_salt_and_the_entries_are_for_this_user_only(tmp_path):
+    """T-UNX-101, 4.7.1: `.salt` and each entry file have the mode 0600 on POSIX."""
+    import stat
+
+    store = product(STORE_MODULE)
+    store.salt_of(tmp_path)
+    ident = {"key": "c" * 64, "vendor_id": 1, "product_id": 2}
+    store.write_entry(tmp_path, ident, {"names": ["exposure"], "before": {"exposure": [True, True, -6]},
+                                        "set": {"exposure": [False, -7]}})
+    for path in (tmp_path / ".salt", store.entry_path(tmp_path, ident["key"])):
+        assert stat.S_IMODE(path.stat().st_mode) == 0o600, path

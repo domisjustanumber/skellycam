@@ -68,38 +68,91 @@ def identity_input(device, sys_root: Path = Path("/sys")) -> str | None:
     return None
 
 
-def _salt(folder: Path) -> bytes | None:
-    """The salt of the folder, or None when it is missing or cannot be read."""
+def _write_private(path: Path, text: str, exclusive: bool = True) -> None:
+    """Write `text` to a new file at `path`, mode 0600 on POSIX (the salt and the entries are for this user only)."""
+    flags = os.O_WRONLY | os.O_CREAT | (os.O_EXCL if exclusive else os.O_TRUNC) | getattr(os, "O_BINARY", 0)
+    descriptor = os.open(path, flags, 0o600)
+    with os.fdopen(descriptor, "wb") as file:
+        file.write(text.encode("utf-8"))
+
+
+def _read_salt(folder: Path) -> tuple[str, bytes | None]:
+    """("ok", salt), ("missing", None), ("damaged", None) for a file that is not 32 bytes of hex, or ("error", None)
+    for a file that exists and cannot be read (a sharing violation, a folder in its place, EIO)."""
     try:
-        salt = bytes.fromhex((folder / SALT_NAME).read_text(encoding="ascii").strip())
-    except (OSError, ValueError):
-        return None
-    return salt if len(salt) == 32 else None
+        text = (folder / SALT_NAME).read_text(encoding="ascii")
+    except FileNotFoundError:
+        return "missing", None
+    except OSError:
+        return "error", None
+    except ValueError:  # UnicodeDecodeError: not ASCII
+        return "damaged", None
+    try:
+        salt = bytes.fromhex(text.strip())
+    except ValueError:
+        return "damaged", None
+    return ("ok", salt) if len(salt) == 32 else ("damaged", None)
 
 
-def _new_salt(folder: Path) -> bytes | None:
-    """A new salt. Each entry file goes: no key of the old salt can match it now."""
+def _remove_old_entries(folder: Path) -> None:
+    """After a new salt: no key of the old salt can match an entry now."""
+    for old in folder.glob("*.json"):
+        try:
+            old.unlink(missing_ok=True)
+        except OSError:
+            pass
+
+
+def _new_salt(folder: Path, replace: bool) -> bytes | None:
+    """A new salt (4.7.1). It is written and put in place first; the old entries go only after that. With no salt
+    (`replace` False) the salt is created with no replace: when another server made one first, that salt is read back
+    and nothing is removed. A damaged salt (`replace` True) is replaced."""
     salt = secrets.token_bytes(32)
     path = folder / SALT_NAME
     temporary = folder / f".salt.{os.getpid()}.tmp"
     try:
         folder.mkdir(parents=True, exist_ok=True)
-        for old in folder.glob("*.json"):
-            old.unlink(missing_ok=True)
-        temporary.write_text(salt.hex(), encoding="ascii")
-        os.replace(temporary, path)
+        _write_private(temporary, salt.hex(), exclusive=False)
+        if replace:
+            os.replace(temporary, path)
+        else:
+            try:
+                try:
+                    os.link(temporary, path)  # atomic, and it fails when the file exists
+                except FileExistsError:
+                    raise
+                except OSError:  # a file system with no hard links: an exclusive create of the salt itself
+                    _write_private(path, salt.hex(), exclusive=True)
+            except FileExistsError:
+                state, other = _read_salt(folder)
+                return other if state == "ok" else None
+            finally:
+                temporary.unlink(missing_ok=True)
     except OSError as error:
         _log_once(path, "salt", f"The salt of the restore files could not be written: {error}; no restore file is used")
+        try:
+            temporary.unlink(missing_ok=True)
+        except OSError:
+            pass
         return None
+    _remove_old_entries(folder)
     return salt
 
 
 def salt_of(folder) -> bytes | None:
-    """The salt of `folder`; a missing or damaged salt gives a new one (and no old entry is used)."""
+    """The salt of `folder` (4.7.1). A missing or damaged salt gives a new one (and no old entry is used). A salt that
+    exists and cannot be read gives None: no restore file this run, and nothing is removed."""
     if folder is None:
         return None
     folder = Path(folder)
-    return _salt(folder) or _new_salt(folder)
+    state, salt = _read_salt(folder)
+    if state == "ok":
+        return salt
+    if state == "error":
+        _log_once(folder / SALT_NAME, "salt-read", "The salt of the restore files cannot be read; no restore file is "
+                                                   "used this time, and none is removed")
+        return None
+    return _new_salt(folder, replace=state == "damaged")
 
 
 def identity(device, folder=None, salt: bytes | None = None, sys_root: Path = Path("/sys")) -> dict | None:
@@ -142,7 +195,7 @@ def write_entry(folder, ident: dict | None, record: dict) -> None:
     temporary = path.with_name(f".{path.stem}.{os.getpid()}.tmp")
     try:
         path.parent.mkdir(parents=True, exist_ok=True)
-        temporary.write_text(json.dumps(data), encoding="utf-8")
+        _write_private(temporary, json.dumps(data), exclusive=False)
         os.replace(temporary, path)
     except OSError as error:
         _log_once(path, "write", f"The restore file {path.name} could not be written: {error}; the restore after a "

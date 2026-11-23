@@ -1250,8 +1250,8 @@ section adds only what capture adds.
   1 when the setting is not there). In a `pace` test, the tolerance of each bound (the part of the bound
   past its nominal value, for example 0.5 s of a bound of 5.5 s for a limit of 5 s) is the strict
   tolerance times the margin. The nominal value does not move: a limit of 5 s that ends at 4 s still
-  fails. A target of a percentile (T-RING-23: write p99 under 1.0 ms) has no nominal value: its whole
-  bound is the tolerance, and the margin multiplies it.
+  fails. An upper bound on a duration percentile (T-RING-23: write p99 under 1.0 ms) has no nominal
+  value: its whole bound is the tolerance, and the margin multiplies it.
   A `pace` test holds only its bounds of time. Each other check of the same run is in a test with no
   marker, in the blocking step, with a loose bound of time (10 times the limit) where it waits: a test
   that fails for a reason that does not depend on the pace (for example a camera process that gives no

@@ -174,6 +174,7 @@ task. Delete an item when its work is done. The PR that closes an item records t
     nothing is decided. The user: "I think this needs to be part of a wider review of how the whole of freemocap
     works on linux"; the freemocap session does that review. A candidate for it: a call of
     `multiprocessing.set_start_method("spawn")` at the top of `freemocap/__main__.py`, before
-    `create_websocket_log_queue()`, so that its own workers also spawn on Linux, as on Windows. Until a change, on
-    Linux its start method is `fork`, and skellycam refuses each camera process with `start-method-fork`
-    (`unix-capture.md` 4.12). Not verified on Linux.
+    `create_websocket_log_queue()`, so that its own workers also spawn on Linux, as on Windows. After this change of
+    skellycam, FreeMoCap on Linux opens no camera until it sets the start method: its method is `fork`, and skellycam
+    refuses each camera process with `start-method-fork` (`unix-capture.md` 4.12). This is the decision of the
+    user; the fix of FreeMoCap belongs to the wider Linux review. Not verified on Linux.

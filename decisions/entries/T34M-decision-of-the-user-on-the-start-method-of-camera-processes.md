@@ -28,6 +28,8 @@ host from setting the method after the import (the review of 2026-11-23).
 
 ## Alternatives rejected
 
+The reasons are the analysis of the agent; the user decided the route.
+
 - A `spawn` context object inside skellycam for each shared object: the host gives objects of its own context to
   the camera processes (the kill flag, the log queue of `skellylogs`, the objects of the FreeMoCap workers), and a
   lock of the `fork` context cannot go to a `spawn` child. It needs an API change of two repositories.
