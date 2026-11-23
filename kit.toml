@@ -15,6 +15,11 @@ SIBLING_PATH = "../skellyfileformat/spec/"  # A path relative to the repository,
 SECRET_SCAN_BRANCHES = "[main, development, development-streaming]"  # The branches of a PR that the secret scan checks.
 PYTHON_VERSION = "3.13.18"  # The Python of the doc checks in CI. The same as pyproject.toml.
 UV_VERSION = "0.13.7"  # The uv of the doc checks in CI: the value of the kit, as each repository has (decision X1T8).
+# For the other-systems rule, before it goes into the kit (decision 3SRX): the block AGENTS.md#other-systems
+# and the skill verify-on-other-systems. No kit unit uses them yet.
+SELF_TEST = "skellycam.certify"  # The self-test of the project, as AGENTS.md and the skills name it.
+CERTIFY_SPEC = "specs/certify.md"  # The spec that holds the certify check names.
+CERTIFY_REPO = "skellycertify"  # The repository of the certify contract report-format.md.
 
 [check_decision_log]
 # module_logs = ["server/decisions"]  # The folder of each module log.
@@ -42,6 +47,13 @@ reason = "upstream author credit"
 
 [check_camera_media]
 golden_paths = []  # skellycam has no golden reference files yet, so nothing is allowed.
+
+# tools/check_other_systems.py (decisions VV4Q, K3BX, C307, K9B7; values moved here by decision 3SRX).
+[check_other_systems]
+exempt_paths = ["skellycam/", "skellycam-ui/", "skellycam-docs/", ".github/"]  # The product folders and CI.
+certify_spec = "specs/certify.md"  # The spec that holds the check names.
+self_test = "skellycam.certify"  # The self-test, in the advice of a refusal line.
+certify_contract = "report-format.md of the skellycertify repository"  # In the refusal line for a new check.
 
 # The table [kit] is written by tools/kit_sync.py pull and propose. Do not edit it.
 [kit]
