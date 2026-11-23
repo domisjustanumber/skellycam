@@ -230,6 +230,38 @@ def test_virtual_clock_fallback_does_not_jump_to_a_far_wake_time():
     assert 0 < moved_s <= 0.2, f"the time moved {moved_s:.3f} s in 0.5 s of real time with a busy participant"
 
 
+def test_virtual_clock_work_for_a_waiting_thread_keeps_its_wait():
+    """ADR-DC43 (review round 1): `give_work` to a control thread that waits on the clock (the fake hang of a
+    set) does not make it "run". When the busy participant leaves, the time moves at once to its wake time;
+    with "run" only forced steps would move it (none here: `fallback_s` is 10 s)."""
+    clock = VirtualClock(fallback_s=10.0)
+    busy, done = threading.Event(), threading.Event()
+
+    def loop():
+        clock.wait_until(clock.now_ns())  # joins, then is busy: the time does not move
+        busy.set()
+        done.wait(5)
+        clock.leave()
+
+    def hung_set():
+        clock.wait_until(clock.now_ns() + 10**9)
+
+    first = threading.Thread(target=loop)
+    first.start()
+    busy.wait(5)
+    control = threading.Thread(target=hung_set, daemon=True)
+    control.start()
+    deadline = time.monotonic() + 5
+    while not isinstance(clock._states.get(control.ident), tuple) and time.monotonic() < deadline:
+        time.sleep(0.001)
+    clock.give_work(control, lambda: None)
+    assert isinstance(clock._states.get(control.ident), tuple), clock._states.get(control.ident)
+    done.set()
+    first.join(5)
+    control.join(2)
+    assert not control.is_alive() and clock.now_ns() == VirtualClock.START_NS + 10**9
+
+
 def test_real_clock_waits_real_time():
     clock = RealClock()
     t0 = time.perf_counter()

@@ -9,13 +9,18 @@
    control thread of a camera loop does not wait on the `VirtualClock`. Thus the virtual time ran on while a
    set waited for that thread. The fix: in `capture_session.py`, `ClockQueue` replaces the class of the request
    queue of each `_ControlThread` on a virtual clock. A request stops the time (`VirtualClock.give_work`) until
-   the control thread waits for its next request (`VirtualClock.idle_if`). A read of the controls after the
-   timeout of the queue does not stop the time, as before. A new test sets a real delay of 20 ms before each
-   set; the search must end `done` at -9 with 8 trials.
+   the control thread waits for its next request (`VirtualClock.idle_if`, state `idle`). `give_work` changes
+   only no state or `idle` to `run`: a control thread that waits on the clock (the fake hang of a set) keeps
+   its wait. The clock and the consumer go on the queue before its class changes, so a `get` of the started
+   thread never finds a `ClockQueue` with no clock. A read of the controls after the timeout of the queue
+   does not stop the time, as before. A new test sets a real delay of 20 ms before each set; the search must
+   end `done` at -9 with 8 trials. A test of the clock checks the kept wait.
    T-CAP-31 then failed by one frame: with no virtual time in the set, a frame can arrive while the loop
    waits in its read, before it takes the check signal. The check does not count that frame. Spec 10.2 of
    [`windows-capture.md`](../../specs/windows-capture.md) names no first frame of the skip. Thus the test
    accepts a window that starts at the 16th or the 17th frame after the change. The product stays.
+   The skip of the product is 15 + k frames, where k is the count of frames that the loop took after the
+   change and before it read the check signal. The spec names no first frame. The user decides this point.
 2. **T-UNX-95, `device-removed` (1 test).** A fault of the test. The test thread polls each 5 ms of real time.
    On the virtual clock the 2 s in `ready` before the removal can pass in less time. `one_camera` gets
    `until`. The two cases with `removed_after_frame` also accept `dead`.
@@ -26,8 +31,9 @@
 4. **T-UNX-74 on Windows Server (1 test).** The product is correct. The test was wrong.
    [`certify.md`](../../specs/certify.md) 11.2 makes the Windows key from the release and the feature version.
    The release is `platform.release()` (`os.release` of the report). On Windows Server 2025 the key is
-   `2025Server 24H2`. The test now matches the release of the system, and a new test checks a client key and a
-   server key with fakes.
+   `2025Server 24H2`. The test on the system now has a fixed pattern for a client and a server release
+   (`^\d+(Server)? \w+$`). A new test with fakes gives the client key `11 24H2` and the server key
+   `2025Server 24H2` for the same feature version.
 
 ## Reason
 
@@ -58,6 +64,9 @@ WSL Ubuntu 24.04, a copy of commit 0d0dfa054, uv 0.13.9, Python 3.13.18, the sta
 - A poll of the state each 5 ms of `removed_after_frame=150` on 2 cores: `waiting` then `dead`, 5 ms of real
   time apart; `ready` was not seen.
 - F1 fails on 2 and on 28 cores; with the join it passes.
+- Review round 1: the test of the kept wait fails with the old `give_work` (state `run`) and passes with the
+  new one. On 2 cores the four files and `test_restore.py` give 114 passed. Windows, the five changed test
+  files of the review: 163 passed.
 
 ## Alternatives rejected
 

@@ -90,13 +90,14 @@ class ClockQueue(queue.Queue):
 
 def install_control_clock(monkeypatch, clock, loop_module):
     """Give the request queue of each control thread to the virtual clock (`ClockQueue`). The control thread
-    can already wait in a plain `get` of the queue: the next request wakes it as before."""
+    can already wait in a plain `get` of the queue: the next request wakes it as before. The attributes come
+    before the class, so a `get` of the started thread never finds a `ClockQueue` with no clock."""
     original = loop_module._ControlThread.__init__
 
     def init(self, loop):
         original(self, loop)
+        ClockQueue.attach(self.requests, clock, self.thread)
         self.requests.__class__ = ClockQueue
-        self.requests.attach(clock, self.thread)
 
     monkeypatch.setattr(loop_module._ControlThread, "__init__", init)
 
