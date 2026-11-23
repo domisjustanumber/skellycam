@@ -143,8 +143,8 @@ task. Delete an item when its work is done. The PR that closes an item records t
   - The DirectShow open order of `sfn26` (item 1 of ADR-6T78) waits for a check on the cameras.
   - The UI does not show the `start_failure` warning item.
   - Not verified: real cameras, Linux, macOS and the installer build.
-- **The certify run of skellycam.** The spec [`specs/certify.md`](../specs/certify.md) is draft 3, on
-  format 1.6.0 of the contract. The first code is in `skellycam/core/certify/` (section 19 of the
+- **The certify run of skellycam.** The spec [`specs/certify.md`](../specs/certify.md) is draft 3. The code
+  writes format 1.6.0 of the contract; section 3.6 moves it to format 1.7.0 (decided 2026-11-23, not built). The first code is in `skellycam/core/certify/` (section 19 of the
   spec), and a first real quick run was done on 2026-11-21. Open: the checks that are `not-run`
   `not-built` (the status line of the spec). The choices of the agents
   wait for the user: [ADR-KY81](entries/KY81-certify-spec-choices-of-the-agent.md) (the items that the
@@ -153,11 +153,11 @@ task. Delete an item when its work is done. The PR that closes an item records t
   with the open questions of section 14 of the spec.
 - **Certify report fields, decided 2026-11-23, not built**
   ([ADR-F6C3](entries/F6C3-decisions-of-the-user-on-the-certify-report-fields.md)). The fields, the
-  unit id and the kept logs are in section 3.5 of the spec, with the build order in 3.5.15 and the
-  tests T-CERT-77 to T-CERT-90. The user accepted the choices of the agent
+  kept logs are in section 3.5 of the spec, in the slim form of Q594, with the build order of 3.6.7 (Q626) and
+  the tests T-CERT-77 to T-CERT-90. The unit id is removed (Q595). The user accepted the choices of the agent
   ([ADR-NQ77](entries/NQ77-choices-of-the-certify-report-fields.md)) and the build order on 2026-11-23
   ([ADR-10HT](entries/10HT-acceptance-of-the-certify-report-field-choices-and-the-build-order.md)). The
-  build starts only after `dom/fix-lane-3` is merged into `dom/integration`.
+  build starts only after `dom/fix-lane-3` is merged into `dom/integration`; that merge is done (2026-11-23).
   - Q574 is closed: the skellycertify session changed its section 6 in its commit `cf9c7a2`, so the contract
     allows a local unit id. The user then removed the unit id (Q595 of
     [ADR-H2A0](entries/H2A0-decisions-of-the-user-on-the-certify-report-shape.md)), so skellycam does not use
@@ -166,22 +166,20 @@ task. Delete an item when its work is done. The PR that closes an item records t
   ([ADR-H2A0](entries/H2A0-decisions-of-the-user-on-the-certify-report-shape.md),
   [ADR-BW5M](entries/BW5M-decisions-of-the-user-on-the-two-verdicts-and-the-certify-test-set.md)). Section 3.6 of the spec holds
   the shape of quick and full, the two verdicts, the fixes B1 and the commit (first in the build order of 3.6.7),
-  and the tests T-CERT-91 to T-CERT-111. The choices of the agent wait for the user
-  ([ADR-MEE1](entries/MEE1-choices-of-the-certify-report-shape.md)), with question 17 of section 14 (the user asked for more detail on it; Q620 to Q623 decided the
-  questions 13 to 16, [ADR-G0AC](entries/G0AC-decisions-of-the-user-on-the-certify-verdict-questions.md)).
-  - Q626 and Q627 are decided ([ADR-63D9](entries/63D9-decisions-of-the-user-on-the-processors-the-build-order-and-the-certify-choices.md)).
-    The user refused Q625 (a name rule for Latin letters only); the any-language rule of 9.4 waits for Q628
-    ([ADR-M7JC](entries/M7JC-choices-of-the-any-language-camera-name-and-the-usb-capability.md)).
+  and the tests T-CERT-91 to T-CERT-132. Each question of this shape is decided (Q591 to Q629): the user
+  accepted the choices of the agent ([ADR-MEE1](entries/MEE1-choices-of-the-certify-report-shape.md),
+  [ADR-DBF8](entries/DBF8-choices-of-the-certify-names-verdicts-and-checks.md) by Q627 of
+  [ADR-63D9](entries/63D9-decisions-of-the-user-on-the-processors-the-build-order-and-the-certify-choices.md);
+  [ADR-M7JC](entries/M7JC-choices-of-the-any-language-camera-name-and-the-usb-capability.md) by Q628;
+  [ADR-H7PX](entries/H7PX-choices-of-the-usb-3-capability-on-macos-and-the-three-state-fact.md) by Q629).
   - The name rule of Q596 depends on a change of the wording of rule 16 of section 6 of the contract, for the
     name of the list of known cameras, the fixed class texts and a name in any script. The contract owner decides
     it; it is pending. The relay already keeps a name in any script (the answer of the contract owner).
-  - Q628 is decided ([ADR-BG8P](entries/BG8P-decision-of-the-user-on-the-any-language-camera-name.md)). Not verified:
-    the hub flag of Windows on hardware (a Kiyo Pro on a USB 2 port), the kernel release of `bos_descriptors`
-    on Linux, and a read of the BOS on macOS without an open of the device.
-  - Q629 waits for the user ([ADR-H7PX](entries/H7PX-choices-of-the-usb-3-capability-on-macos-and-the-three-state-fact.md)):
-    the three-state USB 3 fact and the milder notice for `possible`. The user runs the probe
-    `decisions/scripts/probe_usb3_capability_macos.py` on a Mac with a USB 3 camera on a USB 3 port and on a
-    USB 2 port; its synthetic test samples are then replaced by the recorded output.
+  - Not verified: the hub flag of Windows on hardware (a Kiyo Pro on a USB 2 port), the kernel release of
+    `bos_descriptors` on Linux, and each macOS method of 3.6.13. The trial `<label>:usb3-trial` at the end of a
+    full run on macOS and Linux reports each method (Q629); after its reports show that the request to the camera
+    is safe or not, the user decides whether it moves to the detection or goes. There is no stand-alone probe:
+    certify is the only way that tests run on other systems (the user, Q629).
   - Later work, not specified: an optional question to the person, "What make and model is this?".
   - The sign-off checks `<label>:cycles`, `group:take-30`, `group:contention` and `group:open` (Q599, Q610), and
     `group:restore-after-kill` when the product keeps the "before" values on disk (Q608, Q615).

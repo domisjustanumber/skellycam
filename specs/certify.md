@@ -173,6 +173,7 @@ break a camera last [U]. The product restores the "before" values of each camera
 | E. Group, system, self-checks | full; quick: `self:hang-100ms` only, when the budget allows (4.1) [U] | Section 6: the group take at 30 fps, the contention, the disk check, the disk benchmark, the system facts. Section 7: the self-checks. They use fake cameras and do not touch a real camera. |
 | F. Risky checks | full | Section 8, in order of rising risk: the in-use check, the 60 fps modes, the sweeps and the Auto search at 60, the group take at 60 fps, the open and close cycles, and on macOS the endpoint-0 and device-open probes of 10.7 (steps 7 to 9), last. |
 | G. Re-check | both | Section 8.3. Quick: the state of each camera comes from the restore of its last close. Full: a plain open of each camera that did not hang. The phase runs also after a crash of an earlier phase. After a cancel it re-checks only the cameras that the run touched, at most 5 s each, and it gives only cleanup rows (8.3). |
+| G2. USB 3 trial | full, macOS and Linux | `<label>:usb3-trial` of 3.6.13: each method, the request to the camera last, then a new listing [U Q629]. |
 | H. Cleanup and record | both | Section 9.5; the record of checked models (2.5). Then the report. |
 
 The user accepts a full run of skellycam of 6 to 11 minutes [U]. Section 16 gives the estimates.
@@ -1711,7 +1712,7 @@ the agent are in [ADR-DBF8](../decisions/entries/DBF8-choices-of-the-certify-nam
   this list that the rule of 3.6.10 gives to the model.
 - The catalogue of 3.6.2 gets these rows at their levels. 3.6.8 counts them.
 
-#### 3.6.13 The USB 3 capability on each system [U Q624k, 63D9, Q628; macOS and the three-state fact: A, pending Q629]
+#### 3.6.13 The USB 3 capability on each system [U Q624k, 63D9, Q628, Q629]
 
 The user asked for the notice of a USB 3 camera on a USB 2 link on macOS and Linux too [U, ADR-63D9]. The notice
 needs two facts: the operating speed of the link (`usb_link`, read today by
@@ -1721,10 +1722,10 @@ pure USB 2 cameras also declare 0x0210. `details.cameras[]` gets one key [U Q628
 
 | Key | Type and values | Present (else) | Privacy |
 |---|---|---|---|
-| `usb3_capable` | `yes`, `no`, `possible`, `null` [A, pending Q629: was `true`, `false`, `null` in Q628] | always; `null` when no source below tells | a model fact |
-| `usb3_capable_source` | `os`, `list`, `bcd`, or `null` with `usb3_capable` `null` [A, pending Q629] | always | a closed name |
+| `usb3_capable` | `yes`, `no`, `possible`, `null` [U Q629; was `true`, `false`, `null` in Q628] | always; `null` when no source below tells | a model fact |
+| `usb3_capable_source` | `os`, `list`, `bcd`, or `null` with `usb3_capable` `null` [U Q629] | always | a closed name |
 
-**The order of the sources [A, pending Q629].** The first source that gives an answer sets the fact:
+**The order of the sources [U Q629].** The first source that gives an answer sets the fact:
 
 1. `os`: the fact of the system (the table below): `yes` or `no`.
 2. `list`: the field `usb3_capable` of the model in the list of known cameras (9.4): `yes` or `no`. Thus the
@@ -1737,38 +1738,74 @@ pure USB 2 cameras also declare 0x0210. `details.cameras[]` gets one key [U Q628
    lab cameras of 2026-11-23 [M, relayed]: the C922, the C930e and the generic camera present 2.00 (`no`); the
    Kiyo Pro presents 3.20 on its USB 3 link (`yes`). This source also serves Linux with no `bos_descriptors`.
 
-**The notice rule (each system) [U Q628; A, pending Q629 for `possible`].** `camera-usb3-on-usb2-link` fires when
+**The notice rule (each system) [U Q628, Q629].** `camera-usb3-on-usb2-link` fires when
 `usb3_capable` is `yes` and `usb_link` is `USB 2`. With `possible` on a USB 2 link, the milder notice
 `camera-maybe-faster-usb-port` fires, with the text "Camera <name> may support a faster USB port. If the
-computer has a USB 3 port (often blue), try it there." [A, pending Q629]. With `no` or `null`, no notice. A
+computer has a USB 3 port (often blue), try it there." [U Q629]. With `no` or `null`, no notice. A
 guess never gives the text of a fact.
 
 | System | Operating speed (today) | USB 3 capability | Uncertain |
 |---|---|---|---|
 | Windows | the connection information of the hub, `IOCTL_USB_GET_NODE_CONNECTION_INFORMATION_EX_V2`, bit 0 of its flags (`DeviceIsOperatingAtSuperSpeedOrHigher`) | bit 1 of the same flags (`DeviceIsSuperSpeedCapableOrHigher`); `usb_connection.py` already reads the flags word at offset 12 | [NV]: a check on hardware is open (a Kiyo Pro on a USB 2 port) |
 | Linux | sysfs `speed` of the USB device (Mbit/s: 480 is USB 2, 5000 or more is USB 3) | sysfs `bos_descriptors` of the USB device: the cached BOS of the device, a binary file, read-only for each user (`BIN_ATTR_RO`, mode 0444), present only when the device has a BOS. `usb3_capable` is `true` when it holds a SuperSpeed USB Device Capability (`bDevCapabilityType` 0x03) or a SuperSpeedPlus capability (0x0A), `false` when the file exists with neither, `null` when the file does not exist | The attribute came in 2024 (the ABI file says "March 2024"; probably kernel 6.9) [NV: the first release]. On an older kernel the BOS is not in sysfs: the `descriptors` file holds only the device and configuration descriptors, and a BOS request through usbfs (`/dev/bus/usb/BBB/DDD`) needs a control request and so write access to the node, which a normal user usually does not have [NV]. Then `usb3_capable` is `null`. The kernel reads the BOS only from a device with `bcdUSB` 0x0201 or higher, which each USB 3 device on a USB 2 link has. |
-| macOS | IORegistry property `USBSpeed` of the `IOUSBHostDevice` (`ioreg -a -r -c IOUSBHostDevice`); 3 is high speed, 4 or more is SuperSpeed | The BOS of the device through one standard GET_DESCRIPTOR(BOS) request on the default pipe, through the IOUSBLib device interface, with no open of the device (method 2 below) [A, pending Q629]; else the known list; else `bcdUSB` | [NV] on each point: the probe of this section answers them on a Mac |
+| macOS | IORegistry property `USBSpeed` of the `IOUSBHostDevice` (`ioreg -a -r -c IOUSBHostDevice`); 3 is high speed, 4 or more is SuperSpeed | At detection none: the known list, then `bcd` (no request to the camera). The trial of the end of a full run tries the BOS request (method 2 below) [U Q629] | [NV] on each point, until the reports of the trial show it |
 
-**macOS: the methods, ranked [A, pending Q629].** The user asked: "try a little harder to build a test we can
-include into certify to find out this information" [U, ADR-BG8P]. Each method must not disturb the camera: no
-stream, no claim of an interface, no exclusive open. Everything below is [NV] until the user runs the probe.
+**The methods on macOS, ranked [U Q629].** The user asked: "try a little harder to build a test we can include into
+certify to find out this information" [U, ADR-BG8P]. He refused a stand-alone probe: "the certify process is the
+only way any tests are ever run on machines other than this one" [U Q629]. Each method must not disturb the
+camera: no stream, no claim of an interface, no exclusive open. Everything below is [NV] until the reports of
+the trial show it.
 
 | Rank | Method | What it tells | Rights and risk |
 |---|---|---|---|
 | 1 | The known list (`usb3_capable` of the model, 9.4) | exact for a listed model, on each system | none |
-| 2 | GET_DESCRIPTOR(BOS) on the default pipe through `IOUSBDeviceInterface::DeviceRequest`, with no `USBDeviceOpen` and no `USBDeviceOpenSeize`: a read of 5 bytes, then of the total length; it changes no state | exact (a SuperSpeed or SuperSpeedPlus device capability in the BOS) | No root. No entitlement for a program outside the App Sandbox; a sandboxed app needs `com.apple.security.device.usb` [NV]. Apple's documentation says that the device must be open for a device request, but libusb notes that Apple's USB Prober sends a descriptor request with no open; the request can fail with `kIOReturnNotOpen`, and then the fact is `null` [NV]. libusb itself calls `USBDeviceOpenSeize` before its descriptor request; certify must not, because a seize asks the driver of the camera to let go. The request is the kind that enumeration sends; certify sends it at detection, before any stream. The IOUSBLib interface is old but still works on Apple Silicon and Intel through libusb [NV]. Before the request, the code reads the vendor id, the product id and the release number through the same function table and compares them with the registry; on any difference it sends nothing, because a wrong slot of the table could reset the device. |
+| 2 | GET_DESCRIPTOR(BOS) on the default pipe through `IOUSBDeviceInterface::DeviceRequest`, with no `USBDeviceOpen` and no `USBDeviceOpenSeize`: a read of 5 bytes, then of the total length; it changes no state | exact (a SuperSpeed or SuperSpeedPlus device capability in the BOS) | No root. No entitlement for a program outside the App Sandbox; a sandboxed app needs `com.apple.security.device.usb` [NV]. Apple's documentation says that the device must be open for a device request, but libusb notes that Apple's USB Prober sends a descriptor request with no open; the request can fail with `kIOReturnNotOpen` [NV]. libusb itself calls `USBDeviceOpenSeize` before its descriptor request; certify must not, because a seize asks the driver of the camera to let go. The IOUSBLib interface is old but still works on Apple Silicon and Intel through libusb [NV]. |
 | 3 | `bcdUSB` with the running link (`ioreg`) | `no` (0x0200, 0x0201) or `possible` (0x0210 and higher) on a USB 2 link; `yes` on a SuperSpeed link | none (a registry read) |
-| 4 | The IORegistry keys of the `IOUSBHostDevice` (`ioreg -a -l -r -c IOUSBHostDevice`): `USBSpeed`, `UsbLinkSpeed`, `bcdUSB`, and any key with "BOS", "SuperSpeed" or "Capab" in its name | today only the running speed; no documented key gives the capability; the probe lists each such key name, in case macOS has one | none |
+| 4 | The IORegistry keys of the `IOUSBHostDevice` (`ioreg -a -l -r -c IOUSBHostDevice`): `USBSpeed`, `UsbLinkSpeed`, `bcdUSB`, and any key with "BOS", "SuperSpeed" or "Capab" in its name | today only the running speed; no documented key gives the capability; the trial records if such a key exists | none |
 | 5 | `system_profiler -json SPUSBDataType` | its "speed" ("Up to 480 Mb/s") follows the running link, not the capability (an iPhone shows 10 Gb/s with a USB 3 cable and 480 Mb/s with a USB 2 cable); new macOS versions may lack `SPUSBDataType` | none; about 1 s to 10 s |
 
-**The probe.** `decisions/scripts/probe_usb3_capability_macos.py` (standard library only, Python 3.9 or later)
-tries each method and prints one JSON object for each attached USB video device: the USB id, the product text,
-the running link, `bcdUSB`, and the answer and the error class of each method. It prints no serial number, no
-location id and no registry path, opens no stream and never opens the device. Run it on a Mac from the repository
-root: `python3 decisions/scripts/probe_usb3_capability_macos.py`. The parsers have tests with synthetic samples:
-`decisions/scripts/tests/test_probe_usb3_capability_macos.py`. The user runs the probe with a USB 3 camera on a
-USB 3 port and on a USB 2 port (open work). Certify uses method 2 only when the probe shows that it answers and
-that the camera keeps working; until then macOS gives the list, then `bcd`.
+At detection, macOS uses the known list, then `bcd` (no request to the camera). Linux uses `bos_descriptors`, then
+the list, then `bcd`. The trial below tries each method.
+
+**The trial: `<label>:usb3-trial` [U Q629].** The user agreed: "The method trial runs inside certify: The
+three-state fact (yes, no, possible) and the milder notice for "possible" as before. On macOS and Linux, a
+record-only check at the end of a full run tries every method and reports each answer. The request to the camera
+runs last, followed by a check that the camera is still listed." [U Q629]
+
+- **Level and system.** `full` only, never `quick`. macOS and Linux only; Windows has the exact hub flag and no
+  trial. One row for the first unit of each model, as the camera block of 5.1 [A].
+- **Its place.** The very end of a full run: after phase G (each other check of the cameras has ended, and each
+  camera is released and restored), before phase H (2.3) [U Q629]. A camera that hung or wedged earlier in the run
+  gets no trial (2.3); its row is in `<label>:not-reached`.
+- **Its order inside.** First each method that sends nothing to the camera (macOS: the known list, `bcd`, the
+  IORegistry keys, `system_profiler`; Linux: `bos_descriptors`, the known list, `bcd` from sysfs `version`). Then,
+  as the last action of the trial, the request to the camera: on macOS method 2; on Linux one GET_DESCRIPTOR(BOS)
+  through usbfs (`USBDEVFS_CONTROL` on the node of the device, which needs write access; a normal user often has
+  none, and then the row has `PermissionError`) [U Q629; A: the Linux request].
+- **The guard.** Before the request, the code reads the vendor id, the product id and the release number of the
+  device through the same interface (macOS: the function table of `IOUSBDeviceInterface`; Linux: the cached device
+  descriptor that a read of the usbfs node gives with no request) and compares them with the registry (macOS) or
+  sysfs (Linux). On any difference it sends nothing and writes `FunctionTableNotVerified` [U Q629].
+- **The listing after.** After the request, one new device listing (macOS `ioreg`; Linux sysfs) records if the
+  camera is still listed with the same USB id at the same place [U Q629]. When it is not, the row has
+  `still_listed` `false`, and the notice `camera-gone-after-usb-trial` tells the person: "Camera <name> stopped
+  answering after the last check of the run. Unplug it and plug it in again." [A: the text].
+- **It fails nothing [U Q629].** The row is `record-only`, with the `module` of its model, in no gate, and it
+  feeds no verdict: `usb3_capable` and the notices of detection do not change in the run.
+- **Its numbers [A].** `os_fact` (`yes`, `no` or `null`; Linux `bos_descriptors`), `list` (`yes`, `no`,
+  `null`), `bcd` (`yes`, `no`, `possible`, `null`), `ioreg_capability_key` (macOS; `true` when a key name of
+  method 4 exists, else `false`), `system_profiler_mbps` (macOS; 480, 5000, 10000, 20000 or `null`),
+  `bos_request` (`yes`, `no`, `null`), `still_listed` (`true`, `false`), and for each method that failed
+  `<method>_error` with the class name of the error from a fixed list (`PermissionError`, `TimeoutError`,
+  `OSError`, `NotOpen`, `FunctionTableNotVerified`, `NoBosDescriptor`, `PlugInNotCreated`, `InterfaceNotFound`,
+  `NotSupported`). No free text, no serial number, no location id, no path, no product text.
+- **Its future.** When the reports of the trial show that the request is safe (each camera still listed, no
+  fault) or not, the user decides in a later decision whether the request moves to the detection, or whether the
+  trial goes [U Q629].
+- **No stand-alone probe [U Q629].** The script `decisions/scripts/probe_usb3_capability_macos.py` of the
+  previous commit and its tests are removed [A]: the rules of `AGENTS.md` put code that a test runs in `tools/`,
+  and the certify code will own these parsers. The synthetic samples of its tests are the samples of T-CERT-114.
+- **Time.** About 2 s for each model on Linux and up to 15 s on macOS (with `system_profiler`) [NV].
 
 Sources for macOS (read on 2026-11-23, as data): the libusb darwin backend
 (`https://github.com/libusb/libusb/blob/master/libusb/os/darwin_usb.c`: "According to Apple's documentation the
@@ -1796,9 +1833,13 @@ layouts of the specifications and are marked as such [NV until a recording repla
   USB 2.0 Extension capability `07 10 02 06 00 00 00`, then a SuperSpeed capability `0A 10 03 00 0E 00 01 0A FF
   07`: `usb3_capable` `true` and the notice; the same with only the USB 2.0 Extension (the header set to its length): `false`, no notice; no
   `bos_descriptors` file: `null`, no notice.
-- macOS: the samples of the probe tests (a USB 3 camera on a USB 2 link with `bcdUSB` 0x0210, a USB 2 camera
-  with 0x0200, a BOS with and without a SuperSpeed capability): `possible` and the milder notice with no BOS
-  answer, `yes` and the notice with the BOS answer, `no` and no notice for 0x0200.
+- macOS, synthetic: an `ioreg -a -l` plist with a Kiyo Pro (`idVendor` 0x1532, `idProduct` 0x0E05, `bcdUSB`
+  0x0210, `USBSpeed` 3, `UsbLinkSpeed` 480000000, a child of `bInterfaceClass` 14, a serial and a `locationID`),
+  a C922 (`bcdUSB` 0x0200, `USBSpeed` 3) and a keyboard (class 3): two video devices; the Kiyo Pro gives
+  `possible` and the milder notice at detection; the C922 gives `no`; no serial and no location is in the report.
+  A `system_profiler -json` sample with `"speed": "Up to 480 Mb/s"` gives `system_profiler_mbps` 480. The BOS
+  bytes of the Linux bullet give `bos_request` `yes`; the bytes `05 0F 08 00 01 03 10 0A` (SuperSpeedPlus only,
+  shortened) give `yes`; a device descriptor in place of a BOS gives `null` with `NoBosDescriptor`.
 - Each system: a known model with `usb3_capable` `true` in the list and no system fact: `yes` (`list`).
 
 **A wider USB speed test? [U Q628, M7JC 11].** The recommendation: no streaming throughput test. The inventory already holds
@@ -2526,8 +2567,8 @@ package:
 ```
 
 - A key is a USB id `vvvv:pppp` in lower-case hex. A name passes the filter and has at most 60 characters. The
-  optional field `usb3_capable` (`true` or `false`) gives the USB 3 capability of the model for 3.6.13 [A,
-  pending Q629]: the seed is the Kiyo Pro `true`, the C922 and the C930e `false` [M, lab data of 2026-11-23,
+  optional field `usb3_capable` (`true` or `false`) gives the USB 3 capability of the model for 3.6.13 [U
+  Q629]: the seed is the Kiyo Pro `true`, the C922 and the C930e `false` [M, lab data of 2026-11-23,
   relayed]. A test checks the file (T-CERT-100).
 - The generic id `4c4a:4a55` has no entry, because many different cameras share it. A camera with such a shared
   generic id gets the name of rule 3. A pass of one camera with a shared generic id never proves that another
@@ -3273,9 +3314,9 @@ important is first.
 20. Decided (Q628, [ADR-BG8P](../decisions/entries/BG8P-decision-of-the-user-on-the-any-language-camera-name.md)), except the macOS part, which Q629 replaces: the any-language name rule of 9.4 (the firmware text only, the filter of the relay set with the direction
     marks removed, the cut at 60 code points, the spoof and short-name rules) and the USB 3 capability of 3.6.13
     (the hub flags on Windows, `bos_descriptors` on Linux).
-21. Q629: the three-state fact `usb3_capable` (`yes`, `no`, `possible`) with its source, the order `os`, `list`,
-    `bcd`, the field `usb3_capable` of the known list, the milder notice for `possible` on a USB 2 link, and the
-    macOS method 2 (the BOS request with no open) once the probe shows that it is safe (3.6.13). Yes?
+21. Decided (Q629, revised): the three-state fact, the source order, the known-list field, the milder notice,
+    and the trial `<label>:usb3-trial` at the end of a full run on macOS and Linux (3.6.13). The user refused a
+    stand-alone probe.
 
 ## 15. Reason codes (proposed `skellycam/REASON_CODES.md`) [A]
 
@@ -3329,6 +3370,8 @@ of a product failure gives the product code as its reason, with one exception: t
 | `not-applicable`, `no-reference` | macOS probes (10.7) | The listing found no object or format for this approach; the evidence file has no JPEG reference for the model. |
 | `prior-failure`, `prior-check-failed` | any, `<label>:not-reached` | The camera hung or failed earlier; a check that this check needs did not pass. Both are in `skellycam/REASON_CODES.md` (3.6.1). |
 | `mkv-not-readable`, `mkv-frames-differ`, `memory-low`, `shm-too-small`, `report-rules` | checks of 3.6.12; `report-rules` also in `evidence.reasons` | The MKV does not open through the reader of the product; its frame count is not the frame count of the take; the free memory, or the shared-memory mount on Linux, is below the need of the rings; the report breaks a privacy or form rule. |
+| `camera-gone-after-usb-trial` | notice [C 3.8] | 3.6.13: the camera is not listed after the request of the trial. Text: "Camera <name> stopped answering after the last check of the run. Unplug it and plug it in again." |
+| `PermissionError`, `TimeoutError`, `OSError`, `NotOpen`, `FunctionTableNotVerified`, `NoBosDescriptor`, `PlugInNotCreated`, `InterfaceNotFound`, `NotSupported` | `numbers` of `<label>:usb3-trial` (`<method>_error`) | The class of the error of one method of the trial (3.6.13). |
 | `camera-maybe-faster-usb-port` | notice [C 3.8] | 3.6.13, `usb3_capable` `possible` on a USB 2 link. Text: "Camera <name> may support a faster USB port. If the computer has a USB 3 port (often blue), try it there." |
 | `camera-usb3-on-usb2-link` | notice [C 3.8] | Text: "Camera <name> is a USB 3 camera on a USB 2 port. Plug it into a USB 3 port (often blue) if the computer has one." |
 | `not-decided-one-model` | `details.pipeline.reason` | A pipeline check failed, and with one model only the run cannot tell the pipeline from the camera (3.6.10). |
@@ -3531,9 +3574,13 @@ tests only the self-check.
 | T-CERT-126 | 3 OS. No camera; a refused run (`cameras-busy`). | No pipeline item, and no row has a `module` (3.6.10). |
 | T-CERT-127 | 3 OS. The record key of two cameras with no USB id and two OS display names, one of them in CJK. | Two rows `nousb:<raw name>`; no row is keyed by `Camera (no USB id)`; neither raw name is in the report (2.5). |
 | T-CERT-128 | 3 OS. A quick and a full report of 4 good fakes. | No `pass` row holds a count of 0; no `exposure_set`; no `luma_at_m7`; `details.pipeline` has no `result`; `details.gates` has no item for a gate that is `not-run` only with `not-built`. |
+| T-CERT-129 | macOS and Linux fakes. A full run with two models and a spy on each call of the source and system layer. | `<label>:usb3-trial` runs after phase G and before phase H; the BOS request is the last call of the trial and of the camera checks; the trial is not in quick and not on Windows; one row for the first unit of each model. |
+| T-CERT-130 | macOS and Linux fakes. The guard: a fake interface whose vendor id, product id or release number differs from the registry or sysfs. | No request is sent; `bos_request` `null` and `bos_request_error` `FunctionTableNotVerified`. |
+| T-CERT-131 | macOS and Linux fakes. The listing after: a camera that stays listed; one that is gone after the request. | `still_listed` `true` and no notice; `still_listed` `false` and the notice `camera-gone-after-usb-trial` with the camera name; the row stays `record-only`; no gate and no item changes. |
+| T-CERT-132 | macOS and Linux fakes. The rows of the trial with each method answering, and with each method failing (no write access to usbfs, `kIOReturnNotOpen`, a missing `system_profiler`). | Each row is `record-only` with the `module` of its model and the keys of 3.6.13; each failure gives its class name in `<method>_error`; no row holds free text, a serial, a location id, a path or the product text; `usb3_capable` of `details.cameras` is the value of detection. |
 
 **The changes of 3.6 to the tests above [U Q591 to Q599, Q610 to Q618, A].** Where a row above and this list
-differ, this list is the rule. T-CERT-91 to T-CERT-128 are new. Q624 also changes T-CERT-61 to T-CERT-64:
+differ, this list is the rule. T-CERT-91 to T-CERT-132 are new. Q624 also changes T-CERT-61 to T-CERT-64:
 `self:scale-3` and `self:scale-12`; no `system:backend` and no `system:virtual-cameras`.
 
 - T-CERT-01: `total` counts no check with no code and counts `session:exit`; full: `risks` empty and the estimate
