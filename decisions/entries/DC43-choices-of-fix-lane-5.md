@@ -57,16 +57,13 @@ WSL Ubuntu 24.04, a copy of commit 0d0dfa054, uv 0.13.9, Python 3.13.18, the sta
 - The new test with the old harness fails on 1, 2 and 28 cores (`timed-out`). With `ClockQueue`: those four
   files and `test_restore.py` on 2 cores, 115 passed; the 18 test files that use the harness (no hardware) on
   4 cores, 335 passed, 9 skipped.
-- `test_t_cap_86_relay_sends_each_camera_on_its_own` fails on 2 cores with the old and the new harness ("not
-  ready in 15 s"). It passed on CI. This lane does not change it.
 - T-CAP-31 with `ClockQueue`: the check started at frame 181 (first 166), one frame after the frame of the
   test; `too_slow` came at its own t_a + 2.0275 s. With the new test rule it passes on 1, 2 and 28 cores.
 - A poll of the state each 5 ms of `removed_after_frame=150` on 2 cores: `waiting` then `dead`, 5 ms of real
   time apart; `ready` was not seen.
 - F1 fails on 2 and on 28 cores; with the join it passes.
-- Review round 1: the test of the kept wait fails with the old `give_work` (state `run`) and passes with the
-  new one. On 2 cores the four files and `test_restore.py` give 114 passed. Windows, the five changed test
-  files of the review: 163 passed.
+- Review round 1: the test of the kept wait fails with the old `give_work` and passes with the new one. 2 cores:
+  the four files and `test_restore.py`, 114 passed. Windows, the five test files of the review: 163 passed.
 
 ## Alternatives rejected
 
