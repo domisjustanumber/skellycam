@@ -1,7 +1,17 @@
 # H2A0 — Decisions of the user on the shape of the certify report
 
-**Status:** accepted, 2026-11-23 (user; questions Q591 to Q599 after the review of the certify report; the
-supervisor relayed the answers).
+**Status:** absorbed into
+[`specs/certify.md#35-report-fields-that-say-why-a-check-failed-u`](../../specs/certify.md#35-report-fields-that-say-why-a-check-failed-u),
+[`specs/certify.md#352-addition-1-the-commit-and-the-tree-state-u-q557`](../../specs/certify.md#352-addition-1-the-commit-and-the-tree-state-u-q557),
+[`specs/certify.md#3510-the-unit-id-removed-u-q595`](../../specs/certify.md#3510-the-unit-id-removed-u-q595),
+[`specs/certify.md#36-the-report-shape-of-quick-and-full-u-q591-to-q599-q608-to-q624`](../../specs/certify.md#36-the-report-shape-of-quick-and-full-u-q591-to-q599-q608-to-q624),
+[`specs/certify.md#361-rules-of-the-rows`](../../specs/certify.md#361-rules-of-the-rows),
+[`specs/certify.md#362-the-check-catalogue-for-each-level`](../../specs/certify.md#362-the-check-catalogue-for-each-level),
+[`specs/certify.md#363-the-details-objects`](../../specs/certify.md#363-the-details-objects),
+[`specs/certify.md#364-the-full-report-is-not-a-production-sign-off-yet-u-q599-q610`](../../specs/certify.md#364-the-full-report-is-not-a-production-sign-off-yet-u-q599-q610),
+[`specs/certify.md#94-privacy-and-camera-names-u-a`](../../specs/certify.md#94-privacy-and-camera-names-u-a),
+2026-11-23 (commit to dom/certify-4; was accepted, 2026-11-23 (user; questions Q591 to Q599 after the review
+of the certify report; the supervisor relayed the answers)).
 
 ## Decision
 

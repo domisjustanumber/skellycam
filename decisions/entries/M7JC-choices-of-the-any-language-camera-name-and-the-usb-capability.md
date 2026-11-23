@@ -1,7 +1,11 @@
 # M7JC — Choices of the agent for the camera name in any language and the USB 3 capability
 
-**Status:** accepted, 2026-11-23 (user; Q628 of ADR-BG8P, except item 10, which ADR-H7PX replaces; commit to
-dom/certify-4; was proposed, 2026-11-23 (agent)).
+**Status:** absorbed into
+[`specs/certify.md#363-the-details-objects`](../../specs/certify.md#363-the-details-objects),
+[`specs/certify.md#3613-the-usb-3-capability-on-each-system-u-q624k-63d9-q628-macos-and-the-three-state-fact-a-pending-q629`](../../specs/certify.md#3613-the-usb-3-capability-on-each-system-u-q624k-63d9-q628-macos-and-the-three-state-fact-a-pending-q629),
+[`specs/certify.md#94-privacy-and-camera-names-u-a`](../../specs/certify.md#94-privacy-and-camera-names-u-a),
+2026-11-23 (commit to dom/certify-4; was accepted, 2026-11-23 (user; Q628 of ADR-BG8P, except item 10, which
+ADR-H7PX replaces; commit to dom/certify-4; was proposed, 2026-11-23 (agent))).
 
 ## Decision
 

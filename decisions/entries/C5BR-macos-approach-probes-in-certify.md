@@ -1,6 +1,8 @@
 # C5BR — macOS: certify tries each approach for exposure and for the camera's JPEG
 
-**Status:** accepted, 2026-11-20 (user, relayed by the supervisor).
+**Status:** absorbed into
+[`specs/certify.md#107-macos-the-approach-probes-for-exposure-and-for-the-cameras-jpeg-u-a`](../../specs/certify.md#107-macos-the-approach-probes-for-exposure-and-for-the-cameras-jpeg-u-a),
+2026-11-23 (commit to dom/certify-4; was accepted, 2026-11-20 (user, relayed by the supervisor)).
 
 ## Decision
 

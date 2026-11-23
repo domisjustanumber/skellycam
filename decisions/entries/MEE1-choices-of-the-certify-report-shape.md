@@ -1,7 +1,9 @@
 # MEE1 — Choices of the agent for the shape of the certify report
 
-**Status:** accepted, 2026-11-23 (user; Q627 of ADR-63D9, except item 18, which ADR-M7JC replaces; commit to
-dom/certify-4; was proposed, 2026-11-23 (agent)).
+**Status:** absorbed into
+[`specs/certify.md#certify-specification-what-a-certify-run-of-skellycam-measures-draft-3`](../../specs/certify.md#certify-specification-what-a-certify-run-of-skellycam-measures-draft-3),
+2026-11-23 (commit to dom/certify-4; was accepted, 2026-11-23 (user; Q627 of ADR-63D9, except item 18, which
+ADR-M7JC replaces; commit to dom/certify-4; was proposed, 2026-11-23 (agent))).
 
 ## Decision
 

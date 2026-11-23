@@ -1,7 +1,13 @@
 # BW5M — Decisions of the user on the two verdicts, the gate not complete and the certify test set
 
-**Status:** accepted, 2026-11-23 (user; questions Q610 to Q618 after the second pass and the gap review of the
-certify report; the supervisor relayed the answers and Q608, Q609).
+**Status:** absorbed into
+[`specs/certify.md#364-the-full-report-is-not-a-production-sign-off-yet-u-q599-q610`](../../specs/certify.md#364-the-full-report-is-not-a-production-sign-off-yet-u-q599-q610),
+[`specs/certify.md#366-fixes-of-the-code-that-the-reviews-found`](../../specs/certify.md#366-fixes-of-the-code-that-the-reviews-found),
+[`specs/certify.md#3610-two-verdicts-the-pipeline-and-each-camera-model-u-q611`](../../specs/certify.md#3610-two-verdicts-the-pipeline-and-each-camera-model-u-q611),
+[`specs/certify.md#3611-changes-to-the-test-set-u-q612-to-q618`](../../specs/certify.md#3611-changes-to-the-test-set-u-q612-to-q618),
+[`specs/certify.md#63-the-disk-benchmark-u`](../../specs/certify.md#63-the-disk-benchmark-u),
+2026-11-23 (commit to dom/certify-4; was accepted, 2026-11-23 (user; questions Q610 to Q618 after the second
+pass and the gap review of the certify report; the supervisor relayed the answers and Q608, Q609)).
 
 ## Decision
 

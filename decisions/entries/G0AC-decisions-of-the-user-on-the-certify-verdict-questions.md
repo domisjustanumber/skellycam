@@ -1,7 +1,12 @@
 # G0AC — Decisions of the user on four questions of the certify report shape
 
-**Status:** accepted, 2026-11-23 (user; questions Q620 to Q623, the questions 13 to 16 of section 14 of the
-certify spec; the supervisor relayed the answer "Q620-Q623 agree").
+**Status:** absorbed into
+[`specs/certify.md#362-the-check-catalogue-for-each-level`](../../specs/certify.md#362-the-check-catalogue-for-each-level),
+[`specs/certify.md#3610-two-verdicts-the-pipeline-and-each-camera-model-u-q611`](../../specs/certify.md#3610-two-verdicts-the-pipeline-and-each-camera-model-u-q611),
+[`specs/certify.md#113-how-the-product-uses-it-u`](../../specs/certify.md#113-how-the-product-uses-it-u),
+[`specs/certify.md#115-from-a-report-to-a-release-u-a`](../../specs/certify.md#115-from-a-report-to-a-release-u-a),
+2026-11-23 (commit to dom/certify-4; was accepted, 2026-11-23 (user; questions Q620 to Q623, the questions 13
+to 16 of section 14 of the certify spec; the supervisor relayed the answer "Q620-Q623 agree")).
 
 ## Decision
 

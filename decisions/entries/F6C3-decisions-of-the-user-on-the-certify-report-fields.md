@@ -1,7 +1,11 @@
 # F6C3 — Decisions of the user on the certify report fields
 
-**Status:** accepted, 2026-11-23 (user; questions Q557 to Q559 after the analysis of 2026-11-21 of the
-certify report).
+**Status:** absorbed into
+[`specs/certify.md#35-report-fields-that-say-why-a-check-failed-u`](../../specs/certify.md#35-report-fields-that-say-why-a-check-failed-u),
+[`specs/certify.md#3510-the-unit-id-removed-u-q595`](../../specs/certify.md#3510-the-unit-id-removed-u-q595),
+[`specs/certify.md#3511-the-logs-of-the-last-run-u-q559-q572`](../../specs/certify.md#3511-the-logs-of-the-last-run-u-q559-q572),
+2026-11-23 (commit to dom/certify-4; was accepted, 2026-11-23 (user; questions Q557 to Q559 after the analysis
+of 2026-11-21 of the certify report)).
 
 ## Decision
 

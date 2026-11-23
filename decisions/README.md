@@ -40,7 +40,6 @@ These entries are `accepted`.
 | [SC3Y](entries/SC3Y-later-rulings-of-the-user-for-native-capture-on-linux-and-macos.md) | Later native capture rulings: widest macOS control route; named checks turn native on; restore may re-enable auto; spec owners | accepted |
 | [GVC0](entries/GVC0-certify-decisions-of-the-user.md) | Certify run of skellycam: levels, quick camera checks and 3 s take, camera summary list, rules that hold everywhere, fake cameras, functions, draft 1 answers | accepted |
 | [KG00](entries/KG00-certify-decisions-of-the-user-on-draft-2.md) | Certify decisions of the user on draft 2: C1 to C9 as recommended; OpenCV fallback for now; one check per model; cancel, progress, run order, exposure rule | accepted |
-| [C5BR](entries/C5BR-macos-approach-probes-in-certify.md) | macOS certify run tries each approach for exposure and for the camera's JPEG, for now; trimmed when one works | accepted |
 | [BVK7](entries/BVK7-certify-rulings-of-the-user-one-test-one-row.md) | Certify rulings of the user: one test one row, native gate at the base mode, macOS widest route, probes pass/fail, 29.97 is 30 | accepted |
 | [H0BQ](entries/H0BQ-user-rulings-of-the-spec-integration.md) | Spec integration rulings: summary item, progress of each check, re-check after a cancel, sequence gate, probe module, take error state, 30 s quick | accepted |
 | [2GS1](entries/2GS1-step-3a-choices-of-the-capture-code-and-its-fixes.md) | Supersedes S6HT, MA22, 6EKB, 037V, BM73, R60B, FTC3: step 3a choices; virtual by link; macOS timing step; loop, source, review and CI fixes | accepted |
@@ -51,18 +50,6 @@ These entries are `accepted`.
 | [XT31](entries/XT31-kit-adoption-choices-camera-media-check-and-fills.md) | Supersedes NMM1, 4A7H: kit adoption choices; the media check refuses PNG, GIF, WebP, SVG with an allow by path; index limit 24,000 | accepted |
 | [6T78](entries/6T78-choices-of-the-sfn26-integration.md) | Choices of the `sfn26` integration: OpenCV helpers stay ours, kept and dropped items, forms of the four ports, Rust removal | accepted |
 | [TFD7](entries/TFD7-search-limit-stop-rate-median-role-flag-and-restore-after-a-failed-loop.md) | Decisions B1, B2, B7 to B9 of 2026-11-21: search limit stays 20 s; median stop rate, role flag, no restart, restore after a failed loop (not built) | accepted |
-| [F6C3](entries/F6C3-decisions-of-the-user-on-the-certify-report-fields.md) | Q557 to Q559: eight report additions that say why a check failed, a salted unit id, the logs of the last run kept locally (not built) | accepted |
-| [NQ77](entries/NQ77-choices-of-the-certify-report-fields.md) | Choices for the report fields of `specs/certify.md` 3.5: names, places, vocabularies, unit id, log folder, size bounds, build order; T-CERT-77 to 90 | accepted |
-| [10HT](entries/10HT-acceptance-of-the-certify-report-field-choices-and-the-build-order.md) | Q572 to Q575: the NQ77 choices; `seconds` is the check time; ask skellycertify to allow the unit id; P3, P1, P2, P4 first, after fix lane 3 merges (not built) | accepted |
-| [H2A0](entries/H2A0-decisions-of-the-user-on-the-certify-report-shape.md) | Q591 to Q599: smoke-test quick, no not-built rows, not-reached row, slim 3.5, no unit id, camera names, two gate rows (not built) | accepted |
-| [BW5M](entries/BW5M-decisions-of-the-user-on-the-two-verdicts-and-the-certify-test-set.md) | Q610 to Q618: pipeline and model verdicts, gate not complete, one disk check, 30 cycles, spread record only (not built) | accepted |
-| [G0AC](entries/G0AC-decisions-of-the-user-on-the-certify-verdict-questions.md) | Q620 to Q623: quick keeps the clock rows on Linux and macOS; take and pipeline faults by model; a model pass needs the pipeline gate | accepted |
-| [493E](entries/493E-decisions-of-the-user-on-the-certify-check-drops-and-additions.md) | Q624a to Q624m: drops and merges of planned certify checks, scale at 3 and 12, six added checks and one notice (not built) | accepted |
-| [MEE1](entries/MEE1-choices-of-the-certify-report-shape.md) | Choices for the report shape of `specs/certify.md` 3.6: B1 row, not-built list, not-reached, limits, name filter, verdict rules, size bound | accepted |
-| [DBF8](entries/DBF8-choices-of-the-certify-names-verdicts-and-checks.md) | Choices for the checks of Q624 and the review fixes of `specs/certify.md` 3.6: strict name filter, model count, wedge rule, gates by module | accepted |
-| [63D9](entries/63D9-decisions-of-the-user-on-the-processors-the-build-order-and-the-certify-choices.md) | Q624g reversed (ring and idle self-checks on every processor), Q626 build order, Q627 accepts MEE1 and DBF8; Q625 refused | accepted |
-| [M7JC](entries/M7JC-choices-of-the-any-language-camera-name-and-the-usb-capability.md) | Choices for Q628 in `specs/certify.md` 9.4 and 3.6.13: any-language camera name from the firmware text, USB 3 capability on each system | accepted |
-| [BG8P](entries/BG8P-decision-of-the-user-on-the-any-language-camera-name.md) | Q628: the any-language camera name and the USB 3 capability of M7JC are accepted; macOS: build a test (not built) | accepted |
 
 ### Evidence
 

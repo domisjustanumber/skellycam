@@ -1,7 +1,13 @@
 # 10HT — The user accepts the choices of the certify report fields, the meaning of `seconds` and the build order
 
-**Status:** accepted, 2026-11-23 (user; the questions Q572 to Q575, to which the user answered "agree to all";
-commit to dom/certify-4).
+**Status:** absorbed into
+[`specs/certify.md#35-report-fields-that-say-why-a-check-failed-u`](../../specs/certify.md#35-report-fields-that-say-why-a-check-failed-u),
+[`specs/certify.md#351-common-rules-u-q572-q573`](../../specs/certify.md#351-common-rules-u-q572-q573),
+[`specs/certify.md#3510-the-unit-id-removed-u-q595`](../../specs/certify.md#3510-the-unit-id-removed-u-q595),
+[`specs/certify.md#3515-build-order-u-q572-q575`](../../specs/certify.md#3515-build-order-u-q572-q575),
+[`specs/certify.md#367-build-order-u-q627-dbf8-17`](../../specs/certify.md#367-build-order-u-q627-dbf8-17),
+2026-11-23 (commit to dom/certify-4; was accepted, 2026-11-23 (user; the questions Q572 to Q575, to which the
+user answered "agree to all"; commit to dom/certify-4)).
 
 ## Decision
 

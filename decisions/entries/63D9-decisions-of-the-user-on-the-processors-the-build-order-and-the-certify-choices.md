@@ -1,7 +1,14 @@
 # 63D9 — Decisions of the user on the self-checks of each processor, the build order and the certify choices
 
-**Status:** accepted, 2026-11-23 (user; a later answer to Q624g and the questions Q625 to Q627; the supervisor
-relayed the answer).
+**Status:** absorbed into
+[`specs/certify.md#36-the-report-shape-of-quick-and-full-u-q591-to-q599-q608-to-q624`](../../specs/certify.md#36-the-report-shape-of-quick-and-full-u-q591-to-q599-q608-to-q624),
+[`specs/certify.md#367-build-order-u-q627-dbf8-17`](../../specs/certify.md#367-build-order-u-q627-dbf8-17),
+[`specs/certify.md#3612-drops-and-additions-of-q624-u-q624a-to-q624m`](../../specs/certify.md#3612-drops-and-additions-of-q624-u-q624a-to-q624m),
+[`specs/certify.md#3613-the-usb-3-capability-on-each-system-u-q624k-63d9-q628-macos-and-the-three-state-fact-a-pending-q629`](../../specs/certify.md#3613-the-usb-3-capability-on-each-system-u-q624k-63d9-q628-macos-and-the-three-state-fact-a-pending-q629),
+[`specs/certify.md#7-self-checks-with-fake-cameras-phase-e-u-a`](../../specs/certify.md#7-self-checks-with-fake-cameras-phase-e-u-a),
+[`specs/certify.md#94-privacy-and-camera-names-u-a`](../../specs/certify.md#94-privacy-and-camera-names-u-a),
+2026-11-23 (commit to dom/certify-4; was accepted, 2026-11-23 (user; a later answer to Q624g and the questions
+Q625 to Q627; the supervisor relayed the answer)).
 
 ## Decision
 

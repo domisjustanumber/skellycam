@@ -1,7 +1,17 @@
 # DBF8 — Choices of the agent for the certify checks of Q624 and the fixes of the review
 
-**Status:** accepted, 2026-11-23 (user; Q627 of ADR-63D9, except items 2 and 9, which ADR-M7JC replaces;
-commit to dom/certify-4; was proposed, 2026-11-23 (agent)).
+**Status:** absorbed into
+[`specs/certify.md#25-checked-camera-models-and-the-local-record-u-a`](../../specs/certify.md#25-checked-camera-models-and-the-local-record-u-a),
+[`specs/certify.md#361-rules-of-the-rows`](../../specs/certify.md#361-rules-of-the-rows),
+[`specs/certify.md#362-the-check-catalogue-for-each-level`](../../specs/certify.md#362-the-check-catalogue-for-each-level),
+[`specs/certify.md#363-the-details-objects`](../../specs/certify.md#363-the-details-objects),
+[`specs/certify.md#367-build-order-u-q627-dbf8-17`](../../specs/certify.md#367-build-order-u-q627-dbf8-17),
+[`specs/certify.md#3610-two-verdicts-the-pipeline-and-each-camera-model-u-q611`](../../specs/certify.md#3610-two-verdicts-the-pipeline-and-each-camera-model-u-q611),
+[`specs/certify.md#3612-drops-and-additions-of-q624-u-q624a-to-q624m`](../../specs/certify.md#3612-drops-and-additions-of-q624-u-q624a-to-q624m),
+[`specs/certify.md#94-privacy-and-camera-names-u-a`](../../specs/certify.md#94-privacy-and-camera-names-u-a),
+[`specs/certify.md#115-from-a-report-to-a-release-u-a`](../../specs/certify.md#115-from-a-report-to-a-release-u-a),
+2026-11-23 (commit to dom/certify-4; was accepted, 2026-11-23 (user; Q627 of ADR-63D9, except items 2 and 9,
+which ADR-M7JC replaces; commit to dom/certify-4; was proposed, 2026-11-23 (agent))).
 
 ## Decision
 

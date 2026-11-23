@@ -1,7 +1,21 @@
 # NQ77 — Choices of the agent for the certify report fields
 
-**Status:** accepted, 2026-11-23 (user; Q572 of ADR-10HT; commit to dom/certify-4; was proposed, 2026-11-23
-(agent)).
+**Status:** absorbed into
+[`specs/certify.md#35-report-fields-that-say-why-a-check-failed-u`](../../specs/certify.md#35-report-fields-that-say-why-a-check-failed-u),
+[`specs/certify.md#351-common-rules-u-q572-q573`](../../specs/certify.md#351-common-rules-u-q572-q573),
+[`specs/certify.md#353-addition-2-the-failure-facts-u-q557`](../../specs/certify.md#353-addition-2-the-failure-facts-u-q557),
+[`specs/certify.md#355-addition-4-the-camera-inventory-u-q557`](../../specs/certify.md#355-addition-4-the-camera-inventory-u-q557),
+[`specs/certify.md#356-addition-5-frame-timing-u-q557-q594`](../../specs/certify.md#356-addition-5-frame-timing-u-q557-q594),
+[`specs/certify.md#357-addition-6-the-warnings-of-the-take-the-first-gap-the-exit-codes-u-q557`](../../specs/certify.md#357-addition-6-the-warnings-of-the-take-the-first-gap-the-exit-codes-u-q557),
+[`specs/certify.md#358-addition-7-the-cpu-during-the-open-and-the-take-u-q557-q594`](../../specs/certify.md#358-addition-7-the-cpu-during-the-open-and-the-take-u-q557-q594),
+[`specs/certify.md#359-addition-8-the-exposure-and-gain-context-u-q557-q572-q594`](../../specs/certify.md#359-addition-8-the-exposure-and-gain-context-u-q557-q572-q594),
+[`specs/certify.md#3510-the-unit-id-removed-u-q595`](../../specs/certify.md#3510-the-unit-id-removed-u-q595),
+[`specs/certify.md#3511-the-logs-of-the-last-run-u-q559-q572`](../../specs/certify.md#3511-the-logs-of-the-last-run-u-q559-q572),
+[`specs/certify.md#3512-size-of-the-report-u-q572-changed-by-q594-and-365`](../../specs/certify.md#3512-size-of-the-report-u-q572-changed-by-q594-and-365),
+[`specs/certify.md#3515-build-order-u-q572-q575`](../../specs/certify.md#3515-build-order-u-q572-q575),
+[`specs/certify.md#365-the-size-bound-u-q627-mee1-19`](../../specs/certify.md#365-the-size-bound-u-q627-mee1-19),
+2026-11-23 (commit to dom/certify-4; was accepted, 2026-11-23 (user; Q572 of ADR-10HT; commit to
+dom/certify-4; was proposed, 2026-11-23 (agent))).
 
 ## Decision
 

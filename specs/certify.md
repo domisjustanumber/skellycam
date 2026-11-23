@@ -1161,11 +1161,11 @@ the run against its budget of 30 s (4.1).
 A row holds its value, and `details.limits` holds its limit. A limit that is "not calibrated" in this spec stays
 "not calibrated" here.
 
-**`details.not_built` [U Q591, A].** `camera` holds the camera checks with no code, each without `<label>:` and
+**`details.not_built` [U Q591; Q627, MEE1 5].** `camera` holds the camera checks with no code, each without `<label>:` and
 with the word `base` in place of the mode of `<base>` (for example `exposure:base`), each name one time. `run`
 holds the group, system and self checks with no code. Both lists are sorted. A list with no name is `[]`.
 
-**`details.gates[]` [U Q597, A].** One item for each gate that is `fail`, or `not-run` for a reason other than
+**`details.gates[]` [U Q597; Q627, MEE1 15].** One item for each gate that is `fail`, or `not-run` for a reason other than
 `not-built` (a gate that only waits for a check with no code has no item: `details.not_built` tells it). Each
 item: `gate` (the name `<model>:gate` or `pipeline:gate`), `failed` (the
 full name of the first required check, in the order of `checks`, that is `fail`; else the first one that is not
@@ -2514,7 +2514,7 @@ text copied. Rule 16 of the contract says today that the package takes the name 
 device; the contract owner decides a change of its wording for the list name, the fixed class texts and any
 script (open work).
 
-**The list of known cameras [U Q596; the path, the form and the seed list are A].** One small data file in the
+**The list of known cameras [U Q596; the path and the form are A; the seed list is U Q627, DBF8 10].** One small data file in the
 package:
 `skellycam/core/camera/known_cameras.json`.
 

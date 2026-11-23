@@ -1,7 +1,11 @@
 # 493E — Decisions of the user on the drops and additions of the certify checks
 
-**Status:** accepted, 2026-11-23 (user; questions Q624a to Q624m, question 17 of section 14 of the certify spec;
-the supervisor relayed the answer).
+**Status:** absorbed into
+[`specs/certify.md#362-the-check-catalogue-for-each-level`](../../specs/certify.md#362-the-check-catalogue-for-each-level),
+[`specs/certify.md#3612-drops-and-additions-of-q624-u-q624a-to-q624m`](../../specs/certify.md#3612-drops-and-additions-of-q624-u-q624a-to-q624m),
+[`specs/certify.md#7-self-checks-with-fake-cameras-phase-e-u-a`](../../specs/certify.md#7-self-checks-with-fake-cameras-phase-e-u-a),
+2026-11-23 (commit to dom/certify-4; was accepted, 2026-11-23 (user; questions Q624a to Q624m, question 17 of
+section 14 of the certify spec; the supervisor relayed the answer)).
 
 ## Decision
 
