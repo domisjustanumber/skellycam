@@ -56,6 +56,7 @@ These entries are `accepted`.
 | [10HT](entries/10HT-acceptance-of-the-certify-report-field-choices-and-the-build-order.md) | Q572 to Q575: the NQ77 choices; `seconds` is the check time; ask skellycertify to allow the unit id; P3, P1, P2, P4 first, after fix lane 3 merges (not built) | accepted |
 | [H2A0](entries/H2A0-decisions-of-the-user-on-the-certify-report-shape.md) | Q591 to Q599: smoke-test quick, no not-built rows, not-reached row, slim 3.5, no unit id, camera names, two gate rows (not built) | accepted |
 | [BW5M](entries/BW5M-decisions-of-the-user-on-the-two-verdicts-and-the-certify-test-set.md) | Q610 to Q618: pipeline and model verdicts, gate not complete, one disk check, 30 cycles, spread record only (not built) | accepted |
+| [G0AC](entries/G0AC-decisions-of-the-user-on-the-certify-verdict-questions.md) | Q620 to Q623: quick keeps the clock rows on Linux and macOS; take and pipeline faults by model; a model pass needs the pipeline gate | accepted |
 
 ### Evidence
 

@@ -1009,7 +1009,7 @@ not repeated here. 3.6.10 gives the kind of each check (camera, pipeline or syst
 | `<label>:records:blocks-decode` | `decode_failures` | `frame-not-decodable` |
 
 On Linux and macOS, quick also has `clock:base`, `clock:before-arrival`, `clock:near-arrival` and one of
-`sequence` and `time-gaps` (10.6). Q593 did not move them (section 14, question 13).
+`sequence` and `time-gaps` (10.6). They stay in quick [U Q620] ([ADR-G0AC](../decisions/entries/G0AC-decisions-of-the-user-on-the-certify-verdict-questions.md)).
 
 **Quick, the run: five checks, and `session:exit` only after a fault of the exit.**
 
@@ -1479,7 +1479,7 @@ contract owner confirmed its form [C 3.7]:
   model, counts against that model: the pipeline has shown that it works. Its `module` is the name of that
   model.
 - (c) A pipeline check that fails on each tested unit, with two or more models tested, counts against the
-  pipeline: its `module` is the pipeline name, and it does not change the model items [A].
+  pipeline: its `module` is the pipeline name, and it does not change the model items [U Q622].
 - (d) A system check counts against the pipeline: its `module` is the pipeline name. A hang of the app, a fault of
   the disk, `session:exit` and each `self:*` and `system:*` check are system checks.
 - (e) With one model only (one or more units of it), a pipeline check that fails cannot be given to either part.
@@ -1500,13 +1500,13 @@ contract owner confirmed its form [C 3.7]:
 3. `pass`: each other case.
 
 **The model item.** The four rules of 3.4 apply to the checks whose `module` is the name of the model. A check
-given to the pipeline does not change a model item [A]. In `full`, 3.6.4 applies.
+given to the pipeline does not change a model item [U Q622]. In `full`, 3.6.4 applies.
 
 **The take when one camera stalls.** The stalled camera gets its B1 row or `<label>:records:rows-complete` `fail`
 (`missing-rows` or `stalled`): rule (b) or the product code gives it to its model. `group:take:finished` and
 `group:take:rate` are system checks. When one of them fails in the same take, it counts against that model, with
 the `module` of that model, when the take error names the camera (`take_error_camera`) or when exactly one camera
-of the take failed its `rows-complete`, and another model passed its `rows-complete` [A]. Else it counts against
+of the take failed its `rows-complete`, and another model passed its `rows-complete` [U Q621]. Else it counts against
 the pipeline.
 
 **Example: three models pass, one model fails.** Four cameras of four models. The Kiyo Pro gives JPEG frames
@@ -1529,7 +1529,7 @@ and the generic camera pass that check.
 **The local record [U Q611, A].** A run writes one row for the pipeline beside the rows of the models (2.5):
 `device` `"pipeline"`, with the backend, the OS key, the ABI, the level, `item` (the pipeline item) and, for
 `full`, `gate`. It turns nothing on by itself (11.3). The local pass of a model on Linux and macOS also needs a
-pipeline row of the same key with each `gate` value `pass` [A].
+pipeline row of the same key with each `gate` value `pass` [U Q623].
 
 #### 3.6.11 Changes to the test set [U Q612 to Q618]
 
@@ -2790,7 +2790,7 @@ no YAML library and must not add one for this [A]. The app never downloads it.
   `gate` = `pipeline:gate` (3.6.10).
 - **The local pass** is for each camera model: a row of the local record (2.5) with the model, the
   backend, the ABI and the current OS key, the level `full`, and each value of `gate` `pass`, and a pipeline row
-  (3.6.10) of the same key with each value of `gate` `pass` [A]. A row with `"sign-off": "not-built"` is no local
+  (3.6.10) of the same key with each value of `gate` `pass` [U Q623]. A row with `"sign-off": "not-built"` is no local
   pass (3.6.4) [U Q610]. A `quick` row never turns on native capture [A]. The source selection of [ux 4.9] reads this row, and
   it reads `controls` for the route of each control (2.5). Inside certify, the source reads no row
   (2.5).
@@ -2826,7 +2826,7 @@ no YAML library and must not add one for this [A]. The app never downloads it.
    - **Camera verified** for (device, backend, OS key, ABI): 3 valid `full` reports from 2 different
      systems in which `<model>:gate` is `pass`; or 1 valid `full` report of a maintainer
      (`source: maintainer`) in which `<model>:gate` is `pass` [U: the same gate as 11.3], and `pipeline:gate` is
-     `pass` in the same report (3.6.10) [A]. The row
+     `pass` in the same report (3.6.10) [U Q623]. The row
      also holds the result of each route of each control (`controls`). A `partial` item whose `gate`
      check is `pass` gives the row, with `not_passed` (11.2) [C 7.2]; a `skipped` item never does.
    - **Camera known-bad**: 2 valid reports from 2 systems with the same failed gate step and reason;
@@ -2978,16 +2978,13 @@ important is first.
 12. With the quick budget of 30 s (4.1), `self:hang-100ms` starts only when 10 s of the budget remain,
     so a quick run that checks a camera usually gives it `not-run` with `over-budget`; it always runs
     in `full`. Yes?
-13. Q593 did not move the clock checks: on Linux and macOS quick still has `clock:base`, `clock:before-arrival`,
-    `clock:near-arrival` and one of `sequence` and `time-gaps` (10.6). The review counts them as more than a
-    smoke test. Should they stay in quick (the recommendation: yes, they come from the same frames at no cost and
-    test the new native sources)?
-14. A take row has `module` = the name of a model when the take error names its camera or when exactly one
-    camera failed its `rows-complete` (3.6.10). Yes?
-15. A pipeline check that fails on each tested model counts against the pipeline and does not change the model
-    items (3.6.10 rule c). Yes?
-16. The local pass of a model on Linux and macOS also needs a pipeline row with each gate value `pass`, and a
-    verified camera row also needs `pipeline:gate` `pass` (3.6.10, 11.3, 11.5). Yes?
+13. Decided by the user on 2026-11-23 ([ADR-G0AC](../decisions/entries/G0AC-decisions-of-the-user-on-the-certify-verdict-questions.md)): Linux and macOS quick keeps its clock rows (Q620); a
+    failed group take counts against one model when one camera caused it (Q621); a pipeline check that fails on
+    each model leaves the model items unchanged (Q622); the local pass and the verified row of a model also need
+    `pipeline:gate` `pass` (Q623).
+14. Decided: Q621 (item 13).
+15. Decided: Q622 (item 13).
+16. Decided: Q623 (item 13).
 17. The gap review of 2026-11-23 proposed more changes that the user did not decide. The recommendation for each
     is "yes":
     1. Drop `system:backend` (`details.backend` holds it) and `system:virtual-cameras` (`detect` holds the count).
