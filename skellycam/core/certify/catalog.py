@@ -48,6 +48,7 @@ FULL_NOT_BUILT = (
 SYSTEM_NOT_BUILT = {"media-foundation": ("system:camera-apps",), "v4l2": ("system:kernel", "system:camera-access"),
                     "avfoundation": ("system:camera-access", "system:video-effects")}
 GATE_STEPS = ("opens", "mode", "rate", "native-jpeg", "timestamps", "sequence", "records", "no-hang")
+HANG_REASONS = ("hung", "crashed", "stalled")  # the reasons that fail `<model>:gate:no-hang` (3.6.1 B1)
 
 # The item groups of 3.4: Open, Rate and Records decide `fail`.
 FATAL = ("opens", "rate", "modes:granted", "records:rows-complete", "records:blocks-decode", "records:gaps-explained")
@@ -276,8 +277,9 @@ def gate_rows(model: str, units: list, module: str | None) -> list:
 
     rows = [_roll_up(f"{model}:gate:{step}", [row for unit in ran for row in required(unit, step)], module)
             for step in GATE_STEPS[:-1]]
+    # 3.6.1 B1: each `fail` row of the model; a `device-removed` row does not fail it (the person removed the camera)
     hang = next((row["reason"] for unit in units for row in unit.values()
-                 if row["result"] == "fail" and row["reason"] in ("hung", "crashed")), None)
+                 if row["result"] == "fail" and row["reason"] in HANG_REASONS), None)
     rows.append(dict(name=f"{model}:gate:no-hang", result="fail" if hang else "pass", reason=hang, module=module))
     rows.append(_roll_up(f"{model}:gate", rows, module))
     return rows

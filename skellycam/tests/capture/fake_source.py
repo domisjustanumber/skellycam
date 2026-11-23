@@ -244,6 +244,7 @@ class FakeScript:
     drop_at_window_end: bool = False  # the camera drops one frame when a rate window ends
     close_delay_s: float = 0.0  # the close of the source takes this long (clock time)
     exit_at: str | None = None  # "open", or "frame:<n>": the camera process ends there with os._exit(3)
+    on_arm: str | None = None  # after FakeLog.arm(), at the next frame: "stall", "exit" (os._exit(3)) or "remove"
     name: str | None = None  # the friendly name in the detection result; None: "Fake camera <index>"
     no_dht: bool = False  # each JPEG has no DHT segment, as many UVC cameras send it
     diagnostics: dict | None = None  # keys that `diagnostics()` adds to the null source keys and `frames`
@@ -259,6 +260,7 @@ class FakeLog:
         self.first_read_sample_ns = multiprocessing.Value("q", 0)
         self.hang_started_ns = multiprocessing.Value("q", 0)
         self.hang_armed = multiprocessing.Value("b", 0)
+        self.armed = multiprocessing.Value("b", 0)  # the event of `FakeScript.on_arm`
         self.events = []  # (name, clock ns, detail)
         self.settings = []  # each `changes` of set_controls, in order
         self.frames = {}  # frame number -> (arrival_ns, sample_ns), of the last open
@@ -269,6 +271,10 @@ class FakeLog:
 
     def arm_hang(self):
         self.hang_armed.value = 1
+
+    def arm(self):
+        """The event of `FakeScript.on_arm` comes at the next frame (also in a camera process)."""
+        self.armed.value = 1
 
     def names(self):
         return [event[0] for event in self.events]
@@ -669,6 +675,14 @@ class FakeSource:
         with self._lock:
             while not self._ended and self._place is not None:
                 k = self._next_sfn
+                if self.script.on_arm and self.log.armed.value:
+                    self.log.armed.value = 0
+                    if self.script.on_arm == "exit":
+                        os._exit(3)  # a camera process that ends without unwinding (a native crash)
+                    if self.script.on_arm == "stall":
+                        self._stop_after = k - 1
+                    else:  # "remove": the error of `removed_code` before frame k
+                        self._remove_after = k - 1
                 if self._stop_after is not None and k > self._stop_after:
                     return
                 if self._due(k) > t_ns or (self._stop_ns is not None and self._due(k) > self._stop_ns):

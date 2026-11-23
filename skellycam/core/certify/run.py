@@ -12,6 +12,7 @@ import contextlib
 import dataclasses
 import datetime
 import getpass
+import json
 import logging
 import multiprocessing
 import os
@@ -57,6 +58,8 @@ QUESTIONS = [{"section": None, "id": "lit-as-usual", "text": "Was the room lit a
 QUESTION_FULL = {"section": None, "id": "camera-ok-after",
                  "text": "Do all the cameras still work in other programs after the run?"}
 SEMVER = re.compile(r"^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-[0-9A-Za-z.-]+)?(?:\+[0-9A-Za-z.-]+)?$")
+COMMIT = re.compile(r"[0-9a-f]{40}")
+BUILD_INFO = Path(__file__).resolve().parents[2] / "build_info.json"  # 3.5.2: `skellycam/build_info.json` (P7)
 
 
 # ---------------------------------------------------------------------------
@@ -992,13 +995,37 @@ def _write_record(rows, context, level, summary, checks_path):
         catalog.write_record(checks_path, out)
 
 
+def read_build_info(path) -> tuple:
+    """3.5.2: (commit, tree_modified) from the build file that the wheel build writes (P7); (None, None) with no
+    file, a file that does not parse or a file of another form. A run never reads git."""
+    try:
+        data = json.loads(Path(path).read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return None, None
+    commit = data.get("commit") if isinstance(data, dict) else None
+    modified = data.get("tree_modified") if isinstance(data, dict) else None
+    if isinstance(commit, str) and COMMIT.fullmatch(commit) and isinstance(modified, bool):
+        return commit, modified
+    return None, None
+
+
+def evidence_reasons(version, commit, tree_modified, reasons) -> list:
+    """C 7.1: `no-version`, `no-commit` and `modified-tree` only when they apply (3.5.2), then the reasons of the
+    run, each one time."""
+    common = (["no-version"] if not SEMVER.match(version) else []) + (
+        ["no-commit"] if not (isinstance(commit, str) and COMMIT.fullmatch(commit)) else []) + (
+        ["modified-tree"] if tree_modified is not False else [])
+    return list(dict.fromkeys(common + list(reasons)))
+
+
 def _report(level, created, out, backend) -> dict:
     version = _version()
     context = out["context"]
-    evidence = (["no-version"] if not SEMVER.match(version) else []) + ["no-commit", "modified-tree"] + out["reasons"]
+    commit, tree_modified = read_build_info(BUILD_INFO)
+    evidence = evidence_reasons(version, commit, tree_modified, out["reasons"])
     report = {
         "schema": SCHEMA,
-        "package": {"name": "skellycam", "version": version, "commit": None, "tree_modified": None},
+        "package": {"name": "skellycam", "version": version, "commit": commit, "tree_modified": tree_modified},
         "kind": level,
         "created_utc": created,
         "host": _host(),
@@ -1006,7 +1033,7 @@ def _report(level, created, out, backend) -> dict:
         "cleanup": out["cleanup"],
         "details": {"backend": backend, "os_key": context.os_key if context else None,
                     "abi": context.abi if context else None},
-        "evidence": {"valid": not evidence, "reasons": list(dict.fromkeys(evidence))},
+        "evidence": {"valid": not evidence, "reasons": evidence},
     }
     summary = [{k: v for k, v in item.items() if not k.startswith("_")} for item in out["summary"]]
     if summary:
