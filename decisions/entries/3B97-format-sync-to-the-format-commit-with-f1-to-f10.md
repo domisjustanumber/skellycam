@@ -1,9 +1,21 @@
 # 3B97 — Format sync: skellycam follows the format commit that holds F-1 to F-10
 
-**Status:** accepted, 2026-11-21 (user; "yes" to each of the nine questions, items 2 and 4 to 10;
+**Status:** absorbed into
+[`specs/recorder.md#0-how-to-read-this-spec`](../../specs/recorder.md#0-how-to-read-this-spec),
+[`specs/recorder.md#66-the-manifest`](../../specs/recorder.md#66-the-manifest),
+[`specs/recorder.md#122-test-list`](../../specs/recorder.md#122-test-list),
+[`specs/recorder.md#123-conformance-check-against-skellyfileformat`](../../specs/recorder.md#123-conformance-check-against-skellyfileformat),
+[`specs/recorder.md#13-proposed-format-changes-one-list-for-the-recorder-and-the-player`](../../specs/recorder.md#13-proposed-format-changes-one-list-for-the-recorder-and-the-player),
+[`specs/player.md#0-how-to-read-this-spec`](../../specs/player.md#0-how-to-read-this-spec),
+[`specs/player.md#62-the-manifest`](../../specs/player.md#62-the-manifest),
+[`specs/player.md#66-rows-the-row-crc-and-the-footer`](../../specs/player.md#66-rows-the-row-crc-and-the-footer),
+[`specs/player.md#67-missing-rows-placeholders-and-the-short-file-m1-to-m5-m9`](../../specs/player.md#67-missing-rows-placeholders-and-the-short-file-m1-to-m5-m9),
+[`specs/player.md#73-the-frame-choice-sff-783-e4-m9-agent-20-agent-21`](../../specs/player.md#73-the-frame-choice-sff-783-e4-m9-agent-20-agent-21),
+[`specs/player.md#123-test-list`](../../specs/player.md#123-test-list),
+2026-11-23 (commit to dom/format-sync; was accepted, 2026-11-21 (user; "yes" to each of the nine questions, items 2 and 4 to 10;
 commit to dom/format-sync; was proposed, 2026-11-21 (an agent made these choices to bring the
 recorder, the player, the specs and the test adapter in line with skellyfileformat commit
-`c1028ef185be86f0ac6ccf7f9ac2ce76def13f2d`; branch `dom/format-sync`)).
+`c1028ef185be86f0ac6ccf7f9ac2ce76def13f2d`; branch `dom/format-sync`))).
 
 ## Decision
 
