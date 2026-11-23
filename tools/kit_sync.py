@@ -40,7 +40,8 @@ not fill in yet.
   text when the local text did not change. It keeps a local change when the kit did not change the
   unit. It refuses when both changed, or when a unit with no hash has a different local text. A copy
   of the kit file with its placeholders not filled in is not a change. A refusal prints the
-  difference and writes nothing. ``--replace UNIT`` writes the kit text for that
+  difference and writes nothing. When the pull writes a new ``tools/kit_sync.py``, the new tool
+  runs the pull once more, so that it can write the state that it knows. ``--replace UNIT`` writes the kit text for that
   unit. Then the tool writes the commit and the hashes.
 - ``propose`` writes each changed unit into the kit working tree, with the values changed back to
   their placeholders. It refuses when the kit HEAD changed the unit after the commit in
@@ -65,6 +66,7 @@ import argparse
 import difflib
 import hashlib
 import json
+import os
 import re
 import shutil
 import subprocess
@@ -78,6 +80,7 @@ MANIFEST = "manifest.toml"
 CONFIG = "kit.toml"
 STATE_HEADER = "# The table [kit] is written by tools/kit_sync.py pull and propose. Do not edit it."
 STATE_TABLES = ("[kit]", "[kit.hashes]", "[kit.pending]")
+RERUN = "KIT_SYNC_RERUN"  # set for the second run of pull, after a pull wrote a new kit_sync.py
 
 MARKER = re.compile(
     r"^[ \t]*(?:<!--[ \t]*(?:kit:(?P<html>[a-z0-9-]+)|(?P<html_end>/kit))[ \t]*-->"
@@ -209,16 +212,18 @@ def placeholder(name: str) -> str:
 
 
 def value_pattern(values: dict[str, str]) -> re.Pattern[str] | None:
-    """A value as a whole token: not a part of a longer word, path or name. The longest value wins.
+    """A value as a whole token: not a part of a longer word or file name. The longest value wins.
 
-    A value with a / is a path. It can follow a /, for example in the link target ../../<value>.
+    A / ends a token, so a value is also found as a part of a path or a URL, for example in
+    ../../<value> or https://github.com/<owner>/<value>/blob/... Then propose finds a value of the
+    repository there, and refuses it unless the kit text has its placeholder at that place.
     """
     if not values:
         return None
 
     def token(value: str) -> str:
-        before = (r"(?<![\w.-])" if "/" in value else r"(?<![\w./-])") if re.match(r"\w", value[0]) else ""
-        after = r"(?![\w/-]|\.\w)" if re.match(r"\w", value[-1]) else ""
+        before = r"(?<![\w.-])" if re.match(r"\w", value[0]) else ""
+        after = r"(?![\w-]|\.\w)" if re.match(r"\w", value[-1]) else ""
         return before + re.escape(value) + after
 
     return re.compile("|".join(token(v) for v in sorted(set(values.values()), key=len, reverse=True)))
@@ -455,7 +460,9 @@ def check(root: Path) -> tuple[list[str], list[str]]:
     hashes, pending = state.get("hashes", {}), state.get("pending", {})
     errors: list[str] = []
     notes: list[str] = []
-    if state.get("values") != values_digest(config.get("values", {})):
+    if "values" not in state:
+        errors.append(f"kit: {CONFIG} has no hash of [values]: an older kit_sync.py wrote it; run `python tools/kit_sync.py pull` once more")
+    elif state["values"] != values_digest(config.get("values", {})):
         errors.append(f"kit: [values] of {CONFIG} changed after the last pull; run `python tools/kit_sync.py pull`")
     for uid, expected in sorted(hashes.items()):
         unit = unit_from_id(uid)
@@ -696,10 +703,15 @@ def main(argv: list[str]) -> int:
             print(f"kit: no {KIT_FOLDER}/{MANIFEST} found; clone https://github.com/freemocap/project to ../project or give --kit")
             return 1
         if args.command == "pull":
-            notes = pull(root, kit, args.commit, frozenset(args.replace))
-        else:
-            notes = propose(root, kit, args.units, args.new, frozenset(args.fill), frozenset(args.literal))
-        print("\n".join(notes))
+            own = root / "tools" / "kit_sync.py"
+            before = read_file(own)
+            print("\n".join(pull(root, kit, args.commit, frozenset(args.replace))))
+            if read_file(own) != before and os.environ.get(RERUN) != "1":
+                # The pull wrote a new kit_sync.py. The new tool can write more state, so it runs once more.
+                print("kit: the pull changed tools/kit_sync.py; the new tool runs the pull once more")
+                return subprocess.run([sys.executable, str(own), *argv[1:]], env={**os.environ, RERUN: "1"}, check=False).returncode  # noqa: S603
+            return 0
+        print("\n".join(propose(root, kit, args.units, args.new, frozenset(args.fill), frozenset(args.literal))))
         return 0
     except KitError as error:
         print(error)

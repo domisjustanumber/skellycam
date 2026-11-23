@@ -3,7 +3,8 @@
 
 Usage::
 
-    python tools/check_line_ends.py [ROOT]
+    python tools/check_line_ends.py [ROOT]             # check the index
+    python tools/check_line_ends.py --refresh [ROOT]   # write the CRLF files of a clean worktree again
 
 Each text file of each repository uses LF line ends, on each system. The line
 ``* text=auto eol=lf`` of ``.gitattributes`` makes git write LF into the index and into each
@@ -13,8 +14,12 @@ reports each file whose index text has a CRLF line end (``i/crlf``) or mixed lin
 ``.gitattributes`` sets to ``-text`` is not reported: for example a golden file that a test
 compares byte for byte. Such a line must come after the kit block of ``.gitattributes``. To repair the
 index, run ``git add --renormalize .`` and commit the result by itself. The pre-commit hook runs
-the tool on the index of the commit, and the doc test runs it in CI. Standard library and the
-git CLI only.
+the tool on the index of the commit, and the doc test runs it in CI.
+
+A working tree that git wrote before the rule keeps its CRLF files. ``--refresh`` writes each of
+them again from the index, with LF. It refuses when ``git diff HEAD`` shows a change of a tracked
+file, so that it cannot delete work: commit or stash the change first. A file that differs only by
+its line ends is not a change. The tool does not touch an untracked file. Standard library and the git CLI only.
 """
 
 from __future__ import annotations
@@ -27,25 +32,49 @@ from pathlib import Path
 BAD = ("i/crlf", "i/mixed")
 
 
+def git(root: Path, *args: str, stdin: bytes | None = None) -> bytes:
+    exe = shutil.which("git")
+    if exe is None:
+        raise SystemExit("git is not on the PATH")
+    out = subprocess.run([exe, "-C", str(root), *args], input=stdin, capture_output=True, check=True)  # noqa: S603
+    return out.stdout
+
+
+def eol_rows(root: Path) -> list[tuple[list[str], str]]:
+    """The fields (``i/...``, ``w/...``, ``attr/...``) and the path of each file of the index."""
+    rows = []
+    for row in git(root, "ls-files", "--eol", "-z").decode("utf-8").split("\0"):
+        info, _, path = row.partition("\t")
+        if path:
+            rows.append((info.split(), path))
+    return rows
+
+
 def crlf_files(root: Path) -> list[str]:
     """The paths of the index whose text has a CRLF line end or mixed line ends."""
-    git = shutil.which("git")
-    if git is None:
-        raise SystemExit("git is not on the PATH")
-    out = subprocess.run(  # noqa: S603
-        [git, "-C", str(root), "ls-files", "--eol", "-z"], capture_output=True, check=True
-    )
-    found = []
-    for row in out.stdout.decode("utf-8").split("\0"):
-        info, _, path = row.partition("\t")
-        fields = info.split()
-        if path and fields[0] in BAD and "attr/-text" not in fields:
-            found.append(path)
-    return sorted(found)
+    return sorted(p for f, p in eol_rows(root) if f[0] in BAD and "attr/-text" not in f)
+
+
+def refresh(root: Path) -> list[str]:
+    """Write each CRLF text file of a clean working tree again from the index. Return the paths."""
+    # git diff compares the text after the line-end rule, so a file that differs only by CRLF is not a change.
+    if git(root, "diff", "--name-only", "HEAD", "--").strip():
+        raise SystemExit("line ends: the worktree has changes; commit or stash them, then run --refresh again")
+    paths = sorted(p for f, p in eol_rows(root) if f[1] in ("w/crlf", "w/mixed") and "attr/-text" not in f)
+    if paths:
+        for path in paths:
+            (root / path).unlink()
+        git(root, "checkout", "--pathspec-from-file=-", "--pathspec-file-nul", stdin="\0".join(paths).encode("utf-8"))
+    return paths
 
 
 def main(argv: list[str]) -> int:
-    root = Path(argv[1]).resolve() if len(argv) > 1 else Path.cwd()
+    args = argv[1:]
+    if args[:1] == ["--refresh"]:
+        root = Path(args[1]).resolve() if len(args) > 1 else Path.cwd()
+        print(f"line ends: wrote {len(refresh(root))} files again with LF")
+        return 0
+    root = Path(args[0]).resolve() if args else Path.cwd()
     found = crlf_files(root)
     if found:
         print("\n".join(f"{p}: CRLF line ends in the index; run `git add --renormalize .`" for p in found))

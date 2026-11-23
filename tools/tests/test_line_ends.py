@@ -47,6 +47,28 @@ def test_crlf_and_mixed_files_are_reported_and_binary_files_are_not(tmp_path: Pa
     assert cle.main(["check_line_ends.py", str(tmp_path)]) == 1
 
 
+def test_refresh_writes_the_crlf_files_of_a_clean_worktree_again_and_refuses_a_change(tmp_path: Path) -> None:
+    git(tmp_path, "init", "-q")
+    git(tmp_path, "config", "core.autocrlf", "true")
+    (tmp_path / "a b.md").write_bytes(b"x\r\ny\r\n")
+    (tmp_path / "golden").mkdir()
+    (tmp_path / "golden" / "frame.txt").write_bytes(b"g\r\n")
+    (tmp_path / ".gitattributes").write_bytes(b"golden/** -text\n")
+    git(tmp_path, "add", "-A")
+    git(tmp_path, "commit", "-q", "-m", "before the rule")
+    (tmp_path / ".gitattributes").write_bytes(b"* text=auto eol=lf\ngolden/** -text\n")
+    git(tmp_path, "add", "-A")
+    git(tmp_path, "commit", "-q", "-m", "the rule")
+    (tmp_path / "a b.md").write_bytes(b"x\r\ny\r\nlocal\r\n")
+    with pytest.raises(SystemExit, match="commit or stash"):
+        cle.refresh(tmp_path)
+    git(tmp_path, "checkout", "--", "a b.md")
+    (tmp_path / "a b.md").write_bytes(b"x\r\ny\r\n")
+    assert cle.refresh(tmp_path) == ["a b.md"]
+    assert (tmp_path / "a b.md").read_bytes() == b"x\ny\n"
+    assert (tmp_path / "golden" / "frame.txt").read_bytes() == b"g\r\n"
+
+
 def test_the_gitattributes_rule_writes_lf_into_the_index(tmp_path: Path) -> None:
     git(tmp_path, "init", "-q")
     git(tmp_path, "config", "core.autocrlf", "true")
