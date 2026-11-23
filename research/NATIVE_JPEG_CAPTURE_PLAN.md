@@ -199,7 +199,8 @@ and `usb_cameras/suite/macos/RUNBOOK_PLAN.md`. Neither preset has run on hardwar
 | 5 | Recorder (writer thread, queue), Opus audio, manifest and capture info, camera identity from the OS. |
 | 6 | Canvas player, reading old recordings, the "upgrade recording" converter. |
 | 7 | Linux and macOS native capture, built from the phase 0 results. Can move earlier if the results arrive early and look clean. |
-| 8 | Remove the lockstep gate. **Not designed.** Dom: "we'll do that when we get there." |
+| 7b | H.264 and long-GOP study (Dom, 2026-11-23: placed here, before phase 8). Exploratory only, on its own branch `dom/h264-scrub-study` and worktree `skellycam-h264`, apart from all other work. Decided 2026-11-21 (Q526 to Q533): two tests of six streams; a seek is correct when the pixel hash equals frame N of a start-to-end decode; x264 defaults only; I-frames at CRF 18, 23 and 28 with SSIM; any decode route or dependency is allowed on that branch; a sidecar index from one scan. Open: questions Q534 to Q539 were asked and not answered; ask them again at the start. Nothing is built. |
+| 8 | Remove the lockstep gate. **Not designed.** Dom: "we'll do that when we get there." First step of the stage (Dom, 2026-11-23): review `research/usb_cameras/docs/sample_time_vs_arrival_time_20261123.md`, section 7. |
 
 ## 9. Interface note for the freemocap session (written after phase 4)
 
@@ -220,6 +221,8 @@ to its own UI unopened. All of these go away.
 - Phase 0 results. They decide phase 7 and whether macOS gets native JPEG and manual controls at all.
 - The lockstep gate removal is undesigned. Known from earlier research: the recorder placement in §6 may need
   revisiting then, because slot assembly across per-camera writer processes needs a shared slot clock.
+  The stage starts with a review of `research/usb_cameras/docs/sample_time_vs_arrival_time_20261123.md`
+  (which time pairs the frames, bursts, the per-model offset of the sample time, the tests that come first).
 - Whether the version bumps made on `upstream/main` in the phase-1 worktree apply cleanly on
   `development-streaming` [NV].
 - How Windows sizes its MJPEG buffers is undocumented; the oversize guard is the only protection there.
@@ -432,3 +435,15 @@ records only the decisions that change the plan.
   and the camera trial of the pairing rule amendment. Until then, a new camera restarts the group, as
   `sfn26` does.
 - **Later:** a click on the USB label opens a diagram of the cameras on their USB controllers.
+- **Later decisions of the user on 2026-11-20 (questions Q447 to Q458):**
+  - A take uses the camera number of the camera list.
+  - A camera in Auto runs the exposure search when the user changes the frame rate, and also when the
+    camera opens. This changes the earlier rule "search only when the user asks": the user does not want
+    to start the search by hand each time.
+  - The text for a slow camera is "Camera is slow. Try adding more light".
+  - Certify: the summary gets the results "partial" and "in use"; the quick level checks that a setting
+    stays and that native JPEG frames arrive; the product restores the camera settings at close; the
+    evidence stays in the package; a camera wedged by a run gives "please replug"; the disk benchmark
+    writes 1 GiB; the application asks for the macOS camera permission.
+  - Linux and macOS without evidence keep OpenCV and prompt for a certify run, for now. The goal: with
+    enough passes of native capture, remove OpenCV and put new OS versions behind the certify test.
