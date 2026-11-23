@@ -107,7 +107,7 @@ step for a person to run on another system. Add a check to the self-test.
 Sections 5.5 and 5.6 of `report-format.md` of the skellycertify repository tell how to add a check,
 when a check can exist, and its level.
 Mark the fact "not verified" until a report gives its result.
-The one exception is a CI runner with no camera. It can still run the checks that need no device.
+The one exception is a CI runner with no device. It can still run the checks that need no device.
 Load the skill [`verify-on-other-systems`](.claude/skills/verify-on-other-systems/SKILL.md) for
 this work.
 <!-- /kit -->

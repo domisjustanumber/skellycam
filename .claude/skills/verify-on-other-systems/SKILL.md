@@ -18,7 +18,7 @@ The rules of [`AGENTS.md`](../../../AGENTS.md#other-systems-only-through-certify
 3. Mark the fact `[NV]` (not verified) in the spec, and put it in
    [`open-work.md`](../../../decisions/open-work.md).
 4. Tell the user which certify report will give the result.
-5. Exception: a CI runner with no camera can still run the checks that need no device, for example
+5. Exception: a CI runner with no device can still run the checks that need no device, for example
    the portable tests. Use CI only for what it can check.
 6. A script outside the product code that names or guards for a system has the comment
    `script-purpose: <kind> ...` in one of its first 5 lines. Use one of these kinds:
