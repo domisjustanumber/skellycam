@@ -22,11 +22,12 @@ Marks:
 - **[En]**: an earlier decision of the user that the decision list of 2026-11-19 cites (section 18.5).
   This spec numbers them for reference only.
 - **[SFF-nnn]**: a requirement of the format spec `../skellyfileformat/spec/SPEC.md`, draft v2, read
-  at commit c1028ef (`c1028ef185be86f0ac6ccf7f9ac2ce76def13f2d`) of that repository. This spec cites
-  it. It does not repeat it. Before 2026-11-21, this spec read commit d67679a ([ADR-3B97](../decisions/entries/3B97-format-sync-to-the-format-commit-with-f1-to-f10.md)).
+  at commit 24949df (`24949df6c22093336c30b279c396ef593648de1e`) of that repository. This spec cites
+  it. It does not repeat it. Before 2026-11-21, this spec read commit d67679a, and then commit
+  c1028ef ([ADR-3B97](../decisions/entries/3B97-format-sync-to-the-format-commit-with-f1-to-f10.md)).
 - **[F-list]**: the list F-1 to F-10 of format changes, section 13 of `specs/recorder.md`. The format
-  holds these changes since commit c1028ef (skellyfileformat ADR-6AT7). A sentence that follows a
-  detail of the proposed format entry skellyfileformat ADR-76NN says so.
+  holds these changes since commit c1028ef (skellyfileformat ADR-6AT7). The user accepted the details
+  of skellyfileformat ADR-5B03 and ADR-76NN.
 - **[M file]**: measured; the file holds the result. Each research file is on branch `dom/research`
   at commit fc95be447 of this repository. It is not on this branch. Short names:
   - `RT` = `research/skellycam_recording/recording_upgrade/results/range_transport/FINDINGS.md`;
@@ -587,7 +588,7 @@ The rebuild needs `<rec>` only to find the folder files [SFF-868]. The player re
   other file is `unfinished` [SFF-747, SFF-795]. When two states apply, the reader gives the first of
   SFF-886. The reader ignores the keys of the `# end` line that it does not need, also `missing=`
   [SFF-709, M3]. SFF-729 makes a reader compare `missing` of the summary with the `# end` line when
-  both hold it (proposed format detail, skellyfileformat ADR-76NN item 11). The player does not make
+  both hold it (skellyfileformat ADR-76NN item 11). The player does not make
   this comparison: it never reads `summary` (6.2) and it gives no `summary_stale` for any member
   (6.13, L2). The full result of 6c makes it ([ADR-3B97](../decisions/entries/3B97-format-sync-to-the-format-commit-with-f1-to-f10.md)).
 - The flags: bit 0 `gap`, bit 1 `filled`, bit 2 `encode_skip`, bit 3 `repeat` and the flag
@@ -609,7 +610,7 @@ The rebuild needs `<rec>` only to find the folder files [SFF-868]. The player re
   the rows with byte fields with the blocks [SFF-759].
 - The reader refuses the file (`invalid`, `bad_metadata`) when a row has one empty byte field and
   one that is not empty, when a row has empty byte fields and no flag `missing`, or when a row with
-  byte fields follows a row with empty byte fields (SFF-759; proposed format detail,
+  byte fields follows a row with empty byte fields (SFF-759;
   skellyfileformat ADR-76NN item 10) ([ADR-3B97](../decisions/entries/3B97-format-sync-to-the-format-commit-with-f1-to-f10.md)).
 - The player never shows a placeholder [M9]. It never decodes the block of a `missing` row. It reads
   the bytes of a placeholder only as part of a range that it checks (6.10).
@@ -702,9 +703,8 @@ The rebuild needs `<rec>` only to find the folder files [SFF-868]. The player re
 - A frame of an unfinished file is usable when its row is usable and its block is complete [SFF-740].
   A block is complete when the end of its payload is not past the snapshot size [agent 12]. The reader
   uses no row after the first row with byte fields whose block is not complete, also no `missing`
-  row with empty byte fields, and no block after the last usable row (SFF-740; "the first row with
-  byte fields whose block is not complete" follows the proposed format detail skellyfileformat
-  ADR-76NN item 1). A `missing` row with empty byte fields before that row needs no block, and it is
+  row with empty byte fields, and no block after the last usable row (SFF-740;
+  skellyfileformat ADR-76NN item 1). A `missing` row with empty byte fields before that row needs no block, and it is
   a usable frame [SFF-740, SFF-754].
 - `torn_bytes` of the pair is the bytes of a torn last line of the sidecar, plus the bytes of the
   camera file after its last complete block when the sidecar has no `# end` line [SFF-791].
@@ -1302,7 +1302,7 @@ The recorder spec uses this description as the model of its placeholder, so it i
 | T-PLAY-79 | electron | A GET with no `Range` of a sparse file of 512 MiB. | 200 with all bytes; the main process grows by less than 200 MB ([ADR-5FBS](../decisions/entries/5FBS-fixes-of-the-6a-code-review.md)). |
 | T-PLAY-80 | component | Host view on `counts_refused`. | The loading message goes away ([ADR-5FBS](../decisions/entries/5FBS-fixes-of-the-6a-code-review.md)). |
 | T-PLAY-81 | unit | The route with a bridge double that refuses the folder, and with an old folder. | `not_allowed` for the first (`chooseTakePlayer` still gives `video`); `video` for the second, and the files close ([ADR-5FBS](../decisions/entries/5FBS-fixes-of-the-6a-code-review.md)). |
-| T-PLAY-82 | unit | Copies of `dead_short` whose camera 3 has: row 100 with one empty byte field; row 100 with empty byte fields and no flag `missing`; row 78 with empty byte fields and no block, so that row 79 has byte fields after it. Also a copy whose camera 3 has no block. | The first three: camera 3 is `invalid` with `bad_metadata` (SFF-759; proposed format detail skellyfileformat ADR-76NN item 10). No block: camera 3 is `repaired` and not refused, 120 rows, `deadFrom` 0, K = 120, the mark "camera lost at frame 0" (SFF-754) ([ADR-3B97](../decisions/entries/3B97-format-sync-to-the-format-commit-with-f1-to-f10.md)). |
+| T-PLAY-82 | unit | Copies of `dead_short` whose camera 3 has: row 100 with one empty byte field; row 100 with empty byte fields and no flag `missing`; row 78 with empty byte fields and no block, so that row 79 has byte fields after it. Also a copy whose camera 3 has no block. | The first three: camera 3 is `invalid` with `bad_metadata` (SFF-759; skellyfileformat ADR-76NN item 10). No block: camera 3 is `repaired` and not refused, 120 rows, `deadFrom` 0, K = 120, the mark "camera lost at frame 0" (SFF-754) ([ADR-3B97](../decisions/entries/3B97-format-sync-to-the-format-commit-with-f1-to-f10.md)). |
 
 ### 12.4 Decisions and reader rules to tests
 
@@ -1447,8 +1447,7 @@ Section 14.2 lists the cases that the format still leaves open.
 1. **The F-list of the recorder spec** is in the format since commit c1028ef (skellyfileformat
    ADR-6AT7). This spec follows the format text: the bit 4 of `missing` and `missing=` before the last
    key of `# end` (F-1), the short file (F-2), and the `detail` forms of `camera_dead` and
-   `camera_file_short` (F-5). The details of skellyfileformat ADR-76NN are proposed and wait for the
-   user. When they change, this spec follows them ([ADR-3B97](../decisions/entries/3B97-format-sync-to-the-format-commit-with-f1-to-f10.md)).
+   `camera_file_short` (F-5). The user accepted the details of skellyfileformat ADR-76NN ([ADR-3B97](../decisions/entries/3B97-format-sync-to-the-format-commit-with-f1-to-f10.md)).
 2. **Cases that the format leaves open**: a missing column that a reader needs; a `frame` value that
    is not the position; a player time that decreases; a camera file whose track is not `V_MJPEG`.
    None of the four is in the merged list F-1 to F-10 of the recorder spec. They stay open. The

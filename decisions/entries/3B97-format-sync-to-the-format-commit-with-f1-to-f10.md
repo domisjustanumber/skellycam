@@ -1,20 +1,22 @@
 # 3B97 — Format sync: skellycam follows the format commit that holds F-1 to F-10
 
-**Status:** proposed, 2026-11-21 (an agent made these choices to bring the recorder, the player, the
-specs and the test adapter in line with skellyfileformat commit
-`c1028ef185be86f0ac6ccf7f9ac2ce76def13f2d`; branch `dom/format-sync`).
+**Status:** accepted, 2026-11-21 (user; "yes" to each of the nine questions, items 2 and 4 to 10;
+commit to dom/format-sync; was proposed, 2026-11-21 (an agent made these choices to bring the
+recorder, the player, the specs and the test adapter in line with skellyfileformat commit
+`c1028ef185be86f0ac6ccf7f9ac2ce76def13f2d`; branch `dom/format-sync`)).
 
 ## Decision
 
-**Limit.** The format commit `c1028ef` exists only on the machine of the user. The workflow
-`recorder.yml` checks the format out by commit. Thus this branch must not be merged or pushed until
-the user pushes the format repository. Until then, T-REC-37 is skipped in CI.
+**Limit (ended 2026-11-23).** The format commit `c1028ef` was first only on the machine of the user,
+and `recorder.yml` checks the format out by commit, so this branch had to wait for the push of the
+format repository. On 2026-11-23 the user pushed the format `main` at
+`24949df6c22093336c30b279c396ef593648de1e`, a child of `c1028ef`.
 
-The format holds F-1 to F-10 since that commit (skellyfileformat ADR-6AT7, decided by the user).
-skellyfileformat ADR-5B03 is accepted. skellyfileformat ADR-76NN is proposed: the user did not see
-it. Each spec sentence that follows a detail of ADR-76NN says so. The choices of the agent:
+The format holds F-1 to F-10 since `c1028ef` (skellyfileformat ADR-6AT7, decided by the user).
+skellyfileformat ADR-5B03 and ADR-76NN are accepted by the user (ADR-76NN in commit `24949df`). The
+choices of the agent:
 
-1. **The pin.** Each pin moves from `d67679a` to `c1028ef`: the workflow, `sff_expected.py`, the
+1. **The pin.** Each pin moves from `d67679a` to `24949df` (first to `c1028ef`): the workflow, `sff_expected.py`, the
    docstring of T-REC-37, `specs/recorder.md` and `specs/player.md`.
    [ADR-4K7V](4K7V-phase-6a-player-spec-and-test-list.md) is not changed.
 2. **The test adapter.** `write_frame` gives each JPEG to the capture check `check_jpeg` before the
@@ -26,10 +28,9 @@ it. Each spec sentence that follows a detail of ADR-76NN says so. The choices of
    and `test_sft_771_missing_rows_and_placeholder` pass. The reasons "without audio, ... (F-1)" and
    "(F-6)" go. `test_sft_708_manifest` also needs `add_warning`.
 4. **`stored_px`.** The size of the first block that is not a placeholder, else the mode size. The
-   fallback to the size of a placeholder goes (SFF-728; ADR-5B03 item 5; proposed: ADR-76NN item
-   12). T-REC-23 gets case 4.
+   fallback to the size of a placeholder goes (SFF-728; ADR-5B03 item 5; ADR-76NN item 12). T-REC-23 gets case 4.
 5. **The player refusal of SFF-759.** The player refuses a camera file (`invalid`, `bad_metadata`)
-   when a row with byte fields follows a row with empty byte fields (proposed: ADR-76NN item 10). The
+   when a row with byte fields follows a row with empty byte fields (ADR-76NN item 10). The
    other two refusals of that item were already in the reader. T-PLAY-82 tests the three refusals and
    a camera file with no block.
 6. **The summary `missing`.** The player does not compare it with the `# end` line. It never reads
@@ -57,8 +58,8 @@ it. Each spec sentence that follows a detail of ADR-76NN says so. The choices of
 
 ## Consequences
 
-- When the user changes item 1, 9, 10, 11 or 12 of skellyfileformat ADR-76NN, the marked sentences
-  and items 4 and 5 can change.
+- A later change of the format needs a new pin, and the expected results of T-REC-37 change in the
+  same commit.
 
 ## Evidence
 
@@ -75,7 +76,3 @@ it. Each spec sentence that follows a detail of ADR-76NN says so. The choices of
 - A Python reader in the adapter: no product uses it.
 - A new heading for section 13: it breaks the links of decided entries.
 - The placeholder size as `stored_px`: it differs from SFF-728.
-
-## Open work
-
-See [open-work.md](../open-work.md).

@@ -6,7 +6,7 @@ differs is a failure of T-REC-37. When the pinned format commit changes, this ta
 same commit as the new pin.
 """
 
-SFF_COMMIT = "c1028ef185be86f0ac6ccf7f9ac2ce76def13f2d"
+SFF_COMMIT = "24949df6c22093336c30b279c396ef593648de1e"
 
 EXPECTED = [
     ("test_sft_705_names_and_layout[file_of_another_take]", "pass", ""),
