@@ -35,6 +35,14 @@ make these choices. The agent made them. "Not:" gives the rejected alternative.
     With no camera, `total` of `full` is 1 (`detect`) and of `quick` 0, as before. The progress counts the end of
     the session child at the end of the run, also after a refused run or a stop before the session, so the last
     `done` equals `total`. Not: one more check in each plan.
+11. `<label>:not-reached` stands for the checks at the end of the camera, in the order of the plan, that are
+    `not-run` with a reason of a camera that cannot go on (the list of 3.6.1) and that no progress message named. A
+    `not-run` row before a check with a result (for example `no-manual-exposure`, or `holds` after a failed
+    `readback`) keeps its own row. Not: each such row of the camera wherever it stands.
+12. A unit with a `not-reached` row makes its item `partial` when no `fail` rule applies. A gate step whose required
+    check is in the `not-reached` row requires that row, so the gate is `not-run`. The local record (2.5) reads a
+    settings check in the `not-reached` row as `not-run` with the reason of that row, so the row has no `controls`.
+    Not: no part in the item and the gate (an item would then pass with checks that did not run).
 
 ## Reason
 
@@ -48,6 +56,9 @@ make these choices. The agent made them. "Not:" gives the rejected alternative.
 7. A progress message is the only point that a test can name in a session child.
 9. The plan has planned these checks only with a camera to check.
 10. The rule "with no camera to check, the run also reports `detect`" of 9.1 stays.
+11. Only the end of the checks of a camera shows that it could not go on; a check in the middle can be `not-run`
+    for its own reason.
+12. Before, these checks were `not-run` rows of the groups, and the item and the gate read them.
 
 ## Alternatives rejected
 

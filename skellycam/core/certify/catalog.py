@@ -194,7 +194,12 @@ def seconds_estimate(level: str, cameras: int, models: int) -> int:
 # ----- the summary item and the gate (3.3, 3.4, 11.3) -----
 
 def _label_of(unit: dict) -> str:
-    return next(name for name in unit if name.endswith(":opens"))[: -len(":opens")]
+    """The label of the rows of one unit (a label holds no `:`; 3.1)."""
+    return next(iter(unit)).split(":", 1)[0]
+
+
+def _not_reached(unit: dict) -> dict | None:
+    return unit.get(f"{_label_of(unit)}:not-reached")
 
 
 def _suffix(name: str, unit_label: str) -> str:
@@ -235,8 +240,8 @@ def item_result(units: list, unix: bool = False) -> str:
     groups = set(ITEM) | (set(CLOCK) if unix else set())
 
     def busy(unit):
-        row = unit[f"{_label_of(unit)}:opens"]
-        return row["result"] == "not-run" and row["reason"] == "camera-in-use"
+        row = unit.get(f"{_label_of(unit)}:opens") or {}
+        return row.get("result") == "not-run" and row.get("reason") == "camera-in-use"
 
     if all(busy(unit) for unit in units):
         return "skipped"
@@ -247,7 +252,7 @@ def item_result(units: list, unix: bool = False) -> str:
             return "fail"
     for unit in units:
         lab = _label_of(unit)
-        if busy(unit):
+        if busy(unit) or _not_reached(unit) is not None:  # 3.6.1: checks of the groups that did not run
             return "partial"
         for name, row in unit.items():
             if _group(name, lab, unit) in groups and not _ok(row, unit, lab):
@@ -265,7 +270,7 @@ def _roll_up(name: str, required: list, module: str | None) -> dict:
 
 def gate_rows(model: str, units: list, module: str | None) -> list:
     """The roll-up checks of 11.3 for one model, from the rows of its units, and the ordinary check `no-hang`."""
-    ran = [u for u in units if u[f"{_label_of(u)}:opens"]["result"] in ("pass", "fail")] or units
+    ran = [u for u in units if (u.get(f"{_label_of(u)}:opens") or {}).get("result") in ("pass", "fail")] or units
 
     def required(unit, step):
         lab = _label_of(unit)
@@ -278,7 +283,11 @@ def gate_rows(model: str, units: list, module: str | None) -> list:
         if step == "sequence":
             sequence = unit.get(f"{lab}:sequence")
             pick = ("time-gaps",) if sequence is None or sequence["reason"] == "no-sequence" else ("sequence",)
-        return [row for name, row in unit.items() if _group(name, lab, unit) in pick]
+        out = [row for name, row in unit.items() if _group(name, lab, unit) in pick]
+        missing = _base_granted(unit) is None if step == "mode" else any(f"{lab}:{c}" not in unit for c in pick)
+        if missing and _not_reached(unit) is not None:  # 3.6.1: a required check is in the `not-reached` row
+            out.append(_not_reached(unit))
+        return out
 
     rows = [_roll_up(f"{model}:gate:{step}", [row for unit in ran for row in required(unit, step)], module)
             for step in GATE_STEPS[:-1]]

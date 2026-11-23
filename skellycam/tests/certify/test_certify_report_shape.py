@@ -14,7 +14,7 @@ from skellycam.tests.capture.capture_session import capture_app
 from skellycam.tests.capture.fake_source import FakeSourceFactory
 from skellycam.tests.certify.report_rules import assert_valid
 from skellycam.tests.certify.test_certify import (
-    CATALOG, RUN, SOURCE_FACTS, by_name, good, labels, paths, product, run_with, same_model)
+    CATALOG, RUN, SOURCE_FACTS, InUseFactory, by_name, good, labels, paths, product, run_with, same_model)
 from skellycam.tests.certify.test_certify_review import assert_no_new_process, descendants
 
 COMMIT = "0123456789abcdef0123456789abcdef01234567"
@@ -44,8 +44,7 @@ def test_t_cert_93_b1_a_camera_that_leaves_the_run_between_two_steps(tmp_path):
     whose camera process ends there with `os._exit(3)`, one with a stream error in the take and one removed in the
     take. Each gets one `fail` row on the first check that has no result (`settings-stick:readback` `stalled` and
     `crashed`; `records:rows-complete` `stream-error` and `device-removed`), with the failure facts that have a
-    value and `module` = its model; each later check of that camera is `not-run` (one `not-reached` row joins at
-    step 4); `<model>:gate:no-hang` is `fail` for the stall and the crash and `pass` for the others. The take in
+    value and `module` = its model; its later checks are one `not-reached` row; `<model>:gate:no-hang` is `fail` for the stall and the crash and `pass` for the others. The take in
     place of "before the take": no progress message comes between the settings change and the take."""
     scripts = [good(on_arm="stall"), good(on_arm="exit"), good(on_arm="remove", removed_code="stream-error"),
                good(on_arm="remove")]
@@ -83,6 +82,7 @@ def test_t_cert_93_b1_a_camera_that_leaves_the_run_between_two_steps(tmp_path):
         assert [c["name"] for c in own if c["result"] == "fail"] == [row["name"]], own
         after = own[own.index(row) + 1:]
         assert after and all(c["result"] == "not-run" for c in after), after
+        assert after[-1]["name"] == f"{label}:not-reached" and after[-1]["module"] == row["module"], after
     assert checks[f"{crash}:settings-stick:readback"]["numbers"]["exit_code"] == 3
     for label, result in ((stall, "fail"), (crash, "fail"), (error, "pass"), (removed, "pass")):
         assert checks[f"{label.rsplit('.', 1)[0]}:gate:no-hang"]["result"] == result, label
@@ -213,3 +213,93 @@ def test_t_cert_103_the_plan_total_counts_session_exit(monkeypatch, tmp_path, ha
         assert exit_row is None
     assert messages[-1]["state"] == "done" and messages[-1]["done"] == messages[-1]["total"] == plan["total"]
     assert all(m["done"] <= m["total"] for m in messages if m["total"] is not None)
+
+
+# ---------------------------------------------------------------------------
+# Step 4: `<label>:not-reached` and the `done` count (3.6.1)
+# ---------------------------------------------------------------------------
+
+def assert_not_reached(report, plan, messages, expected, all_labels):
+    """Each camera of `expected` ({label: reason}) has one `not-reached` row with `not-run`, the reason of the first
+    check that it stands for, `module` = the name of its item and `checks` = the count of the checks that it
+    stands for; each camera check that a progress message named keeps its own row; `done` ends at `total`."""
+    checks = by_name(report)
+    named = {(m.get("step") or {}).get("name") for m in messages}
+    items = {i["name"] for i in report.get("summary", [])}
+    for label, reason in expected.items():
+        row = checks[f"{label}:not-reached"]
+        own = [c for c in report["checks"] if c["name"].startswith(label + ":") and c is not row]
+        planned = [n for n in plan["details"]["checks"] if n.startswith(label + ":")]
+        assert (row["result"], row["reason"]) == ("not-run", reason), row
+        assert row["module"] in items, row
+        assert row["numbers"] == {"checks": len(planned) - len(own)} and row["numbers"]["checks"] > 0, (row, own)
+        assert not [n for n in planned if n in named and n not in checks], label
+    for label in set(all_labels) - set(expected):
+        assert f"{label}:not-reached" not in checks, label
+    totals = [m for m in messages if m["total"] is not None]
+    assert totals[-1]["state"] == "done" and totals[-1]["done"] == totals[-1]["total"] == plan["total"]
+    assert all(m["done"] <= m["total"] for m in totals)
+
+
+def test_t_cert_92_17_one_not_reached_row_for_a_camera_that_cannot_go_on(monkeypatch, tmp_path):
+    """T-CERT-92, T-CERT-17, 3.6.1: a camera in use, one with no MJPG mode and one with a rate failure, beside a
+    good camera: each of the first three has one `not-reached` row (`camera-in-use`, `no-mjpg-mode`,
+    `prior-check-failed`); the good camera has none; `done` counts a `not-reached` row as its checks."""
+    yuy2 = good(modes=((640, 480, 30, 1, "YUY2"),))
+    messages = []
+    with capture_app(monkeypatch, [good(), yuy2, good(rate=25.0), good()]) as app:
+        factory = InUseFactory(app.factory.scripts, clock=app.factory.clock)  # the first camera is in use
+        app.manager.source_factory = app.factory = factory
+        devices = factory.device_infos()
+        plan = product(RUN).plan("quick", devices=devices, **plan_options(tmp_path))
+        report = run_with(app, tmp_path, progress=messages.append)
+    assert_valid(report)
+    busy, no_mjpg, slow, fine = labels(devices)
+    assert_not_reached(report, plan, messages, {busy: "camera-in-use", no_mjpg: "no-mjpg-mode",
+                                                slow: "prior-check-failed"}, labels(devices))
+    checks = by_name(report)
+    assert checks[f"{busy}:opens"]["reason"] == "camera-in-use"  # named by its progress message: its own row
+    assert checks[f"{slow}:rate"]["reason"] == "rate-low"
+    assert [i["result"] for i in report["summary"]] == ["skipped", "partial", "fail", "pass"]
+
+
+@pytest.mark.capture_timing
+def test_t_cert_92_a_hang_at_the_open(monkeypatch, tmp_path):
+    """T-CERT-92, 3.6.1: a camera that hangs at the open has one `not-reached` row with `prior-failure`."""
+    messages = []
+    with capture_app(monkeypatch, [good(hang_at="open", hang_armed=True), good()], workers="process") as app:
+        devices = app.factory.device_infos()
+        plan = product(RUN).plan("quick", devices=devices, **plan_options(tmp_path))
+        report = run_with(app, tmp_path, progress=messages.append)
+    assert_valid(report)
+    hung, _ = labels(devices)
+    assert by_name(report)[f"{hung}:opens"]["reason"] == "hung"
+    assert_not_reached(report, plan, messages, {hung: "prior-failure"}, labels(devices))
+
+
+def test_t_cert_92_a_cancel_in_the_take_and_the_end_of_the_budget(monkeypatch, tmp_path):
+    """T-CERT-92, 3.6.1: a cancel when the take starts gives each camera one `not-reached` row with `cancelled` for
+    its checks after the take, and `group:take:finished` keeps its own row; a budget that ends before the take gives
+    each camera one `not-reached` row with `over-budget`."""
+    cancel = threading.Event()
+    messages = []
+
+    def progress(message):
+        messages.append(message)
+        if (message.get("step") or {}).get("name") == "group:take:finished":
+            cancel.set()
+    with capture_app(monkeypatch, [good(), good()]) as app:
+        devices = app.factory.device_infos()
+        plan = product(RUN).plan("quick", devices=devices, **plan_options(tmp_path))
+        report = run_with(app, tmp_path, progress=progress, cancel=cancel)
+    assert_valid(report)
+    assert by_name(report)["group:take:finished"]["reason"] == "cancelled"
+    assert_not_reached(report, plan, messages, {label: "cancelled" for label in labels(devices)}, labels(devices))
+    messages = []
+    with capture_app(monkeypatch, [good()]) as app:
+        devices = app.factory.device_infos()
+        plan = product(RUN).plan("quick", devices=devices, **plan_options(tmp_path))
+        report = run_with(app, tmp_path, progress=messages.append, budget_s=0.0)
+    assert_valid(report)
+    (label,) = labels(devices)
+    assert_not_reached(report, plan, messages, {label: "over-budget"}, [label])

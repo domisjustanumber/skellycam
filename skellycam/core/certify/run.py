@@ -191,14 +191,19 @@ class _Progress:
         self.broken = False
         self.session = False  # 3.6.1: the plan counts the end of the session child (`session:exit`) as one check
         self.ended = False
+        self.named: set[str] = set()  # each check that a progress message named (3.6.1 `not-reached`)
 
     def done(self, rows) -> int:
-        """3.6.1: the ended checks; the end of the session child counts as one, with or without a `session:exit`
-        row, so `done` equals `total` at the end."""
-        return sum(1 for name, r in rows.items() if r is not None and name != "session:exit") + (
+        """3.6.1: the ended checks; a `<label>:not-reached` row counts as the checks that it stands for, and the end
+        of the session child counts as one, with or without a `session:exit` row, so `done` equals `total` at the
+        end."""
+        return sum((r.get("numbers") or {}).get("checks", 1) if name.endswith(":not-reached") else 1
+                   for name, r in rows.items() if r is not None and name != "session:exit") + (
             1 if self.session and self.ended else 0)
 
     def send(self, state, rows, step=None):
+        if step is not None:
+            self.named.add(step)
         if self.callback is None or self.broken:
             return
         wait = self.last + PROGRESS_GAP_S - time.monotonic()
@@ -822,6 +827,7 @@ def _run(out, level, reporter, stops, cameras, devices, manager, source_factory,
                                                         [unit.label for unit in units])}
     computed = {name for name in rows if name.endswith(":units") or ":gate" in name}
     _fill(rows, modules, context, level, stop, facts["prior"], skip=computed)
+    _not_reached(rows, context, reporter.named)
     if stop not in STOPS:
         _computed_rows(rows, context, level, reporter)
     _fill(rows, modules, context, level, stop, facts["prior"], skip=set())
@@ -887,6 +893,41 @@ def _fill(rows, modules, context, level, stop, prior, skip):
         else:
             reason = "prior-check-failed"
         rows[name] = _row(name, "not-run", reason, modules.get(name))
+
+
+NOT_REACHED = ("prior-check-failed", "prior-failure", "camera-in-use", "no-mjpg-mode", "cancelled", "over-budget",
+               "interrupted")  # 3.6.1: the reasons of a camera that cannot go on
+
+
+def _not_reached(rows, context, named) -> None:
+    """3.6.1: the checks at the end of a camera, in the order of the plan, that are `not-run` because the camera
+    could not go on (a reason of NOT_REACHED) and that no progress message named, give one row
+    `<label>:not-reached` in their place: `not-run`, the reason of the first of them, the `module` of the camera and
+    `numbers.checks`. A check that a progress message named keeps its own row."""
+    tails = {}
+    for camera in context.units:
+        own = [name for name in rows if name.startswith(camera["label"] + ":")]
+        tail = []
+        for name in reversed(own):
+            r = rows[name]
+            if r is None or r["result"] != "not-run" or r["reason"] not in NOT_REACHED or name in named:
+                break
+            tail.insert(0, name)
+        if tail:
+            tails[tail[0]] = (camera["label"], tail)
+    if not tails:
+        return
+    merged = {}
+    gone = {name for _, tail in tails.values() for name in tail}
+    for name, r in rows.items():
+        if name in tails:
+            label, tail = tails[name]
+            merged[f"{label}:not-reached"] = _row(f"{label}:not-reached", "not-run", r["reason"], r.get("module"),
+                                                  checks=len(tail))
+        if name not in gone:
+            merged[name] = r
+    rows.clear()
+    rows.update(merged)
 
 
 def _unit_rows(rows, unit_label):
@@ -985,7 +1026,9 @@ def _write_record(rows, context, level, summary, checks_path):
             continue
         gate = {step: rows[f"{model}:gate:{step}"]["result"] for step in catalog.GATE_STEPS} if level == "full" else None
         first = units[0]["label"]
-        settings = [rows.get(f"{first}:settings-stick:{c}") or {} for c in ("readback", "holds", "image-effect")]
+        # 3.6.1: a settings check in the `not-reached` row is `not-run` with the reason of that row
+        missing = rows.get(f"{first}:not-reached") or dict(result="not-run", reason="not-built")
+        settings = [rows.get(f"{first}:settings-stick:{c}") or missing for c in ("readback", "holds", "image-effect")]
         path = (settings[0].get("numbers") or {}).get("control_path")
         result = catalog.control_result(settings[0].get("result"), settings[1].get("result"),
                                         {"result": settings[2].get("result"), "reason": settings[2].get("reason")})

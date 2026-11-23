@@ -72,7 +72,8 @@ def test_review_1_a_hang_after_the_open_gives_camera_wedged(monkeypatch, tmp_pat
     assert (checks[f"{hung}:settings-stick:readback"]["result"], checks[f"{hung}:settings-stick:readback"]["reason"]) \
         == ("fail", "hung")
     for name in ("settings-stick:holds", "settings-stick:image-effect", "records:rows-complete"):
-        assert checks[f"{hung}:{name}"]["reason"] == "prior-failure", checks[f"{hung}:{name}"]
+        check = checks.get(f"{hung}:{name}") or checks[f"{hung}:not-reached"]  # 3.6.1: named, or not reached
+        assert check["reason"] == "prior-failure", check
     assert checks[f"{hung.rsplit('.', 1)[0]}:gate:no-hang"]["result"] == "fail"
     assert {"name": f"release:{hung}", "result": "fail", "reason": "camera-wedged", "module": "Fake camera 0"} \
         in report["cleanup"]

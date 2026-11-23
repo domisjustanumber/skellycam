@@ -405,8 +405,9 @@ def test_t_cert_08_and_17_a_slow_camera_and_a_progress_that_raises(monkeypatch, 
     slow, fine = labels(devices)
     assert checks[f"{slow}:rate"]["result"] == "fail" and checks[f"{slow}:rate"]["reason"] == "rate-low"
     assert checks[f"{slow}:opens"]["result"] == "pass"
-    assert checks[f"{slow}:records:rows-complete"] == {**checks[f"{slow}:records:rows-complete"],
-                                                       "result": "not-run", "reason": "prior-check-failed"}
+    assert f"{slow}:records:rows-complete" not in checks  # 3.6.1: in the one `not-reached` row
+    assert checks[f"{slow}:not-reached"] == {**checks[f"{slow}:not-reached"], "result": "not-run",
+                                             "reason": "prior-check-failed"}
     assert [i["result"] for i in report["summary"]] == ["fail", "pass"], [
         c for c in report["checks"] if c["name"].startswith(fine) and c["result"] != "pass"]
     assert checks[f"{fine}:records:rows-complete"]["result"] == "pass"
@@ -430,7 +431,8 @@ class InUseFactory(FakeSourceFactory):
 
 def test_t_cert_10_a_camera_in_use(monkeypatch, tmp_path):
     """T-CERT-10, 3.4, 9.7: `opens` `not-run` `camera-in-use`, each other check of that camera `not-run`
-    `camera-in-use`, the item `skipped` `busy`, the run is not refused, no retry, no record row of that model."""
+    `camera-in-use` (its own row when a progress message named it, else in the one `not-reached` row, 3.6.1), the
+    item `skipped` `busy`, the run is not refused, no retry, no record row of that model."""
     with capture_app(monkeypatch, [good(), good()]) as app:
         factory = InUseFactory(app.factory.scripts, clock=app.factory.clock)
         app.manager.source_factory = factory
@@ -441,7 +443,9 @@ def test_t_cert_10_a_camera_in_use(monkeypatch, tmp_path):
     checks = by_name(report)
     busy, fine = labels(devices)
     for name in group_checks(busy):
-        assert checks[name]["result"] == "not-run" and checks[name]["reason"] == "camera-in-use", checks[name]
+        check = checks.get(name) or checks[f"{busy}:not-reached"]
+        assert check["result"] == "not-run" and check["reason"] == "camera-in-use", check
+    assert checks[f"{busy}:opens"]["reason"] == "camera-in-use"
     assert report["summary"][0] == {"group": "camera", "name": "Fake camera 0", "device": "feed:0000",
                                     "result": "skipped", "reason": "busy"}
     assert report["summary"][1]["result"] == "pass"
@@ -515,7 +519,7 @@ def test_t_cert_16_a_cancel_during_the_take(monkeypatch, tmp_path):
     first, _ = labels(devices)
     assert checks[f"{first}:opens"]["result"] == "pass"
     assert checks["group:take:finished"]["result"] == "not-run" and checks["group:take:finished"]["reason"] == "cancelled"
-    assert checks[f"{first}:records:rows-complete"]["reason"] == "cancelled"
+    assert checks[f"{first}:not-reached"]["reason"] == "cancelled"  # 3.6.1: the checks after the take
     assert "cancelled" in report["evidence"]["reasons"]
     assert opens == [1, 1], opens
     assert not report.get("cleanup")
@@ -526,14 +530,15 @@ def test_t_cert_16_a_cancel_during_the_take(monkeypatch, tmp_path):
 
 def test_t_cert_24_over_budget(monkeypatch, tmp_path):
     """T-CERT-24, 4.1: with a budget that is used up before the camera steps, each check of the cameras is
-    `not-run` `over-budget`, never `fail`. (A thread session cannot be killed; the kill is the same as a cancel.)"""
+    `not-run` `over-budget` (one `not-reached` row, 3.6.1), never `fail`. (A thread session cannot be killed; the
+    kill is the same as a cancel.)"""
     with capture_app(monkeypatch, [good()]) as app:
         devices = app.factory.device_infos()
         report = run_with(app, tmp_path, budget_s=0.0)
     assert_valid(report)
     checks = by_name(report)
     (label,) = labels(devices)
-    assert checks[f"{label}:opens"]["reason"] == "over-budget"
+    assert f"{label}:opens" not in checks and checks[f"{label}:not-reached"]["reason"] == "over-budget"
     assert checks["group:take:finished"]["reason"] == "over-budget"
     assert not [c for c in report["checks"] if c["result"] == "fail"]
 
@@ -632,7 +637,8 @@ def test_clock_base_of_a_source_that_cannot_tell_its_clock(monkeypatch, tmp_path
 
 @pytest.mark.capture_timing
 def test_t_cert_12_a_camera_that_hangs_at_the_open(monkeypatch, tmp_path):
-    """T-CERT-12, 2.3, 8.3: `opens` `fail` `hung`; the later checks `not-run` `prior-failure`; never opened again;
+    """T-CERT-12, 2.3, 8.3: `opens` `fail` `hung`; the later checks one `not-reached` row `prior-failure` (3.6.1);
+    never opened again;
     the cleanup row `release:<label>` `camera-wedged` and one notice `camera-wedged` with the cleaned name;
     `<model>:gate:no-hang` `fail` in `full`; the other camera completes."""
     scripts = [good(hang_at="open", hang_armed=True), good()]
@@ -644,7 +650,7 @@ def test_t_cert_12_a_camera_that_hangs_at_the_open(monkeypatch, tmp_path):
     checks = by_name(report)
     hung, fine = labels(devices)
     assert checks[f"{hung}:opens"]["result"] == "fail" and checks[f"{hung}:opens"]["reason"] == "hung"
-    assert checks[f"{hung}:records:rows-complete"]["reason"] == "prior-failure"
+    assert checks[f"{hung}:not-reached"]["reason"] == "prior-failure"
     assert opens == 1
     assert report["cleanup"] == [{"name": f"release:{hung}", "result": "fail", "reason": "camera-wedged",
                                   "module": "Fake camera 0"}]

@@ -31,7 +31,8 @@ def test_review2_n1_the_live_change_never_reopens_a_wedged_camera(monkeypatch, t
     assert_valid(report)
     checks = by_name(report)
     assert opens == 1
-    assert checks[f"{ended}:settings-stick:readback"]["reason"] == "prior-failure"
+    readback = checks.get(f"{ended}:settings-stick:readback") or checks[f"{ended}:not-reached"]  # 3.6.1
+    assert readback["reason"] == "prior-failure"
     assert {"code": "camera-wedged", "values": {"camera": "Fake camera 0"}} in report["notices"]
     assert checks[f"{fine}:settings-stick:readback"]["result"] == "pass"
 
