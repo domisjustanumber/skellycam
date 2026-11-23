@@ -760,8 +760,13 @@ A camera that dies while no recording runs is treated as a `failed` camera [U6].
   controls. It reopens only that camera, with the config of the request [D23, D25]. The other cameras
   keep their process, rings and preview [D23]. A live settings change never restarts a camera (a
   decision of the user of 2026-11-21): a request that names a `failed` or `dead` camera (or a camera
-  whose process ended) but not in `retry_camera_ids` leaves it as it is, with its process, its config
-  and its failure. A camera that is not in the group, and a camera that the request selects again after
+  whose process ended) but not in `retry_camera_ids` leaves it as it is, with its process and its
+  failure. Its stored config takes only the `framerate` of the request, so that the group keeps one
+  rate. The answer names each such camera: its failure is in `camera_failures`, and one warning
+  `camera_not_retried` (`camera_ids`, and the text `Camera <id> failed and did not open again: name it
+  in retry_camera_ids to open it again`) lists them. Such a camera does not start the fall back of
+  [req 2.4] and gets no `start_failure` text. An ID in `retry_camera_ids` that is unknown, that is not
+  `failed` or `dead`, or that is not in `camera_configs` is ignored, with no 422. A camera that is not in the group, and a camera that the request selects again after
   an unselect, need no retry list [ADR-Z7F3](../decisions/entries/Z7F3-choices-of-fix-lane-3.md).
 - For a camera in `ready`, `checking` or `too_slow`, a changed config is a live change or a reopen of
   that camera (11.2) [D31].

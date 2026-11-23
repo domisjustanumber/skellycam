@@ -20,9 +20,11 @@ camera_router = APIRouter(prefix="/camera", tags=["Cameras"])
 
 class CameraGroupCreateRequest(BaseModel):
     camera_configs: dict[CameraIdString, CameraConfig]
-    # The failed or dead cameras that this request opens again ("Update Cameras"); no other apply restarts one
-    # (windows-capture.md 8.3) [ADR-Z7F3]
-    retry_camera_ids: list[CameraIdString] = Field(default_factory=list)
+    # windows-capture.md 8.3 [ADR-Z7F3]
+    retry_camera_ids: list[CameraIdString] = Field(default_factory=list, description=(
+        "The failed or dead cameras of camera_configs that this request opens again. No other apply restarts a "
+        "failed camera; the answer names each one that it left alone (warning camera_not_retried). An ID that is "
+        "unknown, not failed or dead, or not in camera_configs is ignored."))
 
     @classmethod
     def example(cls) -> "CameraGroupCreateRequest":

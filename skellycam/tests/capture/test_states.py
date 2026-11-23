@@ -174,6 +174,27 @@ def test_t_cap_20_apply_again_reopens_only_the_failed_camera(monkeypatch):
         assert [opens(app, cid) for cid in app.factory.camera_ids] == [2, 2, 4]
 
 
+def test_a_plain_apply_reports_a_failed_camera_that_it_leaves_alone(monkeypatch):
+    """windows-capture.md 8.3 [Z7F3] (review finding 1, 10): an apply that names a failed camera but not in
+    `retry_camera_ids` leaves it alone and says so: its failure is in `camera_failures`, and one warning
+    `camera_not_retried` names `retry_camera_ids`. A later rate pick gives its stored config the new rate, with no
+    open, so the group keeps one rate."""
+    scripts = [FakeScript(modes=MODES_30_60), FakeScript(modes=MODES_30_60), FakeScript(modes=MODES_30_60, fail_opens=(1,))]
+    with capture_app(monkeypatch, scripts) as app:
+        _, good, failed = start_with_one_in_use(app)
+        response = app.apply([app.config(cid) for cid in good] + [app.config(failed, exposure=-9)])
+        assert response.status_code == 200, response.text
+        body = response.json()
+        assert body["camera_failures"][failed]["reason"] == "in use by another program", body
+        items = [w for w in body["warnings"] if w["kind"] == "camera_not_retried"]
+        assert [w["camera_ids"] for w in items] == [[failed]] and "retry_camera_ids" in items[0]["text"], body["warnings"]
+        response = app.apply([app.config(cid, framerate=60.0) for cid in app.factory.camera_ids])
+        assert response.status_code == 200, response.text
+        assert app.group.configs[failed].framerate == 60.0
+        app.wait_clock(3.0)
+        assert app.state(failed) == "failed" and opens(app, failed) == 1
+
+
 def test_t_cap_21_unselect_the_failed_camera(monkeypatch, tmp_path):
     """T-CAP-21, sections 8.2 and 8.3 [D23, agent 24]: after T-CAP-19, apply with `use_this_camera:
     false` for the failed camera. The camera leaves the group; a record start succeeds with two

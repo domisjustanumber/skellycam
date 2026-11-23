@@ -688,7 +688,10 @@ What the OpenCV source can do:
   the unticked cameras and retries the failed cameras, and does not reopen the other cameras. It
   names the failed cameras in `retry_camera_ids` of the apply request: only that list opens a `failed`
   or `dead` camera again [cap 8.3]. Each other apply of the UI (a settings change, the rate selector,
-  Connect) sends no retry list (a decision of the user of 2026-11-21) [ADR-Z7F3](../decisions/entries/Z7F3-choices-of-fix-lane-3.md). It is
+  Connect) sends no retry list (a decision of the user of 2026-11-21) [ADR-Z7F3](../decisions/entries/Z7F3-choices-of-fix-lane-3.md).
+  After such an apply, a failed camera stays at "error" (the answer gives its failure [cap 8.3]): the
+  "Update Cameras" button stays, and the answer does not replace the desired config of a camera that it
+  reports as failed, so the edit of the user stays (`replacesDesired`). It is
   disabled during a recording, with the text "Stop the recording first" (the English text of the key
   `stopRecordingFirst`, which reads "Stop recording first" today).
 - A camera on the OpenCV source of Linux or macOS: 1.7. A camera with no working exposure control:
@@ -1043,8 +1046,9 @@ The rules above do not give these points. Each item is a proposed choice of the 
    of the request. Each config gets `framerate` 30. A camera that the request unselects stays closed.
 3. The main process runs the fall back as an apply of these configs (`CameraGroup.apply`). The fall back
    has no whole-request check of [cap 8.3], and it does not clear the group warnings. Its retry list
-   (`retry_camera_ids`, [cap 8.3]) holds each camera that failed at 60 fps; no other `failed` or `dead`
-   camera opens again [ADR-Z7F3](../decisions/entries/Z7F3-choices-of-fix-lane-3.md). Before the reopen,
+   (`retry_camera_ids`, [cap 8.3]) holds each camera that failed at 60 fps, except a camera whose failure
+   code (at the request, and again when the fall back runs) is a wedge code (`WEDGE_CODES`: `stalled`,
+   `hung`, `device-removed`, `process-ended`); no other `failed` or `dead` camera opens again [ADR-Z7F3](../decisions/entries/Z7F3-choices-of-fix-lane-3.md). Before the reopen,
    it writes one `rate_fallback` item into `group_warnings` of each camera that failed at 60 fps. A fall
    back at the start-up also puts these items in `warnings` of the apply response. The item has `kind`,
    `camera_ids` (one camera) and `text`. It has no `control`, as `start_failure`.
@@ -1082,7 +1086,9 @@ The rules above do not give these points. Each item is a proposed choice of the 
    runs. With no camera group, the flag `creating` of `CameraGroupManager` does the same job: an apply
    request that would make a group sets it with no wait after it found no group, and clears it at its
    end. A second apply request that finds no group while the flag is set gets the same HTTP 409 with the
-   same reason. Thus two requests never make two groups [ADR-Z7F3](../decisions/entries/Z7F3-choices-of-fix-lane-3.md).
+   same reason. A close of all groups adds one to the count `closes` of the manager; a request that makes
+   a group and finds the count changed after its detection gets HTTP 409 with the reason `The cameras
+   were closed while the request ran. Send the request again.` and makes no group. Thus two requests never make two groups [ADR-Z7F3](../decisions/entries/Z7F3-choices-of-fix-lane-3.md).
 8. T-REQ-19 at 60 fps: the fall back comes after the failure, so the status then holds the result at
    30 fps. The test reads the reason at 60 fps in the log line of the failure.
 9. A recording is never changed by a change of the rate (a decision of the user). A fall back does not

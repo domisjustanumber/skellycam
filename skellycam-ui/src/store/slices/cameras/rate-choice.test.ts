@@ -89,6 +89,7 @@ test('T-REQ-98: the response of a pick does not replace the desired configs (cam
     assert.equal(replacesDesired('rate', true), false, 'a pick keeps the unapplied edits');
     assert.equal(replacesDesired('settings', true), true);
     assert.equal(replacesDesired('update-cameras', false), false, 'a camera that the request did not send');
+    assert.equal(replacesDesired('settings', true, true), false, 'a failed camera keeps the edit of the user (ADR-Z7F3)');
 });
 
 test('T-REQ-95: withChosenRate gives each detected camera the current choice (camera-requests.md 2.8)', () => {

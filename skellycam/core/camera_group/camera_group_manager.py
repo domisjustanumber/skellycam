@@ -18,6 +18,7 @@ from skellycam.core.camera.capture.modes import (
     native_from_supported,
     rates_equal,
 )
+from skellycam.core.camera.capture.failure_codes import WEDGE_CODES
 from skellycam.core.camera.capture.source import CaptureFailure, CaptureRequest
 from skellycam.core.camera.config.camera_config import CameraConfigs, MAX_MANUAL_EXPOSURE
 from skellycam.core.camera_group.camera_group import REQUEST_RUNS, CameraGroup, RequestRefused, same_config
@@ -39,6 +40,7 @@ from skellycam.core.types.type_overloads import (
 from skellycam.core.take_recorder import TakeSummary  # noqa: TC001 — beartype checks annotations at runtime
 
 logger = logging.getLogger(__name__)
+CLOSED_DURING_REQUEST = "The cameras were closed while the request ran. Send the request again."
 
 
 @dataclass
@@ -51,6 +53,7 @@ class CameraGroupManager:
     closed_diagnostics: dict = field(default_factory=dict)  # the last dicts of each camera of a closed group (F4)
     searching: bool = False  # an exposure search of the endpoint runs (camera-requests.md 1.5)
     creating: bool = False  # an apply request makes a group: no second one may (camera-requests.md 2.4a item 7) [Z7F3]
+    closes: int = 0  # the count of close requests: a close ends a request that makes a group (2.4a item 7) [Z7F3]
     restore_records: dict = field(default_factory=dict)  # unix-capture.md 4.7 [NYT6]: from a group to the next
     camera_groups: dict[CameraGroupIdString, CameraGroup] = field(default_factory=dict)
     camera_group_framerate_subscriptions: dict[CameraGroupIdString, TopicSubscriptionQueue] = field(
@@ -136,6 +139,7 @@ class CameraGroupManager:
                 raise RequestRefused(409, REQUEST_RUNS)
             self.creating = True
             flagged.append(self)
+            closes = self.closes
         if any(camera_id not in self.detected_cameras for camera_id, config in camera_configs.items()
                if config.use_this_camera):
             # 7.1, U17: the check needs the detection data, also to refuse a virtual camera (ADR-PDD3 W5)
@@ -156,12 +160,16 @@ class CameraGroupManager:
                 **camera_group.cameras.orchestrator.camera_statuses, **camera_group.cameras.removed_statuses}.items()}
         started = datetime.now(timezone.utc)
         if camera_group is None:
+            if self.closes != closes:  # a close came during the detection: it ends this change (2.4a item 7)
+                raise RequestRefused(409, CLOSED_DURING_REQUEST)
             selected = {camera_id: config for camera_id, config in camera_configs.items() if config.use_this_camera}
             camera_group, failures = await self._create_and_start(selected)
             flagged.append(camera_group)  # `_create_and_start` set `request_runs`
         else:
             failures, change_warnings = await camera_group.apply(camera_configs, retry)
             warnings += change_warnings
+        # [Z7F3]: a failed camera that the request left alone is in the answer, but it is no failure of this request
+        kept = {camera_id for item in warnings if item["kind"] == "camera_not_retried" for camera_id in item["camera_ids"]}
         for item in clamped:  # the main process owns it (camera-requests.md 1.5)
             logger.warning(item["text"])
             warnings.append(item)
@@ -174,20 +182,23 @@ class CameraGroupManager:
             slow = {camera_id: (statuses[camera_id].info_dict().get("measured_fps"), camera_group.configs[camera_id].exposure,
                                 camera_group.mode_rate(camera_id) or camera_group.configs[camera_id].framerate)
                     if failure.get("stage") == "rate check" else (None, None, None)  # 2.4a item 4: `set mode`
-                    for camera_id, failure in failures.items() if failure.get("stage") in ("set mode", "rate check")}
+                    for camera_id, failure in failures.items() if camera_id not in kept
+                    and failure.get("stage") in ("set mode", "rate check") and failure.get("code") not in WEDGE_CODES}
             if slow:
                 failures, fallback_warnings = await camera_group.fall_back(fallback, slow)
-                warnings += fallback_warnings
+                warnings += [item for item in fallback_warnings if not (  # one item for a camera left alone
+                    item["kind"] == "camera_not_retried" and set(item["camera_ids"]) <= kept)]
             else:  # a search at 60 fps can still start it: the watch of the group (2.4a item 5)
                 camera_group.fall_back_armed = (fallback, counts, camera_group.request_count)
-        if failures:
+        new = {camera_id: failure for camera_id, failure in failures.items() if camera_id not in kept}
+        if new:
             # One explanation of the failed start, where it adds a cause to the reasons (port from sfn26)
             # Review item 4: the device list only (no camera is activated); the links of the detection before
             links = {camera_id: getattr(device, "usb_link", "unknown") for camera_id, device in self.detected_cameras.items()}
-            text = await asyncio.to_thread(describe_start_failure, failures, camera_configs, started,
+            text = await asyncio.to_thread(describe_start_failure, new, camera_configs, started,
                                            lambda: detect_available_cameras(modes=False), links)
             if text:
-                item = dict(kind="start_failure", camera_ids=sorted(failures), text=text)
+                item = dict(kind="start_failure", camera_ids=sorted(new), text=text)
                 warnings.append(item)
                 logger.warning(text)
                 camera_group.add_group_warning(item)  # the main process owns it (camera-requests.md 1.5)
@@ -335,6 +346,7 @@ class CameraGroupManager:
 
     async def close_all_camera_groups(self) -> None:
         """Close all camera groups."""
+        self.closes += 1
         if not self.camera_groups:
             logger.warning("No camera groups to close.")
             return  # `closing` stays False: else the payloads stay empty after a close with no group (sfn26)
