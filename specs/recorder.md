@@ -1250,8 +1250,7 @@ Each test of the kinds unit and process uses at least two cameras unless it says
   | `test_sft_766_writer_part` | fail | it records audio (5b) |
 
 - When the pinned format commit changes, this table changes in the same commit as the new pin.
-  The new commit exists only on the machine of the user until the user pushes the format
-  repository. Until then, the CI checkout of this commit fails, and T-REC-37 is skipped in CI ([ADR-3B97](../decisions/entries/3B97-format-sync-to-the-format-commit-with-f1-to-f10.md)).
+  The limit of a format commit that is only on the machine of the user ended on 2026-11-23 ([ADR-3B97](../decisions/entries/3B97-format-sync-to-the-format-commit-with-f1-to-f10.md)).
 
 ### 12.4 Decision to tests
 

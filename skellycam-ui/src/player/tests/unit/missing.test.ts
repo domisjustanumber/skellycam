@@ -201,7 +201,8 @@ test('T-PLAY-82 byte fields: the refusals of SFF-759, and a camera file with no 
     // camera 3 of dead_short: rows 80 to 119 are `missing` with empty byte fields and no block
     const vectors: [string, (p: TakePlan) => void][] = [
         ['one_empty_byte_field', p => void (camByIndex(p, 3).rows[100].fields = {byte_size: '100'})],
-        ['empty_without_missing', p => void (camByIndex(p, 3).rows[100].fields = {flags: '0'})],
+        // row 100 gets a time, so that only the empty byte fields with no `missing` flag refuse it
+        ['empty_without_missing', p => void (camByIndex(p, 3).rows[100].fields = {flags: '0', arrival_ns: '3343333333'})],
         // row 78 has no block, so the 79 rows with byte fields and the 79 blocks stay equal
         ['byte_fields_after_empty', p => markMissing(camByIndex(p, 3), 78, 78, false, 'missing_noblock')],
     ];
