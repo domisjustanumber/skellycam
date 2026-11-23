@@ -89,6 +89,9 @@ To take a newer kit, run `uv run python tools/kit_sync.py pull`. Put the kit com
 the commit that takes it.
 <!-- /kit -->
 
+<!-- kit:line-ends -->
+<!-- /kit -->
+
 ### Other systems only through certify
 
 <!-- kit:other-systems -->

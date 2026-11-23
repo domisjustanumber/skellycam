@@ -8,13 +8,12 @@
 # kit = "../project"  # The path of the freemocap/project checkout.
 
 [values]
-DEFAULT_BRANCH = "development"  # The branch that PRs target: upstream `development` (decision EQY4).
+DEFAULT_BRANCH_TEXT = "upstream `development`"  # The branch that PRs target, as Markdown text (decisions EQY4, X1T8 Q655).
 AREAS = "the code, the CI"  # What an agent must not change before it reads the decision log.
 NORMATIVE_DOCS = "the specs in `specs/`"  # The binding documents (decision 2S1P, item 4).
 SIBLING_PATH = "../skellyfileformat/spec/"  # A path relative to the repository, as an example in AGENTS.md.
 SECRET_SCAN_BRANCHES = "[main, development, development-streaming]"  # The branches of a PR that the secret scan checks.
 PYTHON_VERSION = "3.13.18"  # The Python of the doc checks in CI. The same as pyproject.toml.
-UV_VERSION = "0.13.7"  # The uv of the doc checks in CI: the value of the kit, as each repository has (decision X1T8).
 # For the other-systems rule, before it goes into the kit (decision 3SRX): the block AGENTS.md#other-systems
 # and the skill verify-on-other-systems. No kit unit uses them yet.
 SELF_TEST = "skellycam.certify"  # The self-test of the project, as AGENTS.md and the skills name it.
@@ -44,6 +43,10 @@ path = "skellycam-ui/src/hooks/useDraggableTooltips.tsx"
 line = 1
 sha256 = "2b9a3455ee945850201dde0ba48d187a94f492d5fdf3964dfe818d1b3252ee4e"
 reason = "upstream author credit"
+
+[check_links]
+doc_paths = ["specs/", "notes/"]  # The docs that the link check covers. The same as the kit default.
+skipped_folders = []  # No folder of frozen copies.
 
 [check_camera_media]
 golden_paths = []  # skellycam has no golden reference files yet, so nothing is allowed.

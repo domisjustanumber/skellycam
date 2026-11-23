@@ -1,2 +1,6 @@
+# kit:line-ends
+# /kit
 # Git hook scripts run under sh, also on Windows. They must keep LF line ends.
 .githooks/* text eol=lf
+# Adobe Illustrator files hold CR bytes. They are binary: git must not change their line ends.
+*.ai binary
