@@ -95,7 +95,7 @@ def test_a_write_that_fails_gives_no_file_and_no_error(tmp_path):
 
 
 def test_the_build_commands_call_write(monkeypatch, tmp_path):
-    """`BuildPy.run` writes into the build folder, and not for an editable install; `Sdist` writes into the sdist."""
+    """`BuildPy.run` writes into the build folder, and not for an editable install."""
     pytest.importorskip("setuptools")
     from setuptools.dist import Distribution
     calls = []
@@ -109,8 +109,24 @@ def test_the_build_commands_call_write(monkeypatch, tmp_path):
     command.editable_mode = True
     command.run()
     assert len(calls) == 1
-    build_info.Sdist(Distribution()).make_release_tree(str(tmp_path / "sdist"), [])
-    assert calls[-1] == (tmp_path / "sdist", build_info.ROOT)
+
+
+def test_an_sdist_from_a_clean_checkout_says_the_tree_is_not_modified(monkeypatch, tmp_path):
+    """P2-M1 of the review: the release tree of the sdist is inside the source root, so the tree state is read
+    before setuptools makes it. Real git; an untracked folder that comes after the read changes nothing."""
+    pytest.importorskip("setuptools")
+    from setuptools.dist import Distribution
+    commit = repository(tmp_path / "repo")
+    base = tmp_path / "repo" / "skellycam-2.0.0a6"
+
+    def release_tree(self, base_dir, files):
+        Path(base_dir).mkdir(parents=True)
+        (Path(base_dir) / "PKG-INFO").write_text("x", encoding="utf-8")
+    monkeypatch.setattr(build_info, "ROOT", tmp_path / "repo")
+    monkeypatch.setattr(build_info._sdist, "make_release_tree", release_tree)
+    build_info.Sdist(Distribution()).make_release_tree(str(base), [])
+    assert json.loads((base / "skellycam" / "build_info.json").read_text(encoding="utf-8")) == {
+        "commit": commit, "tree_modified": False}
 
 
 def test_the_commands_are_wired_in_pyproject():

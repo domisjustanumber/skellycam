@@ -545,6 +545,8 @@ The names that the analysis of 2026-11-21 proposed and that this section changes
   the tree, and `skellycam.spec` puts it into `datas`. Only a source root that is the top of its git work tree
   gives a commit; a source tree inside another repository gives none [ADR-0Z6Q](../decisions/entries/0Z6Q-choices-of-the-certify-report-shape-build.md). An error of git gives no commit and
   never fails the build.
+- A run from a source checkout (a `.git` folder or file beside the package folder, as in an editable install)
+  ignores the build file and writes `null` and `null` [ADR-0Z6Q](../decisions/entries/0Z6Q-choices-of-the-certify-report-shape-build.md) item 17: no build made it, and it can be stale.
 - With a valid commit, `evidence.reasons` has no `no-commit`. With `tree_modified` `false`, it has no
   `modified-tree` [C 7.1]. The code must stop to add the two codes in all cases (today `run.py` adds them to each
   report). It adds `no-commit` only when `commit` is `null` or not 40 hex digits, and `modified-tree` only when

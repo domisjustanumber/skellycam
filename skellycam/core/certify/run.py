@@ -1054,6 +1054,15 @@ def read_build_info(path) -> tuple:
     return None, None
 
 
+def build_values(path) -> tuple:
+    """3.5.2: (commit, tree_modified) of the build file at `path`. A source checkout (a `.git` folder, or the `.git`
+    file of a worktree, beside the package folder) ignores the file and gives (None, None): an editable run has no
+    build, and a file that `tools/build_info.py` wrote there can be stale [ADR-0Z6Q item 17]."""
+    if (Path(path).parents[1] / ".git").exists():
+        return None, None
+    return read_build_info(path)
+
+
 def evidence_reasons(version, commit, tree_modified, reasons) -> list:
     """C 7.1: `no-version`, `no-commit` and `modified-tree` only when they apply (3.5.2), then the reasons of the
     run, each one time."""
@@ -1066,7 +1075,7 @@ def evidence_reasons(version, commit, tree_modified, reasons) -> list:
 def _report(level, created, out, backend) -> dict:
     version = _version()
     context = out["context"]
-    commit, tree_modified = read_build_info(BUILD_INFO)
+    commit, tree_modified = build_values(BUILD_INFO)
     evidence = evidence_reasons(version, commit, tree_modified, out["reasons"])
     report = {
         "schema": SCHEMA,

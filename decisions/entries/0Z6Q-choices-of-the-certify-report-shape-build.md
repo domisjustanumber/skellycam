@@ -47,7 +47,11 @@ alternative.
     Not: a second result of a written row (one test, one check, contract 3.4); not: a cleanup row (contract 3.1:
     a failed cleanup step); not: a row that the plan does not count (`done` above `total`).
 16. The build file has a commit only when `git rev-parse --show-toplevel` is the source root. An error of git, also
-    a text that does not decode, gives no commit and never fails the build. Not: the commit of a parent repository.
+    a text that does not decode, gives no commit and never fails the build. `Sdist` reads git before setuptools
+    makes the release tree inside the source root. Not: the commit of a parent repository.
+17. A run from a source checkout (a `.git` folder or file beside the package folder) ignores the build file and
+    gives `null` and `null`, as before P7; the spec has no rule for an editable install. Not: read the file (a file
+    that `tools/build_info.py` wrote there stays after a later change of the tree, and git ignores it).
 
 ## Reason
 

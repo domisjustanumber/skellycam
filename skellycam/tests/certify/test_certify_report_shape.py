@@ -134,6 +134,21 @@ def test_t_cert_77_the_build_file(monkeypatch, tmp_path):
     assert not {"no-commit", "modified-tree"} & set(report["evidence"]["reasons"])
 
 
+def test_a_build_file_in_a_source_checkout_is_ignored(tmp_path):
+    """P2-M2 of the review, 3.5.2, ADR-0Z6Q item 17: a run from a source checkout (a `.git` folder, or the `.git` file
+    of a worktree, beside the package folder) ignores the build file and gives `null` and `null`; else it reads it."""
+    run = product(RUN)
+    package = tmp_path / "skellycam"
+    package.mkdir()
+    build = write_build_file(package / "build_info.json", commit=COMMIT, tree_modified=False)
+    assert run.build_values(build) == (COMMIT, False)
+    (tmp_path / ".git").mkdir()
+    assert run.build_values(build) == (None, None)
+    (tmp_path / ".git").rmdir()
+    (tmp_path / ".git").write_text("gitdir: elsewhere", encoding="utf-8")
+    assert run.build_values(build) == (None, None)
+
+
 def test_t_cert_27_versions_the_tree_and_a_part_of_the_cameras(monkeypatch, tmp_path):
     """T-CERT-27, 3.5.2, 2.4: the version `2.0.0a6` gives `no-version` and `2.0.0-a6` does not; a valid commit with
     `tree_modified` true gives `modified-tree` and no `no-commit`; a run with the option `cameras` of one of four

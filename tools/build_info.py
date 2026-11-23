@@ -7,7 +7,8 @@ skellycam reads the file and never runs git.
 
 - `BuildPy` (the `build_py` command of setuptools) writes the file into the build folder of a wheel. With no git
   answer, it copies a valid file of the source tree: the file of an sdist. An editable install writes no file.
-- `Sdist` (the `sdist` command) writes the file into the tree of the sdist.
+- `Sdist` (the `sdist` command) writes the file into the tree of the sdist. It reads git before setuptools makes
+  the release tree inside the source root, so that new folder does not count as a change.
 - `python tools/build_info.py --require` writes the file into the source tree, for the installer build of CI. It
   ends with exit code 1 when git gives no commit.
 
@@ -57,11 +58,11 @@ def read(path) -> dict | None:
     return None
 
 
-def write(target, root, run=subprocess.run) -> Path | None:
-    """Write the build file into `target` from git in `root`, else from a valid file of `root`. Returns its path,
-    or None with no value. It never raises."""
+def write(target, root, run=subprocess.run, info=None) -> Path | None:
+    """Write the build file into `target`: `info`, else from git in `root`, else from a valid file of `root`.
+    Returns its path, or None with no value. It never raises."""
     try:
-        info = build_info(root, run) or read(Path(root) / FILE)
+        info = info or build_info(root, run) or read(Path(root) / FILE)
         if info is None:
             return None
         path = Path(target) / FILE
@@ -88,8 +89,10 @@ class BuildPy(_build_py):
 
 class Sdist(_sdist):
     def make_release_tree(self, base_dir, files):
+        # the release tree is inside the source root: read the tree state before setuptools makes it
+        info = build_info(ROOT)
         super().make_release_tree(base_dir, files)
-        write(base_dir, ROOT)
+        write(base_dir, ROOT, info=info)
 
 
 def main(argv=None) -> int:
