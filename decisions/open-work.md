@@ -17,10 +17,6 @@ task. Delete an item when its work is done. The PR that closes an item records t
   accepted (Q649).
   - The values are in `kit.toml` ([ADR-3SRX](entries/3SRX-choices-of-the-kit-sync-pilot.md)). Not
     done: `kit_sync.py propose --new` for the four units.
-- **Kit sync pilot** ([ADR-X1T8](entries/X1T8-two-way-kit-sync-adoption.md)). The other uv pins
-  (0.13.9) in five workflows and two specs move to the kit value in round 3 of this lane, after the
-  branches that change those workflows merge (item 11 of
-  [ADR-3SRX](entries/3SRX-choices-of-the-kit-sync-pilot.md)). Do not push before.
 - **An exact name lookup in `tools/check_other_systems.py`.** On 2026-11-23 (Q649) the user asked
   how the lookup of a `certify-check` name can be exact, and what it means that it is not. Today it
   takes the code spans of `specs/certify.md` with the form of a check name (item 6 of
@@ -77,10 +73,6 @@ task. Delete an item when its work is done. The PR that closes an item records t
     `.github/workflows/capture.yml` (section 15: Windows, Linux and macOS) ran one time, on
     d8989972d, and again on 6d496aa24. The next run must show T-CAP-86 and T-CAP-108 pass. The
     macOS job also runs the portable ring tests.
-  - The start method on Linux: Python 3.13 forks the camera processes from the main process, which
-    has threads (the server and the watch of each group). The product does not mix contexts. Spawn
-    on each system is a decision of the user
-    ([ADR-BM73](entries/BM73-fixes-of-the-first-ci-run-of-the-capture-workflow.md), F3).
   - Phase 7: the parity table of section 16.7 of the spec is the to-do list for Linux and macOS
     (14 tests with no counterpart yet).
 - **Support virtual cameras.** Detection shows a virtual camera with `virtual=True`, and a request
@@ -158,8 +150,7 @@ task. Delete an item when its work is done. The PR that closes an item records t
   - The DirectShow open order of `sfn26` (item 1 of ADR-6T78) waits for a check on the cameras.
   - The UI does not show the `start_failure` warning item.
   - Not verified: real cameras, Linux, macOS and the installer build.
-- **The certify run of skellycam.** The spec [`specs/certify.md`](../specs/certify.md) is draft 3. The code
-  writes format 1.6.0 of the contract; section 3.6 moves it to format 1.7.0 (decided 2026-11-23, not built). The first code is in `skellycam/core/certify/` (section 19 of the
+- **The certify run of skellycam.** The spec [`specs/certify.md`](../specs/certify.md) is draft 3. The first code is in `skellycam/core/certify/` (section 19 of the
   spec), and a first real quick run was done on 2026-11-21. Open: the checks that are `not-run`
   `not-built` (the status line of the spec). The choices of the agents
   wait for the user: [ADR-KY81](entries/KY81-certify-spec-choices-of-the-agent.md) (the items that the
@@ -171,8 +162,7 @@ task. Delete an item when its work is done. The PR that closes an item records t
   kept logs are in section 3.5 of the spec, in the slim form of Q594, with the build order of 3.6.7 (Q626) and
   the tests T-CERT-77 to T-CERT-90. The unit id is removed (Q595). The user accepted the choices of the agent
   ([ADR-NQ77](entries/NQ77-choices-of-the-certify-report-fields.md)) and the build order on 2026-11-23
-  ([ADR-10HT](entries/10HT-acceptance-of-the-certify-report-field-choices-and-the-build-order.md)). The
-  build starts only after `dom/fix-lane-3` is merged into `dom/integration`; that merge is done (2026-11-23).
+  ([ADR-10HT](entries/10HT-acceptance-of-the-certify-report-field-choices-and-the-build-order.md)).
 - **Certify report shape, decided 2026-11-23, not built**
   ([ADR-H2A0](entries/H2A0-decisions-of-the-user-on-the-certify-report-shape.md),
   [ADR-BW5M](entries/BW5M-decisions-of-the-user-on-the-two-verdicts-and-the-certify-test-set.md)). Section 3.6 of the spec holds
