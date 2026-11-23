@@ -90,7 +90,7 @@ task. Delete an item when its work is done. The PR that closes an item records t
   Next: the take in the new player and in Blender.
 - **Format sync.** skellyfileformat holds the changes F-1 to F-10 of section 13 of
   [`specs/recorder.md`](../specs/recorder.md) (its `main` is pushed at 24949df). skellycam follows on
-  the branch `dom/format-sync`, which is not merged.
+  the branch `dom/format-sync`. On 2026-11-23 it is merged into `dom/integration`.
 - **Phase 6a (the canvas player for new takes).** The user decided Y1 to Y7 on 2026-11-19
   ([ADR-J2BQ](entries/J2BQ-phase-6-player-decisions-y1-to-y7.md)). The user accepted the spec
   [`specs/player.md`](../specs/player.md) (revision 2) and its test list T-PLAY-01 to T-PLAY-72 on

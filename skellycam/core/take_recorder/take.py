@@ -256,10 +256,9 @@ class Take:
 
     @staticmethod
     def _stored_px(camera, mkv, rows):
-        """The size of the first block that is not a placeholder; else of the first placeholder; else
-        of the mode (SFF-728, agent 26)."""
-        stored = [r for r in rows if r.byte_offset is not None]
-        row = next((r for r in stored if not r.flags & sidecar.MISSING), stored[0] if stored else None)
+        """The size of the first block that is not a placeholder, else of the mode (SFF-728; format
+        ADR-5B03 item 5 and ADR-76NN item 12)."""
+        row = next((r for r in rows if r.byte_offset is not None and not r.flags & sidecar.MISSING), None)
         if row is None:
             return f"{camera.width}x{camera.height}"
         with open(mkv, "rb") as handle:

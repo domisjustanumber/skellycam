@@ -15,8 +15,8 @@ import pytest
 
 from skellycam.tests.take_recorder import ebml, jpeg_tools, sidecar_check
 from skellycam.tests.take_recorder.rec_api import (
-    DEAD_REASON, WRITER, Frames, Run, camera_key, camera_label, dead_take, hand_mean_framerate, hand_stop_fields, rec,
-    simple_take, take_camera, warnings_of)
+    DEAD_REASON, WRITER, Frames, Run, camera_key, camera_label, dead_take, hand_mean_framerate, hand_stop_fields,
+    layout_of, rec, simple_take, take_camera, warnings_of)
 
 STALL_LIMIT_S = 1.0  # scaled down by 10 (12.1)
 QUEUE_S = 0.3
@@ -194,6 +194,19 @@ def test_t_rec_23_dead_camera_writes_placeholders_to_the_end(tmp_path, runs, cas
     assert response["mean_framerate"] == pytest.approx(hand_mean_framerate(rows), abs=1e-9)
     assert response["mean_inter_camera_sync_ms"] == pytest.approx(round(statistics.fmean(ranges), 2), abs=1e-9)
     assert response["frame_duration_stats"]["max"] == pytest.approx(max(durations), abs=1e-9)
+
+
+def test_t_rec_23_stored_px_with_only_placeholders(tmp_path, runs):
+    """T-REC-23, case 4 [SFF-728, format ADR-76NN item 12]: camera B dies before its first frame, and
+    the layout of its placeholder (320x240) is not the mode size (640x480). `stored_px` of B is the
+    mode size: a placeholder is never the stored size."""
+    run = Run(tmp_path / "take", [take_camera("0a1b", os_index=0),
+                                  take_camera("ff00", os_index=1, layout=layout_of(jpeg_tools.synthetic_jpeg(0, 320, 240, "422")))])
+    runs.append(run)
+    for k in range(10):
+        run.give("0a1b", k)
+    run.finish(10, dead_cameras={"ff00": DEAD_REASON})
+    assert [c["stored_px"] for c in run.manifest()["summary"]["cameras"]] == ["640x480", "640x480"]
 
 
 # 20 kill points (12.2): (place, row or frame). "csv_before": the child ends before it writes row r
