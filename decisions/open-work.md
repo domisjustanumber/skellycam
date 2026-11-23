@@ -162,5 +162,11 @@ task. Delete an item when its work is done. The PR that closes an item records t
   a median frame-rate statistic in the stop answer; a role flag in place of the `parent_process()`
   guards. Built now on `dom/fix-lane-3`: a live settings change never restarts a failed camera; a
   camera whose capture failed for a reason other than a hang gets its settings back at the close.
+- **Capture timings, decided 2026-11-23, not built**
+  ([ADR-MX8V](entries/MX8V-decisions-of-the-user-on-capture-timings.md)). The spec
+  [`specs/capture-timings.md`](../specs/capture-timings.md) is draft 1, with its test list T-TIM-01 to
+  T-TIM-24. Its agent choices ([ADR-8Z0Q](entries/8Z0Q-choices-of-the-capture-timings-spec.md)) and the
+  four questions of its section 12 wait for the user. The code starts after the user accepts the spec and
+  after `dom/fix-lane-3` merges. The FreeMoCap display comes after FreeMoCap moves to the frame-ring API.
 - **Deferred by the user (2026-11-23).** At 60 fps the exposure search never tries a value longer
   than the frame period. The product switches low light compensation off after each open.
