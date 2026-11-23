@@ -8,6 +8,13 @@ task. Delete an item when its work is done. The PR that closes an item records t
   `tools/check_camera_media.py` must refuse a PNG, GIF, WebP or SVG file, and allow each chart,
   diagram or UI screenshot by its path. Today it prints a reminder only. Its docstring and the
   `commit-files` skill change with it.
+- **The other-systems rule in the shared kit.**
+  [ADR-VV4Q](entries/VV4Q-other-systems-only-through-certify.md) item 5: the block
+  `<!-- kit:other-systems -->` of `AGENTS.md`, the skill `verify-on-other-systems`,
+  `tools/check_other_systems.py` and its test go into the shared agents and ADR kit later. Each
+  repository then sets its own `LAB_PLATFORMS`, `EXEMPT_PATHS` and self-test pointer. The design
+  choices of [ADR-K9B7](entries/K9B7-design-of-the-other-systems-rule-skill-and-check.md) wait for
+  the user.
 - **The index after the clean-up.**
   [ADR-N2NH](entries/N2NH-index-limit-24000-no-shortened-rows-and-binding-specs.md) raised
   `INDEX_LIMIT` from 14,000 to 24,000 characters until the clean-up. On 2026-11-20 the user ruled

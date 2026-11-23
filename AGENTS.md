@@ -15,10 +15,10 @@ package in `skellycam/`, the Electron UI in `skellycam-ui/` and the docs site in
 | Path | Role |
 |---|---|
 | `AGENTS.md` | The root instructions file for coding agents |
-| `CLAUDE.md` | Imports this file. It has no other content. |
+| `CLAUDE.md` | A local file. Git does not track it, because `.gitignore` ignores it. If you want one, put only `@AGENTS.md` in it ([ADR-XT31](decisions/entries/XT31-kit-adoption-choices-camera-media-check-and-fills.md)). |
 | `decisions/` | Decision log ([`README.md`](decisions/README.md)) and its open work ([`open-work.md`](decisions/open-work.md)) |
 | `specs/` | The specifications. An accepted decision entry links each one. |
-| `tools/` | The doc checks: `check_decision_log.py`, `check_links.py`, `check_private_data.py` and `check_camera_media.py`. Their tests are in `tools/tests/`. |
+| `tools/` | The doc checks: `check_decision_log.py`, `check_links.py`, `check_private_data.py`, `check_camera_media.py` and `check_other_systems.py`. Their tests are in `tools/tests/`. |
 | `plans/` | A local working folder. Git ignores it. |
 | `.claude/skills/` | The skills ([section 2](#2-skills)) |
 | `.githooks/` | The git hooks of a worktree that adopts these rules ([section 3](#3-install-and-test)) |
@@ -35,6 +35,7 @@ The rules in this file also apply.
 | Skill | Use it to |
 |---|---|
 | [`commit-files`](.claude/skills/commit-files/SKILL.md) | Make a commit, or add a recording, a camera frame, an image or another large file |
+| [`verify-on-other-systems`](.claude/skills/verify-on-other-systems/SKILL.md) | Get a fact from macOS, Linux, a user system or hardware that the test machine does not have |
 
 ## 3. Install and Test
 
@@ -56,8 +57,8 @@ Do not depend on an activated virtual environment.
 Run `uv run pytest`.
 These tests must pass.
 Run `uv run pytest tools/tests` to run only the doc checks.
-The doc checks test the decision log, the relative links, the private-data rule and the camera-media
-rule.
+The doc checks test the decision log, the relative links, the private-data rule, the camera-media
+rule and the other-systems rule.
 Report each new test failure to the user.
 Fix the failures of one root cause in one PR.
 
@@ -67,6 +68,30 @@ Pin each Python package, npm package, git revision, CI action and toolchain to o
 Use `==` for Python. Do not use a version range.
 Python is `==3.13.18` (`pyproject.toml`).
 Do not change code that your task does not need.
+
+### Other systems only through certify
+
+<!-- kit:other-systems -->
+The Windows lab machine of the project is the only test machine. You can reach other systems only
+through the self-test of the project and its report.
+When you cannot verify a fact on the test machine, do not write a script or a manual step for a
+person to run on another system.
+Add a check to the self-test. Use `record-only` when the check has no pass rule yet.
+The check must not change or stop the other checks of the run. A check that can block a device runs
+after the safe checks.
+The check must report its result and its reason code. It must not report private data.
+Mark the fact "not verified" until a report gives its result.
+The one exception is a CI runner with no camera. It can still run the checks that need no device.
+Load the skill [`verify-on-other-systems`](.claude/skills/verify-on-other-systems/SKILL.md) for
+this work.
+<!-- /kit -->
+
+The self-test is `skellycam.certify(level)` ([specs/certify.md](specs/certify.md)). Mark a fact not
+verified with `[NV]`.
+The pre-commit hook runs `tools/check_other_systems.py` on the files that the commit adds, and
+`uv run pytest tools/tests` and CI run it on each tracked file. It refuses a script that names or
+guards for another system, unless one of its first 5 lines is a comment with
+`certify-check: <name>` or `other-systems: not applicable (<reason>)` (see its docstring).
 
 ## 5. Decision Log
 
