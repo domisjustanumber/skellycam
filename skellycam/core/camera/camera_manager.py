@@ -32,6 +32,9 @@ class CameraManager:
     removed_workers: dict[CameraIdString, CameraWorker] = field(default_factory=dict)  # a restart joins them first
     # unix-capture.md 4.7 [NYT6]: camera_id -> the restore record that a closed group left; the group manager keeps it
     restore_records: dict = field(default_factory=dict)
+    # unix-capture.md 4.7.1 [HQE5]: the folder of the restore files (None: no file) and the key and USB IDs of each camera
+    restore_store: object = None
+    restore_identities: dict = field(default_factory=dict)
 
     @property
     def all_ready(self) -> bool:
@@ -46,6 +49,8 @@ class CameraManager:
         camera_configs: CameraConfigs,
         source_factory: Callable | None = None,
         restore_records: dict | None = None,
+        restore_store=None,
+        restore_identities: dict | None = None,
     ) -> "CameraManager":
         logger.info(f"Starting camera manager process with {len(camera_configs)} cameras")
 
@@ -58,7 +63,8 @@ class CameraManager:
         orchestrator = CameraOrchestrator.from_statuses(camera_statuses=camera_statuses)
 
         manager = cls(ipc=ipc, camera_workers={}, orchestrator=orchestrator, worker_registry=worker_registry,
-                      source_factory=source_factory, restore_records=restore_records)
+                      source_factory=source_factory, restore_records=restore_records,
+                      restore_store=restore_store, restore_identities=dict(restore_identities or {}))
         for camera_id, camera_config in camera_configs.items():
             manager.camera_workers[camera_id] = manager._create_worker(camera_id, camera_config)
         return manager
@@ -79,6 +85,8 @@ class CameraManager:
             shm_subscription=topics[TopicTypes.SHM_UPDATES].get_subscription(),
             recording_info_subscription=topics[TopicTypes.RECORDING_INFO].get_subscription(),
             source_factory=self.source_factory,
+            restore_store=self.restore_store,
+            restore_identity=self.restore_identities.get(camera_id),
         )
         orchestrator.camera_statuses[camera_id].owner = worker.worker  # the status tells a slow lock from a dead one
         return worker

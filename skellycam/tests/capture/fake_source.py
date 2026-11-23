@@ -245,6 +245,7 @@ class FakeScript:
     close_delay_s: float = 0.0  # the close of the source takes this long (clock time)
     exit_at: str | None = None  # "open", or "frame:<n>": the camera process ends there with os._exit(3)
     name: str | None = None  # the friendly name in the detection result; None: "Fake camera <index>"
+    product_id: int | None = None  # the USB product ID in the detection result; None: the index (4.7.1 tests)
     no_dht: bool = False  # each JPEG has no DHT segment, as many UVC cameras send it
     diagnostics: dict | None = None  # keys that `diagnostics()` adds to the null source keys and `frames`
 
@@ -809,7 +810,8 @@ class FakeSourceFactory:
         for index, script in enumerate(self.scripts):
             native = [modes.NativeMode(*m) for m in (script.detected_modes or script.modes)]
             infos.append(CameraDeviceInfo(index=index, name=script.name or f"Fake camera {index}", vendor_id=0xFEED,
-                                          product_id=index, path=self.links[index],
+                                          product_id=index if script.product_id is None else script.product_id,
+                                          path=self.links[index],
                                           supported_modes=modes.supported_modes(native), modes_read=True,
                                           virtual="virtual" in (script.name or "").lower()))
         return infos
