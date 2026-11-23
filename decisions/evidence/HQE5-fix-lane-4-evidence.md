@@ -19,3 +19,12 @@ The evidence of [ADR-HQE5](../entries/HQE5-choices-of-fix-lane-4.md).
 2. The log of run 44676423645: `test_connection.py ssssssssss`.
 3. The Windows runner, run 45214740615: `row=30 from=125 to=127` (delay 0.05 s) and `row=30 from=125 to=131`,
    `from=126 to=131` (0.2 s): each gap is on one row near the end; 1.0 s and 60 fps passed.
+4. Certify on Linux, the same copy: on the old code `test_session_child_a_cancel_kills_the_session_tree` failed at
+   once with "A SemLock created in a fork context is being shared with a process in a spawn context". With `spawn`
+   it hung: `py-spy` showed the drive loop in `_drive` with no session child left (psutil had reaped it, and
+   `is_alive()` stayed true). With the sentinel in `_ChildSession`: the 54 certify tests passed on Linux and on
+   Windows.
+5. The capture and preview tests on Linux with `spawn` (WSL, open-file limit 65536 as on the hosted runners; the
+   WSL default of 1024 ran out in one long session): 407 passed, 4 failed. Two passed alone. The other two
+   (`test_t_cap_04_read_frame_times_out_without_spinning`, `test_f1_a_tripped_camera_with_a_take_ends_within_1_s`)
+   fail alone on the old code in the same copy too: not caused by this lane.
