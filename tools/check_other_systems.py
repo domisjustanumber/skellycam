@@ -48,7 +48,8 @@ the same result on each system: no system is special.
   that quotes a guard.
 
 Exit codes: 0 when no file is refused, 1 when a file is refused, 2 for a usage error, outside a git
-repository, or with no git. Standard library only.
+repository, or with no git. It reads a file with a UTF-16 BOM as UTF-16. Standard library and the
+git CLI only.
 """
 
 from __future__ import annotations

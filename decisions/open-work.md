@@ -13,8 +13,13 @@ task. Delete an item when its work is done. The PR that closes an item records t
   `<!-- kit:other-systems -->` of `AGENTS.md`, the skill `verify-on-other-systems`,
   `tools/check_other_systems.py` and its test go into the shared agents and ADR kit later. Each
   repository then sets its own `EXEMPT_PATHS`, spec path and self-test pointer. The design
-  choices of [ADR-K9B7](entries/K9B7-design-of-the-other-systems-rule-skill-and-check.md) wait for
-  the user.
+  choices of [ADR-K9B7](entries/K9B7-design-of-the-other-systems-rule-skill-and-check.md) are
+  accepted (Q649).
+- **An exact name lookup in `tools/check_other_systems.py`.** On 2026-11-23 (Q649) the user asked
+  how the lookup of a `certify-check` name can be exact, and what it means that it is not. Today it
+  takes the code spans of `specs/certify.md` with the form of a check name (item 6 of
+  [ADR-K9B7](entries/K9B7-design-of-the-other-systems-rule-skill-and-check.md)). The supervisor puts
+  the options to the user. A later entry changes the lookup source.
 - **The index after the clean-up.**
   [ADR-N2NH](entries/N2NH-index-limit-24000-no-shortened-rows-and-binding-specs.md) raised
   `INDEX_LIMIT` from 14,000 to 24,000 characters until the clean-up. On 2026-11-20 the user ruled

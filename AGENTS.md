@@ -76,11 +76,9 @@ You can test only on the system that you work on. You can reach each other syste
 self-test of the project and its report. Another system is another OS, or hardware that the system
 that you work on does not have.
 When you cannot verify a fact on the system that you work on, do not write a script or a manual
-step for a person to run on another system.
-Add a check to the self-test. Use `record-only` when the check has no pass rule yet.
-The check must not change or stop the other checks of the run. A check that can block a device runs
-after the safe checks.
-The check must report its result and its reason code. It must not report private data.
+step for a person to run on another system. Add a check to the self-test.
+Sections 5.5 and 5.6 of `report-format.md` of the skellycertify repository tell how to add a check,
+when a check can exist, and its level.
 Mark the fact "not verified" until a report gives its result.
 The one exception is a CI runner with no camera. It can still run the checks that need no device.
 Load the skill [`verify-on-other-systems`](.claude/skills/verify-on-other-systems/SKILL.md) for
