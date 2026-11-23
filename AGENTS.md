@@ -90,11 +90,13 @@ this work.
 The self-test is `skellycam.certify(level)` ([specs/certify.md](specs/certify.md)). Mark a fact not
 verified with `[NV]`.
 The pre-commit hook runs `tools/check_other_systems.py` on the files that the commit adds, and
-`uv run pytest tools/tests` and CI run it on each tracked file. It refuses a script that names or
-guards for another system, unless one of its first 5 lines is a comment with
-`certify-check: <name>` or `other-systems: not applicable (<reason>)` (see its docstring).
-`<name>` must be a check name of `specs/certify.md`, in each mode. If the check is not in the spec,
-add it to the spec first (see the skill).
+`uv run pytest tools/tests` and CI run it on each tracked file. It gives the same result on each
+system. It refuses a script outside the product code that names or guards for any system, unless
+one of its first 5 lines is the comment `script-purpose: <kind> ...`. The kinds are
+`certify-check <name>`, `local-study (<what>)`, `tool (<what>)` and `ci (<workflow>)` (see its
+docstring). `<name>` must be a check name of `specs/certify.md`. If the check is not in the spec,
+add it to the spec first (see the skill). The result of a `local-study` is a fact about the system
+of its author only. Mark it not verified for each other system.
 
 ## 5. Decision Log
 

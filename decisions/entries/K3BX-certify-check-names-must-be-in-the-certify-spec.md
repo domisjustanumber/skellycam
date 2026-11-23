@@ -8,8 +8,10 @@
 
 ## Decision
 
-1. The marker `certify-check: <name>` of
-   [ADR-VV4Q](VV4Q-other-systems-only-through-certify.md) passes the file check only when `<name>`
+1. The kind `certify-check <name>` of the field `script-purpose:`
+   ([ADR-C307](C307-script-purpose-field-and-check-names-of-the-certify-spec.md); first written
+   for the marker `certify-check: <name>` of
+   [ADR-VV4Q](VV4Q-other-systems-only-through-certify.md)) passes the file check only when `<name>`
    is a check name of [`specs/certify.md`](../../specs/certify.md). For another name, the test
    fails.
 2. To use a new name, the user or the agent first gets the check added to the spec. The process of
