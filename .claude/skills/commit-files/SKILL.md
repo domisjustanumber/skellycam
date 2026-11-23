@@ -12,8 +12,8 @@ The rules of [`AGENTS.md`](../../../AGENTS.md#8-private-data) also apply.
 
 - Do not commit a camera recording (video or audio) or a camera frame (a still image or a raw frame
   from a camera). These files are large, and they can contain private information.
-- The one exception is a golden reference file. Its path starts with an item of `GOLDEN_PATHS` in
-  `tools/check_camera_media.py`.
+- The one exception is a golden reference file. Its path starts with an item of `golden_paths` in
+  the table `[check_camera_media]` of `kit.toml`.
 - A screenshot that shows a camera image is a camera frame. A chart, a diagram or a UI screenshot
   that shows no camera image is not a camera frame.
 - A results folder can hold summaries, for example JSON, CSV and Markdown files. It must not hold

@@ -32,3 +32,13 @@ paths = [
   '''^research/skellycam_recording/recording_upgrade/results/hw_accel_target/gapfill/GF07_sources/GF07_manifest\.json$''',
 ]
 regexes = ['''^[0-9a-f]{16}$''', '''^h264/h[\w/]+$''', '''^[0-9a-f]{64}$''']
+
+# Reviewed 2026-11-23 (decision 3SRX): tools/kit_sync.py writes the SHA-256 of each kit unit into kit.toml.
+# The rule generic-api-key reports the hash of the unit .github/workflows/secrets.yml, because its key
+# holds the word "secrets". A SHA-256 of a public text is no credential.
+[[allowlists]]
+description = "SHA-256 of the kit text in kit.toml, no credential"
+targetRules = ["generic-api-key"]
+condition = "AND"
+paths = ['''^kit\.toml$''']
+regexes = ['''^[0-9a-f]{64}$''']

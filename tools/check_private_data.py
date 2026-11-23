@@ -22,11 +22,13 @@ generated lock files and Adobe Illustrator files (``SKIPPED_SUFFIXES``). The pre
 
 A placeholder such as ``C:\\Users\\<you>`` or ``/home/$USER`` or ``/home/user`` is not reported.
 
-``ALLOWED_LINES`` allows the findings of one line of one file: a path, a line number, the SHA-256 of
-the exact text of that line (with no line end) and a reason. A finding passes only when all three
-match, so an edited or moved line is checked again. The value itself is never copied into this file
-(decision I of JMS0). A term of ``.private-terms`` is reported also on an allowed line. Standard
-library only.
+The table ``[check_private_data]`` of ``kit.toml`` in the repository root holds the values of the
+repository. ``allowed_emails`` adds addresses to the allowlist, for example the public contact
+address of the project. Each item of ``allowed_lines`` allows the findings of one line of one file:
+``path``, ``line`` (the line number), ``sha256`` (the SHA-256 of the exact text of that line, with no
+line end) and ``reason``. A finding passes only when all three match, so an edited or moved line is
+checked again. The value itself is never copied into ``kit.toml`` (decision 0001). A term of
+``.private-terms`` is reported also on an allowed line. Standard library only.
 """
 
 from __future__ import annotations
@@ -36,8 +38,25 @@ import re
 import shutil
 import subprocess
 import sys
+import tomllib
 from dataclasses import dataclass
 from pathlib import Path
+
+
+def kit_values(section: str, keys: set[str]) -> dict:
+    """The table ``[section]`` of ``kit.toml`` in the repository root, or {} when there is no file."""
+    path = Path(__file__).resolve().parents[1] / "kit.toml"
+    if not path.is_file():
+        return {}
+    with path.open("rb") as file:
+        table = tomllib.load(file).get(section, {})
+    unknown = sorted(set(table) - keys)
+    if unknown:
+        raise SystemExit(f"kit.toml [{section}]: unknown keys: {', '.join(unknown)}")
+    return table
+
+
+KIT = kit_values("check_private_data", {"allowed_emails", "allowed_lines"})
 
 PRIVATE_TERMS = ".private-terms"
 # Generated lock files hold four-part package versions that look like private IP addresses, and
@@ -49,15 +68,12 @@ ALLOWED_EMAIL_DOMAINS = re.compile(
     r"(?:^|\.)(?:example\.(?:com|org|net)|invalid|test|localhost|users\.noreply\.github\.com)$",
     re.IGNORECASE,
 )
-# Add the public contact address of the project here, for example the one in pyproject.toml.
-ALLOWED_EMAILS = {"info@freemocap.org", "noreply@anthropic.com"}
+# kit.toml adds the public contact address of the project, for example the one in pyproject.toml.
+ALLOWED_EMAILS = {"noreply@anthropic.com", *(a.lower() for a in KIT.get("allowed_emails", []))}
 
-# (path, line number): (SHA-256 of the exact line text, reason). Decision I of JMS0 (2026-11-20).
-ALLOWED_LINES = {
-    ("skellycam-ui/src/hooks/floatingOnboarding.tsx", 1):
-        ("70d514cd447c3acfa67678f424813f7219a6820a0d1bb02bd319800e482e93b0", "upstream author credit"),
-    ("skellycam-ui/src/hooks/useDraggableTooltips.tsx", 1):
-        ("2b9a3455ee945850201dde0ba48d187a94f492d5fdf3964dfe818d1b3252ee4e", "upstream author credit"),
+# (path, line number): (SHA-256 of the exact line text, reason), from kit.toml.
+ALLOWED_LINES: dict[tuple[str, int], tuple[str, str]] = {
+    (row["path"], row["line"]): (row["sha256"], row["reason"]) for row in KIT.get("allowed_lines", [])
 }
 
 # A user folder that starts with <, {, % or $, or that is the word "user", is a placeholder.

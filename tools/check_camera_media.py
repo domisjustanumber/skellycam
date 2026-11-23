@@ -13,7 +13,8 @@ file, and exits 1. It finds the file by its extension (``RECORDING_SUFFIXES``, `
 and by its first bytes (``MAGIC``), so that a renamed video or JPEG is also refused.
 
 - The one exception is a golden reference file. Its path starts with an item of ``GOLDEN_PATHS``.
-  Set this list for the repo. The default is ``golden/``.
+  Set this list for the repo with ``golden_paths`` in the table ``[check_camera_media]`` of
+  ``kit.toml`` in the repository root. The default is ``golden/``. An empty list allows none.
 - A ``.ts`` file is a TypeScript file unless its first bytes are an MPEG transport stream.
 - A NumPy or array dump is a measurement. The tool does not refuse it.
 - A PNG, GIF, WebP or SVG file can be a chart, a diagram or a screenshot. The tool does not refuse
@@ -33,10 +34,25 @@ import argparse
 import shutil
 import subprocess
 import sys
+import tomllib
 from pathlib import Path, PurePosixPath
 
-# The path prefixes of the golden reference files. skellycam has none yet, so nothing is allowed.
-GOLDEN_PATHS: tuple[str, ...] = ()
+
+def kit_values(section: str, keys: set[str]) -> dict:
+    """The table ``[section]`` of ``kit.toml`` in the repository root, or {} when there is no file."""
+    path = Path(__file__).resolve().parents[1] / "kit.toml"
+    if not path.is_file():
+        return {}
+    with path.open("rb") as file:
+        table = tomllib.load(file).get(section, {})
+    unknown = sorted(set(table) - keys)
+    if unknown:
+        raise SystemExit(f"kit.toml [{section}]: unknown keys: {', '.join(unknown)}")
+    return table
+
+
+# The path prefixes of the golden reference files, from kit.toml. An empty tuple allows none.
+GOLDEN_PATHS: tuple[str, ...] = tuple(kit_values("check_camera_media", {"golden_paths"}).get("golden_paths", ["golden/"]))
 
 RECORDING_SUFFIXES = frozenset(
     ".mp4 .mkv .mka .avi .mov .webm .m4v .m4a .wav .flac .opus .ogg .mp3 .mcap"

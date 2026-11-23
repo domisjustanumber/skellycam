@@ -44,7 +44,7 @@ def test_user_paths_are_reported(text: str) -> None:
         "/ho" + "me/$USER/repo",
         '"path": "/ho' + 'me/user/recordings"',
         "C:" + "\\Users\\%USERNAME%",
-        "../OpenMMLab-Exporter/notes",
+        "../other-repo/notes",
     ],
 )
 def test_placeholders_and_relative_paths_pass(text: str) -> None:
@@ -116,9 +116,9 @@ def test_files_mode_checks_only_the_given_files_and_skips_lock_and_illustrator_f
 
 
 def test_an_allowed_line_passes_only_while_its_text_is_unchanged(monkeypatch) -> None:
-    """Decision I of the user (2026-11-20): an allow entry is a path, a line number and the SHA-256 of the exact
-    text of that line, with a reason. A finding on that line passes only when all three match: an edited
-    line, the same text on another line, or the same line in another file is checked again."""
+    """An allow entry is a path, a line number and the SHA-256 of the exact text of that line, with a reason
+    (decision 0001). A finding on that line passes only when all three match: an edited line, the same text
+    on another line, or the same line in another file is checked again."""
     import hashlib
 
     line = "// by " + USER + "@" + "corp-mail.org"

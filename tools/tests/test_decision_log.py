@@ -34,13 +34,16 @@ INDEX = """# Decision log
 |---|----------|---------|--------|
 {proposed}
 
+## Open work
+"""
+
+EVIDENCE = """# Evidence entries
+
 ### Evidence
 
 | # | Decision | Status |
 |---|----------|--------|
 {evidence}
-
-## Open work
 """
 
 HISTORY = """# Historical entries
@@ -65,8 +68,9 @@ def make_log(
     log_dir = tmp_path / log
     log_dir.mkdir(parents=True)
     (log_dir / "README.md").write_text(
-        INDEX.format(active=active, proposed=proposed, evidence=evidence), encoding="utf-8"
+        INDEX.format(active=active, proposed=proposed), encoding="utf-8"
     )
+    (log_dir / cdl.EVIDENCE).write_text(EVIDENCE.format(evidence=evidence), encoding="utf-8")
     (log_dir / cdl.HISTORICAL).write_text(HISTORY.format(historical=historical), encoding="utf-8")
     (log_dir / cdl.ENTRIES).mkdir()
     for name, text in (entries or {}).items():
@@ -163,7 +167,7 @@ def test_an_absorbed_status_links_pyproject_only_beside_a_test(tmp_path: Path) -
                 row(1, "absorbed into [`pyproject.toml`](../pyproject.toml)"),
                 row(2, "absorbed into `pyproject.toml`, `tools/x.py`", "y"),
                 row(3, "absorbed into [`pyproject.toml`](../pyproject.toml), [`t`](../tools/tests/test_pins.py)", "z"),
-                row(4, "absorbed into `pyproject.toml`, `skellytracker/tests/sub/test_a.py`", "w"),
+                row(4, "absorbed into `pyproject.toml`, `package/tests/sub/test_a.py`", "w"),
             ]
         ),
         entries={"0001-x.md": "", "0002-y.md": "", "0003-z.md": "", "0004-w.md": ""},
@@ -222,7 +226,7 @@ def test_used_evidence_is_historical(tmp_path: Path) -> None:
 
 
 def test_evidence_entries_are_in_the_evidence_table_and_not_in_the_read_path(tmp_path: Path) -> None:
-    """An `evidence` entry has its row in the Evidence table, off the read path (decision 0001)."""
+    """An `evidence` entry has its row in `evidence.md`, off the read path (decision 0001)."""
     root = make_log(
         tmp_path,
         active=row(1, "accepted"),
@@ -239,8 +243,32 @@ def test_evidence_entries_are_in_the_evidence_table_and_not_in_the_read_path(tmp
     )
     assert cdl.check(root) == [
         "README.md:9: status 'evidence' must not be in the Active table",
-        "README.md:21: status 'accepted' must not be in the Evidence table",
+        "evidence.md:7: status 'accepted' must not be in the Evidence table",
     ]
+    (root / cdl.LOG_DIR / "README.md").write_text("### Evidence\n", encoding="utf-8")
+    assert "README.md:1: the Evidence table must be in evidence.md" in cdl.check(root)
+
+
+def test_replaced_evidence_is_historical(tmp_path: Path) -> None:
+    root = make_log(
+        tmp_path,
+        evidence=row(1, "evidence"),
+        historical="\n".join([row(2, "evidence; replaced by 0001", "y"), row(3, "evidence; replaced by 0001", "z")]),
+        entries={
+            "0001-x.md": "",
+            "0002-y.md": "**Status:** evidence; replaced by [0001](0001-x.md), 2026-11-23 (#1).\n",
+            "0003-z.md": "**Status:** evidence; replaced by 0001.\n",
+        },
+    )
+    assert cdl.check(root) == ["entries/0003-z.md: the status line does not link replaced by 0001 to 0001-x.md"]
+
+
+def test_staged_reminder() -> None:
+    assert cdl.staged_reminder(["decisions/entries/0001-x.md", "decisions/README.md", "a.py"]) == (
+        "decision log: the commit changes decisions/entries/0001-x.md and 1 more. The rules for an entry, a status"
+        " and a row are in the skill change-decision-log (.claude/skills/change-decision-log/SKILL.md)."
+    )
+    assert cdl.staged_reminder(["decisions/open-work.md", "decisions/evidence/x.md", "tools/a.py", ""]) is None
 
 
 def test_long_decision_cell_is_reported(tmp_path: Path) -> None:
@@ -1132,8 +1160,3 @@ def test_new_id_never_reads_as_a_number() -> None:
     assert cdl.new_id(set(), scripted("1E23", "12E3", "3K7Q")) == "1E23"  # a scripted draw is not filtered
     for _ in range(5000):
         assert not cdl.NUMBER_LIKE.fullmatch(cdl.new_id(set()))
-
-
-def test_the_pr_branch_is_upstream_development() -> None:
-    """Pull requests go against upstream `development` (decision EQY4): an entry there wins a collision."""
-    assert cdl.TARGET_BRANCH == "development"

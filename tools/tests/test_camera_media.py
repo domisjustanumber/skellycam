@@ -30,7 +30,7 @@ def refused(tmp_path: Path, files: dict[str, bytes], golden: tuple[str, ...] = (
 
 
 def git(root: Path, *args: str) -> None:
-    subprocess.run(["git", "-C", str(root), *args], check=True, capture_output=True)
+    subprocess.run(["git", "-C", str(root), *args], check=True, capture_output=True)  # noqa: S603, S607
 
 
 @pytest.fixture

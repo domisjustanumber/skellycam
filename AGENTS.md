@@ -20,7 +20,8 @@ package in `skellycam/`, the Electron UI in `skellycam-ui/` and the docs site in
 | `CLAUDE.md` | A local file. Git does not track it, because `.gitignore` ignores it. If you want one, put only `@AGENTS.md` in it ([ADR-XT31](decisions/entries/XT31-kit-adoption-choices-camera-media-check-and-fills.md)). |
 | `decisions/` | Decision log ([`README.md`](decisions/README.md)) and its open work ([`open-work.md`](decisions/open-work.md)) |
 | `specs/` | The specifications. An accepted decision entry links each one. |
-| `tools/` | The doc checks: `check_decision_log.py`, `check_links.py`, `check_private_data.py`, `check_camera_media.py` and `check_other_systems.py`. Their tests are in `tools/tests/`. |
+| `tools/` | The doc checks: `check_decision_log.py`, `check_links.py`, `check_private_data.py`, `check_camera_media.py` and `check_other_systems.py`, and the kit sync `kit_sync.py`. Their tests are in `tools/tests/`. |
+| `kit.toml` | The values of this repository for the tools, and the kit commit that it took ([section 4](#4-project-rules)) |
 | `plans/` | A local working folder. Git ignores it. |
 | `.claude/skills/` | The skills ([section 2](#2-skills)) |
 | `.githooks/` | The git hooks of a worktree that adopts these rules ([section 3](#3-install-and-test)) |
@@ -39,6 +40,7 @@ The rules in this file also apply.
 | Skill | Use it to |
 |---|---|
 | [`commit-files`](.claude/skills/commit-files/SKILL.md) | Make a commit, or add a recording, a camera frame, an image or another large file |
+| [`change-decision-log`](.claude/skills/change-decision-log/SKILL.md) | Add a decision entry, change a status, absorb or supersede an entry, or move a row of a log |
 | [`verify-on-other-systems`](.claude/skills/verify-on-other-systems/SKILL.md) | Get a fact from another system: another OS, or hardware that the system that you work on does not have |
 
 ## 3. Install and Test
@@ -62,7 +64,7 @@ Run `uv run pytest`.
 These tests must pass.
 Run `uv run pytest tools/tests` to run only the doc checks.
 The doc checks test the decision log, the relative links, the private-data rule, the camera-media
-rule and the other-systems rule.
+rule, the other-systems rule and the kit text.
 Report each new test failure to the user.
 Fix the failures of one root cause in one PR.
 
@@ -74,6 +76,17 @@ Python is `==3.13.18` (`pyproject.toml`).
 Do not change code that your task does not need.
 
 <!-- kit:kit-text -->
+Some text of this repository comes from the agents and ADR kit of freemocap/project. This is each
+file and each block that `kit.toml` lists in `[kit.hashes]`. A block is the text between the lines
+`<!-- kit:<name> -->` and `<!-- /kit -->`. Do not delete the marker lines.
+`uv run pytest tools/tests` runs `tools/kit_sync.py check`. It fails when such a text is not the
+kit text.
+To change such a text, add a decision entry, change the text, and run
+`uv run python tools/kit_sync.py propose`. It writes the change into the kit checkout in
+`../project`. The kit change then needs its own PR to freemocap/project. Its commit subject cites
+the entry of this repository.
+To take a newer kit, run `uv run python tools/kit_sync.py pull`. Put the kit commit in the body of
+the commit that takes it.
 <!-- /kit -->
 
 ### Other systems only through certify
@@ -114,9 +127,10 @@ An entry goes in the log of a module only when each file that its Decision secti
 changes is in that module.
 All other entries go in the root log, also each case that you cannot decide.
 A new module log needs the approval of the user. The PR that adds it also adds its folder to
-`LOG_DIRS` of `tools/check_decision_log.py`.
-Each log has a `README.md` with an Active table, an Evidence table, a Proposed table and `## Open work`, a
-`historical.md`, an `open-work.md` and its entry files in `entries/`. The Rules and `template.md` are only in the root log.
+`module_logs` in the table `[check_decision_log]` of `kit.toml`.
+Each log has a `README.md` with an Active table, a Proposed table and `## Open work`, an
+`evidence.md` with the Evidence table, a `historical.md`, an `open-work.md` and its entry files in
+`entries/`. The Rules and `template.md` are only in the root log.
 All logs have one ID space. Do not add a module name to an ID.
 When the scope of a module entry grows to more than one module, a new root entry supersedes it.
 A tool is code that a test, a hook, a CI job, a skill or a workflow step runs, or code that writes a
@@ -125,8 +139,10 @@ A script made the evidence for an entry or did its one-off job, and the entry na
 `scripts/` of the log that holds the entry. Its own tests, if any, are in `scripts/tests/`.
 A script does not change after its entry is decided. When a step starts to run it, move it to
 `tools/` and add a test.
-The [Rules](decisions/README.md#rules) of the index give the allowed edits, the status changes and
-the other rules that an agent needs and that no tool checks and no loaded document states. `tools/check_decision_log.py` checks the tables, the IDs and the
+The [Rules](decisions/README.md#rules) of the index give the rules for reading a log.
+Before you add or change an entry, a status or a row of a table, load the skill
+[`change-decision-log`](.claude/skills/change-decision-log/SKILL.md). It gives the allowed edits, the status changes and
+the other rules for a change that no tool checks. `tools/check_decision_log.py` checks the tables, the IDs and the
 limits.
 Add one entry for each new decision or measurement.
 Get its ID from `uv run python tools/check_decision_log.py --new`.
@@ -138,7 +154,7 @@ user. In a reply or a plan, the path is relative to the repository root or to th
 A commit message cannot hold a working link. In the commit body, write `ADR-<ID>` with no link.
 Cite an entry of another repository with the repository name and `ADR-<ID>`. Also link it with a
 full-SHA permalink when the entry is on the default branch of that repository
-(see the [Rules](decisions/README.md#rules)).
+(see the [Rules](.claude/skills/change-decision-log/SKILL.md#rules)).
 <!-- /kit -->
 
 ## 6. Git Rules
@@ -179,14 +195,14 @@ Do not write these in a tracked file, a commit message or a PR body:
 - a credential, a token, a password or a private key;
 - an absolute path in a user folder;
 - a hostname or a user name in prose;
-- an email address that is not on the allowlist of `tools/check_private_data.py`;
+- an email address that is not on the allowlist of `tools/check_private_data.py` and `kit.toml`;
 - a private URL or a private IP address;
 - a raw dump of `env`, `pip list`, `nvidia-smi` or `docker inspect`.
 
 Do not commit a camera recording (video or audio) or a camera frame (a still image or a raw frame
 from a camera). These files are large, and they can contain private information. The one exception
-is a golden reference file: its path starts with an item of `GOLDEN_PATHS` in
-`tools/check_camera_media.py`. Load the [`commit-files`](.claude/skills/commit-files/SKILL.md)
+is a golden reference file: its path starts with an item of `golden_paths` in the table
+`[check_camera_media]` of `kit.toml`. Load the [`commit-files`](.claude/skills/commit-files/SKILL.md)
 skill before each commit.
 
 - A screenshot that shows a camera image is a camera frame. A chart, a diagram or a UI screenshot
