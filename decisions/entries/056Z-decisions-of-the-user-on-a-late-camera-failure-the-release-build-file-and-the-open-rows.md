@@ -1,6 +1,11 @@
 # 056Z — Decisions of the user on a late camera failure, the release build file and the open rows
 
-**Status:** accepted, 2026-11-23 (user, relayed by the supervisor).
+**Status:** absorbed into
+[`specs/certify.md#352-addition-1-the-commit-and-the-tree-state-u-q557`](../../specs/certify.md#352-addition-1-the-commit-and-the-tree-state-u-q557),
+[`specs/certify.md#361-rules-of-the-rows`](../../specs/certify.md#361-rules-of-the-rows),
+[`specs/certify.md#362-the-check-catalogue-for-each-level`](../../specs/certify.md#362-the-check-catalogue-for-each-level),
+[`specs/certify.md#368-rows-and-bytes-today-and-after`](../../specs/certify.md#368-rows-and-bytes-today-and-after),
+2026-11-23 (commit to dom/certify-build; was accepted, 2026-11-23 (user, relayed by the supervisor; questions Q646 to Q648)).
 
 ## Decision
 
