@@ -30,6 +30,10 @@ The supervisor gave the items. The agent chose these details:
    reads names the base. Certify gives `clock:base` `not-run` with the new reason `clock-unknown` (not
    `not-built`, which stays for a null key). `long_intervals` already counted with the mode period (since the
    step 2 fixes); a test now proves it, and `time-gaps` is marked W in `full` ([`certify.md`](../../specs/certify.md) 10.2, 15).
+6. The user decided on 2026-11-21: the frame-rate statistic of the stop response uses a median. The agent chose:
+   the rate of group frame k is 1 / the median over the cameras of its frame duration, and its duration is that
+   median. The field names stay: each is still a summary of the rates and durations of the frames
+   ([`recorder.md`](../../specs/recorder.md) 8.2).
 
 ## Reason
 
@@ -47,6 +51,8 @@ The supervisor gave the items. The agent chose these details:
    time made a second group on the same cameras.
 5. A guess of QPC would be a fact that no code proves. The measured arrival minus sample (0.33 ms and 32 ms,
    [`certify.md`](../../specs/certify.md) 10.2) agrees with QPC but does not prove the base.
+6. One camera that gives queued frames 0.36 ms apart made one frame 2778 fps, and the mean over the cameras kept
+   most of it. The median of the durations and its reciprocal give one value for both fields.
 
 ## Consequences
 
@@ -58,6 +64,8 @@ The supervisor gave the items. The agent chose these details:
 3. A close dict that comes after the close of the group (no `restore_ok`) of a camera that failed with
    `rate-low` now gives no notice: certify trusts the restore of the product there.
 5. `<model>:gate:timestamps` cannot pass on Media Foundation while `clock:base` is `not-run`.
+6. With two cameras the median is still the mean of the two durations: one bursting camera of two gives about
+   60 fps for that frame, not 30. A burst of all cameras at once still shows in `max`.
 
 ## Evidence
 
@@ -74,6 +82,8 @@ The supervisor gave the items. The agent chose these details:
 4. Test: `test_t_req_96_two_requests_with_no_group_make_one_group` in `skellycam/tests/capture/test_frame_rate.py`.
 5. Test: `test_clock_base_of_a_source_that_cannot_tell_its_clock` in `skellycam/tests/certify/test_certify.py`;
    `test_t_unx_76_long_intervals_count_with_the_period_of_the_granted_mode`.
+6. Tests: `test_a_burst_of_one_camera_does_not_make_the_frame_rate_of_the_group` in
+   `skellycam/tests/take_recorder/test_review_fixes.py`; T-REC-27 and `hand_stop_fields` with the new rule.
 
 ## Alternatives rejected
 
@@ -83,3 +93,5 @@ The supervisor gave the items. The agent chose these details:
 2. One request flag `retry: true`: a camera that the UI does not yet show as failed, sent in the same "Update
    Cameras" request, would also open again. A rule from the configs alone (for example "a changed config"): the
    settings apply sends a failed camera with its unchanged config, and a rate pick changes every config.
+6. A median of the rates over the cameras: for two cameras it is the mean of the two rates (1404 fps in the
+   example). A median over the frames in place of `framerate_stats.mean`: the field `median` holds it already.
