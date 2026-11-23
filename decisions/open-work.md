@@ -170,6 +170,10 @@ task. Delete an item when its work is done. The PR that closes an item records t
   - FreeMoCap reads `framerate_stats.median` from the old `*_stats.json`, not from the stop response; a reader of
     new takes must use `mean_framerate` (Q609).
   - The first CI run with `spawn` on Linux and macOS, the skip guard and the pace steps is not done yet.
-  - FreeMoCap on Linux makes its log queue before it imports `skellycam`, so its start method is `fork` and its
-    camera processes can deadlock (`unix-capture.md` 4.12). FreeMoCap must call
-    `multiprocessing.set_start_method("spawn")` at the start of `main()`.
+  - FreeMoCap on Linux ([ADR-T34M](entries/T34M-decision-of-the-user-on-the-start-method-of-camera-processes.md)):
+    nothing is decided. The user: "I think this needs to be part of a wider review of how the whole of freemocap
+    works on linux"; the freemocap session does that review. A candidate for it: a call of
+    `multiprocessing.set_start_method("spawn")` at the top of `freemocap/__main__.py`, before
+    `create_websocket_log_queue()`, so that its own workers also spawn on Linux, as on Windows. Until a change, on
+    Linux its start method is `fork`, and skellycam refuses each camera process with `start-method-fork`
+    (`unix-capture.md` 4.12). Not verified on Linux.

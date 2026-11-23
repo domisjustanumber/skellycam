@@ -9,13 +9,12 @@ The decisions of the user are in
 [ADR-81RE](81RE-decisions-of-the-user-on-the-restore-file-the-take-rate-and-pace-tests.md). Q-A, Q-B and Q-C go to
 the user with the review.
 
-1. **Start method** ([`unix-capture.md`](../../specs/unix-capture.md) 4.12). On Linux, `skellycam/__init__.py` sets
-   `spawn` when no method is set; on Windows and macOS it sets nothing. A host on Linux that has `fork` already
-   gets one warning at the first camera start. `CameraStatus.retired` keeps the arrays of the last two
-   replacements. `_ChildSession` of certify reads the sentinel.
-   Not: a `spawn` context object for each object (the kill flag and the log queue of the host are of the host's
-   context and go to each camera process: two bridge threads and about 40 places). Not: the method on each system
-   (a host could no longer set it after the import).
+1. **Start method** ([`unix-capture.md`](../../specs/unix-capture.md) 4.12; the route is the decision of the user
+   in [ADR-T34M](T34M-decision-of-the-user-on-the-start-method-of-camera-processes.md)). The check is in
+   `CameraWorker.start`: `failed`, stage `open`, code `start-method-fork`, a reason that names
+   `set_start_method('spawn')`; on each system, not only Linux. `forkserver` starts (its children come from a
+   clean server process). The root `conftest.py` sets `spawn` first. `retired` keeps two generations; certify's
+   `_ChildSession` reads the sentinel. Not: only a warning (a forked camera never answers).
 2. **Skip guard** (4.11). `SKELLYCAM_NO_SKIP`; run reports and collect reports. Not: a minimum test count.
 3. **Slow stop** ([`recorder.md`](../../specs/recorder.md) 8.1, 12.1). A fault of the test: a camera at the gate
    during the hold of the last-frame lock loses frames of its push source, a true gap on the last row. The test

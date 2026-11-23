@@ -1182,7 +1182,8 @@ Codes [U, cert 15]: `not-found`, `no-access`, `no-permission`, `camera-in-use`, 
 `no-mode`, `below-floor`, `open-failed`, `first-frame-timeout`, `no-native-jpeg`, `not-ready`,
 `rate-low`, `rate-high`, `control-failed`, `device-removed`, `stalled`, `hung`, `disk-stall`,
 `previous-process-alive`, `stream-error`, `format-changed`, `process-ended` (certify added the last
-four [cert 18.1]). `no-manual-exposure` is not a failure code of `CaptureFailure`: a camera with no
+four [cert 18.1]), `start-method-fork` (the start of a camera process refuses the method `fork`, 4.12)
+[ADR-HQE5](../decisions/entries/HQE5-choices-of-fix-lane-4.md). `no-manual-exposure` is not a failure code of `CaptureFailure`: a camera with no
 manual exposure opens, with the warning kind `no_manual_exposure` (4.5) [req 1.5]. `no-manual-exposure`
 is only a certify reason code [cert 15] [ADR-FC1C](../decisions/entries/FC1C-choices-of-the-spec-integration.md).
 
@@ -1221,6 +1222,7 @@ The failure dicts that the main process writes get a code too:
 | `CameraGroup._mark_ended` (`camera_group.py:348`) | `open` or `streaming`, `camera process ended (exit code <n>)` | `process-ended` |
 | `CameraGroup._end_stuck_camera` and the stuck writer of `_collect_results` ([recorder.md](recorder.md) 5.3) | `recording`, `disk stall` | `disk-stall` |
 | The stall watch of 4.10 | `streaming`, `no loop pass for 3 s` | `stalled` |
+| `CameraWorker.start` when the start method is `fork` (4.12) | `open`, the text of 4.12 | `start-method-fork` |
 
 The new sources set their own codes (4.3.6, 4.4.8): `not-found`, `no-access`, `no-permission`,
 `camera-in-use`, `no-native-jpeg`, `previous-process-alive`, `format-changed` and the others above.
@@ -1521,20 +1523,36 @@ The signal and the watch [ADR-AC5B](../decisions/entries/AC5B-choices-of-the-thi
 
 ### 4.12 The start method of a camera process [A]
 
-- On Linux, `skellycam/__init__.py` sets the start method `spawn` when no start method is set yet. On
-  Windows and macOS it sets nothing: `spawn` is the default there, and a host program can still call
-  `set_start_method` after it imports `skellycam` [ADR-HQE5](../decisions/entries/HQE5-choices-of-fix-lane-4.md).
-- A host program on Linux that made a `multiprocessing` object before it imports `skellycam` has the
-  start method `fork` already (each object of the default context fixes the method). Then the camera
-  processes fork, and the deadlock below can come. The first start of a camera process then logs one
-  warning that names the deadlock and the fix of the host: `set_start_method("spawn")` before its
-  first `multiprocessing` object. FreeMoCap does this today (it makes its log queue first), so
-  FreeMoCap on Linux keeps the fault until it changes ([`open-work.md`](../decisions/open-work.md)).
-- Not chosen: a `spawn` context object for each object of skellycam, so that the global method does not
-  matter. The host gives objects of its own context to the camera processes: the kill flag (a `Value`
-  with a lock in FreeMoCap) and the log queue of `skellylogs`. A lock of the `fork` context cannot go to
-  a `spawn` child (`RuntimeError`), so this needs a bridge thread for each of them, beside about 40
-  places of creation [ADR-HQE5](../decisions/entries/HQE5-choices-of-fix-lane-4.md).
+- The user decided the route on 2026-11-23 (Q651) [ADR-T34M](../decisions/entries/T34M-decision-of-the-user-on-the-start-method-of-camera-processes.md); the agent chose the details
+  [ADR-HQE5](../decisions/entries/HQE5-choices-of-fix-lane-4.md).
+- The library does not set the start method: `import skellycam` changes nothing, and a host program can
+  call `set_start_method` after the import.
+- The program entry point of skellycam (`skellycam/__main__.py`, also the entry of the frozen app and of
+  `entry_point`) sets the start method `spawn` as its first action, before any `multiprocessing`
+  object exists, on each system. Where `spawn` is the default (Windows, macOS) this changes nothing.
+  The test session does the same in the root `conftest.py`, so the tests run as the app runs.
+- A host program owns the start method of its process. Nothing is decided for FreeMoCap: a change there
+  is a candidate of a wider review of FreeMoCap on Linux ([`open-work.md`](../decisions/open-work.md)).
+- The start of a camera process refuses the method `fork`. The user decided the refusal on Linux; the
+  agent applies it on each system (with `fork` on macOS a fork of a process with threads is not safe
+  either). The camera does not start:
+  it becomes `failed` with the code `start-method-fork`, the stage `open` and the reason "the host
+  program must call multiprocessing.set_start_method('spawn') before it creates a multiprocessing
+  object". The apply request answers at once with that failure, not after the limit of 30 s. Reason:
+  with `fork` the known result is a camera process that never answers (below). `spawn` and
+  `forkserver` start: a `forkserver` child is forked from a server process that started before the
+  main process made its objects and threads, so it holds no PyAV object and no lock of a thread of the
+  main process, and each argument goes to it by pickle, as with `spawn`. The default of Python 3.14 on
+  Linux is `forkserver`.
+- Not chosen: a `spawn` context object inside skellycam for each object that it shares with a camera
+  process. The host makes some of these objects in its own context and gives them to skellycam: the
+  kill flag (a `Value` with a lock, through `WorkerRegistry` and `CameraGroupIPC`), the log queue of
+  `skellylogs` (`LogsTopic.publication`), and the queues, values, events and pipes of the workers of
+  FreeMoCap that start through `ManagedWorker`. A lock of the `fork` context cannot go to a `spawn`
+  child (`RuntimeError`), so this needs a change of the API across the two repositories.
+- Not chosen: the method `spawn` set at `import skellycam`. A host that made a `multiprocessing` object
+  before the import (FreeMoCap makes its log queue first) has `fork` already, and a host can no longer
+  set the method after the import.
 - Reason (CI run 45214740615, reproduced on Linux): a forked camera process of a main process that
   had decoded a video with PyAV (T-REC-31 before T-REC-44; in the app, the player) freed a PyAV
   `VideoReformatter` right after the fork. `sws_freeContext` waited for the FFmpeg slice threads,

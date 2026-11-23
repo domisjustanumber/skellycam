@@ -52,6 +52,7 @@ These entries are `accepted`.
 | [6T78](entries/6T78-choices-of-the-sfn26-integration.md) | Choices of the `sfn26` integration: OpenCV helpers stay ours, kept and dropped items, forms of the four ports, Rust removal | accepted |
 | [TFD7](entries/TFD7-search-limit-stop-rate-median-role-flag-and-restore-after-a-failed-loop.md) | Decisions B1, B2, B7 to B9 of 2026-11-21: search limit stays 20 s; median stop rate, role flag, no restart, restore after a failed loop (not built) | accepted |
 | [81RE](entries/81RE-decisions-of-the-user-on-the-restore-file-the-take-rate-and-pace-tests.md) | Q608, Q609, Q619 of 2026-11-23: restore record on disk; take rate is frames over time; pace tests reported, not blocking, on CI | accepted |
+| [T34M](entries/T34M-decision-of-the-user-on-the-start-method-of-camera-processes.md) | Q651 of 2026-11-23: no start method at import; the app sets spawn; a fork start is refused; nothing decided for FreeMoCap | accepted |
 
 ### Evidence
 
