@@ -108,6 +108,41 @@ times of the slots on arrival. This gives the burst benefit without the offset p
 - The free-run log of 2026-11-20 ([free_run_log_20261120.md](free_run_log_20261120.md)) found that the camera
   clocks disagree by one frame for the Kiyo Pro, and asked for an LED or moving-board test before any design.
 
+## 6a. Spread between cameras with the lockstep gate (measured 2026-11-23)
+
+Ten takes of 10 s on the integration branch (commit 54d915c59), three cameras (C922, C930e, Kiyo Pro) in Auto
+at 30 fps, three separate connects (before takes 1, 4 and 7). No row was missing in any take. The spread of a
+group frame is the latest arrival minus the earliest arrival across the three cameras. Values in ms.
+
+| Take | Connect | Arrival spread p5 / p50 / p95 / max | Sample-time spread p50 / p95 |
+|---|---|---|---|
+| 1 | 1 | 2.8 / 15.6 / 29.1 / 29.5 | 34.8 / 48.1 |
+| 2 | 1 | 28.5 / 29.5 / 45.2 / 45.6 | 32.5 / 48.4 |
+| 3 | 1 | 16.4 / 16.7 / 32.7 / 32.9 | 48.6 / 48.8 |
+| 4 | 2 | 41.7 / 42.1 / 58.3 / 58.8 | 26.1 / 30.1 |
+| 5 | 2 | 6.1 / 13.9 / 27.8 / 37.8 | 22.3 / 36.1 |
+| 6 | 2 | 25.3 / 27.4 / 41.9 / 43.4 | 14.0 / 20.4 |
+| 7 | 3 | 2.8 / 13.6 / 19.2 / 20.2 | 35.0 / 50.9 |
+| 8 | 3 | 12.7 / 28.6 / 29.4 / 30.0 | 32.3 / 48.2 |
+| 9 | 3 | 28.8 / 44.6 / 45.3 / 45.7 | 32.7 / 48.8 |
+| 10 | 3 | 27.8 / 44.0 / 60.7 / 76.6 | 29.0 / 45.0 |
+
+- The spread is not stable between takes or between connects. The median falls near 14, 28 or 44 ms.
+- In three of ten takes the median is above 42 ms, more than one frame period (33.3 ms). The frames that the
+  gate puts in one group are then more than one frame apart for most of the take.
+- Three cameras at 30 fps can always be grouped within about 22 ms when each group takes the closest frames.
+  The lockstep gate does not do that.
+- The frame rate from the sample times: C922 30.00, Kiyo Pro 30.00 to 30.05, C930e 30.05 to 30.10. The C930e
+  runs about 0.05 fps fast, which moves the cameras against each other by about 16 ms in 10 s, also inside one
+  take.
+- The sample-time spread does not agree with the arrival spread take by take (for example take 6: 27.4 ms by
+  arrival, 14.0 ms by sample time; take 3: 16.7 ms against 48.6 ms). Section 3 explains why: the sample time
+  has an offset per model and steps of 16 ms.
+- Limits: one machine, one session, 10 s takes, no ground truth for the true time of a frame. The numbers show
+  what the stored times say, not the true light-to-light offset.
+
+Source: the timing CSV files of the run of 2026-11-23 (kept outside the repository; recordings deleted).
+
 ## 7. For the stage "remove the lockstep gate"
 
 Review this note at the start of that stage. Without the gate, frames are paired by time, so these points

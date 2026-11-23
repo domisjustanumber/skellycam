@@ -223,6 +223,12 @@ to its own UI unopened. All of these go away.
   revisiting then, because slot assembly across per-camera writer processes needs a shared slot clock.
   The stage starts with a review of `research/usb_cameras/docs/sample_time_vs_arrival_time_20261123.md`
   (which time pairs the frames, bursts, the per-model offset of the sample time, the tests that come first).
+  **Finding to use in that stage (measured 2026-11-23, section 6a of that note):** with the lockstep gate,
+  the spread between three cameras in one group frame is not stable. Its median was 14 to 45 ms over ten
+  takes, and above one frame period (33 ms) in three of them, although the closest frames are always within
+  about 22 ms. The gate sometimes groups frames that are one frame apart. The C930e runs about 0.05 fps fast,
+  which shifts the cameras by about 16 ms in 10 s. The certify "cameras in step" check is record only until
+  the pairing changes (user decision Q616).
 - Whether the version bumps made on `upstream/main` in the phase-1 worktree apply cleanly on
   `development-streaming` [NV].
 - How Windows sizes its MJPEG buffers is undocumented; the oversize guard is the only protection there.
