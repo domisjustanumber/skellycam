@@ -503,7 +503,7 @@ def test_t_rec_48_stall_watch_stall_end_and_failed_state(monkeypatch, tmp_path):
         assert [w["camera_key"] for w in take_warnings(tmp_path, "camera_file_short", "take3")] == [key]
         assert take_warnings(tmp_path, "camera_dead", "take3")[0]["detail"].endswith("reason=disk stall")
         hold.stop()
-        response = app.apply([app.config(cid) for cid in app.factory.camera_ids])
+        response = app.apply([app.config(cid) for cid in app.factory.camera_ids], retry=app.factory.camera_ids)
         assert response.status_code == 200, response.text
         app.wait_state(held_id, "ready")
     finally:
@@ -1299,7 +1299,7 @@ def test_a_lost_heartbeat_ends_only_the_cameras(monkeypatch, tmp_path, during_ta
         if during_take:
             app.wait(lambda: app.group.take is None, "the take ends in the group")
             assert app.record_stop().status_code == 200  # the stored summary of the error end
-        response = app.apply([app.config(cid) for cid in app.factory.camera_ids])
+        response = app.apply([app.config(cid) for cid in app.factory.camera_ids], retry=app.factory.camera_ids)
         assert response.status_code == 200, response.text
         for camera_id in app.factory.camera_ids:
             app.wait_state(camera_id, "ready")
@@ -1370,7 +1370,7 @@ def test_a_request_while_the_heartbeat_is_stale_does_not_stop_the_group(monkeypa
         for camera_id in app.factory.camera_ids:
             app.wait_state(camera_id, "dead", timeout=30)
         assert heartbeat_age(app) > 10.0
-        response = app.apply([app.config(cid) for cid in app.factory.camera_ids])
+        response = app.apply([app.config(cid) for cid in app.factory.camera_ids], retry=app.factory.camera_ids)
         assert response.status_code == 200, response.text
         failures = response.json()["camera_failures"]
         for camera_id in app.factory.camera_ids:  # each camera opened in the stale window is reported
@@ -1378,7 +1378,7 @@ def test_a_request_while_the_heartbeat_is_stale_does_not_stop_the_group(monkeypa
                 assert failures[camera_id]["reason"] == "lost the server's heartbeat", failures
         assert not app.group.ipc.shutdown_camera_group_flag.value, "the request stopped the group for good"
         app.wait(lambda: heartbeat_age(app) < 2.0, "the heartbeat beats again")
-        response = app.apply([app.config(cid) for cid in app.factory.camera_ids])
+        response = app.apply([app.config(cid) for cid in app.factory.camera_ids], retry=app.factory.camera_ids)
         assert response.status_code == 200, response.text
         for camera_id in app.factory.camera_ids:
             app.wait_state(camera_id, "ready")
