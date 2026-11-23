@@ -13,6 +13,7 @@ import numpy as np
 import pytest
 
 from skellycam.tests.frame_ring import ring_children
+from skellycam.tests.pace import margin
 from skellycam.tests.frame_ring.ring_spec import (
     KILL_TRIALS,
     LAP_SECONDS,
