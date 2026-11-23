@@ -13,6 +13,9 @@ from skellycam.tests.capture.capture_session import product
 pytestmark = pytest.mark.skipif(sys.platform != "win32", reason="the media_foundation package is Windows only (U18)")
 
 
+EARLY_S = 0.002  # a timed wait can end up to this much before its limit (see test_bounded_call.py)
+
+
 def run_case(case):
     process = subprocess.run([sys.executable, "-m", "skellycam.tests.capture.mf_standins", case],
                              capture_output=True, text=True, timeout=120)
@@ -35,7 +38,9 @@ def test_t_unx_76_media_foundation_diagnostics():
     assert all(isinstance(value, float) and value >= 0 for value in times.values()), times
     assert (data["requested_w"], data["granted_w"], data["granted_fps_num"], data["delivered"]) == (640, 640, 30, "jpeg")
     assert data["frames"] >= 10 and len(data["frame_log"]) == min(64, data["frames"])
-    assert data["sample_minus_arrival_p50_ms"] == pytest.approx(-4.0, abs=0.01)
+    # The stand-in stamps the sample time (arrival - 4 ms) before the callback stamps the arrival: a delay of the
+    # thread between the two stamps (a loaded machine) only makes the value more negative.
+    assert -9.0 <= data["sample_minus_arrival_p50_ms"] <= -4.0, data["sample_minus_arrival_p50_ms"]
     assert data["later_than_arrival"] == 0 and data["sample_time_kept"] is True
     # the last read-back is that of the restore at the close (4.7): the value of before the open
     assert (data["exposure_present"], data["exposure_value"], data["control_path"]) == (True, -6, "iam")
@@ -122,12 +127,13 @@ def test_f7_no_restore_when_the_loop_failed():
     assert sets == [], calls
 
 
+@pytest.mark.capture_timing  # real time: the bound of 5 s
 def test_f7_a_hanging_restore_ends_the_close_as_hung_within_its_bound():
     """F7 (reviewer list): the restore `Set` of gain does not return. The close stops there as hung (stage
     `close`, code `hung`) within the bound of one call (5 s), and goes to no later step (W 6.6, 6.9)."""
     result = run_case("restore-hangs")
     assert result["close_failure"] == ["close", "hung", True]
-    assert 5.0 <= result["close_s"] <= 6.0, result["close_s"]
+    assert 5.0 - EARLY_S <= result["close_s"] <= 6.0, result["close_s"]
     assert ["flush"] not in result["calls"]
 
 

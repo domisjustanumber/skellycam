@@ -34,6 +34,9 @@ The supervisor gave the items. The agent chose these details:
    the rate of group frame k is 1 / the median over the cameras of its frame duration, and its duration is that
    median. The field names stay: each is still a summary of the rates and durations of the frames
    ([`recorder.md`](../../specs/recorder.md) 8.2).
+7. Timing tests: a lower bound of a timed wait gets 2 ms of allowance (`EARLY_S`); the sample-minus-arrival check
+   of the stand-in is one-sided (from -9 ms to -4 ms). The two p99 tests of the ring keep their bound of 10 %
+   and their marker `ring_slow`.
 
 ## Reason
 
@@ -53,6 +56,8 @@ The supervisor gave the items. The agent chose these details:
    [`certify.md`](../../specs/certify.md) 10.2) agrees with QPC but does not prove the base.
 6. One camera that gives queued frames 0.36 ms apart made one frame 2778 fps, and the mean over the cameras kept
    most of it. The median of the durations and its reciprocal give one value for both fields.
+7. A timed wait ended 0.14 ms and 0.4 ms early on a loaded machine (10.99986 s, 4.9996 s). The stand-in stamps
+   the sample time before the callback stamps the arrival, so a thread delay can only lower the value.
 
 ## Consequences
 
