@@ -154,8 +154,13 @@ task. Delete an item when its work is done. The PR that closes an item records t
 - **Certify report fields, decided 2026-11-23, not built**
   ([ADR-F6C3](entries/F6C3-decisions-of-the-user-on-the-certify-report-fields.md)). The fields, the
   unit id and the kept logs are in section 3.5 of the spec, with the build order in 3.5.15 and the
-  tests T-CERT-77 to T-CERT-90. The choices of the agent wait for the user
-  ([ADR-NQ77](entries/NQ77-choices-of-the-certify-report-fields.md)).
+  tests T-CERT-77 to T-CERT-90. The user accepted the choices of the agent
+  ([ADR-NQ77](entries/NQ77-choices-of-the-certify-report-fields.md)) and the build order on 2026-11-23
+  ([ADR-10HT](entries/10HT-acceptance-of-the-certify-report-field-choices-and-the-build-order.md)). The
+  build starts only after `dom/fix-lane-3` is merged into `dom/integration`.
+  - Open (Q574): the contract text "These facts identify a model, not one unit" does not allow the
+    salted unit id yet. The request to change it went to the skellycertify session on 2026-11-23. It
+    waits for the answer of that session.
 - **Decided 2026-11-21, not built**
   ([ADR-TFD7](entries/TFD7-search-limit-stop-rate-median-role-flag-and-restore-after-a-failed-loop.md)):
   a median frame-rate statistic in the stop answer; a role flag in place of the `parent_process()`

@@ -409,7 +409,7 @@ checks names the camera [C 4.2 part 7].
 A virtual camera gets no check and no summary item [A]. `system:virtual-cameras` records the count.
 The app shows it but cannot select it [U].
 
-### 3.5 Report fields that say why a check failed [U, A]
+### 3.5 Report fields that say why a check failed [U]
 
 A person that we do not know runs certify, and a developer with no access to that system reads the
 report. The report must tell the developer why a check failed, not only which check failed. On
@@ -425,13 +425,16 @@ report. The report must tell the developer why a check failed, not only which ch
 - Q559: certify keeps the camera logs of the last run on the system of the person (3.5.11). Certify
   never sends them.
 
-The names, the places, the vocabularies and the bounds of this section are choices of the agent [A]
-([ADR-NQ77](../decisions/entries/NQ77-choices-of-the-certify-report-fields.md), proposed). Nothing in
+The names, the places, the vocabularies and the bounds of this section are choices of the agent
+([ADR-NQ77](../decisions/entries/NQ77-choices-of-the-certify-report-fields.md)). The user accepted them
+as a set on 2026-11-23 [U Q572]
+([ADR-10HT](../decisions/entries/10HT-acceptance-of-the-certify-report-field-choices-and-the-build-order.md)).
+"[U Q572]" marks them in this section. Nothing in
 this section is built yet. Each field fits format 1.6.0 and format 1.7.0 of the contract as they are:
 flat values in `numbers` [C 3.4], structured values in the module `details` [C 3.1]. No field needs a
 `details` object on a check, a list of numbers in `numbers`, or an attached file.
 
-#### 3.5.1 Common rules [A]
+#### 3.5.1 Common rules [U Q572, Q573]
 
 - **Source marks.** The column "Source" of each table says where the value comes from: **run time**
   (the product or certify has the value today), **small code** (a small change of certify or of the
@@ -595,7 +598,7 @@ the mode.
 | Key | Place | Type and values | Present (else) | Example | Source | Privacy |
 |---|---|---|---|---|---|---|
 | `jitter_p95_ms` | `numbers` of `<label>:clock:near-arrival` | ms, 2 decimals: the 95th percentile of the absolute value of d - P, over each d of 1.5 P or less | each such row from a step; `null` with fewer than 10 intervals | `14.67` | small code: `frame_log` | number |
-| `grain_ms` | `numbers` of `<label>:clock:near-arrival` | ms, integer: with each d rounded to 1 ms, the median of the differences between consecutive distinct values (about 16 on the Windows arrival grid; 1 when the values are dense) [A, not calibrated] | as `jitter_p95_ms`; `null` with fewer than 2 distinct values | `16` | small code: `frame_log` | number |
+| `grain_ms` | `numbers` of `<label>:clock:near-arrival` | ms, integer: with each d rounded to 1 ms, the median of the differences between consecutive distinct values (about 16 on the Windows arrival grid; 1 when the values are dense) [U Q572, not calibrated] | as `jitter_p95_ms`; `null` with fewer than 2 distinct values | `16` | small code: `frame_log` | number |
 
 - Size: about 120 bytes on a rate row and about 200 bytes on each `records` row: about 3 kB for four
   cameras.
@@ -630,7 +633,7 @@ The exit codes are in 3.5.3 (`exit_code`).
 - 6.1 uses the same keys with the same meaning, and `cpu_logical` is in `details` only.
 - Size: about 50 bytes on each such row.
 
-#### 3.5.9 Addition 8: the exposure and gain context [U Q557, A]
+#### 3.5.9 Addition 8: the exposure and gain context [U Q557, Q572]
 
 | Key | Place | Type and values | Present (else) | Example | Source | Privacy |
 |---|---|---|---|---|---|---|
@@ -646,7 +649,7 @@ The exit codes are in 3.5.3 (`exit_code`).
   (19.2 item 4): the values tell what the camera had before the run.
 - Size: about 250 bytes on the `settings-stick` rows and about 60 bytes on the `rate` row.
 
-#### 3.5.10 The unit id [U Q558, A]
+#### 3.5.10 The unit id [U Q558, Q572]
 
 The label (3.1) numbers the units of a model in the detection order, so the same unit can have
 another label in the next run. The unit id lets a developer compare two runs of one system unit by
@@ -678,8 +681,11 @@ unit.
   `false` or `null`) that moves to another USB port gets a new link, so a new id (D-7).
 - **The change to 9.4.** 9.4 still forbids the `camera_id`. It allows the salted unit id of this
   section in `details.cameras[].unit_id` only.
+- **The contract [U Q574].** The contract text "These facts identify a model, not one unit" does not
+  allow this id yet. On 2026-11-23 a request went to the skellycertify session to change that text so
+  that it allows the salted unit id. No answer came yet (open work).
 
-#### 3.5.11 The logs of the last run [U Q559, A]
+#### 3.5.11 The logs of the last run [U Q559, Q572]
 
 - **The folder.** `certify_logs/` in the skellycam base folder, beside `camera_checks.json`. It is
   not in the work folder, so the cleanup of 9.5 does not delete it.
@@ -693,7 +699,7 @@ unit.
   files of the folder. A run that the lock refuses does not touch them, because another run writes
   them. A cancel, a crash, a time-out or an abandon keeps the files: a log is no result [C 2.4].
 - **The size bound.** At the end of the run (phase H), certify cuts each file over 1 MiB to its last
-  1 MiB, and keeps the 64 newest files. Thus the folder holds at most 64 MiB [A, not calibrated]. A
+  1 MiB, and keeps the 64 newest files. Thus the folder holds at most 64 MiB [U Q572, not calibrated]. A
   quick run of four cameras wrote about 30 kB [M run 11-21].
 - **Never sent.** Certify never sends a log, never copies a log line into the report, and never puts
   the path of the folder in the report. The logs hold symbolic links, `camera_id` values and paths.
@@ -703,11 +709,11 @@ unit.
 - The folder and the key file of 3.5.10 are the own store of skellycam [C 2.5], as
   `camera_checks.json` is. They are no item of `system_changes` (9.1).
 
-#### 3.5.12 Size of the report [A]
+#### 3.5.12 Size of the report [U Q572]
 
 - The relay refuses a file over 262,144 bytes (256 KiB), with each module report and the Markdown in
   it (`relay/README.md` of the contract). skellytracker shares the file.
-- Bound [A, not calibrated]: a module report of a full run of four cameras, written with
+- Bound [U Q572, not calibrated]: a module report of a full run of four cameras, written with
   `json.dumps(report, indent=1)`, is at most 128 KiB (131,072 bytes), with each field of this section
   at its longest form. A quick run of four cameras is at most 48 KiB. The real quick run of three
   cameras of 2026-11-21 gave 25.9 kB [M run 11-21].
@@ -716,7 +722,7 @@ unit.
 - When the bound fails, certify cuts `modes` of `details.cameras` first (to the modes at `<base>` and
   above).
 
-#### 3.5.13 Worked example [A]
+#### 3.5.13 Worked example [U Q572]
 
 The values are examples, made up but near the real runs. They hold no real serial, path, host name or
 user name. Each example shows only the rows that the case needs.
@@ -840,7 +846,7 @@ the camera gave each frame on time. The waiting place replaced one frame (`repla
 skellycam was late one time. The system was not busy (`cpu_share_p95` 18.4 %), so the next place to
 look is the loop at 17.87 s in the kept logs (3.5.11).
 
-#### 3.5.14 What these fields still cannot answer [A]
+#### 3.5.14 What these fields still cannot answer [U Q572]
 
 - How often a wedge comes (one open in 10 to 30): `<label>:cycles` (8.2, not built).
 - An exposure that a camera loses at a reopen: `<label>:settings-stick:each-open` (5.2, not built).
@@ -857,7 +863,7 @@ look is the loop at 17.87 s in the kept logs (3.5.11).
   The kept logs show only the order of the calls.
 - The physical port, the cable and the hub model: only the person knows them.
 
-#### 3.5.15 Build order [A]
+#### 3.5.15 Build order [U Q572, Q575]
 
 The product changes come first, because without them the failure facts of a wedge stay `null`. Each
 change has its tests.
@@ -881,8 +887,9 @@ change has its tests.
 | C8 | The rate rows of 3.5.6 (needs P5). | certify | cases 1 and 2 |
 | C9 | The validator `skellycam/tests/certify/report_rules.py` and the tests T-CERT-77 to T-CERT-90; `skellycam/REASON_CODES.md` lists the warning codes of `take_warnings` and the vocabularies of this section. | certify | each field |
 
-Recommended order: P3, P1, P2 and P4; then C1, C2, P6 with C3, C4, C5, C6, C7, then P5 with C8. C9
-comes with each step. P7 can come at any time.
+Order [U Q575]: P3, P1, P2 and P4; then C1, C2, P6 with C3, C4, C5, C6, C7, then P5 with C8. C9
+comes with each step. P7 can come at any time. The build starts only after the branch of the third
+fix lane (`dom/fix-lane-3`) is merged into `dom/integration` [U Q575].
 
 ## 4. Level `quick`
 

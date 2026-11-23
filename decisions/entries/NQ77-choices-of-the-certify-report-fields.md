@@ -1,13 +1,16 @@
 # NQ77 — Choices of the agent for the certify report fields
 
-**Status:** proposed, 2026-11-23 (agent).
+**Status:** accepted, 2026-11-23 (user; Q572 of ADR-10HT; commit to dom/certify-4; was proposed, 2026-11-23
+(agent)).
 
 ## Decision
 
 An agent wrote section 3.5 of [`specs/certify.md`](../../specs/certify.md) and the tests T-CERT-77 to
 T-CERT-90 on the decisions of the user in
 [ADR-F6C3](F6C3-decisions-of-the-user-on-the-certify-report-fields.md). The agent made these choices.
-The spec marks them [A]. Each one waits for the user.
+The spec marked them [A]. The user accepted them as a set on 2026-11-23 (Q572 of
+[ADR-10HT](10HT-acceptance-of-the-certify-report-field-choices-and-the-build-order.md)). The spec now
+marks them [U Q572].
 
 1. Names: `first_fail_code` (not `first_code`), `stage` (not `fail_stage`), `cpu_cores_used` and
    `cpu_share_p95` of 6.1, `driver_kind` as a closed vocabulary (no provider name), `bcd_usb` and
