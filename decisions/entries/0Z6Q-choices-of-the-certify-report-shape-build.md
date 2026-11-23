@@ -27,7 +27,8 @@ alternative.
 10. `total` counts `session:exit` only with a camera to check. The progress counts the end of the session at the
     end of each run, so the last `done` equals `total`. Not: one more check in each plan.
 11. `<label>:not-reached` stands for each filled row of the camera (the caller wrote it; no step gave it) with a
-    reason of 3.6.1 that no progress message named, wherever it stands, at the place of its first check. A row of
+    reason of 3.6.1 that no progress message named, wherever it stands, at the place of its last check (after a fail
+    row that caused it). A row of
     the session (`no-manual-exposure`, `holds` after a failed `readback`) stays. A camera with no MJPG mode gets no
     `opens` row from the session: its checks are filled with `no-mjpg-mode`. Not: only the rows at the end (a B1 row
     in the take then left three filled rows before it).
@@ -41,9 +42,11 @@ alternative.
 15. Q646 ([ADR-056Z](056Z-decisions-of-the-user-on-a-late-camera-failure-the-release-build-file-and-the-open-rows.md)):
     the fail row of a camera that leaves after its take checks is `<label>:live-at-close`, a planned check, the last
     of the camera: `pass` with no product failure code from the end of its take checks to the end of the close,
-    else `fail` with the code and its facts. After the close, a camera with no code but an exit code of its
-    process above 0 gives `crashed`, and below 0 (the product ended a close that did not return) `hung`. It is in
-    the Open group of the item and in the gate step `records`.
+    else `fail` with the code and its facts. Only a camera whose take checks have results has it judged. After the
+    close: the status flag `hung` gives `hung`; else a code that is new since the record start; else the exit code
+    of the process: -SIGTERM or -SIGKILL (the product ended a close) gives `hung`, another code that is not 0
+    `crashed`. A wedge code at the close also gives `camera-wedged` (2.3). It is in the Open group of the item and
+    in the gate step `records`.
     Not: a second result of a written row (one test, one check, contract 3.4); not: a cleanup row (contract 3.1:
     a failed cleanup step); not: a row that the plan does not count (`done` above `total`).
 16. The build file has a commit only when `git rev-parse --show-toplevel` is the source root. An error of git, also

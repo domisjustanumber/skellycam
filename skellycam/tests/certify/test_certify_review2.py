@@ -93,7 +93,9 @@ def test_review2_n2_a_camera_with_a_running_step_at_a_cancel_is_not_reopened(tmp
 def test_review2_n3_a_cancel_during_the_close_does_not_kill_the_restore(tmp_path):
     """8.3, 9.3: a cancel that comes while the session closes its group (each close restores a camera) waits for the
     close: the source is closed one time, no camera is opened again, and no row of phase G comes."""
-    factory = FakeSourceFactory([good(close_delay_s=4.0)])
+    # 2 s: within the join of 3 s of the product. A close that the product must end is a hang (live-at-close `hung`
+    # and `camera-wedged`, ADR-0Z6Q item 15), which is not the case of this test.
+    factory = FakeSourceFactory([good(close_delay_s=2.0)])
     (label,) = labels(factory.device_infos())
     log = factory.logs[factory.camera_ids[0]]
     cancel = threading.Event()

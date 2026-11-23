@@ -907,7 +907,8 @@ def _not_reached(rows, context, named, filled) -> None:
     """3.6.1: the filled rows of a camera (`_fill` wrote them; no step gave a result) with a reason of a camera that
     could not go on (NOT_REACHED) and that no progress message named give one row `<label>:not-reached` in their
     place, wherever they stand [ADR-0Z6Q item 11]: `not-run`, the reason of the first of them, the `module` of the
-    camera and `numbers.checks`. The row stands at the place of the first of them. A check that a progress message
+    camera and `numbers.checks`. The row stands at the place of the last of them, so after a fail row that caused
+    them. A check that a progress message
     named, and a row that the session gave, keep their own rows. A check counts as named when the run announced it,
     also with no progress callable [ADR-0Z6Q item 13]."""
     tails = {}
@@ -915,7 +916,7 @@ def _not_reached(rows, context, named, filled) -> None:
         tail = [name for name in rows if name.startswith(camera["label"] + ":") and name in filled
                 and name not in named and rows[name]["result"] == "not-run" and rows[name]["reason"] in NOT_REACHED]
         if tail:
-            tails[tail[0]] = (camera["label"], tail)
+            tails[tail[-1]] = (camera["label"], tail)
     if not tails:
         return
     merged = {}
@@ -923,8 +924,9 @@ def _not_reached(rows, context, named, filled) -> None:
     for name, r in rows.items():
         if name in tails:
             label, tail = tails[name]
-            merged[f"{label}:not-reached"] = _row(f"{label}:not-reached", "not-run", r["reason"], r.get("module"),
-                                                  checks=len(tail))
+            first = rows[tail[0]]  # the reason of the first check that the row stands for
+            merged[f"{label}:not-reached"] = _row(f"{label}:not-reached", "not-run", first["reason"],
+                                                  first.get("module"), checks=len(tail))
         if name not in gone:
             merged[name] = r
     rows.clear()

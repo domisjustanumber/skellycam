@@ -19,6 +19,7 @@ import hashlib
 import json
 import logging
 import re
+import signal
 import threading
 import time
 from collections import deque
@@ -172,6 +173,8 @@ class Session:
         self.sent_before: set[str] = set()
         self.touched: list[Unit] = []
         self.closing: list[Unit] = []  # the cameras whose `live-at-close` the close judges [U Q646]
+        self.takers: list[Unit] = []
+        self.code_at_take: dict[str, str | None] = {}
         # cameras whose loop failed: label -> the code of the status failure (the main process writes it, so a late
         # dict of the camera cannot change it); no restore after a wedge code (unix 4.7) [Z7F3]
         self.failed: dict[str, str | None] = {}
@@ -293,8 +296,9 @@ class Session:
             # Q646 [ADR-0Z6Q item 15]: look once more after the take rows; `live-at-close` of each camera that is
             # still live starts here and ends at the end of the close
             self.scan(self.live)
-            for unit in self.live:
-                if unit.label not in self.wedged and unit.label not in self.left:
+            for unit in self.takers:  # a camera whose take checks have their results [ADR-0Z6Q item 15]
+                if (unit.label not in self.wedged and unit.label not in self.left
+                        and f"{unit.label}:records:rows-complete" in self.results):
                     self.begin(f"{unit.label}:{catalog.LIVE}")
                     self.closing.append(unit)
         finally:
@@ -533,6 +537,9 @@ class Session:
         self.scan(self.live)
         takers = [u for u in self.live if u.label not in self.wedged and u.label not in self.left
                   and self.status(u).get("state") == "ready"]
+        self.takers = takers
+        # the failure code of each camera at the record start: `live-at-close` counts only a new code [ADR-0Z6Q item 15]
+        self.code_at_take = {u.label: (self.status(u).get("failure") or {}).get("code") for u in takers}
         for unit in self.live:
             if unit not in takers:
                 self.prior(unit, "prior-check-failed")
@@ -750,7 +757,10 @@ class Session:
         await self.manager.close_all_camera_groups()
         late = self.late_codes(group, workers)
         for label, (code, _, _) in late.items():
-            if code not in WEDGED:
+            if code in WEDGED:  # 2.3: a camera that hung or whose process ended at the close is wedged (replug)
+                self.wedged[label] = WEDGED[code]
+                self.fact("release", (label, "camera-wedged"))
+            else:
                 self.failed[label] = code  # as a B1 row [ADR-0Z6Q item 14]
         for unit in self.touched:  # also a camera that left the group before the take: its last dict is here
             data = group.camera_diagnostics.get(unit.camera_id, {})
@@ -777,28 +787,35 @@ class Session:
 
     def late_codes(self, group, workers) -> dict:
         """label: (code, failure object, last dict) of each camera of `closing` with a product failure code after
-        the close: from its status, else from its last dict [U Q646]. Else the exit code of its camera process
-        [ADR-0Z6Q item 15]: a code above 0 is `process-ended` (the process ended by itself, for example in its
-        close); a code below 0 is `hung` (the product ended the process: its close did not return in the limit)."""
+        the close [U Q646, ADR-0Z6Q item 15]: `hung` when the status has the flag `hung`; else a code of its status,
+        else of its last dict, that it did not have at the record start; else from the exit code of its camera
+        process: -SIGTERM or -SIGKILL (the product ended a close that did not return) is `hung`, each other code that
+        is not 0 is `process-ended`."""
         out = {}
         statuses = group.cameras.orchestrator.camera_statuses
         for unit in self.closing:
             if unit.label in self.wedged or unit.label in self.left:
                 continue
             status = statuses.get(unit.camera_id)
-            failure = {}
+            info = {}
             with contextlib.suppress(Exception):
-                failure = (status.info_dict().get("failure") or {}) if status is not None else {}
+                info = (status.info_dict() or {}) if status is not None else {}
+            failure = info.get("failure") or {}
             data = dict(group.camera_diagnostics.get(unit.camera_id) or {})
             code = failure.get("code") or data.get("fail_code")
-            if not code:
+            if code is not None and code == self.code_at_take.get(unit.label):
+                code = None  # not new since the record start
+            if info.get("hung"):
+                code = "hung"
+            elif not code:
                 exit_code = None
                 with contextlib.suppress(Exception):
                     exit_code = workers[unit.camera_id].worker.exitcode
-                if isinstance(exit_code, int) and exit_code > 0:
-                    code, failure = "process-ended", dict(stage="close", reason=f"exit code {exit_code}")
-                elif isinstance(exit_code, int) and exit_code < 0:
+                ended_by_product = (-signal.SIGTERM, -getattr(signal, "SIGKILL", 9))
+                if isinstance(exit_code, int) and exit_code in ended_by_product:
                     code, failure = "hung", dict(stage="close")
+                elif isinstance(exit_code, int) and exit_code != 0:
+                    code, failure = "process-ended", dict(stage="close", reason=f"exit code {exit_code}")
             if code:
                 out[unit.label] = (code, failure, data)
         return out

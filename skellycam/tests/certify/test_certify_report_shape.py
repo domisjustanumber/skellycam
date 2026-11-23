@@ -88,6 +88,7 @@ def test_t_cert_93_b1_a_camera_that_leaves_the_run_between_two_steps(tmp_path):
         assert [c["name"] for c in own if c["result"] == "fail"] == [row["name"]], own
         reached = [c for c in own if c["name"] == f"{label}:not-reached"]
         assert len(reached) == 1 and reached[0]["module"] == row["module"], own
+        assert own.index(reached[0]) > own.index(row), own  # the row stands after the fail row (ADR-0Z6Q item 11)
         # M1 of the review: no filled row outside the `not-reached` row, also before the fail row
         assert not [c["name"] for c in own if c["result"] == "not-run" and c is not reached[0]
                     and c["name"] not in named], own
@@ -428,7 +429,7 @@ def test_t_cert_133_a_camera_that_leaves_after_its_take_checks_or_at_the_close(t
                               **paths(tmp_path))
     assert_valid(report)
     checks = by_name(report)
-    expected = {exits: {"crashed"}, stalls: {"stalled"}, hangs: {"hung", "crashed"}, ends: {"crashed"}}
+    expected = {exits: {"crashed"}, stalls: {"stalled"}, hangs: {"hung"}, ends: {"crashed"}}
     for index, (label, reasons) in enumerate(expected.items()):
         row = checks[f"{label}:live-at-close"]
         assert row["result"] == "fail" and row["reason"] in reasons and row["module"] == f"Fake camera {index}", row
@@ -443,9 +444,45 @@ def test_t_cert_133_a_camera_that_leaves_after_its_take_checks_or_at_the_close(t
         assert item["result"] != "pass", item
     assert checks[f"{exits}:live-at-close"]["numbers"]["exit_code"] == 3
     assert checks[f"{fine}:live-at-close"]["result"] == "pass"
+    # P2-S2 of the review: a camera that hangs at the close is wedged (2.3): the cleanup row and the replug notice
+    assert {"name": f"release:{hangs}", "result": "fail", "reason": "camera-wedged", "module": "Fake camera 2"}         in report["cleanup"]
+    assert {"code": "camera-wedged", "values": {"camera": "Fake camera 2"}} in report["notices"]
     assert {"name": f"release:{stalls}", "result": "fail", "reason": "camera-not-restored",
             "module": "Fake camera 1"} in report["cleanup"]
     assert {"code": "camera-not-restored", "values": {"camera": "Fake camera 1"}} in report["notices"]
     # each result that a progress message showed is the result of the report
     assert all(checks[name]["result"] == result for name, result in results.items() if name in checks), results
     assert_no_new_process(before)
+
+
+class _Status:
+    def __init__(self, info):
+        self.info = info
+
+    def info_dict(self):
+        return self.info
+
+
+def test_late_codes_reads_the_hang_flag_and_the_exit_code():
+    """P2-S1 of the review, ADR-0Z6Q item 15: after the close, the status flag `hung` gives `hung`; else a new product
+    code of the status or of the last dict; else an end by -SIGTERM or -SIGKILL (the product ended the process)
+    gives `hung`, and each other exit code that is not 0 gives `process-ended` (`crashed`). A code that the camera
+    had already at the record start is not new and counts as no code."""
+    from types import SimpleNamespace
+    session_module = product("skellycam.core.certify.session")
+    cases = {"a": ({}, 3, "process-ended"), "b": ({}, -11, "process-ended"), "c": ({}, -15, "hung"),
+             "d": ({}, -9, "hung"), "e": ({}, 3221225477, "process-ended"), "f": ({}, 0, None),
+             "g": ({"hung": True, "failure": {"code": "process-ended", "stage": "close"}}, 1, "hung"),
+             "h": ({"failure": {"code": "stalled", "stage": "streaming"}}, 0, None),
+             "i": ({"failure": {"code": "stream-error", "stage": "close"}}, 0, "stream-error")}
+    session = object.__new__(session_module.Session)
+    session.closing = [SimpleNamespace(label=label, camera_id=label) for label in cases]
+    session.wedged, session.left = {}, {}
+    session.code_at_take = {"h": "stalled"}
+    group = SimpleNamespace(cameras=SimpleNamespace(orchestrator=SimpleNamespace(
+        camera_statuses={label: _Status(info) for label, (info, _, _) in cases.items()})), camera_diagnostics={})
+    workers = {label: SimpleNamespace(worker=SimpleNamespace(exitcode=code)) for label, (_, code, _) in cases.items()}
+    late = session.late_codes(group, workers)
+    assert {label: late[label][0] for label in late} == {
+        label: want for label, (_, _, want) in cases.items() if want is not None}
+    assert late["a"][1].get("reason") == "exit code 3" and "reason" not in late["c"][1]
