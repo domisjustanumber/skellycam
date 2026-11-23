@@ -64,6 +64,6 @@ jobs:
           uv run pytest skellycam/tests/frame_ring -m "ring_portable and pace" -rfE > pace.log 2>&1 || status=$?
           cat pace.log
           if [ "$status" -eq 5 ]; then status=0; fi
-          { echo "### Pace tests (reported, not blocking: Q619)"; echo '```'; grep -E '^(FAILED|ERROR)|(passed|failed|error)' pace.log | tail -n 20; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
+          { echo "### Pace tests (reported, not blocking: Q619)"; echo '```'; grep -E '^(FAILED|ERROR)|(passed|failed|error)' pace.log | tail -n 20 || true; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
           if [ "$status" -ne 0 ]; then echo "::warning title=Pace tests::pace tests failed on this runner (reported, not blocking: Q619)"; fi
           exit "$status"

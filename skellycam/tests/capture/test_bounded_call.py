@@ -25,13 +25,10 @@ BOUNDED_MODULE = "skellycam.core.camera.capture.bounded"
 EARLY_S = 0.002
 
 
-@pytest.mark.pace  # Q619: the tolerances of 0.5 s grow by the margin on a hosted runner
-@pytest.mark.capture_timing  # real time: the limits of 5 s and 11 s
-def test_t_unx_26_generic_bounded_call_with_a_limit():
-    """T-UNX-26: a close step that hangs (default limit 5 s); a slow call of 8 s with the limit of 11 s; a
-    call that hangs with the limit of 11 s. `hung`, stage `close`, at 5 s; the slow call returns its value;
-    the hung call gives `hung` at 11 s. The three calls run at the same time; each hung call counts in
-    `abandoned()`."""
+@pytest.fixture(scope="module")
+def t_unx_26_run():
+    """The run of T-UNX-26: a close step that hangs (default limit 5 s); a slow call of 8 s with the limit of 11 s; a
+    call that hangs with the limit of 11 s, at the same time. One run for the blocking test and the `pace` test."""
     bounded, source = product(BOUNDED_MODULE), product("skellycam.core.camera.capture.source")
     assert bounded.DEFAULT_LIMIT_S == 5.0 and bounded.SLOW_CALL_LIMIT_S == 11.0
     never = threading.Event()
@@ -53,17 +50,35 @@ def test_t_unx_26_generic_bounded_call_with_a_limit():
     for thread in threads:
         thread.start()
     for thread in threads:
-        thread.join(20)
+        thread.join(120)
+    return results, bounded.abandoned() - before
+
+
+@pytest.mark.capture_timing  # real time: the limits of 5 s and 11 s
+def test_t_unx_26_generic_bounded_call_with_a_limit(t_unx_26_run):
+    """T-UNX-26: `hung`, stage `close`, not before 5 s; the slow call returns its value; the hung call gives `hung`,
+    not before 11 s; each hung call counts in `abandoned()`. Blocking: the bound above is loose (10 times the limit);
+    `test_t_unx_26_the_bounded_calls_end_within_their_tolerance` holds the strict upper bounds (16.1)."""
+    results, abandoned = t_unx_26_run
     kind, failure, took = results["streamoff"]
     assert kind == "failure" and (failure.stage, failure.code, failure.hung) == ("close", "hung", True)
     assert failure.reason == "STREAMOFF did not return in 5 s"
-    assert 5.0 - EARLY_S <= took <= 5.0 + 0.5 * margin(), took
+    assert 5.0 - EARLY_S <= took <= 50.0, took
     assert results["slow s-fmt"][:2] == ("value", 7) and 8.0 <= results["slow s-fmt"][2] < 11.0
     kind, failure, took = results["hung s-fmt"]
     assert kind == "failure" and (failure.stage, failure.code) == ("set mode", "hung")
     assert failure.reason == "S_FMT did not return in 11 s"
-    assert 11.0 - EARLY_S <= took <= 11.0 + 0.5 * margin(), took
-    assert bounded.abandoned() - before == 2
+    assert 11.0 - EARLY_S <= took <= 110.0, took
+    assert abandoned == 2
+
+
+@pytest.mark.pace  # Q619: only the bounds of time; the tolerances of 0.5 s grow by the margin on a hosted runner
+@pytest.mark.capture_timing
+def test_t_unx_26_the_bounded_calls_end_within_their_tolerance(t_unx_26_run):
+    """T-UNX-26, the bounds of time: the hung calls end within 0.5 s (times the margin) after their limits."""
+    results, _ = t_unx_26_run
+    assert results["streamoff"][2] <= 5.0 + 0.5 * margin(), results["streamoff"]
+    assert results["hung s-fmt"][2] <= 11.0 + 0.5 * margin(), results["hung s-fmt"]
 
 
 def test_a_bounded_call_gives_the_value_or_the_error_of_the_function():

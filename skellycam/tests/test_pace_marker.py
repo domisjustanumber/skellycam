@@ -18,6 +18,16 @@ import yaml
 
 REPO = Path(__file__).resolve().parents[2]
 PACE_TESTS = [
+    ("skellycam.tests.capture.test_bounded_call", "test_t_unx_26_the_bounded_calls_end_within_their_tolerance"),
+    ("skellycam.tests.capture.test_media_foundation_source", "test_t_unx_76_the_timing_values_of_the_stand_in"),
+    ("skellycam.tests.capture.test_media_foundation_source", "test_f7_the_hung_close_ends_within_its_tolerance"),
+    ("skellycam.tests.frame_ring.test_concurrency", "test_t_ring_12_the_writer_timing_is_unchanged_after_a_reader_kill"),
+    ("skellycam.tests.frame_ring.test_camera_process", "test_t_ring_23_write_p99_with_four_readers"),
+]
+# A test whose failure does not depend on the pace blocks (16.1): the functional halves of the split tests, the
+# long-interval test (no bound of time), the slow stop (the row counts are the lock rule), and the tests of item 1
+# of fix lane 4 (no answer from a camera process).
+NOT_PACE = [
     ("skellycam.tests.capture.test_bounded_call", "test_t_unx_26_generic_bounded_call_with_a_limit"),
     ("skellycam.tests.capture.test_media_foundation_source", "test_t_unx_76_media_foundation_diagnostics"),
     ("skellycam.tests.capture.test_media_foundation_source",
@@ -25,11 +35,8 @@ PACE_TESTS = [
     ("skellycam.tests.capture.test_media_foundation_source",
      "test_f7_a_hanging_restore_ends_the_close_as_hung_within_its_bound"),
     ("skellycam.tests.frame_ring.test_concurrency", "test_t_ring_12_reader_killed"),
-    ("skellycam.tests.frame_ring.test_camera_process", "test_t_ring_23_write_p99_with_four_readers"),
+    ("skellycam.tests.frame_ring.test_camera_process", "test_t_ring_23_write_with_four_readers"),
     ("skellycam.tests.take_recorder.test_connection", "test_a_slow_stop_ends_each_camera_at_the_last_frame"),
-]
-# Item 1 of fix lane 4: these fail on Linux for a reason that is not the pace (no answer from a camera process).
-NOT_PACE = [
     ("skellycam.tests.take_recorder.test_connection",
      "test_t_rec_44_hang_ends_the_process_and_the_take_level_completes_its_file"),
     ("skellycam.tests.take_recorder.test_connection", "test_a_busy_main_process_does_not_look_dead"),
@@ -49,6 +56,18 @@ def test_the_marker_is_registered():
 @pytest.mark.parametrize("module, name", PACE_TESTS, ids=[name for _, name in PACE_TESTS])
 def test_each_pace_test_has_the_marker(module, name):
     assert "pace" in marker_names(module, name)
+
+
+def test_the_marked_tests_are_exactly_the_pace_tests():
+    """16.1: a `pace` test holds only its bounds of time. No other test of the package has the marker."""
+    marked = set()
+    for path in (REPO / "skellycam" / "tests").rglob("test_*.py"):
+        lines = path.read_text(encoding="utf-8").splitlines()
+        for index, line in enumerate(lines):
+            if line.strip().startswith("@pytest.mark.pace"):
+                following = next(text for text in lines[index + 1:] if text.startswith("def test_"))
+                marked.add(following.split("(")[0].removeprefix("def "))
+    assert marked == {name for _, name in PACE_TESTS}
 
 
 @pytest.mark.parametrize("module, name", NOT_PACE, ids=[name for _, name in NOT_PACE])

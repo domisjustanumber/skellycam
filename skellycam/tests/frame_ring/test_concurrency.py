@@ -229,12 +229,9 @@ def test_t_ring_11_writer_killed(cleanup, spawn, procs):
     assert hits >= 1, f"no kill hit the payload copy in {trial + 1} trials"
 
 
-@pytest.mark.pace  # Q619: two p99 values of real time; the tolerance of 10 % grows by the margin
-@pytest.mark.ring_portable
-@pytest.mark.ring_slow
-def test_t_ring_12_reader_killed(cleanup, spawn, procs):
-    """T-RING-12, sections 6.1 and 10: kill a reader in the middle of a copy. Writer timing is
-    unchanged (p99 within 10 %); the other readers are unaffected.
+def _reader_killed_run(cleanup, spawn, procs):
+    """The run of T-RING-12: kill a reader in the middle of a copy. Gives the writer p99 before and after the kill
+    and the results of the other reader.
 
     The writer writes about 500 frames/s of 600 kB (1920x1080 slot). Each phase lasts
     TIMING_SECONDS (2 s; 10 s with SKELLYCAM_RING_FULL=1). The kill time is random; the victim
@@ -261,12 +258,28 @@ def test_t_ring_12_reader_killed(cleanup, spawn, procs):
     stop.set()
     durations = timings.get(timeout=WAIT_TIMEOUT_S)
     survivor = survivor_results.get(timeout=WAIT_TIMEOUT_S)
-    before = np.percentile(durations[0], 99)
-    after = np.percentile(durations[1], 99)
-    assert after <= (1.0 + 0.10 * margin()) * before, f"writer p99 {before / 1e3:.1f} us before, {after / 1e3:.1f} us after"
+    return np.percentile(durations[0], 99), np.percentile(durations[1], 99), survivor
+
+
+@pytest.mark.ring_portable
+@pytest.mark.ring_slow
+def test_t_ring_12_reader_killed(cleanup, spawn, procs):
+    """T-RING-12, sections 6.1 and 10: kill a reader in the middle of a copy. The other readers are unaffected: no
+    wrong frame, no error, frames after the kill. The writer p99 is in
+    `test_t_ring_12_the_writer_timing_is_unchanged_after_a_reader_kill` (16.1)."""
+    _, _, survivor = _reader_killed_run(cleanup, spawn, procs)
     assert survivor["wrong"] == 0
     assert not survivor["errors"], survivor["errors"][:3]
     assert survivor["ok_after_kill"] > 0
+
+
+@pytest.mark.pace  # Q619: two p99 values of real time; the tolerance of 10 % grows by the margin
+@pytest.mark.ring_portable
+@pytest.mark.ring_slow
+def test_t_ring_12_the_writer_timing_is_unchanged_after_a_reader_kill(cleanup, spawn, procs):
+    """T-RING-12, the bound of time: the writer p99 after the kill is within 10 % (times the margin) of before."""
+    before, after, _ = _reader_killed_run(cleanup, spawn, procs)
+    assert after <= (1.0 + 0.10 * margin()) * before, f"writer p99 {before / 1e3:.1f} us before, {after / 1e3:.1f} us after"
 
 
 @pytest.mark.ring_portable

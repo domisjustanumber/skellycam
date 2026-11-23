@@ -1221,7 +1221,6 @@ def test_the_stop_costs_no_source_frame_before_the_last_rows(monkeypatch, tmp_pa
 # Fix round 4 (2026-11-20)
 # ---------------------------------------------------------------------------
 
-@pytest.mark.pace  # Q619: whether a camera is one frame behind at the read of the gate count depends on the pace
 @pytest.mark.capture_timing  # real time: a stop that comes late under load moves the last frame (recorder.md 12.1)
 @pytest.mark.parametrize("fps", [30, 60])
 @pytest.mark.parametrize("delay", [0.05, 0.2, 1.0])

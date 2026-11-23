@@ -44,7 +44,7 @@ def test_a_camera_killed_after_its_first_frames_does_not_make_the_take_rate(tmp_
     """Q609 and B2 of ADR-TFD7 (one run gave 136 fps after a killed camera): camera 0 records 300 frames at 30 fps
     (10 s). Camera 1 gives two frames 1 ms apart, then its process is killed: each later row is `missing`.
     Before, the group value was the mean of the rates of the cameras: (30 + 1000) / 2 = 515 fps. Now it is the
-    sum of the frames over the sum of the times: 300 / 9.968 s, about 30.1 fps."""
+    sum of the frames over the sum of the times: (300 + 1) / (10.0 + 0.001) s, about 30.1 fps."""
     period = 1e9 / 30
     live = [(round(k * period), False) for k in range(301)]
     killed = [(0, False), (1_000_000, False)] + [(None, True)] * 299
