@@ -5,7 +5,7 @@
 ## Decision
 
 An agent made these choices when it applied [ADR-X1T8](X1T8-two-way-kit-sync-adoption.md) at kit
-commit 47545bc (round 1) and at kit commit 57a878c (round 2). Each one waits for the user.
+commit 47545bc (round 1), and at kit commits 57a878c and 05a3d2d (round 2). Each one waits for the user.
 
 1. **Open-work clean-up first.** `open-work.md` was at 91 % of its limit. The agent deleted only
    done work: the item "Format sync" (merged, ADR-3B97), the sub-item "Q574 is closed", and the
@@ -23,8 +23,8 @@ commit 47545bc (round 1) and at kit commit 57a878c (round 2). Each one waits for
    `evidence; replaced by XXXX`; a new line names `evidence.md`. The Evidence section moves to
    `evidence.md`, with its four rows unchanged.
 5. **The citations of ADR-N2NH.** The kit text cites no entry of a repository. So one repository
-   line after the skill block `log-change-rules` cites ADR-N2NH for its two rules, and keeps "a spec
-   heading" of the old rule. The test `test_the_pr_branch_is_upstream_development` moves from the
+   line after the skill block `log-change-rules` cites ADR-N2NH for its two rules. Kit 05a3d2d says
+   "a heading of a normative document" again. The test `test_the_pr_branch_is_upstream_development` moves from the
    kit test file to `tools/tests/test_repo_values.py`, with a test of the index limit 24,000.
 6. **Q655.** At 47545bc the kit put the branch placeholder between backticks, so no value gave
    "upstream `development`". Kit 57a878c has the value `DEFAULT_BRANCH_TEXT` with no backticks
@@ -36,7 +36,8 @@ commit 47545bc (round 1) and at kit commit 57a878c (round 2). Each one waits for
    copy.
 8. **The other-systems check.** `tools/check_other_systems.py` reads `exempt_paths`,
    `certify_spec`, `self_test` and `certify_contract` from the table `[check_other_systems]` of
-   `kit.toml`. With no `kit.toml`: `.github/`, `specs/certify.md`, "the self-test of the project"
+   `kit.toml` with `tools/kit_config.py`, as the kit tools do: a missing table, an unknown key or a
+   wrong type stops it. With no `kit.toml`: `.github/`, `specs/certify.md`, "the self-test of the project"
    and "the certify contract". `[values]` holds `SELF_TEST`, `CERTIFY_SPEC` and `CERTIFY_REPO` for
    the Markdown units, as `DEFAULT_BRANCH` is next to `target_branch`. `FIRST_PARTS` and `GENERIC`
    stay in the code, because the name lookup changes later (Q650). The test file of the check names
@@ -59,8 +60,8 @@ commit 47545bc (round 1) and at kit commit 57a878c (round 2). Each one waits for
     from `core.autocrlf`. The agent did not make it again, because that needs `git reset --hard`.
 13. **Values tests.** `kit.toml` has a `[check_links]` table with the kit defaults.
     `test_repo_values.py` pins the golden paths (none), the allow lists of the private-data check
-    (by count and SHA-256), the docs of the link check and the set of tables of `kit.toml`, so that a
-    misspelt table cannot give the kit defaults with no error.
+    (by count and SHA-256) and the docs of the link check. `kit_config.py` stops a tool when its
+    table is missing, so the test does not check the table names.
 
 ## Reason
 
