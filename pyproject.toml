@@ -96,9 +96,10 @@ build-backend = "setuptools.build_meta"
 where = ["."]
 exclude = ["skellycam-ui*"]
 
-# specs/certify.md 3.5.2 (P7): the wheel build writes skellycam/build_info.json from git (tools/build_info.py)
+# specs/certify.md 3.5.2 (P7): each build carries skellycam/build_info.json (tools/build_info.py)
 [tool.setuptools.cmdclass]
 build_py = "tools.build_info.BuildPy"
+sdist = "tools.build_info.Sdist"
 
 # ---- Version Bumping (bumpver) ----
 # Run with: uv run bumpver update <flag>

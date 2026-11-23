@@ -1,52 +1,82 @@
-"""The build file of skellycam (specs/certify.md 3.5.2, 3.5.15 P7) [ADR-0Z6Q].
+"""The build file of skellycam (specs/certify.md 3.5.2, 3.5.15 P7) [ADR-0Z6Q items 6 and 16, ADR-056Z Q647].
 
-The wheel build writes `skellycam/build_info.json`, `{"commit": "<40 hex>", "tree_modified": <bool>}`, from git at
-build time. `tree_modified` is `true` when `git status --porcelain` is not empty. The file goes into the build
-folder of the wheel, never into the source tree. With no git answer the build writes no file, and certify then
-writes `null` for both values. A run of skellycam reads the file and never runs git.
+Each build carries `skellycam/build_info.json`, `{"commit": "<40 hex>", "tree_modified": <bool>}`. The value comes
+from git at build time: `tree_modified` is `true` when `git status --porcelain` is not empty. A commit comes only
+from the git work tree whose top is the source root; a source tree inside another repository gives none. A run of
+skellycam reads the file and never runs git.
 
-`BuildPy` is the `build_py` command of setuptools (`[tool.setuptools.cmdclass]` of `pyproject.toml`). An editable
-install writes no file.
+- `BuildPy` (the `build_py` command of setuptools) writes the file into the build folder of a wheel. With no git
+  answer, it copies a valid file of the source tree: the file of an sdist. An editable install writes no file.
+- `Sdist` (the `sdist` command) writes the file into the tree of the sdist.
+- `python tools/build_info.py --require` writes the file into the source tree, for the installer build of CI. It
+  ends with exit code 1 when git gives no commit.
+
+An error of git, also a text that does not decode, gives "no commit known". The build never fails for the file.
 """
 
 import json
 import re
 import subprocess
+import sys
 from pathlib import Path
 
 FILE = Path("skellycam") / "build_info.json"
 ROOT = Path(__file__).resolve().parents[1]
+COMMIT = re.compile(r"[0-9a-f]{40}")
+
+
+def _git(run, root, *args) -> str:
+    return run(["git", *args], cwd=root, capture_output=True, encoding="utf-8", errors="replace", check=True,
+               timeout=60).stdout
 
 
 def build_info(root, run=subprocess.run) -> dict | None:
-    """The commit and the tree state of the git work tree `root`, or None when git does not answer."""
+    """The commit and the tree state of the git work tree whose top is `root`, or None."""
     try:
-        commit = run(["git", "rev-parse", "HEAD"], cwd=root, capture_output=True, text=True, check=True,
-                     timeout=60).stdout.strip()
-        status = run(["git", "status", "--porcelain"], cwd=root, capture_output=True, text=True, check=True,
-                     timeout=60).stdout
-    except (OSError, subprocess.SubprocessError):
+        top = _git(run, root, "rev-parse", "--show-toplevel").strip()
+        if not top or Path(top).resolve() != Path(root).resolve():
+            return None
+        commit = _git(run, root, "rev-parse", "HEAD").strip()
+        status = _git(run, root, "status", "--porcelain")
+        if not COMMIT.fullmatch(commit):
+            return None
+        return {"commit": commit, "tree_modified": bool(status.strip())}
+    except Exception:
         return None
-    if not re.fullmatch(r"[0-9a-f]{40}", commit):
-        return None
-    return {"commit": commit, "tree_modified": bool(status.strip())}
 
 
-def write(build_lib, root, run=subprocess.run) -> Path | None:
-    """Write the build file into `build_lib`; return its path, or None when git does not answer."""
-    info = build_info(root, run)
-    if info is None:
+def read(path) -> dict | None:
+    """A valid build file, or None."""
+    try:
+        data = json.loads(Path(path).read_text(encoding="utf-8"))
+    except Exception:
         return None
-    path = Path(build_lib) / FILE
-    path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(json.dumps(info), encoding="utf-8")
-    return path
+    if (isinstance(data, dict) and set(data) == {"commit", "tree_modified"} and isinstance(data["commit"], str)
+            and COMMIT.fullmatch(data["commit"]) and isinstance(data["tree_modified"], bool)):
+        return data
+    return None
+
+
+def write(target, root, run=subprocess.run) -> Path | None:
+    """Write the build file into `target` from git in `root`, else from a valid file of `root`. Returns its path,
+    or None with no value. It never raises."""
+    try:
+        info = build_info(root, run) or read(Path(root) / FILE)
+        if info is None:
+            return None
+        path = Path(target) / FILE
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(json.dumps(info), encoding="utf-8")
+        return path
+    except Exception:
+        return None
 
 
 try:
     from setuptools.command.build_py import build_py as _build_py
+    from setuptools.command.sdist import sdist as _sdist
 except ImportError:  # the doc checks run without setuptools
-    _build_py = object
+    _build_py = _sdist = object
 
 
 class BuildPy(_build_py):
@@ -54,3 +84,25 @@ class BuildPy(_build_py):
         super().run()
         if not getattr(self, "editable_mode", False):
             write(self.build_lib, ROOT)
+
+
+class Sdist(_sdist):
+    def make_release_tree(self, base_dir, files):
+        super().make_release_tree(base_dir, files)
+        write(base_dir, ROOT)
+
+
+def main(argv=None) -> int:
+    """`--require`: the installer build of CI; no commit is an error."""
+    args = sys.argv[1:] if argv is None else argv
+    info = build_info(ROOT)
+    if info is None:
+        print("build_info: git gives no commit for the source root", file=sys.stderr)
+        return 1 if "--require" in args else 0
+    path = write(ROOT, ROOT)
+    print(f"build_info: {FILE.as_posix()} with commit {info['commit']}, tree_modified {info['tree_modified']}")
+    return 0 if path is not None else 1
+
+
+if __name__ == "__main__":
+    sys.exit(main())

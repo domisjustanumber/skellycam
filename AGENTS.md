@@ -18,7 +18,7 @@ package in `skellycam/`, the Electron UI in `skellycam-ui/` and the docs site in
 | `CLAUDE.md` | Imports this file. It has no other content. |
 | `decisions/` | Decision log ([`README.md`](decisions/README.md)) and its open work ([`open-work.md`](decisions/open-work.md)) |
 | `specs/` | The specifications. An accepted decision entry links each one. |
-| `tools/` | The doc checks: `check_decision_log.py`, `check_links.py`, `check_private_data.py` and `check_camera_media.py`. Their tests are in `tools/tests/`. |
+| `tools/` | The doc checks: `check_decision_log.py`, `check_links.py`, `check_private_data.py` and `check_camera_media.py`. The build tool `build_info.py` writes the build file of the certify report at each build. Their tests are in `tools/tests/`. |
 | `plans/` | A local working folder. Git ignores it. |
 | `.claude/skills/` | The skills ([section 2](#2-skills)) |
 | `.githooks/` | The git hooks of a worktree that adopts these rules ([section 3](#3-install-and-test)) |
