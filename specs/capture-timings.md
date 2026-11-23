@@ -1,20 +1,22 @@
 # Capture timings specification: the time of each slow step of the frame path, once per second
 
-Status: draft 2 of 2026-11-23. It waits for the acceptance of the user. An agent wrote it. The user
-decided Q565 to Q571, Q576 to Q578, Q580 to Q583 and Q586 on 2026-11-23
+Status: accepted by the user on 2026-11-23 (Q587,
+[ADR-8B85](../decisions/entries/8B85-acceptance-of-the-capture-timings-spec.md)), draft 2 with the six
+edits of a second review. An agent wrote it. The user decided Q565 to Q571, Q576 to Q578, Q580 to
+Q583 and Q586 on 2026-11-23
 ([ADR-MX8V](../decisions/entries/MX8V-decisions-of-the-user-on-capture-timings.md)). Section 14 gives
-each one. The choices of the agent are in section 13 and in
-[ADR-8Z0Q](../decisions/entries/8Z0Q-choices-of-the-capture-timings-spec.md). They wait for the user.
-Draft 2 applies the twelve findings of an independent review of draft 1, and Q580 to Q586. Nothing
-in this spec is built. The code comes only after the user accepts this spec and after branch
-`dom/fix-lane-3` merges [U Q571].
+each one. The user accepted the choices of the agent as a set (Q587); section 13 and
+[ADR-8Z0Q](../decisions/entries/8Z0Q-choices-of-the-capture-timings-spec.md) list them. Nothing in
+this spec is built. The build starts after branch `dom/fix-lane-3` merges into `dom/integration`
+[U Q571, Q587]: the capture side first, the tile part with step 4b.
 
 ## 0. How to read this spec
 
 Marks:
 
 - **[U Qnnn]**: decision Qnnn of the user, 2026-11-23 (section 14).
-- **[A n]**: choice n of the agent (section 13, and the same item number in ADR-8Z0Q).
+- **[U Q587 n]**: choice n of the agent, which the user accepted as a set in Q587 (section 13, and
+  the same item number in ADR-8Z0Q).
 - **[M source]**: measured; the source holds the result. **[NV]**: not verified.
 - **[ring x.y]**, **[cap x.y]**, **[unix x.y]**, **[prv x.y]**, **[4b x.y]**, **[player x.y]**,
   **[rec x.y]**: section x.y of [`frame-ring.md`](frame-ring.md),
@@ -68,10 +70,10 @@ each camera once per second. FreeMoCap shows the summaries [U Q565].
 
 - **Step.** One named part of the path of a frame, with a fixed id (section 3).
 - **Bracket.** The exact code between the two clock reads of a step. No time is in two samples
-  [A 6]. Two brackets can nest: `opencv_retrieve` is inside the `_read` calls of `camera_wait`, and
+  [U Q587 6]. Two brackets can nest: `opencv_retrieve` is inside the `_read` calls of `camera_wait`, and
   `mkv_mux`, `csv_row` and `fsync` are inside `_finish` of `mkv_close`. Then the sample of the outer
   step is the time of its bracket minus the samples of the inner steps, and table 3.1 says so.
-- **Work and wait** [U Q567] [A 4]. The kind of a step comes from the job of the step:
+- **Work and wait** [U Q567] [U Q587 4]. The kind of a step comes from the job of the step:
   - A **wait** step has the job to wait for another part: the camera frame, the other cameras (the
     lockstep gate), space in the recorder queue, or the end of the recorder thread.
   - A **work** step has the job to do the work itself: a decode, an encode, a copy, a check, a
@@ -79,7 +81,7 @@ each camera once per second. FreeMoCap shows the summaries [U Q565].
     awaited call whose job is the step itself is work (`preview_send`, `ui_jpeg_decode`).
   - The time of an awaited step can contain the time of other tasks of the same event loop or page.
     The summary does not take it out.
-- **Cadence** [A 4]. `frame`: the step runs at most one time for each frame. `second`: the step runs
+- **Cadence** [U Q587 4]. `frame`: the step runs at most one time for each frame. `second`: the step runs
   one time in each second. `event`: the step runs at an event (a take start, a take end, a trial of
   the exposure search).
 - **Window.** The time between two summaries of one source, about 1 s [U Q568].
@@ -106,19 +108,19 @@ The user refused "always on": "this must be toggle-able like all other metrics i
 
 The rules of skellycam:
 
-1. **Name and default.** `log_capture_times: bool`, default `False`, as `log_pipeline_times` [A 2].
+1. **Name and default.** `log_capture_times: bool`, default `False`, as `log_pipeline_times` [U Q587 2].
 2. **One switch for the whole app** [U Q581]. `CameraGroupManager` holds it, for all groups and all
    cameras. Each `CameraStatus` gets one shared scalar `log_capture_times`
    (`multiprocessing.Value("b", False, lock=False)`, as the other scalars of `CameraStatus`,
    [ADR-QJH6](../decisions/entries/QJH6-choices-of-the-fix-lane.md) item 3). The manager writes it into
    each status of a new group and at each change. `CameraStatus.reset_for_start` does not reset it
-   [A 2].
+   [U Q587 2].
 3. **How a host sets it** [U Q582]. Python: `CameraGroupManager.set_log_capture_times(on: bool) ->
    None`, and the read-only property `CameraGroupManager.log_capture_times`. HTTP: `POST /timings` on
    `camera_router`, body `{"log_capture_times": true}`, answer `{"log_capture_times": true}`. The path
    is `/camera/timings` in skellycam alone, and `/skellycam/camera/timings` in FreeMoCap (FreeMoCap
-   mounts `camera_router` with the prefix `/skellycam`). A body with no boolean gets HTTP 422 [A 2].
-4. **When a change takes effect** [A 2]. The camera loop reads its shared scalar at each publish of
+   mounts `camera_router` with the prefix `/skellycam`). A body with no boolean gets HTTP 422 [U Q587 2].
+4. **When a change takes effect** [U Q587 2]. The camera loop reads its shared scalar at each publish of
    its diagnostics, on its own thread. A change takes effect at the next such publish:
    - normally within 1 s;
    - during the start-up of an open or of a reopen, at the publish at the end of that open (up to
@@ -126,7 +128,7 @@ The rules of skellycam:
    - during the end of a take that waits for the recorder thread (`take_end`), after that wait.
    The main process applies a change at its next window. The tile applies it at its next step
    (section 7).
-5. **When it is off** [A 3]. The camera process sends `timings = None` (section 6.2). The main
+5. **When it is off** [U Q587 3]. The camera process sends `timings = None` (section 6.2). The main
    process drops each kept summary at once. The Python call and the websocket message give
    `"log_capture_times": false` and `"summaries": []` at once. The websocket message still comes once
    per second. Thus a display can show "timing off".
@@ -135,7 +137,7 @@ The rules of skellycam:
 7. **First window after a change to on.** It holds only the samples since the change. `window_s`
    gives the real length of the window.
 
-Three differences from the pattern of skellytracker and FreeMoCap. Each one is deliberate [A 2]:
+Three differences from the pattern of skellytracker and FreeMoCap. Each one is deliberate [U Q587 2]:
 
 | Difference | Reason |
 |---|---|
@@ -147,16 +149,16 @@ Three differences from the pattern of skellytracker and FreeMoCap. Each one is d
 
 ### 3.1 The step table [U Q566]
 
-`where` is the thread or the process that runs the step [A 5]: `camera_loop` (the loop thread of
+`where` is the thread or the process that runs the step [U Q587 5]: `camera_loop` (the loop thread of
 the camera process), `camera_callback` (the Media Foundation callback thread of the camera process),
 `decode_thread`, `recorder_thread` (both in the camera process), `main_process` (the event loop of
 the server), `ui_tile` (the main thread of the page that shows the shared tile [player 8.1]). The
-ids are stable `snake_case` [A 5].
+ids are stable `snake_case` [U Q587 5].
 
 | id | kind | cadence | where | Bracket (commit c6532a21d) | Known cost | Platform |
 |---|---|---|---|---|---|---|
-| `camera_wait` | wait | frame | `camera_loop` | Each call `frame = self._read()` in `CameraLoop._pass` (`camera_loop.py:233`). The sample of a frame is the sum of the calls since the last frame, also the calls that gave no frame. On the OpenCV source, minus the `opencv_retrieve` sample of the frame [A 6]. The reads of the start-up are not measured. | Up to one frame period. Not measured as its own number. | all |
-| `gate_wait` | wait | frame | `camera_loop` | In each pass that reaches the gate: from a clock read before `should_grab_by_id` (`camera_loop.py:229`) to the read after `time.sleep(0.001)` that exists (`:231`) for a refused pass, or to the read after `should_grab_by_id` for the granted pass. The sample of a frame is the sum over its passes. `_publish_diagnostics`, `_check_updates` and `_search_step` are outside it [A 6]. | Not measured in this loop. Prototype gate: median 0.03 to 6.4 ms for each camera [M `research/frame_ring_buffer/docs/frame_ring_buffer_report.md`, 5 cameras, 60 fps]. | all |
+| `camera_wait` | wait | frame | `camera_loop` | Each call `frame = self._read()` in `CameraLoop._pass` (`camera_loop.py:233`). The sample of a frame is the sum of the calls since the last frame, also the calls that gave no frame. On the OpenCV source, minus the `opencv_retrieve` sample of the frame [U Q587 6]. The reads of the start-up are not measured. | Up to one frame period. Not measured as its own number. | all |
+| `gate_wait` | wait | frame | `camera_loop` | In each pass that reaches the gate: from a clock read before `should_grab_by_id` (`camera_loop.py:229`) to the read after `time.sleep(0.001)` that exists (`:231`) for a refused pass, or to the read after `should_grab_by_id` for the granted pass. The sample of a frame is the sum over its passes. `_publish_diagnostics`, `_check_updates` and `_search_step` are outside it [U Q587 6]. | Not measured in this loop. Prototype gate: median 0.03 to 6.4 ms for each camera [M `research/frame_ring_buffer/docs/frame_ring_buffer_report.md`, 5 cameras, 60 fps]. | all |
 | `camera_sample_copy` | work | frame | `camera_callback` | All of `MediaFoundationSource._frame` (`skellycam/core/camera/capture/media_foundation/source.py:338-363`): `ConvertToContiguousBuffer`, `_copy` (`:413-420`), `GetSampleTime`, the discontinuity flag, `FrameLog.add`. | Not measured. | Windows (Media Foundation) |
 | `opencv_retrieve` | work | frame | `camera_loop` | `self._capture.retrieve()` between `pre_ns` and `post_ns` (`skellycam/core/camera/capture/opencv_source.py:84-86`); both reads come from the clock of `TimingControl`. It holds the hidden MJPG decode of OpenCV. On Windows DirectShow, `grab()` returns at once, so it also holds the camera wait. | About 32 ms median at 720p on DirectShow, camera wait included [M `research/frame_ring_buffer/prototypes/results/p9_real_camera.md`]. | OpenCV source (Linux, macOS; Windows only with `SKELLYCAM_WINDOWS_CAPTURE=opencv`) |
 | `jpeg_encode` | work | frame | `camera_loop` | `cv2.imencode(".jpg", image, JPEG_Q90)[1].tobytes()` (`camera_loop.py:506`). | 1.53 / 2.97 ms median at 720p / 1080p, q90 4:2:0 [M ring 11.1] | OpenCV source |
@@ -174,8 +176,8 @@ ids are stable `snake_case` [A 5].
 | `csv_row` | work | frame | `recorder_thread` | `_write_row` without its fsync (`camera_writer.py:300-308`): `sidecar.row_line` and `_write_line`. | `row_line`: 1.1 µs p50 [M ADR-3TYP]. The write: not measured. | all |
 | `fsync` | work | second | `recorder_thread` | `self._fsync_both()` (`camera_writer.py:311`, `:348`): `os.fsync` of the MKV and of the CSV. | p50 2.0 to 2.1 ms, max 29 to 182 ms with 16 writers at 1080p60 [M ADR-8RES] | all |
 | `mkv_close` | work | event | `recorder_thread` | All of `_finish` (`camera_writer.py:325-351`) minus the samples of `mkv_mux`, `csv_row` and `fsync` that it records: `close_container()`, the search of the last block in the file, the end line and the two file closes. | Not measured. | all |
-| `preview_ring_read` | work | frame | `main_process` | The ring read of the preview sender: `reader.read` in `PreviewRelay._newest_unsent` (`skellycam/api/websocket/preview_relay.py:163`, `:167`), or `reader.read_newest()` in `CameraGroup.read_latest_ring_frames` (`skellycam/core/camera_group/camera_group.py:559`) [A 11]. | 0.08 / 0.25 ms median, 0.16 / 0.44 ms p99 at 720p / 1080p [M ADR-HDC9] | all |
-| `preview_pack` | work | frame | `main_process` | `pack_camera_frame(camera_id, read)` (`preview_relay.py:146`), or the build of the group message in `CameraGroup.get_latest_ring_payload` after its reads (`camera_group.py:573-596`) [A 11]. | `pack_camera_frame`: 0.005 / 0.11 ms median [M ADR-HDC9]. Group message: not measured. | all |
+| `preview_ring_read` | work | frame | `main_process` | The ring read of the preview sender: `reader.read` in `PreviewRelay._newest_unsent` (`skellycam/api/websocket/preview_relay.py:163`, `:167`), or `reader.read_newest()` in `CameraGroup.read_latest_ring_frames` (`skellycam/core/camera_group/camera_group.py:559`) [U Q587 11]. | 0.08 / 0.25 ms median, 0.16 / 0.44 ms p99 at 720p / 1080p [M ADR-HDC9] | all |
+| `preview_pack` | work | frame | `main_process` | `pack_camera_frame(camera_id, read)` (`preview_relay.py:146`), or the build of the group message in `CameraGroup.get_latest_ring_payload` after its reads (`camera_group.py:573-596`) [U Q587 11]. | `pack_camera_frame`: 0.005 / 0.11 ms median [M ADR-HDC9]. Group message: not measured. | all |
 | `preview_send` | work | frame | `main_process` | `await self.websocket.send_bytes(data)` inside `_send_bytes`, after the send lock (`skellycam/api/websocket/websocket_server.py:102`). The wait for the send lock is outside it. | 0.13 / 0.23 ms median, 0.63 / 1.11 ms p99 with compression off [M ADR-HDC9] | all |
 | `ui_jpeg_decode` | work | frame | `ui_tile` | The call `this.#decode(p.u.jpeg!)` in `Tile.#next` to its result (`skellycam-ui/src/player/tile/tile.ts:170`): `decodeJpeg` with `ImageDecoder`, the EXIF undo and the decoder close (`tile.ts:73-87`, [player 8.1]). Only an update with `jpeg` and no `image`. | Not measured live. The player `ImageDecoder`: 2.7 ms median at 1080p, 1 tile; 3.7 ms at 4 tiles [M `decisions/evidence/1ACK-findings-of-the-6a-player-code.md`]. | all |
 | `ui_draw` | work | frame | `ui_tile` | The call `this.#draw()` in `Tile.#apply` (`tile.ts:179-182`, `#draw` at `:184`, [player 8.2]) after an update that set a new decoded image. A redraw for a resize or an overlay-only update gives no sample. | Not measured live. The player draw at tile size: 0.4 to 0.5 ms [M same]. | all |
@@ -183,7 +185,7 @@ ids are stable `snake_case` [A 5].
 A summary holds only the steps that apply to its camera (section 5.4). A step that applies but did
 not run in the window has `n` 0.
 
-### 3.2 Parts left out [U Q566] [A 12]
+### 3.2 Parts left out [U Q566] [U Q587 12]
 
 Each part below is far below 1 ms. Each number is from one run on synthetic data [M ADR-3TYP]. The
 delay `arrival_to_published` (section 4) holds each part of the camera loop up to the ring commit.
@@ -199,7 +201,7 @@ Thus a part that becomes slow still shows in that delay.
 | The SOF parse of the recorder | `parse_sof(payload)` (`camera_writer.py:275`) | 2.8 / 3.3 µs |
 | The tick of the preview sender | `PreviewRelay._tick` (`preview_relay.py:178`) | Four times per second, not for each frame. Its reads are `read_newest` calls: 0.08 / 0.16 ms at 720p, 0.25 / 0.44 ms at 1080p [M ADR-HDC9]. |
 
-## 4. End-to-end delays and clocks [U Q570] [A 10]
+## 4. End-to-end delays and clocks [U Q570] [U Q587 10]
 
 | id | where | From | To | Clock |
 |---|---|---|---|---|
@@ -217,7 +219,7 @@ Rules and limits:
   ADR-ETJ1 M7), `arrival_ns` is late by that time.
 - `arrival_to_published` ends later than `published_ns`: after `published_ns` the ring write also
   packs the header, computes its CRC, stores the header and the head, updates the counters and can
-  log one line (`writer.py:95-116`). Thus the ring API does not change [A 10].
+  log one line (`writer.py:95-116`). Thus the ring API does not change [U Q587 10].
 - `time.perf_counter_ns` is one clock for all processes of one machine on Windows, Linux and macOS.
   The product already compares `arrival_ns` of different camera processes (the spread). Thus
   `published_to_send` is valid on one machine. It is not valid across machines.
@@ -233,7 +235,7 @@ Rules and limits:
 
 ## 5. Measurement
 
-### 5.1 Threads, buffers and the clock [A 7]
+### 5.1 Threads, buffers and the clock [U Q587 7]
 
 - `TimingControl`: the flag `on` and the method `clock()`. `clock()` forwards to a clock function
   that the `CameraLoop` gives when it makes the `TimingControl`: its module name `perf_counter_ns`,
@@ -271,10 +273,10 @@ Rules and limits:
   `StepSet`, written and read on the event loop thread. The preview steps of the interim relay
   are in the shared methods `CameraGroup.read_latest_ring_frames` and `get_latest_ring_payload`, and
   in `CameraGroupManager.get_latest_frontend_payloads`. Each of them gets the `StepSet` of the
-  connection as an argument (`step_set=None` means no measurement) [A 11].
+  connection as an argument (`step_set=None` means no measurement) [U Q587 11].
 - The tile: section 7.
 
-### 5.2 Window and statistics [U Q568] [A 8]
+### 5.2 Window and statistics [U Q568] [U Q587 8]
 
 - The window of a camera is from one summary to the next. The loop thread makes a summary at each
   publish of `_publish_diagnostics` (`DIAGNOSTICS_INTERVAL_NS`, 1 s, `camera_loop.py:71`), also at
@@ -290,10 +292,10 @@ Rules and limits:
 - When `n` is 0: `p50_ms`, `p95_ms` and `max_ms` are `null`. The step stays in the summary.
 - When `n` is more than 512: `n` is the full count; `p50_ms`, `p95_ms` and `max_ms` use the newest
   512 samples. At 120 frames per second a step of cadence `frame` gives 120 samples in a window.
-- Each `_ms` value is a float in milliseconds, rounded to 0.001 ms [A 13].
+- Each `_ms` value is a float in milliseconds, rounded to 0.001 ms [U Q587 13].
 - The statistics are computed once per window, by the reader. No sample is sent.
 
-### 5.3 Cost budget of the measurement [A 9]
+### 5.3 Cost budget of the measurement [U Q587 9]
 
 - When off: one branch for each step (section 2 item 6). No clock read.
 - When on, the camera loop thread reads the clock at most 10 times for each frame, plus one read for
@@ -325,11 +327,11 @@ Rules and limits:
 A source that does not search (the OpenCV source of Linux and macOS) has `n` 0 for
 `exposure_search_brightness`. A later native source (Linux V4L2, macOS AVFoundation) gets the steps
 of the Media Foundation source. Its callback copy step, if it has one, uses `camera_sample_copy`
-[A 5].
+[U Q587 5].
 
 ## 6. Publication
 
-### 6.1 The summary shape [U Q569] [A 15]
+### 6.1 The summary shape [U Q569] [U Q587 15]
 
 | Field | Type | Meaning |
 |---|---|---|
@@ -347,7 +349,7 @@ A step entry: `{"kind": "work" | "wait", "cadence": "frame" | "second" | "event"
 "n": int, "p50_ms": float | null, "p95_ms": float | null, "max_ms": float | null}`. A delay entry
 has `where`, `n`, `p50_ms`, `p95_ms` and `max_ms`; its `where` is the place of its end point.
 
-### 6.2 Camera process to main process [A 1]
+### 6.2 Camera process to main process [U Q587 1]
 
 - `DiagnosticsMessage` (`skellycam/core/ipc/pubsub/pubsub_topics.py:42-47`) gets one field:
   `timings: dict | None = None`. It holds the summary of the camera for the window that just ended,
@@ -359,9 +361,9 @@ has `where`, `n`, `p50_ms`, `p95_ms` and `max_ms`; its `where` is the place of i
 - `CameraGroup._take_diagnostics` (`camera_group.py:491-502`, the watch thread) keeps the newest
   summary of each camera and the main-process `perf_counter_ns` at its receipt. It builds a new dict
   for each change and replaces the attribute `camera_timings` with it (a snapshot swap). A reader
-  reads the attribute one time and uses that dict [A 7].
+  reads the attribute one time and uses that dict [U Q587 7].
 
-### 6.3 The Python call [U Q582] [A 12]
+### 6.3 The Python call [U Q582] [U Q587 12]
 
 `CameraGroupManager.capture_timings() -> dict` gives:
 
@@ -377,7 +379,7 @@ has `where`, `n`, `p50_ms`, `p95_ms` and `max_ms`; its `where` is the place of i
 - It reads no ring and no shared memory. It never raises for a missing camera. It is safe to call
   from any thread of the main process.
 
-### 6.4 The websocket message [A 1] [U Q580]
+### 6.4 The websocket message [U Q587 1] [U Q580]
 
 - A new JSON message kind: `capture_timings` (`WebsocketMessageType.CAPTURE_TIMINGS`).
 - The loop of `_app_state_sender` (`websocket_server.py:264`) sends it once per second, after the
@@ -396,7 +398,7 @@ has `where`, `n`, `p50_ms`, `p95_ms` and `max_ms`; its `where` is the place of i
 - `read_latest_ring_frames` stays for the interim relay. This spec changes the two specs that named
   `get_latest_performance_data`: [prv 2.3] and the table of [ring 2.1].
 
-### 6.5 The preview sender [A 11]
+### 6.5 The preview sender [U Q587 11]
 
 - The preview sender that is wired measures `preview_ring_read`, `preview_pack`, `preview_send` and
   `published_to_send`: the per-camera `PreviewRelay` after step 4b, or the interim
@@ -472,7 +474,7 @@ connection with the per-camera preview sender. The numbers are an example, not a
 
 The summaries of camera `c3d4` have the same form. They are left out of the example.
 
-### 6.7 Version [A 15]
+### 6.7 Version [U Q587 15]
 
 - `version` is 1 for this spec.
 - A new step id, a new delay id or a new field does not change `version`. A display must show a
@@ -481,7 +483,7 @@ The summaries of camera `c3d4` have the same form. They are left out of the exam
   `version` by one. A display that sees a `version` that it does not know shows no numbers and says
   so.
 
-## 7. The shared tile [U Q586] [A 16]
+## 7. The shared tile [U Q586] [U Q587 16]
 
 The player and the live preview of step 4b are built one time in skellycam, and the FreeMoCap UI
 takes a copy of the folder `skellycam-ui/src/player/` [player 4.3], [4b 8] item 6. Thus the decode
@@ -649,11 +651,11 @@ looks at the app. The two share no code and no field. The two use `perf_counter_
 for all processes of one system. A later certify check can switch `log_capture_times` on during its
 take and keep a `record-only` row with the p95 of the slow steps (for example `jpeg_encode`,
 `ring_write`, `fsync`), through `CameraGroupManager.capture_timings()`. That needs a decision of the
-user and a change of the certify spec. This spec does not change certify [A 17].
+user and a change of the certify spec. This spec does not change certify [U Q587 17].
 
 ## 10. Tests
 
-### 10.1 Kinds and helpers [A 18]
+### 10.1 Kinds and helpers [U Q587 18]
 
 - No test needs a camera.
 - One injected clock: each test gives a virtual clock to `TimingControl`. Each bracket of the camera
@@ -704,8 +706,9 @@ user and a change of the certify spec. This spec does not change certify [A 17].
 
 ## 11. Build order
 
-Each step has its tests first. The order starts after the user accepts this spec and after
-`dom/fix-lane-3` merges [U Q571].
+Each step has its tests first. The order starts after `dom/fix-lane-3` merges into
+`dom/integration` [U Q571, Q587]. The capture side (steps 1 to 7) comes first; step 8 comes with
+step 4b.
 
 1. T-TIM-01 to T-TIM-03, T-TIM-22, and the Python part of T-TIM-24. Then the module
    `skellycam/core/capture_timings.py`: `STEPS`, `TimingControl`, `StepSamples`, `StepSet`, the
@@ -731,12 +734,13 @@ Each step has its tests first. The order starts after the user accepts this spec
 
 ## 12. Open questions for the user
 
-No question is open. The questions of draft 1 are decided: Q580 to Q583 and Q586 (section 14).
+No question is open. The questions of draft 1 are decided: Q580 to Q583 and Q586. The user accepted
+the spec in Q587 (section 14).
 
 ## 13. Choices of the agent
 
 [ADR-8Z0Q](../decisions/entries/8Z0Q-choices-of-the-capture-timings-spec.md) holds each choice with
-the alternative that it rejects. In short:
+the alternative that it rejects. The user accepted them as a set on 2026-11-23 [U Q587]. In short:
 
 1. Transport: the field `timings` of `DiagnosticsMessage`, the Python call, one websocket message
    once per second from the loop of `_app_state_sender` (6.2 to 6.4).
@@ -811,3 +815,6 @@ recommendation "always on" in Q578. For Q580 to Q583 the user answered "Q580-Q58
   measurement in the two interim worker files, which step 4b replaces. The decode and draw timing goes
   into the shared tile module (`skellycam-ui/src/player/tile/`), behind the same switch, in the same
   summary shape, built together with step 4b. FreeMoCap gets it when it takes the folder.
+- **Q587.** "Q587 agree": the user accepts this spec, with the choices of ADR-8Z0Q as a set. The
+  build starts after `dom/fix-lane-3` merges into `dom/integration`: the capture side first, the
+  tile part with step 4b ([ADR-8B85](../decisions/entries/8B85-acceptance-of-the-capture-timings-spec.md)).

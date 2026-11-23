@@ -1,10 +1,13 @@
 # 8Z0Q — Choices of the capture timings spec
 
-**Status:** proposed, 2026-11-23 (agent; draft 2 of [`specs/capture-timings.md`](../../specs/capture-timings.md)).
+**Status:** accepted, 2026-11-23 (user; Q587 of ADR-8B85; commit to dom/timings-spec; was proposed,
+2026-11-23 (agent; draft 2 of [`specs/capture-timings.md`](../../specs/capture-timings.md))).
 
 ## Decision
 
-The agent made these choices for [`specs/capture-timings.md`](../../specs/capture-timings.md). The
+The agent made these choices for [`specs/capture-timings.md`](../../specs/capture-timings.md). The spec
+marked them [A]. The user accepted them as a set on 2026-11-23 (Q587 of
+[ADR-8B85](8B85-acceptance-of-the-capture-timings-spec.md)). The spec now marks them [U Q587 n]. The
 decisions of the user are in [ADR-MX8V](MX8V-decisions-of-the-user-on-capture-timings.md). Each item
 gives its spec section, and "Not" gives the rejected alternative and its reason.
 
