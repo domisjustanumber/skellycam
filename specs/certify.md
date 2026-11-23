@@ -1021,7 +1021,7 @@ steps are not built.
 of the row. A key with "fail" is on a `fail` row only. The failure facts of 3.5.3 are on each failure row and are
 not repeated here. 3.6.10 gives the kind of each check (camera, pipeline or system) and its `module`.
 
-**Quick, each camera [U Q593, Q624i, Q646]: twelve checks.**
+**Quick, each camera [U Q593, Q624i, Q646; the row [ADR-0Z6Q](../decisions/entries/0Z6Q-choices-of-the-certify-report-shape-build.md) item 15]: twelve checks.**
 
 | Check | Numbers | Fail and not-run reasons |
 |---|---|---|
@@ -1036,7 +1036,7 @@ not repeated here. 3.6.10 gives the kind of each check (camera, pipeline or syst
 | `<label>:records:rows-complete` | `rows`, `missing`, `take_fps`, `interval_p95_ms`, `interval_max_ms`, `interval_max_at_s`, `long_intervals`, `discontinuity_flags`, the gap keys of 3.5.7 | `rows-differ`, `missing-rows` |
 | `<label>:records:blocks-decode` | `decode_failures` | `frame-not-decodable` |
 | `<label>:records:mkv-opens` [U Q624i] | fail: `mkv_frames`, `frame_count` | `mkv-not-readable`, `mkv-frames-differ` |
-| `<label>:live-at-close` [U Q646] [ADR-0Z6Q](../decisions/entries/0Z6Q-choices-of-the-certify-report-shape-build.md) | fail: the failure facts of 3.5.3 | `pass` when the camera gives no product failure code from the end of its take checks to the end of the close; else `fail` with the product code (B1, 3.6.1) |
+| `<label>:live-at-close` [U Q646: a fail row; the check: [ADR-0Z6Q](../decisions/entries/0Z6Q-choices-of-the-certify-report-shape-build.md) item 15] | fail: the failure facts of 3.5.3 | `pass` when the camera gives no product failure code from the end of its take checks to the end of the close; else `fail` with the product code (B1, 3.6.1); it is in the group Open of 3.4, so a `fail` makes the item `fail` ([ADR-0Z6Q](../decisions/entries/0Z6Q-choices-of-the-certify-report-shape-build.md) item 15) |
 
 On Linux and macOS, quick also has `clock:base`, `clock:before-arrival`, `clock:near-arrival` and one of
 `sequence` and `time-gaps` (10.6). They stay in quick [U Q620] ([ADR-G0AC](../decisions/entries/G0AC-decisions-of-the-user-on-the-certify-verdict-questions.md)).
@@ -1055,7 +1055,7 @@ On Linux and macOS, quick also has `clock:base`, `clock:before-arrival`, `clock:
 | `report:rules` [U Q624m] | `problems` | `report-rules` (3.6.12) |
 | `session:exit` | none | `record-only` `hung-at-exit`, `crashed`, `timed-out` [C 2.5] |
 
-**Full, each camera: the twelve of quick and these six [U Q593], with the clock checks.**
+**Full, each camera: the twelve of quick ([ADR-0Z6Q](../decisions/entries/0Z6Q-choices-of-the-certify-report-shape-build.md) item 15) and these six [U Q593], with the clock checks.**
 
 | Check | Numbers | Fail reasons |
 |---|---|---|
@@ -1082,7 +1082,7 @@ blocks the gate of that model, not `pipeline:gate`. `<model>:gate` requires, for
 `opens` judged, each row of this list whose `module` is the name of the model:
 
 - the camera checks `opens`, `modes:granted:<base>`, `rate`, `native-jpeg:format`, `native-jpeg:valid`,
-  `native-jpeg:size` and `live-at-close` [U Q646];
+  `native-jpeg:size` and `live-at-close` ([ADR-0Z6Q](../decisions/entries/0Z6Q-choices-of-the-certify-report-shape-build.md) item 15: the check and its place in the gate);
 - each pipeline and system check of 3.6.10 that the rule gives to the model, by its name: the pipeline checks of
   the list of `pipeline:gate` below, `group:take:finished`, `group:take:rate` and `group:cycles`;
 - `<model>:gate:no-hang`;
@@ -1284,7 +1284,7 @@ step on, and a part of a test that needs a later step joins at that step (the co
 | 2 | The schema id 1.7.0, also in the validator | T-CERT-03 (schema), the validator tests | T-CERT-03 pipeline item: step 6 |
 | 3 | `details.not_built` and the plan with no not-built check; no `same-model` rows; the plan total with `session:exit` | T-CERT-91, T-CERT-01, T-CERT-103 | |
 | 4 | `<label>:not-reached` and the `done` count | T-CERT-92, T-CERT-17 | |
-| 5 | Quick with eleven checks for each camera (with `live-at-close`, Q646), full with the six; `group:take` with two rows; `system:recording-space` and `group:in-step`; no `<label>:detect`, no `<model>:units` | T-CERT-07, T-CERT-99, T-CERT-26, T-CERT-110, T-CERT-111 | T-CERT-07: the pipeline item at step 6; T-CERT-26: `details.cameras` at step 8; T-CERT-99: the cases of a rate 1.5 % off at step 11; T-CERT-111: `details.limits.in_step_ms` at step 9 [ADR-0Z6Q](../decisions/entries/0Z6Q-choices-of-the-certify-report-shape-build.md) |
+| 5 | Quick with eleven checks for each camera (with `live-at-close`, Q646, [ADR-0Z6Q](../decisions/entries/0Z6Q-choices-of-the-certify-report-shape-build.md) item 15), full with the six; `group:take` with two rows; `system:recording-space` and `group:in-step`; no `<label>:detect`, no `<model>:units` | T-CERT-07, T-CERT-99, T-CERT-26, T-CERT-110, T-CERT-111 | T-CERT-07: the pipeline item at step 6; T-CERT-26: `details.cameras` at step 8; T-CERT-99: the cases of a rate 1.5 % off at step 11; T-CERT-111: `details.limits.in_step_ms` at step 9 [ADR-0Z6Q](../decisions/entries/0Z6Q-choices-of-the-certify-report-shape-build.md) |
 | 6 | The two verdicts of 3.6.10: the pipeline item, the kind and the `module` of each check, the count of the models, the B1 and wedge rules, no `module` with no item, `details.pipeline`, the pipeline row of the record | T-CERT-105 to T-CERT-109, T-CERT-123, T-CERT-125, T-CERT-126, T-CERT-44 | |
 | 7 | The gates: two rows for each model and `pipeline:gate`, each wired by `module`; `details.gates`; "gate not complete" with `not-built`, `partial` items and `"sign-off": "not-built"` in the record; the plan of full | T-CERT-65, T-CERT-98, T-CERT-47, T-CERT-124 | |
 | 8 | `details.cameras` with the verdict and the names of 9.4; the list of known cameras; the record key with no USB id | T-CERT-94, T-CERT-95, T-CERT-100, T-CERT-127 | |
@@ -1350,7 +1350,7 @@ Media Foundation, one model for each camera. "Today" is the code at `54d915c59`.
 - The row counts are computed from the plan, with no `session:exit`: quick 18 N + 9 today and 12 N + 8 after; full
   55 N + 41 today and 24 N + 12 after, for N cameras of N models. The real reports of 2026-11-23 (3 cameras) had 64
   and 207 rows with `session:exit`, which agrees [M review pass 2]. "After" has the row `<label>:live-at-close`
-  [U Q646]. A camera that fails at the open has four rows in the table: `opens`, `rate`, `modes:granted:<base>` and
+  ([U Q646]; the row: [ADR-0Z6Q](../decisions/entries/0Z6Q-choices-of-the-certify-report-shape-build.md) item 15). A camera that fails at the open has four rows in the table: `opens`, `rate`, `modes:granted:<base>` and
   `not-reached` (3.6.1) [U Q648]; in full also `<model>:gate:no-hang` and `<model>:gate`.
 - The bytes "today" for 3 cameras are measured; the others are the first-pass measurements on fake cameras,
   scaled by the real-to-fake ratio (0.90 quick, 0.94 full) [M review pass 2]. The bytes "after" are estimates of
@@ -1361,7 +1361,7 @@ Media Foundation, one model for each camera. "Today" is the code at `54d915c59`.
   0.15 kB for each camera in quick and 0.3 kB in full, and about 0.6 kB (quick) and 1.2 kB (full) for the run
   [estimate].
 - The examples of 3.6.9 show the shape before Q624 and Q646: they do not show the rows of 3.6.12. Each camera also
-  has the row `<label>:live-at-close`, and each `not-reached` count of a camera is one higher.
+  has the row `<label>:live-at-close` ([ADR-0Z6Q](../decisions/entries/0Z6Q-choices-of-the-certify-report-shape-build.md) item 15), and each `not-reached` count of a camera is one higher.
 - With the fields of 3.5 as first specified, the review estimated 38.6 kB for quick and 74.8 kB for full with four
   cameras [estimate].
 
@@ -1545,7 +1545,7 @@ contract owner confirmed its form [C 3.7]:
 
 | Kind | Checks |
 |---|---|
-| camera | `detect:mjpg-mode`, `opens`, `rate`, `modes:granted:<mode>`, `native-jpeg:format`, `native-jpeg:valid`, `native-jpeg:size`, `settings-stick:readback`, `:holds`, `:image-effect`, `:each-open`, `live-at-close`; in full when built: `rate:<mode>`, `rate:<w>x<h>@60`, `exposure:<base>:readback`, `control:gain`, `control:focus`, `auto-off:*`, `group-open`, `cycles`; `<model>:gate:no-hang`; `<label>:not-reached`; the cleanup rows `release:<label>` |
+| camera | `detect:mjpg-mode`, `opens`, `rate`, `modes:granted:<mode>`, `native-jpeg:format`, `native-jpeg:valid`, `native-jpeg:size`, `settings-stick:readback`, `:holds`, `:image-effect`, `:each-open`, `live-at-close` ([ADR-0Z6Q](../decisions/entries/0Z6Q-choices-of-the-certify-report-shape-build.md) item 15); in full when built: `rate:<mode>`, `rate:<w>x<h>@60`, `exposure:<base>:readback`, `control:gain`, `control:focus`, `auto-off:*`, `group-open`, `cycles`; `<model>:gate:no-hang`; `<label>:not-reached`; the cleanup rows `release:<label>` |
 | pipeline | `native-jpeg:not-reencoded`, `native-jpeg:source-equals-ring`, `native-jpeg:ring-equals-mkv`, `records:rows-complete`, `records:blocks-decode`, `records:gaps-explained`, `records:mkv-opens`, `clock:base`, `clock:before-arrival`, `clock:near-arrival`, `sequence`, `time-gaps`; the run checks `group:take-again` and `group:preview-during-take`, which count against the pipeline as a system check does, unless the rule below gives them to a model; in full when built: `identity:*`, `controls`, `controls:exposure-scale`, `auto-exposure:*`, `in-use` |
 | system | `detect`, `system:recording-space`, `system:memory`, `group:take:finished`, `group:take:rate`, `session:exit`; in full when built: `group:cycles`, `group:restore-after-kill`, `group:take-30:*`, `group:take-60:*`, `group:open`, `group:contention`, `system:*`, `self:*`; the cleanup rows `delete-work-folder` and `write-record` |
 | no verdict | the `record-only` checks (`group:in-step` [U Q616], `<label>:bursts` with the `module` of its model, `system:camera-access`, `system:power`, `system:timer`, `timestamps`, the sweeps); `report:rules` (its failure goes into `evidence.reasons`) and the macOS probes of 10.7, which keep the `module` `macOS probes` and count toward no item (10.4) |
@@ -3597,7 +3597,7 @@ tests only the self-check.
 | T-CERT-130 | macOS and Linux fakes. The guard: a fake interface whose vendor id, product id or release number differs from the registry or sysfs. | No request is sent; `bos_request` `null` and `bos_request_error` `FunctionTableNotVerified`. |
 | T-CERT-131 | macOS and Linux fakes. The listing after: a camera that stays listed; one that is gone after the request. | `still_listed` `true` and no notice; `still_listed` `false` and the notice `camera-gone-after-usb-trial` with the camera name; the row stays `record-only`; no gate and no item changes. |
 | T-CERT-132 | macOS and Linux fakes. The rows of the trial with each method answering, and with each method failing (no write access to usbfs, `kIOReturnNotOpen`, a missing `system_profiler`). | Each row is `record-only` with the `module` of its model and the keys of 3.6.13; each failure gives its class name in `<method>_error`; no row holds free text, a serial, a location id, a path or the product text; `usb3_capable` of `details.cameras` is the value of detection. |
-| T-CERT-133 | 3 OS, session child [U Q646]. Fakes that leave after their take checks: a process exit and a stall; a hang at the close; a process exit at the close. | Each gets `<label>:live-at-close` `fail` with the product code (`crashed` with `exit_code` 3, `stalled`, `hung`, `crashed`) and the failure facts that have a value; no written result changes; the model item, `<model>:gate:no-hang` and `<model>:gate` are not `pass`; a good camera has `live-at-close` `pass`. |
+| T-CERT-133 | 3 OS, session child [U Q646; the row: [ADR-0Z6Q](../decisions/entries/0Z6Q-choices-of-the-certify-report-shape-build.md) item 15]. Fakes that leave after their take checks: a process exit and a stall; a hang at the close; a process exit at the close. | Each gets `<label>:live-at-close` `fail` with the product code (`crashed` with `exit_code` 3, `stalled`, `hung`, `crashed`) and the failure facts that have a value; no written result changes; the model item, `<model>:gate:no-hang` and `<model>:gate` are not `pass`; a good camera has `live-at-close` `pass`. |
 | T-CERT-134 | The build file of 3.5.2 [U Q647]: a wheel from a checkout; the sdist and a wheel from the sdist; a source tree inside another git repository; a git that fails or gives text that does not decode; the `datas` of `skellycam.spec`; the CI step of the installer. | The commit and the tree state in the wheel, in the sdist and in the wheel from the sdist; no commit for the tree inside another repository; no commit and no failed build for a git error; `skellycam.spec` takes the file into `datas`; the CI step writes the file before a step changes the tree. |
 
 **The changes of 3.6 to the tests above [U Q591 to Q599, Q610 to Q618, A].** Where a row above and this list
@@ -3608,7 +3608,7 @@ differ, this list is the rule. T-CERT-91 to T-CERT-132 are new. Q624 also change
   from the built checks (Q610).
 - T-CERT-03: the schema id `skellycertify.report/1.7.0`; the pipeline item of `group` `component` (3.6.10).
 - T-CERT-05 and T-CERT-70: replaced by T-CERT-94 (the name rule of 9.4).
-- T-CERT-07: each camera has the eleven quick checks of 3.6.2 (with `live-at-close`); the run has five checks; the pipeline item `pass`.
+- T-CERT-07: each camera has the eleven quick checks of 3.6.2 (with `live-at-close`, [ADR-0Z6Q](../decisions/entries/0Z6Q-choices-of-the-certify-report-shape-build.md) item 15); the run has five checks; the pipeline item `pass`.
 - T-CERT-12 and T-CERT-73: the later checks are one `not-reached` row; a camera that fails at the open keeps
   `opens`, `rate` and `modes:granted:<base>` and has one `not-reached` row [U Q648].
 - T-CERT-13: `image-effect` cases run at `full`.

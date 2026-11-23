@@ -18,8 +18,9 @@ The user answered three questions of the review of the certify build with "Q646-
    [ADR-0Z6Q](0Z6Q-choices-of-the-certify-report-shape-build.md) (`<label>:live-at-close`).
 2. Q647: "The report's commit field is filled only for one kind of local build. The installer that people actually
    run gets none, so every real report would say 'commit unknown' and 'tree modified'. Should the release build (CI
-   and the installer) write the commit file too?" Yes. The sdist, a wheel built from the sdist and the installer
-   build carry `skellycam/build_info.json`.
+   and the installer) write the commit file too?" Yes. The release build (CI and the installer) carries
+   `skellycam/build_info.json`. The agent reads "the release build" as also the sdist and a wheel built from the
+   sdist ([ADR-0Z6Q](0Z6Q-choices-of-the-certify-report-shape-build.md) item 6).
 3. Q648: "Such a camera keeps three rows (`opens`, `rate`, `modes:granted`), because the three are announced
    together. The spec's row count assumed two rows. Should it keep the three rows, with the spec's count
    corrected?" Yes. A camera that fails at the open keeps the three rows and one `not-reached` row. The count of
