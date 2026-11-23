@@ -60,7 +60,7 @@ and Q-C go to the user with the review of this work.
 
 ## Reason
 
-1. A fork of a process with threads can deadlock in each library with threads. The deadlock below is one case.
+1. A fork of a process with threads can deadlock in each library with threads. The deadlock of the evidence (PyAV and FFmpeg) is one case.
 2. The green recorder run of 2026-11-20 (run 44676423645) skipped each test of `test_connection.py`: the file was
    the placeholder of the connection commit, with a module skip. The connection tests first ran on Linux on
    2026-11-23.
