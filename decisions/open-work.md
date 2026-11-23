@@ -143,20 +143,58 @@ task. Delete an item when its work is done. The PR that closes an item records t
   - The DirectShow open order of `sfn26` (item 1 of ADR-6T78) waits for a check on the cameras.
   - The UI does not show the `start_failure` warning item.
   - Not verified: real cameras, Linux, macOS and the installer build.
-- **The certify run of skellycam.** The spec [`specs/certify.md`](../specs/certify.md) is draft 3, on
-  format 1.6.0 of the contract. The first code is in `skellycam/core/certify/` (section 19 of the
+- **The certify run of skellycam.** The spec [`specs/certify.md`](../specs/certify.md) is draft 3. The code
+  writes format 1.6.0 of the contract; section 3.6 moves it to format 1.7.0 (decided 2026-11-23, not built). The first code is in `skellycam/core/certify/` (section 19 of the
   spec), and a first real quick run was done on 2026-11-21. Open: the checks that are `not-run`
   `not-built` (the status line of the spec). The choices of the agents
   wait for the user: [ADR-KY81](entries/KY81-certify-spec-choices-of-the-agent.md) (the items that the
   later entries do not rule), [ADR-8CP7](entries/8CP7-certify-spec-draft-3-choices-of-the-agent.md)
   and [ADR-FC1C](entries/FC1C-choices-of-the-spec-integration.md),
   with the open questions of section 14 of the spec.
-- **Certify, decided 2026-11-23, not built.** The report gets: the commit; the product failure facts
-  (native code, call, stage, first failure code); a start time and a duration for each check; a camera
-  inventory (USB link, controller, hub depth, firmware revision, driver, mode list); frame timing on
-  each rate row; the warning and exit codes of the take; CPU load; the exposure and gain context. A
-  salted local hash is the stable id of a camera unit. Certify keeps the camera logs of the last run
-  on the machine of the user and never sends them by itself.
+- **Certify report fields, decided 2026-11-23, not built**
+  ([ADR-F6C3](entries/F6C3-decisions-of-the-user-on-the-certify-report-fields.md)). The fields, the
+  kept logs are in section 3.5 of the spec, in the slim form of Q594, with the build order of 3.6.7 (Q626) and
+  the tests T-CERT-77 to T-CERT-90. The unit id is removed (Q595). The user accepted the choices of the agent
+  ([ADR-NQ77](entries/NQ77-choices-of-the-certify-report-fields.md)) and the build order on 2026-11-23
+  ([ADR-10HT](entries/10HT-acceptance-of-the-certify-report-field-choices-and-the-build-order.md)). The
+  build starts only after `dom/fix-lane-3` is merged into `dom/integration`; that merge is done (2026-11-23).
+  - Q574 is closed: the skellycertify session changed its section 6 in its commit `cf9c7a2`, so the contract
+    allows a local unit id. The user then removed the unit id (Q595 of
+    [ADR-H2A0](entries/H2A0-decisions-of-the-user-on-the-certify-report-shape.md)), so skellycam does not use
+    that permission.
+- **Certify report shape, decided 2026-11-23, not built**
+  ([ADR-H2A0](entries/H2A0-decisions-of-the-user-on-the-certify-report-shape.md),
+  [ADR-BW5M](entries/BW5M-decisions-of-the-user-on-the-two-verdicts-and-the-certify-test-set.md)). Section 3.6 of the spec holds
+  the shape of quick and full, the two verdicts, the fixes B1 and the commit (first in the build order of 3.6.7),
+  and the tests T-CERT-91 to T-CERT-132. Each question of this shape is decided (Q591 to Q629): the user
+  accepted the choices of the agent ([ADR-MEE1](entries/MEE1-choices-of-the-certify-report-shape.md),
+  [ADR-DBF8](entries/DBF8-choices-of-the-certify-names-verdicts-and-checks.md) by Q627 of
+  [ADR-63D9](entries/63D9-decisions-of-the-user-on-the-processors-the-build-order-and-the-certify-choices.md);
+  [ADR-M7JC](entries/M7JC-choices-of-the-any-language-camera-name-and-the-usb-capability.md) by Q628;
+  [ADR-H7PX](entries/H7PX-choices-of-the-usb-3-capability-on-macos-and-the-three-state-fact.md) by Q629).
+  - The name rule of Q596 depends on a change of the wording of rule 16 of section 6 of the contract, for the
+    name of the list of known cameras, the fixed class texts and a name in any script. The contract owner decides
+    it; it is pending. The relay already keeps a name in any script (the answer of the contract owner).
+  - Not verified: the hub flag of Windows on hardware (a Kiyo Pro on a USB 2 port), the kernel release of
+    `bos_descriptors` on Linux, and each macOS method of 3.6.13. The trial `<label>:usb3-trial` at the end of a
+    full run on macOS and Linux reports each method (Q629); after its reports show that the request to the camera
+    is safe or not, the user decides whether it moves to the detection or goes. There is no stand-alone probe:
+    certify is the only way that tests run on other systems (the user, Q629).
+  - Later work, not specified: an optional question to the person, "What make and model is this?".
+  - The sign-off checks `<label>:cycles`, `group:take-30`, `group:contention` and `group:open` (Q599, Q610), and
+    `group:restore-after-kill` when the product keeps the "before" values on disk (Q608, Q615).
+  - Q616: more certify runs on the test system calibrate the limit of `group:in-step` (one frame period today).
+  - The limits of 3.6.6 rest on two cameras and three runs: `near_arrival_p5_ms` -50 ms and the take rate limit
+    of 2 %. They are not calibrated.
+  - A fault of the product: a log line prints the full path of the evidence file with the text of a
+    `FileNotFoundError`. The path can hold the user name. The kept logs are never sent (3.5.11).
+  - The user decided the proposals of the gap review as Q624a to Q624m
+    ([ADR-493E](entries/493E-decisions-of-the-user-on-the-certify-check-drops-and-additions.md)). Focus matters
+    for calibration boards: `control:focus:sharpness` and `control:autofocus` come back when they have a pass
+    rule (Q624d). `group:preview-during-take` waits for the preview UI of step 4b.
+  - Named only, not specified: codec checks from the H.264 study (which encoders exist and work, the stream limits
+    of each hardware encoder per GPU model with the sustained number and the crossover to the CPU, and what the
+    Electron UI can decode). The user wants them in certify if the study finds answers.
 - **Decided 2026-11-21, not built**
   ([ADR-TFD7](entries/TFD7-search-limit-stop-rate-median-role-flag-and-restore-after-a-failed-loop.md)):
   a median frame-rate statistic in the stop answer; a role flag in place of the `parent_process()`
