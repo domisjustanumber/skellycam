@@ -1,0 +1,44 @@
+# The values of this repository for the kit tools (decision 0001). This repository owns this file.
+# tools/kit_sync.py fills each placeholder of the kit text with a value of [values]. The check tools
+# read their tables. Each commented line gives the default.
+
+[sync]
+# adopt = ["AGENTS.md#writing-rules"]  # Only these unit IDs of the kit manifest. Default: all units.
+# skip = [".github/workflows/doc-checks.yml"]  # The unit IDs that this repository does not take.
+# kit = "../project"  # The path of the freemocap/project checkout.
+
+[values]
+DEFAULT_BRANCH = "development"  # The branch that PRs target: upstream `development` (decision EQY4).
+AREAS = "the code, the CI"  # What an agent must not change before it reads the decision log.
+NORMATIVE_DOCS = "the specs in `specs/`"  # The binding documents (decision 2S1P, item 4).
+SIBLING_PATH = "../skellyfileformat/spec/"  # A path relative to the repository, as an example in AGENTS.md.
+SECRET_SCAN_BRANCHES = "[main, development, development-streaming]"  # The branches of a PR that the secret scan checks.
+PYTHON_VERSION = "3.13.18"  # The Python of the doc checks in CI. The same as pyproject.toml.
+UV_VERSION = "0.13.9"  # The uv of the doc checks in CI. The pin of this repository.
+
+[check_decision_log]
+# module_logs = ["server/decisions"]  # The folder of each module log.
+# old_log_dirs = []  # A folder where a log was before a move.
+target_branch = "development"  # The PR branch: upstream `development` (decision EQY4).
+index_limit = 24_000  # Was 14_000 (decisions N2NH and XT31). A PR that raises a limit must add an entry.
+# read_path_limit = 220_000
+# last_unlimited_entry = 0
+
+[check_private_data]
+allowed_emails = ["info@freemocap.org"]  # The public contact address of the project.
+
+# Decision I of JMS0 (2026-11-20): a reviewed line, by its path, its line number and the SHA-256 of its text.
+[[check_private_data.allowed_lines]]
+path = "skellycam-ui/src/hooks/floatingOnboarding.tsx"
+line = 1
+sha256 = "70d514cd447c3acfa67678f424813f7219a6820a0d1bb02bd319800e482e93b0"
+reason = "upstream author credit"
+
+[[check_private_data.allowed_lines]]
+path = "skellycam-ui/src/hooks/useDraggableTooltips.tsx"
+line = 1
+sha256 = "2b9a3455ee945850201dde0ba48d187a94f492d5fdf3964dfe818d1b3252ee4e"
+reason = "upstream author credit"
+
+[check_camera_media]
+golden_paths = []  # skellycam has no golden reference files yet, so nothing is allowed.

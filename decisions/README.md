@@ -92,6 +92,7 @@ The open work is in [open-work.md](open-work.md).
 
 ## Rules
 
+<!-- kit:reading-rules -->
 - Read the Active entries that apply to your task. Then you do not repeat a settled question. Before
   you make a measurement, scan the rows of the Evidence table of each log, and read the entries that
   apply. Then you do not repeat a completed measurement. The Evidence entries are not in the read
@@ -170,3 +171,4 @@ The open work is in [open-work.md](open-work.md).
   heading, an index row and a status line hold the bare ID. Cite a provisional entry of another repo
   by the repo name, the PR number and the slug. Do not edit a decided entry only to add or move the
   prefix or the link.
+<!-- /kit -->

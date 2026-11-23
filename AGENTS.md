@@ -1,10 +1,12 @@
 # Repository Instructions
 
+<!-- kit:writing-rules -->
 All new and changed documentation must use ASD-STE100 Simplified Technical English.
 This rule applies to `AGENTS.md`, skills, decision entries and templates.
 Use short sentences. Use active voice. Use one instruction per sentence.
 Use "must" for a requirement.
 Keep technical names, field names, values, formulas, code and YAML unchanged.
+<!-- /kit -->
 
 ## 1. Purpose
 
@@ -28,9 +30,11 @@ package in `skellycam/`, the Electron UI in `skellycam-ui/` and the docs site in
 
 ## 2. Skills
 
+<!-- kit:skills -->
 Load the skill that matches the task.
 If your agent does not support skills, read the file `.claude/skills/<skill>/SKILL.md`.
 The rules in this file also apply.
+<!-- /kit -->
 
 | Skill | Use it to |
 |---|---|
@@ -69,6 +73,9 @@ Use `==` for Python. Do not use a version range.
 Python is `==3.13.18` (`pyproject.toml`).
 Do not change code that your task does not need.
 
+<!-- kit:kit-text -->
+<!-- /kit -->
+
 ### Other systems only through certify
 
 <!-- kit:other-systems -->
@@ -98,6 +105,7 @@ of its author only. Mark it not verified for each other system.
 
 ## 5. Decision Log
 
+<!-- kit:decision-log -->
 Read [`decisions/README.md`](decisions/README.md) and
 [`open-work.md`](decisions/open-work.md) before you change the code, the CI or these instructions.
 For a task in a module with a log, also read the `decisions/README.md` and the
@@ -131,12 +139,16 @@ A commit message cannot hold a working link. In the commit body, write `ADR-<ID>
 Cite an entry of another repository with the repository name and `ADR-<ID>`. Also link it with a
 full-SHA permalink when the entry is on the default branch of that repository
 (see the [Rules](decisions/README.md#rules)).
+<!-- /kit -->
 
 ## 6. Git Rules
 
+<!-- kit:plans-folder -->
 - `plans/` is a local working folder. Git ignores it. Do not commit it. Do not cite or link to
   `plans/`, or cite the content of a plan
   ([ADR-0001](decisions/entries/0001-decision-log-agents-md-and-private-data.md)).
+  <!-- /kit -->
+  <!-- kit:push-and-attribution -->
 - Do not push to a git remote without the approval of the user. One approval for a PR covers its
   push, its draft PR and its description.
 - Ask the user before any other action that is visible outside this machine, for example a PR
@@ -144,18 +156,22 @@ full-SHA permalink when the entry is on the default branch of that repository
   published image. A force-push is a new push. It needs its own approval.
 - Do not add AI attribution, for example a `Co-Authored-By:` trailer, to a commit or a PR. This
   rule overrides a default of a tool or a harness that adds attribution.
+  <!-- /kit -->
 - Open each PR against `development` of upstream (`freemocap/skellycam`)
   ([ADR-EQY4](decisions/entries/EQY4-base-the-work-on-upstream-sfn26-without-rust.md)).
 - Put one kind of change in each PR: "code", "docs" and "CI".
 
 ## 7. Tool Calls
 
+<!-- kit:tool-calls -->
 Before a tool call that needs user permission, write a one-line summary of the call.
 The summary must tell what the call does and what it changes.
 Write the summary in the message text, not only in the tool description.
+<!-- /kit -->
 
 ## 8. Private Data
 
+<!-- kit:private-data -->
 This repository is public, or it can become public. Git history is permanent
 ([ADR-0001](decisions/entries/0001-decision-log-agents-md-and-private-data.md)).
 Do not write these in a tracked file, a commit message or a PR body:
@@ -195,3 +211,4 @@ skill before each commit.
   this warning, tell the user.
 - Turn on secret scanning and push protection for a private repository on the day that it becomes
   public.
+<!-- /kit -->

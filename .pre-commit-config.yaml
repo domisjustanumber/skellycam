@@ -4,12 +4,15 @@
 default_install_hook_types: [pre-commit, commit-msg, pre-push]
 default_stages: [pre-commit]
 repos:
+  # kit:gitleaks-hook
   - repo: https://github.com/gitleaks/gitleaks
     rev: v8.30.1
     hooks:
       - id: gitleaks
+  # /kit
   - repo: local
     hooks:
+      # kit:local-hooks
       # Only the files of the commit. The doc test and CI check each file of the repo.
       - id: private-data
         name: private data
@@ -22,13 +25,6 @@ repos:
         entry: uv run python tools/check_camera_media.py
         language: system
         verbose: true
-      # A new script that names or guards for a system needs a script-purpose field (ADR-VV4Q, ADR-K3BX, ADR-C307).
-      # Only the files that the commit adds. The doc test and CI check each tracked file.
-      - id: other-systems
-        name: other systems only through certify
-        entry: uv run python tools/check_other_systems.py
-        language: system
-        pass_filenames: false
       # An entry ID that a different file has on another branch or worktree.
       - id: decision-log-ids
         name: decision log IDs
@@ -44,3 +40,11 @@ repos:
         language: system
         stages: [commit-msg]
         verbose: true
+      # /kit
+      # A new script that names or guards for a system needs a script-purpose field (ADR-VV4Q, ADR-K3BX, ADR-C307).
+      # Only the files that the commit adds. The doc test and CI check each tracked file.
+      - id: other-systems
+        name: other systems only through certify
+        entry: uv run python tools/check_other_systems.py
+        language: system
+        pass_filenames: false
