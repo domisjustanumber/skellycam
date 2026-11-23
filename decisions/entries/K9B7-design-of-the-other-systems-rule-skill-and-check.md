@@ -1,6 +1,12 @@
 # K9B7 — Design of the other-systems rule text, its skill and its file check
 
-**Status:** accepted, 2026-11-23 (user, relayed by the supervisor; commit to dom/other-systems-rule;
+**Status:** absorbed into
+[`AGENTS.md#2-skills`](../../AGENTS.md#2-skills),
+[`AGENTS.md#other-systems-only-through-certify`](../../AGENTS.md#other-systems-only-through-certify),
+[`.claude/skills/verify-on-other-systems/SKILL.md#steps`](../../.claude/skills/verify-on-other-systems/SKILL.md#steps),
+[`tools/check_other_systems.py`](../../tools/check_other_systems.py),
+[`tools/tests/test_other_systems.py`](../../tools/tests/test_other_systems.py),
+2026-11-23 (commit to dom/other-systems-rule; was accepted, 2026-11-23 (user, relayed by the supervisor);
 was proposed, 2026-11-23 (agent; waits for the user)).
 
 ## Decision
