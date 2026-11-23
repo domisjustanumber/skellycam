@@ -91,9 +91,14 @@ class StopRecordingResponse(BaseModel):
     number_of_cameras: int
     number_of_frames: int
     total_duration_sec: float
-    mean_framerate: float
+    # recorder.md 8.2 [Q609]: the rate of the take, frames over the elapsed time (the sum over the cameras of the
+    # frames over the sum of their times). The name stays: a client reads it.
+    mean_framerate: float = Field(description="The frame rate of the take: frames divided by the elapsed time "
+                                              "(sum of the frames of the cameras over the sum of their times)")
     mean_inter_camera_sync_ms: float
-    framerate_stats: StatsSummary
+    # Figures of each frame interval, not the rate of the take: on a 16 ms arrival grid the median is 31.25 at 30 fps.
+    framerate_stats: StatsSummary = Field(description="The rate of each frame interval (1 / the median over the "
+                                                      "cameras of the interval); not the rate of the take")
     frame_duration_stats: StatsSummary
     inter_camera_grab_range_ms_stats: StatsSummary
 

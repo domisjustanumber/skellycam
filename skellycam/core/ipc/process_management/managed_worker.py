@@ -317,6 +317,8 @@ class ManagedProcess(ManagedWorker):
         return self._process.is_alive()
 
     def join(self, timeout: float | None = None) -> None:
+        if self._process.pid is None:  # never started (a refused start, unix-capture.md 4.12): nothing to join
+            return
         self._process.join(timeout=timeout)
 
     @property

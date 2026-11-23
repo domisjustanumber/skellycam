@@ -18,6 +18,7 @@ from skellycam.core.camera.capture.modes import (
     native_from_supported,
     rates_equal,
 )
+from skellycam.core.camera.capture import restore_store as restore_files
 from skellycam.core.camera.capture.failure_codes import WEDGE_CODES
 from skellycam.core.camera.capture.source import CaptureFailure, CaptureRequest
 from skellycam.core.camera.config.camera_config import CameraConfigs, MAX_MANUAL_EXPOSURE
@@ -55,6 +56,8 @@ class CameraGroupManager:
     creating: bool = False  # an apply request makes a group: no second one may (camera-requests.md 2.4a item 7) [Z7F3]
     closes: int = 0  # the count of close requests: a close ends a request that makes a group (2.4a item 7) [Z7F3]
     restore_records: dict = field(default_factory=dict)  # unix-capture.md 4.7 [NYT6]: from a group to the next
+    # unix-capture.md 4.7.1 [HQE5]: the folder of the restore files. None (certify, the tests): no file is read or written.
+    restore_store: object = None
     camera_groups: dict[CameraGroupIdString, CameraGroup] = field(default_factory=dict)
     camera_group_framerate_subscriptions: dict[CameraGroupIdString, TopicSubscriptionQueue] = field(
         default_factory=dict
@@ -67,6 +70,14 @@ class CameraGroupManager:
         return camera_group
 
     async def _create_and_start(self, camera_configs: CameraConfigs) -> tuple:
+        identities = {}
+        if self.restore_store is not None:  # 4.7.1: a camera with no record in memory takes the entry of its file
+            salt = restore_files.salt_of(self.restore_store)  # the main process only: a camera process gets its key
+            identities = {camera_id: restore_files.identity(self.detected_cameras.get(camera_id), salt=salt)
+                          for camera_id in camera_configs}
+            missing = [camera_id for camera_id in camera_configs if not self.restore_records.get(camera_id)]
+            self.restore_records.update(restore_files.read_entries(self.restore_store, missing, self.detected_cameras,
+                                                                   identities))
         camera_group = CameraGroup.create(
             camera_configs=camera_configs,
             heartbeat_timestamp=self.worker_registry.heartbeat_timestamp,
@@ -74,6 +85,8 @@ class CameraGroupManager:
             worker_registry=self.worker_registry,
             source_factory=self.source_factory,
             restore_records=self.restore_records,
+            restore_store=self.restore_store,
+            restore_identities=identities,
         )
         self.camera_group_framerate_subscriptions[camera_group.id] = (
             camera_group.ipc.pubsub.get_subscription(TopicTypes.FRAMERATE)
@@ -494,5 +507,6 @@ def get_or_create_camera_group_manager(app: FastAPI) -> CameraGroupManager:
     _CAMERA_GROUP_MANAGER = CameraGroupManager(
         global_kill_flag=app.state.global_kill_flag,
         worker_registry=app.state.worker_registry,
+        restore_store=restore_files.default_folder(),  # 4.7.1: only the server of the app keeps restore files
     )
     return _CAMERA_GROUP_MANAGER

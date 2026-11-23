@@ -188,6 +188,11 @@ jobs:
       - name: Verify installation 3/3
         run: uv pip show opencv-contrib-python
 
+      # ── The build file of the certify report (specs/certify.md 3.5.2, P7), before a step changes the tree ──
+      - name: Write the certify build file
+        shell: bash
+        run: uv run --no-project python tools/build_info.py --require
+
       # ── Write build metadata and secrets into the Python package ──
       - name: Write build info
         shell: bash

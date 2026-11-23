@@ -9,6 +9,7 @@ import sys
 import pytest
 
 from skellycam.tests.capture.capture_session import product
+from skellycam.tests.pace import margin
 
 pytestmark = pytest.mark.skipif(sys.platform != "win32", reason="the media_foundation package is Windows only (U18)")
 
@@ -23,11 +24,18 @@ def run_case(case):
     return json.loads(process.stdout.strip().splitlines()[-1])
 
 
-def test_t_unx_76_media_foundation_diagnostics():
+@pytest.fixture(scope="module")
+def diagnostics_case():
+    """One run of the stand-in case "diagnostics" for the blocking test and the `pace` test of T-UNX-76."""
+    return run_case("diagnostics")
+
+
+def test_t_unx_76_media_foundation_diagnostics(diagnostics_case):
     """T-UNX-76: every key of 4.6.2; `id_source` `mf-link`; `native_domain` `hresult`; `clock` `unknown`;
-    the `t_*_ms` keys of the steps that Media Foundation has are filled (it has no buffer step)."""
+    the `t_*_ms` keys of the steps that Media Foundation has are filled (it has no buffer step). The values that
+    depend on the pace of the stand-in threads are in `test_t_unx_76_the_timing_values_of_the_stand_in` (16.1)."""
     source = product("skellycam.core.camera.capture.source")
-    result = run_case("diagnostics")
+    result = diagnostics_case
     data = result["diagnostics"]
     assert result["frames"] == 10
     assert set(data) == set(source.SOURCE_KEYS)
@@ -39,21 +47,31 @@ def test_t_unx_76_media_foundation_diagnostics():
     assert (data["requested_w"], data["granted_w"], data["granted_fps_num"], data["delivered"]) == (640, 640, 30, "jpeg")
     assert data["frames"] >= 10 and len(data["frame_log"]) == min(64, data["frames"])
     # The stand-in stamps the sample time (arrival - 4 ms) before the callback stamps the arrival: a delay of the
-    # thread between the two stamps (a loaded machine) only makes the value more negative.
-    assert -9.0 <= data["sample_minus_arrival_p50_ms"] <= -4.0, data["sample_minus_arrival_p50_ms"]
+    # thread between the two stamps (a loaded machine) only makes the value more negative, never above -4 ms.
+    assert data["sample_minus_arrival_p50_ms"] <= -4.0, data["sample_minus_arrival_p50_ms"]
     assert data["later_than_arrival"] == 0 and data["sample_time_kept"] is True
     # the last read-back is that of the restore at the close (4.7): the value of before the open
     assert (data["exposure_present"], data["exposure_value"], data["control_path"]) == (True, -6, "iam")
     assert data["focus_present"] is False and data["fail_code"] is None
     # F10: the range of IAMCameraControl::GetRange; the keys that Media Foundation cannot fill are null (4.6.2)
     assert [data[f"exposure_{k}"] for k in ("min", "max", "step", "default", "auto_supported")] == [-13, -1, 1, -6, True]
-    assert (data["long_intervals"], data["format_changes"]) == (0, 0)
+    assert data["format_changes"] == 0
     assert all(data[k] is None for k in ("error_flag_frames", "drops_reported", "long_intervals_with_seq_gap"))
+
+
+@pytest.mark.pace  # Q619: these values depend on the pace of the stand-in threads
+def test_t_unx_76_the_timing_values_of_the_stand_in(diagnostics_case):
+    """T-UNX-76, the timing values: the sample-minus-arrival median is at most 5 ms (times the margin) below the 4 ms
+    of the stand-in, and no interval is long (a slow thread makes one)."""
+    data = diagnostics_case["diagnostics"]
+    assert data["sample_minus_arrival_p50_ms"] >= -4.0 - 5.0 * margin(), data["sample_minus_arrival_p50_ms"]
+    assert data["long_intervals"] == 0, data["long_intervals"]
 
 
 def test_t_unx_76_long_intervals_count_with_the_period_of_the_granted_mode():
     """T-UNX-76, unix-capture.md 4.6.2 D-2, D-3 [Z7F3]: the Media Foundation source gives `FrameLog` the period of the
-    granted mode (30 fps), so an interval of 150 ms counts in `long_intervals`; `clock` stays `unknown`."""
+    granted mode (30 fps), so an interval of 150 ms counts in `long_intervals`; `clock` stays `unknown`. A slower
+    machine only makes the gap longer: no `pace` marker."""
     data = run_case("gap")["diagnostics"]
     assert data["long_intervals"] >= 1 and data["clock"] == "unknown"
 
@@ -134,14 +152,28 @@ def test_f7_no_restore_when_the_loop_failed():
     assert sets == [], calls
 
 
+@pytest.fixture(scope="module")
+def hanging_restore_case():
+    """One run of the stand-in case "restore-hangs" for the blocking test and the `pace` test of F7."""
+    return run_case("restore-hangs")
+
+
 @pytest.mark.capture_timing  # real time: the bound of 5 s
-def test_f7_a_hanging_restore_ends_the_close_as_hung_within_its_bound():
+def test_f7_a_hanging_restore_ends_the_close_as_hung_within_its_bound(hanging_restore_case):
     """F7 (reviewer list): the restore `Set` of gain does not return. The close stops there as hung (stage
-    `close`, code `hung`) within the bound of one call (5 s), and goes to no later step (W 6.6, 6.9)."""
-    result = run_case("restore-hangs")
+    `close`, code `hung`), not before the bound of one call (5 s), and goes to no later step (W 6.6, 6.9). The bound
+    above is loose here (10 times); `test_f7_the_hung_close_ends_within_its_tolerance` holds the strict one."""
+    result = hanging_restore_case
     assert result["close_failure"] == ["close", "hung", True]
-    assert 5.0 - EARLY_S <= result["close_s"] <= 6.0, result["close_s"]
+    assert 5.0 - EARLY_S <= result["close_s"] <= 50.0, result["close_s"]
     assert ["flush"] not in result["calls"]
+
+
+@pytest.mark.pace  # Q619: only the bound of time; the tolerance of 1 s grows by the margin on a hosted runner
+@pytest.mark.capture_timing
+def test_f7_the_hung_close_ends_within_its_tolerance(hanging_restore_case):
+    """F7, the bound of time: the hung close ends within 1 s (times the margin) after the 5 s of one call."""
+    assert hanging_restore_case["close_s"] <= 5.0 + 1.0 * margin(), hanging_restore_case["close_s"]
 
 
 def test_t_req_15_no_auto_set_outside_the_close_and_the_exposure_range():

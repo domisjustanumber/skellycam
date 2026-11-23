@@ -186,6 +186,8 @@ class CameraGroup:
         worker_registry: WorkerRegistry,
         source_factory: Callable | None = None,
         restore_records: dict | None = None,
+        restore_store=None,
+        restore_identities: dict | None = None,
     ) -> "CameraGroup":
         try:
             validate_camera_configs(camera_configs)
@@ -200,6 +202,8 @@ class CameraGroup:
                 camera_configs=camera_configs,
                 source_factory=source_factory,
                 restore_records=restore_records,
+                restore_store=restore_store,
+                restore_identities=restore_identities,
             )
         except Exception as e:
             logger.error(f"Error creating camera group: {type(e).__name__} - {e}")

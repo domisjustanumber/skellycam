@@ -17,6 +17,7 @@ import numpy as np
 import pytest
 
 from skellycam.tests.frame_ring import ring_children
+from skellycam.tests.pace import margin
 from skellycam.tests.frame_ring.ring_session import (
     fake_configs,
     fake_session,
@@ -32,15 +33,10 @@ from skellycam.tests.frame_ring.ring_spec import (
 REPO_ROOT = Path(__file__).resolve().parents[3]
 
 
-@pytest.mark.ring_slow
-def test_t_ring_23_write_p99_with_four_readers(cleanup, spawn, procs):
-    """T-RING-23, sections 5.3 and 11.3 [A48]: 4 reader processes read the newest frame without a
-    pause. The JPEG write p99 stays within the target of 1.0 ms at 1080p for a writer that is paced
-    at 60 frames/s by a sleep [A66].
-
-    The writer writes 1080p-size payloads (607,032 bytes, the largest measured frame) at 60
-    frames/s for TIMING_SECONDS (2 s; 10 s with SKELLYCAM_RING_FULL=1).
-    """
+def _four_readers_run(cleanup, spawn, procs):
+    """The run of T-RING-23: 4 reader processes read the newest frame without a pause, while the writer writes
+    1080p-size payloads (607,032 bytes, the largest measured frame) at 60 frames/s for TIMING_SECONDS (2 s; 10 s with
+    SKELLYCAM_RING_FULL=1). Gives whether each reader still runs and the JPEG write p99 in ms."""
     fr = ring()
     creator = cleanup.own(fr.FrameRingCreator.create(
         camera_id="p99", camera_index=0, pixel_format=fr.PixelFormat.JPEG, width=1920,
@@ -67,9 +63,25 @@ def test_t_ring_23_write_p99_with_four_readers(cleanup, spawn, procs):
             time.sleep(1 / 60)
     finally:
         stop.set()
-    assert all(process.is_alive() for process in procs), "a reader died"
-    p99_ms = np.percentile(durations, 99) / 1e6
-    assert p99_ms <= 1.0, f"JPEG write p99 {p99_ms:.3f} ms > 1.0 ms (target with four readers, paced at 60 frames/s)"
+    alive = all(process.is_alive() for process in procs)
+    return alive, np.percentile(durations, 99) / 1e6
+
+
+@pytest.mark.ring_slow
+def test_t_ring_23_write_with_four_readers(cleanup, spawn, procs):
+    """T-RING-23, sections 5.3 and 11.3 [A48]: 4 reader processes read the newest frame without a pause while the
+    writer writes at 60 frames/s; no reader dies. The p99 target is in `test_t_ring_23_write_p99_with_four_readers`."""
+    alive, _ = _four_readers_run(cleanup, spawn, procs)
+    assert alive, "a reader died"
+
+
+@pytest.mark.pace  # Q619: a p99 of real time; a percentile target is all tolerance, so the margin multiplies it (16.1)
+@pytest.mark.ring_slow
+def test_t_ring_23_write_p99_with_four_readers(cleanup, spawn, procs):
+    """T-RING-23, the bound of time [A66]: the JPEG write p99 stays within the target of 1.0 ms (times the margin) at
+    1080p with four readers, for a writer that is paced at 60 frames/s by a sleep."""
+    _, p99_ms = _four_readers_run(cleanup, spawn, procs)
+    assert p99_ms <= 1.0 * margin(), f"JPEG write p99 {p99_ms:.3f} ms > {margin():g} ms (target with four readers)"
 
 
 DELETED_MODULES = [

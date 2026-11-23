@@ -19,9 +19,10 @@ INFO_SIZE = 16384
 # lock of a JSON array is bounded: one wait of ARRAY_LOCK_WAIT_S for each stretch with no lock, then tries with no
 # wait until the lock comes again; a call with no lock goes on with no lock (unix-capture.md 4.10).
 ARRAY_LOCK_WAIT_S = 0.5
+RETIRED_GENERATIONS = 2  # unix-capture.md 4.12 [HQE5]
 ARRAYS = ("info", "warnings", "camera_warnings", "group_warnings", "controls_before")
 KEPT_ARRAYS = ("camera_warnings", "group_warnings", "controls_before")  # "apply again" keeps their content
-MAIN_ONLY = ("owner", "holder_dead", "last_good", "pending_info", "no_lock")  # never pickled to a camera process
+MAIN_ONLY = ("owner", "holder_dead", "last_good", "pending_info", "no_lock", "retired")  # never pickled to a camera process
 
 @dataclass
 class CameraStatus:
@@ -74,12 +75,17 @@ class CameraStatus:
     last_good: dict = field(default_factory=dict)
     pending_info: dict = field(default_factory=dict)
     no_lock: set = field(default_factory=set)
+    # The arrays of the last RETIRED_GENERATIONS replacements of `reset_for_start`. The main process keeps them: with
+    # "spawn" on Linux and macOS a camera process opens each shared array by its name while it starts, and the array
+    # of a status that the main process dropped is gone then (FileNotFoundError). Another camera process can still
+    # start with an old one; older ones are freed (each holds file descriptors).
+    retired: list = field(default_factory=list)
 
     def __getstate__(self) -> dict:
         return {name: value for name, value in self.__dict__.items() if name not in MAIN_ONLY}
 
     def __setstate__(self, state: dict) -> None:
-        self.__dict__.update(state, owner=None, holder_dead=False, last_good={}, pending_info={}, no_lock=set())
+        self.__dict__.update(state, owner=None, holder_dead=False, last_good={}, pending_info={}, no_lock=set(), retired=[])
 
     @contextmanager
     def _array_lock(self, name: str):
@@ -190,7 +196,9 @@ class CameraStatus:
         # the warning items of the camera and the group are read with no lock.
         kept = {name: self._json(name, [], raw=getattr(self, name).get_obj().value) for name in KEPT_ARRAYS}
         for name in ARRAYS:
+            self.retired.append(getattr(self, name))
             setattr(self, name, multiprocessing.Array("c", INFO_SIZE))
+        del self.retired[:-RETIRED_GENERATIONS * len(ARRAYS)]  # unix-capture.md 4.12: the last two replacements
         self.holder_dead = False
         self.no_lock.clear()
         self.pending_info.clear()

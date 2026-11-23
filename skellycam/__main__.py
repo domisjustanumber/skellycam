@@ -1,4 +1,13 @@
-from skellycam.utilities.utf8_console import utf8_console
+import multiprocessing
+
+# unix-capture.md 4.12 [ADR-HQE5]: the program entry point sets "spawn" as its first action, before any multiprocessing
+# object exists, on each system (no change where spawn is the default). A forked camera process can deadlock at its
+# start; the start of a camera process refuses "fork". A spawned child imports this module again as `__mp_main__`,
+# with the method already set.
+if multiprocessing.get_start_method(allow_none=True) != "spawn":
+    multiprocessing.set_start_method("spawn", force=True)
+
+from skellycam.utilities.utf8_console import utf8_console  # noqa: E402
 
 utf8_console()  # first: before an import configures the logging
 

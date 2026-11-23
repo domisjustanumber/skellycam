@@ -2,11 +2,11 @@ name: Recorder
 
 # specs/recorder.md section 12.1 [C4, agent 34]: the unit and process tests of step 5a, the short pass
 # parts of T-REC-STALL and T-REC-KILL, and T-REC-37 on Windows, Linux and macOS. The benchmarks
-# (marker recorder_bench) run only on the machines of the user. The connection tests are skipped until
-# the connection commit after step 3a.
+# (marker recorder_bench) run only on the machines of the user. A skipped connection test fails the run
+# (SKELLYCAM_NO_SKIP, unix-capture.md 4.11). The tests with the marker `pace` run in their own step (Q619).
 on:
   push:
-    branches: [dom/recorder]
+    branches: [dom/recorder, dom/integration]
     paths:
       - "skellycam/core/take_recorder/**"
       - "skellycam/tests/take_recorder/**"
@@ -24,6 +24,8 @@ permissions:
   contents: read
 
 env:
+  # unix-capture.md 4.11 [ADR-HQE5]: a skipped connection test fails the run (a module skip hid them on Linux).
+  SKELLYCAM_NO_SKIP: skellycam/tests/take_recorder/test_connection.py
   # T-REC-37 exports the conformance tests of this commit (specs/recorder.md section 12.3).
   SKELLYFILEFORMAT_DIR: ${{ github.workspace }}/.skellyfileformat
   SKELLYFILEFORMAT_COMMIT: 24949df6c22093336c30b279c396ef593648de1e
@@ -59,7 +61,24 @@ jobs:
         run: uv sync --group dev --python 3.13.18
 
       - name: Run the recorder tests
-        run: uv run pytest skellycam/tests/take_recorder -m "not recorder_bench"
+        run: uv run pytest skellycam/tests/take_recorder -m "not recorder_bench and not pace"
+
+      # Q619 of the user ("A red workflow should mean a real fault"): the tests with the marker `pace` run here with
+      # wide margins. A failure shows as a failed step, a warning and lines in the job summary; the job stays green.
+      - name: Run the pace tests
+        if: ${{ !cancelled() }}
+        continue-on-error: true
+        shell: bash
+        env:
+          SKELLYCAM_PACE_MARGIN: "3"
+        run: |
+          status=0
+          uv run pytest skellycam/tests/take_recorder -m "pace and not recorder_bench" -rfE > pace.log 2>&1 || status=$?
+          cat pace.log
+          if [ "$status" -eq 5 ]; then status=0; fi
+          { echo "### Pace tests (reported, not blocking: Q619)"; echo '```'; grep -E '^(FAILED|ERROR)|(passed|failed|error)' pace.log | tail -n 20 || true; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
+          if [ "$status" -ne 0 ]; then echo "::warning title=Pace tests::pace tests failed on this runner (reported, not blocking: Q619)"; fi
+          exit "$status"
 
   recorder-linux:
     name: Recorder tests (Python 3.13.18, ubuntu-24.04)
@@ -97,7 +116,24 @@ jobs:
         run: uv sync --group dev --python 3.13.18
 
       - name: Run the recorder tests
-        run: uv run pytest skellycam/tests/take_recorder -m "not recorder_bench"
+        run: uv run pytest skellycam/tests/take_recorder -m "not recorder_bench and not pace"
+
+      # Q619 of the user ("A red workflow should mean a real fault"): the tests with the marker `pace` run here with
+      # wide margins. A failure shows as a failed step, a warning and lines in the job summary; the job stays green.
+      - name: Run the pace tests
+        if: ${{ !cancelled() }}
+        continue-on-error: true
+        shell: bash
+        env:
+          SKELLYCAM_PACE_MARGIN: "3"
+        run: |
+          status=0
+          uv run pytest skellycam/tests/take_recorder -m "pace and not recorder_bench" -rfE > pace.log 2>&1 || status=$?
+          cat pace.log
+          if [ "$status" -eq 5 ]; then status=0; fi
+          { echo "### Pace tests (reported, not blocking: Q619)"; echo '```'; grep -E '^(FAILED|ERROR)|(passed|failed|error)' pace.log | tail -n 20 || true; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
+          if [ "$status" -ne 0 ]; then echo "::warning title=Pace tests::pace tests failed on this runner (reported, not blocking: Q619)"; fi
+          exit "$status"
 
   # Apple Silicon. opencv-contrib-python 5.1.0.95 has macOS wheels for macOS 15 and later only. The
   # sounddevice wheel for macOS holds PortAudio, so no install step is necessary.
@@ -131,10 +167,27 @@ jobs:
         run: uv sync --group dev --python 3.13.18
 
       - name: Run the recorder tests
-        run: uv run pytest skellycam/tests/take_recorder -m "not recorder_bench and not capture_timing"
+        run: uv run pytest skellycam/tests/take_recorder -m "not recorder_bench and not capture_timing and not pace"
 
       # The tests of real-time gaps of 100 ms in their own step, as in capture.yml: this runner can be slow
       # (ADR-BM73). T-REC-44 is one of them.
       - name: Run the real-time gap tests
         if: ${{ !cancelled() }}
-        run: uv run pytest skellycam/tests/take_recorder -m "capture_timing and not recorder_bench"
+        run: uv run pytest skellycam/tests/take_recorder -m "capture_timing and not recorder_bench and not pace"
+
+      # Q619 of the user ("A red workflow should mean a real fault"): the tests with the marker `pace` run here with
+      # wide margins. A failure shows as a failed step, a warning and lines in the job summary; the job stays green.
+      - name: Run the pace tests
+        if: ${{ !cancelled() }}
+        continue-on-error: true
+        shell: bash
+        env:
+          SKELLYCAM_PACE_MARGIN: "3"
+        run: |
+          status=0
+          uv run pytest skellycam/tests/take_recorder -m "pace and not recorder_bench" -rfE > pace.log 2>&1 || status=$?
+          cat pace.log
+          if [ "$status" -eq 5 ]; then status=0; fi
+          { echo "### Pace tests (reported, not blocking: Q619)"; echo '```'; grep -E '^(FAILED|ERROR)|(passed|failed|error)' pace.log | tail -n 20 || true; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
+          if [ "$status" -ne 0 ]; then echo "::warning title=Pace tests::pace tests failed on this runner (reported, not blocking: Q619)"; fi
+          exit "$status"

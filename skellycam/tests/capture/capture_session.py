@@ -234,7 +234,7 @@ class StateTracker:
 class CaptureApp:
     """The real manager and router with fake sources. Use `capture_app()`."""
 
-    def __init__(self, monkeypatch, factory, *, workers="thread"):
+    def __init__(self, monkeypatch, factory, *, workers="thread", restore_store=None):
         from fastapi import FastAPI
         from fastapi.testclient import TestClient
 
@@ -274,8 +274,9 @@ class CaptureApp:
         self.kill = multiprocessing.Value("b", False)
         mode = WorkerMode.THREAD if workers == "thread" else WorkerMode.PROCESS
         self.registry = WorkerRegistry(global_kill_flag=self.kill, worker_mode=mode)
+        # unix-capture.md 4.7.1: a folder of restore files only when the test gives one (never the folder of the app)
         self.manager = CameraGroupManager(global_kill_flag=self.kill, worker_registry=self.registry,
-                                          source_factory=factory)
+                                          source_factory=factory, restore_store=restore_store)
         self._router = camera_router
         monkeypatch.setattr(camera_router, "get_or_create_camera_group_manager", lambda app: self.manager)
         monkeypatch.setattr(camera_router, "detect_available_cameras",

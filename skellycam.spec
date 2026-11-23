@@ -30,6 +30,11 @@ jaraco_text_path = os.path.join(
 if os.path.isdir(jaraco_text_path):
     datas.append((os.path.join(jaraco_text_path, '*.txt'), 'setuptools/_vendor/jaraco/text/'))
 
+# ── The build file of the certify report (specs/certify.md 3.5.2, P7): the installer build of CI writes it ──
+build_file = os.path.join('skellycam', 'build_info.json')
+if os.path.isfile(build_file):
+    datas.append((build_file, 'skellycam'))
+
 a = Analysis(
     ['skellycam/__main__.py'],
     binaries=binaries,

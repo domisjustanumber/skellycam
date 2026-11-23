@@ -212,3 +212,17 @@ task. Delete an item when its work is done. The PR that closes an item records t
   guards.
 - **Deferred by the user (2026-11-23).** At 60 fps the exposure search never tries a value longer
   than the frame period. The product switches low light compensation off after each open.
+- **Fix lane 4 follow-ups** ([ADR-HQE5](entries/HQE5-choices-of-fix-lane-4.md)).
+  - The user decides Q-A (the restore file), Q-B (the take rate as a sum over a sum) and Q-C (the pace step).
+  - Certify: `group:restore-after-kill` (Q615) can use the restore file with a folder of its own run.
+  - FreeMoCap reads `framerate_stats.median` from the old `*_stats.json`, not from the stop response; a reader of
+    new takes must use `mean_framerate` (Q609).
+  - The first CI run with `spawn` on Linux and macOS, the skip guard and the pace steps is not done yet.
+  - FreeMoCap on Linux ([ADR-T34M](entries/T34M-decision-of-the-user-on-the-start-method-of-camera-processes.md)):
+    nothing is decided. The user: "I think this needs to be part of a wider review of how the whole of freemocap
+    works on linux"; the freemocap session does that review. A candidate for it: a call of
+    `multiprocessing.set_start_method("spawn")` at the top of `freemocap/__main__.py`, before
+    `create_websocket_log_queue()`, so that its own workers also spawn on Linux, as on Windows. After this change of
+    skellycam, FreeMoCap on Linux opens no camera until it sets the start method: its method is `fork`, and skellycam
+    refuses each camera process with `start-method-fork` (`unix-capture.md` 4.12). This is the decision of the
+    user; the fix of FreeMoCap belongs to the wider Linux review. Not verified on Linux.

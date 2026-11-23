@@ -22,7 +22,7 @@ CODES_MODULE = "skellycam.core.camera.capture.failure_codes"
 SPEC_CODES = ("not-found", "no-access", "no-permission", "camera-in-use", "usb-bandwidth", "no-mode", "below-floor",
               "open-failed", "first-frame-timeout", "no-native-jpeg", "not-ready", "rate-low", "rate-high",
               "control-failed", "device-removed", "stalled", "hung", "disk-stall", "previous-process-alive",
-              "stream-error", "format-changed", "process-ended")
+              "stream-error", "format-changed", "process-ended", "start-method-fork")  # 4.12 [HQE5]
 BEFORE_STREAMING = ("open", "set mode", "set controls", "first frame", "warm-up", "rate check", "detection")
 AFTER_STREAMING = ("streaming", "recording", "close")
 
