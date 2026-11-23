@@ -8,21 +8,21 @@ the spec at commit 65197a7c6).
 An agent wrote section 3.6.12 of [`specs/certify.md`](../../specs/certify.md) and the tests T-CERT-112 to
 T-CERT-122 on the decisions of the user in
 [ADR-493E](493E-decisions-of-the-user-on-the-certify-check-drops-and-additions.md), and the fixes of the review
-(items 9 to 17, tests T-CERT-123 to T-CERT-128). The spec marks these choices
+(items 9 to 18, tests T-CERT-123 to T-CERT-128). The spec marks these choices
 [A]. "Not:" gives the rejected alternative. The choices of the rest of section 3.6 are in
 [ADR-MEE1](MEE1-choices-of-the-certify-report-shape.md).
 
 1. The keys `white_balance`, `white_balance_auto` and `power_line` in `details.cameras[]`. Not: one object
    `controls` (a nested object for three values).
-2. The USB link hint is a notice `camera-usb3-on-usb2-link` with no check row; it fires for `bcd_usb` `0210` or
-   higher on a `USB 2` link, and its text says "can". Not: a `record-only` row in quick (noise in a smoke test).
+2. The USB link notice has no check row and fires only on a fact: on Windows the capable bit of the hub
+   connection flags without the operating bit. Not: `bcd_usb` alone (pure USB 2 cameras declare 0210).
 3. `system:memory` needs `ring_total_size` of each ring of the product, and the open still runs after a `fail`.
    Not: a fixed 26.5 MiB for each camera (it changes with the mode).
 4. `group:take-again` is one check: "a second take works". Not: the two take rows again.
-5. `report:rules` checks the report without its own row; the validator moves into the package. Not: keep the
-   validator in the tests (the shipped package has no tests).
-6. `system:camera-access` on Windows uses the rule of 10.2: with no access each camera is `not-run`
-   `no-access`. Not: `fail` (the person can change a setting; the camera is not at fault).
+5. `report:rules` checks the report without its own row; a failure puts `report-rules` into
+   `evidence.reasons` and gives no verdict; the validator moves into the package. Not: a pipeline verdict.
+6. `system:camera-access` is `record-only` with `access`; with `denied` each camera is `not-run` `no-access`.
+   Not: `fail` (the person can change a setting; the camera is not at fault).
 7. `system:power` keeps a closed list of power plans, `other` for a plan of the person. Not: the plan name (the
    person can name a plan).
 8. `identity:stable` and `identity:unique` stay: they test the `camera_id` that the product uses for the
@@ -41,12 +41,15 @@ T-CERT-122 on the decisions of the user in
 13. A row has `module` only when its summary item exists; each gate requires only rows with its own `module`.
     Not: the pipeline gate requires the take rows always.
 14. The B1 row in or after the take is `rows-complete`; `<model>:gate` needs the cycles of the first unit.
-15. Known-bad from `details.gates[].failed` and its reason; the record key `nousb:<os name>`; no
+15. Known-bad from `details.gates[].failed` and its reason; the local record key `nousb:<raw name>`; no
     `take_error_camera` in `numbers`. Not: the gate steps (gone); `Camera (no USB id)` as the key.
 16. No count of 0 on a `pass` row; no `exposure_set`, no `luma_at_m7`, no `details.pipeline.result`, no
     `details.gates` item for a gate that only waits for a check with no code. Not: keep them.
 17. The build order of 3.6.7, where each step passes its own tests and a part of a test joins later. Not: one
     test in one step only.
+18. "The same step" is one item of `details.steps`; a blocked unit writes no record row, and its failed rows
+    count for no gate and no known-bad row. `mkv-opens` compares with the take frame count; `time-gaps` writes
+    no `frames`. Not: count the rows of a blocked unit.
 
 ## Reason
 

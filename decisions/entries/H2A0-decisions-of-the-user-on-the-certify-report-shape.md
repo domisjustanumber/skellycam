@@ -34,7 +34,8 @@ The words of the user: "Otherwise Q591-Q599 agree"; "Q595 agree"; "Agree" (Q596,
    withdrawn (see below). For a new USB id the report holds both the display name of the OS and the product text
    of the firmware, where they can be read, each through the same filter. The reason, in the words of the user:
    "we need to know the names of the cameras, so if we find one that does or does not work, we can tell
-   end-users". No language model and no name recognition. The generic 4c4a:4a55 has no entry in the list, because many cameras share
+   end-users". No language model and no name recognition. A question to the person about make and model is later
+   work. The generic 4c4a:4a55 has no entry in the list, because many cameras share
    that id. The seed list of the file is a choice of the agent (ADR-DBF8).
    Correction before the first push: point (5), "a human reviewer still sees each report before it is
    public", was a false premise of the supervisor: the relay publishes first (contract 4.1). The user is asked

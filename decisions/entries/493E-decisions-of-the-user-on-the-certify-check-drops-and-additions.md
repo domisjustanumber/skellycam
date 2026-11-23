@@ -23,7 +23,8 @@ of the agent are in [ADR-DBF8](DBF8-choices-of-the-certify-names-verdicts-and-ch
   the rows.
 - j. Add, full, model, record only at first: bursts, the share of arrival intervals under half a frame period.
 - k. Add, quick, system: a camera that declares USB 3 capability on a USB 2 link gives a notice with a cause the
-  person can fix. The summed need on one controller waits for `group:contention`.
+  person can fix. The summed need on one controller waits for `group:contention`. The threshold "bcdUSB 2.1 or
+  higher" in the question was the wording of the supervisor, not of the user; the spec uses a fact of the hub.
 - l. Add, quick, system: free memory before the open against the need of the rings, and on Linux the size of the
   shared-memory mount.
 - m. Add: record, stop, record again (full, pipeline); the preview path during a take (full, planned until the
