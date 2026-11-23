@@ -22,7 +22,6 @@ attach_stderr_pipe()
 
 import multiprocessing
 
-
 multiprocessing.freeze_support()
 
 from skellylogs import LogLevels

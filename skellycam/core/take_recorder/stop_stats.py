@@ -28,15 +28,17 @@ def _mean(values) -> float:
 
 
 def _mean_rate(times) -> float:
-    """Decision M of the user (2026-11-20, 8.2): frames divided by the elapsed time. For each camera, the group
-    frames from its first to its last row with an arrival time, divided by the time between them; the mean
-    over the cameras, rounded to 2 decimals. NaN (JSON null) when no camera has two such rows."""
-    rates = []
+    """The rate of the take (decision M of the user, 2026-11-20; Q609, 2026-11-23; 8.2): frames divided by the elapsed
+    time. For each camera, F is the group frames from its first to its last row with an arrival time and T the time
+    between them; the sum of F over the sum of T, rounded to 2 decimals [ADR-HQE5]: a camera killed after two frames
+    1 ms apart adds almost nothing. NaN (JSON null) when no camera has two such rows."""
+    frames = seconds = 0
     for camera in times:
         timed = [(k, t) for k, t in enumerate(camera) if t is not None]
         if len(timed) >= 2 and timed[-1][1] > timed[0][1]:
-            rates.append((timed[-1][0] - timed[0][0]) / ((timed[-1][1] - timed[0][1]) / 1e9))
-    return round(statistics.fmean(rates), 2) if rates else math.nan
+            frames += timed[-1][0] - timed[0][0]
+            seconds += (timed[-1][1] - timed[0][1]) / 1e9
+    return round(frames / seconds, 2) if seconds else math.nan
 
 
 def _per_frame(csv_paths):

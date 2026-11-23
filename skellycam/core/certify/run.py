@@ -336,7 +336,10 @@ class _ChildSession:
         self.closed = False
 
     def alive(self):
-        return self.process.is_alive()
+        # The sentinel, not `is_alive()`: `kill_tree` reaps the child with psutil, and on POSIX `is_alive()` of a child
+        # that another call reaped stays True for ever (the drive loop then never ended on Linux) [ADR-HQE5].
+        from multiprocessing.connection import wait
+        return not wait([self.process.sentinel], timeout=0)
 
     def remember(self):
         """Keep the camera processes of the child: after the child ends, its children have no parent to find."""
@@ -355,7 +358,7 @@ class _ChildSession:
         child first; each camera process sees the dead server, finishes its files and restores its camera; after
         GRACE_S the rest of the tree is killed. Nothing is left after a stop."""
         self.remember()
-        if self.process.is_alive():
+        if self.alive():
             if mode == "kill":
                 kill_tree(self.process.pid)
             else:
@@ -371,7 +374,7 @@ class _ChildSession:
     def finish(self) -> bool:
         """True when the child gave its result and did not end (C 2.5 `exit`)."""
         self.process.join(EXIT_LIMIT_S)
-        hung = self.process.is_alive()
+        hung = self.alive()
         if hung:
             self.stop("kill")
         self.process.join(EXIT_LIMIT_S)

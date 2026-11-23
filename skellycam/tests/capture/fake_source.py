@@ -246,6 +246,7 @@ class FakeScript:
     exit_at: str | None = None  # "open", "close" or "frame:<n>": the camera process ends there with os._exit(3)
     on_arm: str | None = None  # after FakeLog.arm(), at the next frame: "stall", "exit" (os._exit(3)) or "remove"
     name: str | None = None  # the friendly name in the detection result; None: "Fake camera <index>"
+    product_id: int | None = None  # the USB product ID in the detection result; None: the index (4.7.1 tests)
     no_dht: bool = False  # each JPEG has no DHT segment, as many UVC cameras send it
     diagnostics: dict | None = None  # keys that `diagnostics()` adds to the null source keys and `frames`
 
@@ -466,7 +467,9 @@ class FakeSource:
                 faults = self.script.live_set_faults
                 fault = faults[self._live_changes - 1] if self._live_changes <= len(faults) else None
             if self._restore is not None:
-                self._restore.read(self._read_back(), {"exposure": (self.exposure_range() or (0, 0, None))[2]})
+                exposure = self.exposure_range()
+                self._restore.read(self._read_back(), {"exposure": (exposure or (0, 0, None))[2]},
+                                   {"exposure": exposure[:2]} if exposure else None)
                 self._restore.changed(changes)
             if fault == "error":
                 raise types.CaptureFailure("set controls", "the camera refused the value")
@@ -825,7 +828,8 @@ class FakeSourceFactory:
         for index, script in enumerate(self.scripts):
             native = [modes.NativeMode(*m) for m in (script.detected_modes or script.modes)]
             infos.append(CameraDeviceInfo(index=index, name=script.name or f"Fake camera {index}", vendor_id=0xFEED,
-                                          product_id=index, path=self.links[index],
+                                          product_id=index if script.product_id is None else script.product_id,
+                                          path=self.links[index],
                                           supported_modes=modes.supported_modes(native), modes_read=True,
                                           virtual="virtual" in (script.name or "").lower()))
         return infos

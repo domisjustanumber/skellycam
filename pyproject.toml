@@ -222,6 +222,7 @@ markers = [
     "capture_local: capture tests for the Windows development machine only; CI leaves them out (specs/windows-capture.md 16.1)",
     "capture_timing: capture tests that measure real-time gaps; the macOS job runs them in their own step (ADR-BM73)",
     "recorder_slow: recorder tests that run longer than 10 s (specs/recorder.md 12.1)",
+    "pace: tests whose result depends on the pace of the machine or a wall-clock limit (Q619); strict on a real machine, a non-blocking step with SKELLYCAM_PACE_MARGIN on CI (specs/windows-capture.md 16.1)",
     "recorder_bench: recorder benchmarks of section 11; they run only with SKELLYCAM_BENCH=1 (specs/recorder.md 12.1)",
     "hardware: tests that require physical USB cameras (skipped in CI)",
 ]

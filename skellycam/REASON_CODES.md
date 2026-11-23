@@ -85,6 +85,7 @@ The common codes of the contract keep the meaning of the contract (section 5.3):
 | `device-removed` | The camera was removed. |
 | `stalled` | The camera gave no frame for 2 seconds. |
 | `previous-process-alive` | An earlier camera process still holds the camera. |
+| `start-method-fork` | The start method of the process is `fork`, so skellycam did not start the camera process: the host program must call `multiprocessing.set_start_method('spawn')` before it creates a multiprocessing object. |
 | `stream-error` | The stream gave an error. |
 | `format-changed` | The format changed during the stream. |
 | `<ExceptionClass>` | A step raised an exception of this class. The report never holds the message. |

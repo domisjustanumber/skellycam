@@ -137,7 +137,8 @@ class MediaFoundationSource:
         if self._restore.before is None:
             self._ranges = {name: _read_range(interfaces, name) for name in CONTROLS}
             self._restore.read({name: _read_control(interfaces, name)[0] for name in CONTROLS},
-                               {name: values[2] for name, values in self._ranges.items() if values is not None})
+                               {name: values[2] for name, values in self._ranges.items() if values is not None},
+                               {name: (values[0], values[1]) for name, values in self._ranges.items() if values is not None})
         self._restore.changed(changes)
         for name, setting in changes.items():
             _set_control(interfaces, name, setting)

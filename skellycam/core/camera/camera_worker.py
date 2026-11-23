@@ -1,5 +1,6 @@
 import contextlib
 import logging
+import multiprocessing
 import os
 import sys
 from dataclasses import dataclass
@@ -9,7 +10,7 @@ from collections.abc import Callable
 import cv2
 from pydantic import BaseModel
 
-from skellycam.core.camera.capture import source, warning_pipe
+from skellycam.core.camera.capture import restore_store as restore_store_module, source, warning_pipe
 from skellycam.core.camera.capture.camera_loop import camera_loop
 from skellycam.core.camera.config.camera_config import CameraConfig
 from skellycam.core.camera_group.camera_group_ipc import CameraGroupIPC
@@ -23,6 +24,14 @@ from skellycam.core.types.type_overloads import CameraIdString, TopicSubscriptio
 logger = logging.getLogger(__name__)
 
 CAPTURE_SOURCES = ("opencv", "media_foundation")
+# unix-capture.md 4.12 [HQE5]: the reason of the code `start-method-fork`.
+START_METHOD_REASON = ("the host program must call multiprocessing.set_start_method('spawn') before it creates a "
+                       "multiprocessing object")
+
+
+def start_method() -> str:
+    """The start method that a camera process gets now (4.12): the method of the default context."""
+    return multiprocessing.get_start_method()
 
 
 def select_capture_source() -> str:
@@ -73,6 +82,8 @@ def camera_worker_method(
     shm_subscription: TopicSubscriptionQueue,
     recording_info_subscription: TopicSubscriptionQueue,
     source_factory: Callable | None = None,
+    restore_store=None,
+    restore_identity: dict | None = None,
 ) -> None:
     """The target of each camera process (section 3): the shared loop with the chosen source."""
     logger.trace(f"Camera {camera_id} worker started")
@@ -80,7 +91,13 @@ def camera_worker_method(
     limit_libjpeg_warnings()  # ring 8.9; on Windows the main process gives the pipe (5.6)
     status = orchestrator.camera_statuses[camera_id]
     # unix-capture.md 4.7 [NYT6]: the restore record lives in the status, so it survives this process
-    keeper = SimpleNamespace(restore_record=status.restore_record, set_restore_record=status.set_restore_record)
+    # 4.7.1 [HQE5]: each write of the record also writes the restore file of the camera (an empty record removes it)
+
+    def set_restore_record(record: dict) -> None:
+        status.set_restore_record(record)
+        restore_store_module.write_entry(restore_store, restore_identity, record)
+
+    keeper = SimpleNamespace(restore_record=status.restore_record, set_restore_record=set_restore_record)
     source.RESTORE_RECORDS[camera_id] = keeper
     try:
         with media_foundation_process(source_factory is None and select_capture_source() == "media_foundation"):
@@ -123,6 +140,8 @@ class CameraWorker:
         shm_subscription: TopicSubscriptionQueue,
         recording_info_subscription: TopicSubscriptionQueue,
         source_factory: Callable | None = None,
+        restore_store=None,
+        restore_identity: dict | None = None,
     ) -> "CameraWorker":
         status = orchestrator.camera_statuses[camera_id]
         worker = worker_registry.create_worker(
@@ -142,6 +161,8 @@ class CameraWorker:
                 shm_subscription=shm_subscription,
                 recording_info_subscription=recording_info_subscription,
                 source_factory=source_factory,
+                restore_store=restore_store,
+                restore_identity=restore_identity,
             ),
         )
         worker.protect_recording(status.recording_in_progress, status.writer_progress_at)
@@ -153,7 +174,16 @@ class CameraWorker:
         )
 
     def start(self) -> None:
-        self.orchestrator.camera_statuses[self.camera_id].set_state("starting")
+        status = self.orchestrator.camera_statuses[self.camera_id]
+        status.set_state("starting")
+        if isinstance(self.worker, ManagedProcess) and start_method() == "fork":
+            # unix-capture.md 4.12 [HQE5]: a forked camera process can deadlock at its start (a library of the main
+            # process waits for threads that the fork did not copy); refuse it with the fix of the host.
+            status.update_info(failure=dict(camera_id=self.camera_id, stage="open", reason=START_METHOD_REASON,
+                                            code="start-method-fork"))
+            status.set_state("failed")
+            logger.error(f"Camera {self.camera_id} failed during open: {START_METHOD_REASON}")
+            return
         on_windows = sys.platform == "win32" and isinstance(self.worker, ManagedProcess)
         with warning_pipe.child_stderr_pipe(self.camera_id) if on_windows else contextlib.nullcontext():
             self.worker.start()

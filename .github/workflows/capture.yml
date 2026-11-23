@@ -6,7 +6,7 @@ name: Capture
 # with fake rings (specs/preview.md section 9.4, P7).
 on:
   push:
-    branches: [dom/native-jpeg]
+    branches: [dom/native-jpeg, dom/integration]
     paths:
       - "skellycam/core/camera/**"
       - "skellycam/core/camera_group/**"
@@ -53,7 +53,24 @@ jobs:
 
       # T-CAP-46 (load the Media Foundation module) is one of these tests; it runs on Windows only.
       - name: Run the fake-source tests and the preview tests
-        run: uv run pytest skellycam/tests/capture skellycam/tests/preview -m "not camera_hardware and not capture_local"
+        run: uv run pytest skellycam/tests/capture skellycam/tests/preview -m "not camera_hardware and not capture_local and not pace"
+
+      # Q619 of the user ("A red workflow should mean a real fault"): the tests with the marker `pace` run here with
+      # wide margins. A failure shows as a failed step, a warning and lines in the job summary; the job stays green.
+      - name: Run the pace tests
+        if: ${{ !cancelled() }}
+        continue-on-error: true
+        shell: bash
+        env:
+          SKELLYCAM_PACE_MARGIN: "3"
+        run: |
+          status=0
+          uv run pytest skellycam/tests/capture skellycam/tests/preview -m "pace and not camera_hardware and not capture_local" -rfE > pace.log 2>&1 || status=$?
+          cat pace.log
+          if [ "$status" -eq 5 ]; then status=0; fi
+          { echo "### Pace tests (reported, not blocking: Q619)"; echo '```'; grep -E '^(FAILED|ERROR)|(passed|failed|error)' pace.log | tail -n 20 || true; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
+          if [ "$status" -ne 0 ]; then echo "::warning title=Pace tests::pace tests failed on this runner (reported, not blocking: Q619)"; fi
+          exit "$status"
 
   capture-linux:
     name: Capture fake-source tests (Python 3.13.18, ubuntu-24.04)
@@ -81,7 +98,24 @@ jobs:
         run: uv sync --group dev --python 3.13.18
 
       - name: Run the fake-source tests and the preview tests
-        run: uv run pytest skellycam/tests/capture skellycam/tests/preview -m "not camera_hardware and not capture_local"
+        run: uv run pytest skellycam/tests/capture skellycam/tests/preview -m "not camera_hardware and not capture_local and not pace"
+
+      # Q619 of the user ("A red workflow should mean a real fault"): the tests with the marker `pace` run here with
+      # wide margins. A failure shows as a failed step, a warning and lines in the job summary; the job stays green.
+      - name: Run the pace tests
+        if: ${{ !cancelled() }}
+        continue-on-error: true
+        shell: bash
+        env:
+          SKELLYCAM_PACE_MARGIN: "3"
+        run: |
+          status=0
+          uv run pytest skellycam/tests/capture skellycam/tests/preview -m "pace and not camera_hardware and not capture_local" -rfE > pace.log 2>&1 || status=$?
+          cat pace.log
+          if [ "$status" -eq 5 ]; then status=0; fi
+          { echo "### Pace tests (reported, not blocking: Q619)"; echo '```'; grep -E '^(FAILED|ERROR)|(passed|failed|error)' pace.log | tail -n 20 || true; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
+          if [ "$status" -ne 0 ]; then echo "::warning title=Pace tests::pace tests failed on this runner (reported, not blocking: Q619)"; fi
+          exit "$status"
 
   # Apple Silicon (U20). opencv-contrib-python 5.1.0.95 has macOS wheels for macOS 15 and later only.
   # GitHub has few of these runners: no other job waits for this job, and a newer push cancels it.
@@ -109,15 +143,50 @@ jobs:
         run: uv sync --group dev --python 3.13.18
 
       - name: Run the fake-source tests and the preview tests
-        run: uv run pytest skellycam/tests/capture skellycam/tests/preview -m "not camera_hardware and not capture_local and not capture_timing"
+        run: uv run pytest skellycam/tests/capture skellycam/tests/preview -m "not camera_hardware and not capture_local and not capture_timing and not pace"
 
       # The tests of real-time gaps of 100 ms in their own step: this runner can be slow (ADR-BM73).
       - name: Run the real-time gap tests
         if: ${{ !cancelled() }}
-        run: uv run pytest skellycam/tests/capture skellycam/tests/preview -m "capture_timing and not camera_hardware and not capture_local"
+        run: uv run pytest skellycam/tests/capture skellycam/tests/preview -m "capture_timing and not camera_hardware and not capture_local and not pace"
+
+      # Q619 of the user ("A red workflow should mean a real fault"): the tests with the marker `pace` run here with
+      # wide margins. A failure shows as a failed step, a warning and lines in the job summary; the job stays green.
+      - name: Run the pace tests of capture
+        if: ${{ !cancelled() }}
+        continue-on-error: true
+        shell: bash
+        env:
+          SKELLYCAM_PACE_MARGIN: "3"
+        run: |
+          status=0
+          uv run pytest skellycam/tests/capture skellycam/tests/preview -m "pace and not camera_hardware and not capture_local" -rfE > pace.log 2>&1 || status=$?
+          cat pace.log
+          if [ "$status" -eq 5 ]; then status=0; fi
+          { echo "### Pace tests (reported, not blocking: Q619)"; echo '```'; grep -E '^(FAILED|ERROR)|(passed|failed|error)' pace.log | tail -n 20 || true; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
+          if [ "$status" -ne 0 ]; then echo "::warning title=Pace tests::pace tests failed on this runner (reported, not blocking: Q619)"; fi
+          exit "$status"
 
       - name: Run the portable ring tests
         if: ${{ !cancelled() }}
         env:
           SKELLYCAM_RING_FULL: "1"
-        run: uv run pytest skellycam/tests/frame_ring -m ring_portable -q
+        run: uv run pytest skellycam/tests/frame_ring -m "ring_portable and not pace" -q
+
+      # Q619 of the user ("A red workflow should mean a real fault"): the tests with the marker `pace` run here with
+      # wide margins. A failure shows as a failed step, a warning and lines in the job summary; the job stays green.
+      - name: Run the pace tests of the ring
+        if: ${{ !cancelled() }}
+        continue-on-error: true
+        shell: bash
+        env:
+          SKELLYCAM_PACE_MARGIN: "3"
+          SKELLYCAM_RING_FULL: "1"
+        run: |
+          status=0
+          uv run pytest skellycam/tests/frame_ring -m "ring_portable and pace" -rfE > pace.log 2>&1 || status=$?
+          cat pace.log
+          if [ "$status" -eq 5 ]; then status=0; fi
+          { echo "### Pace tests (reported, not blocking: Q619)"; echo '```'; grep -E '^(FAILED|ERROR)|(passed|failed|error)' pace.log | tail -n 20 || true; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
+          if [ "$status" -ne 0 ]; then echo "::warning title=Pace tests::pace tests failed on this runner (reported, not blocking: Q619)"; fi
+          exit "$status"
