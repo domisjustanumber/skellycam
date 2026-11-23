@@ -16,8 +16,10 @@ The user decided these points on 2026-11-23. The quotes are the words of the use
 3. **Q637** ("python 3.13 to match this/all other repos"). The values of each repository move out of
    the tool code into one `kit.toml` that the repository owns. The kit tools need Python 3.13 or
    later.
-4. **Q638** ("Q638, Q640 agree"). The winners of the 19 differences between the kit and skellycam,
-   as the supervisor listed them to the user:
+4. **Q638 and Q640** ("Q638, Q640 agree"). Q638: the winners of the 19 differences between the
+   kit and skellycam. The user saw the rows in four groups, with one line for each row: the kit
+   wins 1, 2, 3, 4, 5 and 17; skellycam wins 7, 9, 10, 11, 12, 13, 14 and 15; a merge for 6; each
+   repository keeps 8, 16, 18 and 19. The rows, as the brief of the supervisor gives them:
 
    | Row | Difference | Winner |
    |---|---|---|
@@ -41,6 +43,12 @@ The user decided these points on 2026-11-23. The quotes are the words of the use
    | 18 | `CLAUDE.md` not tracked in skellycam | Repository-owned ([ADR-XT31](XT31-kit-adoption-choices-camera-media-check-and-fills.md)) |
    | 19 | gitleaks allow lists | Repository data |
 
+   The brief also has three notes of the supervisor. They are not decisions of the user: row 14,
+   "verify that each SHA matches its tag"; row 15, "a repository with no `dev` group keeps the full
+   install"; row 16, "the kit can describe it as an option for a clone with many worktrees".
+   Q640: "Should I correct the row in AGENTS.md that still says CLAUDE.md imports it, so it says the
+   file is local and not tracked?" Yes. That row was already changed before this entry
+   ([ADR-XT31](XT31-kit-adoption-choices-camera-media-check-and-fills.md)).
 5. **Q639** ("Otherwise Q635-Q639 agree"). CI runs only the offline `kit_sync.py check`. The note "a
    newer kit exists" comes only from a local run.
 6. **Q655** ("Q655 and 656 agree"). Question: "The kit's text now says "`development`" where
@@ -48,8 +56,9 @@ The user decided these points on 2026-11-23. The quotes are the words of the use
    the word "upstream" part of its value?" Answer: yes.
 7. **Q656.** Question: "Should skellycam keep 0.13.9 until I can show you the rule's source?" The
    first answer was yes ("Q655 and 656 agree"). The user then changed it: "actually for Q656 follow
-   that rule, so we are using the same version of uv as every other repo". So `UV_VERSION` in
-   `kit.toml` is the value of the `kit.toml` template of the kit.
+   that rule, so we are using the same version of uv as every other repo".
+8. **Line ends** (2026-11-23): "we must use linux line endings everywhere for all repos" and "this
+   must be enforced by git rules".
 
 ## Reason
 

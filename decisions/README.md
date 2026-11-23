@@ -72,7 +72,7 @@ These entries wait for a decision of the user. Section is the section or area of
 | [GEH0](entries/GEH0-choices-of-code-step-3.md) | Choices of code step 3: `not_streaming`, held value through the status, search flag, exposure range (`no-value-in-range`), 409 and 422 rules | none | proposed |
 | [QJH6](entries/QJH6-choices-of-the-fix-lane.md) | Choices of the fix lane: held value at the nearest search value, `cameras_left_out`, status locks, failed start keeps the summary, OpenCV mode FOURCC | none | proposed |
 | [Z7F3](entries/Z7F3-choices-of-fix-lane-3.md) | Choices of fix lane 3: restore record within one step, retry list, restore after a failure, one group creation, Media Foundation clock, median rate | none | proposed |
-| [3SRX](entries/3SRX-choices-of-the-kit-sync-pilot.md) | Choices of the kit sync pilot: open-work clean-up, markers, `--replace`, Q655 left to the kit, gitleaks allow, other-systems values in `kit.toml` | none | proposed |
+| [3SRX](entries/3SRX-choices-of-the-kit-sync-pilot.md) | Choices of the kit sync pilot: open-work clean-up, markers, `--replace`, Q655 value, other-systems values, uv pins in round 3, LF line ends | none | proposed |
 
 The entries that are `rejected`, `superseded by XXXX`, `absorbed into <path>#<anchor>`,
 `evidence; used by XXXX`, `evidence; replaced by XXXX` or `done` are in [historical.md](historical.md).

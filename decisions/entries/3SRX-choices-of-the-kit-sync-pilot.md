@@ -5,7 +5,7 @@
 ## Decision
 
 An agent made these choices when it applied [ADR-X1T8](X1T8-two-way-kit-sync-adoption.md) at kit
-commit 47545bc. Each one waits for the user.
+commit 47545bc (round 1) and at kit commit 57a878c (round 2). Each one waits for the user.
 
 1. **Open-work clean-up first.** `open-work.md` was at 91 % of its limit. The agent deleted only
    done work: the item "Format sync" (merged, ADR-3B97), the sub-item "Q574 is closed", and the
@@ -22,15 +22,18 @@ commit 47545bc. Each one waits for the user.
    skill `change-decision-log` gives the allowed edits; the list of historical statuses has
    `evidence; replaced by XXXX`; a new line names `evidence.md`. The Evidence section moves to
    `evidence.md`, with its four rows unchanged.
-5. **The citations of ADR-N2NH** in two Rules lines are not in the kit form of those rules. The
-   rules stay in the skill. The test `test_the_pr_branch_is_upstream_development` moves from the
+5. **The citations of ADR-N2NH.** The kit text cites no entry of a repository. So one repository
+   line after the skill block `log-change-rules` cites ADR-N2NH for its two rules, and keeps "a spec
+   heading" of the old rule. The test `test_the_pr_branch_is_upstream_development` moves from the
    kit test file to `tools/tests/test_repo_values.py`, with a test of the index limit 24,000.
-6. **Q655.** The kit puts the placeholder of `DEFAULT_BRANCH` between backticks, so a value
-   cannot give "upstream `development`" without a backtick in the value. The agent did not do that.
-   The two lines say `` `development` `` until the kit changes ([open-work.md](../open-work.md)).
+6. **Q655.** At 47545bc the kit put the branch placeholder between backticks, so no value gave
+   "upstream `development`". Kit 57a878c has the value `DEFAULT_BRANCH_TEXT` with no backticks
+   around it. `kit.toml` sets it to "upstream `development`", and the two skill lines say that now.
+   `target_branch` and `SECRET_SCAN_BRANCHES` keep the bare names.
 7. **gitleaks.** The rule `generic-api-key` reports the SHA-256 of the unit
-   `.github/workflows/secrets.yml` in `kit.toml`. A reviewed allowlist after the kit block of
-   `.gitleaks.toml` allows a SHA-256 in `kit.toml` only.
+   `.github/workflows/secrets.yml` in `kit.toml`. Round 1 added a reviewed allowlist after the kit
+   block of `.gitleaks.toml`. Kit 57a878c has the same allowlist in its block, so round 2 deleted the
+   copy.
 8. **The other-systems check.** `tools/check_other_systems.py` reads `exempt_paths`,
    `certify_spec`, `self_test` and `certify_contract` from the table `[check_other_systems]` of
    `kit.toml`. With no `kit.toml`: `.github/`, `specs/certify.md`, "the self-test of the project"
@@ -42,17 +45,34 @@ commit 47545bc. Each one waits for the user.
    No `CLAUDE.md` is created ([ADR-XT31](XT31-kit-adoption-choices-camera-media-check-and-fills.md)).
 10. **CI.** No new step: `doc-checks.yml` runs `pytest tools/tests`, and the kit test
     `tools/tests/test_kit_sync.py` runs `check`.
+11. **uv (Q656).** The agent reads the words of the user "the same version of uv as every other
+    repo" as: each uv pin of this repository ends at the version of the kit. The kit text pins
+    `doc-checks.yml` to 0.13.7. The other pins stay at 0.13.9 for now: 9 lines of 5 workflows and
+    2 lines of 2 specs. Unmerged branches change those workflows. The supervisor scheduled the move
+    for round 3 of this lane, after those branches merge. Until then this repository runs two uv
+    versions, and the branch is not pushed. The local uv 0.13.7 reads `uv.lock` with no change.
+12. **Line ends.** At 3dc5377b4, `decisions/historical.md` was the one text file whose blob held CR
+    (CRLF lines). The marker edit of round 1 (79ea16e96) made it LF in git. It stays LF, because LF
+    is now the rule of the user (ADR-X1T8 item 8). `git add --renormalize .` changed no file. A line
+    `*.ai binary` after the kit block of `.gitattributes` keeps the CR bytes of
+    `shared/skellycam-logo/skellycam-logo.ai`. The working tree of the pilot still has CRLF files
+    from `core.autocrlf`. The agent did not make it again, because that needs `git reset --hard`.
+13. **Values tests.** `kit.toml` has a `[check_links]` table with the kit defaults.
+    `test_repo_values.py` pins the golden paths (none), the allow lists of the private-data check
+    (by count and SHA-256), the docs of the link check and the set of tables of `kit.toml`, so that a
+    misspelt table cannot give the kit defaults with no error.
 
 ## Reason
 
 Each choice changes no rule of the user and keeps the behaviour of the tools. Items 2 and 7 keep
-what git ignores and what gitleaks reports. Item 8 makes the four other-systems units hold no
+what git ignores and what gitleaks reports. Item 11 waits for the branches that change the same
+workflow lines, so that their merges do not conflict. Item 8 makes the four other-systems units hold no
 repository value, as the kit test "no repository value in a kit unit" needs.
 
 ## Alternatives rejected
 
-- A value `` development` of upstream `` or a backtick in `DEFAULT_BRANCH` (item 6): a value is a
-  name, not Markdown, and the supervisor said not to work around the kit.
+- In round 1, a backtick in the value of the branch (item 6): the supervisor said not to work
+  around the kit.
 - Adding the other-systems units to the kit now: `propose` writes into the kit checkout, which
   another session owns.
 
