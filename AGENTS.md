@@ -35,7 +35,7 @@ The rules in this file also apply.
 | Skill | Use it to |
 |---|---|
 | [`commit-files`](.claude/skills/commit-files/SKILL.md) | Make a commit, or add a recording, a camera frame, an image or another large file |
-| [`verify-on-other-systems`](.claude/skills/verify-on-other-systems/SKILL.md) | Get a fact from macOS, Linux, a user system or hardware that the test machine does not have |
+| [`verify-on-other-systems`](.claude/skills/verify-on-other-systems/SKILL.md) | Get a fact from another system: another OS, or hardware that the system that you work on does not have |
 
 ## 3. Install and Test
 
@@ -72,10 +72,11 @@ Do not change code that your task does not need.
 ### Other systems only through certify
 
 <!-- kit:other-systems -->
-The Windows lab machine of the project is the only test machine. You can reach other systems only
-through the self-test of the project and its report.
-When you cannot verify a fact on the test machine, do not write a script or a manual step for a
-person to run on another system.
+You can test only on the system that you work on. You can reach each other system only through the
+self-test of the project and its report. Another system is another OS, or hardware that the system
+that you work on does not have.
+When you cannot verify a fact on the system that you work on, do not write a script or a manual
+step for a person to run on another system.
 Add a check to the self-test. Use `record-only` when the check has no pass rule yet.
 The check must not change or stop the other checks of the run. A check that can block a device runs
 after the safe checks.
@@ -92,6 +93,8 @@ The pre-commit hook runs `tools/check_other_systems.py` on the files that the co
 `uv run pytest tools/tests` and CI run it on each tracked file. It refuses a script that names or
 guards for another system, unless one of its first 5 lines is a comment with
 `certify-check: <name>` or `other-systems: not applicable (<reason>)` (see its docstring).
+`<name>` must be a check name of `specs/certify.md`, in each mode. If the check is not in the spec,
+add it to the spec first (see the skill).
 
 ## 5. Decision Log
 

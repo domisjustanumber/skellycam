@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Refuse a new script for a person to run on a system that is not the test machine (decision VV4Q).
+"""Refuse a new script for a person to run on another system (decisions VV4Q and K3BX).
 
 Usage::
 
@@ -7,9 +7,9 @@ Usage::
     python tools/check_other_systems.py              # the files that the commit adds (the pre-commit hook)
     python tools/check_other_systems.py --all        # each tracked file (the doc test and CI)
 
-The Windows lab machine of the project is the only test machine. A test on another system runs only
-through the self-test ``skellycam.certify(level)`` and its report. The tool refuses a script that
-looks like a manual step for another system, one line for each file. It is the primary mechanical
+You can test only on the system that you work on. You can reach each other system only through the
+self-test ``skellycam.certify(level)`` and its report. The tool refuses a script that looks like a
+manual step for another system, one line for each file. It is the primary mechanical
 check of the rule. It cannot see a proposal in chat; the rule and the skill
 ``verify-on-other-systems`` cover that. It checks the whole repository, also when you run it from
 a subfolder.
@@ -24,8 +24,15 @@ a subfolder.
   A guard that stops a lab script on other systems names a lab value, so it passes. Set
   ``LAB_PLATFORMS`` and ``LAB_SYSTEMS`` for the repo.
 - It passes the script when one of its first ``MARKER_LINES`` lines is a comment (``#`` or ``//``)
-  with ``certify-check: <name>`` (the certify check that the script serves) or
-  ``other-systems: not applicable (<reason>)``. It does not look up the name in the spec.
+  with ``other-systems: not applicable (<reason>)``, or with ``certify-check: <name>`` (the certify
+  check that the script serves) when ``<name>`` is a check name of ``CERTIFY_SPEC`` (decision
+  K3BX). A check name is the whole text of a code span of the spec that matches ``CHECK_NAME``:
+  ``detect``, or two or more parts joined by ``:``. The first part is a ``<word>`` placeholder, or
+  a lower-case letter and then lower-case letters, digits and ``-``. Each other part starts with a
+  letter, a digit or a placeholder. So a name matches in the form that the spec writes, for example
+  ``<label>:usb3-trial``, and a filled-in name does not. A name that is not in the spec, or a
+  missing spec, refuses the script in each mode: the check must be in the spec first
+  (``ADD_CHECK_FIRST``).
 - The default mode checks the files that the commit adds, with rename detection off: a moved or a
   replaced file is a new file. ``--all`` checks each tracked file.
 - It does not catch: an instruction in a shell script or in Markdown (it reads only the path of a
@@ -53,12 +60,30 @@ EXEMPT_PATHS: tuple[str, ...] = ("skellycam/", "skellycam-ui/", "skellycam-docs/
 SCRIPT_SUFFIXES = frozenset(".py .sh .bash .zsh .command .ps1".split())
 OTHER_SYSTEM_NAMES = frozenset({"mac", "macos", "osx", "darwin", "linux"})
 MARKER_LINES = 5
-MARKER = re.compile(r"certify-check:\s*\S|other-systems:\s*not applicable\s*\(\s*[^)\s][^)]*\)")
+NOT_APPLICABLE = re.compile(r"other-systems:\s*not applicable\s*\(\s*[^)\s][^)]*\)")
+CERTIFY_MARKER = re.compile(r"certify-check:\s*(\S+)")
+CERTIFY_SPEC = "specs/certify.md"
+CODE_SPAN = re.compile(r"`([^`\n]+)`")
+_PART = r"(?:[A-Za-z0-9]|<[a-z]+>)(?:[A-Za-z0-9_.@-]|<[a-z]+>)*"
+CHECK_NAME = re.compile(rf"detect|(?:<[a-z]+>|[a-z][a-z0-9-]*)(?::{_PART})+")
 GUARD = re.compile(
     r"(sys\.platform|platform\.system\(\))\s*"
     r"""(?:(==|!=|\.startswith\()\s*("[^"]*"|'[^']*')|((?:not\s+)?in)\s*([\(\[\{][^)\]\}]*))"""
 )
 LITERAL = re.compile(r"""["']([^"']*)["']""")
+OTHER_SYSTEMS_ADVICE = (
+    "test other systems only through skellycam.certify (see AGENTS.md, Project Rules); add a certify check,"
+    " or put the comment 'certify-check: <name>' or 'other-systems: not applicable (<reason>)' in the first"
+    f" {MARKER_LINES} lines"
+)
+# The pointer to the process of skellycertify for a new check. Change it here only.
+ADD_CHECK_FIRST = (
+    "the check must be in specs/certify.md first: add it there (skill verify-on-other-systems); its name"
+    " follows section 3.4 (Check) of report-format.md of the skellycertify repository, a new reason code"
+    " follows its section 5.4 and goes into skellycam/REASON_CODES.md in the same commit, and a new field,"
+    " common reason code, allowed value or summary group needs a format change under its section 8, asked"
+    " from the skellycertify maintainers first"
+)
 
 
 class GitError(Exception):
@@ -108,39 +133,54 @@ def other_value(subject: str, op: str, values: list[str], lab: tuple[str, ...]) 
     return next((v for v in values if v not in lab), None)
 
 
-def reason_of(rel: str, root: Path, lab: tuple[str, ...] = LAB_PLATFORMS) -> str | None:
-    """Why the script looks like a manual step for another system, or None."""
+def spec_names(root: Path) -> frozenset[str] | None:
+    """The check names of the certify spec, or None when the spec is missing."""
+    spec = root / CERTIFY_SPEC
+    if not spec.is_file():
+        return None
+    return frozenset(span for span in CODE_SPAN.findall(read_text(spec)) if CHECK_NAME.fullmatch(span))
+
+
+def reason_of(
+    rel: str, root: Path, lab: tuple[str, ...] = LAB_PLATFORMS, names: frozenset[str] | None = None
+) -> tuple[str, str] | None:
+    """Why the script is refused and what to do, or None."""
     file = root / rel
     if not in_scope(rel) or not file.is_file():
         return None
     # shortcut: reads the working-tree file, not the staged blob, as check_camera_media.py does.
     text = read_text(file)
     for line in text.splitlines()[:MARKER_LINES]:
-        if line.lstrip().startswith(("#", "//")) and MARKER.search(line):
+        if not line.lstrip().startswith(("#", "//")):
+            continue
+        if NOT_APPLICABLE.search(line):
             return None
-    names = OTHER_SYSTEM_NAMES & set(re.split(r"[^a-z0-9]+", rel.lower()))
-    if names:
-        return f"its path names another system ({', '.join(sorted(names))})"
+        marker = CERTIFY_MARKER.search(line)
+        if marker and names is not None and marker.group(1) in names:
+            return None
+        if marker:
+            where = CERTIFY_SPEC if names is not None else f"{CERTIFY_SPEC} (the file is missing)"
+            return f"its certify-check name {marker.group(1)!r} is not a check name of {where}", ADD_CHECK_FIRST
+    systems = OTHER_SYSTEM_NAMES & set(re.split(r"[^a-z0-9]+", rel.lower()))
+    if systems:
+        return f"its path names another system ({', '.join(sorted(systems))})", OTHER_SYSTEMS_ADVICE
     if PurePosixPath(rel).suffix.lower() == ".py":
         for subject, op, literal, op_in, sequence in GUARD.findall(text):
             op = op or " ".join(op_in.split())
             value = other_value(subject, op, LITERAL.findall(literal or sequence), lab)
             if value is not None:
-                return f"it has a guard for another system ({subject} {op.strip('.(')} {value!r})"
+                return f"it has a guard for another system ({subject} {op.strip('.(')} {value!r})", OTHER_SYSTEMS_ADVICE
     return None
 
 
 def check(paths: list[str], root: Path, lab: tuple[str, ...] = LAB_PLATFORMS) -> list[str]:
     """The refusal lines for the given repo-relative paths."""
     refused = []
+    names = spec_names(root)
     for rel in sorted({PurePosixPath(p.replace("\\", "/")).as_posix() for p in paths}):
-        reason = reason_of(rel, root, lab)
-        if reason:
-            refused.append(
-                f"{rel}: {reason}: test other systems only through skellycam.certify (see AGENTS.md, Project"
-                " Rules); add a certify check, or put the comment 'certify-check: <name>' or 'other-systems:"
-                f" not applicable (<reason>)' in the first {MARKER_LINES} lines"
-            )
+        found = reason_of(rel, root, lab, names)
+        if found:
+            refused.append(f"{rel}: {found[0]}: {found[1]}")
     return refused
 
 

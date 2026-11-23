@@ -1,6 +1,6 @@
 ---
 name: verify-on-other-systems
-description: Use this skill when a task needs a fact from macOS, Linux, a computer that is not the test machine, or hardware that the test machine does not have, for example a codec, driver or camera check, before you propose a script, a probe or a manual step for a person.
+description: Use this skill when a task needs a fact from a system other than the one that you work on (another OS, or hardware that your system does not have), for example a codec, driver or camera check, before you propose a script, a probe or a manual step for a person.
 ---
 
 # Verify on other systems
@@ -25,6 +25,13 @@ The rules of [`AGENTS.md`](../../../AGENTS.md#other-systems-only-through-certify
 5. Exception: a CI runner with no camera can still run the checks that need no device, for example
    the portable tests. Use CI only for what it can check.
 6. A script that serves a certify check has the comment `certify-check: <name>` in one of its first
-   5 lines. A script that is not a test of another system has the comment
+   5 lines. `<name>` must be a check name as `specs/certify.md` writes it, for example
+   `<label>:usb3-trial`, not a filled-in name. `tools/check_other_systems.py` refuses another name. A script that is not a test of another system has the comment
    `other-systems: not applicable (<reason>)`.
    `tools/check_other_systems.py` refuses other scripts that name or guard for another system.
+7. To add a check name, write it in `specs/certify.md` first, in the same commit as the script or
+   before it. Follow the skellycertify repository: the name follows section "3.4 Check" of its
+   `report-format.md`; a new reason code follows its section "5.4 Codes of a package" and goes into
+   `skellycam/REASON_CODES.md` in the same commit; a new field, common reason code, allowed value or
+   summary group needs a format change under its section "8. Versioning of the format". Ask the
+   skellycertify maintainers for that change first.

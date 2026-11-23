@@ -1,8 +1,10 @@
-"""No commit adds a script for a person to run on a system that is not the test machine (decision VV4Q).
+"""No commit adds a script for a person to run on another system (decisions VV4Q and K3BX).
 
-A test on another system runs only through ``skellycam.certify(level)``. The product folders, the
-tests and the CI workflows are exempt. A comment marker in the first lines declares a valid
-exception. The pre-commit hook runs the tool on the files that a commit adds.
+You can test only on the system that you work on. Each other system is reached only through
+``skellycam.certify(level)``. The product folders, the tests and the CI workflows are exempt. A
+comment marker in the first lines declares a valid exception. A ``certify-check`` name must be a
+check name of ``specs/certify.md``, in each mode. The pre-commit hook runs the tool on the files
+that a commit adds.
 """
 
 from __future__ import annotations
@@ -20,6 +22,7 @@ DARWIN_GUARD = 'import sys\nif sys.platform == "darwin":\n    print(1)\n'
 LINUX_PREFIX = 'import sys\nif sys.platform.startswith("linux"):\n    print(1)\n'
 LAB_GUARD = 'import sys\nif sys.platform != "win32":\n    raise SystemExit("Windows only")\n'
 LAB_ONLY = 'import sys\nif sys.platform == "win32":\n    print(1)\n'
+SPEC = "Checks: `system:disk`, `detect`, `<label>:usb3-trial`, `<label>:rate:<w>x<h>@60`, `record-only`.\n"
 REFUSAL_TAIL = (
     ": test other systems only through skellycam.certify (see AGENTS.md, Project Rules); add a certify"
     " check, or put the comment 'certify-check: <name>' or 'other-systems: not applicable (<reason>)' in"
@@ -144,14 +147,61 @@ def test_a_document_with_a_guard_passes(tmp_path: Path) -> None:
 @pytest.mark.parametrize(
     "marker",
     [
-        "# certify-check: cam0:detect:mjpg-mode",
+        "# certify-check: system:disk",
+        "// certify-check: <label>:usb3-trial",
+        "# certify-check: <label>:rate:<w>x<h>@60",
+        "# certify-check: detect",
         "  # other-systems: not applicable (it only reads a report)",
-        "// certify-check: cam0:open",
     ],
 )
 def test_a_comment_marker_in_the_first_lines_passes(tmp_path: Path, marker: str) -> None:
     text = "#!/usr/bin/env python3\n" + "\n" * 3 + marker + "\n" + DARWIN_GUARD
-    assert refused(tmp_path, {"scripts/run_macos.py": text}) == []
+    assert refused(tmp_path, {"specs/certify.md": SPEC, "scripts/run_macos.py": text}) == []
+
+
+@pytest.mark.parametrize(
+    "name",
+    [
+        "system:disks",  # not in the spec
+        "cam.media-foundation.046d-085c.0:usb3-trial",  # a filled-in name of a template
+        "<label>:rate:1920x1080@60",
+        "record-only",  # a code span of the spec, but not a check name
+    ],
+)
+def test_a_certify_check_name_that_is_not_in_the_spec_is_refused(tmp_path: Path, name: str) -> None:
+    (tmp_path / "specs").mkdir()
+    (tmp_path / "specs" / "certify.md").write_text(SPEC, encoding="utf-8")
+    (tmp_path / "probe.py").write_text(f"# certify-check: {name}\nprint(1)\n", encoding="utf-8")
+    assert cos.check(["probe.py"], tmp_path) == [
+        f"probe.py: its certify-check name {name!r} is not a check name of specs/certify.md: " + cos.ADD_CHECK_FIRST
+    ]
+
+
+def test_a_missing_spec_refuses_each_certify_check_marker(tmp_path: Path) -> None:
+    (tmp_path / "probe.py").write_text("# certify-check: system:disk\nprint(1)\n", encoding="utf-8")
+    (tmp_path / "lab.py").write_text("print(1)\n", encoding="utf-8")
+    assert cos.check(["probe.py", "lab.py"], tmp_path) == [
+        "probe.py: its certify-check name 'system:disk' is not a check name of specs/certify.md"
+        " (the file is missing): " + cos.ADD_CHECK_FIRST
+    ]
+
+
+def test_the_pointer_to_the_process_is_one_constant() -> None:
+    assert "skill verify-on-other-systems" in cos.ADD_CHECK_FIRST
+    assert "report-format.md" in cos.ADD_CHECK_FIRST
+
+
+def test_the_real_spec_holds_the_names_of_the_catalogue() -> None:
+    names = cos.spec_names(REPO_ROOT)
+    assert names is not None
+    assert {"detect", "system:disk", "<label>:usb3-trial", "session:exit", "<label>:detect:mjpg-mode"} <= names
+    assert not {"record-only", "046d:085c", "cam.media-foundation.046d-085c.0"} & names
+
+
+def test_all_mode_refuses_an_unknown_name_in_a_tracked_script(repo: Path, capsys: pytest.CaptureFixture[str]) -> None:
+    commit(repo, {"specs/certify.md": SPEC, "ok.py": "# certify-check: system:disk\n", "bad.py": "# certify-check: x:y\n"})
+    assert cos.main(["check_other_systems.py", "--all"]) == 1
+    assert capsys.readouterr().out.startswith("bad.py: its certify-check name 'x:y' is not a check name")
 
 
 @pytest.mark.parametrize(
