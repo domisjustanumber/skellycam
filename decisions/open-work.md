@@ -151,12 +151,11 @@ task. Delete an item when its work is done. The PR that closes an item records t
   later entries do not rule), [ADR-8CP7](entries/8CP7-certify-spec-draft-3-choices-of-the-agent.md)
   and [ADR-FC1C](entries/FC1C-choices-of-the-spec-integration.md),
   with the open questions of section 14 of the spec.
-- **Certify, decided 2026-11-23, not built.** The report gets: the commit; the product failure facts
-  (native code, call, stage, first failure code); a start time and a duration for each check; a camera
-  inventory (USB link, controller, hub depth, firmware revision, driver, mode list); frame timing on
-  each rate row; the warning and exit codes of the take; CPU load; the exposure and gain context. A
-  salted local hash is the stable id of a camera unit. Certify keeps the camera logs of the last run
-  on the machine of the user and never sends them by itself.
+- **Certify report fields, decided 2026-11-23, not built**
+  ([ADR-F6C3](entries/F6C3-decisions-of-the-user-on-the-certify-report-fields.md)). The fields, the
+  unit id and the kept logs are in section 3.5 of the spec, with the build order in 3.5.15 and the
+  tests T-CERT-77 to T-CERT-90. The choices of the agent wait for the user
+  ([ADR-NQ77](entries/NQ77-choices-of-the-certify-report-fields.md)).
 - **Decided 2026-11-21, not built**
   ([ADR-TFD7](entries/TFD7-search-limit-stop-rate-median-role-flag-and-restore-after-a-failed-loop.md)):
   a median frame-rate statistic in the stop answer; a role flag in place of the `parent_process()`
