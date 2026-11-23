@@ -15,6 +15,12 @@ task. Delete an item when its work is done. The PR that closes an item records t
   repository then sets its own `EXEMPT_PATHS`, spec path and self-test pointer. The design
   choices of [ADR-K9B7](entries/K9B7-design-of-the-other-systems-rule-skill-and-check.md) are
   accepted (Q649).
+  - The values are in `kit.toml` ([ADR-3SRX](entries/3SRX-choices-of-the-kit-sync-pilot.md)). Not
+    done: `kit_sync.py propose --new` for the four units.
+- **Kit sync pilot** ([ADR-X1T8](entries/X1T8-two-way-kit-sync-adoption.md)). Q655: the skill
+  `change-decision-log` says `development` where this repository said upstream `development`; the
+  kit must change its placeholder. The other uv pins (0.13.9) in five workflows and two specs move
+  to the kit value in one later commit.
 - **An exact name lookup in `tools/check_other_systems.py`.** On 2026-11-23 (Q649) the user asked
   how the lookup of a `certify-check` name can be exact, and what it means that it is not. Today it
   takes the code spans of `specs/certify.md` with the form of a check name (item 6 of
