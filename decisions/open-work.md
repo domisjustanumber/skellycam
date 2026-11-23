@@ -181,7 +181,10 @@ task. Delete an item when its work is done. The PR that closes an item records t
     of 2 %. They are not calibrated.
   - A fault of the product: a log line prints the full path of the evidence file with the text of a
     `FileNotFoundError`. The path can hold the user name. The kept logs are never sent (3.5.11).
-  - The undecided proposals of the gap review of 2026-11-23 are question 17 of section 14 of the spec.
+  - The user decided the proposals of the gap review as Q624a to Q624m
+    ([ADR-493E](entries/493E-decisions-of-the-user-on-the-certify-check-drops-and-additions.md)). Focus matters
+    for calibration boards: `control:focus:sharpness` and `control:autofocus` come back when they have a pass
+    rule (Q624d). `group:preview-during-take` waits for the preview UI of step 4b.
   - Named only, not specified: codec checks from the H.264 study (which encoders exist and work, the stream limits
     of each hardware encoder per GPU model with the sustained number and the crossover to the CPU, and what the
     Electron UI can decode). The user wants them in certify if the study finds answers.
