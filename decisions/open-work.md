@@ -158,9 +158,32 @@ task. Delete an item when its work is done. The PR that closes an item records t
   ([ADR-NQ77](entries/NQ77-choices-of-the-certify-report-fields.md)) and the build order on 2026-11-23
   ([ADR-10HT](entries/10HT-acceptance-of-the-certify-report-field-choices-and-the-build-order.md)). The
   build starts only after `dom/fix-lane-3` is merged into `dom/integration`.
-  - Open (Q574): the contract text "These facts identify a model, not one unit" does not allow the
-    salted unit id yet. The request to change it went to the skellycertify session on 2026-11-23. It
-    waits for the answer of that session.
+  - Q574 is closed: the skellycertify session changed its section 6 in its commit `cf9c7a2`, so the contract
+    allows a local unit id. The user then removed the unit id (Q595 of
+    [ADR-H2A0](entries/H2A0-decisions-of-the-user-on-the-certify-report-shape.md)), so skellycam does not use
+    that permission.
+- **Certify report shape, decided 2026-11-23, not built**
+  ([ADR-H2A0](entries/H2A0-decisions-of-the-user-on-the-certify-report-shape.md),
+  [ADR-BW5M](entries/BW5M-decisions-of-the-user-on-the-two-verdicts-and-the-certify-test-set.md)). Section 3.6 of the spec holds
+  the shape of quick and full, the two verdicts, the fixes B1 and the commit (first in the build order of 3.6.7),
+  and the tests T-CERT-91 to T-CERT-111. The choices of the agent wait for the user
+  ([ADR-MEE1](entries/MEE1-choices-of-the-certify-report-shape.md)), with the questions 13 to 17 of section 14.
+  - The name rule of Q596 depends on a change of the wording of rule 16 of section 6 of the contract, for the
+    name of the list of known cameras and the fixed class texts. The contract owner decides it; it is pending.
+  - Not verified: on Windows the firmware product text is the device property "bus reported device
+    description". A check on the four lab cameras comes later.
+  - Later work, not specified: an optional question to the person, "What make and model is this?".
+  - The sign-off checks `<label>:cycles`, `group:take-30`, `group:contention` and `group:open` (Q599, Q610), and
+    `group:restore-after-kill` when the product keeps the "before" values on disk (Q608, Q615).
+  - Q616: more certify runs on the test system calibrate the limit of `group:in-step` (one frame period today).
+  - The limits of 3.6.6 rest on two cameras and three runs: `near_arrival_p5_ms` -50 ms and the take rate limit
+    of 2 %. They are not calibrated.
+  - A fault of the product: a log line prints the full path of the evidence file with the text of a
+    `FileNotFoundError`. The path can hold the user name. The kept logs are never sent (3.5.11).
+  - The undecided proposals of the gap review of 2026-11-23 are question 17 of section 14 of the spec.
+  - Named only, not specified: codec checks from the H.264 study (which encoders exist and work, the stream limits
+    of each hardware encoder per GPU model with the sustained number and the crossover to the CPU, and what the
+    Electron UI can decode). The user wants them in certify if the study finds answers.
 - **Decided 2026-11-21, not built**
   ([ADR-TFD7](entries/TFD7-search-limit-stop-rate-median-role-flag-and-restore-after-a-failed-loop.md)):
   a median frame-rate statistic in the stop answer; a role flag in place of the `parent_process()`

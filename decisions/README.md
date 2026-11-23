@@ -54,6 +54,8 @@ These entries are `accepted`.
 | [F6C3](entries/F6C3-decisions-of-the-user-on-the-certify-report-fields.md) | Q557 to Q559: eight report additions that say why a check failed, a salted unit id, the logs of the last run kept locally (not built) | accepted |
 | [NQ77](entries/NQ77-choices-of-the-certify-report-fields.md) | Choices for the report fields of `specs/certify.md` 3.5: names, places, vocabularies, unit id, log folder, size bounds, build order; T-CERT-77 to 90 | accepted |
 | [10HT](entries/10HT-acceptance-of-the-certify-report-field-choices-and-the-build-order.md) | Q572 to Q575: the NQ77 choices; `seconds` is the check time; ask skellycertify to allow the unit id; P3, P1, P2, P4 first, after fix lane 3 merges (not built) | accepted |
+| [H2A0](entries/H2A0-decisions-of-the-user-on-the-certify-report-shape.md) | Q591 to Q599: smoke-test quick, no not-built rows, not-reached row, slim 3.5, no unit id, camera names, two gate rows (not built) | accepted |
+| [BW5M](entries/BW5M-decisions-of-the-user-on-the-two-verdicts-and-the-certify-test-set.md) | Q610 to Q618: pipeline and model verdicts, gate not complete, one disk check, 30 cycles, spread record only (not built) | accepted |
 
 ### Evidence
 
@@ -86,6 +88,7 @@ These entries wait for a decision of the user. Section is the section or area of
 | [GEH0](entries/GEH0-choices-of-code-step-3.md) | Choices of code step 3: `not_streaming`, held value through the status, search flag, exposure range (`no-value-in-range`), 409 and 422 rules | none | proposed |
 | [QJH6](entries/QJH6-choices-of-the-fix-lane.md) | Choices of the fix lane: held value at the nearest search value, `cameras_left_out`, status locks, failed start keeps the summary, OpenCV mode FOURCC | none | proposed |
 | [Z7F3](entries/Z7F3-choices-of-fix-lane-3.md) | Choices of fix lane 3: restore record within one step, retry list, restore after a failure, one group creation, Media Foundation clock, median rate | none | proposed |
+| [MEE1](entries/MEE1-choices-of-the-certify-report-shape.md) | Choices for the report shape of `specs/certify.md` 3.6: B1 row, not-built list, not-reached, limits, name filter, verdict rules, size bound | `certify` | proposed |
 
 The entries that are `rejected`, `superseded by XXXX`, `absorbed into <path>#<anchor>`,
 `evidence; used by XXXX` or `done` are in [historical.md](historical.md).
