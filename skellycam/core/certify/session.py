@@ -28,6 +28,7 @@ from pathlib import Path
 import cv2
 import numpy as np
 
+from skellycam.core.camera.capture.failure_codes import WEDGE_CODES
 from skellycam.core.camera.capture.modes import rates_equal
 from skellycam.core.camera.capture.source import CONTROL_NAMES, HASH_COUNT
 from skellycam.core.camera.config.camera_config import CameraConfig
@@ -149,7 +150,7 @@ class Session:
         self.wedged: dict[str, str] = {}  # label: the reason of the wedge (2.3)
         self.sent_before: set[str] = set()
         self.touched: list[Unit] = []
-        self.failed: set[str] = set()  # cameras whose loop failed: the product does not restore them (unix 4.7)
+        self.failed: set[str] = set()  # cameras whose loop failed: no restore after a wedge code (unix 4.7) [Z7F3]
 
     # ----- helpers -----
 
@@ -676,8 +677,9 @@ class Session:
 
     async def close_step(self):
         """Phase G of quick (8.3): the close restores each camera. `camera-not-restored`: a restore that failed, or a
-        camera whose loop failed after its controls were set, because the product does not restore it
-        (unix-capture.md 4.7). (The close dict of a good camera can come after the close returns, so a missing
+        camera whose loop failed with a wedge code after its controls were set, because the product does not restore
+        it (unix-capture.md 4.7) [Z7F3]; the product restores a camera that failed for another reason. (The close
+        dict of a good camera can come after the close returns, so a missing
         `restore_ok` alone proves nothing.) A wedge code in the last dict gives `camera-wedged`."""
         group = self.group()
         if group is None:
@@ -691,8 +693,9 @@ class Session:
             if data.get("fail_code") in WEDGED:
                 self.wedged[unit.label] = WEDGED[data["fail_code"]]
                 self.fact("release", (unit.label, "camera-wedged"))
-            elif data.get("restore_ok") is False or (unit.label in self.failed and data.get("restore_ok") is not True and any(
-                    data.get(f"{name}_before_auto") is not None for name in CONTROL_NAMES)):
+            elif data.get("restore_ok") is False or (
+                    unit.label in self.failed and data.get("fail_code") in WEDGE_CODES and data.get("restore_ok") is not True
+                    and any(data.get(f"{name}_before_auto") is not None for name in CONTROL_NAMES)):
                 self.fact("release", (unit.label, "camera-not-restored"))
 
 

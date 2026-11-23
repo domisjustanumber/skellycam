@@ -107,6 +107,33 @@ def test_f7_no_restore_when_the_loop_failed(monkeypatch):
     assert source.diagnostics()["restore_ok"] is None
 
 
+@pytest.mark.parametrize("failure, script, restored", [
+    ("rate-low", dict(rate=25.0), True),  # the start-up rate check of a camera in MANUAL
+    ("not-ready", dict(), True),  # the ready limit of W 9.3 (2 s here) ends the warm-up
+    ("stalled", dict(), False),  # the stall rule of W 9.5: a wedge
+])
+def test_t_unx_95_a_camera_whose_loop_failed_is_restored_unless_it_is_wedged(monkeypatch, failure, script, restored):
+    """T-UNX-95, unix-capture.md 4.7 [Z7F3] (a decision of the user of 2026-11-21): the open set the exposure (auto -6
+    before it, MANUAL -7 after it); then the loop fails. A failure that is not a wedge (`rate-low`, `not-ready`) gets
+    the restore at the close: auto -6 again, `restore_ok` true. A wedge (`stalled`) gets no set at the close."""
+    if failure == "not-ready":
+        from skellycam.core.camera.capture import camera_loop
+        monkeypatch.setattr(camera_loop, "READY_LIMIT_NS", 2_000_000_000)  # 2 s: the warm-up of 90 frames needs 3 s
+    with one_camera(monkeypatch, FakeScript(controls=AUTO_BEFORE, **script)) as (app, camera_id, _):
+        source, log = app.factory.sources[camera_id], app.factory.logs[camera_id]
+        if failure == "stalled":
+            source.stop_now()
+            app.wait_state(camera_id, "dead")
+        app.wait(lambda: log.closes.value == 1, "the close")
+        assert app.status(camera_id)["failure"]["code"] == failure
+    after_close = [s for t, s in exposure_sets(log) if t >= close_time(log)]
+    if restored:
+        assert [(s.auto, s.value) for s in after_close] == [(True, -6)]
+        assert source.diagnostics()["restore_ok"] is True
+    else:
+        assert after_close == [] and source.diagnostics()["restore_ok"] is None
+
+
 @pytest.mark.parametrize("next_open", ["apply again", "a new group", "a camera that rounds"])
 def test_t_unx_91_the_values_of_before_survive_a_camera_with_no_restore(monkeypatch, next_open):
     """T-UNX-91, unix-capture.md 4.7 [NYT6]: a camera that keeps its controls between opens (a real camera) was in auto -6. Its

@@ -857,8 +857,10 @@ After a stop of the caller, the end of the budget, a time-out or a crash, the ru
 - Each other touched camera gets the plain open below. The session sends the "before" values of a camera as soon as
   its diagnostics hold them.
 
-In quick with no stop, a camera whose loop failed after its controls were set is `not-restored`: the product does
-not restore a camera whose loop failed [ux 4.7].
+In quick with no stop, a camera whose loop failed with a wedge code that certify does not already count as a wedge
+(`stalled`) after its controls were set is `not-restored`: the product does not restore it [ux 4.7]. A camera whose
+loop failed for another reason (for example `rate-low`) gets the restore of the product at its close; its close dict
+decides (`restore_ok` false is `not-restored`) [ADR-Z7F3](../decisions/entries/Z7F3-choices-of-fix-lane-3.md).
 
 The phase also runs after a crash of an earlier phase, with its own limit of 20 s for each camera
 [A]. After a cancel, the user decided [ADR-H0BQ](../decisions/entries/H0BQ-user-rulings-of-the-spec-integration.md): phase G re-checks only the cameras that the run touched

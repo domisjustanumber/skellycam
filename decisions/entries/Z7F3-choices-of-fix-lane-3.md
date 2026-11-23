@@ -19,6 +19,10 @@ The supervisor gave the items. The agent chose these details:
    fills the list (its `retry` cameras). The fall back to 30 fps (2.4a) names the cameras that failed at 60 fps.
    A camera that the request selects again after an unselect needs no list
    ([`windows-capture.md`](../../specs/windows-capture.md) 8.2, 8.3; [`camera-requests.md`](../../specs/camera-requests.md) 1.8, 2.4a).
+3. The user decided on 2026-11-21: a camera whose loop failed for a reason other than a hang gets its own
+   settings back at its close. The agent chose the codes with no restore: `stalled`, `hung` and `device-removed`
+   (`WEDGE_CODES` of `failure_codes.py`, the wedge of [`certify.md`](../../specs/certify.md) 10.7 item 5). Certify
+   gives `camera-not-restored` to a failed camera only for these codes or for `restore_ok` false (8.3).
 
 ## Reason
 
@@ -30,6 +34,8 @@ The supervisor gave the items. The agent chose these details:
 2. The UI sends each selected camera in a settings apply, also a failed one with its unchanged config, so the
    server cannot tell a retry from the configs. Only an explicit list can. The certify live change (4.3) then
    cannot reopen a camera that dies between its scan and its apply.
+3. A camera that failed its rate check stayed at MANUAL -7 (a generic camera at 25.7 fps in a 30 fps mode, the
+   first real certify run of 2026-11-21). A stall can be a wedged camera (the Kiyo Pro), so it gets no call.
 
 ## Consequences
 
@@ -38,6 +44,8 @@ The supervisor gave the items. The agent chose these details:
    (step 1, log2 seconds) that is a change of one stop.
 2. "Apply again" with no list no longer reopens a camera. A client other than the UI (for example freemocap) must
    send `retry_camera_ids` to reopen a failed camera. The rate selector no longer reopens a failed camera.
+3. A close dict that comes after the close of the group (no `restore_ok`) of a camera that failed with
+   `rate-low` now gives no notice: certify trusts the restore of the product there.
 
 ## Evidence
 
@@ -49,6 +57,8 @@ The supervisor gave the items. The agent chose these details:
 2. Tests: T-CAP-20 step (0) in `skellycam/tests/capture/test_states.py` and
    `test_the_live_change_does_not_reopen_a_camera_that_died_after_the_scan` in
    `skellycam/tests/certify/test_certify_review2.py`; both failed on the old code (the camera opened again).
+3. Tests: T-UNX-95 in `skellycam/tests/capture/test_restore.py`; the two cases of
+   `test_review_2_a_failed_camera_that_was_set_is_flagged_only_when_the_product_does_not_restore_it`.
 
 ## Alternatives rejected
 

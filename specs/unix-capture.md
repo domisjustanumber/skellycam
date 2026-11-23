@@ -1256,12 +1256,17 @@ the record), 6 (the citation of 0) and 7 (4.4.10 filled) are applied here.
   was on before the open: the camera is then closed, so auto exposure is not a mode [U].
 - The setting `SKELLYCAM_RESTORE_CONTROLS=0` turns it off, for a debug run only [A].
 - A camera that failed, hung or was removed is not opened again to restore it [U]. The restore runs
-  only inside the close of an open camera. It is also skipped when the shared loop failed (for example
-  the stall rule of [W 9.5], which sets no error of the source): the loop calls `close(restore=False)`,
-  so a camera that can be wedged gets no set and no read-back [ADR-Q2NY](../decisions/entries/Q2NY-choices-of-code-step-2.md). A restore call that
+  only inside the close of an open camera. It is skipped when the failure of the shared loop is a
+  wedge: the code `hung`, `stalled` (for example the stall rule of [W 9.5], which sets no error of the
+  source) or `device-removed` (the wedge of [cert 10.7] item 5; `WEDGE_CODES` of `failure_codes.py`).
+  The loop then calls `close(restore=False)`, so a camera that can be wedged gets no set and no
+  read-back [ADR-Q2NY](../decisions/entries/Q2NY-choices-of-code-step-2.md). A restore call that
   hangs ends the close as hung, within the bound of one call [W 6.6].
-- A lost heartbeat of the server ([`recorder.md`](recorder.md) section 9) is not a camera fault. The
-  close of that camera restores the controls. No other failure of the loop gets the restore.
+- Each other failure of the loop gets the restore at its close: for example `rate-low`, `not-ready`,
+  `open-failed` and a lost heartbeat of the server ([`recorder.md`](recorder.md) section 9), which is
+  not a camera fault (a decision of the user of 2026-11-21) [ADR-Z7F3](../decisions/entries/Z7F3-choices-of-fix-lane-3.md). A source that holds a stream error
+  of its own (the Media Foundation source after an error of `OnReadSample`) still sets nothing at its
+  close.
 - The "before" values survive the camera process [ADR-NYT6](../decisions/entries/NYT6-choices-of-fix-lane-2.md).
   The source keeps the shared record `controls_before` of `CameraStatus` (a JSON array that the main
   process makes with the status). For each control that this app changed, it holds the name, the
@@ -1656,6 +1661,7 @@ facts of macOS only.
 | T-UNX-92 | fake | `ControlRestore` with a record: open 1 sets manual -7 and gets no restore; (a) the camera still holds -7; (b) another program set manual -3; (c) a record whose `before` has a control that is not in `names`; (d) the camera reads one step from -7 (-6 or -8) with the step 1, and with no step; (e) it reads two steps from -7. | (a) The close of open 2 restores auto -6; (b) it restores -3; the record is empty after each; (c) that control keeps the value that the camera reads; (d) with the step: auto -6, with no step: the value that the camera reads; (e) the value that the camera reads (4.7) [ADR-Z7F3](../decisions/entries/Z7F3-choices-of-fix-lane-3.md). |
 | T-UNX-93 | fake | A frame decision with no take (first frame -1) while another thread holds the lock of the last frame. | It returns "no record, no finish" in under 0.2 s and starts no stretch with no lock (4.10). |
 | T-UNX-94 | fake | `CameraManager.close()` with a camera process that cannot be killed and a camera with a restore record. | The close raises; `restore_records` holds the record of that camera (4.7). |
+| T-UNX-95 | fake | A camera whose exposure the open set and whose loop then fails: with `rate-low` (the start-up rate check), with `not-ready`, and with `stalled` (the stall rule of [W 9.5]). | `rate-low` and `not-ready`: the close restores the "before" values, `restore_ok` true; `stalled`: no set at the close, `restore_ok` null (4.7) [ADR-Z7F3](../decisions/entries/Z7F3-choices-of-fix-lane-3.md). |
 | T-UNX-79 | fake | `capture_timing`. A paused camera process with `V4L2Source` and with `AVFoundationSource` over the fakes, 10 s. | Process CPU under 2 % of one core (the rule of T-CAP-49). Not calibrated on a hosted runner: a failure is recorded and the user decides [A]. |
 
 ### 6.6 Runner and build tests
@@ -1709,7 +1715,7 @@ tests; it does not repeat the certify spec.
 
 | Kind | Linux | macOS | Each OS or Windows |
 |---|---|---|---|
-| fake | 30 (T-UNX-01 to 30) | 31 (T-UNX-31 to 60, 90) | 21 shared (61 to 75, 79, 89, 91 to 94), on Windows, Linux and macOS |
+| fake | 30 (T-UNX-01 to 30) | 31 (T-UNX-31 to 60, 90) | 22 shared (61 to 75, 79, 89, 91 to 95), on Windows, Linux and macOS |
 | windows | — | — | 3 (76 to 78) |
 | runner, vivid | 4 (80 to 83) | 4 (84 to 87) | — |
 | build | — | 1 (88) | — |
