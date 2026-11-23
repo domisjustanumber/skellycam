@@ -50,7 +50,6 @@ These entries are `accepted`.
 | [XT31](entries/XT31-kit-adoption-choices-camera-media-check-and-fills.md) | Supersedes NMM1, 4A7H: kit adoption choices; the media check refuses PNG, GIF, WebP, SVG with an allow by path; index limit 24,000 | accepted |
 | [6T78](entries/6T78-choices-of-the-sfn26-integration.md) | Choices of the `sfn26` integration: OpenCV helpers stay ours, kept and dropped items, forms of the four ports, Rust removal | accepted |
 | [TFD7](entries/TFD7-search-limit-stop-rate-median-role-flag-and-restore-after-a-failed-loop.md) | Decisions B1, B2, B7 to B9 of 2026-11-21: search limit stays 20 s; median stop rate, role flag, no restart, restore after a failed loop (not built) | accepted |
-| [K3BX](entries/K3BX-certify-check-names-must-be-in-the-certify-spec.md) | A `certify-check` marker name must be a check name of `specs/certify.md`; else the check fails; add a new check to the spec first | accepted |
 
 ### Evidence
 

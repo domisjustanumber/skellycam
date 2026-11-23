@@ -1,6 +1,10 @@
 # K3BX — A certify-check name must be a check name of the certify spec
 
-**Status:** accepted, 2026-11-23 (user, relayed by the supervisor).
+**Status:** absorbed into
+[`AGENTS.md#other-systems-only-through-certify`](../../AGENTS.md#other-systems-only-through-certify),
+[`.claude/skills/verify-on-other-systems/SKILL.md#steps`](../../.claude/skills/verify-on-other-systems/SKILL.md#steps),
+[`tools/check_other_systems.py`](../../tools/check_other_systems.py),
+2026-11-23 (commit to dom/other-systems-rule; was accepted, 2026-11-23 (user, relayed by the supervisor)).
 
 ## Decision
 
