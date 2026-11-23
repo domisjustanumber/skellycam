@@ -364,8 +364,9 @@ def test_t_rec_27_stop_statistics_from_the_csvs(tmp_path):
         if k == 0:
             continue
         pairs = [(rows[k - 1][0], rows[k][0]) for rows in ARRIVALS_27 if not rows[k][1] and not rows[k - 1][1]]
-        rates.append(statistics.fmean([1e9 / (b - a) for a, b in pairs]))
-        durations.append(statistics.fmean([(b - a) / 1e6 for a, b in pairs]))
+        middle = statistics.median([b - a for a, b in pairs])  # [Z7F3]
+        rates.append(1e9 / middle)
+        durations.append(middle / 1e6)
     last = max([r[0] for r in rows if r[0] is not None][-1] for rows in ARRIVALS_27)
     expected = {
         "recording_name": "take", "recording_path": str(folder), "number_of_cameras": 3, "number_of_frames": frames,

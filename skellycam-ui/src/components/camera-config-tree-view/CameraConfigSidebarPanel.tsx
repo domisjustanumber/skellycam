@@ -69,7 +69,7 @@ export const CameraConfigSidebarPanel: React.FC = () => {
         setIsUpdating(true);
         try {
             const configs = updateRequestConfigs(cameras, changes, groupConfigs);
-            await dispatch(camerasConnectOrUpdate({ configs, kind: 'update-cameras' })).unwrap();
+            await dispatch(camerasConnectOrUpdate({ configs, kind: 'update-cameras', retry: changes.retry })).unwrap();
         } catch {
             // the store keeps the error; the error line shows it
         } finally {

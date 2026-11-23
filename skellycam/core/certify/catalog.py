@@ -63,7 +63,7 @@ REASON_CODES = (
     "setting-reverted", "no-image-effect", "no-native-jpeg", "jpeg-damaged", "jpeg-size-differs", "mode-not-granted",
     "take-not-finished", "take-error", "rows-differ", "missing-rows", "gaps-unexplained", "group-rate-off",
     "too-few-frames", "frame-not-decodable", "fat-disk", "disk-stall", "write-error", "clock-base-differs",
-    "sample-after-arrival", "sample-too-early", "sequence-unreliable", "no-sequence", "has-sequence", "frame-gaps",
+    "clock-unknown", "sample-after-arrival", "sample-too-early", "sequence-unreliable", "no-sequence", "has-sequence", "frame-gaps",
     "gate-check-failed", "gate-check-not-run", "no-manual-exposure", "prior-failure", "prior-check-failed",
     "camera-wedged", "camera-not-restored", "not-deleted",
     # the product failure codes of unix-capture.md 4.6.3 that a failed open gives as its reason
@@ -266,6 +266,9 @@ def gate_rows(model: str, units: list, module: str | None) -> list:
         pick = {"opens": ("opens",), "mode": ("modes:granted",), "rate": ("rate",),
                 "native-jpeg": tuple(c for c in ITEM if c.startswith("native-jpeg:")),
                 "timestamps": CLOCK[:3], "records": tuple(c for c in FATAL if c.startswith("records:"))}.get(step)
+        if step == "timestamps":  # Q585 of the user [Z7F3]: a source that cannot tell its clock needs the two others
+            base = unit.get(f"{lab}:clock:base")
+            pick = CLOCK[1:3] if base is not None and base["reason"] == "clock-unknown" else CLOCK[:3]
         if step == "sequence":
             sequence = unit.get(f"{lab}:sequence")
             pick = ("time-gaps",) if sequence is None or sequence["reason"] == "no-sequence" else ("sequence",)

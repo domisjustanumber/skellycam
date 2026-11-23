@@ -17,6 +17,7 @@ import cv2
 import numpy as np
 
 from skellycam.core.camera.capture import rate_check
+from skellycam.core.camera.capture.failure_codes import WEDGE_CODES
 from skellycam.core.camera.capture.exposure_search import ExposureSearch, add_light_text, failed_text, search_values
 from skellycam.core.camera.capture.modes import NO_FLOOR_MODE, at_floor, rates_equal
 from skellycam.core.camera.capture.source import (
@@ -852,8 +853,8 @@ class CameraLoop:
                 self._add_replaced()
                 if self.source is not None:
                     try:
-                        # 4.7: a failed camera gets no restore; a lost heartbeat is no camera fault
-                        self.source.close(restore=not self.failed or self.lost_heartbeat)
+                        # 4.7 [Z7F3]: no call into a wedged camera; each other failure (and a lost heartbeat) restores
+                        self.source.close(restore=self.failure_code not in WEDGE_CODES)
                     except CaptureFailure as failure:
                         self._fail(failure)
                         hung = failure.hung

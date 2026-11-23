@@ -109,9 +109,9 @@ export const detectCameras = createAsyncThunk<
     }
 );
 
-async function applyConfigs(configs: Record<string, CameraConfig>, cameras: Camera[]): Promise<ConnectCamerasResponse> {
+async function applyConfigs(configs: Record<string, CameraConfig>, cameras: Camera[], retry: string[] = []): Promise<ConnectCamerasResponse> {
     // A stored config can hold the number of an earlier detection: the request never sends it (camera-requests.md 8.1)
-    const request: CamerasConnectOrUpdateRequest = applyRequestBody(configs, cameras);
+    const request: CamerasConnectOrUpdateRequest = applyRequestBody(configs, cameras, retry);
     const response = await backendFetch(serverUrls.endpoints.camerasConnectOrUpdate, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -128,17 +128,18 @@ export type ConnectResult = ConnectCamerasResponse & { sentIds: string[] };
 
 export const camerasConnectOrUpdate = createAsyncThunk<
     ConnectResult,
-    // configs: only these cameras ("Update Cameras"), else each selected camera; kind: see closeAllAndConnect
-    { configs?: Record<string, CameraConfig>; kind?: ApplyKind } | undefined,
+    // configs: only these cameras ("Update Cameras"), else each selected camera; kind: see closeAllAndConnect;
+    // retry: the failed cameras that "Update Cameras" opens again (no other apply restarts a camera, ADR-Z7F3)
+    { configs?: Record<string, CameraConfig>; kind?: ApplyKind; retry?: string[] } | undefined,
     { state: RootState }
 >(
     'cameras/connect',
-    async ({ configs: onlyConfigs, kind = 'settings' } = {}, { getState, dispatch }) => {
+    async ({ configs: onlyConfigs, kind = 'settings', retry = [] } = {}, { getState, dispatch }) => {
         const configs = onlyConfigs ?? selectSelectedCameraConfigs(getState());
         if (Object.keys(configs).length === 0) {
             throw new Error('No cameras selected for connection');
         }
-        const response = await applyConfigs(configs, getState().cameras.cameras);
+        const response = await applyConfigs(configs, getState().cameras.cameras, retry);
         if (!closeAllAndConnect(kind, configs, response.camera_configs)) {
             return { ...response, sentIds: Object.keys(configs) };
         }

@@ -18,7 +18,7 @@ from skellycam.tests.capture.capture_session import capture_app
 from skellycam.tests.capture.fake_source import FakeSourceFactory
 from skellycam.tests.certify.report_rules import assert_valid, problems
 from skellycam.tests.certify.test_certify import (
-    CATALOG, RUN, by_name, good, group_checks, labels, paths, product, run_with, unit)
+    CATALOG, RUN, SOURCE_FACTS, by_name, good, group_checks, labels, paths, product, run_with, unit)
 
 
 def descendants():
@@ -125,14 +125,21 @@ def test_review_5_and_6_the_end_of_the_budget_during_the_open(tmp_path):
     assert_no_new_process(before)
 
 
-def test_review_2_a_failed_camera_that_was_set_is_flagged(monkeypatch, tmp_path):
-    """8.3, unix-capture.md 4.7: the product does not restore a camera whose loop failed (a failed rate check), so
-    the camera gets `camera-not-restored`; a camera that was never set (in use) gets nothing."""
-    with capture_app(monkeypatch, [good(rate=25.0), good()]) as app:
-        slow, _ = labels(app.factory.device_infos())
+@pytest.mark.parametrize("script, flagged", [
+    (dict(rate=25.0), False), (dict(stop_after_frame=100), True),
+    # finding 9 [Z7F3]: a later dict of the camera holds another `fail_code`; the status code `stalled` decides
+    (dict(stop_after_frame=100, diagnostics={**SOURCE_FACTS, "fail_code": "stream-error"}), True)])
+def test_review_2_a_failed_camera_that_was_set_is_flagged_only_when_the_product_does_not_restore_it(
+        monkeypatch, tmp_path, script, flagged):
+    """8.3, unix-capture.md 4.7 [Z7F3]: the product restores a camera whose loop failed for a reason that is not a
+    wedge (a failed rate check, `rate-low`), so that camera gets no cleanup row. It does not restore a camera that
+    stalled (`stalled`, no frame for 2 s) after its controls were set: that camera gets `camera-not-restored`."""
+    with capture_app(monkeypatch, [good(**script), good()]) as app:
+        failed, _ = labels(app.factory.device_infos())
         report = run_with(app, tmp_path)
-    assert report["cleanup"] == [{"name": f"release:{slow}", "result": "fail", "reason": "camera-not-restored",
-                                  "module": "Fake camera 0"}]
+    assert_valid(report)
+    assert report["cleanup"] == ([{"name": f"release:{failed}", "result": "fail", "reason": "camera-not-restored",
+                                   "module": "Fake camera 0"}] if flagged else [])
 
 
 # ---------------------------------------------------------------------------

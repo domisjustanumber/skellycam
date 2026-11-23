@@ -207,6 +207,28 @@ def test_item_6_and_11_stop_statistics_never_fail(tmp_path):
     StopRecordingResponse(**fields)
 
 
+def test_a_burst_of_one_camera_does_not_make_the_frame_rate_of_the_group(tmp_path):
+    """recorder.md 8.2 [Z7F3] (a decision of the user of 2026-11-21: a median, not a mean): three cameras at 30 fps;
+    at frame 2 one camera gives a frame 0.36 ms after its last one (a burst of queued frames). The rate of each
+    group frame is 1 / the median over the cameras of the frame duration: about 30 fps, not the mean of 2778, 30
+    and 30 fps (946 fps)."""
+    from skellycam.api.http.cameras.camera_router import StopRecordingResponse
+
+    stop_stats = rec_module("stop_stats")
+    period, paths = 33_333_333, []
+    for camera in range(3):
+        times = [1000 + k * period for k in range(4)]
+        if camera == 0:
+            times[2] = times[1] + 360_000
+        path = tmp_path / f"c{camera}.csv"
+        write_sidecar(path, [(t, False) for t in times])
+        paths.append(path)
+    fields = stop_stats.stop_response_fields(paths, recording_name="t", recording_path=tmp_path, frame_count=4)
+    assert fields["framerate_stats"]["max"] == pytest.approx(30.0, rel=1e-6)
+    assert fields["frame_duration_stats"]["min"] == pytest.approx(period / 1e6, rel=1e-6)
+    StopRecordingResponse(**fields)
+
+
 def test_item_7_frame_number_must_increase(tmp_path, runs):
     """Item 7 (spec 4.1): a frame whose `frame_number` does not increase raises ValueError and is not
     queued; the writer goes on."""

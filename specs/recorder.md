@@ -895,8 +895,8 @@ finished [SFF-724].
 | `total_duration_sec` | `duration_s` of the manifest summary [SFF-728, F-1]. |
 | `mean_framerate` | Frames divided by the elapsed time (M of [ADR-JMS0](../decisions/entries/JMS0-review-decisions.md), changed on 2026-11-20): for each camera, the group frames from its first to its last row that is not `missing`, divided by the time between their `arrival_ns`, in s; the mean over the cameras. Rounded to 2 decimals. Null (NaN) when no camera has two such rows. Before, the mean of a rate for each frame: two frames 1 ms apart counted as 1000 fps. |
 | `mean_inter_camera_sync_ms` | The mean of the range of frame k: the largest minus the smallest `arrival_ns` of the cameras whose row is not `missing`, in ms. Rounded to 2 decimals. |
-| `framerate_stats` | Median, mean, standard deviation, min and max of the rate of each group frame k ≥ 1: the mean over the cameras of 1 / (`arrival_ns`(k) − `arrival_ns`(k − 1)) in s, for each camera with neither row `missing` ([ADR-F8C0](../decisions/entries/F8C0-third-review-choices.md) item 11). |
-| `frame_duration_stats` | The same of the mean frame duration of each frame k ≥ 1, in ms. |
+| `framerate_stats` | Median, mean, standard deviation, min and max of the rate of each group frame k ≥ 1: 1 / the median over the cameras of `arrival_ns`(k) − `arrival_ns`(k − 1), in s, for each camera with neither row `missing` and a time that increases ([ADR-F8C0](../decisions/entries/F8C0-third-review-choices.md) item 11). A median, not a mean (a decision of the user of 2026-11-21): a burst of queued frames of one camera (one run gave a mean of 136 fps and a max of 2775 fps) does not make the rate of the frame [ADR-Z7F3](../decisions/entries/Z7F3-choices-of-fix-lane-3.md). With two cameras, the median is the mean of the two durations. |
+| `frame_duration_stats` | The same of the median frame duration of each frame k ≥ 1 (the median over the cameras), in ms. |
 | `inter_camera_grab_range_ms_stats` | The same of the ranges of `mean_inter_camera_sync_ms`. |
 
 Today these values come from the midpoints of the grab stamps of the old frame record. From step 3a,

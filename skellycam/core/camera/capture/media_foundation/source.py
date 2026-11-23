@@ -15,6 +15,7 @@ from comtypes import COMObject
 
 from skellycam.core.camera.capture.media_foundation import bounded, com, detect
 from skellycam.core.camera.capture.media_foundation.errors import E_FAIL, check, failure, hresult_reason
+from skellycam.core.camera.capture.failure_codes import WEDGE_CODES
 from skellycam.core.camera.capture.modes import choose_mode, mode_fraction
 from skellycam.core.camera.capture.source import (
     BOUNDED_CALL_LIMIT_S, FIRST_FRAME_TIMEOUT_S, CapturedFrame, CaptureFailure, CaptureRequest, CaptureWaitingPlace,
@@ -134,8 +135,9 @@ class MediaFoundationSource:
     def _set_and_read(self, interfaces, changes) -> ControlState:
         """On the worker of a bounded call. The first read of an open comes before any set (unix-capture.md 4.7)."""
         if self._restore.before is None:
-            self._restore.read({name: _read_control(interfaces, name)[0] for name in CONTROLS})
             self._ranges = {name: _read_range(interfaces, name) for name in CONTROLS}
+            self._restore.read({name: _read_control(interfaces, name)[0] for name in CONTROLS},
+                               {name: values[2] for name, values in self._ranges.items() if values is not None})
         self._restore.changed(changes)
         for name, setting in changes.items():
             _set_control(interfaces, name, setting)
@@ -173,6 +175,7 @@ class MediaFoundationSource:
             data.update(granted_fourcc=mode.format, granted_w=mode.width, granted_h=mode.height,
                         granted_fps_num=mode.fps_num, granted_fps_den=mode.fps_den,
                         delivered="jpeg" if mode.format == "MJPG" else "decoded")
+        # D-2 [Z7F3]: only GetSampleTime is read, and nothing names its base: the source cannot tell its clock
         data.update(clock="unknown", tstamp_src="unknown", ts_conversion="100ns-units",
                     sample_time_kept=self._sample_time_ok, frames=self._count, sequence_available=False,
                     discontinuity_flags=self._discontinuities, zero_bytes=self._zero_bytes, native_domain="hresult",
@@ -206,7 +209,8 @@ class MediaFoundationSource:
                 raise CaptureFailure("close", f"a ReadSample issue did not return in {BOUNDED_CALL_LIMIT_S:g} s",
                                      hung=True)
             time.sleep(0.001)
-        if restore and self._error is None:  # 4.7: between step 1 and step 2; never after a failure
+        # 4.7: between step 1 and step 2; never after a wedge (a source error that is no wedge restores) [Z7F3]
+        if restore and (self._error is None or self._error.code not in WEDGE_CODES):
             self._restore.restore(lambda changes: self._call(
                 "close", "a control call", lambda: self._set_and_read(interfaces, changes)))
         if self._reader is not None:

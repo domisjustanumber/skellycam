@@ -21,7 +21,19 @@ test('a camera that is not in the current detection keeps its number and name', 
 test('the apply request body holds the numbers and the names of the current detection', () => {
     assert.deepEqual(applyRequestBody({ a1b2: stored }, [{ id: 'a1b2', index: 2, name: 'Logitech C922' }]), {
         camera_configs: { a1b2: { ...stored, camera_index: 2, camera_name: 'Logitech C922' } },
+        retry_camera_ids: [],
     });
+});
+
+test('windows-capture.md 8.3 (ADR-Z7F3): only "Update Cameras" names failed cameras to open again', () => {
+    assert.deepEqual(applyRequestBody({ a1b2: stored }, [], ['a1b2']).retry_camera_ids, ['a1b2']);
+    const thunks = readFileSync(new URL('./cameras-thunks.ts', import.meta.url), 'utf8');
+    assert.match(thunks, /kind = 'settings', retry = \[\] \}/, 'an apply with no retry list restarts no camera');
+    assert.match(thunks, /applyConfigs\(configs, getState\(\)\.cameras\.cameras, retry\)/);
+    assert.match(thunks, /applyConfigs\(all, getState\(\)\.cameras\.cameras\)/, 'the close-all fall back makes a new group: no retry');
+    const panel = readFileSync(new URL('../../../components/camera-config-tree-view/CameraConfigSidebarPanel.tsx', import.meta.url), 'utf8');
+    assert.match(panel, /camerasConnectOrUpdate\(\{ configs, kind: 'update-cameras', retry: changes\.retry \}\)/);
+    assert.equal((panel.match(/retry:/g) ?? []).length, 1, 'no other apply of the panel sends a retry list');
 });
 
 test('the Auto choice goes on the wire as AUTO (the exposure search of the server, camera-requests.md 1.5); MANUAL is unchanged', () => {
@@ -36,8 +48,8 @@ test('the Auto choice goes on the wire as AUTO (the exposure search of the serve
 
 test('the apply thunk sends the body of applyRequestBody', () => {
     const thunks = readFileSync(new URL('./cameras-thunks.ts', import.meta.url), 'utf8');
-    assert.match(thunks, /const request(: \w+)? = applyRequestBody\(configs, cameras\);/);
-    assert.match(thunks, /applyConfigs\(configs, getState\(\)\.cameras\.cameras\)/);
+    assert.match(thunks, /const request(: \w+)? = applyRequestBody\(configs, cameras, retry\);/);
+    assert.match(thunks, /applyConfigs\(configs, getState\(\)\.cameras\.cameras, retry\)/);
     assert.match(thunks, /applyConfigs\(all, getState\(\)\.cameras\.cameras\)/, 'the fall back sends the detection numbers too');
     assert.match(thunks, /body: JSON\.stringify\(request\)/);
 });

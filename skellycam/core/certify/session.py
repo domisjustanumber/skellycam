@@ -28,6 +28,7 @@ from pathlib import Path
 import cv2
 import numpy as np
 
+from skellycam.core.camera.capture.failure_codes import WEDGE_CODES
 from skellycam.core.camera.capture.modes import rates_equal
 from skellycam.core.camera.capture.source import CONTROL_NAMES, HASH_COUNT
 from skellycam.core.camera.config.camera_config import CameraConfig
@@ -149,7 +150,9 @@ class Session:
         self.wedged: dict[str, str] = {}  # label: the reason of the wedge (2.3)
         self.sent_before: set[str] = set()
         self.touched: list[Unit] = []
-        self.failed: set[str] = set()  # cameras whose loop failed: the product does not restore them (unix 4.7)
+        # cameras whose loop failed: label -> the code of the status failure (the main process writes it, so a late
+        # dict of the camera cannot change it); no restore after a wedge code (unix 4.7) [Z7F3]
+        self.failed: dict[str, str | None] = {}
 
     # ----- helpers -----
 
@@ -323,7 +326,7 @@ class Session:
             self.prior(unit, "camera-in-use")
             return
         if failure:
-            self.failed.add(unit.label)
+            self.failed[unit.label] = code
         if state == "ready" or rate_failed:
             self.done(row(names[0], "pass", None, unit.module, **opened))
         else:
@@ -403,7 +406,8 @@ class Session:
     async def settings_step(self):
         """4.3: one live change of each camera with manual exposure from -7 to -8."""
         manual, lacking = [], []
-        # N1: a product apply restarts a camera that is `failed` or `dead`; a wedged or not-ready camera gets no change
+        # N1: a wedged or not-ready camera gets no change; the apply names no retry list, so the product opens no
+        # `failed` or `dead` camera again, also one that dies after this scan (windows-capture.md 8.3) [Z7F3]
         self.scan(self.live)
         ready = [u for u in self.live if u.label not in self.wedged and self.status(u).get("state") == "ready"]
         for unit in self.live:
@@ -475,8 +479,8 @@ class Session:
         for unit in self.live:
             if unit not in takers:
                 self.prior(unit, "prior-check-failed")
-                if self.status(unit).get("failure"):
-                    self.failed.add(unit.label)
+                if failure := self.status(unit).get("failure"):
+                    self.failed[unit.label] = failure.get("code")
         if group is None or not takers:
             self.fact("prior", ("group", "prior-check-failed"))
             return
@@ -629,14 +633,16 @@ class Session:
 
     def clock_rows(self, unit, before, data):
         """10.2: the clock, the sequence and the time gaps, from the diagnostics of the source (on Linux and macOS in
-        quick, on each system in full). A key that the source does not fill gives `not-run` `not-built`."""
+        quick, on each system in full). A key that the source does not fill gives `not-run` `not-built`; a `clock` of
+        `unknown` (the source cannot tell its clock: Media Foundation) gives `not-run` `clock-unknown` [Z7F3]."""
         names = catalog.camera_names(unit.label, unit.base, self.level, self.unix)["clock"]
         if not names:
             return
         clock = data.get("clock")
         self.begin(names[0])
         result = (("pass", None) if clock in ("monotonic", "host") else ("fail", "clock-base-differs")
-                  if clock in ("realtime", "device") else ("not-run", "not-built"))
+                  if clock in ("realtime", "device") else ("not-run", "clock-unknown") if clock == "unknown"
+                  else ("not-run", "not-built"))
         self.done(row(names[0], *result, unit.module, clock=clock, tstamp_src=data.get("tstamp_src"),
                       ts_conversion=data.get("ts_conversion"), sample_time_kept=data.get("sample_time_kept")))
         self.begin(names[1])
@@ -675,8 +681,9 @@ class Session:
 
     async def close_step(self):
         """Phase G of quick (8.3): the close restores each camera. `camera-not-restored`: a restore that failed, or a
-        camera whose loop failed after its controls were set, because the product does not restore it
-        (unix-capture.md 4.7). (The close dict of a good camera can come after the close returns, so a missing
+        camera whose loop failed with a wedge code after its controls were set, because the product does not restore
+        it (unix-capture.md 4.7) [Z7F3]; the product restores a camera that failed for another reason. (The close
+        dict of a good camera can come after the close returns, so a missing
         `restore_ok` alone proves nothing.) A wedge code in the last dict gives `camera-wedged`."""
         group = self.group()
         if group is None:
@@ -690,8 +697,10 @@ class Session:
             if data.get("fail_code") in WEDGED:
                 self.wedged[unit.label] = WEDGED[data["fail_code"]]
                 self.fact("release", (unit.label, "camera-wedged"))
-            elif data.get("restore_ok") is False or (unit.label in self.failed and data.get("restore_ok") is not True and any(
-                    data.get(f"{name}_before_auto") is not None for name in CONTROL_NAMES)):
+            elif data.get("restore_ok") is False or (
+                    unit.label in self.failed and (self.failed[unit.label] or data.get("fail_code")) in WEDGE_CODES
+                    and data.get("restore_ok") is not True
+                    and any(data.get(f"{name}_before_auto") is not None for name in CONTROL_NAMES)):
                 self.fact("release", (unit.label, "camera-not-restored"))
 
 

@@ -230,8 +230,8 @@ def test_t_req_12_and_74_each_open_sets_the_held_value_then_searches(monkeypatch
         camera_id = app.factory.camera_ids[0]
         app.detect()
 
-        def step(config, count, rate):
-            response = app.apply([config])
+        def step(config, count, rate, retry=()):
+            response = app.apply([config], retry=retry)
             assert response.status_code == 200, response.text
             app.wait_state(camera_id, "ready")
             held = group_state(app)["configs"][camera_id]
@@ -244,7 +244,7 @@ def test_t_req_12_and_74_each_open_sets_the_held_value_then_searches(monkeypatch
         step(auto(app, camera_id, framerate=60.0, exposure=-5), 3, 60.0)
         failed = app.apply([auto(app, camera_id, exposure=-5)])
         assert failed.status_code == 200 and camera_id in failed.json()["camera_failures"], failed.text
-        step(auto(app, camera_id, exposure=-9, exposure_found_at_fps=60.0), 4, 30.0)
+        step(auto(app, camera_id, exposure=-9, exposure_found_at_fps=60.0), 4, 30.0, retry=[camera_id])  # [Z7F3]
         assert app.apply([auto(app, camera_id, use_this_camera=False)]).status_code == 200
         step(auto(app, camera_id, exposure=-9), 5, 30.0)
         assert open_sets(app, camera_id) == [(False, -9)] * 5  # open 4 failed before its set

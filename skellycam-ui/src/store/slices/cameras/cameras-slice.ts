@@ -193,7 +193,7 @@ export const cameraSlice = createSlice({
                     if (!config) return;
                     camera.actualConfig = config;
                     // a camera not in the request, and each camera of a pick, keeps its unsaved edits (camera-requests.md 2.8)
-                    if (replacesDesired(kind, sent)) camera.desiredConfig = { ...config };
+                    if (replacesDesired(kind, sent, Boolean(failures?.[camera.id]))) camera.desiredConfig = { ...config };
                     camera.hasConfigMismatch = !areConfigsEqual(camera.actualConfig, camera.desiredConfig);
                 });
                 persistAllCameraSettings(state);

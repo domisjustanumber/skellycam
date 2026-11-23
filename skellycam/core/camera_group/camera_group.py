@@ -18,6 +18,7 @@ from pydantic import BaseModel, ConfigDict, TypeAdapter
 from skellycam import __version__
 from skellycam.core.camera.camera_manager import CameraManager
 from skellycam.core.camera.camera_worker import CameraState
+from skellycam.core.camera.capture.failure_codes import WEDGE_CODES
 from skellycam.core.camera.capture.source import COUNTER_KEYS
 from skellycam.core.camera.capture.camera_loop import needs_reopen
 from skellycam.core.camera.config.camera_config import CameraConfigs, CameraConfig, validate_camera_configs
@@ -231,15 +232,17 @@ class CameraGroup:
         await self._await_settled(list(self.configs))
         return self._failures(list(self.configs))
 
-    async def apply(self, requested: CameraConfigs) -> tuple[dict, list]:
+    async def apply(self, requested: CameraConfigs, retry=()) -> tuple[dict, list]:
         """Apply a checked request to each camera on its own (8.3, U10). Return the failures and the warnings.
 
+        A `failed` or `dead` camera, or one whose process ended, starts again only when `retry` (the request's
+        `retry_camera_ids`) names it; else the request leaves it as it is (8.3) [Z7F3].
         A camera that was unselected and is selected again starts again (8.3). Each other selected camera of
         the request that is not in the group is left out, as before phase 3: the other camera processes have
         no status for it, so it cannot join their gate. The warnings then have one `cameras_left_out` item.
         """
         statuses = self.cameras.orchestrator.camera_statuses
-        restart, changed, removed, left_out = [], {}, [], []
+        restart, changed, removed, left_out, left = [], {}, [], [], []
         for camera_id, config in requested.items():
             if camera_id not in self.configs:
                 if config.use_this_camera and camera_id in self.cameras.removed_statuses:
@@ -253,7 +256,11 @@ class CameraGroup:
                 removed.append(camera_id)
             elif (statuses[camera_id].state in ("failed", "dead") or worker is None
                   or worker.worker.exitcode is not None):
-                restart.append(camera_id)
+                if camera_id in retry:  # a live settings change never restarts a camera [Z7F3]
+                    restart.append(camera_id)
+                else:  # left alone; it keeps one rate with the group (the next retry sends its config)
+                    left.append(camera_id)
+                    self.configs[camera_id] = self.configs[camera_id].model_copy(update=dict(framerate=config.framerate))
             elif not same_config(config, self.configs[camera_id]):
                 changed[camera_id] = config
             else:  # no effect on the camera; the number and the name of the request are kept (camera-requests.md 1.5)
@@ -286,8 +293,13 @@ class CameraGroup:
                     f"group: close the cameras and open them again")
             warnings.append(dict(kind="cameras_left_out", camera_ids=left_out, text=text))
             logger.warning(text)
+        if left:  # 8.3 [Z7F3]: the answer names each failed camera that the request did not open again
+            text = (f"{'Camera' if len(left) == 1 else 'Cameras'} {', '.join(left)} failed and did not open again: "
+                    f"name {'it' if len(left) == 1 else 'them'} in retry_camera_ids to open {'it' if len(left) == 1 else 'them'} again")
+            warnings.append(dict(kind="camera_not_retried", camera_ids=left, text=text))
+            logger.warning(text)
         logger.info(f"Applied camera configs - {list(requested.keys())}")
-        return self._failures(reopened), warnings
+        return self._failures(reopened + left), warnings
 
     async def update_camera_settings(self, requested_configs: CameraConfigs) -> CameraConfigs:
         await self.apply(requested_configs)
@@ -958,7 +970,10 @@ class CameraGroup:
                 items.append(dict(kind="rate_fallback", camera_ids=[camera_id], text=text))
                 logger.warning(text)
                 self.add_group_warning(items[-1])
-            failures, warnings = await self.apply(configs)
+            statuses = self.cameras.orchestrator.camera_statuses  # [Z7F3]: never a camera with a wedge code now
+            retry = [camera_id for camera_id in slow if camera_id in statuses
+                     and (statuses[camera_id].info_dict().get("failure") or {}).get("code") not in WEDGE_CODES]
+            failures, warnings = await self.apply(configs, retry=retry)  # 2.4a item 3: only the cameras that failed
             return failures, items + warnings
         finally:
             self.request_runs = runs

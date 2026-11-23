@@ -217,7 +217,8 @@ class ControlRestore:
         self._keeper = RESTORE_RECORDS.get(camera_id)
         self._set: dict[str, list] = {}  # name -> [auto, value] that this app set last (4.7) [NYT6]
 
-    def read(self, state: ControlState) -> None:
+    def read(self, state: ControlState, steps: dict | None = None) -> None:
+        """`steps`: name -> the step of the control's range at this open (None or not above 0: not known)."""
         if self.before is not None:
             return
         self.before = dict(state)
@@ -225,11 +226,14 @@ class ControlRestore:
         if not record:
             return
         # An earlier open got no restore (4.7) [NYT6]: a control that still holds the value that this app set last
-        # takes its "before" value from the record; the record drops each other control.
+        # (with auto off, within one step [Z7F3]: a camera can round at a new open) takes its "before" value from the
+        # record; the record drops each other control.
         for name in record.get("names", ()):
             got, last, before = state.get(name), record.get("set", {}).get(name), record.get("before", {}).get(name)
+            step = max((steps or {}).get(name) or 0, 0)
             if got is not None and last is not None and before is not None and got.auto == last[0] and (
-                    got.auto or got.value == last[1]):
+                    got.auto or got.value == last[1]
+                    or got.value is not None and last[1] is not None and abs(got.value - last[1]) <= step):
                 self.before[name] = ControlValue(*before)
                 self.names.add(name)
                 self._set[name] = last

@@ -315,11 +315,13 @@ class CaptureApp:
         values.update(changes)
         return CameraConfig(**values)
 
-    def apply(self, configs):
-        """POST /camera/group/apply. `configs`: CameraConfig objects or a dict by camera_id."""
+    def apply(self, configs, retry=()):
+        """POST /camera/group/apply. `configs`: CameraConfig objects or a dict by camera_id. `retry`: the IDs of
+        `retry_camera_ids`, the failed or dead cameras that the request opens again (windows-capture.md 8.3)."""
         if not isinstance(configs, dict):
             configs = {config.camera_id: config for config in configs}
-        body = {"camera_configs": {cid: config.model_dump(mode="json") for cid, config in configs.items()}}
+        body = {"camera_configs": {cid: config.model_dump(mode="json") for cid, config in configs.items()},
+                "retry_camera_ids": list(retry)}
         return self.client.post("/skellycam/camera/group/apply", json=body)
 
     def apply_all(self, **changes):

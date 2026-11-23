@@ -50,9 +50,10 @@ def _per_frame(csv_paths):
         # A pair whose time does not increase (two equal arrival times) has no rate.
         pairs = [(t[k - 1], t[k]) for t in times
                  if 0 < k < len(t) and t[k - 1] is not None and t[k] is not None and t[k] > t[k - 1]]
-        if pairs:
-            rates.append(statistics.fmean([1e9 / (b - a) for a, b in pairs]))
-            durations.append(statistics.fmean([(b - a) / 1e6 for a, b in pairs]))
+        if pairs:  # 8.2 [Z7F3]: a median over the cameras, so a burst of one camera does not make the rate
+            middle = statistics.median([b - a for a, b in pairs])
+            rates.append(1e9 / middle)
+            durations.append(middle / 1e6)
     return duration_s(rows_per_camera), rates, durations, ranges, _mean_rate(times)
 
 

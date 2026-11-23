@@ -125,7 +125,9 @@ def test_t_cap_19_a_camera_in_use_fails_alone(monkeypatch, tmp_path):
 
 
 def test_t_cap_20_apply_again_reopens_only_the_failed_camera(monkeypatch):
-    """T-CAP-20, sections 8.2 and 8.3 [D23, D25]: after T-CAP-19: (1) apply the same configs again;
+    """T-CAP-20, sections 8.2 and 8.3 [D23, D25, Z7F3]: after T-CAP-19: (0) apply the same configs, then a changed
+    exposure of a good camera, with no retry list: the failed camera stays `failed` and is not opened again;
+    (1) apply the same configs again with the failed camera in `retry_camera_ids`;
     (2) fail the camera again and apply it with a changed exposure; (3) apply a request that gives all
     three cameras the rate 60. (1) and (2): only the failed camera opens again, in (2) with the new
     exposure; the ring names and the process IDs of the others do not change. (3): each camera reopens
@@ -146,12 +148,20 @@ def test_t_cap_20_apply_again_reopens_only_the_failed_camera(monkeypatch):
                 assert app.ring_name(camera_id) == ring
                 assert app.worker(camera_id) is worker and worker.worker.pid == pid
 
-        assert app.apply([app.config(cid) for cid in app.factory.camera_ids]).status_code == 200  # (1)
+        # (0) [Z7F3]: a live settings change never restarts a camera: with no retry list the failed camera stays
+        assert app.apply([app.config(cid) for cid in app.factory.camera_ids]).status_code == 200
+        response = app.apply([app.config(good[0], exposure=-8), app.config(good[1]), app.config(failed)])
+        assert response.status_code == 200, response.text
+        app.wait(lambda: app.status(good[0])["controls"]["exposure"]["value"] == -8, "the live change")
+        app.wait_clock(5.0)
+        assert app.state(failed) == "failed" and opens(app, failed) == 1
+        others_unchanged()
+        assert app.apply([app.config(cid) for cid in app.factory.camera_ids], retry=[failed]).status_code == 200  # (1)
         app.wait(lambda: opens(app, failed) == 2, "the failed camera opens again")
         app.wait_state(failed, "failed")
         others_unchanged()
         configs = [app.config(cid) for cid in good] + [app.config(failed, exposure=-6)]
-        assert app.apply(configs).status_code == 200  # (2)
+        assert app.apply(configs, retry=[failed]).status_code == 200  # (2)
         app.wait_state(failed, "ready")
         assert opens(app, failed) == 3
         settings = [s["exposure"] for s in app.factory.logs[failed].settings if "exposure" in s]
@@ -162,6 +172,27 @@ def test_t_cap_20_apply_again_reopens_only_the_failed_camera(monkeypatch):
             app.wait(lambda: app.state(camera_id) == "ready" and app.status(camera_id)["mode"]["fps_num"] == 60,
                      f"camera {camera_id} at 60")
         assert [opens(app, cid) for cid in app.factory.camera_ids] == [2, 2, 4]
+
+
+def test_a_plain_apply_reports_a_failed_camera_that_it_leaves_alone(monkeypatch):
+    """windows-capture.md 8.3 [Z7F3] (review finding 1, 10): an apply that names a failed camera but not in
+    `retry_camera_ids` leaves it alone and says so: its failure is in `camera_failures`, and one warning
+    `camera_not_retried` names `retry_camera_ids`. A later rate pick gives its stored config the new rate, with no
+    open, so the group keeps one rate."""
+    scripts = [FakeScript(modes=MODES_30_60), FakeScript(modes=MODES_30_60), FakeScript(modes=MODES_30_60, fail_opens=(1,))]
+    with capture_app(monkeypatch, scripts) as app:
+        _, good, failed = start_with_one_in_use(app)
+        response = app.apply([app.config(cid) for cid in good] + [app.config(failed, exposure=-9)])
+        assert response.status_code == 200, response.text
+        body = response.json()
+        assert body["camera_failures"][failed]["reason"] == "in use by another program", body
+        items = [w for w in body["warnings"] if w["kind"] == "camera_not_retried"]
+        assert [w["camera_ids"] for w in items] == [[failed]] and "retry_camera_ids" in items[0]["text"], body["warnings"]
+        response = app.apply([app.config(cid, framerate=60.0) for cid in app.factory.camera_ids])
+        assert response.status_code == 200, response.text
+        assert app.group.configs[failed].framerate == 60.0
+        app.wait_clock(3.0)
+        assert app.state(failed) == "failed" and opens(app, failed) == 1
 
 
 def test_t_cap_21_unselect_the_failed_camera(monkeypatch, tmp_path):
@@ -467,7 +498,7 @@ def test_t_cap_81_dead_without_recording_is_treated_as_failed(monkeypatch, tmp_p
         app.wait_state(dying, "dead")
         refused = app.record_start(tmp_path)
         assert refused.status_code == 409 and dying in detail(refused)
-        assert app.apply([app.config(cid) for cid in app.factory.camera_ids]).status_code == 200
+        assert app.apply([app.config(cid) for cid in app.factory.camera_ids], retry=[dying]).status_code == 200
         app.wait_state(dying, "ready")
         assert (opens(app, alive), opens(app, dying)) == (1, 2)
 
@@ -846,7 +877,7 @@ def test_a_camera_selected_again_shares_the_gate_with_a_restarted_camera(monkeyp
         assert response.status_code == 200, response.text
         app.worker(b).worker.kill()
         app.wait_state(b, "dead")
-        response = app.apply([app.config(b)])
+        response = app.apply([app.config(b)], retry=[b])
         assert response.status_code == 200, response.text
         app.wait_state(b, "ready")
         response = app.apply([app.config(a), app.config(b)])

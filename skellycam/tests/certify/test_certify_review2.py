@@ -22,8 +22,8 @@ def last_camera_check(label, base=(640, 480, 30.0)):
 
 @pytest.mark.capture_timing
 def test_review2_n1_the_live_change_never_reopens_a_wedged_camera(monkeypatch, tmp_path):
-    """2.3: a camera whose process ended after `ready` is wedged; the live change of 4.3 does not apply to it (the
-    product apply restarts a failed or dead camera), so it is opened one time only."""
+    """2.3: a camera whose process ended after `ready` is wedged; the live change of 4.3 does not apply to it, so it
+    is opened one time only."""
     with capture_app(monkeypatch, [good(exit_at="frame:110"), good()], workers="process") as app:
         ended, fine = labels(app.factory.device_infos())
         report = run_with(app, tmp_path)
@@ -34,6 +34,31 @@ def test_review2_n1_the_live_change_never_reopens_a_wedged_camera(monkeypatch, t
     assert checks[f"{ended}:settings-stick:readback"]["reason"] == "prior-failure"
     assert {"code": "camera-wedged", "values": {"camera": "Fake camera 0"}} in report["notices"]
     assert checks[f"{fine}:settings-stick:readback"]["result"] == "pass"
+
+
+def test_the_live_change_does_not_reopen_a_camera_that_died_after_the_scan(monkeypatch, tmp_path):
+    """4.3, windows-capture.md 8.3 [Z7F3]: a camera is `ready` at the scan of the live change and dies before its apply
+    (the race of N1, made certain: the apply waits until the camera is `dead`). The apply names no retry list, so the
+    product does not open the dead camera again: it is opened one time only."""
+    import asyncio
+
+    with capture_app(monkeypatch, [good(), good()]) as app:
+        dying = app.factory.camera_ids[0]
+        apply = app.manager.create_or_update_camera_group
+
+        async def dies_first(configs, *args, **kwargs):
+            if any(config.exposure == -8 for config in configs.values()):  # the live change of 4.3
+                app.factory.sources[dying].stop_now()
+                deadline = time.monotonic() + 30
+                while app.state(dying) != "dead":
+                    assert time.monotonic() < deadline, "the camera did not die"
+                    await asyncio.sleep(0.01)
+            return await apply(configs, *args, **kwargs)
+        monkeypatch.setattr(app.manager, "create_or_update_camera_group", dies_first)
+        report = run_with(app, tmp_path)
+        opens = app.factory.logs[dying].opens.value
+    assert_valid(report)
+    assert opens == 1
 
 
 def test_review2_n2_a_camera_with_a_running_step_at_a_cancel_is_not_reopened(tmp_path):
