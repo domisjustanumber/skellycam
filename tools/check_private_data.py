@@ -28,7 +28,10 @@ address of the project. Each item of ``allowed_lines`` allows the findings of on
 ``path``, ``line`` (the line number), ``sha256`` (the SHA-256 of the exact text of that line, with no
 line end) and ``reason``. A finding passes only when all three match, so an edited or moved line is
 checked again. The value itself is never copied into ``kit.toml`` (decision 0001). A term of
-``.private-terms`` is reported also on an allowed line. Standard library only.
+``.private-terms`` is reported also on an allowed line. ``allowed_term_urls`` lists reviewed public
+addresses: the term check takes the exact text of each one out of a line before it looks for a
+term, so a term in such an address is not reported. The other checks still read the line. Standard
+library only.
 """
 
 from __future__ import annotations
@@ -44,7 +47,11 @@ from pathlib import Path
 from kit_config import kit_values
 
 
-KIT = kit_values(Path(__file__).resolve().parents[1], "check_private_data", {"allowed_emails": "list[str]", "allowed_lines": "list[table]"})
+KIT = kit_values(
+    Path(__file__).resolve().parents[1],
+    "check_private_data",
+    {"allowed_emails": "list[str]", "allowed_lines": "list[table]", "allowed_term_urls": "list[str]"},
+)
 
 PRIVATE_TERMS = ".private-terms"
 # Generated lock files hold four-part package versions that look like private IP addresses, and
@@ -63,6 +70,9 @@ ALLOWED_EMAILS = {"noreply@anthropic.com", *(a.lower() for a in KIT.get("allowed
 ALLOWED_LINES: dict[tuple[str, int], tuple[str, str]] = {
     (row["path"], row["line"]): (row["sha256"], row["reason"]) for row in KIT.get("allowed_lines", [])
 }
+
+# Reviewed public addresses that the term check takes out of a line, from kit.toml.
+ALLOWED_TERM_URLS: tuple[str, ...] = tuple(KIT.get("allowed_term_urls", []))
 
 # A user folder that starts with <, {, % or $, or that is the word "user", is a placeholder.
 PLACEHOLDER = r"(?![<{%$]|user(?![\w.-]))"
@@ -148,7 +158,11 @@ def scan_text(rel: str, text: str, terms: list[str]) -> list[Finding]:
                 if kind == "email address" and is_allowed_email(match.group(0)):
                     continue
                 findings.append(Finding(rel, number, kind, match.group(0)))
-        lowered = line.lower()
+        # A space, not "", so that the text on the two sides of an address does not join.
+        lowered = line
+        for url in ALLOWED_TERM_URLS:
+            lowered = lowered.replace(url, " ")
+        lowered = lowered.lower()
         findings.extend(
             Finding(rel, number, "private term", "<from .private-terms>")
             for _, term in lowered_terms

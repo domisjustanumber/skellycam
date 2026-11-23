@@ -14,6 +14,7 @@ NORMATIVE_DOCS = "the specs in `specs/`"  # The binding documents (decision 2S1P
 SIBLING_PATH = "../skellyfileformat/spec/"  # A path relative to the repository, as an example in AGENTS.md.
 SECRET_SCAN_BRANCHES = "[main, development, development-streaming]"  # The branches of a PR that the secret scan checks.
 PYTHON_VERSION = "3.13.18"  # The Python of the doc checks in CI. The same as pyproject.toml.
+RULES_ENTRY_LINK = "[ADR-0001](decisions/entries/0001-decision-log-agents-md-and-private-data.md)"  # The entry that holds the rules of the decision log, as a Markdown link.
 # For the other-systems rule, before it goes into the kit (decision 3SRX): the block AGENTS.md#other-systems
 # and the skill verify-on-other-systems. No kit unit uses them yet.
 SELF_TEST = "skellycam.certify"  # The self-test of the project, as AGENTS.md and the skills name it.
@@ -60,8 +61,8 @@ certify_contract = "report-format.md of the skellycertify repository"  # In the 
 
 # The table [kit] is written by tools/kit_sync.py pull and propose. Do not edit it.
 [kit]
-commit = "10efc2bf3a75410a1838917fa62fb0e5b6c4de19"
-values = "2f366f304a77ccee44227cb198a6109555fc2358c5fa33a1b1a97ef8a287b37e"
+commit = "594de025fee3181e1b2b7e32692f8dd9ad154968"
+values = "8e1f6dffd5d44355f707ca267aeb32cafa06fdbde8b3bdb1cdcb64b47e3d0dcb"
 
 [kit.hashes]
 ".claude/skills/change-decision-log/SKILL.md#log-change-rules" = "c2c32a00f36558b25f9e028a718479b05f10d592de68b261e6da9291fffaa669"
@@ -95,7 +96,7 @@ values = "2f366f304a77ccee44227cb198a6109555fc2358c5fa33a1b1a97ef8a287b37e"
 "tools/check_line_ends.py" = "c8ddfb6cf72133c6f3d6691ff919a0ae4504b6891c308b17e32d6b16a1edddd2"
 "tools/check_links.py" = "cb32fa8513010058711ecee52ac5b0ddd1688878393cddda31eeb44223b53969"
 "tools/check_other_systems.py" = "74ca8ee7ff8598d9483594e67e0b256fcce3f31c44e2681c9af5a836cc10a7cc"
-"tools/check_private_data.py" = "4641abb6ad923deaa54097dfb1365e099c511a5d05118c5ed6dfad70fb27d2f6"
+"tools/check_private_data.py" = "efb2f18b02f6cca2df80ab304e531c9d9dd6760536dbfe0962fbb21baa5a43a5"
 "tools/kit_config.py" = "d030e5614f1ae4209438b7ca8581defa952b7fc9b018638c5e065228455746c7"
 "tools/kit_sync.py" = "f0c3e9a396d6b569f0c08ae598bb32fc060659ee70b4cd002182b574540e7ebc"
 "tools/tests/conftest.py" = "c75d4f61e97a6b96e3ce9b67641621459e51ff29ddaf0095282ce0d77d2d11ee"
@@ -105,5 +106,5 @@ values = "2f366f304a77ccee44227cb198a6109555fc2358c5fa33a1b1a97ef8a287b37e"
 "tools/tests/test_kit_sync.py" = "be8657f108adddc118d5e733120d9998a07f3a733bf4de803d24e1e2f9946e9c"
 "tools/tests/test_line_ends.py" = "da6929899ad275bfb756c37afa39e5c0e8ce7fd82af4ff493bff1ecd6373dbce"
 "tools/tests/test_links.py" = "c8f5871b741e8181aac8e41413453f46a52043093d46bd1c4dfde2bad5635913"
-"tools/tests/test_other_systems.py" = "56c879f109d5a5056d5bd7e12c7216ad3b675e4f6e458947ed31fd5e991a069f"
-"tools/tests/test_private_data.py" = "a08b6a8a2f0d8c459938dabc7b7944016577f8e6d99ae0fa4acfaee68cab1f30"
+"tools/tests/test_other_systems.py" = "3e308cf5c50dfbe58dc921c19823bbae13b7ae98ccf8bdc3d192e4924503754d"
+"tools/tests/test_private_data.py" = "af2398df3c637943ba957c07f09ab5c98b322d1f87743b5dd03e9b3bff9f5af7"

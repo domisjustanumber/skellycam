@@ -93,6 +93,15 @@ def test_private_terms_are_reported_without_the_term(tmp_path: Path) -> None:
     assert [str(f) for f in findings] == ["doc.md:1: private term: <from .private-terms>"]
 
 
+def test_an_allowed_term_url_hides_only_its_own_text_from_the_term_check(monkeypatch) -> None:
+    url = "https://models.example.org/" + "myhost" + "-models/"
+    monkeypatch.setattr(cpd, "ALLOWED_TERM_URLS", (url,))
+    assert cpd.scan_text("catalog.yaml", "url: " + url + "a.onnx\n", ["myhost"]) == []
+    assert [f.kind for f in cpd.scan_text("catalog.yaml", "url: " + url + " on myhost\n", ["myhost"])] == ["private term"]
+    # The two sides of the address do not join into a term.
+    assert cpd.scan_text("catalog.yaml", "my" + url + "host\n", ["myhost"]) == []
+
+
 def test_private_terms_file_is_read_without_comments(tmp_path: Path) -> None:
     (tmp_path / cpd.PRIVATE_TERMS).write_text("# hosts\nmyhost\n\n  other  \n", encoding="utf-8")
     assert cpd.private_terms(tmp_path) == ["myhost", "other"]
