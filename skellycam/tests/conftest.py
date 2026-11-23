@@ -16,6 +16,25 @@ import skellycam
 from skellycam.api.http.app.health import health_router
 from skellycam.api.http.app.shutdown import shutdown_router
 from skellycam.api.routers import SKELLYCAM_ROUTERS
+from skellycam.tests import skip_guard
+
+# ---------------------------------------------------------------------------
+# The skip guard of the workflows (unix-capture.md 4.11): a skip under a path of SKELLYCAM_NO_SKIP fails the run
+# ---------------------------------------------------------------------------
+
+_GUARDED_SKIPS: list[str] = []
+
+
+def pytest_runtest_logreport(report):
+    if skip_guard.is_guarded_skip(report, skip_guard.guarded_paths()):
+        _GUARDED_SKIPS.append(report.nodeid)
+
+
+def pytest_sessionfinish(session, exitstatus):
+    if _GUARDED_SKIPS:
+        print(f"\n{skip_guard.NO_SKIP_SETTING}: {len(_GUARDED_SKIPS)} test(s) skipped under a guarded path: "
+              f"{', '.join(_GUARDED_SKIPS[:10])}")
+        session.exitstatus = pytest.ExitCode.TESTS_FAILED
 
 
 # ---------------------------------------------------------------------------
