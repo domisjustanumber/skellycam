@@ -1,6 +1,12 @@
 # PDD3 — Decisions of the user on items 65 to 78 and on the review of the 3a code
 
-**Status:** accepted, 2026-11-20 (user, 2026-11-19 and 2026-11-20, relayed by the supervisor; commit to dom/native-jpeg).
+**Status:** absorbed into
+[`specs/windows-capture.md#20-decisions-of-the-user-d1-to-d49`](../../specs/windows-capture.md#20-decisions-of-the-user-d1-to-d49),
+[`specs/windows-capture.md#18-choices-of-the-agent`](../../specs/windows-capture.md#18-choices-of-the-agent),
+[`specs/windows-capture.md#162-test-list`](../../specs/windows-capture.md#162-test-list),
+[`specs/frame-ring.md#12-test-list`](../../specs/frame-ring.md#12-test-list),
+2026-11-23 (commit to dom/absorb-2; was accepted, 2026-11-20 (user, 2026-11-19 and 2026-11-20, relayed by the
+supervisor; commit to dom/native-jpeg)).
 
 ## Decision
 

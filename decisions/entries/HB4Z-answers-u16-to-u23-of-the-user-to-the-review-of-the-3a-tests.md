@@ -1,6 +1,13 @@
 # HB4Z — Answers U16 to U23 of the user to the review of the 3a tests
 
-**Status:** accepted, 2026-11-19 (user; commit to dom/native-jpeg).
+**Status:** absorbed into
+[`specs/windows-capture.md#20-decisions-of-the-user-d1-to-d49`](../../specs/windows-capture.md#20-decisions-of-the-user-d1-to-d49),
+[`specs/windows-capture.md#15-ci-d47`](../../specs/windows-capture.md#15-ci-d47),
+[`specs/windows-capture.md#161-kinds`](../../specs/windows-capture.md#161-kinds),
+[`specs/windows-capture.md#162-test-list`](../../specs/windows-capture.md#162-test-list),
+[`specs/windows-capture.md#167-parity-of-the-systems-u22`](../../specs/windows-capture.md#167-parity-of-the-systems-u22),
+[`specs/windows-capture.md#18-choices-of-the-agent`](../../specs/windows-capture.md#18-choices-of-the-agent),
+2026-11-23 (commit to dom/absorb-2; was accepted, 2026-11-19 (user; commit to dom/native-jpeg)).
 
 ## Decision
 
