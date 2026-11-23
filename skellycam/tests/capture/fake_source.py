@@ -461,7 +461,9 @@ class FakeSource:
                 faults = self.script.live_set_faults
                 fault = faults[self._live_changes - 1] if self._live_changes <= len(faults) else None
             if self._restore is not None:
-                self._restore.read(self._read_back(), {"exposure": (self.exposure_range() or (0, 0, None))[2]})
+                exposure = self.exposure_range()
+                self._restore.read(self._read_back(), {"exposure": (exposure or (0, 0, None))[2]},
+                                   {"exposure": exposure[:2]} if exposure else None)
                 self._restore.changed(changes)
             if fault == "error":
                 raise types.CaptureFailure("set controls", "the camera refused the value")

@@ -72,10 +72,12 @@ class CameraGroupManager:
     async def _create_and_start(self, camera_configs: CameraConfigs) -> tuple:
         identities = {}
         if self.restore_store is not None:  # 4.7.1: a camera with no record in memory takes the entry of its file
-            identities = {camera_id: restore_files.identity(self.detected_cameras.get(camera_id))
+            salt = restore_files.salt_of(self.restore_store)  # the main process only: a camera process gets its key
+            identities = {camera_id: restore_files.identity(self.detected_cameras.get(camera_id), salt=salt)
                           for camera_id in camera_configs}
             missing = [camera_id for camera_id in camera_configs if not self.restore_records.get(camera_id)]
-            self.restore_records.update(restore_files.read_entries(self.restore_store, missing, self.detected_cameras))
+            self.restore_records.update(restore_files.read_entries(self.restore_store, missing, self.detected_cameras,
+                                                                   identities))
         camera_group = CameraGroup.create(
             camera_configs=camera_configs,
             heartbeat_timestamp=self.worker_registry.heartbeat_timestamp,

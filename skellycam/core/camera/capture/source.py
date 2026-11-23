@@ -217,27 +217,40 @@ class ControlRestore:
         self._keeper = RESTORE_RECORDS.get(camera_id)
         self._set: dict[str, list] = {}  # name -> [auto, value] that this app set last (4.7) [NYT6]
 
-    def read(self, state: ControlState, steps: dict | None = None) -> None:
-        """`steps`: name -> the step of the control's range at this open (None or not above 0: not known)."""
+    def read(self, state: ControlState, steps: dict | None = None, ranges: dict | None = None) -> None:
+        """`steps`: name -> the step of the control's range at this open (None or not above 0: not known). `ranges`:
+        name -> (min, max) of the control at this open, when the source knows it (4.7.1)."""
         if self.before is not None:
             return
         self.before = dict(state)
         record = self._keeper.restore_record() if self._keeper is not None else None
         if not record:
             return
+        try:
+            self._take_record(record, state, steps or {}, ranges or {})
+        except (TypeError, ValueError, AttributeError, IndexError) as error:  # 4.7.1: a bad record never fails an open
+            logger.warning(f"Camera {self.camera_id}: the restore record could not be used ({type(error).__name__}); "
+                           f"it is dropped")
+            self.before, self.names, self._set = dict(state), set(), {}
+        self._save()
+
+    def _take_record(self, record: dict, state: ControlState, steps: dict, ranges: dict) -> None:
         # An earlier open got no restore (4.7) [NYT6]: a control that still holds the value that this app set last
         # (with auto off, within one step [Z7F3]: a camera can round at a new open) takes its "before" value from the
-        # record; the record drops each other control.
+        # record; the record drops each other control, and a "before" value outside the range of the camera (4.7.1).
         for name in record.get("names", ()):
             got, last, before = state.get(name), record.get("set", {}).get(name), record.get("before", {}).get(name)
-            step = max((steps or {}).get(name) or 0, 0)
+            step = max(steps.get(name) or 0, 0)
+            low_high = ranges.get(name)
+            if (before is not None and not before[1] and before[2] is not None and low_high is not None
+                    and not low_high[0] <= before[2] <= low_high[1]):
+                continue
             if got is not None and last is not None and before is not None and got.auto == last[0] and (
                     got.auto or got.value == last[1]
                     or got.value is not None and last[1] is not None and abs(got.value - last[1]) <= step):
                 self.before[name] = ControlValue(*before)
                 self.names.add(name)
                 self._set[name] = last
-        self._save()
 
     def changed(self, changes: dict) -> None:
         """Before the set (4.7): the record holds the names and the values that this app asks for."""

@@ -53,20 +53,15 @@ class CameraDeviceInfo(BaseModel):
     evidence: str = "unknown"  # "verified", "known-bad", "unknown" (certify.md 11.2)
     checked: bool = False  # a row of the record of checked models for the model on this OS key (certify.md 2.5)
 
-    def identity_input(self) -> str | None:
-        """The input of the `camera_id` hash (7.2); None when the ID is the index alone."""
-        if self.path:
-            # 7.2: the lower-case Media Foundation link; the path itself stays as the OS gives it (ADR-PDD3 W6)
-            return self.path.lower() if self.path.startswith(r"\\?" + "\\") else self.path
-        if self.vendor_id is not None and self.product_id is not None:
-            return f"{self.vendor_id:04x}_{self.product_id:04x}_{self.index}"
-        return None
-
     @computed_field
     @property
     def camera_id(self) -> CameraIdString:
-        raw = self.identity_input()
-        if raw is None:
+        if self.path:
+            # 7.2: the lower-case Media Foundation link; the path itself stays as the OS gives it (ADR-PDD3 W6)
+            raw = self.path.lower() if self.path.startswith(r"\\?" + "\\") else self.path
+        elif self.vendor_id is not None and self.product_id is not None:
+            raw = f"{self.vendor_id:04x}_{self.product_id:04x}_{self.index}"
+        else:
             return format(self.index, '04x')
         digest = hashlib.sha256(raw.encode()).digest()
         return format(int.from_bytes(digest[:2], 'big'), '04x')
