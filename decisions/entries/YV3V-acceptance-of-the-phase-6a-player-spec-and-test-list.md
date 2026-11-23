@@ -1,6 +1,10 @@
 # YV3V — Acceptance of the phase 6a player spec and its test list
 
-**Status:** accepted, 2026-11-20 (user; relayed by the supervisor; commit to dom/player).
+**Status:** absorbed into
+[`specs/player.md#phase-6-player-specification-step-6a-the-canvas-player-for-new-takes-video-only`](../../specs/player.md#phase-6-player-specification-step-6a-the-canvas-player-for-new-takes-video-only),
+[`specs/player.md#123-test-list`](../../specs/player.md#123-test-list),
+2026-11-23 (commit to dom/absorb-2; was accepted, 2026-11-20 (user; relayed by the supervisor; commit to
+dom/player)).
 
 ## Decision
 

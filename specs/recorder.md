@@ -988,6 +988,9 @@ Added on 2026-11-20 (L of [ADR-JMS0](../decisions/entries/JMS0-review-decisions.
   manifest is then `finished`. The shutdown endpoint answers at once; the close runs after the
   answer. A camera process ignores Ctrl-C: the main process drives the exit. A stop or an exit gives
   up on a stuck writer after 15 s with no progress ([ADR-82AA](../decisions/entries/82AA-stop-last-frame-survivor-files-and-stuck-writer-limit.md) item 3).
+  The exit of `skellycam/__main__.py` has no fixed wait before `WorkerRegistry.shutdown_all()`:
+  `uvicorn.Server.serve()` returns only after its shutdown, and `shutdown_all()` sets the kill flag
+  and waits for each worker itself [ADR-NYT6](../decisions/entries/NYT6-choices-of-fix-lane-2.md).
 - The main process writes a heartbeat once a second from a thread of its own. A camera process that
   sees no heartbeat for 10 s (`HEARTBEAT_TIMEOUT_SECONDS`) takes the main process as dead: the camera
   processes notice a dead server after 10 seconds, not 300. They then finish their files and release

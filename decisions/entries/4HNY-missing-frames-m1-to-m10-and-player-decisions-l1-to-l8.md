@@ -1,6 +1,12 @@
 # 4HNY — Missing frames M1 to M10 and player decisions L1 to L8
 
-**Status:** accepted, 2026-11-19 (user; relayed by the supervisor after the first drafts of the recorder and player specs and their reviews; answers U1, U2 and U3 on 2026-11-20; commit to dom/player).
+**Status:** absorbed into
+[`specs/player.md#182-missing-frames-m1-to-m10-2026-11-19`](../../specs/player.md#182-missing-frames-m1-to-m10-2026-11-19),
+[`specs/player.md#183-player-decisions-l1-to-l8-2026-11-19`](../../specs/player.md#183-player-decisions-l1-to-l8-2026-11-19),
+[`specs/player.md#184-answers-u1-and-u2-2026-11-20`](../../specs/player.md#184-answers-u1-and-u2-2026-11-20),
+2026-11-23 (commit to dom/absorb-2; was accepted, 2026-11-19 (user; relayed by the supervisor after the first
+drafts of the recorder and player specs and their reviews; answers U1, U2 and U3 on 2026-11-20; commit to
+dom/player)).
 
 ## Decision
 

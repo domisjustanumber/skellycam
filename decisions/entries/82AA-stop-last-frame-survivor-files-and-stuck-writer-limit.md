@@ -1,7 +1,12 @@
 # 82AA — The last frame of a take with no stop pause, the files of a surviving process, the stuck-writer limit
 
-**Status:** accepted, 2026-11-20 (user, review sheets Q465, Q466 and Q472; the correction of item 1 by
-the fourth review).
+**Status:** absorbed into
+[`specs/recorder.md#43-camera-level-camera-process`](../../specs/recorder.md#43-camera-level-camera-process),
+[`specs/recorder.md#53-the-stall-limit-and-a-disk-stall-c5-c6`](../../specs/recorder.md#53-the-stall-limit-and-a-disk-stall-c5-c6),
+[`specs/recorder.md#81-order-of-the-steps`](../../specs/recorder.md#81-order-of-the-steps),
+[`specs/recorder.md#9-when-the-app-is-killed-during-a-take-before-5c`](../../specs/recorder.md#9-when-the-app-is-killed-during-a-take-before-5c),
+2026-11-23 (commit to dom/absorb-2; was accepted, 2026-11-20 (user, review sheets Q465, Q466 and Q472; the
+correction of item 1 by the fourth review)).
 
 ## Decision
 

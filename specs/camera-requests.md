@@ -234,6 +234,8 @@ The frames and the time:
   On the lab cameras a search of 7 values took about 16 s, so a search with more than about three
   borderline values can pass 20 s and fail with `timed-out`. The limit stays 20 s. A camera run
   records how often a value is measured again (T-REQ-23, T-REQ-26)
+  [ADR-NYT6](../decisions/entries/NYT6-choices-of-fix-lane-2.md). If camera runs show searches
+  that pass 20 s for this reason, the user decides a new limit
   [ADR-NYT6](../decisions/entries/NYT6-choices-of-fix-lane-2.md).
 
 Who does what:

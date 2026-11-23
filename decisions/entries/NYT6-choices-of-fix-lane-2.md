@@ -1,7 +1,15 @@
 # NYT6 — Choices of fix lane 2
 
-**Status:** accepted, 2026-11-21 (user; commit to dom/accept-choices; was proposed, 2026-11-21 (agent; the
-supervisor gave the items, after real-camera runs)).
+**Status:** absorbed into
+[`specs/camera-requests.md#11-the-rule`](../../specs/camera-requests.md#11-the-rule),
+[`specs/camera-requests.md#13-the-search`](../../specs/camera-requests.md#13-the-search),
+[`specs/camera-requests.md#15-api`](../../specs/camera-requests.md#15-api),
+[`specs/camera-requests.md#18-ui`](../../specs/camera-requests.md#18-ui),
+[`specs/unix-capture.md#47-restore-of-the-controls-at-the-close-u`](../../specs/unix-capture.md#47-restore-of-the-controls-at-the-close-u),
+[`specs/unix-capture.md#410-main-process-stall-watch-u`](../../specs/unix-capture.md#410-main-process-stall-watch-u),
+[`specs/recorder.md#9-when-the-app-is-killed-during-a-take-before-5c`](../../specs/recorder.md#9-when-the-app-is-killed-during-a-take-before-5c),
+2026-11-23 (commit to dom/absorb-2; was accepted, 2026-11-21 (user; commit to dom/accept-choices; was proposed,
+2026-11-21 (agent; the supervisor gave the items, after real-camera runs))).
 
 ## Decision
 
