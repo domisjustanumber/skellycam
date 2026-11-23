@@ -49,8 +49,8 @@ the rules for a change to a log.
   `open-work.md` states that work in full. A link to the entry is not
   enough.
 - A normative document is binding text. Read each normative document that applies to your task.
-  Absorb an accepted entry into a normative document only after you check, entry by entry, that
-  the document states each rule of that entry.
+  Absorb an accepted entry into a heading of a normative document only after you check, entry by
+  entry, that the document states each rule of that entry.
 - Absorb at landing. The commit group that writes or lands an entry, or that writes the rules of an
   entry into the absorb documents, absorbs the entry in its last commit when the absorb documents
   state all of its rules. This applies in each log, in each skill and without a skill. If an absorb
@@ -89,7 +89,8 @@ the rules for a change to a log.
 - A commit that only makes a workflow, skill, template or tool copy agree with a landed entry
   cites that entry. It needs no entry of its own. A new rule is not a copy.
 - Put long evidence in a tracked file in `evidence/` of the log folder, and link to it. A PR that raises a limit
-  in the table `[check_decision_log]` of `kit.toml` must add an entry.
+  of `tools/check_decision_log.py`, in the tool or in `[check_decision_log]` of `kit.toml`, must add
+  an entry.
 - Do not shorten the index row of an entry that you did not write.
 - An ID changes only on a `re-ID:` line of `tools/check_decision_log.py`, to the ID of a new `--new`
   run.
@@ -103,4 +104,3 @@ the rules for a change to a log.
 In this repository, the rules "A normative document is binding text" and "Do not shorten the index
 row of an entry that you did not write" come from
 [ADR-N2NH](../../../decisions/entries/N2NH-index-limit-24000-no-shortened-rows-and-binding-specs.md).
-An absorb into a spec goes into a spec heading.

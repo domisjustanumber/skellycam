@@ -23,9 +23,10 @@ import re
 import shutil
 import subprocess
 import sys
-import tomllib
 from pathlib import Path
 from urllib.parse import unquote
+
+from kit_config import kit_values
 
 _FENCE = re.compile(r"^\s*(```|~~~)")
 _HEADING = re.compile(r"^(#{1,6})\s+(.*?)\s*#*\s*$")
@@ -160,20 +161,7 @@ def repo_files(root: Path) -> list[str]:
     return names
 
 
-def kit_values(section: str, keys: set[str]) -> dict:
-    """The table ``[section]`` of ``kit.toml`` in the repository root, or {} when there is no file."""
-    path = Path(__file__).resolve().parents[1] / "kit.toml"
-    if not path.is_file():
-        return {}
-    with path.open("rb") as file:
-        table = tomllib.load(file).get(section, {})
-    unknown = sorted(set(table) - keys)
-    if unknown:
-        raise SystemExit(f"kit.toml [{section}]: unknown keys: {', '.join(unknown)}")
-    return table
-
-
-KIT = kit_values("check_links", {"doc_paths", "skipped_folders"})
+KIT = kit_values(Path(__file__).resolve().parents[1], "check_links", {"doc_paths": "list[str]", "skipped_folders": "list[str]"})
 # The docs that the check covers, from kit.toml: a folder ends with /, each other path is a file.
 # The skills are always covered.
 DOC_PATHS: tuple[str, ...] = (".claude/skills/", *KIT.get("doc_paths", ["specs/", "notes/"]))

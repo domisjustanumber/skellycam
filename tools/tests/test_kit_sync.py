@@ -26,24 +26,27 @@ def test_a_repository_with_no_kit_toml_is_not_adopted_and_passes(tmp_path: Path)
 def test_check_reports_a_changed_unit_and_passes_a_pending_change(tmp_path: Path) -> None:
     (tmp_path / "AGENTS.md").write_text("a\n<!-- kit:rule -->\nkit text\n<!-- /kit -->\nb\n", encoding="utf-8")
     (tmp_path / "kit.toml").write_text("[values]\n", encoding="utf-8")
-    ks.write_state(tmp_path, "0" * 40, {"AGENTS.md#rule": ks.digest("kit text")}, {})
+    ks.write_state(tmp_path, "0" * 40, {"AGENTS.md#rule": ks.digest("kit text")}, {}, ks.values_digest({}))
     assert ks.check(tmp_path)[0] == []
     (tmp_path / "AGENTS.md").write_text("A\n<!-- kit:rule -->\nkit text\n<!-- /kit -->\n", encoding="utf-8")
     assert ks.check(tmp_path)[0] == [], "the text outside the block is repo-owned"
     (tmp_path / "AGENTS.md").write_text("<!-- kit:rule -->\nnew text\n<!-- /kit -->\n", encoding="utf-8")
     assert [e.split(":")[0] for e in ks.check(tmp_path)[0]] == ["AGENTS.md#rule"]
-    ks.write_state(tmp_path, "0" * 40, {"AGENTS.md#rule": ks.digest("kit text")}, {"AGENTS.md#rule": ks.digest("new text")})
+    ks.write_state(tmp_path, "0" * 40, {"AGENTS.md#rule": ks.digest("kit text")}, {"AGENTS.md#rule": ks.digest("new text")}, ks.values_digest({}))
     assert ks.check(tmp_path)[0] == []
+    config = (tmp_path / "kit.toml").read_text(encoding="utf-8")
+    (tmp_path / "kit.toml").write_text(config.replace("[values]\n", '[values]\nAREAS = "x"\n'), encoding="utf-8")
+    assert [e.split(":")[0] for e in ks.check(tmp_path)[0]] == ["kit"], "a value that pull did not fill in"
 
 
 def test_write_state_keeps_the_text_above_the_kit_table(tmp_path: Path) -> None:
     (tmp_path / "kit.toml").write_text("# mine\n[values]\nA = \"1\"\n", encoding="utf-8")
-    ks.write_state(tmp_path, "1" * 40, {"x": "a"}, {})
-    ks.write_state(tmp_path, "2" * 40, {"x": "b"}, {"x": "c"})
+    ks.write_state(tmp_path, "1" * 40, {"x": "a"}, {}, "v")
+    ks.write_state(tmp_path, "2" * 40, {"x": "b"}, {"x": "c"}, "v")
     text = (tmp_path / "kit.toml").read_text(encoding="utf-8")
     assert text.startswith("# mine\n[values]\nA = \"1\"\n\n" + ks.STATE_HEADER)
     config = ks.load_config(tmp_path)
-    assert config["kit"] == {"commit": "2" * 40, "hashes": {"x": "b"}, "pending": {"x": "c"}}
+    assert config["kit"] == {"commit": "2" * 40, "values": "v", "hashes": {"x": "b"}, "pending": {"x": "c"}}
 
 
 @pytest.mark.parametrize(

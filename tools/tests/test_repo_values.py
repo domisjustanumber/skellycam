@@ -6,7 +6,6 @@ The kit tests do not check them, because each repository has its own values.
 from __future__ import annotations
 
 import hashlib
-import tomllib
 from pathlib import Path
 
 import check_camera_media as ccm
@@ -17,14 +16,6 @@ import check_private_data as cpd
 import pytest
 
 REPO_ROOT = Path(cos.__file__).resolve().parents[1]
-# Each table of kit.toml that a tool reads. A misspelt or a missing table gives the kit defaults with no error.
-TOOL_TABLES = ("check_decision_log", "check_private_data", "check_links", "check_camera_media", "check_other_systems")
-
-
-def test_kit_toml_has_each_table_that_a_tool_reads() -> None:
-    with (REPO_ROOT / "kit.toml").open("rb") as file:
-        config = tomllib.load(file)
-    assert {"sync", "values", "kit", *TOOL_TABLES} == set(config)
 
 
 def test_there_are_no_golden_paths() -> None:

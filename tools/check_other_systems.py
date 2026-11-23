@@ -17,7 +17,9 @@ The table ``[check_other_systems]`` of ``kit.toml`` in the repository root sets 
 repository: ``exempt_paths`` (the path prefixes of the product folders and the CI workflows,
 ``EXEMPT_PATHS``), ``certify_spec`` (the spec that holds the check names, ``CERTIFY_SPEC``),
 ``self_test`` (the name of the self-test, ``SELF_TEST``) and ``certify_contract`` (the document of
-the certify contract, ``CERTIFY_CONTRACT``). With no ``kit.toml``, the defaults below apply.
+the certify contract, ``CERTIFY_CONTRACT``). ``tools/kit_config.py`` reads the table: with a
+``kit.toml``, a missing table, an unknown key or a value of the wrong type stops the tool. With no
+``kit.toml``, the defaults below apply.
 
 - **Scope.** It checks only a script file (``SCRIPT_SUFFIXES``) outside ``EXEMPT_PATHS`` and
   outside a ``tests`` folder. The product code, its tests, the docs site and the CI workflows can
@@ -66,24 +68,16 @@ import re
 import shutil
 import subprocess
 import sys
-import tomllib
 from pathlib import Path, PurePosixPath
 
-
-def kit_values(section: str, keys: set[str]) -> dict:
-    """The table ``[section]`` of ``kit.toml`` in the repository root, or {} when there is no file."""
-    path = Path(__file__).resolve().parents[1] / "kit.toml"
-    if not path.is_file():
-        return {}
-    with path.open("rb") as file:
-        table = tomllib.load(file).get(section, {})
-    unknown = sorted(set(table) - keys)
-    if unknown:
-        raise SystemExit(f"kit.toml [{section}]: unknown keys: {', '.join(unknown)}")
-    return table
+from kit_config import kit_values
 
 
-KIT = kit_values("check_other_systems", {"exempt_paths", "certify_spec", "self_test", "certify_contract"})
+KIT = kit_values(
+    Path(__file__).resolve().parents[1],
+    "check_other_systems",
+    {"exempt_paths": "list[str]", "certify_spec": "str", "self_test": "str", "certify_contract": "str"},
+)
 
 # The product folders and the CI workflows, from kit.toml. They can name systems.
 EXEMPT_PATHS: tuple[str, ...] = tuple(KIT.get("exempt_paths", [".github/"]))

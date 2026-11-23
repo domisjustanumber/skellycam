@@ -38,25 +38,13 @@ import re
 import shutil
 import subprocess
 import sys
-import tomllib
 from dataclasses import dataclass
 from pathlib import Path
 
-
-def kit_values(section: str, keys: set[str]) -> dict:
-    """The table ``[section]`` of ``kit.toml`` in the repository root, or {} when there is no file."""
-    path = Path(__file__).resolve().parents[1] / "kit.toml"
-    if not path.is_file():
-        return {}
-    with path.open("rb") as file:
-        table = tomllib.load(file).get(section, {})
-    unknown = sorted(set(table) - keys)
-    if unknown:
-        raise SystemExit(f"kit.toml [{section}]: unknown keys: {', '.join(unknown)}")
-    return table
+from kit_config import kit_values
 
 
-KIT = kit_values("check_private_data", {"allowed_emails", "allowed_lines"})
+KIT = kit_values(Path(__file__).resolve().parents[1], "check_private_data", {"allowed_emails": "list[str]", "allowed_lines": "list[table]"})
 
 PRIVATE_TERMS = ".private-terms"
 # Generated lock files hold four-part package versions that look like private IP addresses, and

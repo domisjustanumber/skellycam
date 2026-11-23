@@ -28,7 +28,9 @@ unit IDs that the repository takes, default all; ``skip``, the unit IDs that it 
 ``kit``, the path of the kit checkout), ``[values]``, and one table for each check tool. The table
 ``[kit]`` at its end is written by ``pull`` and ``propose``: ``commit``, the full SHA of the kit
 commit taken; ``[kit.hashes]``, the SHA-256 of the filled text of each unit at that commit; and
-``[kit.pending]``, the SHA-256 of each local change that ``propose`` wrote into the kit.
+``[kit.pending]``, the SHA-256 of each local change that ``propose`` wrote into the kit. ``values``
+is the SHA-256 of ``[values]`` at the last pull, so that ``check`` finds a value that ``pull`` did
+not fill in yet.
 
 - ``check`` needs no kit checkout. It passes when there is no ``kit.toml`` ("not adopted"). It
   reports each unit whose text does not have its hash or its pending hash. With a kit checkout, the
@@ -62,6 +64,7 @@ from __future__ import annotations
 import argparse
 import difflib
 import hashlib
+import json
 import re
 import shutil
 import subprocess
@@ -405,7 +408,12 @@ def toml_string(text: str) -> str:
     return '"' + text.replace("\\", "\\\\").replace('"', '\\"') + '"'
 
 
-def write_state(root: Path, commit: str, hashes: dict[str, str], pending: dict[str, str]) -> None:
+def values_digest(values: dict[str, str]) -> str:
+    """The SHA-256 of [values], so that check finds a change of a value that pull did not fill in."""
+    return digest(json.dumps(values, sort_keys=True))
+
+
+def write_state(root: Path, commit: str, hashes: dict[str, str], pending: dict[str, str], values: str) -> None:
     """Write the table [kit] at the end of kit.toml. The text above it stays."""
     path = root / CONFIG
     lines = norm(path.read_text(encoding="utf-8")).split("\n")
@@ -413,7 +421,7 @@ def write_state(root: Path, commit: str, hashes: dict[str, str], pending: dict[s
     later = [line for line in lines[cut:] if line.startswith("[") and line.strip() not in STATE_TABLES]
     if later:
         raise KitError(f"{CONFIG}: the table [kit] must be the last table; {later[0]} is after it")
-    state = [STATE_HEADER, "[kit]", f"commit = {toml_string(commit)}", "", "[kit.hashes]"]
+    state = [STATE_HEADER, "[kit]", f"commit = {toml_string(commit)}", f"values = {toml_string(values)}", "", "[kit.hashes]"]
     state += [f"{toml_string(k)} = {toml_string(v)}" for k, v in sorted(hashes.items())]
     if pending:
         state += ["", "[kit.pending]"] + [f"{toml_string(k)} = {toml_string(v)}" for k, v in sorted(pending.items())]
@@ -447,6 +455,8 @@ def check(root: Path) -> tuple[list[str], list[str]]:
     hashes, pending = state.get("hashes", {}), state.get("pending", {})
     errors: list[str] = []
     notes: list[str] = []
+    if state.get("values") != values_digest(config.get("values", {})):
+        errors.append(f"kit: [values] of {CONFIG} changed after the last pull; run `python tools/kit_sync.py pull`")
     for uid, expected in sorted(hashes.items()):
         unit = unit_from_id(uid)
         try:
@@ -464,8 +474,9 @@ def check(root: Path) -> tuple[list[str], list[str]]:
             notes.append(f"{uid}: a local change that propose wrote into the kit; it waits for the kit")
             continue
         errors.append(
-            f"{uid}: differs from the kit text of {state['commit'][:12]}; run `python tools/kit_sync.py pull`,"
-            " or `propose` for a change that the kit must take"
+            f"{uid}: differs from the kit text of {state['commit'][:12]}. To take the kit text, run"
+            f" `python tools/kit_sync.py pull --replace {uid}`. To give the change to the kit, add an entry and"
+            " run `python tools/kit_sync.py propose`."
         )
     notes.append(f"kit: {len(hashes)} units of kit commit {state['commit'][:12]} checked")
     return errors, notes
@@ -553,7 +564,7 @@ def pull(root: Path, kit: Path, target: str = "HEAD", replace: frozenset[str] = 
             write_file(root / path, text)
     dropped = sorted(set(hashes) - set(new_hashes))
     notes += [f"{uid}: no longer taken from the kit; it is repo-owned now" for uid in dropped]
-    write_state(root, commit, new_hashes, new_pending)
+    write_state(root, commit, new_hashes, new_pending, values_digest(values))
     notes.append(f"kit: took {len(units)} units of kit commit {commit[:12]}")
     return notes
 
@@ -644,7 +655,7 @@ def propose(
         write_file(manifest_path, norm(read_file(manifest_path) or "").rstrip("\n") + "\n" + "\n".join(rows) + "\n")
         notes.append(f"{MANIFEST}: added {', '.join(u.id for u in added)}")
     if writes:
-        write_state(root, pin, hashes, pending)
+        write_state(root, pin, hashes, pending, state.get("values", ""))
         notes.append("kit: commit the kit files in a PR to freemocap/project; its subject cites the entry of this repository")
     else:
         notes.append("kit: no local change to propose")

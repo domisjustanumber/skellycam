@@ -97,29 +97,25 @@ import shutil
 import subprocess
 import sys
 import time
-import tomllib
 from collections import Counter
 from collections.abc import Callable
 from dataclasses import dataclass, field
 from pathlib import Path
 
-
-def kit_values(section: str, keys: set[str]) -> dict:
-    """The table ``[section]`` of ``kit.toml`` in the repository root, or {} when there is no file."""
-    path = Path(__file__).resolve().parents[1] / "kit.toml"
-    if not path.is_file():
-        return {}
-    with path.open("rb") as file:
-        table = tomllib.load(file).get(section, {})
-    unknown = sorted(set(table) - keys)
-    if unknown:
-        raise SystemExit(f"kit.toml [{section}]: unknown keys: {', '.join(unknown)}")
-    return table
+from kit_config import kit_values
 
 
 KIT = kit_values(
+    Path(__file__).resolve().parents[1],
     "check_decision_log",
-    {"module_logs", "old_log_dirs", "target_branch", "index_limit", "read_path_limit", "last_unlimited_entry"},
+    {
+        "module_logs": "list[str]",
+        "old_log_dirs": "list[str]",
+        "target_branch": "str",
+        "index_limit": "int",
+        "read_path_limit": "int",
+        "last_unlimited_entry": "int",
+    },
 )
 
 LOG_DIR = Path("decisions")
