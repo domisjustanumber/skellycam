@@ -543,7 +543,12 @@ def pull(root: Path, kit: Path, target: str = "HEAD", replace: frozenset[str] = 
         if local == filled:
             continue
         # A unit with no hash and the text of the kit file, before the fill, is an unchanged copy.
-        unchanged = local is None or digest(local) == hashes.get(unit.id) or (unit.id not in hashes and local == kit_text)
+        # So is a new block with no hash and only its two marker lines: the README tells a repo to add them.
+        unchanged = (
+            local is None
+            or digest(local) == hashes.get(unit.id)
+            or (unit.id not in hashes and (local == kit_text or not local.strip()))
+        )
         if unchanged or unit.id in replace:
             files[unit.path] = put_unit(current, unit, filled, unit.path)
             notes.append(f"{unit.id}: took the kit text")
