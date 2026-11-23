@@ -15,6 +15,7 @@ from comtypes import COMObject
 
 from skellycam.core.camera.capture.media_foundation import bounded, com, detect
 from skellycam.core.camera.capture.media_foundation.errors import E_FAIL, check, failure, hresult_reason
+from skellycam.core.camera.capture.failure_codes import WEDGE_CODES
 from skellycam.core.camera.capture.modes import choose_mode, mode_fraction
 from skellycam.core.camera.capture.source import (
     BOUNDED_CALL_LIMIT_S, FIRST_FRAME_TIMEOUT_S, CapturedFrame, CaptureFailure, CaptureRequest, CaptureWaitingPlace,
@@ -208,7 +209,8 @@ class MediaFoundationSource:
                 raise CaptureFailure("close", f"a ReadSample issue did not return in {BOUNDED_CALL_LIMIT_S:g} s",
                                      hung=True)
             time.sleep(0.001)
-        if restore and self._error is None:  # 4.7: between step 1 and step 2; never after a failure
+        # 4.7: between step 1 and step 2; never after a wedge (a source error that is no wedge restores) [Z7F3]
+        if restore and (self._error is None or self._error.code not in WEDGE_CODES):
             self._restore.restore(lambda changes: self._call(
                 "close", "a control call", lambda: self._set_and_read(interfaces, changes)))
         if self._reader is not None:

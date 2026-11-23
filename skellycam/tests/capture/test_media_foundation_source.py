@@ -104,6 +104,13 @@ def test_t_unx_92_the_media_foundation_source_gives_the_step_of_get_range_to_the
     assert ["camera", 4, -5, 1] in sets, calls  # flags 1: auto
 
 
+def test_the_restore_runs_after_a_stream_error_that_is_no_wedge():
+    """unix-capture.md 4.7 [Z7F3] (review finding 2; a decision of the user of 2026-11-21): after its own stream error
+    with a code that is no wedge (`E_FAIL` in `OnReadSample`: `stream-error`), the source restores at its close."""
+    sets, flush_at, calls = restore_sets(run_case("after-stream-error"))
+    assert ["camera", 4, -6, 1] in sets, calls  # exposure back to auto -6
+
+
 def test_f7_no_restore_after_a_stream_error():
     """F7 (reviewer list): a removal HRESULT in `OnReadSample` before the close: the close sets no control."""
     sets, _, calls = restore_sets(run_case("after-error"))

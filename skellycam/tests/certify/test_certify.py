@@ -216,6 +216,24 @@ def test_t_cert_65_and_68_the_gate_roll_ups():
     assert rows[f"{model}:gate:no-hang"]["reason"] == "crashed"
 
 
+def test_the_timestamps_gate_of_a_source_that_cannot_tell_its_clock():
+    """11.3 (Q585 of the user, 2026-11-23) [Z7F3]: with `clock:base` `not-run` `clock-unknown`, `gate:timestamps`
+    requires only `clock:before-arrival` and `clock:near-arrival`; a declared clock keeps all three."""
+    gate = product(CATALOG).gate_rows
+    model, label = "cam.x.0001-0002", "cam.x.0001-0002.0"
+
+    def timestamps(*overrides):
+        rows = {r["name"]: r for r in gate(model, [gate_unit(label, [("clock:base", "not-run", "clock-unknown"),
+                                                                      *overrides])], "Fake")}
+        return rows[f"{model}:gate:timestamps"]["result"]
+    assert timestamps() == "pass"  # (a)
+    assert timestamps(("clock:near-arrival", "fail", "sample-too-early")) == "fail"  # (b)
+    assert timestamps(("clock:before-arrival", "not-run", "not-built")) != "pass"  # (c)
+    rows = {r["name"]: r for r in gate(model, [gate_unit(label, [("clock:base", "fail", "clock-base-differs")])],
+                                       "Fake")}
+    assert rows[f"{model}:gate:timestamps"]["result"] == "fail"  # (d) a declared `realtime` clock
+
+
 def test_t_cert_41_the_record_rule_and_a_damaged_file(tmp_path):
     """T-CERT-41, 2.5: one row for each model whose item is `pass`, `fail`, or `partial` with a judged `opens`; no
     row for `skipped` or for `partial` with no judged `opens`; a damaged file counts as no row, and the writer

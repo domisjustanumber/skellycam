@@ -4,7 +4,11 @@
 
 ## Decision
 
-Items 2, 3 and 6 are decisions of the user of 2026-11-21. The agent chose these details:
+Items 2, 3 and 6 are decisions of the user of 2026-11-21. The user decided item 1 on 2026-11-23 (Q584): "as
+long as the frame rate still passes, a one step exposure tolerance is fine for all cameras". The start-up rate
+check of each open covers that condition (T-UNX-91). The user decided on 2026-11-23 (Q585): with `clock:base`
+`not-run` `clock-unknown`, `gate:timestamps` requires only `clock:before-arrival` and `clock:near-arrival`; a
+declared clock keeps all three. The agent chose the other details:
 
 1. At the first read of an open, a control of the restore record takes its "before" value from the record when
    the camera reads the auto flag that this app set last and, with auto off, a value not more than one step
@@ -12,13 +16,17 @@ Items 2, 3 and 6 are decisions of the user of 2026-11-21. The agent chose these 
    ([`unix-capture.md`](../../specs/unix-capture.md) 4.7).
 2. A live settings change never restarts a camera. The apply request gets the list `retry_camera_ids`: a
    `failed` or `dead` camera, or one whose process ended, opens again only when the list names it. Only "Update
-   Cameras" fills it; the fall back to 30 fps names the cameras that failed at 60 fps
-   ([`windows-capture.md`](../../specs/windows-capture.md) 8.3).
-3. A camera whose loop failed gets its restore at the close, except for the wedge codes `stalled`, `hung` and
-   `device-removed` (`WEDGE_CODES`). Certify gives `camera-not-restored` to a failed camera only for these codes
-   or for `restore_ok` false ([`certify.md`](../../specs/certify.md) 8.3).
+   Cameras" fills it; the fall back to 30 fps names the cameras that failed at 60 fps, never one with a wedge
+   code. The answer names each failed camera that it left alone (`camera_failures` and the warning
+   `camera_not_retried`); its stored config takes only the new rate; the UI keeps it at "error" with the edit of
+   the user. An ID of the list that does not apply is ignored ([`windows-capture.md`](../../specs/windows-capture.md) 8.3).
+3. A camera whose loop failed, or whose source had a stream error, gets its restore at the close, except for the
+   wedge codes `stalled`, `hung`, `device-removed` and `process-ended` (`WEDGE_CODES`). Certify gives
+   `camera-not-restored` to a failed camera only for these codes (from the status, kept at the scan) or for
+   `restore_ok` false ([`certify.md`](../../specs/certify.md) 8.3).
 4. With no group, the flag `creating` of `CameraGroupManager` refuses a second apply request with the 409 of
-   `request_runs` ([`camera-requests.md`](../../specs/camera-requests.md) 2.4a item 7).
+   `request_runs`; a close during its detection (the count `closes`) ends it with a 409
+   ([`camera-requests.md`](../../specs/camera-requests.md) 2.4a item 7).
 5. Media Foundation keeps `clock` `unknown`; certify gives `clock:base` `not-run` with the new reason
    `clock-unknown` (`not-built` stays for a null key); `time-gaps` is marked W in `full` (certify.md 10.2).
 6. The rate of a group frame in the stop response is 1 / the median over the cameras of its frame duration; the
@@ -51,8 +59,12 @@ Items 2, 3 and 6 are decisions of the user of 2026-11-21. The agent chose these 
 2. A client other than the UI (freemocap) must send `retry_camera_ids` to reopen a failed camera; the rate
    selector no longer reopens one.
 3. A late close dict of a camera that failed with `rate-low` gives no notice: certify trusts the product.
-5. `<model>:gate:timestamps` cannot pass on Media Foundation while `clock:base` is `not-run`.
 6. With two cameras the median is the mean of the two durations: one bursting camera of two gives about 60 fps.
+
+## Evidence
+
+Only the tip of the branch is verified: the commits before the fix of the connection tests do not pass their own
+tests, and the history is not rewritten (the review of 2026-11-23).
 
 ## Alternatives rejected
 

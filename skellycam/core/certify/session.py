@@ -150,7 +150,9 @@ class Session:
         self.wedged: dict[str, str] = {}  # label: the reason of the wedge (2.3)
         self.sent_before: set[str] = set()
         self.touched: list[Unit] = []
-        self.failed: set[str] = set()  # cameras whose loop failed: no restore after a wedge code (unix 4.7) [Z7F3]
+        # cameras whose loop failed: label -> the code of the status failure (the main process writes it, so a late
+        # dict of the camera cannot change it); no restore after a wedge code (unix 4.7) [Z7F3]
+        self.failed: dict[str, str | None] = {}
 
     # ----- helpers -----
 
@@ -324,7 +326,7 @@ class Session:
             self.prior(unit, "camera-in-use")
             return
         if failure:
-            self.failed.add(unit.label)
+            self.failed[unit.label] = code
         if state == "ready" or rate_failed:
             self.done(row(names[0], "pass", None, unit.module, **opened))
         else:
@@ -477,8 +479,8 @@ class Session:
         for unit in self.live:
             if unit not in takers:
                 self.prior(unit, "prior-check-failed")
-                if self.status(unit).get("failure"):
-                    self.failed.add(unit.label)
+                if failure := self.status(unit).get("failure"):
+                    self.failed[unit.label] = failure.get("code")
         if group is None or not takers:
             self.fact("prior", ("group", "prior-check-failed"))
             return
@@ -696,7 +698,8 @@ class Session:
                 self.wedged[unit.label] = WEDGED[data["fail_code"]]
                 self.fact("release", (unit.label, "camera-wedged"))
             elif data.get("restore_ok") is False or (
-                    unit.label in self.failed and data.get("fail_code") in WEDGE_CODES and data.get("restore_ok") is not True
+                    unit.label in self.failed and (self.failed[unit.label] or data.get("fail_code")) in WEDGE_CODES
+                    and data.get("restore_ok") is not True
                     and any(data.get(f"{name}_before_auto") is not None for name in CONTROL_NAMES)):
                 self.fact("release", (unit.label, "camera-not-restored"))
 

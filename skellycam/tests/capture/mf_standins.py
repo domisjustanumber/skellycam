@@ -95,8 +95,8 @@ class Reader:
 
         def deliver():
             time.sleep(delay)
-            if self.fail:
-                self.callback.OnReadSample(None, 0xC00D3EA2, 0, 0, 0, None)  # the device went away
+            if self.fail:  # True: the device went away; else the HRESULT of a stream error
+                self.callback.OnReadSample(None, 0xC00D3EA2 if self.fail is True else self.fail, 0, 0, 0, None)
             elif not self.stopped:
                 self.callback.OnReadSample(None, 0, 0, 0, 0, Sample(time.perf_counter_ns()))
         threading.Thread(target=deliver, daemon=True).start()
@@ -176,8 +176,8 @@ def run(case):
         source.set_controls({"gain": ControlSetting(auto=False, value=20)})
     except CaptureFailure as failure:
         result["set_failure"] = [failure.stage, failure.code]
-    if case == "after-error":
-        reader["reader"].fail = True
+    if case in ("after-error", "after-stream-error"):
+        reader["reader"].fail = True if case == "after-error" else E_FAIL
         deadline = time.monotonic() + 2.0
         while source._error is None and time.monotonic() < deadline:
             time.sleep(0.01)

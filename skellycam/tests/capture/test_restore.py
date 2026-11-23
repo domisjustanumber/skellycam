@@ -111,6 +111,8 @@ def test_f7_no_restore_when_the_loop_failed(monkeypatch):
     ("rate-low", dict(rate=25.0), True),  # the start-up rate check of a camera in MANUAL
     ("not-ready", dict(), True),  # the ready limit of W 9.3 (2 s here) ends the warm-up
     ("stalled", dict(), False),  # the stall rule of W 9.5: a wedge
+    ("stream-error", dict(removed_after_frame=150, removed_code="stream-error"), True),  # a source error, no wedge
+    ("device-removed", dict(removed_after_frame=150), False),  # a wedge
 ])
 def test_t_unx_95_a_camera_whose_loop_failed_is_restored_unless_it_is_wedged(monkeypatch, failure, script, restored):
     """T-UNX-95, unix-capture.md 4.7 [Z7F3] (a decision of the user of 2026-11-21): the open set the exposure (auto -6
@@ -123,6 +125,7 @@ def test_t_unx_95_a_camera_whose_loop_failed_is_restored_unless_it_is_wedged(mon
         source, log = app.factory.sources[camera_id], app.factory.logs[camera_id]
         if failure == "stalled":
             source.stop_now()
+        if failure in ("stalled", "stream-error", "device-removed"):
             app.wait_state(camera_id, "dead")
         app.wait(lambda: log.closes.value == 1, "the close")
         assert app.status(camera_id)["failure"]["code"] == failure
@@ -157,6 +160,28 @@ def test_t_unx_91_the_values_of_before_survive_a_camera_with_no_restore(monkeypa
         source = app.factory.sources[camera_id]
         app.client.delete("/skellycam/camera/group/close/all")
         app.wait(lambda: log.closes.value == 2, "the close")
+    assert log.device_controls["exposure"][1:] == [True, -6]
+    data = source.diagnostics()
+    assert (data["exposure_before"], data["exposure_before_auto"], data["restore_ok"]) == (-6, True, True)
+
+
+def test_t_unx_91_an_open_that_takes_the_record_one_step_away_still_runs_the_rate_check(monkeypatch):
+    """T-UNX-91, unix-capture.md 4.7 [Z7F3] (Q584 of the user, 2026-11-23: a one-step tolerance as long as the frame
+    rate still passes): the first open sets MANUAL -7 and stalls (no restore); the camera rounds and reads manual -6
+    at the next open, so that open takes the record (auto -6 before). The camera is now slow (25 fps): the start-up
+    rate check of that open fails it with `rate-low`, and its close restores auto -6."""
+    script = FakeScript(controls=AUTO_BEFORE, keeps_controls=True, reopen_shift=(("exposure", 1),))
+    with one_camera(monkeypatch, script) as (app, camera_id, _):
+        log = app.factory.logs[camera_id]
+        app.factory.sources[camera_id].stop_now()
+        app.wait_state(camera_id, "dead")
+        app.wait(lambda: log.closes.value == 1, "the close of the dead camera")
+        script.rate = 25.0  # the next open delivers 25 fps in its 30 fps mode
+        assert app.apply([app.config(camera_id)], retry=[camera_id]).status_code == 200
+        app.wait_state(camera_id, "failed")
+        app.wait(lambda: log.closes.value == 2, "the close")
+        source = app.factory.sources[camera_id]
+        assert app.status(camera_id)["failure"]["code"] == "rate-low"
     assert log.device_controls["exposure"][1:] == [True, -6]
     data = source.diagnostics()
     assert (data["exposure_before"], data["exposure_before_auto"], data["restore_ok"]) == (-6, True, True)

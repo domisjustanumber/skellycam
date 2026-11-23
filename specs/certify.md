@@ -860,7 +860,10 @@ After a stop of the caller, the end of the budget, a time-out or a crash, the ru
 In quick with no stop, a camera whose loop failed with a wedge code that certify does not already count as a wedge
 (`stalled`) after its controls were set is `not-restored`: the product does not restore it [ux 4.7]. A camera whose
 loop failed for another reason (for example `rate-low`) gets the restore of the product at its close; its close dict
-decides (`restore_ok` false is `not-restored`) [ADR-Z7F3](../decisions/entries/Z7F3-choices-of-fix-lane-3.md).
+decides (`restore_ok` false is `not-restored`) [ADR-Z7F3](../decisions/entries/Z7F3-choices-of-fix-lane-3.md). This also holds after a
+stream error of the source with a code that is no wedge: the source restores then [ux 4.7]. Certify keeps the
+failure code of the status of the camera when it sees the failure (the main process writes it), so a later close dict
+with another `fail_code` does not change the judgement.
 
 The phase also runs after a crash of an earlier phase, with its own limit of 20 s for each camera
 [A]. After a cancel, the user decided [ADR-H0BQ](../decisions/entries/H0BQ-user-rulings-of-the-spec-integration.md): phase G re-checks only the cameras that the run touched
@@ -1507,7 +1510,7 @@ no YAML library and must not add one for this [A]. The app never downloads it.
   | `<model>:gate:mode` | `<label>:modes:granted:<base>` |
   | `<model>:gate:rate` | `<label>:rate` |
   | `<model>:gate:native-jpeg` | each `<label>:native-jpeg:*` check |
-  | `<model>:gate:timestamps` | `<label>:clock:base`, `<label>:clock:before-arrival`, `<label>:clock:near-arrival` |
+  | `<model>:gate:timestamps` | `<label>:clock:base`, `<label>:clock:before-arrival`, `<label>:clock:near-arrival`; when `clock:base` is `not-run` with `clock-unknown`, only the two others (Q585 of the user, 2026-11-23) [ADR-Z7F3](../decisions/entries/Z7F3-choices-of-fix-lane-3.md) |
   | `<model>:gate:sequence` | `<label>:sequence` for each unit whose source gives a sequence number; else `<label>:time-gaps` |
   | `<model>:gate:records` | each `<label>:records:*` check (a short recording through the native source) |
   | `<model>:gate` | each of the seven roll-up checks above and the check `<model>:gate:no-hang` |
