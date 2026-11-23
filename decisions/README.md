@@ -54,6 +54,7 @@ These entries are `accepted`.
 | [X1T8](entries/X1T8-two-way-kit-sync-adoption.md) | Two-way kit sync: skellycam is the pilot; values in `kit.toml`; Python 3.13; the winners of 19 differences; CI runs only `check`; kit uv | accepted |
 | [81RE](entries/81RE-decisions-of-the-user-on-the-restore-file-the-take-rate-and-pace-tests.md) | Q608, Q609, Q619 of 2026-11-23: restore record on disk; take rate is frames over time; pace tests reported, not blocking, on CI | accepted |
 | [T34M](entries/T34M-decision-of-the-user-on-the-start-method-of-camera-processes.md) | Q651 of 2026-11-23: no start method at import; the app sets spawn; a fork start is refused; nothing decided for FreeMoCap | accepted |
+| [0AMX](entries/0AMX-propose-from-skellycam-and-review-in-the-kit.md) | Q657: a skellycam agent runs `propose`; the kit session reviews and commits the result in its own repository | accepted |
 
 ### Proposed
 
@@ -77,6 +78,7 @@ These entries wait for a decision of the user. Section is the section or area of
 | [3SRX](entries/3SRX-choices-of-the-kit-sync-pilot.md) | Choices of the kit sync pilot: open-work clean-up, markers, `--replace`, Q655 value, other-systems values, uv pins in round 3, LF line ends | none | proposed |
 | [0Z6Q](entries/0Z6Q-choices-of-the-certify-report-shape-build.md) | Certify build choices: B1 rows, failure facts, `total`, `not-reached`, named checks, `live-at-close` and its reasons, the build file in each build | `certify` | proposed |
 | [HQE5](entries/HQE5-choices-of-fix-lane-4.md) | Choices of fix lane 4: spawn on Linux, skip guard, slow-stop gap, pace steps, restore file by hashed key, take rate sum over sum | none | proposed |
+| [6RVC](entries/6RVC-choices-of-the-first-propose.md) | Choices of the first propose (other-systems rule): no entry citation in the units, hook place, a test moves, `--fill` and `--literal` | none | proposed |
 
 The entries that are `rejected`, `superseded by XXXX`, `absorbed into <path>#<anchor>`,
 `evidence; used by XXXX`, `evidence; replaced by XXXX` or `done` are in [historical.md](historical.md).
