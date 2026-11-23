@@ -31,6 +31,19 @@ from skellylogs import LogLevels
 LOG_LEVEL = LogLevels.TRACE
 
 
+def certify(level: str, progress=None, cancel=None, *, cameras=None, recording_folder=None, test_media_dir=None,
+            abandon=None) -> dict:
+    """The certify run of skellycam (specs/certify.md 1; contract `report-format.md` 2.1, 2.4). Imported on call."""
+    from skellycam.core.certify.run import certify as run
+    return run(level, progress, cancel, cameras=cameras, recording_folder=recording_folder,
+               test_media_dir=test_media_dir, abandon=abandon)
+
+
+def certify_plan(level: str, *, cameras=None, recording_folder=None, test_media_dir=None) -> dict:
+    """The plan of a certify run (specs/certify.md 9.1; contract 2.6). It opens no camera."""
+    from skellycam.core.certify.run import certify_plan as plan
+    return plan(level, cameras=cameras, recording_folder=recording_folder, test_media_dir=test_media_dir)
+
 
 __all__ = [
     "__author__",
@@ -41,4 +54,6 @@ __all__ = [
     "__repo_url__",
     "__repo_issues_url__",
     "__pypi_url__",
+    "certify",
+    "certify_plan",
 ]

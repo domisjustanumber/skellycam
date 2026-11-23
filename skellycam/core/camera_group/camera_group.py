@@ -82,6 +82,7 @@ STALL_WATCH_S = 3.0  # over the 2 s of the in-process rule (W 9.5), which closes
 STALL_REASON = "no loop pass for 3 s"
 KILL_AFTER_S = 1.0
 STALL_WATCH_SETTING = "SKELLYCAM_STALL_WATCH"  # "0" turns the watch off; read when a group is made
+REQUEST_RUNS = "Another change of the cameras runs now. Send the request again when the cameras are ready."  # 2.4a 7
 MICROPHONE_REFUSED = "audio recording returns in step 5b; start again with no microphone"  # recorder.md 10 item 13
 WRITER = f"skellycam {__version__.lstrip('v')}"  # SFF-712
 
@@ -139,6 +140,12 @@ class CameraGroup:
     camera_diagnostics: dict = field(default_factory=dict)  # the newest diagnostics of each camera (unix 4.2 item 2)
     _passes: dict = field(default_factory=dict)  # camera_id: (alive_count, time.monotonic() of its last change)
     _adopted: dict = field(default_factory=dict)  # camera_id: the search count whose held value is in `configs`
+    # (configs at 30 fps, search counts before the request, request count) after an apply request at 60 fps
+    # (camera-requests.md 2.4a items 5 and 7)
+    fall_back_armed: tuple | None = None
+    request_count: int = 0  # one more at each apply request of the user (2.4a item 7)
+    # A user apply with its start-up fall back, or a fall back, runs: an apply, a record start and a search get 409 (2.4a 7)
+    request_runs: bool = False
     stall_watch: bool = True
     _closing: bool = False  # `close` runs: the watch thread reads the queues but watches no camera (F4)
     _end_lock: Any = field(default_factory=asyncio.Lock)
@@ -159,16 +166,14 @@ class CameraGroup:
 
     @property
     def alive(self) -> bool:
-        return (
-            self.ipc.running
-            and bool(self.cameras.camera_workers)
-            and all(
-                status.connected.value and not status.closed.value
-                and not status.closing.value and not status.error.value
-                for status in list(self.cameras.orchestrator.camera_statuses.values())
-            )
-            and all(worker.is_alive() for worker in list(self.cameras.camera_workers.values()))
-        )
+        """The group runs and at least one selected camera lives: its process runs, and it is not `failed` or `dead`,
+        not closing and not closed (camera-requests.md 1.5) [NYT6]."""
+        statuses = self.cameras.orchestrator.camera_statuses
+        return self.ipc.running and any(
+            worker.is_alive() and (status := statuses.get(camera_id)) is not None
+            and status.state not in ("failed", "dead") and not status.closed.value
+            and not status.closing.value and not status.error.value
+            for camera_id, worker in list(self.cameras.camera_workers.items()))
 
     @classmethod
     def create(
@@ -179,6 +184,7 @@ class CameraGroup:
         global_kill_flag: SharedValue,
         worker_registry: WorkerRegistry,
         source_factory: Callable | None = None,
+        restore_records: dict | None = None,
     ) -> "CameraGroup":
         try:
             validate_camera_configs(camera_configs)
@@ -192,6 +198,7 @@ class CameraGroup:
                 worker_registry=worker_registry,
                 camera_configs=camera_configs,
                 source_factory=source_factory,
+                restore_records=restore_records,
             )
         except Exception as e:
             logger.error(f"Error creating camera group: {type(e).__name__} - {e}")
@@ -381,6 +388,7 @@ class CameraGroup:
                     pass  # the status of each camera holds its failure
                 self._take_finished()
                 self._take_diagnostics()
+                self._watch_fall_back()
             except Exception as error:
                 logger.exception(f"Camera group {self.id}: the watch could not read the camera queues: {error}")
             for camera_id, worker in list(self.cameras.camera_workers.items()):
@@ -601,6 +609,9 @@ class CameraGroup:
                     if not status.ready or status.search_requested.value]  # a search that is asked for (1.5)
         if blocking or self.take is not None:  # a recording starts only when each selected camera is `ready` (8.3)
             raise RequestRefused(409, "A recording needs each selected camera ready: " + "; ".join(blocking or ["a recording runs"]))
+        if self.request_runs:
+            raise RequestRefused(409, REQUEST_RUNS)
+        self.fall_back_armed = None  # camera-requests.md 2.4a item 9: a rate change never disturbs a recording
         folder = Path(recording_info.recording_directory) / recording_info.recording_name
         if folder.is_dir() and any(folder.iterdir()):
             raise RequestRefused(409, f"The take folder holds files: {folder}")  # [agent 16]
@@ -922,6 +933,76 @@ class CameraGroup:
         for status in list(self.cameras.orchestrator.camera_statuses.values()):
             status.set_warning_items([], "group_warnings")
 
+    def mode_rate(self, camera_id: CameraIdString) -> float | None:
+        """The rate of the opened mode of a camera, or None before a mode is open."""
+        mode = self.cameras.orchestrator.camera_statuses[camera_id].info_dict().get("mode") or {}
+        return mode["fps_num"] / mode["fps_den"] if mode.get("fps_num") else None
+
+    async def fall_back(self, configs: CameraConfigs, slow: dict) -> tuple[dict, list]:
+        """The one fall back of the group to 30 fps (camera-requests.md 2.4, 2.4a) [ADR-1T0S]: one `rate_fallback` item
+        in the status of each camera of `slow`, then an apply of `configs`. `slow`: camera_id: (measured fps, exposure,
+        mode rate), read when the failure was seen; the mode rate is None for a `set mode` failure. Return the failures
+        and the warnings of that apply, after the items. Never during a take, a record start or a close (2.4a item 9)."""
+        if self._closing or self.take is not None or self.take_busy:
+            logger.warning(f"The fall back of camera group {self.id} to 30 fps does not run during a take, a record start "
+                           f"or a close")
+            return {}, []
+        runs, self.request_runs = self.request_runs, True  # inside a user apply (the start-up path) it is set already
+        try:
+            items = []
+            for camera_id, (measured, exposure, fps) in slow.items():
+                text = f"The group runs at 30 fps. Camera {camera_id} " + (
+                    "could not set its 60 fps mode." if fps is None else f"found no exposure that keeps {fps:g} fps."
+                    if measured is None else f"measured {measured:.2f} fps in its {fps:g} fps mode"
+                    + ("." if exposure is None else f" at exposure {exposure:g}."))
+                items.append(dict(kind="rate_fallback", camera_ids=[camera_id], text=text))
+                logger.warning(text)
+                self.add_group_warning(items[-1])
+            failures, warnings = await self.apply(configs)
+            return failures, items + warnings
+        finally:
+            self.request_runs = runs
+
+    def _watch_fall_back(self) -> None:
+        """camera-requests.md 2.4a item 5 [ADR-1T0S]: after an apply request at 60 fps, a camera in `AUTO` whose search
+        of that request (`held.count`) found no value that keeps the rate, or whose check after it failed, starts the
+        fall back. The watch stops when no camera starts, waits, searches or checks."""
+        armed = self.fall_back_armed
+        if armed is None or self._closing:
+            return
+        configs, counts, request = armed
+        statuses = self.cameras.orchestrator.camera_statuses
+        slow = {}
+        for camera_id, status in list(statuses.items()):
+            info, config = status.info_dict(), self.configs.get(camera_id)
+            held = info.get("held") or {}
+            if config is None or config.exposure_mode != "AUTO" or held.get("count", 0) <= counts.get(camera_id, 0):
+                continue
+            search = info.get("exposure_search") or {}
+            if search.get("state") == "failed" and search.get("reason") == "no-value-kept-rate":
+                best = max(search.get("trials") or [{}], key=lambda trial: trial.get("measured_fps") or 0)
+                # [B7]: the trial with the highest rate
+                slow[camera_id] = (best.get("measured_fps"), best.get("value"), self.mode_rate(camera_id) or config.framerate)
+            elif status.state == "too_slow":
+                slow[camera_id] = (info.get("measured_fps"), held.get("exposure"), self.mode_rate(camera_id) or config.framerate)
+        busy = any(status.state in ("starting", "waiting", "adjusting", "checking") for status in list(statuses.values()))
+        if (slow or not busy) and self.fall_back_armed is armed:  # an apply request of the user can have replaced it
+            self.fall_back_armed = None
+            if slow:
+                asyncio.run_coroutine_threadsafe(self._fall_back_after_search(configs, slow, request), self._loop)
+
+    async def _fall_back_after_search(self, configs: CameraConfigs, slow: dict, request: int) -> None:
+        """On the event loop, as `_end_after_error`; no response carries the result, so the log gets a failure. The check
+        of the request count and the flag of `fall_back` come with no wait between them (2.4a item 7)."""
+        try:
+            if request != self.request_count or self.request_runs:
+                logger.warning(f"The fall back of camera group {self.id} to 30 fps does not run: a later request of the "
+                               f"user replaced the request at 60 fps, or runs now")
+            else:
+                await self.fall_back(configs, slow)
+        except Exception as error:
+            logger.exception(f"The fall back of camera group {self.id} to 30 fps failed: {error!r}")
+
     async def search_exposure(self, camera_ids: list) -> dict:
         """camera-requests.md 1.5: each camera of `camera_ids` (checked by the manager) searches on its open stream;
         return when each search has ended, within SEARCH_WAIT_LIMIT_S. The response of the endpoint. A camera whose
@@ -965,6 +1046,8 @@ class CameraGroup:
             if held and camera_id in self.configs and held["count"] != self._adopted.get(camera_id):
                 self._adopted[camera_id] = held.pop("count")
                 self.configs[camera_id] = self.configs[camera_id].model_copy(update=held)
+                # the camera left the clamped MANUAL value (camera-requests.md 1.5) [NYT6]
+                status.replace_warning_items("group_warnings", ("exposure_clamped",), [])
 
     def to_state(self) -> CameraGroupState:
         self.adopt_search_results()

@@ -1,6 +1,11 @@
 # QKX1 — Fifteen answers of the user to the phase 3 spec drafts; three interim rules
 
-**Status:** accepted, 2026-11-19 (user; commit to dom/native-jpeg).
+**Status:** absorbed into
+[`specs/windows-capture.md#20-decisions-of-the-user-d1-to-d49`](../../specs/windows-capture.md#20-decisions-of-the-user-d1-to-d49),
+[`specs/windows-capture.md#75-mode-choice-auto-rate-group-rate`](../../specs/windows-capture.md#75-mode-choice-auto-rate-group-rate),
+[`specs/windows-capture.md#142-windows-the-temporary-setting-and-the-deletion-d8`](../../specs/windows-capture.md#142-windows-the-temporary-setting-and-the-deletion-d8),
+[`specs/recorder.md#18-decisions-of-the-user`](../../specs/recorder.md#18-decisions-of-the-user),
+2026-11-23 (commit to dom/absorb-2; was accepted, 2026-11-19 (user; commit to dom/native-jpeg)).
 
 ## Decision
 

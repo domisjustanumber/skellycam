@@ -81,6 +81,7 @@ export interface Camera {
     deviceInfo: {
         virtual?: boolean;
         usbLink?: string;           // 'USB 1' | 'USB 2' | 'USB 3' | 'unknown' (detect_cameras_devices.py sends it)
+        supportedModes?: { width: number; height: number; framerates: number[] }[];  // the rate choice (rate-choice.ts)
         vendorId?: string;
         productId?: string;
     };
@@ -99,6 +100,9 @@ export interface CamerasState {
     isPaused: boolean;
     isLoading: boolean;
     error: string | null;
+    rateNote: string | null;        // the text under the rate selector: a fall back to 30 fps, or why 60 fps went (2.4, 2.5)
+    rateFallbackSeen: string | null;  // the rate_fallback text of the last live state: only a new one changes the rate
+    rateChecking: boolean;          // "Checking 60 fps…" (rate-choice.ts nextRateChecking)
 }
 
 // ==================== API Types ====================
@@ -115,6 +119,7 @@ export interface DetectCamerasResponse {
         product_id?: string;
         virtual?: boolean;
         usb_link?: string;          // the server sends it for each camera; optional only for an older server
+        supported_modes?: { width: number; height: number; framerates: number[] }[];
     }>;
 }
 

@@ -1,6 +1,10 @@
 # EN7A — Phase 3 decisions: Windows native capture through Media Foundation (D1 to D49)
 
-**Status:** accepted, 2026-11-19 (user; grilling session of 2026-11-19; commit to dom/native-jpeg).
+**Status:** absorbed into
+[`specs/windows-capture.md#20-decisions-of-the-user-d1-to-d49`](../../specs/windows-capture.md#20-decisions-of-the-user-d1-to-d49),
+[`specs/windows-capture.md#14-decided-elsewhere`](../../specs/windows-capture.md#14-decided-elsewhere),
+2026-11-23 (commit to dom/absorb-2; was accepted, 2026-11-19 (user; grilling session of 2026-11-19; commit to
+dom/native-jpeg)).
 
 ## Decision
 

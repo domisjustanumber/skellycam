@@ -14,14 +14,16 @@ T0 = 1_000_000_000_000
 MODEL = {-12: 10, -11: 20, -10: 40, -9: 70, -8: 110, -7: 150, -6: 190, -5: 230}  # T-REQ-01
 
 
-def simulate(brightness, rates=None, mode_rate=30.0, lag=0, until_s=60.0, exposure_range=None):
-    """Run one search. Returns (search, the sets in order, the frames of each trial as (sfn, brightness))."""
+def simulate(brightness, rates=None, mode_rate=30.0, lag=0, until_s=60.0, exposure_range=None, late=None):
+    """Run one search. Returns (search, the sets in order, the frames of each trial as (sfn, brightness)).
+    `late`: {value: (n, seconds)}: the frame n (from 0) after the set of that value arrives late by that time; the
+    camera keeps its cadence, so the next frames come at their times (or just after the late frame)."""
     from skellycam.core.camera.capture.exposure_search import ExposureSearch
 
-    rates = rates or {}
+    rates, late = rates or {}, late or {}
     search = ExposureSearch(mode_rate, T0, exposure_range)
     now, sfn, value, sets, set_at = T0, 0, -7, [], []  # set_at: (sfn of the first frame after the set, value)
-    seen = []
+    seen, cadence, last = [], T0, T0  # a wake of the search moves no frame of the camera
     while search.result is None and now < T0 + until_s * 1e9:
         pending = search.take_pending()
         if pending is not None:
@@ -29,12 +31,15 @@ def simulate(brightness, rates=None, mode_rate=30.0, lag=0, until_s=60.0, exposu
             sets.append(value)
             set_at.append((sfn, value))
             search.set_done(value, now)
-        interval = round(1e9 / rates.get(value, mode_rate))
-        if search.wake_ns < now + interval:
+        n, delay = late.get(value, (None, 0.0))
+        nominal = cadence + round(1e9 / rates.get(value, mode_rate))
+        due = max(nominal + (round(delay * 1e9) if sfn - set_at[-1][0] == n else 0), last + 1000)
+        if search.wake_ns < due:
             now = max(now, search.wake_ns)
             search.no_frame(now)
             continue
-        now += interval
+        cadence, now = nominal, max(now, due)
+        last = now
         shown = next((v for s, v in reversed(set_at) if s <= sfn - lag), -7)
         gray = brightness[shown]
         seen.append((sfn, gray))
@@ -153,6 +158,84 @@ def test_t_req_09_the_search_fails_at_20_s():
     assert (search.result["state"], search.result["reason"]) == ("failed", "timed-out")
     assert search.detail == "it took more than 20 s"
     assert abs((search.ended_ns - T0) / 1e9 - 20.0) <= 0.25
+
+
+def test_t_req_77_a_borderline_value_is_measured_again_before_it_is_dropped(caplog):
+    """T-REQ-77, 1.3 item 2.7 [Q522, NYT6]: at -8 the frame s_a + 30 comes 50 ms late, and the camera keeps 30 fps.
+    The early decision reads 28.1 fps (29 intervals in 30 / (0.97 x 30) s), so -8 is measured again over 60 intervals
+    from frame a: 30 fps, kept, and the result is -9 (with -8 dropped it is -7). The trial has `first_fps` 28.1. The
+    repeat costs about 1.0 s at 30 fps. A value at 28.1 fps for each frame is dropped after the repeat; a value at
+    25 fps (more than 10 % below) is not measured again. Each value is set one time; with no repeat `first_fps` is
+    null."""
+    import logging
+
+    baseline, _, _ = simulate(MODEL)
+    assert all(t["first_fps"] is None for t in baseline.result["trials"])
+    with caplog.at_level(logging.INFO):
+        search, sets, _ = simulate(MODEL, late={-8: (39, 0.05)})
+    assert sets == list(range(-12, -4))
+    assert search.result["chosen"] == -9
+    trial = {t["value"]: t for t in search.result["trials"]}[-8]
+    assert trial["kept_rate"] and abs(trial["measured_fps"] - 30.0) < 0.05 and trial["brightness"] == MODEL[-8]
+    assert abs(trial["first_fps"] - 28.13) < 0.05, trial
+    assert len([m for m in caplog.messages if "measures -8 again" in m]) == 1
+    added_s = (search.ended_ns - baseline.ended_ns) / 1e9
+    assert 0.9 <= added_s <= 1.2, added_s
+
+    for rate, windows in ((28.1, 2), (25.0, 1)):
+        search, sets, _ = simulate(MODEL, rates={-8: rate})
+        assert sets == list(range(-12, -4))
+        trial = {t["value"]: t for t in search.result["trials"]}[-8]
+        assert not trial["kept_rate"] and search.result["chosen"] == -7
+        assert (trial["first_fps"] is not None) == (windows == 2), (rate, trial)
+        added_s = (search.ended_ns - baseline.ended_ns) / 1e9
+        assert (added_s > 0.9) == (windows == 2), (rate, added_s)
+
+
+def keep_share(rate, runs, borderline, seed=7):
+    """The share of `runs` searches of one value at `rate` fps (mode 30) that keep it. The arrival jitter of the review
+    experiment `jitter.py`: gaussian with sd 2 ms, and 3 % of the frames 10 to 30 ms late; the cadence stays. Run i
+    uses the seed `seed + i`, so the runs with and with no repeat see the same frame times."""
+    import random
+
+    from skellycam.core.camera.capture import exposure_search as es
+
+    kept, saved = 0, es.BORDERLINE
+    es.BORDERLINE = borderline
+    try:
+        for i in range(runs):
+            rng = random.Random(seed + i)
+            search = es.ExposureSearch(30.0, 0, (-8, -8, 1))
+            search.set_done(search.take_pending(0), 0)
+            period, sfn, previous = 1e9 / rate, 0, 0
+            while search.result is None and sfn < 400:
+                extra = rng.uniform(10e6, 30e6) if rng.random() < 0.03 else 0
+                t = max(previous + 1, round((sfn + 1) * period + rng.gauss(0, 2e6) + extra))
+                while search.result is None and search.wake_ns is not None and search.wake_ns < t:
+                    search.no_frame(search.wake_ns)
+                if search.result is None:
+                    search.frame(sfn, t, lambda: 100.0)
+                previous, sfn = t, sfn + 1
+            kept += search.result["trials"][0]["kept_rate"]
+    finally:
+        es.BORDERLINE = saved
+    return kept / runs
+
+
+def test_t_req_80_the_repeat_keeps_a_slow_value_no_more_often():
+    """T-REQ-80, 1.3 item 2.7 [NYT6]: 600 seeded runs with the arrival jitter of the review. A repeat only adds a
+    chance, so a value at 29.0 fps (3.3 % slow) is kept at most 1 point more often with the repeat than with no repeat
+    (measured: 11.8 % against 11.3 %; a second window that decides alone gave 23.8 %); a value at 30.0 fps is kept in
+    each run with the repeat."""
+    import logging
+
+    logging.disable(logging.INFO)
+    try:
+        without, with_repeat = keep_share(29.0, 600, -1.0), keep_share(29.0, 600, 0.10)
+        assert with_repeat <= without + 0.01, (without, with_repeat)
+        assert keep_share(30.0, 600, 0.10) == 1.0
+    finally:
+        logging.disable(logging.NOTSET)
 
 
 @pytest.mark.parametrize(("error", "readback", "reason", "detail"), [

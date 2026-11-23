@@ -193,14 +193,18 @@ def empty_diagnostics(backend: str | None = None) -> dict:
 
 
 RESTORE_SETTING = "SKELLYCAM_RESTORE_CONTROLS"  # "0" turns the restore off, for a debug run only (4.7)
+# 4.7 [NYT6]: camera_id -> the keeper of the shared record of the "before" values (the status of the camera, which
+# the camera process puts here), with `restore_record()` and `set_restore_record(record)`. The record survives the
+# camera process.
+RESTORE_RECORDS: dict = {}
 
 
 class ControlRestore:
     """The restore of the controls at the close (unix-capture.md 4.7), for one open of one camera.
 
     The source gives each read-back to `read` (the first one is the "before" state, taken before any set),
-    each `changes` to `changed` before it sets them, and calls `restore` in its close, before the stream
-    stops. `restore` sets each changed control back to its "before" value and auto flag (the one set that
+    each `changes` to `changed` before it sets them, the read-back after each set to `after_set`, and calls
+    `restore` in its close, before the stream stops. `restore` sets each changed control back to its "before" value and auto flag (the one set that
     may turn the camera's own auto exposure on again), and reads it back. A failed restore is logged and
     counted; the close goes on. A hung call raises (6.6)."""
 
@@ -210,13 +214,50 @@ class ControlRestore:
         self.names: set[str] = set()
         self.ok: bool | None = None
         self.failed: int | None = None
+        self._keeper = RESTORE_RECORDS.get(camera_id)
+        self._set: dict[str, list] = {}  # name -> [auto, value] that this app set last (4.7) [NYT6]
 
     def read(self, state: ControlState) -> None:
-        if self.before is None:
-            self.before = dict(state)
+        if self.before is not None:
+            return
+        self.before = dict(state)
+        record = self._keeper.restore_record() if self._keeper is not None else None
+        if not record:
+            return
+        # An earlier open got no restore (4.7) [NYT6]: a control that still holds the value that this app set last
+        # takes its "before" value from the record; the record drops each other control.
+        for name in record.get("names", ()):
+            got, last, before = state.get(name), record.get("set", {}).get(name), record.get("before", {}).get(name)
+            if got is not None and last is not None and before is not None and got.auto == last[0] and (
+                    got.auto or got.value == last[1]):
+                self.before[name] = ControlValue(*before)
+                self.names.add(name)
+                self._set[name] = last
+        self._save()
 
     def changed(self, changes: dict) -> None:
+        """Before the set (4.7): the record holds the names and the values that this app asks for."""
+        asked = {name: [setting.auto, setting.value] for name, setting in changes.items()}
+        if set(changes) <= self.names and all(self._set.get(name) == value for name, value in asked.items()):
+            return
         self.names.update(changes)
+        self._set.update(asked)
+        self._save()
+
+    def after_set(self, state: ControlState) -> None:
+        """The read-back after a set: the value that the camera took is the value that this app set last."""
+        took = {name: [state[name].auto, state[name].value] for name in self.names if name in state}
+        if any(self._set.get(name) != value for name, value in took.items()):
+            self._set.update(took)
+            self._save()
+
+    def _save(self) -> None:
+        if self._keeper is None or self.before is None:
+            return
+        before = {name: [value.present, value.auto, value.value] for name, value in self.before.items()
+                  if name in self.names}
+        self._keeper.set_restore_record(
+            dict(before=before, names=sorted(self.names), set=self._set) if self.names else {})
 
     def restore(self, set_controls) -> None:
         """`set_controls(changes) -> ControlState` sets the changes and reads the controls back."""
@@ -239,6 +280,8 @@ class ControlRestore:
                 failed += 1
                 logger.warning(f"Camera {self.camera_id}: the restore of {name} at the close failed: {problem}")
         self.ok, self.failed = failed == 0, failed
+        if self.ok and self._keeper is not None:
+            self._keeper.set_restore_record({})  # the camera holds its own values again
 
     def fill(self, diagnostics: dict) -> None:
         diagnostics.update(restore_ok=self.ok, restore_failed=self.failed)

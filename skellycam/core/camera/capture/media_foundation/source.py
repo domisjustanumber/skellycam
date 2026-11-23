@@ -140,6 +140,7 @@ class MediaFoundationSource:
         for name, setting in changes.items():
             _set_control(interfaces, name, setting)
         read = {name: _read_control(interfaces, name) for name in CONTROLS}
+        self._restore.after_set({name: value for name, (value, _) in read.items()})
         self._controls = {name: (value, None if via is None else "ks" if via is interfaces[2] else "iam")
                           for name, (value, via) in read.items()}
         return {name: value for name, (value, _) in read.items()}

@@ -191,7 +191,7 @@ def kill_holder(array):
 @pytest.mark.capture_timing
 def test_experiment_1_a_restart_right_after_a_dead_holder_of_camera_warnings_gives_new_arrays():
     """F2 of the second review: the old process was killed while it held the lock of `camera_warnings`, and no read
-    found that before `reset_for_start`. The restart gives four new arrays; each later `serialize` of the new
+    found that before `reset_for_start`. The restart gives new arrays (ARRAYS); each later `serialize` of the new
     process takes no wait."""
     from types import SimpleNamespace
 
@@ -231,11 +231,27 @@ def test_experiment_2_a_restart_right_after_a_dead_holder_of_info_lets_the_main_
 
 
 def test_experiment_3_a_swap_of_the_arrays_during_a_read_raises_nothing():
-    """F3: the warning arrays go by name, so a read that comes during the swap of `reset_for_start` cannot raise."""
+    """F3: the swap of `reset_for_start` comes while a read holds the lock of the old array. The read releases the
+    lock that it took (not the lock of the new array), reads the array by name, and raises nothing; the old lock is
+    free and the new lock was never taken."""
+    import contextlib
+
     status = CameraStatus()
-    status.camera_warnings = multiprocessing.Array("c", camera_status.INFO_SIZE)  # the swap
-    assert status.warning_items("camera_warnings") == []
-    assert status.serialize()["warnings"] == []
+    status.set_warning_items([{"kind": "add_light"}], "camera_warnings")
+    old = status.camera_warnings
+    take_lock = status._array_lock
+
+    @contextlib.contextmanager
+    def swap_inside(name):
+        with take_lock(name) as locked:
+            assert locked
+            setattr(status, name, multiprocessing.Array("c", camera_status.INFO_SIZE))  # the swap, inside the window
+            yield locked
+
+    status._array_lock = swap_inside
+    assert status.warning_items("camera_warnings") == []  # the new array, read by name
+    del status._array_lock
+    assert old.get_lock().acquire(timeout=0) and status.camera_warnings.get_lock().acquire(timeout=0)
 
 
 @pytest.mark.capture_timing
@@ -256,6 +272,34 @@ def test_experiment_4_a_dead_holder_of_the_last_frame_blocks_no_frame_decision()
     assert orchestrator.should_record_frame_number(5) == (False, True)
     assert orchestrator.take_frame_count() == 2
     assert time.monotonic() - started < 0.2
+
+
+def test_t_unx_93_a_frame_decision_outside_a_take_never_touches_the_last_frame_lock():
+    """T-UNX-93, unix-capture.md 4.10 [NYT6]: with no take (first is -1), a frame decision reads no last frame and takes no
+    lock. A holder that keeps the lock (a camera killed inside it) makes no wait, and no stretch with no lock starts."""
+    import threading
+
+    from skellycam.core.camera_group.camera_orchestrator import CameraOrchestrator
+
+    orchestrator = CameraOrchestrator.from_statuses({})
+    held, release = threading.Event(), threading.Event()
+
+    def hold():
+        with orchestrator.last_recording_frame_number.get_lock():
+            held.set()
+            release.wait(10)
+
+    holder = threading.Thread(target=hold, daemon=True)
+    holder.start()
+    try:
+        assert held.wait(5)
+        started = time.monotonic()
+        assert orchestrator.should_record_frame_number(5) == (False, False)
+        assert time.monotonic() - started < 0.2
+        assert not orchestrator.frame_lock_lost
+    finally:
+        release.set()
+        holder.join(5)
 
 
 async def test_a_state_read_that_raises_once_does_not_end_the_app_state_sender(monkeypatch):

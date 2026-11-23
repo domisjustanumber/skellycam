@@ -1,7 +1,20 @@
 # Certify specification: what a certify run of skellycam measures (draft 3)
 
-Status: draft 3 for the user, 2026-11-20. Spec and test list only: no product code and no test code
-exist for it. The decisions of the user that it builds on are in
+Status: draft 3 for the user, 2026-11-20; the first code step on 2026-11-21. The code is in
+`skellycam/core/certify/`, the tests are in `skellycam/tests/certify/`, and section 19 states the choices of the code
+([ADR-VG5F](../decisions/entries/VG5F-choices-of-the-first-certify-code.md) and [ADR-X8XE](../decisions/entries/X8XE-choices-of-the-certify-review-fixes-and-format-1-6-0.md)). The code builds these checks: `detect`; for each camera `<label>:detect`,
+`:detect:mjpg-mode`, `:opens`, `:rate`, `:modes:granted:<base>`, `:native-jpeg:format`, `:native-jpeg:not-reencoded`,
+`:native-jpeg:valid`, `:native-jpeg:size`, `:native-jpeg:ring-equals-mkv`, `:native-jpeg:source-equals-ring`,
+`:settings-stick:readback`, `:settings-stick:holds`, `:settings-stick:image-effect`, `:records:rows-complete`,
+`:records:blocks-decode`, `:records:gaps-explained`, and on Linux and macOS in quick and on each system in full
+`:clock:base`, `:clock:before-arrival`, `:clock:near-arrival`, `:sequence`, `:time-gaps`; `group:take:finished`,
+`:csv-rows`, `:no-missing`, `:frame-count`, `:rate`; `<model>:units`; in full the roll-up checks
+`<model>:gate:<step>` and `<model>:gate` and the check `<model>:gate:no-hang`; the cleanup rows `release:<label>`,
+`delete-work-folder` and `write-record`; and `session:exit`. Each other check of this spec is `not-run` with
+`not-built`: `group:open` with the retry alone (4.2), `self:hang-100ms:gap` and `:hard-end`, the camera block of
+`full` (5, 8.2, 10.2), and the group, system and self checks of `full` (6, 7). The checks of a mode above `<base>`
+and the macOS probes (10.7) are not in the report yet. On Linux and macOS the native detection is not built:
+`detect` is `not-run` `not-built`. The decisions of the user that it builds on are in
 [ADR-GVC0](../decisions/entries/GVC0-certify-decisions-of-the-user.md) and
 [ADR-KG00](../decisions/entries/KG00-certify-decisions-of-the-user-on-draft-2.md). The choices of the
 agent are in [ADR-KY81](../decisions/entries/KY81-certify-spec-choices-of-the-agent.md) (draft 2) and
@@ -12,7 +25,7 @@ differences to it. Section 10.7 holds the macOS approach probes.
 Draft 3 puts in the decisions of the user of 2026-11-20 on draft 2: the answers C1 to C9 (questions 1
 to 9 of draft 2), the "for now" rule of the OpenCV fallback, the check of a camera model one time on a
 system, the cancel and progress rules, the order of the full run, the exposure rule of the product,
-and "native capture only". It is written against format 1.4.0 of the contract: one test is one
+and "native capture only". It was written against format 1.4.0 of the contract: one test is one
 check, a busy camera is `skipped` with `busy`, there is one summary item for each camera model, the
 plan has `risks` and `total`, the report has `notices`, and `cameras-busy`, `interrupted` and
 `over-budget` are common codes. The cross-spec review of 2026-11-20 and the rulings of the user of
@@ -24,14 +37,19 @@ of the supervisor and of the agent ([ADR-FC1C](../decisions/entries/FC1C-choices
 ## 0. How to read this spec
 
 - **The contract** is `report-format.md` of the repository `skellycertify` (sibling folder
-  `../skellycertify/`), format `skellycertify.report/1.4.0`, commit `1c9c191` of `main` (read on
-  2026-11-20), with its `review.md`. "[C x.y]" cites section x.y of `report-format.md`. This spec does
+  `../skellycertify/`), format `skellycertify.report/1.6.0`, commit `ba9a071` of `main` (read on
+  2026-11-21; skellycertify ADR-9FHP), with its `review.md`. The user moved this spec and the code to 1.6.0 on
+  2026-11-21 [ADR-X8XE](../decisions/entries/X8XE-choices-of-the-certify-review-fixes-and-format-1-6-0.md). Format 1.6.0 adds the keyword-only option `abandon` of `certify()` [C 2.4] (9.3), the
+  optional field `test_media` [C 3.9] (skellycam uses no test media, so its reports have no such field), the
+  field `shared_memory_bytes` of a GPU [C 3.3] (skellycam writes no `gpus`), and the summary group `component`
+  with the reason `not-installed` (format 1.5.0 and 1.6.0; skellycam gives no `component` item). The text below
+  that cites 1.4.0 stays true in 1.6.0. "[C x.y]" cites section x.y of `report-format.md`. This spec does
   not repeat it. Format 1.3.0 (skellycertify ADR-D1PW) gave the summary results `partial` and
   `skipped` with `busy` and the code `cameras-busy`. Format 1.4.0
   ([ADR-V1TR of skellycertify](https://github.com/domisjustanumber/skellycertify/blob/1c9c1917d8524931ff43ffae52051a529a875a3b/decisions/entries/V1TR-format-1-4-0.md))
   gives one check for each test, the roll-up check, `notices`, the plan fields `risks` and `total`,
   the table of the checks that did not pass, and `over-budget`. Each module report of skellycam has
-  the schema `skellycertify.report/1.4.0`. Commit `9e6d575` of `main` (skellycertify ADR-T191 and
+  the schema `skellycertify.report/1.6.0`. Commit `9e6d575` of `main` (skellycertify ADR-T191 and
   ADR-MM1F, still format 1.4.0) adds the optional `gate` of a summary item [C 3.7], the reviewed row of
   a `partial` item whose `gate` check is `pass` [C 7.2], the forms of `host` [C 3.3] and the privacy
   rules 17 to 20 [C 6]. "[C x.y]" cites that commit.
@@ -73,7 +91,7 @@ feature that the camera does not have [A].
 Scope:
 
 - skellycam gives the two Python functions `skellycam.certify(level, progress=None, cancel=None, *,
-  cameras=None, recording_folder=None, test_media_dir=None)` and `skellycam.certify_plan(level, *,
+  cameras=None, recording_folder=None, test_media_dir=None, abandon=None)` and `skellycam.certify_plan(level, *,
   cameras=None, recording_folder=None, test_media_dir=None)` [C 2.1, C 2.8]. The HTTP routes that start a run in the app stay in freemocap [U].
 - The levels `quick` and `full` [C 2.7].
 - The product path on all three systems: Media Foundation on Windows, and the native V4L2 (Linux) and
@@ -405,7 +423,9 @@ settings check and the JPEG check [U]. The pop-up check of a new model (2.5) is 
 cameras of that model.
 
 The 2 minutes are for all packages together [C 2.7 rule 1]. The user decided the shares: skellycam
-30 s, skellytracker 75 s, freemocap 15 s (reported by the freemocap session and confirmed by the user,
+30 s, skellytracker 75 s, freemocap 15 s (format 1.6.0 gives the quick run of skellytracker a limit of 65 s
+[C 3.6], and the contract does not split the 2 minutes between the packages; reported by the freemocap session and
+confirmed by the user,
 [ADR-H0BQ](../decisions/entries/H0BQ-user-rulings-of-the-spec-integration.md)). Thus the quick part of skellycam stops at 30 s:
 
 - A check that cannot start before the end of the 30 s is `not-run` with the common code
@@ -525,7 +545,7 @@ Numbers: `format` (`MJPG`, `YUY2`, `NV12`), `delivered`, `frames_checked`, `enco
 | `group:take:rate` | The frame rate of the take summary is within 1 % of the mode rate. This rate is the frames divided by the elapsed time [U]. The mean of 1/interval is not used: the 16 ms arrival grid biases it high [M `research/usb_cameras/docs/hardware_run_3a_20261120.md`, T-CAP-60]. | `group-rate-off` |
 | `<label>:records:rows-complete` | The rows of this camera have no `missing` row. | `missing-rows` |
 | `<label>:records:blocks-decode` | Each block of its MKV decodes (at 1/8 size, in memory). | `frame-not-decodable` |
-| `<label>:records:gaps-explained` | The sum of its gaps of `source_frame_number` equals its `replaced_count` (cap 5.2). | `gaps-unexplained` |
+| `<label>:records:gaps-explained` | The sum of its gaps of `source_frame_number` is not more than the change of its `replaced_count` (cap 5.2) from before the record start to after the stop: each gap needs a replaced frame. The window holds each row of the take and some frames more [A] [ADR-X8XE](../decisions/entries/X8XE-choices-of-the-certify-review-fixes-and-format-1-6-0.md). | `gaps-unexplained` |
 
 - A normal take of three cameras had equal rows, and each frame decoded [M run 11-20].
 - A gap in the last three rows is recorded in `end_gaps` and does not fail `gaps-explained` [A]. In 6
@@ -822,6 +842,28 @@ camera <camera name> wedged, please replug"" [U]. He also decided that the produ
 | `not-restored` | A control does not have its first "before" value at the end of the run. | Cleanup row `release:<label>`, `fail`, reason `camera-not-restored`. |
 | `replug` | The camera hung during the run, its camera process ended, or the plain open of phase G failed. | Cleanup row `release:<label>`, `fail`, reason `camera-wedged`. |
 
+After a stop of the caller, the end of the budget, a time-out or a crash, the rules of phase G are [U] [ADR-X8XE](../decisions/entries/X8XE-choices-of-the-certify-review-fixes-and-format-1-6-0.md):
+
+- A camera that hung, whose process ended or that was removed (after any step) is `replug`. It is never opened
+  again.
+- A camera whose `opens` has no result was in the middle of its open. It is never opened again. Its settings are
+  not known, so it is `not-restored`, never `healthy`. A camera that had a step running at the stop is the same,
+  because the product needs 5 s to declare a hang [U, question 6 of ADR-X8XE]. This costs the restore of each camera
+  after a cancel during the take.
+- When the session closed its camera group itself (the close ran to its end), the close restored each camera:
+  phase G takes the result of that close, as in quick with no stop, and opens no camera.
+- A camera that another program holds, or whose first "before" values are not known (no control was set), gets no
+  open and no row.
+- Each other touched camera gets the plain open below. The session sends the "before" values of a camera as soon as
+  its diagnostics hold them.
+
+In quick with no stop, a camera whose loop failed after its controls were set is `not-restored`: the product does
+not restore a camera whose loop failed [ux 4.7].
+
+Decided, not built [U, question 4 of [ADR-X8XE](../decisions/entries/X8XE-choices-of-the-certify-review-fixes-and-format-1-6-0.md), 2026-11-21]: in quick, phase G opens a camera whose loop
+failed and that is not wedged, and sets its "before" values back, in place of only the notice. When it is built,
+this rule replaces the rule above in quick.
+
 The phase also runs after a crash of an earlier phase, with its own limit of 20 s for each camera
 [A]. After a cancel, the user decided [ADR-H0BQ](../decisions/entries/H0BQ-user-rulings-of-the-spec-integration.md): phase G re-checks only the cameras that the run touched
 (opened), with a plain open of at most 5 s for each camera, and it sets a control back when it differs
@@ -900,10 +942,15 @@ the record of checked models (2.5) and the evidence file (11.2).
 - `system_changes` is empty in both levels: the product restores each camera at its close (8.3), and
   certify changes nothing else outside the work folder.
 - `risks` is empty for `quick` and holds the sentences of 8.4 for `full` [C 2.6].
-- `total` is the count of checks that the run will do [C 2.6]. A quick run of a system whose models
-  are each checked or reviewed has `total` 0: it checks nothing, and the app does not ask the person
-  [C 2.7]. The quick self-check `self:hang-100ms` runs only when the run checks at least one camera
-  model [A, question 8].
+- `total` is the count of checks that the run will do [C 2.6]. A quick run with no camera model to
+  check (for example, each model is reviewed, 2.5) has `total` 0: it checks nothing, and the app does
+  not ask the person [C 2.7]. A model that the record holds as checked does not give `total` 0: a
+  quick run with no option `cameras` checks it again (2.4). The app gives the option `cameras` from
+  `details.unchecked`, so the pop-up run checks only the unchecked models (2.5) [U, question 1 of
+  [ADR-X8XE](../decisions/entries/X8XE-choices-of-the-certify-review-fixes-and-format-1-6-0.md)].
+  With no camera to check, the run still reports `detect`, one check more than `total`: the user
+  accepts this difference of one [U, question 2 of ADR-X8XE]. The quick self-check `self:hang-100ms`
+  runs only when the run checks at least one camera model [A, question 8].
 - `questions` holds `camera-ok-after` only for `full`.
 - `details.cameras[].evidence` and `details.system_evidence` come from the known-systems file
   (section 11): `verified`, `known-bad` or `unknown`.
@@ -916,7 +963,10 @@ Quick: section 4.7. Full: section 16.
 
 ### 9.3 Cancel and time limits [A]
 
-- The caller reads `cancel.is_set()` at least two times each second [C 2.4].
+- The caller reads `cancel.is_set()` and `abandon.is_set()` at least two times each second [C 2.4].
+- `abandon` [C 1.6.0 2.4]: the run stops as for a cancel, and the checks that did not end are `not-run` with
+  `cancelled`. Certify then writes no row to `camera_checks.json` and no report file, and it returns the module
+  report. When `cancel` and `abandon` are both set, the rules of `abandon` apply.
 - On a cancel, the caller stops the running check at once: it kills the child process of that check
   with its process tree (`psutil`) [C 2.4]. After a cancel no new check starts [C 2.4]. Then phase G
   re-checks the cameras that the run touched (8.3), with cleanup rows only, and phase H. A cancel
@@ -934,6 +984,29 @@ Quick: section 4.7. Full: section 16.
   limit gives `fail` with `timed-out` [C 2.5].
 - A check that cannot start because the time limit of the level was used up is `not-run` with the
   common code `over-budget` [C 5.3].
+- The bound of the call [U] [ADR-X8XE](../decisions/entries/X8XE-choices-of-the-certify-review-fixes-and-format-1-6-0.md). The budget of quick starts at the call, so it holds the detection: the
+  detection ends at its limit of 20 s or at the end of the budget, whichever comes first. After the budget, the
+  call can still take phase G (at most 5 s and about 1.5 s to start and end the child, for each touched camera
+  that is opened again) and the wait for the end of the session child (`EXIT_LIMIT_S`, 5 s). Thus `certify("quick")`
+  returns within 30 s + N x 6.5 s + 5 s, which is about 55 s for three cameras. After a crash or a time-out the
+  wait of 12 s of the camera processes and 20 s for each camera in phase G apply: about 112 s for three cameras.
+- The close of the group is never cut [A]. When the session starts the close of its camera group, it tells the
+  caller. From then on the caller applies no budget stop and no cancel kill until the close ended or the close limit
+  passed: 5 s + 8 s for each camera, from the bounds of the product close (a join of 3 s, a terminate and 3 s, a
+  kill and 2 s, one camera process after the other). A stop that came in the close stays a stop for the report.
+- The bound above assumes that each process ends when it is killed. A process in a driver call that does not
+  return can add about 27 s (the waits of the kill, the grace and the exit). The worst case for three cameras is
+  then about 77 s.
+- The grace of 12 s at a time-out is 2 s more than the heartbeat limit of 10 s of a camera process: a camera
+  process sees the dead server after 10 s and has about 2 s to finish its files and restore its camera before the
+  rest of the tree is killed. Phase G then judges that camera again.
+- Ctrl+C in a console reaches each process of the console. The camera processes ignore it; the session child ends,
+  and the camera processes restore their cameras through the heartbeat path within about 12 s. The caller then
+  stops the session and gives no report.
+- The session child ends when its caller dies: it sets the kill flag, closes its camera group (the close restores
+  each camera) within 15 s, and ends. Each wait of the child for its caller has a time limit. The caller stops the
+  session child also when the progress callable or the cancel object raises an exception that is not an
+  `Exception`.
 
 ### 9.4 Privacy and camera names [U, A]
 
@@ -969,6 +1042,17 @@ The contract rules 1 to 16 apply [C 6]. In addition:
   folder that does not go gives the cleanup row `delete-work-folder` with `not-deleted`.
 - At the start, certify deletes earlier `skellycam-certify-*` folders that hold the marker file
   `.skellycam-certify`. It deletes nothing else.
+- One run at a time [U] [ADR-X8XE](../decisions/entries/X8XE-choices-of-the-certify-review-fixes-and-format-1-6-0.md). A run holds the OS file lock of `certify.lock` beside `camera_checks.json` in the
+  skellycam base folder for its whole time. A second run is refused as in 9.7, with `cameras-busy`, and makes no
+  work folder. The OS frees the lock when the process ends. Another error of the lock file refuses the run with
+  the class name of the error.
+- The work folder can outlive a caller that died. It then holds the take, which is a recording of real frames.
+  The next run in the same recording folder deletes it (it has the marker file).
+- No log file outside the work folder: the session child gives its camera processes the log folder `logs` in the
+  work folder (`SKELLYLOGS_LOG_DIR`), unless the caller set that folder. The session child itself writes no log
+  file.
+- A record write that fails gives the cleanup row `write-record` with the class name of the error; the report
+  still returns [C 2.5].
 - The report holds no media and no file name of a take [C 6 rule 7].
 
 ### 9.6 Progress before each step [U, A]
@@ -985,6 +1069,11 @@ The user decided: the progress callback is called with the name of a check befor
   100 ms after the last message, certify waits until 100 ms have passed [A]. It never drops a
   message before a step.
 - If `progress` raises, certify stops calling it and continues the run [C 2.3].
+- Decided, not built [U, question 3 of [ADR-X8XE](../decisions/entries/X8XE-choices-of-the-certify-review-fixes-and-format-1-6-0.md), 2026-11-21]: the checks that only compute
+  from data that the run already has (the JPEG, record and clock checks) share one progress message.
+  A quick run then sends about 20 progress messages. Before, a quick run of three cameras sent 63
+  messages, and the gap of 100 ms cost about 6 s of the 30 s. When it is built, this rule replaces the
+  rule of one message before each computed check.
 
 ### 9.7 Cameras busy [U, A, C 2.5]
 
@@ -998,6 +1087,10 @@ One camera that another program holds, while the other cameras work, is not a re
 Its checks are `not-run` with `camera-in-use`, and its summary item is `skipped` with `busy` when
 each unit of its model is held (3.3). A camera that a skellycam server in another process holds is
 such a camera [A].
+
+Not built [ADR-X8XE](../decisions/entries/X8XE-choices-of-the-certify-review-fixes-and-format-1-6-0.md): a check for a camera group that another process holds (review finding
+11). A sound way is that the app takes `certify.lock` (9.5) while it has a camera group open. That is a
+change of `camera_group_manager.py`.
 
 ### 9.8 Interrupted run [C 2.5, A]
 
@@ -1751,9 +1844,9 @@ tests only the self-check.
 
 | ID | What it does | Pass criterion |
 |---|---|---|
-| T-CERT-01 | 3 OS. `certify_plan("quick")` and `("full")` with a fake enumeration of 0, 1, 4 and 8 cameras and 4 virtual cameras, a fake evidence file with one `verified` model, and a fake `camera_checks.json` that holds one other model. | The fields of C 2.6; empty `downloads` and `system_changes`; `risks` empty for `quick` and the sentences of 8.4 for `full`; `total` equal to the count of checks that the run then reports; `seconds_estimate` = min(30, ⌈20 + N/4⌉ + 10) for quick (0 with no model to check) and by 16 for full; `evidence` and `checked` of each camera; `details.unchecked` holds neither the checked nor the reviewed model; with each model checked or reviewed, quick has `total` 0; no activate call; `comtypes` not imported in the caller. |
+| T-CERT-01 | 3 OS. `certify_plan("quick")` and `("full")` with a fake enumeration of 0, 1, 4 and 8 cameras and 4 virtual cameras, a fake evidence file with one `verified` model, and a fake `camera_checks.json` that holds one other model. | The fields of C 2.6; empty `downloads` and `system_changes`; `risks` empty for `quick` and the sentences of 8.4 for `full`; `total` equal to the count of checks that the run then reports (with no camera to check, the run also reports `detect`, 9.1); `seconds_estimate` = min(30, ⌈20 + N/4⌉ + 10) for quick (0 with no model to check) and by 16 for full; `evidence` and `checked` of each camera; `details.unchecked` holds neither the checked nor the reviewed model; the checked model counts in `total` (2.4); with each model reviewed, quick has `total` 0; no activate call; `comtypes` not imported in the caller. |
 | T-CERT-02 | `certify("slow")`, `certify_plan("")`. | `ValueError` [C 2.2]. |
-| T-CERT-03 | 3 OS. Quick with 4 fake cameras of 3 models. Validate the report. | Each required field of C 3.1; the schema id `skellycertify.report/1.4.0`; `kind` = level; each name matches C 3.4 and is unique; each check has one result, never `partial`; each `fail` and `not-run` has a reason of C 5.2; each `numbers` value has an allowed type; each summary item has a `group` of C 3.7, a `name` of 1 to 80 characters, a `device` of at most 40 characters or `null`, a `reason` only for `skipped`; the `module` of each camera check equals the `name` of its summary item [C 3.4]. |
+| T-CERT-03 | 3 OS. Quick with 4 fake cameras of 3 models. Validate the report. | Each required field of C 3.1; the schema id `skellycertify.report/1.6.0`; `kind` = level; each name matches C 3.4 and is unique; each check has one result, never `partial`; each `fail` and `not-run` has a reason of C 5.2; each `numbers` value has an allowed type; each summary item has a `group` of C 3.7, a `name` of 1 to 80 characters, a `device` of at most 40 characters or `null`, a `reason` only for `skipped`; the `module` of each camera check equals the `name` of its summary item [C 3.4]. |
 | T-CERT-04 | Fakes with planted values: a host name and a user name in a camera name, a path, a MAC-like string, a serial, `take.mkv`, a long string. | C 6 rules 1 to 11 hold; the planted values are gone. |
 | T-CERT-05 | Camera names: `Alex's iPhone Camera`, `Kamera’s Webcam`, a name with the host name, `HD Webcam (SN 12AB34CD56)`, `USB Video Device`. | `iPhone Camera`, `Webcam`, `Camera vvvv:pppp`, `HD Webcam`, `USB Video Device`. |
 | T-CERT-06 | 3 OS. No camera attached. | `detect` `pass` with `cameras` 0; each check that needs a camera `not-run` `no-camera`; no `fail` in the report; the self-checks run; no `camera` summary item; `no-camera` in `evidence.reasons`; no row written to the record of checked models. |
@@ -1822,6 +1915,11 @@ tests only the self-check.
 | T-CERT-69 | 3 OS. Certify and the record: a fake model with a local `full` row whose exposure is `{"v4l2": "no"}` and a shipped row that says the same; a full run. | Certify tries exposure again: the settings checks run and judge; no check is `not-run` because of the row; the new row holds the new results. |
 | T-CERT-70 | 3 OS. Report privacy for the Markdown part: camera names `Cam <x>`, `See https://x`, `www.cam.example`, `Cam 192.0.2.7` (a documentation address); a `host` with unknown fields. | The cleaned names hold no `<`, `>`, `](`, `]:`, `://`, `www.` or IPv4 address; the unknown `host` fields are left out or `null`; no object has a key two times [C 6 rules 17, 19, 20, C 3.3]. |
 | T-CERT-71 | 3 OS. A `full` run with a fake model whose `settings-stick:image-effect` fails and whose gate passes; the proposal tool of 11.5 with that report from a maintainer. | The summary item is `partial` with `gate` `<model>:gate`; the tool proposes `verified` with `not_passed` holding `settings-stick:image-effect`, `fail`, `no-image-effect`; a `skipped` item gives no row [C 7.2]. |
+| T-CERT-72 | 3 OS. Two models with one cleaned name, one `fail` and one `pass`. | Each model gets the row of its own summary item (2.5). |
+| T-CERT-73 | 3 OS. A fake that hangs at the live change (8.3), in a full run. | The running check `fail` `hung`; the later checks of that camera `not-run` `prior-failure`; `<model>:gate:no-hang` `fail`; `release:<label>` `camera-wedged` and its notice; no second open. |
+| T-CERT-74 | 3 OS, session child. A cancel, and the end of the budget, while a camera is in the middle of its open. | `cancelled` or `over-budget`; the camera is never opened again; `camera-not-restored` with its notice; the call returns within the bound of 9.3; no process is left. |
+| T-CERT-75 | 3 OS, session child. The caller dies during a run; a time-out of a full run. | The session child closes its cameras (each source is closed) and ends with its camera processes; at the time-out each camera process closes its source before the rest of the tree is killed; no record row after a time-out. |
+| T-CERT-76 | 3 OS. A second run while the lock of 9.5 is held; a record file that cannot be written; `abandon` with `cancel` [C 1.6.0 2.4]. | `cameras-busy` and no work folder; the cleanup row `write-record` and a returned report; after `abandon`, `cancelled` rows and no record row. |
 
 ## 18. The other specs: answers and differences [A]
 
@@ -1867,3 +1965,105 @@ names and `camera_checks.json`.
 The second cross-spec review of 2026-11-20 found more differences. The fixes are applied in this
 spec, [ux] and [req] ([ADR-FC1C](../decisions/entries/FC1C-choices-of-the-spec-integration.md)); the rulings of the user that they need are in [ADR-H0BQ](../decisions/entries/H0BQ-user-rulings-of-the-spec-integration.md).
 
+## 19. Choices of the first certify code [U]
+
+The first code step (Windows first) and the fixes of its two independent reviews made these choices
+where this spec was silent or unclear. The user accepted them on 2026-11-21
+([ADR-VG5F](../decisions/entries/VG5F-choices-of-the-first-certify-code.md),
+[ADR-X8XE](../decisions/entries/X8XE-choices-of-the-certify-review-fixes-and-format-1-6-0.md)). The
+sections above state some of them. This section states each one.
+
+### 19.1 The first code [U]
+
+1. Not built: `group:open` with the retry alone (4.2), `self:hang-100ms:*`, the camera block of
+   `full`, and the group, system and self checks of `full`. Each such check is `not-run` with
+   `not-built`. The `full` list has no check of a mode above `<base>`.
+2. The plan reads no modes, so its check names use `<base>` `1280x720@30`. `total` is the count of the
+   planned checks. A quick plan with no camera model to check has `total` 0.
+3. A run with no option `cameras` checks each camera that is not reviewed, also a camera of a model
+   that is in the record (2.4, [C 2.7]). The user kept this rule (9.1).
+4. `<label>:time-gaps` is in each list that has `<label>:sequence`. With a sequence number, it is
+   `not-run` with `has-sequence`, a new reason code.
+5. A `clock`, `sequence` or `time-gaps` check whose diagnostics key is null or `unknown` is `not-run`
+   with `not-built`. The Media Foundation source gives `clock` `unknown` and no `long_intervals`, so
+   the gate cannot pass on Windows yet.
+6. `<label>:clock:near-arrival` passes when the absolute p95 of sample minus arrival is 200 ms or
+   less.
+7. A failure of the product rate check at the open gives `opens` `pass` and `rate` `fail` with the
+   product code. `too-dark` for `rate` is not built: a camera that fails its rate check gives no ring
+   frame.
+8. In the summary item, `sequence` `not-run` with `no-sequence` counts as passed when `time-gaps`
+   passed, and the reverse.
+9. A camera that is not `ready` before the take leaves the group, because a record start needs each
+   camera `ready`.
+10. The session child clears its parent mark (`multiprocessing.process._parent_process`), because the
+    pubsub of the product refuses a camera group in a process with a parent. It keeps its parent
+    handle before it clears the mark (19.2 item 5). It sets up logging as a camera process does.
+    Decided, not built [U, question 5 of ADR-X8XE]: `managed_worker` sets an explicit role flag in
+    each camera process, and the `parent_process()` guards read it. Certify then drops this
+    workaround
+    ([ADR-TFD7](../decisions/entries/TFD7-search-limit-stop-rate-median-role-flag-and-restore-after-a-failed-loop.md)
+    item 3).
+11. A ring watch keeps the SHA-256 of each ring frame by source frame number. A frame that the
+    capture check flagged counts as damaged in `native-jpeg:valid`. `ring-equals-mkv` compares each
+    MKV block that is not `missing` with the ring hash and with the hash set of the record start.
+    With no compared frame, it is `not-run` with `ring-lapped`.
+12. `gaps-explained`: 19.2 item 11.
+13. A refused run (`cameras-busy`) has no summary item, so its checks have no `module`.
+14. Phase G after a stop, a time-out or a crash: 8.3 and 19.2. The plain open closes with
+    `restore=False`.
+15. After a time-out or a crash: 9.3 and 19.2. `full` has one session limit of 240 s in this step.
+16. The report has no `id`, and `commit` and `tree_modified` are null, so it is not yet valid as
+    evidence. The schema is in 19.2 item 12. The exit check of the session child is `session:exit`,
+    with no `module`.
+17. The record holds `controls.exposure` for the route of the settings checks only.
+18. `details.system_evidence` comes from the `systems` rows of the evidence file.
+
+### 19.2 The review fixes and format 1.6.0 [U]
+
+1. The record row of a model comes from the summary item of that model, never from its name
+   (T-CERT-72).
+2. A wedge code (`hung`, `process-ended`, `device-removed`) after any step makes the running check
+   `fail` (`hung`, `crashed` or `device-removed`), each later check of that camera `not-run` with
+   `prior-failure`, and the camera `camera-wedged`. `<model>:gate:no-hang` counts only `fail` rows.
+3. The session sends the "before" values as soon as the diagnostics hold them. Phase G never opens a
+   wedged camera or a camera with no `opens` result; the second one is `camera-not-restored`. A camera
+   with no known "before" values gets no open (8.3).
+4. A camera whose loop failed after its controls were set is `camera-not-restored`, because the
+   product does not restore it (`camera_loop.py`, `close(restore=not self.failed ...)`). In quick,
+   question 4 of ADR-X8XE replaces this rule when it is built (8.3).
+5. The session child keeps its parent handle before it clears the mark. A thread waits on the
+   caller. At the death of the caller, it sets the kill flag, closes the group within 15 s and ends.
+   The wait for an answer has a limit of 1 s in a loop. The caller stops the child in a `finally`,
+   also after a `BaseException` from the progress callable (9.3).
+6. A time-out ends the main process of the child, waits up to 12 s, then kills the rest. A cancel, an
+   abandon and the end of the budget kill the tree. After a crash, the caller waits up to 12 s for the
+   camera processes that it saw (9.3).
+7. At a stop, the events already in the queue keep their results.
+8. After a crash or a time-out, a running check is `fail` only when the checks that ran belong to one
+   camera; else each is `not-run` with the cause. A refused apply gives `opens` `not-run` with the
+   class name. A crash, a time-out or an abandon writes no record row.
+9. `certify.lock` beside the record holds one run at a time. A second run is refused with
+   `cameras-busy` and makes no work folder. A failed record write gives the cleanup row
+   `write-record` (9.5).
+10. The budget of quick starts at the call and holds the detection. The bound is in 9.3.
+11. `gaps-explained` passes when the gaps are not more than the replaced frames of a window from
+    before the record start to after the stop (4.5). Only the mode check of `<base>` counts for the
+    summary item and for `gate:mode`.
+12. Format 1.6.0: the schema id `skellycertify.report/1.6.0`; `abandon` stops as a cancel
+    (`cancelled`) and writes no record row; no `test_media` and no `gpus`; `session:exit` has no
+    `module`. The local contract clone is at 1.7.0, which changes only the `name` of a `test_media`
+    item; skellycam writes 1.6.0, as the user decided (section 0).
+13. Second review: the live change skips a wedged or not-ready camera. After the session starts its
+    close, the caller kills nothing before 5 s + 8 s for each camera (9.3). A clean close means no
+    reopen in phase G (8.3). A crash never blames a camera. A late abandon stops the record write.
+    Camera logs go to `logs` of the work folder (9.5).
+14. A camera with a step running at a stop is not opened again and gets `camera-not-restored`,
+    because the product needs 5 s to declare a hang (8.3). Cost: no restore after a cancel during the
+    take. The coordinator chose it, and the user accepted it (question 6 of ADR-X8XE).
+
+The user answered "yes" to the six questions of ADR-X8XE on 2026-11-21: (1) keep 2.4 (9.1); (2) the
+difference of one between `total` and the reported checks with no camera to check (9.1); (3) one
+progress message for the computed checks (9.6, decided, not built); (4) the restore of a camera whose
+loop failed, in phase G of quick (8.3, decided, not built); (5) the role flag (19.1 item 10, decided,
+not built); (6) item 14. Not built: the check for a camera group that another process holds (9.7).

@@ -255,17 +255,20 @@ def test_t_req_12_and_74_each_open_sets_the_held_value_then_searches(monkeypatch
 def test_t_req_19_the_server_reason_of_a_slow_camera_in_manual(monkeypatch):
     """T-REQ-19 (the `MANUAL` cameras), 1.5a [G3, H5, B8]: a camera in `MANUAL` that fails the start-up rate check
     at 60 fps gets the reason `declared 60.00 fps, measured ... fps. Camera is slow. Try adding more light`, to the
-    character, with no ` Or choose 30 fps.`. T-CAP-18 holds the case at 30 fps."""
+    character, with no ` Or choose 30 fps.`. T-CAP-18 holds the case at 30 fps. The fall back of 2.4 follows, so the
+    test reads the reason at 60 fps in the log line of the failure (2.4a item 8)."""
     import re
 
-    with capture_app(monkeypatch, [FakeScript(modes=((640, 480, 60, 1, "MJPG"),), rate=51.5)]) as app:
+    from skellycam.tests.capture.capture_session import capture_logs
+
+    with capture_logs() as logs, capture_app(monkeypatch, [FakeScript(modes=((640, 480, 60, 1, "MJPG"),), rate=51.5)]) as app:
         camera_id = app.factory.camera_ids[0]
         app.detect()
         assert app.apply([app.config(camera_id)]).status_code == 200
         app.wait_state(camera_id, "failed")
-        failure = app.status(camera_id)["failure"]
-        assert re.fullmatch(r"declared 60\.00 fps, measured \d+\.\d\d fps\. " + re.escape(SLOW_TEXT), failure["reason"])
-        assert failure["code"] == "rate-low"
+        line = re.escape(f"Camera {camera_id} failed during rate check: ")
+        assert [m for m in logs.messages() if re.fullmatch(
+            line + r"declared 60\.00 fps, measured \d+\.\d\d fps\. " + re.escape(SLOW_TEXT), m)], logs.messages()
 
 
 def test_t_req_44_a_failed_search_at_an_open_keeps_the_camera(monkeypatch):
@@ -531,6 +534,33 @@ def test_t_req_68_add_light_stays_until_the_next_exposure_change(monkeypatch, tm
         assert app.apply([app.config(camera_id)]).status_code == 200
         app.wait_state(camera_id, "ready")
         assert kinds() == []
+
+
+def test_t_req_78_the_clamp_of_a_manual_exposure_gives_a_warning(monkeypatch):
+    """T-REQ-78, 1.1 and 1.5 [NYT6]: `MANUAL -2` is clamped to -5. The apply response and the status of the camera
+    hold the item `exposure_clamped` with its text; the next apply request with `MANUAL -7` clears it. The button
+    "Auto-set exposure" (no apply) moves the camera to `AUTO`, and its held value clears the item too."""
+    with capture_app(monkeypatch, [FakeScript(brightness=MODEL)]) as app:
+        camera_id = app.factory.camera_ids[0]
+        app.detect()
+        response = app.apply([app.config(camera_id, exposure=-2)])
+        assert response.status_code == 200, response.text
+        item = {"kind": "exposure_clamped", "camera_ids": [camera_id], "control": "exposure",
+                "text": f"Camera {camera_id}: manual exposure -2 is above the limit -5. The exposure is -5."}
+        assert item in response.json()["warnings"]
+        app.wait_state(camera_id, "ready")
+        assert app.group.configs[camera_id].exposure == -5
+        assert item in app.status(camera_id)["warnings"]
+        assert app.client.post("/skellycam/camera/group/exposure/auto", json=None).status_code == 200
+        app.wait_state(camera_id, "ready")
+        assert app.group.configs[camera_id].exposure_mode == "AUTO"
+        assert "exposure_clamped" not in [w["kind"] for w in app.status(camera_id)["warnings"]]
+        assert item in app.apply([app.config(camera_id, exposure=-2)]).json()["warnings"]
+        app.wait_state(camera_id, "ready")
+        assert item in app.status(camera_id)["warnings"]
+        assert app.apply([app.config(camera_id)]).status_code == 200
+        app.wait_state(camera_id, "ready")
+        assert "exposure_clamped" not in [w["kind"] for w in app.status(camera_id)["warnings"]]
 
 
 # ---------------------------------------------------------------------------

@@ -55,6 +55,7 @@ export function exposureRowText(
     if (state === 'too_slow') keys.push(measuredFps != null && measuredFps > modeRate ? 'cameraDeliversMoreFrames' : 'cameraIsSlow');
     if (kinds.includes('add_light')) keys.push('addLight');
     if (kinds.includes('exposure_search_failed')) keys.push('exposureSearchFailed');
+    if (kinds.includes('exposure_clamped') && config.exposure_mode === 'MANUAL') keys.push('exposureClamped');  // a plain line (1.8)
     return { chip, keys };
 }
 

@@ -16,6 +16,7 @@ TARGET_BRIGHTNESS = 127.5  # 1.3 item 4: half of 255
 OFFSET = -1  # 1.3 item 4 [E6]: one step darker than the nearest value
 ADD_LIGHT_BELOW = 64.0  # 1.3 item 5 [Q6]: a starting value; T-REQ-25 sets it
 LIMIT_NS = 20_000_000_000  # 1.3 item 6 [A2]: from the first set
+BORDERLINE = 0.10  # 1.3 item 2.7 [Q522, NYT6]: a miss not more than 10 % below the mode rate is measured again once
 
 
 def search_values(exposure_range: tuple | None) -> tuple:
@@ -25,9 +26,9 @@ def search_values(exposure_range: tuple | None) -> tuple:
     return tuple(value for value in VALUES if low <= value <= high and (value - low) % step == 0)
 
 
-def early_deadline_ns(t_a: int, mode_rate: float) -> int:
-    """1.3 item 2.6 [A1]: frame s_a + 30 cannot arrive in time after t_a + 30 / (0.97 x r)."""
-    return t_a + round(RATE_FRAMES / ((1 - rate_check.LIMIT) * mode_rate) * 1e9)
+def early_deadline_ns(t_a: int, mode_rate: float, frames: int = RATE_FRAMES) -> int:
+    """1.3 item 2.6 [A1]: frame s_a + 30 cannot arrive in time after t_a + 30 / (0.97 x r); 60 for a repeat (2.7)."""
+    return t_a + round(frames / ((1 - rate_check.LIMIT) * mode_rate) * 1e9)
 
 
 def choose(trials: list[dict]) -> tuple[int | None, bool, str | None]:
@@ -66,6 +67,8 @@ class ExposureSearch:
         self._a: tuple[int, int, float] | None = None  # (s_a, t_a, brightness of the 10th frame)
         self._deadline: int | None = None
         self._last: tuple[int, int] | None = None
+        self._frames = RATE_FRAMES  # the intervals of the window from frame a: 60 for a repeat (1.3 item 2.7)
+        self._first_fps: float | None = None  # the rate of the first window of a repeated value (1.3 item 2.7)
         if not self.values:
             self.fail("no-value-in-range", f"no exposure from {VALUES[0]} to {VALUES[-1]} is in the range of the "
                                            f"camera ({low} to {high})")
@@ -92,6 +95,7 @@ class ExposureSearch:
             self.fail("readback-differs", f"exposure {value} read back as {readback}")
         else:
             self._value, self._returned_ns, self._first, self._a, self._deadline = value, returned_ns, None, None, None
+            self._frames, self._first_fps = RATE_FRAMES, None
 
     def frame(self, sfn: int, arrival_ns: int, brightness: Callable[[], float | None]) -> None:
         """A taken frame: its `source_frame_number`, its arrival and a call that gives the mean of its image, or None
@@ -107,9 +111,9 @@ class ExposureSearch:
                 self._a = (sfn, arrival_ns, float(mean))
                 self._deadline = early_deadline_ns(arrival_ns, self.mode_rate)
             return
-        if sfn >= self._a[0] + RATE_FRAMES:
+        if sfn >= self._a[0] + self._frames:
             self._trial(rate_check.measured_rate(self._a[0], self._a[1], sfn, arrival_ns))
-        elif arrival_ns > self._deadline:  # a later frame came after the deadline: frame s_a + 30 was not in time
+        elif arrival_ns > self._deadline:  # a later frame came after the deadline: frame s_a + 30 (60) was late
             self._trial(rate_check.measured_rate(self._a[0], self._a[1], sfn, arrival_ns), early=True)
 
     def no_frame(self, now_ns: int) -> None:
@@ -131,7 +135,15 @@ class ExposureSearch:
 
     def _trial(self, measured: float, early: bool = False) -> None:
         kept = not early and not rate_check.is_slow(measured, self.mode_rate)
-        self.trials.append(dict(value=self._value, brightness=self._a[2], measured_fps=measured, kept_rate=kept))
+        if not kept and self._first_fps is None and measured >= (1 - BORDERLINE) * self.mode_rate:
+            # 1.3 item 2.7 [NYT6]: the window grows to 60 intervals from frame a; its whole rate decides
+            self._first_fps, self._frames = measured, 2 * RATE_FRAMES
+            logger.info(f"The exposure search measures {self._value} again: {measured:.2f} fps at "
+                        f"{self.mode_rate:g} fps")
+            self._deadline = early_deadline_ns(self._a[1], self.mode_rate, self._frames)
+            return
+        self.trials.append(dict(value=self._value, brightness=self._a[2], measured_fps=measured, kept_rate=kept,
+                                first_fps=self._first_fps))
         self._next(self._value)
 
     def _next(self, value: int) -> None:
