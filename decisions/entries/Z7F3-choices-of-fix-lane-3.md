@@ -5,10 +5,15 @@
 ## Decision
 
 Items 2, 3 and 6 are decisions of the user of 2026-11-21. The user decided item 1 on 2026-11-23 (Q584): "as
-long as the frame rate still passes, a one step exposure tolerance is fine for all cameras". The start-up rate
-check of each open covers that condition (T-UNX-91). The user decided on 2026-11-23 (Q585): with `clock:base`
-`not-run` `clock-unknown`, `gate:timestamps` requires only `clock:before-arrival` and `clock:near-arrival`; a
-declared clock keeps all three. The agent chose the other details:
+long as the frame rate still passes, a one step exposure tolerance is fine for all cameras". The user decided on
+2026-11-23 (Q585): with `clock:base` `not-run` `clock-unknown`, `gate:timestamps` requires only
+`clock:before-arrival` and `clock:near-arrival`; a declared clock keeps all three.
+
+The agent states about item 1: the tolerance changes only which value the close restores. It does not change the
+exposure that the app sets or the rate of the camera while the app has it. No rate check judges the restored
+value. The rate of each open is judged as before: the start-up rate check for a manual value, the check after the
+search in Auto. T-UNX-91 shows that an open that used the record one step away still runs the normal rate check.
+The orchestrator asks the user if this meets Q584. The agent chose the other details:
 
 1. At the first read of an open, a control of the restore record takes its "before" value from the record when
    the camera reads the auto flag that this app set last and, with auto off, a value not more than one step
@@ -72,3 +77,9 @@ tests, and the history is not rewritten (the review of 2026-11-23).
    new open. A fixed tolerance of 1: a control with a larger step loses its record.
 2. One request flag `retry: true`: a camera that the UI does not yet show as failed would also open again.
 6. A median of the rates over the cameras: for two cameras it is the mean of the two rates.
+
+## Open work
+
+- A camera that stalls during the take of certify is never put in `failed`, so it gets no `camera-not-restored`
+  (a finding of the review; suspected; older than this branch).
+- FreeMoCap does not send `retry_camera_ids` yet.

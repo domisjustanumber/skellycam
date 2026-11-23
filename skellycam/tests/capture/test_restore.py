@@ -166,10 +166,10 @@ def test_t_unx_91_the_values_of_before_survive_a_camera_with_no_restore(monkeypa
 
 
 def test_t_unx_91_an_open_that_takes_the_record_one_step_away_still_runs_the_rate_check(monkeypatch):
-    """T-UNX-91, unix-capture.md 4.7 [Z7F3] (Q584 of the user, 2026-11-23: a one-step tolerance as long as the frame
-    rate still passes): the first open sets MANUAL -7 and stalls (no restore); the camera rounds and reads manual -6
-    at the next open, so that open takes the record (auto -6 before). The camera is now slow (25 fps): the start-up
-    rate check of that open fails it with `rate-low`, and its close restores auto -6."""
+    """T-UNX-91, unix-capture.md 4.7 [Z7F3]: an open that used the record one step away still runs the normal rate
+    check. The first open sets MANUAL -7 and stalls (no restore); the camera rounds and reads manual -6 at the next
+    open, so that open takes the record (auto -6 before). The camera is now slow (25 fps): the start-up rate check
+    of that open fails it with `rate-low`, and its close restores auto -6."""
     script = FakeScript(controls=AUTO_BEFORE, keeps_controls=True, reopen_shift=(("exposure", 1),))
     with one_camera(monkeypatch, script) as (app, camera_id, _):
         log = app.factory.logs[camera_id]
