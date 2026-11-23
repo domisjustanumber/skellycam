@@ -69,6 +69,40 @@ def test_refresh_writes_the_crlf_files_of_a_clean_worktree_again_and_refuses_a_c
     assert (tmp_path / "golden" / "frame.txt").read_bytes() == b"g\r\n"
 
 
+@pytest.mark.parametrize("mark", ["--assume-unchanged", "--skip-worktree"])
+def test_refresh_refuses_a_file_whose_change_git_hides_and_deletes_nothing(tmp_path: Path, mark: str) -> None:
+    git(tmp_path, "init", "-q")
+    git(tmp_path, "config", "core.autocrlf", "true")
+    (tmp_path / "a.md").write_bytes(b"a\r\n")
+    (tmp_path / "b.md").write_bytes(b"b\r\n")
+    git(tmp_path, "add", "-A")
+    git(tmp_path, "commit", "-q", "-m", "before the rule")
+    (tmp_path / ".gitattributes").write_bytes(b"* text=auto eol=lf\n")
+    git(tmp_path, "add", "-A")
+    git(tmp_path, "commit", "-q", "-m", "the rule")
+    git(tmp_path, "update-index", mark, "b.md")
+    (tmp_path / "b.md").write_bytes(b"b\r\nlocal\r\n")
+    with pytest.raises(SystemExit, match="assume-unchanged or skip-worktree"):
+        cle.refresh(tmp_path)
+    assert (tmp_path / "a.md").read_bytes() == b"a\r\n"
+    assert (tmp_path / "b.md").read_bytes() == b"b\r\nlocal\r\n"
+
+
+def test_refresh_compares_each_file_with_the_index_before_the_first_delete(tmp_path: Path) -> None:
+    git(tmp_path, "init", "-q")
+    git(tmp_path, "config", "core.autocrlf", "true")
+    (tmp_path / "a.md").write_bytes(b"a\r\n")
+    (tmp_path / "b.md").write_bytes(b"b\r\n")
+    git(tmp_path, "add", "-A")
+    git(tmp_path, "commit", "-q", "-m", "before the rule")
+    (tmp_path / ".gitattributes").write_bytes(b"* text=auto eol=lf\n")
+    git(tmp_path, "add", "-A")
+    git(tmp_path, "commit", "-q", "-m", "the rule")
+    assert cle.changed_paths(tmp_path, ["a.md", "b.md"]) == []
+    (tmp_path / "b.md").write_bytes(b"b\r\nlocal\r\n")
+    assert cle.changed_paths(tmp_path, ["a.md", "b.md"]) == ["b.md"]
+
+
 def test_the_gitattributes_rule_writes_lf_into_the_index(tmp_path: Path) -> None:
     git(tmp_path, "init", "-q")
     git(tmp_path, "config", "core.autocrlf", "true")

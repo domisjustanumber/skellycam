@@ -5,7 +5,8 @@
 ## Decision
 
 An agent made these choices when it applied [ADR-X1T8](X1T8-two-way-kit-sync-adoption.md) at kit
-commit 47545bc (round 1), and at kit commits 57a878c and 05a3d2d (round 2). Each one waits for the user.
+commit 47545bc (round 1), 57a878c and 05a3d2d (round 2), 617fbf4 (round 3) and 89cd90b (round 4).
+Each one waits for the user.
 
 1. **Open-work clean-up first.** `open-work.md` was at 91 % of its limit. The agent deleted only
    done work: the item "Format sync" (merged, ADR-3B97), the sub-item "Q574 is closed", and the
@@ -56,8 +57,8 @@ commit 47545bc (round 1), and at kit commits 57a878c and 05a3d2d (round 2). Each
     (CRLF lines). The marker edit of round 1 (79ea16e96) made it LF in git. It stays LF, because LF
     is now the rule of the user (ADR-X1T8 item 8). `git add --renormalize .` changed no file. A line
     `*.ai binary` after the kit block of `.gitattributes` keeps the CR bytes of
-    `shared/skellycam-logo/skellycam-logo.ai`. The working tree of the pilot still has CRLF files
-    from `core.autocrlf`. The agent did not make it again, because that needs `git reset --hard`.
+    `shared/skellycam-logo/skellycam-logo.ai`. In round 3, `tools/check_line_ends.py --refresh` wrote
+    the 885 CRLF files of the pilot worktree again with LF.
 13. **Values tests.** `kit.toml` has a `[check_links]` table with the kit defaults.
     `test_repo_values.py` pins the golden paths (none), the allow lists of the private-data check
     (by count and SHA-256) and the docs of the link check. `kit_config.py` stops a tool when its
