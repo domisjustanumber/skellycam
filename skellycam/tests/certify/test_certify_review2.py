@@ -31,7 +31,15 @@ def test_review2_n1_the_live_change_never_reopens_a_wedged_camera(monkeypatch, t
     assert_valid(report)
     checks = by_name(report)
     assert opens == 1
-    assert checks[f"{ended}:settings-stick:readback"]["reason"] == "prior-failure"
+    # the crash gives one `fail` row (B1): on a check of the ready step, or on the read-back when the settings step
+    # finds it; no check of the settings step has a progress message, so no `not-run` row of it stays (3.6.1)
+    fails = [c for c in report["checks"] if c["name"].startswith(ended + ":") and c["result"] == "fail"]
+    assert [(c["reason"]) for c in fails] == ["crashed"], fails
+    assert fails[0]["name"].split(":", 1)[1] in ("native-jpeg:format", "native-jpeg:not-reencoded",
+                                                 "native-jpeg:source-equals-ring", "settings-stick:readback"), fails
+    assert not [c for c in report["checks"] if c["name"].startswith(ended + ":settings-stick")
+                and c["result"] == "not-run"]
+    assert checks[f"{ended}:not-reached"]["reason"] == "prior-failure"
     assert {"code": "camera-wedged", "values": {"camera": "Fake camera 0"}} in report["notices"]
     assert checks[f"{fine}:settings-stick:readback"]["result"] == "pass"
 
@@ -85,7 +93,9 @@ def test_review2_n2_a_camera_with_a_running_step_at_a_cancel_is_not_reopened(tmp
 def test_review2_n3_a_cancel_during_the_close_does_not_kill_the_restore(tmp_path):
     """8.3, 9.3: a cancel that comes while the session closes its group (each close restores a camera) waits for the
     close: the source is closed one time, no camera is opened again, and no row of phase G comes."""
-    factory = FakeSourceFactory([good(close_delay_s=4.0)])
+    # 2 s: within the join of 3 s of the product. A close that the product must end is a hang (live-at-close `hung`
+    # and `camera-wedged`, ADR-0Z6Q item 15), which is not the case of this test.
+    factory = FakeSourceFactory([good(close_delay_s=2.0)])
     (label,) = labels(factory.device_infos())
     log = factory.logs[factory.camera_ids[0]]
     cancel = threading.Event()

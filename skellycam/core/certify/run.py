@@ -1,5 +1,5 @@
 """The caller part of a certify run of skellycam (specs/certify.md 2.1, 2.5, 4.1, 8.3, 9; contract `report-format.md`
-of `skellycertify`, format 1.6.0): the plan, the progress, the cancel, the time limits, phase G, the local record and
+of `skellycertify`, format 1.7.0): the plan, the progress, the cancel, the time limits, phase G, the local record and
 the module report.
 
 The caller imports no `comtypes` and opens no camera. The camera steps (`session.py`) run in a spawn session child
@@ -12,6 +12,7 @@ import contextlib
 import dataclasses
 import datetime
 import getpass
+import json
 import logging
 import multiprocessing
 import os
@@ -35,7 +36,7 @@ from skellycam.core.certify.session import Stopped, Unit, run_session
 
 logger = logging.getLogger(__name__)
 
-SCHEMA = "skellycertify.report/1.6.0"
+SCHEMA = "skellycertify.report/1.7.0"  # 3.6.1
 LEVELS = ("quick", "full")
 QUICK_BUDGET_S = 30.0  # 4.1
 FULL_SESSION_LIMIT_S = 240.0  # 9.3: the limit of a camera block, for the session of this step
@@ -57,6 +58,8 @@ QUESTIONS = [{"section": None, "id": "lit-as-usual", "text": "Was the room lit a
 QUESTION_FULL = {"section": None, "id": "camera-ok-after",
                  "text": "Do all the cameras still work in other programs after the run?"}
 SEMVER = re.compile(r"^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-[0-9A-Za-z.-]+)?(?:\+[0-9A-Za-z.-]+)?$")
+COMMIT = re.compile(r"[0-9a-f]{40}")
+BUILD_INFO = Path(__file__).resolve().parents[2] / "build_info.json"  # 3.5.2: `skellycam/build_info.json` (P7)
 
 
 # ---------------------------------------------------------------------------
@@ -160,7 +163,8 @@ def plan(level, *, cameras=None, devices=None, checks_path=None, evidence_path=c
         "package": "skellycam",
         "kind": level,
         "seconds_estimate": catalog.seconds_estimate(level, len(context.units), len(context.checked_models)),
-        "total": len(checks) if level == "full" or context.units else 0,
+        # 3.6.1: with `session:exit`, when a session child runs
+        "total": len(checks) + 1 if context.units else len(checks) if level == "full" else 0,
         "risks": risks,
         "downloads": [],
         "system_changes": [],
@@ -185,8 +189,21 @@ class _Progress:
         self.callback, self.level, self.total = callback, level, total
         self.last = 0.0
         self.broken = False
+        self.session = False  # 3.6.1: the plan counts the end of the session child (`session:exit`) as one check
+        self.ended = False
+        self.named: set[str] = set()  # each check that a progress message named (3.6.1 `not-reached`)
+
+    def done(self, rows) -> int:
+        """3.6.1: the ended checks; a `<label>:not-reached` row counts as the checks that it stands for, and the end
+        of the session child counts as one, with or without a `session:exit` row, so `done` equals `total` at the
+        end."""
+        return sum((r.get("numbers") or {}).get("checks", 1) if name.endswith(":not-reached") else 1
+                   for name, r in rows.items() if r is not None and name != "session:exit") + (
+            1 if self.session and self.ended else 0)
 
     def send(self, state, rows, step=None):
+        if step is not None:
+            self.named.add(step)
         if self.callback is None or self.broken:
             return
         wait = self.last + PROGRESS_GAP_S - time.monotonic()
@@ -196,7 +213,7 @@ class _Progress:
                   for name, r in rows.items()]
         message = {"package": "skellycam", "kind": self.level, "state": state,
                    "step": None if step is None else {"section": None, "name": step}, "checks": checks,
-                   "done": sum(1 for r in rows.values() if r is not None), "total": self.total, "seconds_left": None}
+                   "done": self.done(rows), "total": self.total, "seconds_left": None}
         self.last = time.monotonic()
         try:
             self.callback(message)
@@ -742,6 +759,7 @@ def run(level, progress=None, cancel=None, *, cameras=None, recording_folder=Non
                  evidence_path, os_key, abi, private_terms, backend, work, refused, start + limit,
                  "over-budget" if level == "quick" else "timed-out")
         finally:
+            reporter.ended = True
             reporter.send("cleaning-up", out["rows"])
             if work is not None:
                 shutil.rmtree(work, ignore_errors=True)
@@ -771,7 +789,8 @@ def _run(out, level, reporter, stops, cameras, devices, manager, source_factory,
     planned = catalog.planned_checks(level, context.unit_specs(), backend)
     modules = dict(planned)
     rows = out["rows"] = {name: None for name, _ in planned}
-    reporter.total = len(rows)
+    reporter.session = bool(context.units)
+    reporter.total = len(rows) + (1 if context.units else 0)
     if busy:  # 9.5, 9.7: the run is refused; it opens no camera. No summary item, so no `module` (C 3.4)
         out["rows"] = {name: _row(name, "not-run", refused) for name in rows}
         out["reasons"].append(refused)
@@ -807,7 +826,8 @@ def _run(out, level, reporter, stops, cameras, devices, manager, source_factory,
         label for name in driven.pending for label in ([_unit_of(name, units)] if _unit_of(name, units) else
                                                         [unit.label for unit in units])}
     computed = {name for name in rows if name.endswith(":units") or ":gate" in name}
-    _fill(rows, modules, context, level, stop, facts["prior"], skip=computed)
+    filled = _fill(rows, modules, context, level, stop, facts["prior"], skip=computed)
+    _not_reached(rows, context, reporter.named, filled)
     if stop not in STOPS:
         _computed_rows(rows, context, level, reporter)
     _fill(rows, modules, context, level, stop, facts["prior"], skip=set())
@@ -858,23 +878,15 @@ def _row(name, result, reason=None, module=None, **numbers) -> dict:
 
 
 def _fill(rows, modules, context, level, stop, prior, skip):
-    """Each check with no result: `not-built` or `same-model` (5.1), the stop cause (C 2.4, 4.1), or the reason that
-    the session gave for its camera (`prior-failure`, `camera-in-use`, ...)."""
-    unix = context.backend != "media-foundation"
-    first = {m["units"][0]["label"] for m in context.models.values()}
-    block = {name: c["label"] for c in context.units
-             for name in catalog.camera_names(c["label"], c["base"], level, unix)["full"]}
-    static = set(catalog.QUICK_NOT_BUILT + catalog.SELF_QUICK + catalog.FULL_NOT_BUILT).union(
-        *catalog.SYSTEM_NOT_BUILT.values())
+    """Each planned check with no result: the stop cause (C 2.4, 4.1), or the reason that the session gave for its
+    camera (`prior-failure`, `camera-in-use`, ...). A check with no code is not planned (3.6.1). Returns the names
+    that it filled."""
+    filled = set()
     for name in rows:
         if rows[name] is not None or name in skip:
             continue
         unit_label = next((c["label"] for c in context.units if name.startswith(c["label"] + ":")), None)
-        if name in static:
-            reason = "not-built"
-        elif name in block:
-            reason = "not-built" if block[name] in first else "same-model"
-        elif stop in STOPS:
+        if stop in STOPS:
             reason = STOPS[stop]
         elif unit_label in prior:
             reason = prior[unit_label]
@@ -883,6 +895,42 @@ def _fill(rows, modules, context, level, stop, prior, skip):
         else:
             reason = "prior-check-failed"
         rows[name] = _row(name, "not-run", reason, modules.get(name))
+        filled.add(name)
+    return filled
+
+
+NOT_REACHED = ("prior-check-failed", "prior-failure", "camera-in-use", "no-mjpg-mode", "cancelled", "over-budget",
+               "interrupted")  # 3.6.1: the reasons of a camera that cannot go on
+
+
+def _not_reached(rows, context, named, filled) -> None:
+    """3.6.1: the filled rows of a camera (`_fill` wrote them; no step gave a result) with a reason of a camera that
+    could not go on (NOT_REACHED) and that no progress message named give one row `<label>:not-reached` in their
+    place, wherever they stand [ADR-0Z6Q item 11]: `not-run`, the reason of the first of them, the `module` of the
+    camera and `numbers.checks`. The row stands at the place of the last of them, so after a fail row that caused
+    them. A check that a progress message
+    named, and a row that the session gave, keep their own rows. A check counts as named when the run announced it,
+    also with no progress callable [ADR-0Z6Q item 13]."""
+    tails = {}
+    for camera in context.units:
+        tail = [name for name in rows if name.startswith(camera["label"] + ":") and name in filled
+                and name not in named and rows[name]["result"] == "not-run" and rows[name]["reason"] in NOT_REACHED]
+        if tail:
+            tails[tail[-1]] = (camera["label"], tail)
+    if not tails:
+        return
+    merged = {}
+    gone = {name for _, tail in tails.values() for name in tail}
+    for name, r in rows.items():
+        if name in tails:
+            label, tail = tails[name]
+            first = rows[tail[0]]  # the reason of the first check that the row stands for
+            merged[f"{label}:not-reached"] = _row(f"{label}:not-reached", "not-run", first["reason"],
+                                                  first.get("module"), checks=len(tail))
+        if name not in gone:
+            merged[name] = r
+    rows.clear()
+    rows.update(merged)
 
 
 def _unit_rows(rows, unit_label):
@@ -981,7 +1029,9 @@ def _write_record(rows, context, level, summary, checks_path):
             continue
         gate = {step: rows[f"{model}:gate:{step}"]["result"] for step in catalog.GATE_STEPS} if level == "full" else None
         first = units[0]["label"]
-        settings = [rows.get(f"{first}:settings-stick:{c}") or {} for c in ("readback", "holds", "image-effect")]
+        # 3.6.1: a settings check in the `not-reached` row is `not-run` with the reason of that row
+        missing = rows.get(f"{first}:not-reached") or dict(result="not-run", reason="not-built")
+        settings = [rows.get(f"{first}:settings-stick:{c}") or missing for c in ("readback", "holds", "image-effect")]
         path = (settings[0].get("numbers") or {}).get("control_path")
         result = catalog.control_result(settings[0].get("result"), settings[1].get("result"),
                                         {"result": settings[2].get("result"), "reason": settings[2].get("reason")})
@@ -992,21 +1042,55 @@ def _write_record(rows, context, level, summary, checks_path):
         catalog.write_record(checks_path, out)
 
 
+def read_build_info(path) -> tuple:
+    """3.5.2: (commit, tree_modified) from the build file that the wheel build writes (P7); (None, None) with no
+    file, a file that does not parse or a file of another form. A run never reads git."""
+    try:
+        data = json.loads(Path(path).read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return None, None
+    commit = data.get("commit") if isinstance(data, dict) else None
+    modified = data.get("tree_modified") if isinstance(data, dict) else None
+    if isinstance(commit, str) and COMMIT.fullmatch(commit) and isinstance(modified, bool):
+        return commit, modified
+    return None, None
+
+
+def build_values(path) -> tuple:
+    """3.5.2: (commit, tree_modified) of the build file at `path`. A source checkout (a `.git` folder, or the `.git`
+    file of a worktree, beside the package folder) ignores the file and gives (None, None): an editable run has no
+    build, and a file that `tools/build_info.py` wrote there can be stale [ADR-0Z6Q item 17]."""
+    if (Path(path).parents[1] / ".git").exists():
+        return None, None
+    return read_build_info(path)
+
+
+def evidence_reasons(version, commit, tree_modified, reasons) -> list:
+    """C 7.1: `no-version`, `no-commit` and `modified-tree` only when they apply (3.5.2), then the reasons of the
+    run, each one time."""
+    common = (["no-version"] if not SEMVER.match(version) else []) + (
+        ["no-commit"] if not (isinstance(commit, str) and COMMIT.fullmatch(commit)) else []) + (
+        ["modified-tree"] if tree_modified is not False else [])
+    return list(dict.fromkeys(common + list(reasons)))
+
+
 def _report(level, created, out, backend) -> dict:
     version = _version()
     context = out["context"]
-    evidence = (["no-version"] if not SEMVER.match(version) else []) + ["no-commit", "modified-tree"] + out["reasons"]
+    commit, tree_modified = build_values(BUILD_INFO)
+    evidence = evidence_reasons(version, commit, tree_modified, out["reasons"])
     report = {
         "schema": SCHEMA,
-        "package": {"name": "skellycam", "version": version, "commit": None, "tree_modified": None},
+        "package": {"name": "skellycam", "version": version, "commit": commit, "tree_modified": tree_modified},
         "kind": level,
         "created_utc": created,
         "host": _host(),
         "checks": [r for r in out["rows"].values() if r is not None],
         "cleanup": out["cleanup"],
         "details": {"backend": backend, "os_key": context.os_key if context else None,
-                    "abi": context.abi if context else None},
-        "evidence": {"valid": not evidence, "reasons": list(dict.fromkeys(evidence))},
+                    "abi": context.abi if context else None,
+                    "not_built": catalog.not_built(level, context.unit_specs() if context else [], backend)},
+        "evidence": {"valid": not evidence, "reasons": evidence},
     }
     summary = [{k: v for k, v in item.items() if not k.startswith("_")} for item in out["summary"]]
     if summary:

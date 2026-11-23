@@ -17,7 +17,6 @@ from skellycam.core.camera.capture.modes import at_floor, auto_rate
 NAME = re.compile(r"^[A-Za-z0-9][A-Za-z0-9_.:@-]{0,127}$")  # C 3.4
 BACKENDS = {"Windows": "media-foundation", "Linux": "v4l2", "Darwin": "avfoundation"}
 DEFAULT_BASE = (1280, 720, 30.0)  # 3.4 `<base>`; the plan uses it when the modes were not read
-DISK = "Disk"
 
 # The quick checks of one camera (3.4, 4.2 to 4.5), by the step of the run that gives them (4.1).
 DETECT = ("detect", "detect:mjpg-mode")
@@ -27,6 +26,7 @@ SETTINGS = ("settings-stick:readback", "settings-stick:holds", "settings-stick:i
 AFTER_TAKE = ("native-jpeg:valid", "native-jpeg:size", "native-jpeg:ring-equals-mkv",
               "records:rows-complete", "records:blocks-decode", "records:gaps-explained")
 CLOCK = ("clock:base", "clock:before-arrival", "clock:near-arrival", "sequence", "time-gaps")  # 10.2, 10.6
+LIVE = "live-at-close"  # 3.6.2 [U Q646]: the last check of each camera [ADR-0Z6Q item 15]
 TAKE = tuple(f"group:take:{c}" for c in ("finished", "csv-rows", "no-missing", "frame-count", "rate"))
 QUICK_NOT_BUILT = ("group:open",)  # with the retry alone of 4.2
 SELF_QUICK = ("self:hang-100ms:gap", "self:hang-100ms:hard-end")  # 7: not built in this step
@@ -48,9 +48,11 @@ FULL_NOT_BUILT = (
 SYSTEM_NOT_BUILT = {"media-foundation": ("system:camera-apps",), "v4l2": ("system:kernel", "system:camera-access"),
                     "avfoundation": ("system:camera-access", "system:video-effects")}
 GATE_STEPS = ("opens", "mode", "rate", "native-jpeg", "timestamps", "sequence", "records", "no-hang")
+HANG_REASONS = ("hung", "crashed", "stalled")  # the reasons that fail `<model>:gate:no-hang` (3.6.1 B1)
 
 # The item groups of 3.4: Open, Rate and Records decide `fail`.
-FATAL = ("opens", "rate", "modes:granted", "records:rows-complete", "records:blocks-decode", "records:gaps-explained")
+FATAL = ("opens", "rate", "modes:granted", "records:rows-complete", "records:blocks-decode", "records:gaps-explained",
+         LIVE)
 ITEM = FATAL + SETTINGS + ("native-jpeg:format", "native-jpeg:not-reencoded", "native-jpeg:valid",
                            "native-jpeg:size", "native-jpeg:ring-equals-mkv", "native-jpeg:source-equals-ring")
 
@@ -144,15 +146,16 @@ def camera_names(unit_label: str, base, level: str, unix: bool) -> dict:
         "settings": [f"{unit_label}:{c}" for c in SETTINGS],
         "take": [f"{unit_label}:{c}" for c in AFTER_TAKE],
         "clock": [f"{unit_label}:{c}" for c in CLOCK] if unix or level == "full" else [],
+        "close": [f"{unit_label}:{LIVE}"],
     }
-    block = [c.format(base=mode_name(*base)) for c in FULL_CAMERA_NOT_BUILT if base or "{base}" not in c]
-    names["full"] = [f"{unit_label}:{c}" for c in block] if level == "full" else []
     return names
 
 
 def planned_checks(level: str, units: list, backend: str) -> list:
-    """(name, module) of each check of the run, in the order of the report. `units`: (label, base, module) of each
-    camera to check, in the detection order."""
+    """(name, module) of each check of the run that has code, in the order of the report. `units`: (label, base,
+    module) of each camera to check, in the detection order. A check with no code is not planned and gives no row: it
+    is in `not_built` (3.6.1). A check of the camera block of `full` for a second unit of a model gives no row
+    either (no `same-model`)."""
     unix = backend != "media-foundation"
     by_unit = [(lab, module, camera_names(lab, base, level, unix)) for lab, base, module in units]
     models = {}
@@ -162,20 +165,26 @@ def planned_checks(level: str, units: list, backend: str) -> list:
     for step in ("detect", "open", "ready", "settings"):
         out += [(name, module) for _, module, names in by_unit for name in names[step]]
     if units:
-        out += [(name, None) for name in QUICK_NOT_BUILT + TAKE]
-    for step in ("take", "clock"):
+        out += [(name, None) for name in TAKE]
+    for step in ("take", "clock", "close"):
         out += [(name, module) for _, module, names in by_unit for name in names[step]]
     out += [(f"{model}:units", module) for model, module in models.items()]
-    if level == "full":
-        out += [(name, module) for _, module, names in by_unit for name in names["full"]]
-        out += [(name, DISK if name.startswith("system:disk") else None)
-                for name in FULL_NOT_BUILT + SYSTEM_NOT_BUILT.get(backend, ())]
-    if units:
-        out += [(name, None) for name in SELF_QUICK]
     if level == "full":
         out += [(f"{model}:gate{step}", module) for model, module in models.items()
                 for step in [f":{s}" for s in GATE_STEPS] + [""]]
     return out
+
+
+def not_built(level: str, units: list, backend: str) -> dict:
+    """3.6.3 `details.not_built`: the names of the checks with no code, `camera` without `<label>:` and with `base`
+    for the mode of `<base>`, `run` the group, system and self checks; each name one time, sorted."""
+    run = set(QUICK_NOT_BUILT + SELF_QUICK) if units else set()
+    camera = set()
+    if level == "full":
+        run.update(FULL_NOT_BUILT + SYSTEM_NOT_BUILT.get(backend, ()))
+        for _, base, _ in units:
+            camera.update(c.format(base="base") for c in FULL_CAMERA_NOT_BUILT if base or "{base}" not in c)
+    return {"camera": sorted(camera), "run": sorted(run)}
 
 
 def seconds_estimate(level: str, cameras: int, models: int) -> int:
@@ -188,7 +197,12 @@ def seconds_estimate(level: str, cameras: int, models: int) -> int:
 # ----- the summary item and the gate (3.3, 3.4, 11.3) -----
 
 def _label_of(unit: dict) -> str:
-    return next(name for name in unit if name.endswith(":opens"))[: -len(":opens")]
+    """The label of the rows of one unit (a label holds no `:`; 3.1)."""
+    return next(iter(unit)).split(":", 1)[0]
+
+
+def _not_reached(unit: dict) -> dict | None:
+    return unit.get(f"{_label_of(unit)}:not-reached")
 
 
 def _suffix(name: str, unit_label: str) -> str:
@@ -229,8 +243,8 @@ def item_result(units: list, unix: bool = False) -> str:
     groups = set(ITEM) | (set(CLOCK) if unix else set())
 
     def busy(unit):
-        row = unit[f"{_label_of(unit)}:opens"]
-        return row["result"] == "not-run" and row["reason"] == "camera-in-use"
+        row = unit.get(f"{_label_of(unit)}:opens") or {}
+        return row.get("result") == "not-run" and row.get("reason") == "camera-in-use"
 
     if all(busy(unit) for unit in units):
         return "skipped"
@@ -241,7 +255,7 @@ def item_result(units: list, unix: bool = False) -> str:
             return "fail"
     for unit in units:
         lab = _label_of(unit)
-        if busy(unit):
+        if busy(unit) or _not_reached(unit) is not None:  # 3.6.1: checks of the groups that did not run
             return "partial"
         for name, row in unit.items():
             if _group(name, lab, unit) in groups and not _ok(row, unit, lab):
@@ -259,25 +273,30 @@ def _roll_up(name: str, required: list, module: str | None) -> dict:
 
 def gate_rows(model: str, units: list, module: str | None) -> list:
     """The roll-up checks of 11.3 for one model, from the rows of its units, and the ordinary check `no-hang`."""
-    ran = [u for u in units if u[f"{_label_of(u)}:opens"]["result"] in ("pass", "fail")] or units
+    ran = [u for u in units if (u.get(f"{_label_of(u)}:opens") or {}).get("result") in ("pass", "fail")] or units
 
     def required(unit, step):
         lab = _label_of(unit)
         pick = {"opens": ("opens",), "mode": ("modes:granted",), "rate": ("rate",),
                 "native-jpeg": tuple(c for c in ITEM if c.startswith("native-jpeg:")),
-                "timestamps": CLOCK[:3], "records": tuple(c for c in FATAL if c.startswith("records:"))}.get(step)
+                "timestamps": CLOCK[:3], "records": tuple(c for c in FATAL if c.startswith("records:")) + (LIVE,)}.get(step)
         if step == "timestamps":  # Q585 of the user [Z7F3]: a source that cannot tell its clock needs the two others
             base = unit.get(f"{lab}:clock:base")
             pick = CLOCK[1:3] if base is not None and base["reason"] == "clock-unknown" else CLOCK[:3]
         if step == "sequence":
             sequence = unit.get(f"{lab}:sequence")
             pick = ("time-gaps",) if sequence is None or sequence["reason"] == "no-sequence" else ("sequence",)
-        return [row for name, row in unit.items() if _group(name, lab, unit) in pick]
+        out = [row for name, row in unit.items() if _group(name, lab, unit) in pick]
+        missing = _base_granted(unit) is None if step == "mode" else any(f"{lab}:{c}" not in unit for c in pick)
+        if missing and _not_reached(unit) is not None:  # 3.6.1: a required check is in the `not-reached` row
+            out.append(_not_reached(unit))
+        return out
 
     rows = [_roll_up(f"{model}:gate:{step}", [row for unit in ran for row in required(unit, step)], module)
             for step in GATE_STEPS[:-1]]
+    # 3.6.1 B1: each `fail` row of the model; a `device-removed` row does not fail it (the person removed the camera)
     hang = next((row["reason"] for unit in units for row in unit.values()
-                 if row["result"] == "fail" and row["reason"] in ("hung", "crashed")), None)
+                 if row["result"] == "fail" and row["reason"] in HANG_REASONS), None)
     rows.append(dict(name=f"{model}:gate:no-hang", result="fail" if hang else "pass", reason=hang, module=module))
     rows.append(_roll_up(f"{model}:gate", rows, module))
     return rows

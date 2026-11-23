@@ -71,8 +71,13 @@ def test_review_1_a_hang_after_the_open_gives_camera_wedged(monkeypatch, tmp_pat
     checks = by_name(report)
     assert (checks[f"{hung}:settings-stick:readback"]["result"], checks[f"{hung}:settings-stick:readback"]["reason"]) \
         == ("fail", "hung")
-    for name in ("settings-stick:holds", "settings-stick:image-effect", "records:rows-complete"):
-        assert checks[f"{hung}:{name}"]["reason"] == "prior-failure", checks[f"{hung}:{name}"]
+    # the settings step named `holds` and `image-effect`: each keeps its own row; the take rows are not reached
+    for name in ("settings-stick:holds", "settings-stick:image-effect", "not-reached"):
+        check = checks[f"{hung}:{name}"]
+        assert (check["result"], check["reason"]) == ("not-run", "prior-failure"), check
+    names = [c["name"].split(":", 1)[1] for c in report["checks"] if c["name"].startswith(hung + ":")]
+    assert names[names.index("settings-stick:readback"):] == [
+        "settings-stick:readback", "settings-stick:holds", "settings-stick:image-effect", "not-reached"], names
     assert checks[f"{hung.rsplit('.', 1)[0]}:gate:no-hang"]["result"] == "fail"
     assert {"name": f"release:{hung}", "result": "fail", "reason": "camera-wedged", "module": "Fake camera 0"} \
         in report["cleanup"]
@@ -387,14 +392,14 @@ def test_format_1_6_0_abandon(monkeypatch, tmp_path):
     with capture_app(monkeypatch, [good()]) as app:
         report = run_with(app, tmp_path, progress=progress, cancel=cancel, abandon=abandon)
     assert_valid(report)
-    assert report["schema"] == "skellycertify.report/1.6.0"
+    assert report["schema"] == "skellycertify.report/1.7.0"
     assert by_name(report)["group:take:finished"]["reason"] == "cancelled"
     assert "cancelled" in report["evidence"]["reasons"]
     assert record(tmp_path) == []
 
 
 def base_report():
-    return {"schema": "skellycertify.report/1.6.0",
+    return {"schema": "skellycertify.report/1.7.0",
             "package": {"name": "skellycam", "version": "2.0.0", "commit": None, "tree_modified": None},
             "kind": "quick", "created_utc": "2026-11-21T00:00:00Z", "host": {"os": None, "cpu": None},
             "checks": [{"name": "detect", "result": "pass", "reason": None}],
@@ -402,7 +407,8 @@ def base_report():
 
 
 def test_the_validator_rules_of_the_review_and_of_1_6_0():
-    """The validator refuses each form that the review and format 1.6.0 name."""
+    """The validator refuses each form that the review and formats 1.6.0 and 1.7.0 name (3.6.1: the schema
+    `skellycertify.report/1.7.0`; the name of a test media file is exempt from rule 7 only there)."""
     assert problems(base_report()) == []
     cases = {
         "no-commit missing": dict(evidence={"valid": False, "reasons": ["modified-tree"]}),
@@ -417,12 +423,18 @@ def test_the_validator_rules_of_the_review_and_of_1_6_0():
         "a bad test_media item": dict(test_media=[{"name": "x", "sha256": "abc", "bytes": -1, "source": "web"}]),
         "a bad shared_memory_bytes": dict(host={"gpus": [{"name": "G", "id": "10de:2484",
                                                           "shared_memory_bytes": -5}]}),
+        "the schema of format 1.6.0": dict(schema="skellycertify.report/1.6.0"),
+        "a media name outside test_media": dict(
+            test_media=[{"name": "quick_frames.mp4", "sha256": "a" * 64, "bytes": 10, "source": "bundled"}],
+            checks=[{"name": "detect", "result": "pass", "reason": None, "numbers": {"file": "quick_frames.mp4"}}]),
     }
     for what, change in cases.items():
         assert problems({**base_report(), **change}), what
     good_cases = [dict(summary=[{"group": "component", "name": "Blender", "device": None, "result": "skipped",
                                  "reason": "not-installed"}]),
                   dict(test_media=[{"name": "quick_frames.zip", "sha256": "a" * 64, "bytes": 10,
+                                    "source": "bundled"}]),
+                  dict(test_media=[{"name": "quick_frames.mp4", "sha256": "a" * 64, "bytes": 10,
                                     "source": "bundled"}])]
     for change in good_cases:
         assert problems({**base_report(), **change}) == [], change
