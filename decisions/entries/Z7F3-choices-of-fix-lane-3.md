@@ -13,7 +13,7 @@ The agent states about item 1: the tolerance changes only which value the close 
 exposure that the app sets or the rate of the camera while the app has it. No rate check judges the restored
 value. The rate of each open is judged as before: the start-up rate check for a manual value, the check after the
 search in Auto. T-UNX-91 shows that an open that used the record one step away still runs the normal rate check.
-The orchestrator asks the user if this meets Q584. The agent chose the other details:
+The user agreed on 2026-11-23 (Q588): this meets Q584. The agent chose the other details:
 
 1. At the first read of an open, a control of the restore record takes its "before" value from the record when
    the camera reads the auto flag that this app set last and, with auto off, a value not more than one step
