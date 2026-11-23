@@ -11,7 +11,7 @@ The rules of [`AGENTS.md`](../../../AGENTS.md#other-systems-only-through-certify
 ## Steps
 
 1. Do not write a script or a manual step for a person to run on another system. Name the check of
-   `skellycam.certify(level)` that gives the fact ([`specs/certify.md`](../../../specs/certify.md)).
+   `skellycam.certify(level)` that gives the fact (`specs/certify.md`).
 2. If no check gives the fact, add a check to the spec and to the self-test. Sections 5.5 and 5.6
    of the skellycertify contract (step 7) tell when a check can exist, its level and its safety
    rules.
