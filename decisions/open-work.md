@@ -8,16 +8,6 @@ task. Delete an item when its work is done. The PR that closes an item records t
   `tools/check_camera_media.py` must refuse a PNG, GIF, WebP or SVG file, and allow each chart,
   diagram or UI screenshot by its path. Today it prints a reminder only. Its docstring and the
   `commit-files` skill change with it.
-- **The other-systems rule in the shared kit.**
-  [ADR-VV4Q](entries/VV4Q-other-systems-only-through-certify.md) item 5: the block
-  `<!-- kit:other-systems -->` of `AGENTS.md`, the skill `verify-on-other-systems`,
-  `tools/check_other_systems.py` and its test go into the shared agents and ADR kit later. Each
-  repository then sets its own `EXEMPT_PATHS`, spec path and self-test pointer. The design
-  choices of [ADR-K9B7](entries/K9B7-design-of-the-other-systems-rule-skill-and-check.md) are
-  accepted (Q649).
-  - The kit took the rule at c426019 ([ADR-0AMX](entries/0AMX-propose-from-skellycam-and-review-in-the-kit.md)).
-    The wording of [ADR-TC9B](entries/TC9B-ci-runner-with-no-device.md) waits in the kit working
-    tree: the kit reviews and commits it, pushes, then a `pull` here.
 - **An exact name lookup in `tools/check_other_systems.py`.** On 2026-11-23 (Q649) the user asked
   how the lookup of a `certify-check` name can be exact, and what it means that it is not. Today it
   takes the code spans of `specs/certify.md` with the form of a check name (item 6 of
