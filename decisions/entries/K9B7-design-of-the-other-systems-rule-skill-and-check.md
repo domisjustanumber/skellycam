@@ -21,20 +21,28 @@ below. The user has not decided them.
    `tools/tests/test_other_systems.py`. Its form copies `tools/check_camera_media.py`.
 4. **What it scans.** Only a script: `.py .sh .bash .zsh .command .ps1`. It skips `EXEMPT_PATHS`
    (`skellycam/`, `skellycam-ui/`, `skellycam-docs/`, `.github/`) and each path with a `tests`
-   folder. A Markdown or text file is not checked.
-5. **Signals.** A path part (split at each character that is not a letter or a digit) that is
-   `mac`, `macos` or `linux`; or, in a Python script, `sys.platform` compared with `==`, `!=` or
-   `startswith` to a value that is not in `LAB_PLATFORMS`. A lab script that stops with
-   `sys.platform != "win32"` passes. `LAB_PLATFORMS = ("win32",)` is set for this repo. A `probe_*`
-   name is not a signal: a probe on the lab machine is valid.
-6. **Markers.** One of the first 5 lines has `certify-check: <name>` (the script serves that
-   certify check) or `other-systems: not applicable (<reason>)`. An empty name or reason does not
-   pass.
-7. **Modes.** With no argument, the tool checks the files that the commit adds
-   (`--diff-filter=A`), so a change to an old file does not stop a commit. The pre-commit hook runs
-   it so, with `pass_filenames: false`. With file arguments it checks those files. `--all` checks
-   each tracked file; the doc test runs it, and CI runs the doc test. Exit codes: 0, 1 for a
-   refusal, 2 for a usage error.
+   folder. A Markdown or text file is not checked. It reads a file with a UTF-16 BOM as UTF-16.
+5. **Signals.**
+   - A path part (split at each character that is not a letter or a digit) that is `mac`,
+     `macos`, `osx`, `darwin` or `linux`.
+   - In a Python script: `sys.platform` with `==`, `!=`, `in` or `not in` and a value that is not
+     in `LAB_PLATFORMS`; `sys.platform.startswith` with a value that no lab platform starts with;
+     `platform.system()` with `==`, `!=` or `in` and a value that is not in `LAB_SYSTEMS`.
+   - So a lab guard passes: `sys.platform != "win32"`, `not sys.platform.startswith("win")` and
+     `platform.system() != "Windows"`. This repo sets `LAB_PLATFORMS = ("win32",)` and
+     `LAB_SYSTEMS = ("Windows",)`.
+   - A `probe_*` name is not a signal: a probe on the lab machine is valid.
+6. **Markers.** One of the first 5 lines is a comment (`#` or `//` before the text) with
+   `certify-check: <name>` (the script serves that certify check) or
+   `other-systems: not applicable (<reason>)`. A marker in a string, an empty name and an empty
+   reason do not pass. The tool does not look up the name in `specs/certify.md`.
+7. **Modes.** The tool finds the repository root with `git rev-parse --show-toplevel`, so a run
+   from a subfolder checks the whole repository. With no argument, it checks the files that the
+   commit adds (`--diff-filter=A --no-renames`): a moved file, or a deleted file plus a similar new
+   file, is a new file, and a change to an old file does not stop a commit. The pre-commit hook
+   runs it so, with `pass_filenames: false`. With file arguments it checks those files. `--all`
+   checks each tracked file; the doc test runs it, and CI runs the doc test. Exit codes: 0, 1 for a
+   refusal, 2 for a usage error, outside a git repository or with no git (one line, no traceback).
 
 ## Reason
 
@@ -46,15 +54,18 @@ below. The user has not decided them.
 
 ## Evidence
 
-- `uv run python tools/check_other_systems.py --all` on the tree of this commit: `other systems: no
-  findings (989 files)`.
+- `uv run python tools/check_other_systems.py --all` on the tree of this branch: `other systems: no
+  findings (989 files, 8 scripts in scope)`. The 8 scripts are 2 in `decisions/scripts/` and 6 in
+  `tools/`.
 
 ## Consequences
 
-- The tool misses a shell or Markdown instruction, a renamed file, a script with no script suffix
-  and chat.
+- The tool misses: an instruction in a shell script or in Markdown (it reads only the path of a
+  shell script), a script with no script suffix, a script named for its probe and not for the
+  system, a tuple in `startswith`, a guard with the literal first, `os.name`, `match`, and chat. It
+  refuses a comment that quotes a guard.
 - A Claude Code prompt hook as a backup reminder is not in this change.
-- On `dom/research`, `--all` refuses 82 scripts of the research tree, most of them in its `linux/`
+- On `dom/research`, `--all` refuses 83 scripts of the research tree, most of them in its `linux/`
   and `macos/` folders. That branch does not adopt the rule.
 
 ## Alternatives rejected
@@ -62,3 +73,4 @@ below. The user has not decided them.
 - A phrase check on the specs: many correct lines about a run by hand would fail it.
 - A field in a spec template: the specs have no template.
 - A Stop hook: it must parse the transcript, and it fires on text that quotes the rule.
+- A lookup of the `certify-check` name in `specs/certify.md`: not in this change.

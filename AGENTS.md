@@ -81,8 +81,7 @@ The check must not change or stop the other checks of the run. A check that can 
 after the safe checks.
 The check must report its result and its reason code. It must not report private data.
 Mark the fact "not verified" until a report gives its result.
-This rule applies to the machines that a person runs: a CI runner with no cameras can run the checks
-that need no camera.
+The one exception is a CI runner with no camera. It can still run the checks that need no device.
 Load the skill [`verify-on-other-systems`](.claude/skills/verify-on-other-systems/SKILL.md) for
 this work.
 <!-- /kit -->
@@ -91,8 +90,8 @@ The self-test is `skellycam.certify(level)` ([specs/certify.md](specs/certify.md
 verified with `[NV]`.
 The pre-commit hook runs `tools/check_other_systems.py` on the files that the commit adds, and
 `uv run pytest tools/tests` and CI run it on each tracked file. It refuses a script that names or
-guards for another system, unless one of its first 5 lines has `certify-check: <name>` or
-`other-systems: not applicable (<reason>)` (see its docstring).
+guards for another system, unless one of its first 5 lines is a comment with
+`certify-check: <name>` or `other-systems: not applicable (<reason>)` (see its docstring).
 
 ## 5. Decision Log
 

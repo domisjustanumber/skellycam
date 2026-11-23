@@ -4,16 +4,17 @@
 [`AGENTS.md#other-systems-only-through-certify`](../../AGENTS.md#other-systems-only-through-certify),
 [`.claude/skills/verify-on-other-systems/SKILL.md#steps`](../../.claude/skills/verify-on-other-systems/SKILL.md#steps),
 [`tools/check_other_systems.py`](../../tools/check_other_systems.py),
-2026-11-23 (commit to dom/other-systems-rule; was accepted, 2026-11-23 (user)).
+2026-11-23 (commit to dom/other-systems-rule; was accepted, 2026-11-23 (user, relayed by the supervisor)).
 
 ## Decision
 
 1. The Windows lab machine of the project is the only test machine. A test on another system
    runs only through the certify process of the project, `skellycam.certify(level)`, and its report.
 2. A check on another system, for example a cross-platform codec check, is a part of the certify
-   process. An agent does not write a script or a manual step for a person to run on another system.
-3. The rule applies to the machines that a person runs. A CI runner with no cameras stays allowed
-   for the checks that it can do.
+   process. An agent does not write a script or a manual step for a person to run on another system
+   to test or verify a fact.
+3. The rule applies to the machines that a person runs, not to a CI runner. A CI runner with no
+   camera stays allowed for the checks that need no device.
 4. A file check in the pre-commit hook and in CI is the primary mechanical check of the rule.
 5. The rule lands in skellycam now. It goes into the shared agents and ADR kit later.
 
@@ -24,6 +25,11 @@
 - The user, the same day, on a macOS probe script that an agent proposed for the user to run by
   hand: "the certify process is the only way any tests are ever run on machines other than this
   one".
+- The user, the same day, asked for "a rule or skill with a suitable hook for this certify rule
+  that can go into this repo and back into the agents_and_adr kit".
+- The user accepted two questions of the supervisor (relayed): "Is the pre-commit/CI file check the
+  primary hook, with the reminder as the only backup?" (item 4), and that the rule lands in
+  skellycam now and reaches the kit later (item 5).
 - [`specs/frame-ring.md`](../../specs/frame-ring.md) already put T-RING-34 (Apple Silicon) into the
   certify suite, not into a run by hand.
 

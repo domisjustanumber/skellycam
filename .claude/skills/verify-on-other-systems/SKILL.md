@@ -1,6 +1,6 @@
 ---
 name: verify-on-other-systems
-description: Use this skill when a task needs a fact from macOS, Linux, a user system, or hardware that the test machine does not have, before you propose a script, a probe or a manual step for a person.
+description: Use this skill when a task needs a fact from macOS, Linux, a computer that is not the test machine, or hardware that the test machine does not have, for example a codec, driver or camera check, before you propose a script, a probe or a manual step for a person.
 ---
 
 # Verify on other systems
@@ -22,8 +22,9 @@ The rules of [`AGENTS.md`](../../../AGENTS.md#other-systems-only-through-certify
 3. Mark the fact `[NV]` (not verified) in the spec, and put it in
    [`open-work.md`](../../../decisions/open-work.md).
 4. Tell the user which certify report will give the result.
-5. Exception: a CI runner with no cameras can run the checks that need no camera, for example the
-   portable tests. Use CI only for what it can check.
-6. A script that serves a certify check has `certify-check: <name>` in one of its first 5 lines. A
-   script that is not a test of another system has `other-systems: not applicable (<reason>)`.
+5. Exception: a CI runner with no camera can still run the checks that need no device, for example
+   the portable tests. Use CI only for what it can check.
+6. A script that serves a certify check has the comment `certify-check: <name>` in one of its first
+   5 lines. A script that is not a test of another system has the comment
+   `other-systems: not applicable (<reason>)`.
    `tools/check_other_systems.py` refuses other scripts that name or guard for another system.
