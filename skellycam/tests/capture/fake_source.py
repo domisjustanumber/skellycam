@@ -165,6 +165,28 @@ class VirtualClock:
             self._states.pop(threading.get_ident(), None)
             self._advance()
 
+    def give_work(self, thread, put):
+        """`put()` gives work to `thread`, a thread that does not wait on the clock (the control thread of a
+        camera loop). The time does not move until that thread waits for its next work (`idle_if`). Else the
+        time runs on while the work waits for the GIL: on a CI runner a few ms of real time were more than 1 s
+        of virtual time, and the exposure search passed its limit of 20 s (CI run 45278395951).
+        Only a thread with no state or the state "idle" goes to "run". A thread that waits on the clock (for
+        example in the fake hang of a set) keeps its wait, so the time still moves to its wake time."""
+        with self._condition:
+            self._threads[thread.ident] = thread
+            if self._states.get(thread.ident) in (None, "idle"):
+                self._set(thread.ident, "run")
+            put()
+
+    def idle_if(self, no_work):
+        """The thread of `give_work` waits for its next work: when `no_work()` is true, its state is "idle", and
+        the time can move."""
+        with self._condition:
+            me = self._join()
+            if self._states.get(me) == "run" and no_work():
+                self._set(me, "idle")
+                self._advance()
+
     def advance_to(self, t_ns):
         """Move the time from a test thread that is not a participant."""
         with self._condition:

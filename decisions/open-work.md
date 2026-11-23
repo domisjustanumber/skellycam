@@ -207,3 +207,6 @@ task. Delete an item when its work is done. The PR that closes an item records t
     skellycam, FreeMoCap on Linux opens no camera until it sets the start method: its method is `fork`, and skellycam
     refuses each camera process with `start-method-fork` (`unix-capture.md` 4.12). This is the decision of the
     user; the fix of FreeMoCap belongs to the wider Linux review. Not verified on Linux.
+- **Fix lane 5 follow-ups** ([ADR-DC43](entries/DC43-choices-of-fix-lane-5.md)).
+  - The user decides items 1 to 4. Windows Server `os.label`: `Windows 2025Server 24H2` [NV].
+  - `stop_after_frame=200` tests that wait for `ready` have the risk of T-UNX-95.

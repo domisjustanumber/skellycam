@@ -80,6 +80,7 @@ These entries wait for a decision of the user. Section is the section or area of
 | [0Z6Q](entries/0Z6Q-choices-of-the-certify-report-shape-build.md) | Certify build choices: B1 rows, failure facts, `total`, `not-reached`, named checks, `live-at-close` and its reasons, the build file in each build | `certify` | proposed |
 | [HQE5](entries/HQE5-choices-of-fix-lane-4.md) | Choices of fix lane 4: spawn on Linux, skip guard, slow-stop gap, pace steps, restore file by hashed key, take rate sum over sum | none | proposed |
 | [6RVC](entries/6RVC-choices-of-the-first-propose.md) | Choices of the first propose (other-systems rule): no entry citation in the units, hook place, a test moves, `--fill` and `--literal` | none | proposed |
+| [DC43](entries/DC43-choices-of-fix-lane-5.md) | Choices of fix lane 5: control thread on the test clock, test waits for a short `ready` and for a killed process, Windows Server OS key | none | proposed |
 
 The entries that are `rejected`, `superseded by XXXX`, `absorbed into <path>#<anchor>`,
 `evidence; used by XXXX`, `evidence; replaced by XXXX` or `done` are in [historical.md](historical.md).

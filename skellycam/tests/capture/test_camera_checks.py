@@ -119,9 +119,28 @@ def test_t_unx_74_the_os_key_and_the_abi():
 
     checks = product(CHECKS_MODULE)
     key = checks.current_os_key()
-    pattern = {"Windows": r"^\d+ \w+$", "Linux": r"^\d+\.\d+$", "Darwin": r"^\d+$"}[platform.system()]
+    # Windows: the release (`11`, or `2025Server` on Windows Server 2025, CI run 45278395951), a space and the
+    # feature version
+    pattern = {"Windows": r"^\d+(Server)? \w+$", "Linux": r"^\d+\.\d+$", "Darwin": r"^\d+$"}[platform.system()]
     assert re.match(pattern, key), key
     assert checks.current_abi() == ("lp64" if struct.calcsize("P") == 8 else "ilp32")
+
+
+def test_t_unx_74_the_windows_os_key_of_a_client_and_a_server(monkeypatch):
+    """cert 11.2: the Windows OS key is the release and the feature version. Windows Server keeps the release of
+    `platform.release()`: with the same feature version 24H2, the server key differs from the client key."""
+    import sys
+    from types import SimpleNamespace
+
+    checks = product(CHECKS_MODULE)
+    registry = SimpleNamespace(HKEY_LOCAL_MACHINE="HKLM", OpenKey=lambda *args: __import__("contextlib").nullcontext(),
+                               QueryValueEx=lambda handle, name: ("24H2", 1) if name == "DisplayVersion" else None)
+    monkeypatch.setitem(sys.modules, "winreg", registry)
+    keys = []
+    for release in ("11", "2025Server"):
+        monkeypatch.setattr(checks, "platform", SimpleNamespace(system=lambda: "Windows", release=lambda: release))
+        keys.append(checks.current_os_key())
+    assert keys == ["11 24H2", "2025Server 24H2"]
 
 
 @pytest.mark.skipif(__import__("sys").platform != "win32", reason="the media_foundation package is Windows only (U18)")

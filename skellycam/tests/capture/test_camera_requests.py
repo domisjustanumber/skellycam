@@ -380,6 +380,31 @@ def test_t_req_46_the_ready_limit_ends_at_the_warm_up(monkeypatch):
         assert status["exposure_search"]["chosen"] == -9
 
 
+def test_a_slow_hand_over_to_the_control_thread_takes_no_virtual_time(monkeypatch):
+    """The test clock (CI run 45278395951, ubuntu-24.04; reproduced in WSL on 2 cores): the control thread does
+    each set of the search. It does not wait on the virtual clock. A hand-over of 20 ms of real time (the GIL
+    on a busy runner) must take no virtual time, else the search of T-REQ-46 passes its limit of 20 s."""
+    import time
+
+    from skellycam.core.camera.capture import camera_loop
+
+    search_set = camera_loop._ControlThread._search_set
+
+    def late_search_set(self, value):
+        time.sleep(0.02)
+        search_set(self, value)
+
+    monkeypatch.setattr(camera_loop._ControlThread, "_search_set", late_search_set)
+    slow = tuple((value, 15.0) for value in range(-12, -4) if value != -9)
+    with capture_app(monkeypatch, [FakeScript(brightness=MODEL, rate_by_exposure=slow)]) as app:
+        camera_id = app.factory.camera_ids[0]
+        app.detect()
+        assert app.apply([auto(app, camera_id, exposure=-9)]).status_code == 200
+        app.wait_state(camera_id, "ready", "failed", "too_slow")
+        search = app.status(camera_id)["exposure_search"]
+        assert (search["state"], search["chosen"], len(search["trials"])) == ("done", -9, 8), search
+
+
 def test_t_req_47_the_state_route_gives_the_live_state(monkeypatch):
     """T-REQ-47, 1.5 [H1, B15, K1]: a client with no websocket reads `GET /camera/group/state` from the apply to
     the end of the check. Each body equals `to_state_dict()` of the same read; the camera is `adjusting` with

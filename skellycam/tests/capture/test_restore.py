@@ -121,7 +121,9 @@ def test_t_unx_95_a_camera_whose_loop_failed_is_restored_unless_it_is_wedged(mon
     if failure == "not-ready":
         from skellycam.core.camera.capture import camera_loop
         monkeypatch.setattr(camera_loop, "READY_LIMIT_NS", 2_000_000_000)  # 2 s: the warm-up of 90 frames needs 3 s
-    with one_camera(monkeypatch, FakeScript(controls=AUTO_BEFORE, **script)) as (app, camera_id, _):
+    # A removal 2 s of virtual time after `ready` can come before the test thread sees `ready` (CI run 45278395951)
+    until = ("ready", "failed", "dead") if "removed_after_frame" in script else ("ready", "failed")
+    with one_camera(monkeypatch, FakeScript(controls=AUTO_BEFORE, **script), until=until) as (app, camera_id, _):
         source, log = app.factory.sources[camera_id], app.factory.logs[camera_id]
         if failure == "stalled":
             source.stop_now()
