@@ -1,7 +1,12 @@
 # VG5F — Choices of the first certify code (Windows first)
 
-**Status:** accepted, 2026-11-21 (user; commit to dom/accept-choices; was proposed, 2026-11-21 (agent; the user
-approved the build, the supervisor gave the scope)).
+**Status:** absorbed into
+[`specs/certify.md#certify-specification-what-a-certify-run-of-skellycam-measures-draft-3`](../../specs/certify.md#certify-specification-what-a-certify-run-of-skellycam-measures-draft-3),
+[`specs/certify.md#91-certify_planlevel-a`](../../specs/certify.md#91-certify_planlevel-a),
+[`specs/certify.md#191-the-first-code-u`](../../specs/certify.md#191-the-first-code-u),
+[`specs/certify.md#192-the-review-fixes-and-format-160-u`](../../specs/certify.md#192-the-review-fixes-and-format-160-u),
+2026-11-23 (commit to dom/absorb-2; was accepted, 2026-11-21 (user; commit to dom/accept-choices; was proposed,
+2026-11-21 (agent; the user approved the build, the supervisor gave the scope))).
 
 ## Decision
 

@@ -1,6 +1,11 @@
 # 4CQC — Phase 3 spec and test list: Windows native capture
 
-**Status:** accepted, 2026-11-19 (user; commit to dom/native-jpeg; was proposed, 2026-11-19 (agent)).
+**Status:** absorbed into
+[`specs/windows-capture.md#phase-3-capture-specification-windows-native-capture-3a-3b-3c`](../../specs/windows-capture.md#phase-3-capture-specification-windows-native-capture-3a-3b-3c),
+[`specs/windows-capture.md#162-test-list`](../../specs/windows-capture.md#162-test-list),
+[`specs/windows-capture.md#18-choices-of-the-agent`](../../specs/windows-capture.md#18-choices-of-the-agent),
+2026-11-23 (commit to dom/absorb-2; was accepted, 2026-11-19 (user; commit to dom/native-jpeg; was proposed,
+2026-11-19 (agent))).
 
 ## Decision
 

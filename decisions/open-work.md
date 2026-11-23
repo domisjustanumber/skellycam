@@ -16,12 +16,6 @@ task. Delete an item when its work is done. The PR that closes an item records t
   fit in ADR-P98T) and 82AA (accepted). 3WCA (`dom/3bc-tests`) joins the step entries when its
   branch merges. If the index fills again, give
   the user the bigger restructurings of decision 4 of ADR-N2NH.
-- **Private-data findings.** `tools/check_private_data.py` reports 3 lines in upstream files: an
-  email address in `skellycam-ui/src/hooks/floatingOnboarding.tsx` and in
-  `skellycam-ui/src/hooks/useDraggableTooltips.tsx`, and a user path in
-  `skellycam/tests/reference_recordings/README.md`. The user decides each redaction. Until then,
-  `test_repository_has_no_private_data` fails, and a commit that changes one of these files stops
-  ([ADR-PEJ0](entries/PEJ0-scope-of-the-private-data-check.md)).
 - **Phase 2 of the frame ring.** [ADR-50G8](entries/50G8-phase-2-frame-ring-spec.md) accepts
   [`specs/frame-ring.md`](../specs/frame-ring.md). The tests of step 2a (T-RING-01 to 33) are in
   `skellycam/tests/frame_ring/`. They use the API of
@@ -32,58 +26,11 @@ task. Delete an item when its work is done. The PR that closes an item records t
   Run the timed and kill tests with `-m ring_slow`. `SKELLYCAM_RING_FULL=1` gives the durations of
   the spec, for example 60 s for each slot count of T-RING-08. T-RING-49 needs cameras and is not
   written.
-  - Done: the code of step 2a is complete. This is the ring package
-    `skellycam/core/ipc/frame_ring/`, the rings in `CameraGroup` (session start and close,
-    recreation, `ring_infos`), the `cv2.imencode` feed of the OpenCV loop (recorder first), the
-    interim relay (item 4), the performance page (item 5) and the deletions of section 2.1. The
-    test helper `FakeCapture` stays alive until the process ends, because OpenCV 5.1.0 crashes when
-    the garbage collector frees a subclass of `cv2.VideoCapture`.
-  - Step 2b (the BGR ring and the decode stage). The user approved the build on 2026-11-19
-    (item 63). The failing tests of step 2b (T-RING-36 to 47) are in
-    `skellycam/tests/frame_ring/test_bgr_ring.py`, `test_decode_stage.py` and
-    `test_bgr_camera.py`. They use the API of
-    [ADR-5MYA](entries/5MYA-python-api-of-the-bgr-ring-and-the-decode-stage-as-the-2b-tests-assume-it.md),
-    which the user accepted on 2026-11-19, with the four decisions of
-    [ADR-467Z](entries/467Z-step-2b-self-check-stop-opencv-threads-and-yuv-conversion.md).
-    One more test in `test_bgr_camera.py` checks that a mode change (7.5) recreates the BGR ring
-    with the new shape (user, 2026-11-19).
-    T-RING-48 has no test of its own: it runs the T-RING-36 tests (marker `ring_portable`) on ARM.
-    Run the 2b tests with
-    `uv run pytest skellycam/tests/frame_ring/test_bgr_ring.py skellycam/tests/frame_ring/test_decode_stage.py skellycam/tests/frame_ring/test_bgr_camera.py`.
-    Add `-m "not ring_slow"` for a short run.
-  - Done: the code of step 2b (2026-11-19). This is `decode.py` of the ring package,
-    BGR support in `FrameRingWriter` and `FrameRingReader`, `CameraConfig.bgr_ring`, the BGR rings
-    of `create_session_rings` and the hand-over in the OpenCV loop. The entry
-    [ADR-E817](entries/E817-choices-of-the-2b-code.md) holds the choices of the code.
-  - Expected failure until phase 3: T-RING-46 (libjpeg warnings) fails on Windows. The OpenCV 5.1.0 wheel has its own
-    C runtime, so a redirect of descriptor 2 does not reach libjpeg there (ADR-E817 item 7). The
-    limit stays off on Windows until phase 3 (user, 2026-11-19). A possible fix: the main process
-    gives each camera process a pipe as its stderr before OpenCV loads. The Linux code was checked in WSL without OpenCV.
-  - Done: the measurements M5 to M7 of section 11.3 on Windows
-    ([ADR-ETJ1](entries/ETJ1-measurements-m5-to-m7-of-the-bgr-ring.md)). M8 (Apple Silicon) is open.
   - Open: the BGR read at 1080p does not meet its target (p99 3.13 to 4.05 ms, target 3 ms). The
     user decided on 2026-11-19 that the reader does not change in phase 2. A read call that copies
     into a buffer of the reader waits for the first consumer that reads the BGR ring.
-  - Done: T-RING-31 is retired with the phase 2 loop. T-CAP-49 checks its rule on the shared loop
-    ([ADR-PDD3](entries/PDD3-decisions-of-the-user-on-items-65-to-78-and-the-3a-review.md) W8).
-  - Fact, 2026-11-18: the four-camera comparison of the timing. Before is commit 0a66994c3, after
-    is commit 8a1f9b517. Each had two runs of 60 s, with a 720p30 MJPG request, lockstep and
-    four cameras (Logitech C922, Logitech C930e, Razer Kiyo Pro and a generic camera), lights on.
-    The values below are before (run 1 and 2), then after (run 1 and 2).
-    - Frames per camera: 1548 and 1547, then 1548 and 1548.
-    - Group frame rate: 25.76 and 25.76, then 25.76 and 25.77.
-    - Median spread of the grab times between cameras: 0.205 and 0.189 ms, then 0.183 and 0.194 ms.
-    - The step that copied a frame to the old ring now holds the JPEG encode and the capture check.
-      Median: 1.02 and 1.24 ms, then 1.87 and 1.81 ms. 95th percentile: 1.58 and 1.92 ms, then
-      3.39 and 3.41 ms.
-    - Whole processing of a frame, median: 2.86 and 3.24 ms, then 3.97 and 3.91 ms.
-    - No traceback. Four JPEG rings of 27,779,072 bytes each, 111,116,288 bytes in total. The
-      largest frame is 0.10 to 0.22 of its slot. There was no oversize frame, no cut-off frame, no
-      capture-error frame and no failed ring write.
-    - An earlier pair of runs the same day in a dim room gave 8.00 frames per second before and
-      after. The cause is not verified.
-    - The result files are in the research branch `dom/research` of this repository. They are not
-      committed there yet.
+  - Fact, 2026-11-18: the four-camera comparison of the timing of step 2a
+    ([evidence](evidence/four-camera-timing-of-step-2a-20261118.md)).
   - The user runs T-RING-49, the optional four-camera smoke test. It needs cameras.
   - T-RING-34 (Apple Silicon) is on hold. It goes into the certify suite of a later task and is not
     run by hand now (item 67). The job `ring-portable` of `.github/workflows/ring-arm64.yml` runs T-RING-35 and T-RING-48 on
@@ -101,20 +48,11 @@ task. Delete an item when its work is done. The PR that closes an item records t
   ([ADR-QKX1](entries/QKX1-answers-of-the-user-to-the-phase-3-spec-questions.md)). The user accepted
   the revised spec on 2026-11-19, with its 64 agent choices (section 18). Section 17.2 of the spec
   lists seven differences from the ring spec.
-  - The failing tests of step 3a are in `skellycam/tests/capture/`, with the fake source
-    `fake_source.py`. They use the API of
-    [ADR-HP7D](entries/HP7D-python-api-of-capture-as-the-3a-tests-assume-it.md), which the user
-    accepted on 2026-11-19 with the answers U16 to U23
-    ([ADR-HB4Z](entries/HB4Z-answers-u16-to-u23-of-the-user-to-the-review-of-the-3a-tests.md)). Next:
-    the product code of step 3a.
-  - Done: the user decided items 65 to 78 of section 18 of the spec, and W1 to W8 after the review of
-    the 3a code ([ADR-PDD3](entries/PDD3-decisions-of-the-user-on-items-65-to-78-and-the-3a-review.md)).
   - The user accepted the choices of the 3a code and its fixes
     ([ADR-2GS1](entries/2GS1-step-3a-choices-of-the-capture-code-and-its-fixes.md)). Open: section 15
     must name the macOS timing step (BM73 7); item 90 of section 18 is stale.
-  - Done: W8 deleted the phase 2 loop. Its tests moved to the shared loop or were retired. The
-    `README.md` of `skellycam/tests/reference_recordings/` still names the deleted tests; it changes
-    after the redaction decision of that file.
+  - The `README.md` of `skellycam/tests/reference_recordings/` still names the deleted tests of the
+    phase 2 loop (W8); it changes after the redaction decision of that file.
   - Run the fake-source tests with
     `uv run pytest skellycam/tests/capture -m "not camera_hardware and not capture_local"`. The
     hardware tests run only with `SKELLYCAM_HARDWARE=1`. The workflow
@@ -125,8 +63,6 @@ task. Delete an item when its work is done. The PR that closes an item records t
     has threads (the server and the watch of each group). The product does not mix contexts. Spawn
     on each system is a decision of the user
     ([ADR-BM73](entries/BM73-fixes-of-the-first-ci-run-of-the-capture-workflow.md), F3).
-  - Phase 0 (the user, through the certify suite): the Linux and macOS hardware tests T-CAP-92 to
-    T-CAP-98.
   - Phase 7: the parity table of section 16.7 of the spec is the to-do list for Linux and macOS
     (14 tests with no counterpart yet).
 - **Support virtual cameras.** Detection shows a virtual camera with `virtual=True`, and a request
@@ -151,29 +87,15 @@ task. Delete an item when its work is done. The PR that closes an item records t
   a slow disk (USB, spinning) on the hardware of the user, and the D3 detection on Linux and macOS.
   Run the benchmarks with `SKELLYCAM_BENCH=1` and
   `SKELLYCAM_BENCH_OUT` set to a folder outside the repository.
-  Done: the connection to the shared loop and the edits of section 14 of the spec in
-  `specs/windows-capture.md`; U4, U5 and U12 are removed
-  ([ADR-YNM2](entries/YNM2-connection-of-the-take-recorder-to-the-shared-loop.md)), and fix rounds 3
-  to 5 ([ADR-82AA](entries/82AA-stop-last-frame-survivor-files-and-stuck-writer-limit.md)). Open:
-  the code does not implement section 8.4 of the spec yet (`take_state`, `ended_take`; today
-  `recording_in_progress` stays true after an error end until a stop fetches the summary). Next: the
-  first hardware run of the new recorder (a take with three cameras; an ended camera process in
-  place of an unplug), and the take in the new player and in Blender.
-- **The change request F-1 to F-10 to skellyfileformat.** The user decided on 2026-11-20 that the
-  ten format changes of section 13 of [`specs/recorder.md`](../specs/recorder.md) go to
-  skellyfileformat as one change request, and that the user sees its text before it is sent
-  ([ADR-P98T](entries/P98T-step-5a-choices-of-the-recorder-and-its-connection.md)). It is not sent.
-  The list: F-1 the `missing` flag, the `missing=` count and the placeholder; F-2 the short file;
-  F-3 two exceptions to unchanged bytes; F-4 the completion of a take by its own writer; F-5 the
-  codes `camera_dead`, `camera_file_short`, `take_error`; F-6 `key_origin` `provisional`; F-7 the
-  lock on each OS; F-8 equal player times; F-9 when a player checks the block count; F-10 a
-  `missing` row in a player.
+  Next: the take in the new player and in Blender.
+- **Format sync.** skellyfileformat holds the changes F-1 to F-10 of section 13 of
+  [`specs/recorder.md`](../specs/recorder.md) (its `main` is pushed at 24949df). skellycam follows on
+  the branch `dom/format-sync`, which is not merged.
 - **Phase 6a (the canvas player for new takes).** The user decided Y1 to Y7 on 2026-11-19
   ([ADR-J2BQ](entries/J2BQ-phase-6-player-decisions-y1-to-y7.md)). The user accepted the spec
   [`specs/player.md`](../specs/player.md) (revision 2) and its test list T-PLAY-01 to T-PLAY-72 on
   2026-11-20 ([ADR-YV3V](entries/YV3V-acceptance-of-the-phase-6a-player-spec-and-test-list.md)), and
-  the 6a choices ([ADR-4D94](entries/4D94-step-6a-choices-of-the-canvas-player.md)). The player
-  gives three items to the merged format list of the recorder spec (section 13).
+  the 6a choices ([ADR-4D94](entries/4D94-step-6a-choices-of-the-canvas-player.md)).
   - The failing tests of 6a are in `skellycam-ui/src/player/tests/` and
     `skellycam-ui/src/components/playback/tests/`. Run `npm run test:player:unit` and
     `npm run test:player:browser` in `skellycam-ui/`. The benchmarks T-PLAY-65 to T-PLAY-70 run by
@@ -201,7 +123,7 @@ task. Delete an item when its work is done. The PR that closes an item records t
   4a choices ([ADR-68JT](entries/68JT-step-4a-choices-of-the-preview-sender.md)).
   - The tests of step 4a (T-PRV-01 to T-PRV-24) are in `skellycam/tests/preview/`, with the
     helpers of spec section 9.1 in `preview_helpers.py`. Run them with
-    `uv run pytest skellycam/tests/preview`. The product code of step 4a is done. The measurements
+    `uv run pytest skellycam/tests/preview`. The measurements
     M-PRV-1 to M-PRV-5 are done on Windows
     ([ADR-HDC9](entries/HDC9-measurements-m-prv-1-to-m-prv-5-of-the-preview-sender.md)). Open: M-PRV-4
     on Linux. The user must confirm the target of A10 of
@@ -214,26 +136,31 @@ task. Delete an item when its work is done. The PR that closes an item records t
     ([ADR-VYS7](entries/VYS7-answers-of-the-user-to-the-step-4b-spec-and-go-ahead-for-its-tests.md)).
     Revision 3 has the full test list (section 7.4). Next: the failing 4b tests, on top of
     `dom/integration` when it exists (section 2). The user accepted Q14 and the agent choices
-    ([ADR-RA16](entries/RA16-step-4b-choices-of-the-preview-ui.md)). The two open points of section
-    12.2 are done.
+    ([ADR-RA16](entries/RA16-step-4b-choices-of-the-preview-ui.md)).
 - **The `sfn26` integration on `dom/integration`.** The user decided the base on 2026-11-20
   ([ADR-EQY4](entries/EQY4-base-the-work-on-upstream-sfn26-without-rust.md)), and accepted the
   agent choices ([ADR-6T78](entries/6T78-choices-of-the-sfn26-integration.md)). Open:
-  - D1 of [ADR-EN7A](entries/EN7A-phase-3-windows-capture-decisions.md) says that no merge of `sfn26`
-    is planned. The spec has a changed-on note.
   - The DirectShow open order of `sfn26` (item 1 of ADR-6T78) waits for a check on the cameras.
-  - The UI does not show the USB link or the `start_failure` warning item.
+  - The UI does not show the `start_failure` warning item.
   - Not verified: real cameras, Linux, macOS and the installer build.
-- **The certify run of skellycam.** The spec [`specs/certify.md`](../specs/certify.md) is draft 3.
-  The user decided [ADR-GVC0](entries/GVC0-certify-decisions-of-the-user.md),
-  [ADR-KG00](entries/KG00-certify-decisions-of-the-user-on-draft-2.md),
-  [ADR-C5BR](entries/C5BR-macos-approach-probes-in-certify.md) and
-  [ADR-BVK7](entries/BVK7-certify-rulings-of-the-user-one-test-one-row.md). The choices of the agents
+- **The certify run of skellycam.** The spec [`specs/certify.md`](../specs/certify.md) is draft 3, on
+  format 1.6.0 of the contract. The first code is in `skellycam/core/certify/` (section 19 of the
+  spec), and a first real quick run was done on 2026-11-21. Open: the checks that are `not-run`
+  `not-built` (the status line of the spec). The choices of the agents
   wait for the user: [ADR-KY81](entries/KY81-certify-spec-choices-of-the-agent.md) (the items that the
-  later entries do not rule) and [ADR-8CP7](entries/8CP7-certify-spec-draft-3-choices-of-the-agent.md),
-  with the open questions of section 14 of the spec. The spec is written against format 1.4.0 of the
-  contract `skellycertify` (commit `1c9c191`). Commit `9e6d575` of the contract answers question 6 (a
-  `partial` item and a reviewed row). The specs `camera-requests.md`, `unix-capture.md` and `certify.md` are
-  merged on `dom/integration` and agree
-  ([ADR-H0BQ](entries/H0BQ-user-rulings-of-the-spec-integration.md),
-  [ADR-FC1C](entries/FC1C-choices-of-the-spec-integration.md), which waits for the user).
+  later entries do not rule), [ADR-8CP7](entries/8CP7-certify-spec-draft-3-choices-of-the-agent.md)
+  and [ADR-FC1C](entries/FC1C-choices-of-the-spec-integration.md),
+  with the open questions of section 14 of the spec.
+- **Certify, decided 2026-11-23, not built.** The report gets: the commit; the product failure facts
+  (native code, call, stage, first failure code); a start time and a duration for each check; a camera
+  inventory (USB link, controller, hub depth, firmware revision, driver, mode list); frame timing on
+  each rate row; the warning and exit codes of the take; CPU load; the exposure and gain context. A
+  salted local hash is the stable id of a camera unit. Certify keeps the camera logs of the last run
+  on the machine of the user and never sends them by itself.
+- **Decided 2026-11-21, not built**
+  ([ADR-TFD7](entries/TFD7-search-limit-stop-rate-median-role-flag-and-restore-after-a-failed-loop.md)):
+  a median frame-rate statistic in the stop answer; a role flag in place of the `parent_process()`
+  guards. Built now on `dom/fix-lane-3`: a live settings change never restarts a failed camera; a
+  camera whose capture failed for a reason other than a hang gets its settings back at the close.
+- **Deferred by the user (2026-11-23).** At 60 fps the exposure search never tries a value longer
+  than the frame period. The product switches low light compensation off after each open.
