@@ -17,7 +17,6 @@ from skellycam.core.camera.capture.modes import at_floor, auto_rate
 NAME = re.compile(r"^[A-Za-z0-9][A-Za-z0-9_.:@-]{0,127}$")  # C 3.4
 BACKENDS = {"Windows": "media-foundation", "Linux": "v4l2", "Darwin": "avfoundation"}
 DEFAULT_BASE = (1280, 720, 30.0)  # 3.4 `<base>`; the plan uses it when the modes were not read
-DISK = "Disk"
 
 # The quick checks of one camera (3.4, 4.2 to 4.5), by the step of the run that gives them (4.1).
 DETECT = ("detect", "detect:mjpg-mode")
@@ -146,14 +145,14 @@ def camera_names(unit_label: str, base, level: str, unix: bool) -> dict:
         "take": [f"{unit_label}:{c}" for c in AFTER_TAKE],
         "clock": [f"{unit_label}:{c}" for c in CLOCK] if unix or level == "full" else [],
     }
-    block = [c.format(base=mode_name(*base)) for c in FULL_CAMERA_NOT_BUILT if base or "{base}" not in c]
-    names["full"] = [f"{unit_label}:{c}" for c in block] if level == "full" else []
     return names
 
 
 def planned_checks(level: str, units: list, backend: str) -> list:
-    """(name, module) of each check of the run, in the order of the report. `units`: (label, base, module) of each
-    camera to check, in the detection order."""
+    """(name, module) of each check of the run that has code, in the order of the report. `units`: (label, base,
+    module) of each camera to check, in the detection order. A check with no code is not planned and gives no row: it
+    is in `not_built` (3.6.1). A check of the camera block of `full` for a second unit of a model gives no row
+    either (no `same-model`)."""
     unix = backend != "media-foundation"
     by_unit = [(lab, module, camera_names(lab, base, level, unix)) for lab, base, module in units]
     models = {}
@@ -163,20 +162,26 @@ def planned_checks(level: str, units: list, backend: str) -> list:
     for step in ("detect", "open", "ready", "settings"):
         out += [(name, module) for _, module, names in by_unit for name in names[step]]
     if units:
-        out += [(name, None) for name in QUICK_NOT_BUILT + TAKE]
+        out += [(name, None) for name in TAKE]
     for step in ("take", "clock"):
         out += [(name, module) for _, module, names in by_unit for name in names[step]]
     out += [(f"{model}:units", module) for model, module in models.items()]
     if level == "full":
-        out += [(name, module) for _, module, names in by_unit for name in names["full"]]
-        out += [(name, DISK if name.startswith("system:disk") else None)
-                for name in FULL_NOT_BUILT + SYSTEM_NOT_BUILT.get(backend, ())]
-    if units:
-        out += [(name, None) for name in SELF_QUICK]
-    if level == "full":
         out += [(f"{model}:gate{step}", module) for model, module in models.items()
                 for step in [f":{s}" for s in GATE_STEPS] + [""]]
     return out
+
+
+def not_built(level: str, units: list, backend: str) -> dict:
+    """3.6.3 `details.not_built`: the names of the checks with no code, `camera` without `<label>:` and with `base`
+    for the mode of `<base>`, `run` the group, system and self checks; each name one time, sorted."""
+    run = set(QUICK_NOT_BUILT + SELF_QUICK) if units else set()
+    camera = set()
+    if level == "full":
+        run.update(FULL_NOT_BUILT + SYSTEM_NOT_BUILT.get(backend, ()))
+        for _, base, _ in units:
+            camera.update(c.format(base="base") for c in FULL_CAMERA_NOT_BUILT if base or "{base}" not in c)
+    return {"camera": sorted(camera), "run": sorted(run)}
 
 
 def seconds_estimate(level: str, cameras: int, models: int) -> int:

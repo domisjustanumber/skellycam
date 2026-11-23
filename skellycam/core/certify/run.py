@@ -163,7 +163,8 @@ def plan(level, *, cameras=None, devices=None, checks_path=None, evidence_path=c
         "package": "skellycam",
         "kind": level,
         "seconds_estimate": catalog.seconds_estimate(level, len(context.units), len(context.checked_models)),
-        "total": len(checks) if level == "full" or context.units else 0,
+        # 3.6.1: with `session:exit`, when a session child runs
+        "total": len(checks) + 1 if context.units else len(checks) if level == "full" else 0,
         "risks": risks,
         "downloads": [],
         "system_changes": [],
@@ -188,6 +189,14 @@ class _Progress:
         self.callback, self.level, self.total = callback, level, total
         self.last = 0.0
         self.broken = False
+        self.session = False  # 3.6.1: the plan counts the end of the session child (`session:exit`) as one check
+        self.ended = False
+
+    def done(self, rows) -> int:
+        """3.6.1: the ended checks; the end of the session child counts as one, with or without a `session:exit`
+        row, so `done` equals `total` at the end."""
+        return sum(1 for name, r in rows.items() if r is not None and name != "session:exit") + (
+            1 if self.session and self.ended else 0)
 
     def send(self, state, rows, step=None):
         if self.callback is None or self.broken:
@@ -199,7 +208,7 @@ class _Progress:
                   for name, r in rows.items()]
         message = {"package": "skellycam", "kind": self.level, "state": state,
                    "step": None if step is None else {"section": None, "name": step}, "checks": checks,
-                   "done": sum(1 for r in rows.values() if r is not None), "total": self.total, "seconds_left": None}
+                   "done": self.done(rows), "total": self.total, "seconds_left": None}
         self.last = time.monotonic()
         try:
             self.callback(message)
@@ -745,6 +754,7 @@ def run(level, progress=None, cancel=None, *, cameras=None, recording_folder=Non
                  evidence_path, os_key, abi, private_terms, backend, work, refused, start + limit,
                  "over-budget" if level == "quick" else "timed-out")
         finally:
+            reporter.ended = True
             reporter.send("cleaning-up", out["rows"])
             if work is not None:
                 shutil.rmtree(work, ignore_errors=True)
@@ -774,7 +784,8 @@ def _run(out, level, reporter, stops, cameras, devices, manager, source_factory,
     planned = catalog.planned_checks(level, context.unit_specs(), backend)
     modules = dict(planned)
     rows = out["rows"] = {name: None for name, _ in planned}
-    reporter.total = len(rows)
+    reporter.session = bool(context.units)
+    reporter.total = len(rows) + (1 if context.units else 0)
     if busy:  # 9.5, 9.7: the run is refused; it opens no camera. No summary item, so no `module` (C 3.4)
         out["rows"] = {name: _row(name, "not-run", refused) for name in rows}
         out["reasons"].append(refused)
@@ -861,23 +872,13 @@ def _row(name, result, reason=None, module=None, **numbers) -> dict:
 
 
 def _fill(rows, modules, context, level, stop, prior, skip):
-    """Each check with no result: `not-built` or `same-model` (5.1), the stop cause (C 2.4, 4.1), or the reason that
-    the session gave for its camera (`prior-failure`, `camera-in-use`, ...)."""
-    unix = context.backend != "media-foundation"
-    first = {m["units"][0]["label"] for m in context.models.values()}
-    block = {name: c["label"] for c in context.units
-             for name in catalog.camera_names(c["label"], c["base"], level, unix)["full"]}
-    static = set(catalog.QUICK_NOT_BUILT + catalog.SELF_QUICK + catalog.FULL_NOT_BUILT).union(
-        *catalog.SYSTEM_NOT_BUILT.values())
+    """Each planned check with no result: the stop cause (C 2.4, 4.1), or the reason that the session gave for its
+    camera (`prior-failure`, `camera-in-use`, ...). A check with no code is not planned (3.6.1)."""
     for name in rows:
         if rows[name] is not None or name in skip:
             continue
         unit_label = next((c["label"] for c in context.units if name.startswith(c["label"] + ":")), None)
-        if name in static:
-            reason = "not-built"
-        elif name in block:
-            reason = "not-built" if block[name] in first else "same-model"
-        elif stop in STOPS:
+        if stop in STOPS:
             reason = STOPS[stop]
         elif unit_label in prior:
             reason = prior[unit_label]
@@ -1032,7 +1033,8 @@ def _report(level, created, out, backend) -> dict:
         "checks": [r for r in out["rows"].values() if r is not None],
         "cleanup": out["cleanup"],
         "details": {"backend": backend, "os_key": context.os_key if context else None,
-                    "abi": context.abi if context else None},
+                    "abi": context.abi if context else None,
+                    "not_built": catalog.not_built(level, context.unit_specs() if context else [], backend)},
         "evidence": {"valid": not evidence, "reasons": evidence},
     }
     summary = [{k: v for k, v in item.items() if not k.startswith("_")} for item in out["summary"]]

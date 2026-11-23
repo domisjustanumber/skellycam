@@ -27,6 +27,14 @@ make these choices. The agent made them. "Not:" gives the rejected alternative.
    progress message. Not: a frame number (the real clock of a session child moves the step of a frame).
 8. T-CERT-93 puts the stream error and the removal in the take, not "before the take": no progress message comes
    between the settings change and the take.
+9. `details.not_built.run` holds `group:open` and the two `self:hang-100ms` checks only when the run checks a
+   camera, as the plan did before. `details.not_built.camera` is the union of the names of the units; a unit with
+   no `<base>` adds no name with `base`. A refused run also has `details.not_built`. Not: the lists of the level
+   with no regard to the cameras.
+10. `total` counts `session:exit` only when the run has a camera to check, because only then a session child runs.
+    With no camera, `total` of `full` is 1 (`detect`) and of `quick` 0, as before. The progress counts the end of
+    the session child at the end of the run, also after a refused run or a stop before the session, so the last
+    `done` equals `total`. Not: one more check in each plan.
 
 ## Reason
 
@@ -38,6 +46,8 @@ make these choices. The agent made them. "Not:" gives the rejected alternative.
 5. The status failure of a camera process that ended holds its exit code.
 6. A `build_py` command runs in each wheel build and has the build folder.
 7. A progress message is the only point that a test can name in a session child.
+9. The plan has planned these checks only with a camera to check.
+10. The rule "with no camera to check, the run also reports `detect`" of 9.1 stays.
 
 ## Alternatives rejected
 

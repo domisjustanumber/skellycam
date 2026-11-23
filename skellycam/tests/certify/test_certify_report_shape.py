@@ -8,10 +8,13 @@ import subprocess
 import threading
 import time
 
+import pytest
+
 from skellycam.tests.capture.capture_session import capture_app
 from skellycam.tests.capture.fake_source import FakeSourceFactory
 from skellycam.tests.certify.report_rules import assert_valid
-from skellycam.tests.certify.test_certify import CATALOG, RUN, by_name, good, labels, paths, product, run_with
+from skellycam.tests.certify.test_certify import (
+    CATALOG, RUN, SOURCE_FACTS, by_name, good, labels, paths, product, run_with, same_model)
 from skellycam.tests.certify.test_certify_review import assert_no_new_process, descendants
 
 COMMIT = "0123456789abcdef0123456789abcdef01234567"
@@ -143,3 +146,70 @@ def test_t_cert_27_versions_the_tree_and_a_part_of_the_cameras(monkeypatch, tmp_
     assert "no-commit" not in reasons and "partial-run" not in reasons
     assert by_name(report)[f"{first}:opens"]["result"] == "pass"
     assert not [c for c in report["checks"] if any(c["name"].startswith(label + ":") for label in others)]
+
+
+# ---------------------------------------------------------------------------
+# Step 3: `details.not_built`, no `same-model` row, the plan total with `session:exit` (3.6.1, 3.6.3)
+# ---------------------------------------------------------------------------
+
+def plan_options(tmp_path):
+    return {key: value for key, value in paths(tmp_path).items() if key != "recording_folder"}
+
+
+@pytest.mark.parametrize("level", ["quick", "full"])
+def test_t_cert_91_a_check_with_no_code_has_no_row(monkeypatch, tmp_path, level):
+    """T-CERT-91, 3.6.1, 3.6.3: 4 fakes of 3 models, two of one model. No row has `not-built` for a check with no
+    code, and no row has `same-model`; `details.not_built.camera` and `.run` hold each such name one time, sorted,
+    with `base` for the mode of `<base>`; the plan `total` and `details.checks` count no such check; a check with code
+    whose diagnostics key is `null` keeps `not-run` `not-built` and counts in `total`."""
+    catalog = product(CATALOG)
+    unfilled = good(diagnostics={**SOURCE_FACTS, "long_intervals": None})
+    with capture_app(monkeypatch, [good(), good(), good(), unfilled]) as app:
+        devices = same_model(app.factory.device_infos(), 0, 1)
+        plan = product(RUN).plan(level, devices=devices, **plan_options(tmp_path))
+        report = run_with(app, tmp_path, level=level, devices=devices)
+    assert_valid(report)
+    not_built = report["details"]["not_built"]
+    assert set(not_built) == {"camera", "run"}
+    for names in not_built.values():
+        assert names == sorted(set(names)), names
+    no_code = set(not_built["run"]) | {f"{label}:{name}" for label in labels(devices) for name in not_built["camera"]}
+    no_code |= {f"{label}:{name.replace('base', catalog.mode_name(640, 480, 30.0))}" for label in labels(devices)
+                for name in not_built["camera"]}
+    assert not [c for c in report["checks"] if c["name"] in no_code]
+    assert not [c for c in report["checks"] if c["reason"] == "same-model"]
+    assert not [name for name in plan["details"]["checks"] if name in no_code]
+    assert plan["total"] == len(plan["details"]["checks"]) + 1 == len(report["checks"]) + 1  # with `session:exit`
+    if level == "quick":
+        assert not_built == {"camera": [], "run": ["group:open", "self:hang-100ms:gap", "self:hang-100ms:hard-end"]}
+    else:
+        assert {"cycles", "exposure:base", "auto-exposure:searched:base", "timings"} <= set(not_built["camera"])
+        assert {"group:contention", "group:take-30:finished", "self:idle-cpu"} <= set(not_built["run"])
+        last = labels(devices)[-1]
+        assert (by_name(report)[f"{last}:time-gaps"]["result"], by_name(report)[f"{last}:time-gaps"]["reason"]) \
+            == ("not-run", "not-built")
+        assert f"{last}:time-gaps" in plan["details"]["checks"]
+
+
+@pytest.mark.parametrize("hang", [False, True])
+def test_t_cert_103_the_plan_total_counts_session_exit(monkeypatch, tmp_path, hang):
+    """T-CERT-103, 3.6.1: the plan counts `session:exit`; with a clean exit there is no `session:exit` row and the
+    last `done` equals `total`; with a hang at the exit the row is `record-only` `hung-at-exit` and `done` equals
+    `total`; no message has `done` above `total`."""
+    run = product(RUN)
+    if hang:
+        finish = run._ThreadSession.finish
+        monkeypatch.setattr(run._ThreadSession, "finish", lambda self: finish(self) or True)
+    messages = []
+    with capture_app(monkeypatch, [good()]) as app:
+        plan = run.plan("quick", devices=app.factory.device_infos(), **plan_options(tmp_path))
+        report = run_with(app, tmp_path, progress=messages.append)
+    assert_valid(report)
+    assert plan["total"] == len(plan["details"]["checks"]) + 1
+    exit_row = by_name(report).get("session:exit")
+    if hang:
+        assert (exit_row["result"], exit_row["reason"]) == ("record-only", "hung-at-exit")
+    else:
+        assert exit_row is None
+    assert messages[-1]["state"] == "done" and messages[-1]["done"] == messages[-1]["total"] == plan["total"]
+    assert all(m["done"] <= m["total"] for m in messages if m["total"] is not None)

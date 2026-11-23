@@ -308,9 +308,12 @@ def test_t_cert_01_the_plan(tmp_path):
         cameras = quick["details"]["cameras"]
         assert len(cameras) == count
         to_check = [c for c in cameras if c["evidence"] != "verified"]
-        assert quick["total"] == (len(quick["details"]["checks"]) if to_check else 0)
+        # 3.6.1: `total` counts `session:exit` when a session child runs, and no check with no code
+        assert quick["total"] == (len(quick["details"]["checks"]) + 1 if to_check else 0)
         assert quick["seconds_estimate"] == (min(30, -(-(20 * 4 + len(to_check)) // 4) + 10) if to_check else 0)
-        assert full["total"] == len(full["details"]["checks"])
+        assert full["total"] == len(full["details"]["checks"]) + (1 if count else 0)
+        assert not [n for n in quick["details"]["checks"] + full["details"]["checks"]
+                    if n.startswith(("self:", "group:open", "group:take-30", "system:")) or n.endswith(":cycles")]
         if count == 4:
             by_device = {c["device"]: c for c in cameras}
             assert by_device["feed:0001"]["evidence"] == "verified" and by_device["feed:0002"]["checked"] is True
@@ -364,7 +367,7 @@ def test_t_cert_03_07_17_26_a_quick_run_with_good_fakes(monkeypatch, tmp_path):
     plan = product(RUN).plan("quick", devices=devices, **{k: v for k, v in paths(tmp_path).items()
                                                          if k != "recording_folder"})
     assert plan["details"]["unchecked"] == []
-    assert plan["total"] == len(report["checks"])
+    assert plan["total"] == len(report["checks"]) + 1  # `session:exit` (3.6.1): no row with a clean exit
     # progress (C 2.3, 9.6)
     states = [m["state"] for _, m in messages]
     assert states[0] == "starting" and states[-1] == "done"
@@ -380,7 +383,7 @@ def test_t_cert_03_07_17_26_a_quick_run_with_good_fakes(monkeypatch, tmp_path):
     gaps = [b - a for (a, _), (b, _) in zip(messages, messages[1:])]
     assert min(gaps) >= 0.095, min(gaps)
     last = messages[-1][1]
-    assert last["done"] == len(report["checks"]) and all("reason" in c for c in last["checks"])
+    assert last["done"] == plan["total"] and all("reason" in c for c in last["checks"])
 
 
 def test_t_cert_08_and_17_a_slow_camera_and_a_progress_that_raises(monkeypatch, tmp_path):
@@ -585,7 +588,7 @@ def test_t_cert_47_a_full_run_and_the_local_pass(monkeypatch, tmp_path):
     """T-CERT-47, T-CERT-44, 11.3: a full run with a fake whose gate checks pass gives `<model>:gate` `pass`, the
     summary item `gate`, and a `full` row that is a local pass; a fake whose sample time comes after its arrival
     fails `clock:before-arrival`, so its gate fails and its row is no local pass. The checks that are not built
-    are `not-run` `not-built`."""
+    are not in `checks`: `details.not_built` names them (3.6.1)."""
     late = good(diagnostics={**SOURCE_FACTS, "later_than_arrival": 3})
     with capture_app(monkeypatch, [good(), late]) as app:
         devices = app.factory.device_infos()
@@ -599,7 +602,7 @@ def test_t_cert_47_a_full_run_and_the_local_pass(monkeypatch, tmp_path):
     assert checks[f"{bad}:clock:before-arrival"]["reason"] == "sample-after-arrival"
     assert checks[f"{model_bad}:gate"]["result"] == "fail"
     assert [i["gate"] for i in report["summary"]] == [f"{model_fine}:gate", f"{model_bad}:gate"]
-    assert checks[f"{fine}:cycles"]["reason"] == "not-built"
+    assert f"{fine}:cycles" not in checks and "cycles" in report["details"]["not_built"]["camera"]
     checks_module = product("skellycam.core.camera.capture.camera_checks")
     rows = checks_module.read_rows(tmp_path / "camera_checks.json")
     backend = product(CATALOG).system_backend()
