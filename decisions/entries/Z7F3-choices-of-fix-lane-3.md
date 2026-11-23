@@ -4,99 +4,59 @@
 
 ## Decision
 
-The supervisor gave the items. The agent chose these details:
+Items 2, 3 and 6 are decisions of the user of 2026-11-21. The agent chose these details:
 
-1. The restore record of a camera that rounds. At the first read of an open, a control of the record takes its
-   "before" value from the record when the camera reads the same auto flag as the value that this app set last,
-   and, with auto off, a value not more than one step from that value. The step is `c_step` of the range of the
-   control at this open (`GetRange` on Media Foundation). A control with no range, or with a step that is not
-   above 0, needs the same value. `ControlRestore.read(state, steps)` gets the steps; the Media Foundation source
-   reads the ranges before the first control read ([`unix-capture.md`](../../specs/unix-capture.md) 4.7).
-2. The user decided on 2026-11-21: a live settings change never restarts a camera. "The user asks to open this
-   camera again" is the new list `retry_camera_ids` of the apply request (camera IDs, empty by default). A
-   `failed` or `dead` camera, or a camera whose process ended, opens again only when the request names it there;
-   any other request leaves it as it is, with its process, config and failure. Only "Update Cameras" of the UI
-   fills the list (its `retry` cameras). The fall back to 30 fps (2.4a) names the cameras that failed at 60 fps.
-   A camera that the request selects again after an unselect needs no list
-   ([`windows-capture.md`](../../specs/windows-capture.md) 8.2, 8.3; [`camera-requests.md`](../../specs/camera-requests.md) 1.8, 2.4a).
-3. The user decided on 2026-11-21: a camera whose loop failed for a reason other than a hang gets its own
-   settings back at its close. The agent chose the codes with no restore: `stalled`, `hung` and `device-removed`
-   (`WEDGE_CODES` of `failure_codes.py`, the wedge of [`certify.md`](../../specs/certify.md) 10.7 item 5). Certify
-   gives `camera-not-restored` to a failed camera only for these codes or for `restore_ok` false (8.3).
-4. The flag `creating` of `CameraGroupManager`: an apply request that finds no group sets it with no wait after
-   that check and clears it at its end; a second such request gets the 409 of `request_runs` with its reason
-   ([`camera-requests.md`](../../specs/camera-requests.md) 2.4a item 7).
-5. Media Foundation keeps `clock` `unknown`: the source reads only `IMFSample::GetSampleTime`, and nothing that it
-   reads names the base. Certify gives `clock:base` `not-run` with the new reason `clock-unknown` (not
-   `not-built`, which stays for a null key). `long_intervals` already counted with the mode period (since the
-   step 2 fixes); a test now proves it, and `time-gaps` is marked W in `full` ([`certify.md`](../../specs/certify.md) 10.2, 15).
-6. The user decided on 2026-11-21: the frame-rate statistic of the stop response uses a median. The agent chose:
-   the rate of group frame k is 1 / the median over the cameras of its frame duration, and its duration is that
-   median. The field names stay: each is still a summary of the rates and durations of the frames
-   ([`recorder.md`](../../specs/recorder.md) 8.2).
-7. Timing tests: a lower bound of a timed wait gets 2 ms of allowance (`EARLY_S`); the sample-minus-arrival check
-   of the stand-in is one-sided (from -9 ms to -4 ms). The two p99 tests of the ring keep their bound of 10 %
-   and their marker `ring_slow`.
+1. At the first read of an open, a control of the restore record takes its "before" value from the record when
+   the camera reads the auto flag that this app set last and, with auto off, a value not more than one step
+   from it. The step is `c_step` of the range at this open; with no step above 0, the value must be the same
+   ([`unix-capture.md`](../../specs/unix-capture.md) 4.7).
+2. A live settings change never restarts a camera. The apply request gets the list `retry_camera_ids`: a
+   `failed` or `dead` camera, or one whose process ended, opens again only when the list names it. Only "Update
+   Cameras" fills it; the fall back to 30 fps names the cameras that failed at 60 fps
+   ([`windows-capture.md`](../../specs/windows-capture.md) 8.3).
+3. A camera whose loop failed gets its restore at the close, except for the wedge codes `stalled`, `hung` and
+   `device-removed` (`WEDGE_CODES`). Certify gives `camera-not-restored` to a failed camera only for these codes
+   or for `restore_ok` false ([`certify.md`](../../specs/certify.md) 8.3).
+4. With no group, the flag `creating` of `CameraGroupManager` refuses a second apply request with the 409 of
+   `request_runs` ([`camera-requests.md`](../../specs/camera-requests.md) 2.4a item 7).
+5. Media Foundation keeps `clock` `unknown`; certify gives `clock:base` `not-run` with the new reason
+   `clock-unknown` (`not-built` stays for a null key); `time-gaps` is marked W in `full` (certify.md 10.2).
+6. The rate of a group frame in the stop response is 1 / the median over the cameras of its frame duration; the
+   field names stay ([`recorder.md`](../../specs/recorder.md) 8.2).
+7. A lower bound of a timed wait in a test gets 2 ms (`EARLY_S`); the sample-minus-arrival check of the
+   Media Foundation stand-in is one-sided. The p99 tests of the ring keep their bounds and `ring_slow`.
 
 ## Reason
 
-1. A Logitech C930e read back manual exposure -8 in the open that set it, and -7 at the next open (the user's
-   real-camera run of 2026-11-21). The old rule needed the same value, so the record was dropped, and the close
-   of the next open "restored" manual -7: the camera stayed in manual exposure after its process was killed. A
-   Logitech C922 read back -8 in both opens. A rounding stays inside one step of the control. A value that another
-   program set (T-UNX-92 (b): -3 against -7) is more than one step away, so it still stays.
-2. The UI sends each selected camera in a settings apply, also a failed one with its unchanged config, so the
-   server cannot tell a retry from the configs. Only an explicit list can. The certify live change (4.3) then
-   cannot reopen a camera that dies between its scan and its apply.
-3. A camera that failed its rate check stayed at MANUAL -7 (a generic camera at 25.7 fps in a 30 fps mode, the
-   first real certify run of 2026-11-21). A stall can be a wedged camera (the Kiyo Pro), so it gets no call.
-4. A request with no detection result detects before it makes the group (seconds); a second request in that
-   time made a second group on the same cameras.
-5. A guess of QPC would be a fact that no code proves. The measured arrival minus sample (0.33 ms and 32 ms,
-   [`certify.md`](../../specs/certify.md) 10.2) agrees with QPC but does not prove the base.
-6. One camera that gives queued frames 0.36 ms apart made one frame 2778 fps, and the mean over the cameras kept
-   most of it. The median of the durations and its reciprocal give one value for both fields.
-7. A timed wait ended 0.14 ms and 0.4 ms early on a loaded machine (10.99986 s, 4.9996 s). The stand-in stamps
-   the sample time before the callback stamps the arrival, so a thread delay can only lower the value.
+1. A Logitech C930e read back manual exposure -8 in the open that set it and -7 at the next open, so the record
+   was dropped and the camera stayed manual after a kill; a Logitech C922 read -8 in both. A value of another
+   program (T-UNX-92 (b): -3 against -7) is still more than one step away.
+2. A settings apply of the UI sends each selected camera, also a failed one with its unchanged config, so only
+   an explicit list can tell a retry. The certify live change then cannot reopen a camera that dies after its
+   scan.
+3. A generic camera that failed its rate check (25.7 fps in a 30 fps mode, the first real certify run) stayed
+   at MANUAL -7. A stall can be a wedged camera (the Kiyo Pro), so it gets no call.
+4. A request with no detection result detects before it makes the group; a second request in that time made a
+   second group.
+5. The source reads only `IMFSample::GetSampleTime`; nothing that it reads names the base. The measured arrival
+   minus sample agrees with QPC but proves no base.
+6. One camera with queued frames 0.36 ms apart made a frame of 2778 fps; the mean over the cameras kept most of
+   it.
+7. A timed wait ended 0.14 ms and 0.4 ms early on a loaded machine. The stand-in stamps the sample time before
+   the arrival, so a delay only lowers the value.
 
 ## Consequences
 
-1. A value that another program set to not more than one step from the last value of this app now takes the
-   "before" values of the record (before: only exactly that value). On the exposure scale of Media Foundation
-   (step 1, log2 seconds) that is a change of one stop.
-2. "Apply again" with no list no longer reopens a camera. A client other than the UI (for example freemocap) must
-   send `retry_camera_ids` to reopen a failed camera. The rate selector no longer reopens a failed camera.
-3. A close dict that comes after the close of the group (no `restore_ok`) of a camera that failed with
-   `rate-low` now gives no notice: certify trusts the restore of the product there.
+1. A value that another program set within one step of the last value of this app now takes the record.
+2. A client other than the UI (freemocap) must send `retry_camera_ids` to reopen a failed camera; the rate
+   selector no longer reopens one.
+3. A late close dict of a camera that failed with `rate-low` gives no notice: certify trusts the product.
 5. `<model>:gate:timestamps` cannot pass on Media Foundation while `clock:base` is `not-run`.
-6. With two cameras the median is still the mean of the two durations: one bursting camera of two gives about
-   60 fps for that frame, not 30. A burst of all cameras at once still shows in `max`.
-
-## Evidence
-
-1. Code facts: `ControlRestore.read` of `skellycam/core/camera/capture/source.py`; `_set_and_read` of
-   `skellycam/core/camera/capture/media_foundation/source.py`. Tests: T-UNX-91 (the case "a camera that rounds",
-   the fake field `reopen_shift`) and T-UNX-92 (d), (e) in `skellycam/tests/capture/test_restore.py`, and
-   `test_t_unx_92_the_media_foundation_source_gives_the_step_of_get_range_to_the_restore_record`. Each failed on
-   the old code for the rule itself (the camera stayed manual -6; the "before" value was the read value).
-2. Tests: T-CAP-20 step (0) in `skellycam/tests/capture/test_states.py` and
-   `test_the_live_change_does_not_reopen_a_camera_that_died_after_the_scan` in
-   `skellycam/tests/certify/test_certify_review2.py`; both failed on the old code (the camera opened again).
-3. Tests: T-UNX-95 in `skellycam/tests/capture/test_restore.py`; the two cases of
-   `test_review_2_a_failed_camera_that_was_set_is_flagged_only_when_the_product_does_not_restore_it`.
-4. Test: `test_t_req_96_two_requests_with_no_group_make_one_group` in `skellycam/tests/capture/test_frame_rate.py`.
-5. Test: `test_clock_base_of_a_source_that_cannot_tell_its_clock` in `skellycam/tests/certify/test_certify.py`;
-   `test_t_unx_76_long_intervals_count_with_the_period_of_the_granted_mode`.
-6. Tests: `test_a_burst_of_one_camera_does_not_make_the_frame_rate_of_the_group` in
-   `skellycam/tests/take_recorder/test_review_fixes.py`; T-REC-27 and `hand_stop_fields` with the new rule.
+6. With two cameras the median is the mean of the two durations: one bursting camera of two gives about 60 fps.
 
 ## Alternatives rejected
 
-1. Record the value that the camera reads at the end of the open too: a killed process has no end of the open,
-   and the C930e read -8 to the end of that open; the change came only at the new open. A fixed tolerance of 1:
-   a control with a larger step (for example focus) would still lose its record.
-2. One request flag `retry: true`: a camera that the UI does not yet show as failed, sent in the same "Update
-   Cameras" request, would also open again. A rule from the configs alone (for example "a changed config"): the
-   settings apply sends a failed camera with its unchanged config, and a rate pick changes every config.
-6. A median of the rates over the cameras: for two cameras it is the mean of the two rates (1404 fps in the
-   example). A median over the frames in place of `framerate_stats.mean`: the field `median` holds it already.
+1. A record of the value at the end of the open: a killed open has no end, and the C930e changed only at the
+   new open. A fixed tolerance of 1: a control with a larger step loses its record.
+2. One request flag `retry: true`: a camera that the UI does not yet show as failed would also open again.
+6. A median of the rates over the cameras: for two cameras it is the mean of the two rates.
