@@ -716,7 +716,7 @@ fields of `CameraMode` [ring 9] plus the rounded rate:
 | `checking` | rate check failed | `too_slow` [D32] |
 | `ready`, `too_slow`, `checking` | change of resolution or rate [D31] | `starting` (only this camera) |
 | `ready`, `too_slow`, `checking` | a live control change fails without a hang | the same state: the camera keeps running with its earlier values; the response reports the failed change [U14] |
-| `failed`, `dead` | "apply again", with the same config or a changed config (8.3) | `starting` (only this camera) [D23] |
+| `failed`, `dead` | "apply again": the request names the camera in `retry_camera_ids`, with the same config or a changed config (8.3) | `starting` (only this camera) [D23] [ADR-Z7F3](../decisions/entries/Z7F3-choices-of-fix-lane-3.md) |
 | `ready` | recording starts | `recording` |
 | `recording` | recording stops | `ready` |
 | `recording` | camera slows down | `recording`, with a warning [D39] |
@@ -743,21 +743,26 @@ A camera that dies while no recording runs is treated as a `failed` camera [U6].
 | `starting` | blocked [agent 25] | refused [agent 45] | no effect [agent 45] | allowed |
 | `waiting` | blocked [agent 25] | refused [agent 45] | no effect | allowed |
 | `adjusting` | blocked | refused | no effect | allowed |
-| `failed` | blocked [D23] | reopens only this camera with the new config [D23, D25] [agent 45] | reopens only this camera [D23] | allowed [D23] |
+| `failed` | blocked [D23] | in `retry_camera_ids`: reopens only this camera with the new config [D23, D25] [agent 45]; else no effect | in `retry_camera_ids`: reopens only this camera [D23]; else no effect | allowed [D23] |
 | `checking` | blocked [D33] | live change (restarts the check) [agent 27], or reopen for a resolution or rate | no effect | allowed |
 | `too_slow` | blocked [D32] | live change, or reopen for a resolution or rate [D31, D32] | no effect | allowed |
 | `ready` | allowed, when every selected camera is `ready` | live change, or reopen for a resolution or rate [D31] | no effect | allowed |
 | `recording` | (runs) | refused [D36] | refused [D36] | refused [D36] |
-| `dead` | blocked [U6] | reopens only this camera with the new config [U6] | reopens only this camera [U6] | allowed |
+| `dead` | blocked [U6] | in `retry_camera_ids`: reopens only this camera with the new config [U6]; else no effect | in `retry_camera_ids`: reopens only this camera [U6]; else no effect | allowed |
 
 - A recording starts only when every selected camera is `ready` [D23, D32, D33] [agent 25].
 - HTTP codes, one rule [agent 25]: 422 for a request that is not valid by its content (mixed rates, a
   rate below the floor, an unknown size or control); 409 for a valid request that the current state
   does not allow (recording, checking, starting). The detail names each camera that blocks and why.
-- "Apply again" is a new request to `/camera/group/apply`. For a camera in `failed` or `dead`, the
+- "Apply again" is a new request to `/camera/group/apply` that names the camera in its list
+  `retry_camera_ids` (a list of camera IDs; empty by default). For a camera in `failed` or `dead`, the
   request can carry the same config or a changed config: rate, resolution, exposure or other
   controls. It reopens only that camera, with the config of the request [D23, D25]. The other cameras
-  keep their process, rings and preview [D23].
+  keep their process, rings and preview [D23]. A live settings change never restarts a camera (a
+  decision of the user of 2026-11-21): a request that names a `failed` or `dead` camera (or a camera
+  whose process ended) but not in `retry_camera_ids` leaves it as it is, with its process, its config
+  and its failure. A camera that is not in the group, and a camera that the request selects again after
+  an unselect, need no retry list [ADR-Z7F3](../decisions/entries/Z7F3-choices-of-fix-lane-3.md).
 - For a camera in `ready`, `checking` or `too_slow`, a changed config is a live change or a reopen of
   that camera (11.2) [D31].
 - "Unselect" is `use_this_camera: false` for the camera in a request to `/camera/group/apply`. The
@@ -1293,7 +1298,7 @@ T-CAP-36) are [agent 41]. They can be changed when the tests are written.
 | T-CAP-17 | 3a | fake | Arrival times on a 16 ms grid: 56 % 32 ms and 43 % 48 ms (generic camera); 92 % 32 ms and 8 % 48 ms (good camera). | The generic pattern fails, the good pattern passes; a median of the same intervals gives above 29.1 fps for the generic pattern (proves the pattern). |
 | T-CAP-18 | 3a | fake | The generic pattern of T-CAP-17 at start. | The reason is the server reason of [`camera-requests.md`](camera-requests.md) 1.5a (10.4), with 30.00 and the measured rate. |
 | T-CAP-19 | 3a | fake | Three fakes; one is in use at open. | That camera is `failed` with "in use by another program"; the other two reach `ready` with preview; a record start returns 409 and names it; after 60 s, its open count is still 1. |
-| T-CAP-20 | 3a | fake | After T-CAP-19: (1) apply the same configs again; (2) fail the camera again and apply it with a changed exposure; (3) apply a request that gives all three cameras the rate 60, where each fake delivers 60. | (1) and (2): only the failed camera opens again, in (2) with the new exposure; the ring names and the process IDs of the others do not change. (3): each camera reopens at 60. |
+| T-CAP-20 | 3a | fake | After T-CAP-19: (0) apply the same configs, and a changed exposure of a good camera, with no retry list; (1) apply the same configs again with the failed camera in `retry_camera_ids`; (2) fail the camera again and apply it with a changed exposure in the retry list; (3) apply a request that gives all three cameras the rate 60, where each fake delivers 60. | (0): the failed camera stays `failed` and does not open again; the good camera takes the change live [ADR-Z7F3](../decisions/entries/Z7F3-choices-of-fix-lane-3.md). (1) and (2): only the failed camera opens again, in (2) with the new exposure; the ring names and the process IDs of the others do not change. (3): each camera reopens at 60. |
 | T-CAP-21 | 3a | fake | After T-CAP-19, apply with `use_this_camera: false` for the failed camera. | The camera leaves the group; a record start succeeds with two cameras. |
 | T-CAP-22 | 3a | fake | Map each HRESULT of 6.7 (pure function, no COM). Windows only [U18]. | In-use codes give "in use by another program"; device-removed codes give "device removed"; other codes give their name: `0x80004005` gives `E_FAIL`, `0xC00D3E85` gives `MF_E_SHUTDOWN` [agent 70]. |
 | T-CAP-23 | 3a | fake | A detection result with two links that give the same `camera_id`. Windows only [U18]. | Refused with an error that names both links. |

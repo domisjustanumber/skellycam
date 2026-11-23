@@ -96,17 +96,20 @@ class CameraGroupManager:
         )
         return camera_group, failures
 
-    async def create_or_update_camera_group(self, camera_configs: CameraConfigs) -> tuple[CameraGroup, dict, list]:
+    async def create_or_update_camera_group(self, camera_configs: CameraConfigs,
+                                            retry=()) -> tuple[CameraGroup, dict, list]:
         """One change of the cameras at a time (camera-requests.md 2.4a item 7) [ADR-1T0S]: the request sets
-        `request_runs` of its group with no wait after its whole-request check, and this call clears it at the end."""
+        `request_runs` of its group with no wait after its whole-request check, and this call clears it at the end.
+        `retry`: `retry_camera_ids`, the failed or dead cameras that the request opens again (windows-capture.md 8.3)."""
         flagged = []
         try:
-            return await self._create_or_update(camera_configs, flagged)
+            return await self._create_or_update(camera_configs, flagged, retry)
         finally:
             for camera_group in flagged:
                 camera_group.request_runs = False
 
-    async def _create_or_update(self, camera_configs: CameraConfigs, flagged: list) -> tuple[CameraGroup, dict, list]:
+    async def _create_or_update(self, camera_configs: CameraConfigs, flagged: list,
+                                retry=()) -> tuple[CameraGroup, dict, list]:
         """Check the request as a whole (8.3), then apply it to each camera on its own (U10).
 
         Return the group, the failure object of each camera that failed (8.4) and the warnings (11.3).
@@ -148,7 +151,7 @@ class CameraGroupManager:
             camera_group, failures = await self._create_and_start(selected)
             flagged.append(camera_group)  # `_create_and_start` set `request_runs`
         else:
-            failures, change_warnings = await camera_group.apply(camera_configs)
+            failures, change_warnings = await camera_group.apply(camera_configs, retry)
             warnings += change_warnings
         for item in clamped:  # the main process owns it (camera-requests.md 1.5)
             logger.warning(item["text"])

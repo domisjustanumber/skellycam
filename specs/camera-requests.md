@@ -685,7 +685,10 @@ What the OpenCV source can do:
   and `RecordingInfoPanel.tsx`. `camera-labels.test.ts` changes to the new form [ADR-AC5B](../decisions/entries/AC5B-choices-of-the-third-consistency-check.md). The form
   `Camera <n> · <name>` is the ruling Q13 of [ADR-VYS7](../decisions/entries/VYS7-answers-of-the-user-to-the-step-4b-spec-and-go-ahead-for-its-tests.md).
 - "Update Cameras" [ADR-F2KY](../decisions/entries/F2KY-rulings-of-the-user-after-the-third-consistency-check.md): one button at the top of the camera list adds the ticked cameras, closes
-  the unticked cameras and retries the failed cameras, and does not reopen the other cameras. It is
+  the unticked cameras and retries the failed cameras, and does not reopen the other cameras. It
+  names the failed cameras in `retry_camera_ids` of the apply request: only that list opens a `failed`
+  or `dead` camera again [cap 8.3]. Each other apply of the UI (a settings change, the rate selector,
+  Connect) sends no retry list (a decision of the user of 2026-11-21) [ADR-Z7F3](../decisions/entries/Z7F3-choices-of-fix-lane-3.md). It is
   disabled during a recording, with the text "Stop the recording first" (the English text of the key
   `stopRecordingFirst`, which reads "Stop recording first" today).
 - A camera on the OpenCV source of Linux or macOS: 1.7. A camera with no working exposure control:
@@ -1039,7 +1042,9 @@ The rules above do not give these points. Each item is a proposed choice of the 
    before the request. A camera that the request adds, and each camera of a new group, gets the config
    of the request. Each config gets `framerate` 30. A camera that the request unselects stays closed.
 3. The main process runs the fall back as an apply of these configs (`CameraGroup.apply`). The fall back
-   has no whole-request check of [cap 8.3], and it does not clear the group warnings. Before the reopen,
+   has no whole-request check of [cap 8.3], and it does not clear the group warnings. Its retry list
+   (`retry_camera_ids`, [cap 8.3]) holds each camera that failed at 60 fps; no other `failed` or `dead`
+   camera opens again [ADR-Z7F3](../decisions/entries/Z7F3-choices-of-fix-lane-3.md). Before the reopen,
    it writes one `rate_fallback` item into `group_warnings` of each camera that failed at 60 fps. A fall
    back at the start-up also puts these items in `warnings` of the apply response. The item has `kind`,
    `camera_ids` (one camera) and `text`. It has no `control`, as `start_failure`.

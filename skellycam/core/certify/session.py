@@ -403,7 +403,8 @@ class Session:
     async def settings_step(self):
         """4.3: one live change of each camera with manual exposure from -7 to -8."""
         manual, lacking = [], []
-        # N1: a product apply restarts a camera that is `failed` or `dead`; a wedged or not-ready camera gets no change
+        # N1: a wedged or not-ready camera gets no change; the apply names no retry list, so the product opens no
+        # `failed` or `dead` camera again, also one that dies after this scan (windows-capture.md 8.3) [Z7F3]
         self.scan(self.live)
         ready = [u for u in self.live if u.label not in self.wedged and self.status(u).get("state") == "ready"]
         for unit in self.live:

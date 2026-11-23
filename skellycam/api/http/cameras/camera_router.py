@@ -20,6 +20,9 @@ camera_router = APIRouter(prefix="/camera", tags=["Cameras"])
 
 class CameraGroupCreateRequest(BaseModel):
     camera_configs: dict[CameraIdString, CameraConfig]
+    # The failed or dead cameras that this request opens again ("Update Cameras"); no other apply restarts one
+    # (windows-capture.md 8.3) [ADR-Z7F3]
+    retry_camera_ids: list[CameraIdString] = Field(default_factory=list)
 
     @classmethod
     def example(cls) -> "CameraGroupCreateRequest":
@@ -131,7 +134,8 @@ async def camera_group_apply_post_endpoint(
 
         configs = request_body.camera_configs
         camera_group, failures, warnings = await get_or_create_camera_group_manager(
-            app=request.app).create_or_update_camera_group(camera_configs=configs)
+            app=request.app).create_or_update_camera_group(camera_configs=configs,
+                                                           retry=request_body.retry_camera_ids)
 
         return CreateCameraGroupResponse(
             group_id=camera_group.id,

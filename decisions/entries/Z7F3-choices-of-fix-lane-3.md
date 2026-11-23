@@ -12,6 +12,13 @@ The supervisor gave the items. The agent chose these details:
    control at this open (`GetRange` on Media Foundation). A control with no range, or with a step that is not
    above 0, needs the same value. `ControlRestore.read(state, steps)` gets the steps; the Media Foundation source
    reads the ranges before the first control read ([`unix-capture.md`](../../specs/unix-capture.md) 4.7).
+2. The user decided on 2026-11-21: a live settings change never restarts a camera. "The user asks to open this
+   camera again" is the new list `retry_camera_ids` of the apply request (camera IDs, empty by default). A
+   `failed` or `dead` camera, or a camera whose process ended, opens again only when the request names it there;
+   any other request leaves it as it is, with its process, config and failure. Only "Update Cameras" of the UI
+   fills the list (its `retry` cameras). The fall back to 30 fps (2.4a) names the cameras that failed at 60 fps.
+   A camera that the request selects again after an unselect needs no list
+   ([`windows-capture.md`](../../specs/windows-capture.md) 8.2, 8.3; [`camera-requests.md`](../../specs/camera-requests.md) 1.8, 2.4a).
 
 ## Reason
 
@@ -20,12 +27,17 @@ The supervisor gave the items. The agent chose these details:
    of the next open "restored" manual -7: the camera stayed in manual exposure after its process was killed. A
    Logitech C922 read back -8 in both opens. A rounding stays inside one step of the control. A value that another
    program set (T-UNX-92 (b): -3 against -7) is more than one step away, so it still stays.
+2. The UI sends each selected camera in a settings apply, also a failed one with its unchanged config, so the
+   server cannot tell a retry from the configs. Only an explicit list can. The certify live change (4.3) then
+   cannot reopen a camera that dies between its scan and its apply.
 
 ## Consequences
 
 1. A value that another program set to not more than one step from the last value of this app now takes the
    "before" values of the record (before: only exactly that value). On the exposure scale of Media Foundation
    (step 1, log2 seconds) that is a change of one stop.
+2. "Apply again" with no list no longer reopens a camera. A client other than the UI (for example freemocap) must
+   send `retry_camera_ids` to reopen a failed camera. The rate selector no longer reopens a failed camera.
 
 ## Evidence
 
@@ -34,9 +46,15 @@ The supervisor gave the items. The agent chose these details:
    the fake field `reopen_shift`) and T-UNX-92 (d), (e) in `skellycam/tests/capture/test_restore.py`, and
    `test_t_unx_92_the_media_foundation_source_gives_the_step_of_get_range_to_the_restore_record`. Each failed on
    the old code for the rule itself (the camera stayed manual -6; the "before" value was the read value).
+2. Tests: T-CAP-20 step (0) in `skellycam/tests/capture/test_states.py` and
+   `test_the_live_change_does_not_reopen_a_camera_that_died_after_the_scan` in
+   `skellycam/tests/certify/test_certify_review2.py`; both failed on the old code (the camera opened again).
 
 ## Alternatives rejected
 
 1. Record the value that the camera reads at the end of the open too: a killed process has no end of the open,
    and the C930e read -8 to the end of that open; the change came only at the new open. A fixed tolerance of 1:
    a control with a larger step (for example focus) would still lose its record.
+2. One request flag `retry: true`: a camera that the UI does not yet show as failed, sent in the same "Update
+   Cameras" request, would also open again. A rule from the configs alone (for example "a changed config"): the
+   settings apply sends a failed camera with its unchanged config, and a rate pick changes every config.

@@ -201,8 +201,9 @@ def test_t_req_34_a_camera_that_also_fails_at_30_stays_failed(monkeypatch):
         app.detect()
         app.apply_all()
         wait_ready_at(app, ids[:2], 30)
-        app.wait_state(slow, "failed")  # also slow at 30: it is "applied again" at 60
-        response = app.apply_all(framerate=60.0)
+        app.wait_state(slow, "failed")  # also slow at 30: it is "applied again" at 60 (its retry list [Z7F3])
+        response = app.apply([app.config(cid, framerate=60.0) for cid in ids], retry=[slow])
+        assert response.status_code == 200, response.text
         failure = response.json()["camera_failures"][slow]
         assert failure["stage"] == "rate check" and failure["reason"].startswith("declared 30.00 fps"), failure
         assert [item["camera_ids"] for item in response_items(response)] == [[slow]]
@@ -396,7 +397,7 @@ def test_t_req_93_no_request_of_the_user_while_a_fall_back_runs(monkeypatch):
     entered, user_done = threading.Event(), threading.Event()
     apply = CameraGroup.apply
 
-    async def held_apply(group, requested):
+    async def held_apply(group, requested, retry=()):
         frame = sys._getframe()
         while frame is not None and frame.f_code.co_name != "fall_back":
             frame = frame.f_back
@@ -404,7 +405,7 @@ def test_t_req_93_no_request_of_the_user_while_a_fall_back_runs(monkeypatch):
             entered.set()
             while not user_done.is_set():
                 await asyncio.sleep(0.01)
-        return await apply(group, requested)
+        return await apply(group, requested, retry)
 
     monkeypatch.setattr(CameraGroup, "apply", held_apply)
     with capture_app(monkeypatch, [FakeScript(modes=MODES, brightness=MODEL, rate=SLOW)]) as app:
@@ -448,8 +449,8 @@ def test_t_req_96_no_second_change_while_a_request_runs(monkeypatch):
     held_now, user_done = threading.Event(), threading.Event()
     apply = CameraGroup.apply
 
-    async def held(group, requested):
-        result = await apply(group, requested)
+    async def held(group, requested, retry=()):
+        result = await apply(group, requested, retry)
         if any(abs(config.framerate - 60) <= 0.5 for config in requested.values()):
             held_now.set()
             while not user_done.is_set():

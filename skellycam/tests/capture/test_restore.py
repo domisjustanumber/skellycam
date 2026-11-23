@@ -125,7 +125,7 @@ def test_t_unx_91_the_values_of_before_survive_a_camera_with_no_restore(monkeypa
         if next_open == "a new group":
             app.client.delete("/skellycam/camera/group/close/all")
             assert log.device_controls["exposure"][1:] == [False, -7]  # a group close opens no camera
-        assert app.apply([app.config(camera_id)]).status_code == 200
+        assert app.apply([app.config(camera_id)], retry=[camera_id]).status_code == 200
         app.wait_state(camera_id, "ready")
         source = app.factory.sources[camera_id]
         app.client.delete("/skellycam/camera/group/close/all")

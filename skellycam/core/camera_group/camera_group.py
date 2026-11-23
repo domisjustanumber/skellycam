@@ -231,9 +231,11 @@ class CameraGroup:
         await self._await_settled(list(self.configs))
         return self._failures(list(self.configs))
 
-    async def apply(self, requested: CameraConfigs) -> tuple[dict, list]:
+    async def apply(self, requested: CameraConfigs, retry=()) -> tuple[dict, list]:
         """Apply a checked request to each camera on its own (8.3, U10). Return the failures and the warnings.
 
+        A `failed` or `dead` camera, or one whose process ended, starts again only when `retry` (the request's
+        `retry_camera_ids`) names it; else the request leaves it as it is (8.3) [Z7F3].
         A camera that was unselected and is selected again starts again (8.3). Each other selected camera of
         the request that is not in the group is left out, as before phase 3: the other camera processes have
         no status for it, so it cannot join their gate. The warnings then have one `cameras_left_out` item.
@@ -253,7 +255,8 @@ class CameraGroup:
                 removed.append(camera_id)
             elif (statuses[camera_id].state in ("failed", "dead") or worker is None
                   or worker.worker.exitcode is not None):
-                restart.append(camera_id)
+                if camera_id in retry:  # a live settings change never restarts a camera [Z7F3]
+                    restart.append(camera_id)
             elif not same_config(config, self.configs[camera_id]):
                 changed[camera_id] = config
             else:  # no effect on the camera; the number and the name of the request are kept (camera-requests.md 1.5)
@@ -958,7 +961,7 @@ class CameraGroup:
                 items.append(dict(kind="rate_fallback", camera_ids=[camera_id], text=text))
                 logger.warning(text)
                 self.add_group_warning(items[-1])
-            failures, warnings = await self.apply(configs)
+            failures, warnings = await self.apply(configs, retry=list(slow))  # 2.4a item 3: only the cameras that failed
             return failures, items + warnings
         finally:
             self.request_runs = runs
