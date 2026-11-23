@@ -1,6 +1,7 @@
 # Decision log: entry template
 
-Use this template for a new entry. The [Rules](README.md#rules) of the index apply. This file is not
+Use this template for a new entry. The [Rules](../.claude/skills/change-decision-log/SKILL.md#rules) of the skill
+`change-decision-log` apply. This file is not
 in the read path: read it when you write an entry.
 
 The file name is `<ID>-<short-slug>.md`. Get `<ID>` from
@@ -31,8 +32,9 @@ the root log or the log of a module.
 
 - **Status.** `accepted` is a decision. `evidence` is a measurement. `proposed` waits for a
   decision. A later status change sets `rejected`,
-  `superseded by XXXX`, `absorbed into <path>#<anchor>, …`, `evidence; used by XXXX` or `done` (see the
-  [Rules](README.md#rules)). The source says who decided or where the entry comes from, for example
+  `superseded by XXXX`, `absorbed into <path>#<anchor>, …`, `evidence; used by XXXX`,
+  `evidence; replaced by XXXX` or `done` (see the
+  [Rules](../.claude/skills/change-decision-log/SKILL.md#rules)). The source says who decided or where the entry comes from, for example
   "user" or "backfilled from #81".
 - **Depends on.** Optional. Write it only when the entry waits for a decision of another repo. Use a
   permalink that pins a full SHA on the default branch of that repo.
@@ -40,7 +42,7 @@ the root log or the log of a module.
   old entry links the heading that states each kept rule, and writes text only for a changed rule and
   for a kept rule that no heading states.
 - **Absorb at landing.** When the absorb documents state all the rules of the entry, absorb it in
-  the last commit of the group that writes it ([Rules](README.md#rules)).
+  the last commit of the group that writes it ([Rules](../.claude/skills/change-decision-log/SKILL.md#rules)).
 - **Reason.** Why. Each entry gives its own reasons.
 - **Consequences.** Optional. What becomes harder, what must change later and what the decision
   costs.

@@ -6,11 +6,15 @@ Usage::
     python tools/check_decision_log.py [ROOT]
     python tools/check_decision_log.py --new [ROOT]
     python tools/check_decision_log.py --collisions [ROOT]
+    python tools/check_decision_log.py --staged
 
 The tool reads each decision log in ``LOG_DIRS`` under ROOT (default: the current directory). The
 first log, ``LOG_DIR``, is the root log. A module log is a folder of a module, for example
-``server/decisions``. Each log has the Active, Evidence and Proposed tables in its ``README.md``,
-the Historical table in its ``historical.md`` and its entry files in ``ENTRIES`` (decision 0001). The
+``server/decisions``. The table ``[check_decision_log]`` of ``kit.toml`` in the repository root
+sets the values of the repository: ``module_logs`` (the module log folders), ``old_log_dirs``,
+``target_branch``, ``index_limit``, ``read_path_limit`` and ``last_unlimited_entry``. With no
+``kit.toml``, the defaults below apply. Each log has the Active and Proposed tables in its ``README.md``,
+the Evidence table in its ``evidence.md``, the Historical table in its ``historical.md`` and its entry files in ``ENTRIES`` (decision 0001). The
 Active table holds the ``accepted`` entries, and the Evidence table holds the ``evidence`` entries
 (decision 0001).
 The labels of the root log have no prefix. The labels of a module log start with its folder. It reports:
@@ -29,7 +33,7 @@ The labels of the root log have no prefix. The labels of a module log start with
   that states the rule, or the title heading of the file;
 - an ``absorbed into`` status that links ``pyproject.toml`` with no link or code span to a test file
   ``tests/test_*.py``: a test must check each rule that ``pyproject.toml`` holds (decision 0001);
-- a ``superseded by XXXX`` or ``used by XXXX`` that names no decided entry, or that the status line of
+- a ``superseded by XXXX``, ``used by XXXX`` or ``replaced by XXXX`` that names no decided entry, or that the status line of
   the entry does not link to the file of entry XXXX. The entry XXXX can be in a different log. Then
   the link has a relative path before the file name, and the path must resolve to that file;
 - a Decision cell over its length limit;
@@ -37,7 +41,8 @@ The labels of the root log have no prefix. The labels of a module log start with
 
 It prints a warning, but does not fail, when the index, the open work or the read path is at 80% of
 its limit or more. The read path is ``README.md``, ``open-work.md`` and the Active entries of each
-log, with one limit for the total. The Evidence, Proposed and Historical entries are not in it. The check
+log, with one limit for the total. The Evidence, Proposed and Historical entries are not in it, and
+``evidence.md`` is not in it. ``evidence.md`` has no size limit. The check
 reads only the files. It does not run git.
 
 All logs share one ID space. An ID has 4 characters from ``ALPHABET``, Crockford base32 in upper
@@ -67,6 +72,10 @@ and 0 otherwise. Without git, it reads only this tree.
 ``--collisions`` prints the same lines without the ``new:`` line, and has the same exit code. The
 pre-push hook in ``.pre-commit-config.yaml`` runs it. It does not fetch.
 
+``--staged`` prints one reminder line when a staged file is an entry, a ``README.md``, an
+``evidence.md`` or a ``historical.md`` of a log. The line names the skill ``change-decision-log``.
+The pre-commit hook runs it. It always exits 0.
+
 Sizes are counted in characters after CRLF is changed to LF. About 4 characters make one token.
 The limits are ``INDEX_LIMIT`` for each ``README.md``, ``OPEN_WORK_LIMIT`` for each ``open-work.md``,
 ``ENTRY_LIMIT`` for each entry, ``READ_PATH_LIMIT`` for the read path and ``DECISION_CELL_LIMIT`` for
@@ -93,25 +102,43 @@ from collections.abc import Callable
 from dataclasses import dataclass, field
 from pathlib import Path
 
+from kit_config import kit_values
+
+
+KIT = kit_values(
+    Path(__file__).resolve().parents[1],
+    "check_decision_log",
+    {
+        "module_logs": "list[str]",
+        "old_log_dirs": "list[str]",
+        "target_branch": "str",
+        "index_limit": "int",
+        "read_path_limit": "int",
+        "last_unlimited_entry": "int",
+    },
+)
+
 LOG_DIR = Path("decisions")
-# The root log first. Add the folder of each module log, relative to ROOT.
-LOG_DIRS = (LOG_DIR,)  # A step of the kit guide adds the module logs.
+# The root log first, then the folder of each module log, relative to ROOT.
+LOG_DIRS = (LOG_DIR, *(Path(p) for p in KIT.get("module_logs", [])))
 # A folder where a log was before a move. Only --new reads it, in other worktrees and on branches.
-OLD_LOG_DIRS: tuple[Path, ...] = ()
+OLD_LOG_DIRS: tuple[Path, ...] = tuple(Path(p) for p in KIT.get("old_log_dirs", []))
 # The folder of the entry files in each log. A log before the move to it had them in the log folder.
 ENTRIES = "entries"
 OPEN_WORK = "open-work.md"
 HISTORICAL = "historical.md"
+EVIDENCE = "evidence.md"
 TEMPLATE = "template.md"
-NOT_ENTRIES = {"README.md", OPEN_WORK, HISTORICAL, TEMPLATE}
-TARGET_BRANCH = "development"  # The PR branch: upstream `development` (decision EQY4).
+NOT_ENTRIES = {"README.md", OPEN_WORK, HISTORICAL, EVIDENCE, TEMPLATE}
+SKILL = ".claude/skills/change-decision-log/SKILL.md"
+TARGET_BRANCH: str = KIT.get("target_branch", "main")  # The branch that PRs target.
 SKIPPED_BRANCHES = "refs/heads/backup/"
 
-INDEX_LIMIT = 24_000  # Was 14_000. It goes down again after the clean-up (decision N2NH).
+INDEX_LIMIT: int = KIT.get("index_limit", 14_000)
 OPEN_WORK_LIMIT = 20_000
 ENTRY_LIMIT = 6_000
-READ_PATH_LIMIT = 220_000
-LAST_UNLIMITED_ENTRY = 0
+READ_PATH_LIMIT: int = KIT.get("read_path_limit", 220_000)
+LAST_UNLIMITED_ENTRY: int = KIT.get("last_unlimited_entry", 0)
 WARN_FRACTION = 0.8
 DECISION_CELL_LIMIT = 160
 
@@ -133,13 +160,14 @@ STATUS_FORMS = {
     "Proposed": ("proposed",),
     "Historical": (
         rf"evidence; used by ({ID})",
+        rf"evidence; replaced by ({ID})",
         "rejected",
         rf"superseded by ({ID})",
         ABSORBED,
         "done",
     ),
 }
-TABLE_FILES = {"Active": "README.md", "Evidence": "README.md", "Proposed": "README.md", "Historical": HISTORICAL}
+TABLE_FILES = {"Active": "README.md", "Evidence": EVIDENCE, "Proposed": "README.md", "Historical": HISTORICAL}
 SECTION = re.compile(r"`[a-z][a-z0-9_]*(?:\.[a-z0-9_]+)*`|none")
 NOT_DECIDED = ("proposed", "rejected")
 
@@ -254,10 +282,13 @@ def table_rows(path: Path, log: Path) -> tuple[list[IndexRow], list[str]]:
 
 
 def log_index(root: Path, log: Path) -> tuple[list[IndexRow], list[str]]:
-    """The rows and the format errors of the README.md and the historical.md of one log."""
-    rows, errors = table_rows(root / log / "README.md", log)
-    historical, more = table_rows(root / log / HISTORICAL, log)
-    return rows + historical, errors + more
+    """The rows and the format errors of the README.md, the evidence.md and the historical.md of one log."""
+    rows: list[IndexRow] = []
+    errors: list[str] = []
+    for name in ("README.md", EVIDENCE, HISTORICAL):
+        found, more = table_rows(root / log / name, log)
+        rows, errors = rows + found, errors + more
+    return rows, errors
 
 
 def entry_files(log_dir: Path) -> dict[str, Path]:
@@ -326,7 +357,7 @@ def status_errors(r: IndexRow, by_id: dict[str, IndexRow]) -> list[str]:
 
 
 def status_link_errors(r: IndexRow, by_id: dict[str, IndexRow], path: Path, root: Path) -> list[str]:
-    """`superseded by XXXX` and `used by XXXX` must also be links to entry XXXX in the status line.
+    """`superseded by XXXX`, `used by XXXX` and `replaced by XXXX` must also be links to entry XXXX in the status line.
 
     A link to an entry in a different log has a relative path before the file name. The path must
     resolve to the file of entry XXXX.
@@ -337,7 +368,7 @@ def status_link_errors(r: IndexRow, by_id: dict[str, IndexRow], path: Path, root
     named = by_id.get(match.group(1).upper())
     if named is None or named is r:
         return []
-    kind = "superseded by" if r.status.startswith("superseded by") else "used by"
+    kind = next(k for k in ("superseded by", "used by", "replaced by") if k in r.status)
     target = root / named.log / ENTRIES / named.filename
     link = re.compile(rf"{kind} \[(?i:{named.id})\]\(([^)\s#]+)(?:#[^)\s]*)?\)")
     line = STATUS_LINE.search(path.read_text(encoding="utf-8"))
@@ -492,6 +523,22 @@ def read_path_size(root: Path) -> int:
             )
         )
     return total
+
+
+def staged_reminder(paths: list[str]) -> str | None:
+    """The reminder line when a staged path is an entry or a table file of a log, or None."""
+    tables = {"README.md", EVIDENCE, HISTORICAL}
+    found = [
+        p for p in paths
+        if any(Path(p).parent == log / ENTRIES or (Path(p).parent == log and Path(p).name in tables) for log in LOG_DIRS)
+    ]
+    if not found:
+        return None
+    more = f" and {len(found) - 1} more" if len(found) > 1 else ""
+    return (
+        f"decision log: the commit changes {found[0]}{more}. The rules for an entry, a status and a row are"
+        f" in the skill change-decision-log ({SKILL})."
+    )
 
 
 # --new: entry IDs on other branches and worktrees. Only main() calls it, never check().
@@ -749,6 +796,11 @@ def new_lines(
 
 def main(argv: list[str]) -> int:
     args = argv[1:]
+    if args == ["--staged"]:
+        line = staged_reminder(decoded(git(Path.cwd(), "diff", "--cached", "--name-only", "-z")).split("\0"))
+        if line:
+            print(line)
+        return 0
     if args[:1] in (["--new"], ["--collisions"]) and len(args) <= 2:
         root = Path(args[1]).resolve() if len(args) == 2 else Path.cwd()
         lines = new_lines(root, with_new=args[0] == "--new")

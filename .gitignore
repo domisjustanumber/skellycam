@@ -256,13 +256,22 @@ index.ts
 bun.lock
 package-lock.json
 
-# Agents and ADR kit (decision 0001). The .claude lines are above.
+# Agents and ADR kit (decision 0001). tools/kit_sync.py syncs the lines between the kit markers.
+# kit:ignores
 # Local working notes (decision 0001)
 plans/
+
+# Claude Code: track only the skills. Local settings and worktrees stay out of git.
+.claude/*
+!.claude/skills/
+
 # Secrets and private data (decision 0001). Never commit them.
 .env*
 *.pem
 *.key
 .private-terms
+# /kit
+# After the .claude/* line of the kit block: the shared Claude Code config stays tracked.
+!.claude/settings.json
 .remember/
 .superpowers/

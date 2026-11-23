@@ -1,11 +1,12 @@
 """Each script that names or guards for a system states its purpose (decisions VV4Q, K3BX and C307).
 
-You can test only on the system that you work on. Each other system is reached only through
-``skellycam.certify(level)``. A script outside the product code that names or guards for any system
-has the comment ``script-purpose: <kind> ...`` in its first lines. A ``certify-check`` name must be
-a check name of ``specs/certify.md``. Each mode gives the same result on each system. The product
-folders, the tests and the CI workflows are exempt. The pre-commit hook runs the tool on the files
-that a commit adds.
+You can test only on the system that you work on. Each other system is reached only through the
+self-test of the project (``SELF_TEST``). A script outside the product code that names or guards for
+any system has the comment ``script-purpose: <kind> ...`` in its first lines. A ``certify-check``
+name must be a check name of the spec ``CERTIFY_SPEC``. Each mode gives the same result on each
+system. The product folders and the CI workflows (``EXEMPT_PATHS``) and the tests are exempt. The
+pre-commit hook runs the tool on the files that a commit adds. The values come from ``kit.toml``;
+``test_repo_values.py`` tests the values of this repository.
 """
 
 from __future__ import annotations
@@ -27,7 +28,7 @@ WORKFLOW = {".github/workflows/ring-arm64.yml": "name: ring\n"}
 ADVICE = (
     ": add the comment 'script-purpose: <kind> ...' in the first 5 lines; the kinds are 'certify-check <name>',"
     " 'local-study (<what>)', 'tool (<what>)' and 'ci (<workflow>)'; test other systems only through"
-    " skellycam.certify (see AGENTS.md, Project Rules)"
+    f" {cos.SELF_TEST} (see AGENTS.md, Project Rules)"
 )
 
 
@@ -39,7 +40,7 @@ def write(root: Path, files: dict[str, str]) -> None:
 
 
 def refused(tmp_path: Path, files: dict[str, str]) -> list[str]:
-    write(tmp_path, {"specs/certify.md": SPEC, **WORKFLOW, **files})
+    write(tmp_path, {cos.CERTIFY_SPEC: SPEC, **WORKFLOW, **files})
     return [line.split(":")[0] for line in cos.check(list(files), tmp_path)]
 
 
@@ -162,7 +163,7 @@ def test_each_valid_kind_passes(tmp_path: Path, purpose: str) -> None:
     ],
 )
 def test_an_invalid_purpose_field_is_refused(tmp_path: Path, purpose: str, reason: str) -> None:
-    write(tmp_path, {"specs/certify.md": SPEC, **WORKFLOW, "probe.py": purpose + "\nprint(1)\n"})
+    write(tmp_path, {cos.CERTIFY_SPEC: SPEC, **WORKFLOW, "probe.py": purpose + "\nprint(1)\n"})
     assert cos.check(["probe.py"], tmp_path) == [f"probe.py: {reason}" + ADVICE]
 
 
@@ -177,30 +178,31 @@ def test_an_invalid_purpose_field_is_refused(tmp_path: Path, purpose: str, reaso
     ],
 )
 def test_a_certify_check_name_that_is_not_in_the_spec_is_refused(tmp_path: Path, name: str) -> None:
-    write(tmp_path, {"specs/certify.md": SPEC, "probe.py": f"# script-purpose: certify-check {name}\nprint(1)\n"})
+    write(tmp_path, {cos.CERTIFY_SPEC: SPEC, "probe.py": f"# script-purpose: certify-check {name}\nprint(1)\n"})
     assert cos.check(["probe.py"], tmp_path) == [
-        f"probe.py: its certify-check name {name!r} is not a check name of specs/certify.md: " + cos.ADD_CHECK_FIRST
+        f"probe.py: its certify-check name {name!r} is not a check name of {cos.CERTIFY_SPEC}: " + cos.ADD_CHECK_FIRST
     ]
 
 
 def test_a_missing_spec_refuses_each_certify_check(tmp_path: Path) -> None:
     write(tmp_path, {"probe.py": "# script-purpose: certify-check system:disk\nprint(1)\n", "lab.py": "print(1)\n"})
     assert cos.check(["probe.py", "lab.py"], tmp_path) == [
-        "probe.py: its certify-check name 'system:disk' is not a check name of specs/certify.md"
+        f"probe.py: its certify-check name 'system:disk' is not a check name of {cos.CERTIFY_SPEC}"
         " (the file is missing): " + cos.ADD_CHECK_FIRST
     ]
 
 
 def test_the_pointer_to_the_process_is_one_constant() -> None:
     assert "sections 5.5 (How a package adds a check) and 5.6" in cos.ADD_CHECK_FIRST
-    assert "skill verify-on-other-systems" in cos.ADD_CHECK_FIRST
+    assert f"of {cos.CERTIFY_CONTRACT} (skill verify-on-other-systems)" in cos.ADD_CHECK_FIRST
+    assert cos.ADD_CHECK_FIRST.startswith(f"the check must be in {cos.CERTIFY_SPEC} first: ")
 
 
 @pytest.mark.parametrize(
     "marker", ["# certify-check: system:disk", "# other-systems: not applicable (lab only)"]
 )
 def test_an_old_marker_is_refused_and_named(tmp_path: Path, marker: str) -> None:
-    write(tmp_path, {"specs/certify.md": SPEC, "run_mac.py": marker + "\nprint(1)\n"})
+    write(tmp_path, {cos.CERTIFY_SPEC: SPEC, "run_mac.py": marker + "\nprint(1)\n"})
     assert cos.check(["run_mac.py"], tmp_path) == [
         "run_mac.py: its path names a system (macOS); its marker 'certify-check:' or 'other-systems:' is not valid now"
         + ADVICE
@@ -211,15 +213,9 @@ def test_a_purpose_field_is_checked_also_with_no_signal(tmp_path: Path) -> None:
     assert refused(tmp_path, {"plain.py": "# script-purpose: certify-check x:y\nprint(1)\n"}) == ["plain.py"]
 
 
-def test_the_real_spec_holds_check_names_only() -> None:
-    names = cos.spec_names(REPO_ROOT)
-    assert names is not None
-    real = {"detect", "system:disk", "<label>:usb3-trial", "session:exit", "report:rules", "pipeline:gate",
-            "<model>:gate:rate", "<label>:detect:mjpg-mode", "probe:usb-alt", "release:<label>", "<name>:exit"}
-    assert real <= names
-    parts = {"vvvv:pppp", "vvvv:dddd", "a1-cmio-native:exposure", "clock:base", "rate:1280x720@60", "gate:mode"}
-    forms = {"system:<check>", "<label>:<name>", "<label>:<group>:<condition>", "<group>:<condition>"}
-    assert not (parts | forms | {"record-only", "046d:085c", "cam.media-foundation.046d-085c.0"}) & names
+def test_the_real_spec_has_check_names() -> None:
+    """The spec of this repository exists and has check names. test_repo_values.py checks which names."""
+    assert cos.spec_names(REPO_ROOT)
 
 
 @pytest.mark.parametrize(
@@ -243,14 +239,8 @@ def test_a_utf16_powershell_field_counts(tmp_path: Path, bom: bytes) -> None:
 
 @pytest.mark.parametrize(
     "name",
-    [
-        "skellycam/core/camera/capture/macos/source.py",
-        "skellycam-ui/scripts/linux.sh",
-        "skellycam-docs/linux.py",
-        ".github/scripts/macos.sh",
-        "tools/tests/test_macos.py",
-        "decisions/scripts/tests/test_probe.py",
-    ],
+    [f"{prefix}scripts/macos.sh" for prefix in cos.EXEMPT_PATHS]
+    + ["tools/tests/test_macos.py", "decisions/scripts/tests/test_probe.py"],
 )
 def test_the_product_the_tests_and_ci_are_exempt(tmp_path: Path, name: str) -> None:
     assert refused(tmp_path, {name: "# script-purpose: nonsense\n" + DARWIN_GUARD}) == []

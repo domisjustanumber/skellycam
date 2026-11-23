@@ -1134,7 +1134,7 @@ plan test T-REC-MF-DEFER needs a camera. It is not in R11 and waits for the conn
   [ADR-HQE5](../decisions/entries/HQE5-choices-of-fix-lane-4.md).
 - **Workflow** [C4] [agent 34]: a new `.github/workflows/recorder.yml`, on the pattern of
   `ring-arm64.yml` and of the capture workflow of [cap 15]: the same actions pinned by full SHA, uv
-  `0.13.9`, Python `3.13.18`, `permissions: contents: read`, a concurrency group. Trigger: each push to
+  `0.13.7`, Python `3.13.18`, `permissions: contents: read`, a concurrency group. Trigger: each push to
   `dom/recorder` that changes `skellycam/core/take_recorder/**`, `skellycam/tests/take_recorder/**`,
   `specs/recorder.md`, `pyproject.toml`, `uv.lock` or the workflow file; and by hand. Three blocking
   jobs: `recorder-windows` (`windows-2025`), `recorder-linux` (`ubuntu-24.04`, with PortAudio as the

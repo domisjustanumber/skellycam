@@ -13,7 +13,8 @@ file, and exits 1. It finds the file by its extension (``RECORDING_SUFFIXES``, `
 and by its first bytes (``MAGIC``), so that a renamed video or JPEG is also refused.
 
 - The one exception is a golden reference file. Its path starts with an item of ``GOLDEN_PATHS``.
-  Set this list for the repo. The default is ``golden/``.
+  Set this list for the repo with ``golden_paths`` in the table ``[check_camera_media]`` of
+  ``kit.toml`` in the repository root. The default is an empty list: it allows none.
 - A ``.ts`` file is a TypeScript file unless its first bytes are an MPEG transport stream.
 - A NumPy or array dump is a measurement. The tool does not refuse it.
 - A PNG, GIF, WebP or SVG file can be a chart, a diagram or a screenshot. The tool does not refuse
@@ -35,8 +36,13 @@ import subprocess
 import sys
 from pathlib import Path, PurePosixPath
 
-# The path prefixes of the golden reference files. skellycam has none yet, so nothing is allowed.
-GOLDEN_PATHS: tuple[str, ...] = ()
+from kit_config import kit_values
+
+
+# The path prefixes of the golden reference files, from kit.toml. The default allows none.
+GOLDEN_PATHS: tuple[str, ...] = tuple(
+    kit_values(Path(__file__).resolve().parents[1], "check_camera_media", {"golden_paths": "list[str]"}).get("golden_paths", [])
+)
 
 RECORDING_SUFFIXES = frozenset(
     ".mp4 .mkv .mka .avi .mov .webm .m4v .m4a .wav .flac .opus .ogg .mp3 .mcap"

@@ -8,10 +8,18 @@ Usage::
     python tools/check_other_systems.py --all        # each tracked file (the doc test and CI)
 
 You can test only on the system that you work on. You can reach each other system only through the
-self-test ``skellycam.certify(level)`` and its report. The tool is the primary mechanical check of
+self-test of the project (``SELF_TEST``) and its report. The tool is the primary mechanical check of
 the rule. It cannot see a proposal in chat; the rule and the skill ``verify-on-other-systems``
 cover that. It checks the whole repository, also when you run it from a subfolder. Each mode gives
 the same result on each system: no system is special.
+
+The table ``[check_other_systems]`` of ``kit.toml`` in the repository root sets the values of the
+repository: ``exempt_paths`` (the path prefixes of the product folders and the CI workflows,
+``EXEMPT_PATHS``), ``certify_spec`` (the spec that holds the check names, ``CERTIFY_SPEC``),
+``self_test`` (the name of the self-test, ``SELF_TEST``) and ``certify_contract`` (the document of
+the certify contract, ``CERTIFY_CONTRACT``). ``tools/kit_config.py`` reads the table: with a
+``kit.toml``, a missing table, an unknown key or a value of the wrong type stops the tool. With no
+``kit.toml``, the defaults below apply.
 
 - **Scope.** It checks only a script file (``SCRIPT_SUFFIXES``) outside ``EXEMPT_PATHS`` and
   outside a ``tests`` folder. The product code, its tests, the docs site and the CI workflows can
@@ -62,7 +70,17 @@ import subprocess
 import sys
 from pathlib import Path, PurePosixPath
 
-EXEMPT_PATHS: tuple[str, ...] = ("skellycam/", "skellycam-ui/", "skellycam-docs/", ".github/")
+from kit_config import kit_values
+
+
+KIT = kit_values(
+    Path(__file__).resolve().parents[1],
+    "check_other_systems",
+    {"exempt_paths": "list[str]", "certify_spec": "str", "self_test": "str", "certify_contract": "str"},
+)
+
+# The product folders and the CI workflows, from kit.toml. They can name systems.
+EXEMPT_PATHS: tuple[str, ...] = tuple(KIT.get("exempt_paths", [".github/"]))
 SCRIPT_SUFFIXES = frozenset(".py .sh .bash .zsh .command .ps1".split())
 SYSTEM_NAMES = {
     "win": "Windows",
@@ -79,7 +97,9 @@ KINDS = ("certify-check", "local-study", "tool", "ci")
 PURPOSE = re.compile(r"script-purpose:\s*(\S*)\s*(.*?)\s*$")
 TEXT = re.compile(r"\(\s*([^)\s][^)]*?)\s*\)")
 OLD_MARKER = re.compile(r"certify-check:|other-systems:")
-CERTIFY_SPEC = "specs/certify.md"
+CERTIFY_SPEC: str = KIT.get("certify_spec", "specs/certify.md")  # The spec that holds the check names.
+SELF_TEST: str = KIT.get("self_test", "the self-test of the project")
+CERTIFY_CONTRACT: str = KIT.get("certify_contract", "the certify contract")
 CODE_SPAN = re.compile(r"`([^`\n]+)`")
 _PART = r"(?:[A-Za-z0-9]|<[a-z]+>)(?:[A-Za-z0-9_.@-]|<[a-z]+>)*"
 CHECK_NAME = re.compile(rf"detect|(?:<[a-z]+>|[a-z][a-z0-9-]*)(?::{_PART})+")
@@ -93,13 +113,12 @@ GUARD = re.compile(
 PURPOSE_ADVICE = (
     "add the comment 'script-purpose: <kind> ...' in the first"
     f" {MARKER_LINES} lines; the kinds are 'certify-check <name>', 'local-study (<what>)', 'tool (<what>)'"
-    " and 'ci (<workflow>)'; test other systems only through skellycam.certify (see AGENTS.md, Project Rules)"
+    f" and 'ci (<workflow>)'; test other systems only through {SELF_TEST} (see AGENTS.md, Project Rules)"
 )
-# The pointer to the process of skellycertify for a new check. Change it here only.
+# The pointer to the process of the certify contract for a new check. Change it here only.
 ADD_CHECK_FIRST = (
-    "the check must be in specs/certify.md first: follow sections 5.5 (How a package adds a check) and 5.6"
-    " (When a check can exist, and its level) of report-format.md of the skellycertify repository (skill"
-    " verify-on-other-systems)"
+    f"the check must be in {CERTIFY_SPEC} first: follow sections 5.5 (How a package adds a check) and 5.6"
+    f" (When a check can exist, and its level) of {CERTIFY_CONTRACT} (skill verify-on-other-systems)"
 )
 
 

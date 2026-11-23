@@ -1,8 +1,20 @@
+# kit:gitleaks-config
 # gitleaks configuration (decision 0001). The default rules apply. Add an [[allowlists]] table only
 # for a reviewed false positive, and give its reason.
 
 [extend]
 useDefault = true
+
+# tools/kit_sync.py writes the SHA-256 of each kit unit into kit.toml. The rule generic-api-key reports
+# the hash of the unit .github/workflows/secrets.yml, because its key holds the word "secrets". A
+# SHA-256 of a public text is no credential (decision 0001).
+[[allowlists]]
+description = "SHA-256 of the kit text in kit.toml, no credential"
+targetRules = ["generic-api-key"]
+condition = "AND"
+paths = ['''^kit\.toml$''']
+regexes = ['''^[0-9a-f]{64}$''']
+# /kit
 
 # The three tables below: classified one by one on 2026-11-20: USB device identifiers, synthetic test
 # keys, a file hash, sample keys; no credential (decision JMS0, item K). All the hits were of the rule
