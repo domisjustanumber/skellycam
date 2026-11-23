@@ -248,6 +248,10 @@ def test_f1_a_tripped_camera_with_a_take_ends_within_1_s():
     time.sleep(1.0)
     t0 = time.monotonic()
     CameraGroup._end_process(SimpleNamespace(worker=worker, join=worker.join, is_alive=worker.is_alive), status)
+    # On POSIX the SIGTERM handler of the camera process only sets the stop flag: `kill` after 1 s ends this
+    # process, and SIGKILL does not wait for the end. Thus wait for the end, and measure up to it (CI run
+    # 45278395951, ubuntu-24.04: `is_alive()` just after the kill).
+    worker.join(timeout=1.0)
     took = time.monotonic() - t0
     assert not worker.is_alive() and took < 2.0, f"ended {took:.1f} s after the trip"
     assert worker.intentionally_terminated and not status.recording_in_progress.value

@@ -270,7 +270,9 @@ def test_t_cap_31_too_slow_after_a_live_change(monkeypatch, tmp_path):
     window could end at 20 fps (t_a + 2.95 s); preview continues; record start returns 409; the next
     change at 30 fps gives `ready`.
 
-    The window starts at the 16th frame that the fake delivers after the change (skip 15)."""
+    The window starts at the 16th frame that the fake delivers after the change (skip 15), or at the 17th: the
+    loop takes the check after its next read, so a frame that arrives while the loop waits in that read is not
+    in the skip. With no virtual time in the set (`ClockQueue`), such a frame can come (spec 10.2 names no frame)."""
     script = FakeScript(rate_after_change=(20.0, 30.0))
     with one_camera(monkeypatch, script, track=True) as (app, camera_id, _):
         spies = Spies(monkeypatch, app)
@@ -279,9 +281,10 @@ def test_t_cap_31_too_slow_after_a_live_change(monkeypatch, tmp_path):
         app.wait_state(camera_id, "too_slow")
         t_change = [t for name, t, d in log.events if name == "set_controls" and d.get("exposure")][-1]
         first_after = min(k for k, (arrival, _) in log.frames.items() if arrival > t_change)
-        t_a = log.frames[first_after + 15][0]
         t_slow = app.tracker.first(camera_id, "too_slow")
         assert app.tracker.first(camera_id, "checking", t_change) < t_slow
+        t_a = min((log.frames[first_after + skip][0] for skip in (15, 16)),
+                  key=lambda t: abs(t_slow - t - round(59 / (0.97 * 30) * 1e9)))
         expected = t_a + round(59 / (0.97 * 30) * 1e9)
         assert abs(t_slow - expected) <= 25_000_000, f"too_slow {(t_slow - t_a) / 1e9:.4f} s after t_a"
         assert t_slow < t_a + round(59 / 20 * 1e9)

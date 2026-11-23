@@ -19,6 +19,7 @@ import importlib
 import json
 import logging
 import multiprocessing
+import queue
 import threading
 import time
 from pathlib import Path
@@ -67,6 +68,37 @@ def install_gate_probe(monkeypatch, clock):
         return result
 
     monkeypatch.setattr(CameraOrchestrator, "should_grab_by_id", should_grab_by_id)
+
+
+class ClockQueue(queue.Queue):
+    """The request queue of the control thread of a camera loop on a `VirtualClock`. A request (a set of the
+    exposure search, a live change) stops the time until the control thread waits for its next request, so
+    that the set takes no virtual time, whatever the real time of the hand-over between the threads. A read
+    of the controls after the timeout of `get` does not stop the time, as before."""
+
+    def attach(self, clock, consumer):
+        self.clock, self.consumer = clock, consumer
+
+    def put(self, item, block=True, timeout=None):
+        self.clock.give_work(self.consumer, lambda: super(ClockQueue, self).put(item, block, timeout))
+
+    def get(self, block=True, timeout=None):
+        if block and threading.current_thread() is self.consumer:
+            self.clock.idle_if(self.empty)
+        return super().get(block, timeout)
+
+
+def install_control_clock(monkeypatch, clock, loop_module):
+    """Give the request queue of each control thread to the virtual clock (`ClockQueue`). The control thread
+    can already wait in a plain `get` of the queue: the next request wakes it as before."""
+    original = loop_module._ControlThread.__init__
+
+    def init(self, loop):
+        original(self, loop)
+        self.requests.__class__ = ClockQueue
+        self.requests.attach(clock, self.thread)
+
+    monkeypatch.setattr(loop_module._ControlThread, "__init__", init)
 
 
 class LogCapture(logging.Handler):
@@ -252,6 +284,7 @@ class CaptureApp:
         if self.clock is not None and self.clock.virtual:
             monkeypatch.setattr(loop_module, "perf_counter_ns", self.clock.now_ns)
             install_gate_probe(monkeypatch, self.clock)
+            install_control_clock(monkeypatch, self.clock, loop_module)
             # A dead camera waits on the group frames in real time (recorder.md 10 item 7): not on the clock.
             missing_until_end = loop_module.CameraLoop._missing_until_end
 
@@ -409,14 +442,16 @@ def capture_app(monkeypatch, scripts, *, workers="thread", virtual=None, track=F
 
 
 @contextlib.contextmanager
-def one_camera(monkeypatch, script, *, track=False, **config):
-    """One fake camera, applied. Waits until it is `ready` or `failed`. Gives (app, camera_id, response)."""
+def one_camera(monkeypatch, script, *, track=False, until=("ready", "failed"), **config):
+    """One fake camera, applied. Waits until it is in a state of `until` (`ready` or `failed`). Gives (app,
+    camera_id, response). A camera that fails during streaming soon after `ready` must also wait for `dead`:
+    on the virtual clock its time in `ready` can be shorter than one poll of `wait_state`."""
     with capture_app(monkeypatch, [script], track=track) as app:
         app.detect()
         camera_id = app.factory.camera_ids[0]
         response = app.apply([app.config(camera_id, **config)])
         assert response.status_code == 200, response.text
-        app.wait_state(camera_id, "ready", "failed")
+        app.wait_state(camera_id, *until)
         yield app, camera_id, response
 
 
