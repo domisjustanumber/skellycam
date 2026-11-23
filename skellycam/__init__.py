@@ -22,14 +22,6 @@ attach_stderr_pipe()
 
 import multiprocessing
 
-# Camera processes start with "spawn" on each system (unix-capture.md 4.12) [ADR-HQE5]. A fork copies the objects of
-# a server with threads: a forked camera process on Linux freed a PyAV reformatter of the main process, waited for
-# its FFmpeg threads, which the fork did not copy, and never answered (CI run 45214740615). Before any shared object
-# is made (also by skellylogs), because a lock of the fork context cannot go to a spawned process. A host program that
-# chose a start method keeps it.
-if multiprocessing.get_start_method(allow_none=True) is None:
-    multiprocessing.set_start_method("spawn")
-
 multiprocessing.freeze_support()
 
 from skellylogs import LogLevels

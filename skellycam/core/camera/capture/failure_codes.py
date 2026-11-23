@@ -7,7 +7,7 @@ A site that gives no code gets the default: `open-failed` at a stage before stre
 CODES = ("not-found", "no-access", "no-permission", "camera-in-use", "usb-bandwidth", "no-mode", "below-floor",
          "open-failed", "first-frame-timeout", "no-native-jpeg", "not-ready", "rate-low", "rate-high",
          "control-failed", "device-removed", "stalled", "hung", "disk-stall", "previous-process-alive",
-         "stream-error", "format-changed", "process-ended")
+         "stream-error", "format-changed", "process-ended", "start-method-fork")
 
 # A wedge (certify.md 10.7 item 5): no frame for 2 s, a call that did not return, a camera that is gone, a camera
 # process that ended. A close after one of these codes sets no control (unix-capture.md 4.7) [ADR-Z7F3]; each other

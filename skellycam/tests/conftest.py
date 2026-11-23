@@ -5,7 +5,12 @@ Builds a lightweight FastAPI app with the same routes as the real app
 but WITHOUT the heavy lifespan (bytecode compilation, logging setup, etc).
 """
 import multiprocessing
-import logging
+
+# unix-capture.md 4.12 [ADR-HQE5]: the test session sets "spawn" first, as the entry point of the app does.
+if multiprocessing.get_start_method(allow_none=True) != "spawn":
+    multiprocessing.set_start_method("spawn", force=True)
+
+import logging  # noqa: E402
 from unittest.mock import MagicMock, patch, AsyncMock
 
 import pytest
@@ -26,6 +31,13 @@ _GUARDED_SKIPS: list[str] = []
 
 
 def pytest_runtest_logreport(report):
+    if skip_guard.is_guarded_skip(report, skip_guard.guarded_paths()):
+        _GUARDED_SKIPS.append(report.nodeid)
+
+
+def pytest_collectreport(report):
+    """A skip of a whole module (`pytest.skip(..., allow_module_level=True)`, `pytest.importorskip`) gives a collect
+    report, not a run report."""
     if skip_guard.is_guarded_skip(report, skip_guard.guarded_paths()):
         _GUARDED_SKIPS.append(report.nodeid)
 

@@ -16,7 +16,8 @@ def guarded_paths(value: str | None = None) -> list[str]:
 
 
 def is_guarded_skip(report, paths: list[str]) -> bool:
-    """A skip of a test under `paths` (an expected failure, `xfail`, is not a skip here)."""
+    """A skip under `paths`: of a test (a run report) or of a whole module (a collect report, whose nodeid is the
+    path of the module). An expected failure (`xfail`) is not a skip here."""
     if not paths or not report.skipped or hasattr(report, "wasxfail"):
         return False
     nodeid = report.nodeid.replace("\\", "/")
