@@ -687,7 +687,13 @@ What the OpenCV source can do:
   and `RecordingInfoPanel.tsx`. `camera-labels.test.ts` changes to the new form [ADR-AC5B](../decisions/entries/AC5B-choices-of-the-third-consistency-check.md). The form
   `Camera <n> · <name>` is the ruling Q13 of [ADR-VYS7](../decisions/entries/VYS7-answers-of-the-user-to-the-step-4b-spec-and-go-ahead-for-its-tests.md).
 - "Update Cameras" [ADR-F2KY](../decisions/entries/F2KY-rulings-of-the-user-after-the-third-consistency-check.md): one button at the top of the camera list adds the ticked cameras, closes
-  the unticked cameras and retries the failed cameras, and does not reopen the other cameras. It is
+  the unticked cameras and retries the failed cameras, and does not reopen the other cameras. It
+  names the failed cameras in `retry_camera_ids` of the apply request: only that list opens a `failed`
+  or `dead` camera again [cap 8.3]. Each other apply of the UI (a settings change, the rate selector,
+  Connect) sends no retry list (a decision of the user of 2026-11-21) [ADR-Z7F3](../decisions/entries/Z7F3-choices-of-fix-lane-3.md).
+  After such an apply, a failed camera stays at "error" (the answer gives its failure [cap 8.3]): the
+  "Update Cameras" button stays, and the answer does not replace the desired config of a camera that it
+  reports as failed, so the edit of the user stays (`replacesDesired`). It is
   disabled during a recording, with the text "Stop the recording first" (the English text of the key
   `stopRecordingFirst`, which reads "Stop recording first" today).
 - A camera on the OpenCV source of Linux or macOS: 1.7. A camera with no working exposure control:
@@ -1041,7 +1047,10 @@ accepted on 2026-11-21 [ADR-1T0S](../decisions/entries/1T0S-choices-of-step-4-on
    before the request. A camera that the request adds, and each camera of a new group, gets the config
    of the request. Each config gets `framerate` 30. A camera that the request unselects stays closed.
 3. The main process runs the fall back as an apply of these configs (`CameraGroup.apply`). The fall back
-   has no whole-request check of [cap 8.3], and it does not clear the group warnings. Before the reopen,
+   has no whole-request check of [cap 8.3], and it does not clear the group warnings. Its retry list
+   (`retry_camera_ids`, [cap 8.3]) holds each camera that failed at 60 fps, except a camera whose failure
+   code (at the request, and again when the fall back runs) is a wedge code (`WEDGE_CODES`: `stalled`,
+   `hung`, `device-removed`, `process-ended`); no other `failed` or `dead` camera opens again [ADR-Z7F3](../decisions/entries/Z7F3-choices-of-fix-lane-3.md). Before the reopen,
    it writes one `rate_fallback` item into `group_warnings` of each camera that failed at 60 fps. A fall
    back at the start-up also puts these items in `warnings` of the apply response. The item has `kind`,
    `camera_ids` (one camera) and `text`. It has no `control`, as `start_failure`.
@@ -1076,7 +1085,12 @@ accepted on 2026-11-21 [ADR-1T0S](../decisions/entries/1T0S-choices-of-step-4-on
    clears its configs only when they are still the configs that it read. Thus two changes of the
    cameras never run at the same time, a fall back never replaces a later request of the user, and the
    `rate_fallback` items keep the lifetimes of 1.5. The close is not refused: it ends a change that
-   runs.
+   runs. With no camera group, the flag `creating` of `CameraGroupManager` does the same job: an apply
+   request that would make a group sets it with no wait after it found no group, and clears it at its
+   end. A second apply request that finds no group while the flag is set gets the same HTTP 409 with the
+   same reason. A close of all groups adds one to the count `closes` of the manager; a request that makes
+   a group and finds the count changed after its detection gets HTTP 409 with the reason `The cameras
+   were closed while the request ran. Send the request again.` and makes no group. Thus two requests never make two groups [ADR-Z7F3](../decisions/entries/Z7F3-choices-of-fix-lane-3.md).
 8. T-REQ-19 at 60 fps: the fall back comes after the failure, so the status then holds the result at
    30 fps. The test reads the reason at 60 fps in the log line of the failure.
 9. A recording is never changed by a change of the rate (a decision of the user). A fall back does not
@@ -1219,7 +1233,7 @@ Change to section 16.2, T-CAP-20 item (3): "apply a request that gives all three
 | T-REQ-93 | fake | As T-REQ-92, but the apply of the fall back waits until a request of the user (`MANUAL -9` at 30) has answered; then the fall back ends; then a new request of the user. | The first request of the user gets 409 with the reason of 2.4a item 7; the camera then runs the configs of the fall back, with its `rate_fallback` item; the new request clears the item (2.4a item 7, 1.5). |
 | T-REQ-94 | fake | One camera `ready` at 30. On the event loop, `CameraGroup.fall_back` with a camera that has no measured rate after a search, then with a camera whose mode rate at the failure was 60, then with a measured rate and no exposure value. | The texts `The group runs at 30 fps. Camera <id> found no exposure that keeps 60 fps.`, `... measured 29.66 fps in its 60 fps mode at exposure -7.` and `... measured 29.66 fps in its 60 fps mode.` (2.4a item 4). |
 | T-REQ-98 | ui-unit | `replacesDesired` for the response of a pick, of a settings request and for a camera that the request did not send. | false, true, false: the response of a pick keeps the unapplied edits of the list (2.8). |
-| T-REQ-96 | fake | Two fakes `ready` at 30 in `MANUAL -7`; B delivers 29.66 fps. A request at 60 for both; its apply waits after it returned. During the wait: a request at 30 with `exposure` -9, a press of the button and "Search again" for A. | Each gets 409 with the reason of 2.4a item 7. Then the first request falls back: both cameras run at 30 with -7; B has one `rate_fallback` item (2.4a item 7). |
+| T-REQ-96 | fake | Two fakes `ready` at 30 in `MANUAL -7`; B delivers 29.66 fps. A request at 60 for both; its apply waits after it returned. During the wait: a request at 30 with `exposure` -9, a press of the button and "Search again" for A. | Each gets 409 with the reason of 2.4a item 7. Then the first request falls back: both cameras run at 30 with -7; B has one `rate_fallback` item (2.4a item 7). Also: two apply requests while no group exists, the detection of the first one slow: the second gets the same 409 (the flag `creating`), and one group is made [ADR-Z7F3](../decisions/entries/Z7F3-choices-of-fix-lane-3.md). |
 | T-REQ-97 | fake | As T-REQ-96, but with no wait in the product code: the reopen of A at 60 waits in its open (`hold_opens`), so B fails at 60 while A is `starting`. Then a request for B alone at 30 with -9. | That request gets 409. After the release of A, the first request falls back: A and B run at 30 and are `ready`; no camera is `dead` (2.4a item 7). |
 | T-REQ-95 | ui-unit | `pendingCameraChanges` with a group camera whose desired rate is 30 and applied rate 60, one at 30 and 29.97, and one ticked camera not in the group; `withChosenRate` with an old list at 60 and a new list at 30, and with an empty old list. | The first camera is in `renumber`, the second is not, the third is in `add`; each new camera gets 60, then the rate of the first selected camera of the new list (2.8). |
 

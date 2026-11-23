@@ -216,6 +216,24 @@ def test_t_cert_65_and_68_the_gate_roll_ups():
     assert rows[f"{model}:gate:no-hang"]["reason"] == "crashed"
 
 
+def test_the_timestamps_gate_of_a_source_that_cannot_tell_its_clock():
+    """11.3 (Q585 of the user, 2026-11-23) [Z7F3]: with `clock:base` `not-run` `clock-unknown`, `gate:timestamps`
+    requires only `clock:before-arrival` and `clock:near-arrival`; a declared clock keeps all three."""
+    gate = product(CATALOG).gate_rows
+    model, label = "cam.x.0001-0002", "cam.x.0001-0002.0"
+
+    def timestamps(*overrides):
+        rows = {r["name"]: r for r in gate(model, [gate_unit(label, [("clock:base", "not-run", "clock-unknown"),
+                                                                      *overrides])], "Fake")}
+        return rows[f"{model}:gate:timestamps"]["result"]
+    assert timestamps() == "pass"  # (a)
+    assert timestamps(("clock:near-arrival", "fail", "sample-too-early")) == "fail"  # (b)
+    assert timestamps(("clock:before-arrival", "not-run", "not-built")) != "pass"  # (c)
+    rows = {r["name"]: r for r in gate(model, [gate_unit(label, [("clock:base", "fail", "clock-base-differs")])],
+                                       "Fake")}
+    assert rows[f"{model}:gate:timestamps"]["result"] == "fail"  # (d) a declared `realtime` clock
+
+
 def test_t_cert_41_the_record_rule_and_a_damaged_file(tmp_path):
     """T-CERT-41, 2.5: one row for each model whose item is `pass`, `fail`, or `partial` with a judged `opens`; no
     row for `skipped` or for `partial` with no judged `opens`; a damaged file counts as no row, and the writer
@@ -587,6 +605,25 @@ def test_t_cert_47_a_full_run_and_the_local_pass(monkeypatch, tmp_path):
     assert checks_module.local_pass(rows, "feed:0000", backend, OS_KEY, ABI)
     assert not checks_module.local_pass(rows, "feed:0001", backend, OS_KEY, ABI)
     assert next(r for r in rows if r["device"] == "feed:0000")["controls"] == {"exposure": {"iam": "works"}}
+
+
+def test_clock_base_of_a_source_that_cannot_tell_its_clock(monkeypatch, tmp_path):
+    """10.2, unix-capture.md 4.6.2 D-2 [Z7F3]: a source whose `clock` is `unknown` (Media Foundation: it reads only
+    `IMFSample::GetSampleTime`, and no attribute names the base) gives `clock:base` `not-run` `clock-unknown`; a source
+    that does not fill the key (null) gives `not-built`. `time-gaps` judges the gaps from `long_intervals`."""
+    unknown = good(diagnostics={**SOURCE_FACTS, "clock": "unknown"})
+    unfilled = good(diagnostics={**SOURCE_FACTS, "clock": None})
+    with capture_app(monkeypatch, [unknown, unfilled]) as app:
+        devices = app.factory.device_infos()
+        report = run_with(app, tmp_path, level="full")
+    assert_valid(report)
+    checks = by_name(report)
+    cannot_tell, not_built = labels(devices)
+    assert (checks[f"{cannot_tell}:clock:base"]["result"], checks[f"{cannot_tell}:clock:base"]["reason"]) == (
+        "not-run", "clock-unknown")
+    assert checks[f"{cannot_tell}:clock:base"]["numbers"]["clock"] == "unknown"
+    assert checks[f"{not_built}:clock:base"]["reason"] == "not-built"
+    assert checks[f"{cannot_tell}:time-gaps"]["result"] == "pass"
 
 
 @pytest.mark.capture_timing

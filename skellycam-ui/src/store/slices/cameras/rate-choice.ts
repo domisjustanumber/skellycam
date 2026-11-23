@@ -102,7 +102,10 @@ export function groupRate(groupConfigs: Record<string, { framerate: number }>, f
     return config ? (near60(config.framerate) ? 60 : 30) : fallback;
 }
 
-/** Whether a response replaces the desired config of a camera: only a sent camera, and not for a pick (2.8). */
-export function replacesDesired(kind: string, sent: boolean): boolean {
-    return sent && kind !== 'rate';
+/**
+ * Whether a response replaces the desired config of a camera: only a sent camera, not for a pick (2.8), and not for a
+ * camera that the response reports as failed (the server left it alone or it failed again: the edit stays, ADR-Z7F3).
+ */
+export function replacesDesired(kind: string, sent: boolean, failed = false): boolean {
+    return sent && kind !== 'rate' && !failed;
 }

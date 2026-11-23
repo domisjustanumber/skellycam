@@ -12,8 +12,13 @@ conformance tests of skellyfileformat (`spec/conformance.md`, "The test adapter"
 - `trace(event, path)` comes from the file-action spy of `fake_disk.py` on the take folder: `lock`,
   `unlock` (also the close of the lock file while it is locked), `read`, `replace`, `write`, `flush`
   and `fsync`, with paths relative to the take folder.
+- `write_frame` passes each JPEG through the capture check of the program (`check_jpeg`), which
+  inserts the standard DHT [F-3, ring 5.2]. `data` None gives a frame with `CAPTURE_ERROR`: a
+  `missing` row with its times (7.2). `camera_stopped(index, reason)` marks a dead camera (7.3).
 - `close()` ends each camera writer with the frame count of the take (the largest number of frames
-  of a camera), then calls `finish`.
+  of a camera), then calls `finish` with the dead cameras.
+- The reader functions of the format (also `camera_lost_at` and `short_file_counts`) are not here:
+  the reader of skellycam is the player (TypeScript), and T-REC-37 runs no test that uses `reader`.
 - Audio, a conversion run, a camera with `capture_format` `YUYV` and `add_warning` raise
   `NotImplementedError`. At exit, the adapter ends the writers of each take that a failed test did
   not close, so that no writer thread keeps the test process alive.
@@ -127,6 +132,7 @@ class TakeWriter:
         self._ids = [t.camera_id for t in takes]
         self._writers = [module.CameraTakeWriter.start(self._take.camera_spec(c)) for c in self._ids]
         self._rows = [0] * len(takes)
+        self._stopped = {}  # group_position: the reason of camera_stopped
         _OPEN.add(self)
 
     def write_frame(self, index, data, host_ns, *, source_frame_number, sample_ns=None):
@@ -134,13 +140,28 @@ class TakeWriter:
             raise NotImplementedError("raw YUYV input: the recorder takes JPEG only (3b encodes in the loop)")
         from skellycam.core.ipc.frame_ring import NO_SAMPLE_NS
 
+        from skellycam.core.ipc.frame_ring.capture_check import check_jpeg
+        from skellycam.core.ipc.frame_ring.layout import FrameFlag
+
+        if index in self._stopped:
+            raise RuntimeError(f"camera {index} stopped; the test writes no frame of it after camera_stopped")
+        # The capture check of the program runs before the recorder [ring 5.2]: it inserts the standard
+        # DHT (F-3). `data` None is a frame with a capture error: a `missing` row with its times (7.2).
+        if data is None:
+            data, flags = b"", FrameFlag.CAPTURE_ERROR
+        else:
+            data, flags = check_jpeg(data, delivered_len=len(data), driver_error=False)
         k = self._rows[index]
         frame = self._module.RecorderFrame(
             payload=data, frame_number=k, arrival_ns=host_ns, sample_ns=NO_SAMPLE_NS if sample_ns is None else sample_ns,
-            source_frame_number=k if source_frame_number is None else source_frame_number, flags=0,
+            source_frame_number=k if source_frame_number is None else source_frame_number, flags=int(flags),
             delivered_len=len(data), rotation_cw_deg=0)
         self._writers[index].give(frame)
         self._rows[index] += 1
+
+    def camera_stopped(self, index, reason):
+        """The camera died during the take (7.3): `end` pads its rows, and `finish` adds `camera_dead`."""
+        self._stopped[index] = reason
 
     def write_audio(self, *args, **kwargs):
         raise NotImplementedError("audio recording returns in step 5b")
@@ -153,7 +174,8 @@ class TakeWriter:
         try:
             frame_count = max(self._rows, default=0)
             results = [w.end(frame_count) for w in self._writers]
-            self._take.finish(results, frame_count=frame_count)
+            dead = {self._ids[index]: reason for index, reason in self._stopped.items()}
+            self._take.finish(results, frame_count=frame_count, dead_cameras=dead)
         finally:
             self._undo()
 

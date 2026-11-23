@@ -85,14 +85,18 @@ class Sample:
 
 
 class Reader:
-    def __init__(self, calls, callback):
+    def __init__(self, calls, callback, gap_at=None):
         self.calls, self.callback, self.stopped, self.fail = calls, callback, False, False
+        self.reads, self.gap_at = 0, gap_at  # "gap": one interval of 150 ms (4.5 periods at 30 fps)
 
     def ReadSample(self, *args):  # noqa: N802
+        self.reads += 1
+        delay = 0.15 if self.reads == self.gap_at else 0.033
+
         def deliver():
-            time.sleep(0.033)
-            if self.fail:
-                self.callback.OnReadSample(None, 0xC00D3EA2, 0, 0, 0, None)  # the device went away
+            time.sleep(delay)
+            if self.fail:  # True: the device went away; else the HRESULT of a stream error
+                self.callback.OnReadSample(None, 0xC00D3EA2 if self.fail is True else self.fail, 0, 0, 0, None)
             elif not self.stopped:
                 self.callback.OnReadSample(None, 0, 0, 0, 0, Sample(time.perf_counter_ns()))
         threading.Thread(target=deliver, daemon=True).start()
@@ -124,14 +128,15 @@ def install(case):
     calls = Calls()
     link = fake_link(0)
     # exposure (IAMCameraControl 4) in auto at -6, focus (6) absent, gain (IAMVideoProcAmp 9) manual at 10
-    camera = Control(calls, "camera", {4: [-6, 1]}, ranges={4: (-13, -1, 1, -6, 3)})
+    # "record-rounds": an earlier open set manual -7 and got no restore; this camera rounds and reads manual -6 now
+    camera = Control(calls, "camera", {4: [-6, 2 if case == "record-rounds" else 1]}, ranges={4: (-13, -1, 1, -6, 3)})
     hang = {"after-hang": ((9, 1),), "restore-hangs": ((9, 2),)}.get(case, ())
     procamp = Control(calls, "procamp", {9: [10, 2]}, fail_sets=((9, 2),) if case == "restore-fails" else (),
                       hang_sets=hang)
     reader = {}
 
     def create_reader(media_source, callback, stage):
-        reader["reader"] = Reader(calls, callback)
+        reader["reader"] = Reader(calls, callback, gap_at=6 if case == "gap" else None)
         return reader["reader"]
 
     names = dict(enumerate_devices=lambda stage: [("Fake camera 0", link, Shuts(calls, "shutdown-object"))],
@@ -153,6 +158,13 @@ def run(case):
     if case == "restore-off":
         os.environ["SKELLYCAM_RESTORE_CONTROLS"] = "0"
     mf, camera_id, calls, reader = install(case)
+    if case == "record-rounds":  # unix-capture.md 4.7 [Z7F3]: the record of that open, auto -5 before it
+        from types import SimpleNamespace
+
+        from skellycam.core.camera.capture import source as shared
+        store = {"r": dict(before={"exposure": [True, True, -5]}, names=["exposure"], set={"exposure": [False, -7]})}
+        shared.RESTORE_RECORDS[camera_id] = SimpleNamespace(restore_record=lambda: store["r"],
+                                                            set_restore_record=lambda record: store.update(r=record))
     if case.startswith("auto-open"):
         return auto_open(mf, camera_id, calls, int(case.split(":")[1]))
     source = mf.MediaFoundationSource()
@@ -164,8 +176,8 @@ def run(case):
         source.set_controls({"gain": ControlSetting(auto=False, value=20)})
     except CaptureFailure as failure:
         result["set_failure"] = [failure.stage, failure.code]
-    if case == "after-error":
-        reader["reader"].fail = True
+    if case in ("after-error", "after-stream-error"):
+        reader["reader"].fail = True if case == "after-error" else E_FAIL
         deadline = time.monotonic() + 2.0
         while source._error is None and time.monotonic() < deadline:
             time.sleep(0.01)

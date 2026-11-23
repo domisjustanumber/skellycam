@@ -10,6 +10,7 @@ import hashlib
 import importlib
 import json
 import os
+import statistics
 import threading
 from pathlib import Path
 
@@ -298,9 +299,10 @@ def hand_stop_fields(cameras_rows):
         if k == 0:
             continue
         pairs = [(rows[k - 1][0], rows[k][0]) for rows in cameras_rows if not rows[k][1] and not rows[k - 1][1]]
-        if pairs:
-            rates.append(sum(1e9 / (b - a) for a, b in pairs) / len(pairs))
-            durations.append(sum((b - a) / 1e6 for a, b in pairs) / len(pairs))
+        if pairs:  # [Z7F3]: the median over the cameras of the frame duration; the rate is 1 / that median
+            middle = statistics.median([b - a for a, b in pairs])
+            rates.append(1e9 / middle)
+            durations.append(middle / 1e6)
     return rates, durations, ranges
 
 

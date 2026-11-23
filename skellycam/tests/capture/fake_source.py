@@ -37,6 +37,8 @@ from types import SimpleNamespace
 import cv2
 import numpy as np
 
+from skellycam.core.camera.capture.failure_codes import WEDGE_CODES
+
 HOLD_LIMIT_S = 60.0  # a held call continues after this time, so that a failed test cannot hang
 MEDIA_FOUNDATION_VIDEO_GUID = "{e5323777-f976-4f5b-9b55-b94699c46e44}"
 
@@ -213,6 +215,7 @@ class FakeScript:
     open_failure: tuple = ("open", "in use by another program")
     stop_after_frame: int | None = None  # a stall: no frame after this frame
     removed_after_frame: int | None = None  # device removed after this frame
+    removed_code: str = "device-removed"  # the code of that error; "stream-error": a source error that is no wedge
     drop_before_frames: tuple = ()  # the camera drops the frame before each; the next has the attribute
     discontinuity_frames: tuple = ()  # frames with the discontinuity attribute and no drop
     burst: tuple | None = None  # (first, last): put together at the arrival time of `last`
@@ -221,6 +224,7 @@ class FakeScript:
     controls: tuple = (("exposure", True, False, -6), ("gain", True, False, 0), ("focus", True, True, 30))
     reset_on_stream: tuple = ()  # (name, value): the camera sets this when the stream starts (C930e)
     keeps_controls: bool = False  # the camera keeps its control values from one open to the next (THREAD workers)
+    reopen_shift: tuple = ()  # (name, delta): with keeps_controls, a later open reads a manual value moved by delta (C930e)
     reports_auto: tuple = ()  # control names that read back auto whatever the set (a camera in its own auto)
     live_set_faults: tuple = ()  # for the n-th live change: None, "error" or "readback:<value>"
     rate_after_change: tuple = ()  # the delivered rate after the n-th live change
@@ -332,6 +336,7 @@ class FakeSource:
         self.holding = threading.Event()
         self._opened = False
         self._ended = False
+        self._error_code = None  # the code of the stream error of the source (removed_after_frame)
         self._mode = None
         self._rate = None
         self._upcoming = deque()  # (frame number, arrival_ns), made ahead of delivery
@@ -377,7 +382,7 @@ class FakeSource:
             self._rate = self.script.rate or mode.fps_num / mode.fps_den
             self._place = types.WaitingPlace()
             self._stop.clear()
-            self._ended = False
+            self._ended, self._error_code = False, None
             self._upcoming.clear()
             self._next_sfn = 0
             self._interval_index = 0
@@ -389,6 +394,9 @@ class FakeSource:
             self._controls = kept or {name: [present, auto, value] for name, present, auto, value in self.script.controls}
             if self.script.keeps_controls:
                 self.log.device_controls = self._controls
+            for name, delta in self.script.reopen_shift if kept else ():
+                if not self._controls[name][1]:
+                    self._controls[name][2] += delta
             for name, value in self.script.reset_on_stream:
                 self._controls[name][2] = value
             restore = getattr(types, "ControlRestore", None)  # the stand-ins of the self-tests have none
@@ -452,7 +460,7 @@ class FakeSource:
                 faults = self.script.live_set_faults
                 fault = faults[self._live_changes - 1] if self._live_changes <= len(faults) else None
             if self._restore is not None:
-                self._restore.read(self._read_back())
+                self._restore.read(self._read_back(), {"exposure": (self.exposure_range() or (0, 0, None))[2]})
                 self._restore.changed(changes)
             if fault == "error":
                 raise types.CaptureFailure("set controls", "the camera refused the value")
@@ -496,8 +504,9 @@ class FakeSource:
         with self._lock:
             self.log.closes.value += 1
         self._maybe_hang("close", "close")
-        # the restore of 4.7, before the stream stops; never after a removal or a failure of the loop
-        if restore and self._restore is not None and self._opened and not self._ended:
+        # the restore of 4.7, before the stream stops; never after a wedge (as Media Foundation) [Z7F3]
+        if restore and self._restore is not None and self._opened and (
+                not self._ended or self._error_code not in WEDGE_CODES):
             self._restore.restore(self.set_controls)
         if self.script.close_delay_s:
             self._wait(self.script.close_delay_s)
@@ -668,7 +677,10 @@ class FakeSource:
                     # the device goes away between frame k - 1 and the time of frame k
                     self.removed_frame = k - 1
                     self._ended = True
-                    self._place.put_error(types.CaptureFailure("streaming", "device removed"))
+                    error = types.CaptureFailure("streaming", "device removed" if self.script.removed_code
+                                                 == "device-removed" else "E_FAIL")
+                    error.code = self._error_code = self.script.removed_code  # the stand-ins take no `code`
+                    self._place.put_error(error)
                     return
                 arrival = self._arrival(k)
                 while self._upcoming and self._upcoming[0][0] < k:

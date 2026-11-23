@@ -2,6 +2,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { cameraStatesFromAppState, NOT_IN_GROUP, statusesAfterApply } from './camera-state.ts';
+import { pendingCameraChanges } from './camera-updates.ts';
 
 const group = (alive: boolean, cameras: Record<string, { state?: string | null; failure?: { stage: string; reason: string } | null } | null>) => ({
     alive,
@@ -48,6 +49,17 @@ test('starting, waiting, an unknown state, a null state and a camera with no pro
 test('a camera in no group is not in the result; NOT_IN_GROUP resets every live field', () => {
     assert.deepEqual(cameraStatesFromAppState([]), {});
     assert.deepEqual(NOT_IN_GROUP, { inGroup: false, connectionStatus: 'available', failure: undefined, state: undefined });
+});
+
+test('a failed camera that a settings apply leaves alone stays at error, so "Update Cameras" still retries it (ADR-Z7F3)', () => {
+    const failed = { id: 'a1', selected: true, inGroup: true, connectionStatus: 'error' as const, failure: 'open: in use',
+        state: 'failed', deviceInfo: {}, index: 0, name: 'Fake', actualConfig: { camera_index: 0, camera_name: 'Fake' },
+        desiredConfig: { framerate: 30 } };
+    // the answer of the server for a plain apply: the failure of the camera that it did not open again
+    const after = statusesAfterApply([failed], { a1: {} }, { a1: { stage: 'open', reason: 'in use' } }, ['a1']);
+    assert.equal(after.a1.status.connectionStatus, 'error');
+    const changes = pendingCameraChanges([{ ...failed, ...after.a1.status }], ['a1'], { a1: { framerate: 30 } });
+    assert.deepEqual(changes.retry, ['a1'], 'the "Update Cameras" button stays');
 });
 
 test('after an apply: only the sent cameras change; a response never claims a camera streams (review items 7 and 8)', () => {

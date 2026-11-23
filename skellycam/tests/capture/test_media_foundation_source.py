@@ -13,6 +13,9 @@ from skellycam.tests.capture.capture_session import product
 pytestmark = pytest.mark.skipif(sys.platform != "win32", reason="the media_foundation package is Windows only (U18)")
 
 
+EARLY_S = 0.002  # a timed wait can end up to this much before its limit (see test_bounded_call.py)
+
+
 def run_case(case):
     process = subprocess.run([sys.executable, "-m", "skellycam.tests.capture.mf_standins", case],
                              capture_output=True, text=True, timeout=120)
@@ -35,7 +38,9 @@ def test_t_unx_76_media_foundation_diagnostics():
     assert all(isinstance(value, float) and value >= 0 for value in times.values()), times
     assert (data["requested_w"], data["granted_w"], data["granted_fps_num"], data["delivered"]) == (640, 640, 30, "jpeg")
     assert data["frames"] >= 10 and len(data["frame_log"]) == min(64, data["frames"])
-    assert data["sample_minus_arrival_p50_ms"] == pytest.approx(-4.0, abs=0.01)
+    # The stand-in stamps the sample time (arrival - 4 ms) before the callback stamps the arrival: a delay of the
+    # thread between the two stamps (a loaded machine) only makes the value more negative.
+    assert -9.0 <= data["sample_minus_arrival_p50_ms"] <= -4.0, data["sample_minus_arrival_p50_ms"]
     assert data["later_than_arrival"] == 0 and data["sample_time_kept"] is True
     # the last read-back is that of the restore at the close (4.7): the value of before the open
     assert (data["exposure_present"], data["exposure_value"], data["control_path"]) == (True, -6, "iam")
@@ -44,6 +49,13 @@ def test_t_unx_76_media_foundation_diagnostics():
     assert [data[f"exposure_{k}"] for k in ("min", "max", "step", "default", "auto_supported")] == [-13, -1, 1, -6, True]
     assert (data["long_intervals"], data["format_changes"]) == (0, 0)
     assert all(data[k] is None for k in ("error_flag_frames", "drops_reported", "long_intervals_with_seq_gap"))
+
+
+def test_t_unx_76_long_intervals_count_with_the_period_of_the_granted_mode():
+    """T-UNX-76, unix-capture.md 4.6.2 D-2, D-3 [Z7F3]: the Media Foundation source gives `FrameLog` the period of the
+    granted mode (30 fps), so an interval of 150 ms counts in `long_intervals`; `clock` stays `unknown`."""
+    data = run_case("gap")["diagnostics"]
+    assert data["long_intervals"] >= 1 and data["clock"] == "unknown"
 
 
 def restore_sets(result):
@@ -84,6 +96,21 @@ def test_t_unx_78_a_failed_restore_is_recorded_and_the_close_goes_on():
     assert (data["restore_ok"], data["restore_failed"]) == (False, 1)
 
 
+def test_t_unx_92_the_media_foundation_source_gives_the_step_of_get_range_to_the_restore_record():
+    """T-UNX-92 (d) on Media Foundation, unix-capture.md 4.7 [Z7F3]: an earlier open set manual -7 and got no restore
+    (the record holds auto -5 as "before"); the camera rounds and reads manual -6 now, one step of GetRange (step 1)
+    from -7. The record applies: the close restores auto -5."""
+    sets, flush_at, calls = restore_sets(run_case("record-rounds"))
+    assert ["camera", 4, -5, 1] in sets, calls  # flags 1: auto
+
+
+def test_the_restore_runs_after_a_stream_error_that_is_no_wedge():
+    """unix-capture.md 4.7 [Z7F3] (review finding 2; a decision of the user of 2026-11-21): after its own stream error
+    with a code that is no wedge (`E_FAIL` in `OnReadSample`: `stream-error`), the source restores at its close."""
+    sets, flush_at, calls = restore_sets(run_case("after-stream-error"))
+    assert ["camera", 4, -6, 1] in sets, calls  # exposure back to auto -6
+
+
 def test_f7_no_restore_after_a_stream_error():
     """F7 (reviewer list): a removal HRESULT in `OnReadSample` before the close: the close sets no control."""
     sets, _, calls = restore_sets(run_case("after-error"))
@@ -107,12 +134,13 @@ def test_f7_no_restore_when_the_loop_failed():
     assert sets == [], calls
 
 
+@pytest.mark.capture_timing  # real time: the bound of 5 s
 def test_f7_a_hanging_restore_ends_the_close_as_hung_within_its_bound():
     """F7 (reviewer list): the restore `Set` of gain does not return. The close stops there as hung (stage
     `close`, code `hung`) within the bound of one call (5 s), and goes to no later step (W 6.6, 6.9)."""
     result = run_case("restore-hangs")
     assert result["close_failure"] == ["close", "hung", True]
-    assert 5.0 <= result["close_s"] <= 6.0, result["close_s"]
+    assert 5.0 - EARLY_S <= result["close_s"] <= 6.0, result["close_s"]
     assert ["flush"] not in result["calls"]
 
 

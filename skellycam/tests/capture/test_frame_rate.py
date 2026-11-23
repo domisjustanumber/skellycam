@@ -201,8 +201,9 @@ def test_t_req_34_a_camera_that_also_fails_at_30_stays_failed(monkeypatch):
         app.detect()
         app.apply_all()
         wait_ready_at(app, ids[:2], 30)
-        app.wait_state(slow, "failed")  # also slow at 30: it is "applied again" at 60
-        response = app.apply_all(framerate=60.0)
+        app.wait_state(slow, "failed")  # also slow at 30: it is "applied again" at 60 (its retry list [Z7F3])
+        response = app.apply([app.config(cid, framerate=60.0) for cid in ids], retry=[slow])
+        assert response.status_code == 200, response.text
         failure = response.json()["camera_failures"][slow]
         assert failure["stage"] == "rate check" and failure["reason"].startswith("declared 30.00 fps"), failure
         assert [item["camera_ids"] for item in response_items(response)] == [[slow]]
@@ -396,7 +397,7 @@ def test_t_req_93_no_request_of_the_user_while_a_fall_back_runs(monkeypatch):
     entered, user_done = threading.Event(), threading.Event()
     apply = CameraGroup.apply
 
-    async def held_apply(group, requested):
+    async def held_apply(group, requested, retry=()):
         frame = sys._getframe()
         while frame is not None and frame.f_code.co_name != "fall_back":
             frame = frame.f_back
@@ -404,7 +405,7 @@ def test_t_req_93_no_request_of_the_user_while_a_fall_back_runs(monkeypatch):
             entered.set()
             while not user_done.is_set():
                 await asyncio.sleep(0.01)
-        return await apply(group, requested)
+        return await apply(group, requested, retry)
 
     monkeypatch.setattr(CameraGroup, "apply", held_apply)
     with capture_app(monkeypatch, [FakeScript(modes=MODES, brightness=MODEL, rate=SLOW)]) as app:
@@ -441,6 +442,110 @@ def test_t_req_94_the_texts_of_the_fall_back(monkeypatch):
         assert opens(app, camera_id) == 1  # the configs did not change: no reopen
 
 
+def test_t_req_96_two_requests_with_no_group_make_one_group(monkeypatch):
+    """T-REQ-96, 2.4a item 7 [Z7F3]: two apply requests come while no camera group exists, and the detection of the
+    first one is slow. The second gets 409 with the reason of 2.4a (the flag `creating` of the manager); the first
+    makes the one group."""
+    from skellycam.core.camera_group import camera_group_manager as manager_module
+
+    started, go_on, calls = threading.Event(), threading.Event(), []
+    detect = manager_module.detect_available_cameras
+
+    def slow_first(*args, **kwargs):
+        calls.append(1)
+        if len(calls) == 1:
+            started.set()
+            go_on.wait(30)
+        return detect(*args, **kwargs)
+
+    with capture_app(monkeypatch, [FakeScript(modes=MODES)]) as app:
+        monkeypatch.setattr(manager_module, "detect_available_cameras", slow_first)
+        camera_id = app.factory.camera_ids[0]
+        first = {}
+        thread = threading.Thread(target=lambda: first.setdefault("response", app.apply([app.config(camera_id)])))
+        thread.start()
+        try:
+            app.wait(started.is_set, "the first request detects")
+            second = app.apply([app.config(camera_id)])
+        finally:
+            go_on.set()
+            thread.join(60)
+        assert second.status_code == 409 and REQUEST_RUNS in second.text, second.text
+        assert first["response"].status_code == 200, first["response"].text
+        assert len(app.manager.camera_groups) == 1
+        app.wait_state(camera_id, "ready")
+
+
+def test_the_fall_back_does_not_open_a_hung_camera_again(monkeypatch):
+    """2.4a item 3 [Z7F3] (review finding 3): a request at 60; the open of B at 60 hangs in `set mode` (code `hung`).
+    The fall back to 30 fps does not name B in its retry list: B is not opened again, and the answer gives its
+    failure."""
+    from skellycam.core.camera.capture.source import CaptureFailure
+    from skellycam.tests.capture.fake_source import FakeSource
+
+    real_open, calls, hung = FakeSource.open, {}, []
+
+    def open_(self, request):
+        calls[request.camera_id] = calls.get(request.camera_id, 0) + 1
+        if hung and request.camera_id == hung[0] and request.framerate == 60.0:
+            raise CaptureFailure("set mode", "the mode set did not return in 5 s", hung=True)
+        return real_open(self, request)
+
+    monkeypatch.setattr(FakeSource, "open", open_)
+    with capture_app(monkeypatch, [FakeScript(modes=MODES), FakeScript(modes=MODES)]) as app:
+        ready_app_steps(app)
+        a, b = app.factory.camera_ids
+        hung.append(b)
+        response = app.apply_all(framerate=60.0)
+        assert response.json()["camera_failures"][b]["code"] == "hung", response.text
+        app.wait_clock(3.0)
+        assert calls[b] == 2 and app.state(b) == "failed"
+
+
+def test_the_fall_back_drops_a_camera_whose_status_has_a_wedge_code(monkeypatch):
+    """2.4a item 3 [Z7F3] (review finding 3, the watch path): `fall_back` gets a camera in `slow` that stalled after
+    the snapshot (its status code is `stalled`). It does not open that camera again."""
+    with capture_app(monkeypatch, [FakeScript(modes=MODES), FakeScript(modes=MODES)]) as app:
+        ready_app_steps(app)
+        a, b = app.factory.camera_ids
+        app.factory.sources[b].stop_now()
+        app.wait_state(b, "dead")
+        group = app.group
+        configs = {cid: app.config(cid, framerate=30.0) for cid in (a, b)}
+        asyncio.run_coroutine_threadsafe(group.fall_back(configs, {b: (29.0, -7, 60.0)}), group._loop).result(60)
+        app.wait_clock(3.0)
+        assert opens(app, b) == 1 and app.state(b) == "dead"
+
+
+def test_a_close_all_during_the_detection_of_a_creating_request_ends_it(monkeypatch):
+    """2.4a item 7 [Z7F3] (review finding 7): a close of all groups while a request that makes the group still
+    detects. The close ends that change: the request gets 409, and no group is made after the close."""
+    from skellycam.core.camera_group import camera_group_manager as manager_module
+
+    started, go_on = threading.Event(), threading.Event()
+    detect = manager_module.detect_available_cameras
+
+    def slow(*args, **kwargs):
+        started.set()
+        go_on.wait(30)
+        return detect(*args, **kwargs)
+
+    with capture_app(monkeypatch, [FakeScript(modes=MODES)]) as app:
+        monkeypatch.setattr(manager_module, "detect_available_cameras", slow)
+        camera_id = app.factory.camera_ids[0]
+        out = {}
+        thread = threading.Thread(target=lambda: out.setdefault("response", app.apply([app.config(camera_id)])))
+        thread.start()
+        try:
+            app.wait(started.is_set, "the request detects")
+            assert app.client.delete("/skellycam/camera/group/close/all").status_code == 200
+        finally:
+            go_on.set()
+            thread.join(60)
+        assert out["response"].status_code == 409, out["response"].text
+        assert app.manager.camera_groups == {} and not app.manager.creating
+
+
 def test_t_req_96_no_second_change_while_a_request_runs(monkeypatch):
     """T-REQ-96, 2.4a item 7: the apply of a request at 60 waits after it returned (B failed at 60). During the wait, a
     request at 30 with -9, the button and "Search again" get 409 with the reason of 2.4a. Then the first request falls
@@ -448,8 +553,8 @@ def test_t_req_96_no_second_change_while_a_request_runs(monkeypatch):
     held_now, user_done = threading.Event(), threading.Event()
     apply = CameraGroup.apply
 
-    async def held(group, requested):
-        result = await apply(group, requested)
+    async def held(group, requested, retry=()):
+        result = await apply(group, requested, retry)
         if any(abs(config.framerate - 60) <= 0.5 for config in requested.values()):
             held_now.set()
             while not user_done.is_set():

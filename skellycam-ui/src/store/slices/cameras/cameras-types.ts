@@ -125,6 +125,7 @@ export interface DetectCamerasResponse {
 
 export interface CamerasConnectOrUpdateRequest {
     camera_configs: Record<string, CameraConfig>;
+    retry_camera_ids: string[];  // the failed or dead cameras that this request opens again (windows-capture.md 8.3)
 }
 
 export interface ConnectCamerasResponse {

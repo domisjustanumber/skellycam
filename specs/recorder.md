@@ -28,11 +28,13 @@ Marks:
   M1 to M5 replace the "row with no image" reading of R2, R3 and R4.
 - **[SFF-n]**: requirement n of the skellyfileformat specification, draft v2, `spec/SPEC.md` of the
   repository `../skellyfileformat`, branch `main`, commit
-  `d67679ada704caf55c64c2e279081d317205f354`. **[SFT-n]**: test n of `spec/conformance.md` of the
-  same commit. A skellyfileformat entry is cited as "skellyfileformat ADR-XXXX".
-- **[F-n]**: proposed format change n (section 13). Section 13 is the one list for this spec and for
-  the player spec. The recorder follows it. The user decides it [R6]. The format repository gives
-  the SFF numbers.
+  `24949df6c22093336c30b279c396ef593648de1e`. **[SFT-n]**: test n of `spec/conformance.md` of the
+  same commit. A skellyfileformat entry is cited as "skellyfileformat ADR-XXXX". Before 2026-11-21,
+  this spec cited commit `d67679ada704caf55c64c2e279081d317205f354`, and then commit `c1028ef`
+  ([ADR-3B97](../decisions/entries/3B97-format-sync-to-the-format-commit-with-f1-to-f10.md)).
+- **[F-n]**: format change n of section 13. The format holds F-1 to F-10 since commit `c1028ef`
+  (skellyfileformat ADR-6AT7). Commit `24949df` adds only the acceptance of the details of
+  skellyfileformat ADR-76NN. Section 13 gives the SFF number of each change.
 - **[ring x.y]**: section x.y of [`frame-ring.md`](frame-ring.md)
   ([ADR-50G8](../decisions/entries/50G8-phase-2-frame-ring-spec.md)).
 - **[cap x.y]**, **[Dn]**, **[Un]**: section x.y, decision Dn and answer Un of
@@ -655,7 +657,7 @@ Footer lines [SFF-745]:
 | `files` | One item: `{"path": "<rec>_info.json", "role": "capture_info", "owner": "skellycam", "sha256": <SHA-256 of the file>}` [SFF-723]. |
 | `warnings` | `[]` at the start. At the end: `camera_gap` for each camera with `gaps` > 0 [SFF-727], with the `detail` `row=<k> from=<a> to=<b>` of its first gap row k, where a and b are the `source_frame_number` of rows k − 1 and k (F of [ADR-JMS0](../decisions/entries/JMS0-review-decisions.md); SFF-727 allows a text for people, so no format change; a reader does not parse it); `camera_dead` for each camera that stopped during the take, with `last_frame` [M8, F-5]; `camera_file_short` for each short file, with the block and row counts [M5, F-5]; `take_error` when an error ended the take [C5, F-5]. `source` is `"skellycam"`. |
 | `privacy` | `fields`: `/camera_configs/<key>/device/os_name` of the capture info when not null, `utc_offset_min` of each timing sidecar, `/recording_name` of the manifest; sorted [SFF-881, SFF-882]. `media_shows_people`: `true`. |
-| `summary` | SFF-728, with `missing` for each camera, after `filled`: the `missing` count of its `# end` line [M3, F-1]. In the state `recording`: each `duration_s`, `stored_px`, `gaps`, `filled` and `missing` is null. At the end: computed from the CSVs; `stored_px` is the size of the first block that is not a placeholder (or of the placeholder when there is no such block), from its SOF; `user_name` and `model` are null (5d); `exposure_us` from the capture info (6.7). F-1 gives `duration_s` when the last rows have no time. |
+| `summary` | SFF-728, with `missing` for each camera, after `filled`: the `missing` count of its `# end` line [M3, F-1]. In the state `recording`: each `duration_s`, `stored_px`, `gaps`, `filled` and `missing` is null. At the end: computed from the CSVs; `stored_px` is the size of the first block that is not a placeholder, from its SOF, or the mode size when there is no such block (SFF-728; skellyfileformat ADR-76NN item 12; [ADR-3B97](../decisions/entries/3B97-format-sync-to-the-format-commit-with-f1-to-f10.md)); `user_name` and `model` are null (5d); `exposure_us` from the capture info (6.7). F-1 gives `duration_s` when the last rows have no time. |
 
 - Written by `start_take` before the first frame, and by `finish` after the last media file is
   closed [SFF-724]. Each write reads the file when it exists, changes it, and writes it whole, under
@@ -800,7 +802,9 @@ A frame with no bit of the error mask 0x0F gives one block and one row. `flags` 
      `# end` line [SFF-795]. A reader then reports the pair as `repaired` [C2]. A repaired camera file
      needs no Cues [SFF-794]. It writes no fit lines: they come with step 5b [R1, review S11].
 - A camera file with no block (the process ended before its first block reached the file) keeps only
-  the header of 6.3. Its sidecar holds only `missing` rows with empty byte fields [F-2].
+  the header of 6.3: it holds no Cluster, only the elements before the first Cluster (SFF-754;
+  skellyfileformat ADR-76NN item 9). Its sidecar holds
+  only `missing` rows with empty byte fields [F-2].
 - The manifest gets the warnings `camera_dead` (reason "hang", "disk stall", the reason of the stall watch of
   [`unix-capture.md`](unix-capture.md) 4.10, or the exit code) and
   `camera_file_short` with `blocks=<n> rows=<frame count>` [M5, M8, F-5].
@@ -891,8 +895,8 @@ finished [SFF-724].
 | `total_duration_sec` | `duration_s` of the manifest summary [SFF-728, F-1]. |
 | `mean_framerate` | Frames divided by the elapsed time (M of [ADR-JMS0](../decisions/entries/JMS0-review-decisions.md), changed on 2026-11-20): for each camera, the group frames from its first to its last row that is not `missing`, divided by the time between their `arrival_ns`, in s; the mean over the cameras. Rounded to 2 decimals. Null (NaN) when no camera has two such rows. Before, the mean of a rate for each frame: two frames 1 ms apart counted as 1000 fps. |
 | `mean_inter_camera_sync_ms` | The mean of the range of frame k: the largest minus the smallest `arrival_ns` of the cameras whose row is not `missing`, in ms. Rounded to 2 decimals. |
-| `framerate_stats` | Median, mean, standard deviation, min and max of the rate of each group frame k ≥ 1: the mean over the cameras of 1 / (`arrival_ns`(k) − `arrival_ns`(k − 1)) in s, for each camera with neither row `missing` ([ADR-F8C0](../decisions/entries/F8C0-third-review-choices.md) item 11). |
-| `frame_duration_stats` | The same of the mean frame duration of each frame k ≥ 1, in ms. |
+| `framerate_stats` | Median, mean, standard deviation, min and max of the rate of each group frame k ≥ 1: 1 / the median over the cameras of `arrival_ns`(k) − `arrival_ns`(k − 1), in s, for each camera with neither row `missing` and a time that increases ([ADR-F8C0](../decisions/entries/F8C0-third-review-choices.md) item 11). A median, not a mean (a decision of the user of 2026-11-21): a burst of queued frames of one camera (one run gave a mean of 136 fps and a max of 2775 fps) does not make the rate of the frame [ADR-Z7F3](../decisions/entries/Z7F3-choices-of-fix-lane-3.md). With two cameras, the median is the mean of the two durations. |
+| `frame_duration_stats` | The same of the median frame duration of each frame k ≥ 1 (the median over the cameras), in ms. |
 | `inter_camera_grab_range_ms_stats` | The same of the ranges of `mean_inter_camera_sync_ms`. |
 
 Today these values come from the midpoints of the grab stamps of the old frame record. From step 3a,
@@ -1166,14 +1170,14 @@ Each test of the kinds unit and process uses at least two cameras unless it says
 | T-REC-20 | unit | Queue sizes at 30/1, 30000/1001 and 60/1. | 90, 90 and 180 items (5.1) [agent 4]. |
 | T-REC-21 | process | Camera A writes in a child process; its MKV file object blocks forever. The stall limit is scaled down. A second camera writes in the main process. | `give` of A raises `RecorderStalled` at the limit (±10 %); A gets no `give` after it; the take ends for both; B ends normally with placeholders to the frame count; A's process is ended no later than the time of its end message plus the limit plus the margin; A's result is `"disk stall"`; A's files are completed as a short file only after the join; the manifest has `take_error` "disk stall on camera <id>", `camera_dead` and `camera_file_short` [C5, C6, M5, review B2, review S8]. |
 | T-REC-22 | unit | The MKV file object of one camera raises `OSError(ENOSPC)` at frame 50; the container close then raises. | No exception leaves the writer thread; the next `give` raises `RecorderWriteError`; `end` returns with the error and `files_closed`; the take level completes a short pair for that camera (rows to the frame count, MKV cut after its last block with a row, `missing` rows with no block, `# repair`, `# end`); the other camera is a normal finished pair; the manifest has `take_error` with the error text and `camera_file_short`, and no `camera_dead` [C5, C6, M5, review]. |
-| T-REC-23 | unit | Camera B dies at row 300 of a take of 600 group frames: the test calls `give_missing` for rows 300 to 549, then `end(600)`. Case 2: rows 297 to 299 of B are damaged frames before the death. Case 3: B dies before its first frame. | B's CSV has 600 rows; rows 300 to 599 are `missing` rows with empty times and placeholder byte fields; B's MKV has 600 blocks and a normal end; `missing=300`; `camera_dead` with `last_frame=299` (case 2: `last_frame=296`, `missing=303`; case 3: `last_frame=none`); the stop statistics leave out the `missing` rows [R2, M1, M3, M8, F-5]. |
+| T-REC-23 | unit | Camera B dies at row 300 of a take of 600 group frames: the test calls `give_missing` for rows 300 to 549, then `end(600)`. Case 2: rows 297 to 299 of B are damaged frames before the death. Case 3: B dies before its first frame. Case 4 (added on 2026-11-21): B dies before its first frame of a take of 10 group frames, and its layout (320x240) is not its mode size (640x480). | Case 4: `stored_px` of B is the mode size [SFF-728, [ADR-3B97](../decisions/entries/3B97-format-sync-to-the-format-commit-with-f1-to-f10.md)]. Cases 1 to 3: B's CSV has 600 rows; rows 300 to 599 are `missing` rows with empty times and placeholder byte fields; B's MKV has 600 blocks and a normal end; `missing=300`; `camera_dead` with `last_frame=299` (case 2: `last_frame=296`, `missing=303`; case 3: `last_frame=none`); the stop statistics leave out the `missing` rows [R2, M1, M3, M8, F-5]. |
 | T-REC-24 | process | Camera B writes in a child process (`child_writer.py`). It ends with `os._exit` at 20 kill points: during a `mux`, between a `mux` and its row write, during a row write. The take ends 100 frames later. | `finish` runs only after the join; B's MKV is cut after its last block with a row; the CSV keeps each good row; `missing` rows with empty byte fields reach the frame count; `# repair` then `# end`; no fit line; each row's bytes equal the frame given; each kept block parses; `camera_dead` and `camera_file_short` [R4, M5, C2, SFF-794, SFF-795, F-2, F-4]. |
 | T-REC-25 | unit | Mixes: all live; one dead at 10; one short at 20 and one dead at 30; all dead. | Equal rows in every case, equal to the frame count; equal blocks except the short file [R2, M1, M5, SFF-754]. |
 | T-REC-26 | unit | Trace the end of a take. | The order of 8.1: each camera's `end`, then the completions, the CSV reads, the capture info, the manifest last [SFF-724]. |
 | T-REC-27 | unit | CSVs with known arrival times, also `missing` rows, through `stop_stats`. | Each field of 8.2 equals the value computed by hand to 1e-9 [R5]. |
 | T-REC-28 | unit | Display rotations 0, 90, 180, 270. | The header value; no rotation element; the bytes unrotated [SFF-735, SFF-751]. |
 | T-REC-29 | unit | Inject the clock of the writer thread. | One fsync of the MKV and one of the CSV for each second with a row, on the writer thread only; one fsync of each at `end` [SFF-788, agent 9]. |
-| T-REC-30 | process | A camera process is killed before its first block reaches the file. | The MKV holds only the header of 6.3 (the test's own EBML parser finds the EBML header, the Segment and the Tracks, and no block); the CSV holds only `missing` rows with empty byte fields; `camera_file_short` with `blocks=0`; `stored_px` from the mode size [F-2, review S5]. |
+| T-REC-30 | process | A camera process is killed before its first block reaches the file. | The MKV holds only the header of 6.3 (the test's own EBML parser finds the EBML header, the Segment and the Tracks, and no Cluster); the CSV holds only `missing` rows with empty byte fields; `camera_file_short` with `blocks=0`; `stored_px` from the mode size [F-2, review S5]. |
 | T-REC-31 | unit | Open each finished MKV of T-REC-12 and T-REC-23 with PyAV 19.0.2, with OpenCV 5.1.0 (`CAP_PROP_FRAME_COUNT`, 11 `POS_FRAMES` seeks, over and after the placeholders) and with `SequentialVideoReader`. | The counts equal the rows; each seek gives the expected row; placeholders decode to 0; `SequentialVideoReader` reads every frame [M `RS/mkv_black_placeholder/FINDINGS.md`, M10]. |
 | T-REC-32 | unit | Call `give` and `give_missing` before `start` and after `end`; call `end` twice. | Each raises `RuntimeError` (4.3). |
 | T-REC-33 | unit | Search the module for PyAV calls. | Only the calls of 6.3; no `add_stream_from_template`, no `add_stream(`; `add_mux_stream` with `rate`, `width` and `height` as keywords; the container options hold `flush_packets` `"1"` and `cluster_size_limit` `"1"`; `start_encoding` in `start` [M `RU/results/jpeg_passthrough/FINDINGS.md` §2.1, review B1, S5, S6]. |
@@ -1208,10 +1212,15 @@ Each test of the kinds unit and process uses at least two cameras unless it says
 - Step 5a adds `skellycam/tests/take_recorder/sff_adapter.py` [agent 28]. It exposes only
   `TakeWriter` on top of `start_take`, `CameraTakeWriter` and `finish`, in one process. It has no
   `write_audio` (5b), no `repair_take` (5c), no reader (phase 6) and no `release_check` (5b). It
-  derives the `camera_id` of a camera dict from its `device.os_index`.
-- T-REC-37 checks out skellyfileformat at commit `d67679ada704caf55c64c2e279081d317205f354` next to
+  derives the `camera_id` of a camera dict from its `device.os_index`. Added on 2026-11-21 ([ADR-3B97](../decisions/entries/3B97-format-sync-to-the-format-commit-with-f1-to-f10.md)):
+  `write_frame` passes each JPEG through the capture check `check_jpeg` of the program, which
+  inserts the standard DHT [F-3, ring 5.2]; `data` None gives a frame with `CAPTURE_ERROR` (7.2);
+  `camera_stopped(index, reason)` marks a dead camera for `finish` (7.3). The reader functions
+  `camera_lost_at` and `short_file_counts` are not in the adapter: it has no reader.
+- T-REC-37 checks out skellyfileformat at commit `24949df6c22093336c30b279c396ef593648de1e` next to
   the repository (`../skellyfileformat`) or in CI, and runs only the test functions that use the
-  fixture `writer` and not `reader`.
+  fixture `writer` and not `reader`. Before 2026-11-21, the commit was
+  `d67679ada704caf55c64c2e279081d317205f354`; from 2026-11-21 to 2026-11-23, it was `c1028ef`.
 - The expected results are written by hand here, each with its reason [review S9]. They are not taken
   from a run. A result that differs is a failure of T-REC-37:
 
@@ -1219,12 +1228,14 @@ Each test of the kinds unit and process uses at least two cameras unless it says
   |---|---|---|
   | `test_sft_705_names_and_layout[file_of_another_take]` | pass | |
   | `test_sft_711_camera_file[four_rotations]`, `[rate_30000_1001]`, `[rate_1001_1]` | pass | |
-  | `test_sft_712_jpeg_bytes[mjpeg_source]`, `[h264_request]` | pass | |
+  | `test_sft_712_jpeg_bytes[mjpeg_source]`, `[h264_request]`, `[no_dht]` | pass | |
+  | `test_sft_730_lock_form` | pass | |
+  | `test_sft_771_missing_rows_and_placeholder` | pass | |
   | `test_sft_700_text_integers_json_ids_crcs` | fail | it records audio (5b) |
   | `test_sft_705_names_and_layout[plain]` | fail | it records audio (5b) |
   | `test_sft_705_names_and_layout[labels_of_7]`, `[labels_of_8]` | fail | remembered keys; 5a makes keys from `camera_id` [C3] (5d) |
   | `test_sft_705_names_and_layout[camera_key_0]` | fail | a conversion writer; skellycam's converter is phase 6 |
-  | `test_sft_708_manifest` | fail | it records audio (5b) |
+  | `test_sft_708_manifest` | fail | it records audio (5b); `add_warning` has no call in 5a |
   | `test_sft_711_camera_file[two_cameras]` | fail | it records audio (5b) |
   | `test_sft_712_jpeg_bytes[raw_source]` | fail | raw YUYV input; the recorder takes JPEG only (3b encodes in the loop) |
   | `test_sft_715_common_csv_rules[mono_as_g1]`, `[stereo_as_g2]` | fail | they record audio (5b) |
@@ -1235,11 +1246,11 @@ Each test of the kinds unit and process uses at least two cameras unless it says
   | `test_sft_730_whole_files_and_live_files` | fail | audio (5b) and `repair_take` (5c) |
   | `test_sft_730_fsync_provisional` | skip | provisional in the format |
   | `test_sft_733_camera_file_provisional[*]` | skip | provisional in the format |
-  | `test_sft_735_capture_info_json` | fail | audio (5b); `user_name` (5d) |
+  | `test_sft_735_capture_info_json` | fail | audio (5b) |
   | `test_sft_766_writer_part` | fail | it records audio (5b) |
 
-- When the user accepts a format change of section 13, the format repository changes its tests, and
-  this table changes in the same commit as the new pin.
+- When the pinned format commit changes, this table changes in the same commit as the new pin.
+  The limit of a format commit that is only on the machine of the user ended on 2026-11-23 ([ADR-3B97](../decisions/entries/3B97-format-sync-to-the-format-commit-with-f1-to-f10.md)).
 
 ### 12.4 Decision to tests
 
@@ -1287,13 +1298,13 @@ Each test of the kinds unit and process uses at least two cameras unless it says
 | SFF-741 to 745, 749, 750, 751, 754 to 758 | T-REC-07 to 13, 23, 30 | F-1, F-2. SFF-757 is provisional (DT5). |
 | SFF-772, 774 | T-REC-07, 18 | SFF-773 provisional. |
 | SFF-786, 787, 788, 789 | T-REC-13, 15, 16, 29 | SFF-788 provisional; T-REC-FSYNC. F-7. |
-| SFF-794, 795 (the completion only) | T-REC-21, 22, 24 | F-4. |
+| SFF-794, 795, 894 (the completion only) | T-REC-21, 22, 24 | F-4. |
 | SFF-800, 801, 802 | T-REC-17 | SFF-802 partly until 5d. |
 | SFF-881, 882 | T-REC-14 | |
 | SFF-884 | No test: the module writes JSON and CSV only. | |
 | SFF-760 to 771, 775 to 779 | None in 5a | Audio and fit: 5b [R1]. |
 | SFF-793, 796 to 798 | None in 5a | Repair: 5c [R1]. |
-| SFF-708, 709, 711, 713, 714, 718, 721, 729 to 731, 738 to 740, 746 to 748, 759, 780 to 785, 790 to 792, 799, 803, 864 to 893 | None in 5a | Reader rules: phase 6. |
+| SFF-708, 709, 711, 713, 714, 718, 721, 729 to 731, 738 to 740, 746 to 748, 759, 780 to 785, 790 to 792, 799, 803, 864 to 893, 895 | None in 5a | Reader rules: phase 6. |
 | SFF-725, 804 to 863 | None | freemocap, Blender addon, skellysync. |
 
 ### 12.6 Counts
@@ -1311,139 +1322,33 @@ that the connection tests keep their numbers.
 
 ## 13. Proposed format changes (one list for the recorder and the player)
 
-This is the one list of proposed skellyfileformat changes for this spec and for the player spec. The
-format repository gives the SFF numbers. This spec does not edit skellyfileformat. Each change is a
-local commit there, pushed only on the word of the user [R6]. The text is the proposed rule text.
+Status of 2026-11-23: the format holds F-1 to F-10 since commit `c1028ef` of `../skellyfileformat`
+(skellyfileformat ADR-6AT7). This spec cites commit `24949df6c22093336c30b279c396ef593648de1e`. The
+user decided the ten changes [R6]. skellyfileformat ADR-5B03 and ADR-76NN (both accepted by the
+user) give the details that the list did not fix. Before, this section
+held the proposed rule text of each change. That text is in the git history of this file and in
+skellyfileformat ADR-6AT7. Now the format text applies, and the names F-1 to F-10 stay as references
+([ADR-3B97](../decisions/entries/3B97-format-sync-to-the-format-commit-with-f1-to-f10.md)).
+
+| Change | Format requirements | Details |
+|---|---|---|
+| F-1: `missing` rows and the placeholder [M1, M2, M3] | SFF-728, SFF-729, SFF-745, SFF-754 to SFF-758, SFF-781, SFF-782, SFF-885, the columns of section 8 | `stored_px` is the size of the first stored JPEG that is not a placeholder, or the mode size (ADR-5B03 item 5; ADR-76NN item 12). A reader compares the summary `missing` with the `# end` line only when both hold it (ADR-76NN item 11). |
+| F-2: the short file [M5] | SFF-740, SFF-754, SFF-757, SFF-759, SFF-795 | The term "rows with byte fields". A camera file with no block holds no Cluster (ADR-76NN item 9). A reader refuses a pair (`invalid`, `bad_metadata`) for a row with one empty byte field, for empty byte fields with no flag `missing`, and for a row with byte fields after a row with empty byte fields (ADR-76NN item 10). |
+| F-3: two exceptions to unchanged camera bytes [M4, M6] | SFF-734 | The order of the four Annex K.3 tables is the choice of the writer (ADR-5B03 item 6). |
+| F-4: the completion of a take by its own writer [R4, C2] | SFF-894, SFF-793 | Also after a failed write (ADR-5B03 item 3). The number of rows of the take (ADR-76NN item 10). |
+| F-5: three warning codes [R2, M5, M8, C5] | SFF-727, SFF-895 | The codes are not warnings of the reader result: SFF-887 does not change (ADR-5B03 item 7). "camera lost at frame N", and the warning with no frame number when a `detail` does not parse, are display rules of a player. The take warnings of the skellycam player are the list of the player (`specs/player.md` 6.2, 7.3). |
+| F-6: a provisional key [C3] | SFF-752, SFF-803, the `key_origin` of section 13 | The words "cannot read the values" and "not 0" (ADR-76NN item 5). |
+| F-7: the lock on each OS | SFF-789 | |
+| F-8: equal player times (from the player spec) | SFF-783 | |
+| F-9: when a player checks the block count (from the player spec) | SFF-759 | |
+| F-10: a `missing` row in a player [M9] (from the player spec) | SFF-783 | A take time in a `missing` row with no player time, and a camera with no earlier frame that is not `missing` (ADR-5B03 items 1 and 2). |
+
 The earlier recorder P-2 (block times that count blocks) is withdrawn: with placeholders, rows and
 blocks are equal, and SFF-736 already counts positions [review S13].
 
-**F-1: `missing` rows and the placeholder** [M1, M2, M3]. Touches SFF-728, SFF-745, SFF-754,
-SFF-756, SFF-758, SFF-781, SFF-782, SFF-885 and the column table of section 8.
-
-> **SFF-756** (add): Bit 4 (16): `missing`, the camera gave no usable frame for this row. A capture
-> writer writes it for a frame with a capture error, and for each multi-camera frame after the last
-> frame of a camera that stopped during the take. The block of a `missing` row is a placeholder: a
-> baseline JPEG of one colour, black, with the width, the height, the number of components and the
-> H/V sampling factors of each component of the camera's frames. When the writer knows no frame of
-> the camera, it uses the mode size and the factors 2x1, 1x1, 1x1. Its Huffman and quantisation
-> tables are the writer's choice. The writer compares layouts by the size, the number of components
-> and the H/V factors only. In a `missing` row, `source_frame_number`, `arrival_ns` and `sample_ns` hold the values of the
-> frame that had the error, or are empty when the camera gave no frame.
->
-> **Section 8 columns** (change): `source_frame_number`: "…, or empty"; `arrival_ns`: "The arrival
-> time (relative), or empty in a `missing` row"; `byte_offset` and `byte_size`: "The JPEG payload of
-> the block of the row (the frame or the placeholder), or empty in a `missing` row with no block
-> (F-2)".
->
-> **SFF-758** (change): `# end rows=<R> gaps=<G> filled=<F> missing=<M> encode_skips=<E>`. `missing`
-> is the number of rows with the flag `missing`. It comes before the last key (SFF-745).
->
-> **SFF-728** (change): each item of `cameras` also has `missing`, after `filled`: the count of the
-> `# end` line (null in the state `recording`). `duration_s` uses the largest `arrival_ns` of the last row that
-> holds an `arrival_ns` of each video sidecar.
->
-> **SFF-729** (add): A reader also gives `summary_stale` when `missing` of a summary camera differs
-> from the `# end` line of a finished or repaired sidecar.
->
-> **SFF-781** (add): A row with no `arrival_ns` has no player time. In the strict player time of
-> SFF-782, the reader skips it.
->
-> **SFF-885** (add): `rows` counts the `missing` rows. A `records` item of a row with no time has
-> `arrival_ns`, `sample_ns` and `player_ns` null.
-
-**F-2: the short file** [M5]. Touches SFF-740, SFF-754, SFF-759, SFF-795 and SFF-727 (code in F-5).
-
-> **SFF-754** (add): A camera file has one block for each row, with two exceptions: when the process
-> that writes the camera file is killed or hangs, and when a write to the camera file fails, the file
-> ends early. Each row after its last block
-> has the flag `missing` and empty `byte_offset` and `byte_size`. Such a row has no block. A camera
-> file can hold no block: it then holds only the EBML header, the Segment and the Tracks.
->
-> **SFF-759** (replace the first sentence): The number of rows with a `byte_offset` of a finished or
-> a repaired video sidecar is the number of blocks of its camera file.
->
-> **SFF-740** (add): A `missing` row with empty byte fields has no block. It is usable when it is
-> complete and its CRC is correct.
->
-> **SFF-795** (add): The repair keeps the `missing` rows with empty byte fields that come before the
-> cut, and they do not count as blocks. A later repair may replace the tail of a short file with
-> placeholders (F-1).
-
-The user decided the write error as the second case on 2026-11-20 [M5]. If that decision changes,
-only the words "and when a write to the camera file fails" go.
-
-**F-3: two exceptions to "the stored bytes are the camera's bytes"** [M4, M6]. Touches SFF-734.
-
-> **SFF-734** (add): Two exceptions: (1) the block of a `missing` row is the placeholder of SFF-756;
-> (2) when the camera sent a JPEG with no DHT segment before its first SOS, the capture writer inserts
-> the standard tables of ITU-T T.81 Annex K.3 as one DHT segment immediately before the first SOS,
-> and stores those bytes. It changes no other byte.
-
-**F-4: the completion of a take by its own writer** [R4, C2]. A new requirement after SFF-798.
-
-> **(new, writer)**: When the process that writes a camera pair ends during a take with no normal end
-> of its files (a hang, a kill), the program that records the take completes that pair at the end of
-> the same take, in the same run, after that process has ended. It cuts the camera file and the
-> sidecar as SFF-795 gives, appends no byte to the camera file, appends a `missing` row with empty
-> byte fields (F-2) for each multi-camera frame up to the number of rows of the take, then the
-> `# repair` line and the `# end` line. It writes no fit lines until it has a fitter. This is not the
-> repair of SFF-793: the program does not ask the user. A reader reports the pair as `repaired`.
-
-**F-5: three warning codes** [R2, M5, M8, C5]. Touches SFF-727.
-
-> **SFF-727** (add): skellycam also writes `camera_dead` (a camera stopped during the take; its
-> sidecar holds `missing` rows to the end of the take), `camera_file_short` (F-2) and `take_error`
-> (an error ended the take). The `detail` of `camera_dead` is `last_frame=<p> reason=<text>`, where p
-> is the position of the last row that is not `missing`, or `none`. The `detail` of
-> `camera_file_short` is `blocks=<b> rows=<r>`. The `detail` of `take_error` is the error text, and
-> its `camera_key` is the camera of the error, or null. A write error gives `camera_file_short` and
-> `take_error`, and no `camera_dead`.
->
-> **(new, reader)**: A reader parses the `detail` of `camera_dead` and of `camera_file_short` as keys
-> and values: each key is followed by `=`, the keys are separated by one space, the values of `p`,
-> `b` and `r` are integers in the form of SFF-701 (or `none` for `p`), and the value of `reason` is
-> the rest of the text. A player shows "camera lost at frame N" with N = p + 1, and N = 0 for `none`.
-> A `detail` that does not parse gives the take warning of the code with no frame number.
-
-**F-6: a provisional key** [C3]. Touches SFF-752, SFF-803 and the camera config table of section 13.
-
-> **Section 13, `key_origin`** (add a value): `"provisional"`: a capture writer that cannot read the
-> identity of SFF-752 made the key from its own camera identifier. The key is not stable across
-> computers or sessions. A program does not remember it.
->
-> **SFF-803** (change): a reader checks that `key_origin` is one of its four values.
-
-**F-7: the lock on each OS.** Touches SFF-789.
-
-> **SFF-789** (add): On Windows, the lock is an exclusive lock of byte 0 for 1 byte (`LockFileEx`
-> with `LOCKFILE_EXCLUSIVE_LOCK`, or `LockFile`, which takes the same lock; Python `msvcrt.locking`
-> calls `LockFile`). On Linux and macOS, it is `flock` with `LOCK_EX` on the whole file. Each program
-> uses this form, because a `flock` lock and an `fcntl` record lock do not see each other on Linux.
-
-**F-8: equal player times** (from the player spec). Touches SFF-783.
-
-> **SFF-783** (add): When two or more positions have the same player time, the player shows the
-> highest of them at that time.
-
-**F-9: when a player checks the block count** (from the player spec). Touches SFF-759.
-
-> **SFF-759** (add): A player MAY show the frames of a finished or repaired camera file before it has
-> counted its blocks. It then checks, for each frame that it reads, that the block of the frame is the
-> next block after the block of the previous row with byte fields (SFF-739), and, at the open, that no
-> block follows the last block that a row points at. When a check fails, the player stops showing
-> images of that camera file and reports the file as `invalid` with `bad_metadata`. The reader result
-> of SFF-885 does not use this order.
-
-**Out of the list.** The player spec (section 14.2, branch `dom/player`) names four cases that the
-format leaves open: a missing column that a reader needs; a `frame` value that is not the position; a
-player time that decreases; a camera file whose track is not `V_MJPEG`. They are not in F-1 to F-10.
-They stay open.
-
-**F-10: a `missing` row in a player** [M9] (from the player spec). Touches SFF-783.
-
-> **SFF-783** (add): At a take time in a `missing` row, a player shows the last frame before it that
-> is not `missing`, with a mark "no frame". It never shows the placeholder as a picture. A program
-> that ignores the flag shows the placeholder (black).
+**Out of the list.** The player spec (section 14.2) names four cases that the format leaves open: a
+missing column that a reader needs; a `frame` value that is not the position; a player time that
+decreases; a camera file whose track is not `V_MJPEG`. They are not in F-1 to F-10. They stay open.
 
 ## 14. Edits needed in `specs/windows-capture.md`
 
@@ -1502,7 +1407,8 @@ VPF8 and J3QP record that R1 to R5, M1 to M5 and C5, C6 replace their effect.
 4. The camera-side drop that only the flag `DISCONTINUITY` shows [D34] is not in the CSV (7.1). The
    fit of step 5b counts frames by `source_frame_number` [SFF-777]. A frame that the camera dropped
    then shifts the fit by one period. Step 5b decides.
-5. The format changes F-1 to F-10 wait for the user [R6].
+5. The format changes F-1 to F-10 are in the format since commit `c1028ef` (section 13). The user
+   accepted the details of skellyfileformat ADR-76NN ([ADR-3B97](../decisions/entries/3B97-format-sync-to-the-format-commit-with-f1-to-f10.md)).
 6. The connection tests run the shared loop on macOS, where the capture spec runs no fake-source
    test [D47]. A macOS failure of the shared loop itself goes to the user.
 

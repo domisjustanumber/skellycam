@@ -22,10 +22,12 @@ Marks:
 - **[En]**: an earlier decision of the user that the decision list of 2026-11-19 cites (section 18.5).
   This spec numbers them for reference only.
 - **[SFF-nnn]**: a requirement of the format spec `../skellyfileformat/spec/SPEC.md`, draft v2, read
-  at commit d67679a of that repository. This spec cites it. It does not repeat it.
-- **[F-list]**: the one merged list of proposed format changes, section 13 of `specs/recorder.md` on
-  branch `dom/recorder` (being revised in parallel). This spec reads the rules of M1 to M10 from the
-  decisions until that list is final (section 13).
+  at commit 24949df (`24949df6c22093336c30b279c396ef593648de1e`) of that repository. This spec cites
+  it. It does not repeat it. Before 2026-11-21, this spec read commit d67679a, and then commit
+  c1028ef ([ADR-3B97](../decisions/entries/3B97-format-sync-to-the-format-commit-with-f1-to-f10.md)).
+- **[F-list]**: the list F-1 to F-10 of format changes, section 13 of `specs/recorder.md`. The format
+  holds these changes since commit c1028ef (skellyfileformat ADR-6AT7). The user accepted the details
+  of skellyfileformat ADR-5B03 and ADR-76NN.
 - **[M file]**: measured; the file holds the result. Each research file is on branch `dom/research`
   at commit fc95be447 of this repository. It is not on this branch. Short names:
   - `RT` = `research/skellycam_recording/recording_upgrade/results/range_transport/FINDINGS.md`;
@@ -508,6 +510,10 @@ of option B with threads and process splits is open work, not 6a (14.4) [Y2].
 - It reads the warnings `camera_dead` with `last_frame` [M8] (7.3). It adds the code of each warning
   of the manifest to `take.warnings` of the state, for example `camera_file_short` and `take_error`
   (T-PLAY-71) ([ADR-1ACK](../decisions/entries/1ACK-corrections-and-choices-of-the-6a-player-code.md)).
+  `take.warnings` is the list of the player. It is not the take warnings of the reader result of
+  SFF-887: the codes of SFF-727 are not warnings of that result (SFF-895) ([ADR-3B97](../decisions/entries/3B97-format-sync-to-the-format-commit-with-f1-to-f10.md)).
+  SFF-895 asks a reader to parse the `detail` of `camera_file_short`. The player does not parse it,
+  because it shows no value of it.
 - `state` = `recording` makes the take unfinished (6.11) [Y5].
 - It does not use `summary` for playback [SFF-729]. It does not check `sha256` [SFF-730].
 
@@ -581,9 +587,12 @@ The rebuild needs `<rec>` only to find the folder files [SFF-868]. The player re
   `# end` is `finished`. A file with a `# repair` line and `# end` as its last line is `repaired`. Each
   other file is `unfinished` [SFF-747, SFF-795]. When two states apply, the reader gives the first of
   SFF-886. The reader ignores the keys of the `# end` line that it does not need, also `missing=`
-  [SFF-709, M3].
-- The flags: bit 0 `gap`, bit 1 `filled`, bit 2 `encode_skip`, bit 3 `repeat` [SFF-756], and the flag
-  `missing`, bit 4 (16) [M3, F-1 of the recorder spec]. A
+  [SFF-709, M3]. SFF-729 makes a reader compare `missing` of the summary with the `# end` line when
+  both hold it (skellyfileformat ADR-76NN item 11). The player does not make
+  this comparison: it never reads `summary` (6.2) and it gives no `summary_stale` for any member
+  (6.13, L2). The full result of 6c makes it ([ADR-3B97](../decisions/entries/3B97-format-sync-to-the-format-commit-with-f1-to-f10.md)).
+- The flags: bit 0 `gap`, bit 1 `filled`, bit 2 `encode_skip`, bit 3 `repeat` and the flag
+  `missing`, bit 4 (16) [SFF-756, M3]. A
   usable row with `gap` gives the file warning `gap`; with `encode_skip`, the file warning
   `encode_skip` [SFF-887]. The player shows the frames with `gap`, `filled`, `encode_skip` or
   `repeat` as all other frames.
@@ -593,11 +602,16 @@ The rebuild needs `<rec>` only to find the folder files [SFF-868]. The player re
 - A `missing` row is usable when the row is usable [SFF-746]. It counts in `rows` and in
   `missingRows`.
 - In a camera file of M1, each row has one block, also a `missing` row: its byte fields point at the
-  placeholder [M1, M3]. The row-to-block rule of SFF-740 and the count of SFF-759 stay as they are.
+  placeholder [M1, M3]. Each row then has byte fields, so row k belongs to block k [SFF-740].
 - In the short file of a killed camera process [M5], and in the short file of a write error on one
-  camera file [U2], the late `missing` rows have empty byte fields and no block. The row-to-block rule counts only the rows with byte fields: the j-th row with byte
-  fields belongs to the j-th complete block [M5]. The count of SFF-759 compares the rows with byte
-  fields with the blocks.
+  camera file [U2], the late `missing` rows have empty byte fields and no block [SFF-754]. The
+  row-to-block rule counts only the rows with byte fields (`byte_offset` and `byte_size`): the j-th
+  row with byte fields belongs to the j-th complete block [SFF-740]. The count of SFF-759 compares
+  the rows with byte fields with the blocks [SFF-759].
+- The reader refuses the file (`invalid`, `bad_metadata`) when a row has one empty byte field and
+  one that is not empty, when a row has empty byte fields and no flag `missing`, or when a row with
+  byte fields follows a row with empty byte fields (SFF-759;
+  skellyfileformat ADR-76NN item 10) ([ADR-3B97](../decisions/entries/3B97-format-sync-to-the-format-commit-with-f1-to-f10.md)).
 - The player never shows a placeholder [M9]. It never decodes the block of a `missing` row. It reads
   the bytes of a placeholder only as part of a range that it checks (6.10).
 - A `missing` row keeps its times and `source_frame_number` for a damaged frame that had them, and has
@@ -651,7 +665,7 @@ The rebuild needs `<rec>` only to find the folder files [SFF-868]. The player re
   [SFF-759]. A repaired file has no normal end and passes [SFF-794].
 - The other half of SFF-759 (a block in the middle that has no row) is found when a frame is read
   (6.10). The reader does not walk the whole file at the open: a full walk costs one read for each
-  block. The merged list holds the proposal that allows this order (section 13).
+  block. SFF-759 allows this order (F-9, section 13).
 
 ### 6.10 Reading a frame: trust the CSV, check the block header [SFF-739] [SFF-757] [agent 17]
 
@@ -688,8 +702,10 @@ The rebuild needs `<rec>` only to find the folder files [SFF-868]. The player re
   its frames from the byte positions of its rows [SFF-740].
 - A frame of an unfinished file is usable when its row is usable and its block is complete [SFF-740].
   A block is complete when the end of its payload is not past the snapshot size [agent 12]. The reader
-  uses no row with byte fields after the last complete block, and no block after the last usable row
-  [SFF-740]. A `missing` row with empty byte fields needs no block [M5].
+  uses no row after the first row with byte fields whose block is not complete, also no `missing`
+  row with empty byte fields, and no block after the last usable row (SFF-740;
+  skellyfileformat ADR-76NN item 1). A `missing` row with empty byte fields before that row needs no block, and it is
+  a usable frame [SFF-740, SFF-754].
 - `torn_bytes` of the pair is the bytes of a torn last line of the sidecar, plus the bytes of the
   camera file after its last complete block when the sidecar has no `# end` line [SFF-791].
 - The reader reads each complete record of the snapshot in file order, and it checks that it reached
@@ -746,7 +762,9 @@ For each camera c, at take time t and frame number k*:
   6.8. When two candidate rows have the same player time, the image is the row with the higher
   position. When no candidate exists (t before the first real row), the tile is black [SFF-783].
 - **Mark.** When row k* of camera c is a `missing` row, the tile shows the last image with the mark
-  "no frame" [Y4, M9], or "camera lost at frame N" when k* ≥ N of a dead camera [Y4, M8].
+  "no frame" [Y4, M9, SFF-783], or "camera lost at frame N" when k* ≥ N of a dead camera [Y4, M8,
+  SFF-895]. For a dead camera from N on, "camera lost at frame N" is the text of the "no frame" mark
+  of SFF-783: the tile shows one mark, not two ([ADR-3B97](../decisions/entries/3B97-format-sync-to-the-format-commit-with-f1-to-f10.md)).
 - The player never computes a frame from its index and the frame rate [SFF-783].
 - The image depends only on t and the mark only on k*, not on the history of the tile.
 
@@ -756,12 +774,13 @@ the image. This is a known effect of a mark from k* and an image from t (14.3).
 Dead camera [M8] [agent 21]:
 
 - With a finished manifest that the reader uses: a camera with a warning `camera_dead` is dead. The
-  `detail` of the warning is `last_frame=<p> reason=<text>` [F-5 of the recorder spec]. p is the last
+  `detail` of the warning is `last_frame=<p> reason=<text>` [SFF-727, SFF-895]. p is the last
   row of the camera that is not `missing`. N = p + 1, the first group frame with no image [M8]. When p
   is `none`, N = 0. A `detail` that does not have this form gives the rule of the next item for that
-  camera [agent 21], and the take warning `camera_dead` with no frame number [F-5]. The take warnings
-  hold the code of each manifest warning, so they hold `camera_dead` in each case
-  ([ADR-1ACK](../decisions/entries/1ACK-corrections-and-choices-of-the-6a-player-code.md)).
+  camera [agent 21], and the warning `camera_dead` with no frame number [SFF-895]. The take warnings
+  of the player hold the code of each manifest warning, so they hold `camera_dead` in each case
+  ([ADR-1ACK](../decisions/entries/1ACK-corrections-and-choices-of-the-6a-player-code.md)). They are
+  the list of the player, not the reader result of SFF-887 (6.2).
 - With no manifest that the reader uses, or with a manifest whose `state` is `recording` (it has no
   warnings yet): a camera whose rows are `missing` from one row to the last row of the file is dead.
   N is the first row of that run.
@@ -1283,6 +1302,7 @@ The recorder spec uses this description as the model of its placeholder, so it i
 | T-PLAY-79 | electron | A GET with no `Range` of a sparse file of 512 MiB. | 200 with all bytes; the main process grows by less than 200 MB ([ADR-5FBS](../decisions/entries/5FBS-fixes-of-the-6a-code-review.md)). |
 | T-PLAY-80 | component | Host view on `counts_refused`. | The loading message goes away ([ADR-5FBS](../decisions/entries/5FBS-fixes-of-the-6a-code-review.md)). |
 | T-PLAY-81 | unit | The route with a bridge double that refuses the folder, and with an old folder. | `not_allowed` for the first (`chooseTakePlayer` still gives `video`); `video` for the second, and the files close ([ADR-5FBS](../decisions/entries/5FBS-fixes-of-the-6a-code-review.md)). |
+| T-PLAY-82 | unit | Copies of `dead_short` whose camera 3 has: row 100 with one empty byte field; row 100 with empty byte fields and no flag `missing`; row 78 with empty byte fields and no block, so that row 79 has byte fields after it. Also a copy whose camera 3 has no block. | The first three: camera 3 is `invalid` with `bad_metadata` (SFF-759; skellyfileformat ADR-76NN item 10). No block: camera 3 is `repaired` and not refused, 120 rows, `deadFrom` 0, K = 120, the mark "camera lost at frame 0" (SFF-754) ([ADR-3B97](../decisions/entries/3B97-format-sync-to-the-format-commit-with-f1-to-f10.md)). |
 
 ### 12.4 Decisions and reader rules to tests
 
@@ -1328,9 +1348,9 @@ The recorder spec uses this description as the model of its placeholder, so it i
 | SFF-740 | T-PLAY-21, T-PLAY-23, T-PLAY-24, T-PLAY-26 |
 | SFF-744, SFF-746 | T-PLAY-11, T-PLAY-12, T-PLAY-13 |
 | SFF-747, SFF-795, SFF-798, SFF-886 | T-PLAY-13, T-PLAY-15 |
-| SFF-754 | T-PLAY-11, T-PLAY-22 |
+| SFF-754 | T-PLAY-11, T-PLAY-22, T-PLAY-82 |
 | SFF-756, SFF-887 (file warnings) | T-PLAY-09, T-PLAY-15 |
-| SFF-759, SFF-794 | T-PLAY-21, T-PLAY-27 |
+| SFF-759, SFF-794 | T-PLAY-21, T-PLAY-27, T-PLAY-82 |
 | SFF-777, SFF-780 | T-PLAY-14 |
 | SFF-782 | T-PLAY-16, T-PLAY-29 |
 | SFF-790 | T-PLAY-07 |
@@ -1345,7 +1365,7 @@ The recorder spec uses this description as the model of its placeholder, so it i
 | SFF-890 | T-PLAY-02 |
 | F1 to F21 | T-PLAY-31, T-PLAY-37, T-PLAY-44, T-PLAY-50 to T-PLAY-53 |
 
-Counts: 45 unit, 17 component, 13 electron, 6 benchmark: 81 tests.
+Counts: 46 unit, 17 component, 13 electron, 6 benchmark: 82 tests.
 
 ### 12.5 Parity of the systems [Y7]
 
@@ -1385,9 +1405,11 @@ A new workflow `.github/workflows/player.yml`, on the pattern of `.github/workfl
 
 ## 13. Format changes that the player contributes
 
-The one merged list of proposed format changes is section 13 of `specs/recorder.md` on branch
-`dom/recorder` (the F-list). It also holds the rules of M1 to M10. This spec does not repeat that list
-and does not edit skellyfileformat. The player contributes three items to it [agent 39]:
+The one merged list of format changes is section 13 of `specs/recorder.md` (the F-list). It also
+holds the rules of M1 to M10. This spec does not repeat that list and does not edit skellyfileformat.
+The player contributed three items to it [agent 39]. Since commit c1028ef, the format holds them: item
+1 is F-8 and item 3 is F-10 in SFF-783, and item 2 is F-9 in SFF-759 (skellyfileformat ADR-6AT7)
+([ADR-3B97](../decisions/entries/3B97-format-sync-to-the-format-commit-with-f1-to-f10.md)). The text of the format applies. The items as the player proposed them:
 
 1. **Equal player times** (addition to SFF-783): when two or more frames of a camera have the same
    player time, the last frame at or before t is the one with the highest position.
@@ -1422,10 +1444,10 @@ Section 14.2 lists the cases that the format still leaves open.
 
 ### 14.2 Open points
 
-1. **The F-list of the recorder spec** waits for the user. This spec follows its current text: the
-   bit 4 of `missing` and `missing=` before the last key of `# end` (F-1), the short file (F-2), and
-   the `detail` forms of `camera_dead` and `camera_file_short` (F-5). When the F-list changes, this
-   spec follows it.
+1. **The F-list of the recorder spec** is in the format since commit c1028ef (skellyfileformat
+   ADR-6AT7). This spec follows the format text: the bit 4 of `missing` and `missing=` before the last
+   key of `# end` (F-1), the short file (F-2), and the `detail` forms of `camera_dead` and
+   `camera_file_short` (F-5). The user accepted the details of skellyfileformat ADR-76NN ([ADR-3B97](../decisions/entries/3B97-format-sync-to-the-format-commit-with-f1-to-f10.md)).
 2. **Cases that the format leaves open**: a missing column that a reader needs; a `frame` value that
    is not the position; a player time that decreases; a camera file whose track is not `V_MJPEG`.
    None of the four is in the merged list F-1 to F-10 of the recorder spec. They stay open. The
@@ -1436,9 +1458,10 @@ Section 14.2 lists the cases that the format still leaves open.
 4. A page from `http://` (Vite dev server) that reads the custom scheme was not tested [M `RT` §4].
 5. The exact `xvfb` version for the Linux job [NV]; Node 26.13.1 [NV].
 6. That no other page can learn a token (5.4) [NV].
-7. The golden folders of skellyfileformat: G1 to G16 exist, each case with a `.player.json` result
-   (`../skellyfileformat/golden/README.md`). The conformance run against them comes with 6c [L2]. They
-   do not hold placeholders or `missing` rows yet.
+7. The golden folders of skellyfileformat: G1 to G16 and G18 exist, each case with a `.player.json`
+   result (`../skellyfileformat/golden/README.md`). The conformance run against them comes with 6c
+   [L2]. G18 holds `missing` rows, placeholders, short files and a camera file with no block (the case
+   `no_block`). G1 to G16 hold no placeholder.
 
 ### 14.3 Weak points
 

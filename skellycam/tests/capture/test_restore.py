@@ -107,13 +107,45 @@ def test_f7_no_restore_when_the_loop_failed(monkeypatch):
     assert source.diagnostics()["restore_ok"] is None
 
 
-@pytest.mark.parametrize("next_open", ["apply again", "a new group"])
+@pytest.mark.parametrize("failure, script, restored", [
+    ("rate-low", dict(rate=25.0), True),  # the start-up rate check of a camera in MANUAL
+    ("not-ready", dict(), True),  # the ready limit of W 9.3 (2 s here) ends the warm-up
+    ("stalled", dict(), False),  # the stall rule of W 9.5: a wedge
+    ("stream-error", dict(removed_after_frame=150, removed_code="stream-error"), True),  # a source error, no wedge
+    ("device-removed", dict(removed_after_frame=150), False),  # a wedge
+])
+def test_t_unx_95_a_camera_whose_loop_failed_is_restored_unless_it_is_wedged(monkeypatch, failure, script, restored):
+    """T-UNX-95, unix-capture.md 4.7 [Z7F3] (a decision of the user of 2026-11-21): the open set the exposure (auto -6
+    before it, MANUAL -7 after it); then the loop fails. A failure that is not a wedge (`rate-low`, `not-ready`) gets
+    the restore at the close: auto -6 again, `restore_ok` true. A wedge (`stalled`) gets no set at the close."""
+    if failure == "not-ready":
+        from skellycam.core.camera.capture import camera_loop
+        monkeypatch.setattr(camera_loop, "READY_LIMIT_NS", 2_000_000_000)  # 2 s: the warm-up of 90 frames needs 3 s
+    with one_camera(monkeypatch, FakeScript(controls=AUTO_BEFORE, **script)) as (app, camera_id, _):
+        source, log = app.factory.sources[camera_id], app.factory.logs[camera_id]
+        if failure == "stalled":
+            source.stop_now()
+        if failure in ("stalled", "stream-error", "device-removed"):
+            app.wait_state(camera_id, "dead")
+        app.wait(lambda: log.closes.value == 1, "the close")
+        assert app.status(camera_id)["failure"]["code"] == failure
+    after_close = [s for t, s in exposure_sets(log) if t >= close_time(log)]
+    if restored:
+        assert [(s.auto, s.value) for s in after_close] == [(True, -6)]
+        assert source.diagnostics()["restore_ok"] is True
+    else:
+        assert after_close == [] and source.diagnostics()["restore_ok"] is None
+
+
+@pytest.mark.parametrize("next_open", ["apply again", "a new group", "a camera that rounds"])
 def test_t_unx_91_the_values_of_before_survive_a_camera_with_no_restore(monkeypatch, next_open):
     """T-UNX-91, unix-capture.md 4.7 [NYT6]: a camera that keeps its controls between opens (a real camera) was in auto -6. Its
     first open sets MANUAL -7; its loop fails, so it gets no restore and stays at manual -7. The next open ("apply
     again", or a new group after a group close) reads manual -7, but its "before" values stay auto -6, and its
-    close restores auto -6."""
-    script = FakeScript(controls=AUTO_BEFORE, keeps_controls=True)
+    close restores auto -6. [Z7F3]: a camera that rounds (the C930e) reads manual -6 at the next open, one step from
+    -7; its close also restores auto -6."""
+    rounds = next_open == "a camera that rounds"
+    script = FakeScript(controls=AUTO_BEFORE, keeps_controls=True, reopen_shift=(("exposure", 1),) if rounds else ())
     with one_camera(monkeypatch, script) as (app, camera_id, _):
         log = app.factory.logs[camera_id]
         app.factory.sources[camera_id].stop_now()
@@ -123,11 +155,33 @@ def test_t_unx_91_the_values_of_before_survive_a_camera_with_no_restore(monkeypa
         if next_open == "a new group":
             app.client.delete("/skellycam/camera/group/close/all")
             assert log.device_controls["exposure"][1:] == [False, -7]  # a group close opens no camera
-        assert app.apply([app.config(camera_id)]).status_code == 200
+        assert app.apply([app.config(camera_id)], retry=[camera_id]).status_code == 200
         app.wait_state(camera_id, "ready")
         source = app.factory.sources[camera_id]
         app.client.delete("/skellycam/camera/group/close/all")
         app.wait(lambda: log.closes.value == 2, "the close")
+    assert log.device_controls["exposure"][1:] == [True, -6]
+    data = source.diagnostics()
+    assert (data["exposure_before"], data["exposure_before_auto"], data["restore_ok"]) == (-6, True, True)
+
+
+def test_t_unx_91_an_open_that_takes_the_record_one_step_away_still_runs_the_rate_check(monkeypatch):
+    """T-UNX-91, unix-capture.md 4.7 [Z7F3]: an open that used the record one step away still runs the normal rate
+    check. The first open sets MANUAL -7 and stalls (no restore); the camera rounds and reads manual -6 at the next
+    open, so that open takes the record (auto -6 before). The camera is now slow (25 fps): the start-up rate check
+    of that open fails it with `rate-low`, and its close restores auto -6."""
+    script = FakeScript(controls=AUTO_BEFORE, keeps_controls=True, reopen_shift=(("exposure", 1),))
+    with one_camera(monkeypatch, script) as (app, camera_id, _):
+        log = app.factory.logs[camera_id]
+        app.factory.sources[camera_id].stop_now()
+        app.wait_state(camera_id, "dead")
+        app.wait(lambda: log.closes.value == 1, "the close of the dead camera")
+        script.rate = 25.0  # the next open delivers 25 fps in its 30 fps mode
+        assert app.apply([app.config(camera_id)], retry=[camera_id]).status_code == 200
+        app.wait_state(camera_id, "failed")
+        app.wait(lambda: log.closes.value == 2, "the close")
+        source = app.factory.sources[camera_id]
+        assert app.status(camera_id)["failure"]["code"] == "rate-low"
     assert log.device_controls["exposure"][1:] == [True, -6]
     data = source.diagnostics()
     assert (data["exposure_before"], data["exposure_before_auto"], data["restore_ok"]) == (-6, True, True)
@@ -219,3 +273,32 @@ def test_t_unx_92_a_record_applies_only_to_controls_that_still_hold_the_value_of
     restore = ControlRestore("cam")
     restore.read(dict(device))
     assert restore.before["exposure"] == ControlValue(True, True, -6) and restore.before["gain"] == ControlValue(True, False, 0)
+
+
+@pytest.mark.parametrize("read, steps, takes_record", [
+    (-6, {"exposure": 1}, True), (-8, {"exposure": 1}, True),  # (d) one step: a camera that rounds at a new open (C930e)
+    (-6, None, False), (-6, {"exposure": 0}, False),  # (d) no step known: the same value is needed
+    (-5, {"exposure": 1}, False), (-9, {"exposure": 1}, False),  # (e) two steps: another program set it
+])
+def test_t_unx_92_a_camera_that_rounds_at_a_new_open_keeps_the_record(monkeypatch, read, steps, takes_record):
+    """T-UNX-92 (d), (e), unix-capture.md 4.7 [Z7F3]: open 1 set manual -7 and got no restore. At open 2 the camera
+    reads manual `read`. Within one step of the control's own step the record still applies (the "before" value is
+    auto -6 of the record); else the record drops the control, and the "before" value is the value that the camera
+    reads. The auto flag must always be the same."""
+    from types import SimpleNamespace
+
+    from skellycam.core.camera.capture import source
+    from skellycam.core.camera.capture.source import ControlRestore, ControlValue
+
+    store = {"r": dict(before={"exposure": [True, True, -6]}, names=["exposure"], set={"exposure": [False, -7]})}
+    monkeypatch.setitem(source.RESTORE_RECORDS, "cam", SimpleNamespace(
+        restore_record=lambda: store.get("r", {}), set_restore_record=lambda r: store.__setitem__("r", r)))
+    restore = ControlRestore("cam")
+    restore.read({"exposure": ControlValue(True, False, read)}, steps)
+    expected = ControlValue(True, True, -6) if takes_record else ControlValue(True, False, read)
+    assert restore.before["exposure"] == expected
+    assert bool(store["r"]) == takes_record
+    store["r"] = dict(before={"exposure": [True, True, -6]}, names=["exposure"], set={"exposure": [False, -7]})
+    auto = ControlRestore("cam")
+    auto.read({"exposure": ControlValue(True, True, -7)}, steps)  # the same value, but the camera is in auto again
+    assert auto.before["exposure"] == ControlValue(True, True, -7)
