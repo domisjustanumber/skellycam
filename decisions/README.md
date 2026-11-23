@@ -55,6 +55,7 @@ These entries are `accepted`.
 | [81RE](entries/81RE-decisions-of-the-user-on-the-restore-file-the-take-rate-and-pace-tests.md) | Q608, Q609, Q619 of 2026-11-23: restore record on disk; take rate is frames over time; pace tests reported, not blocking, on CI | accepted |
 | [T34M](entries/T34M-decision-of-the-user-on-the-start-method-of-camera-processes.md) | Q651 of 2026-11-23: no start method at import; the app sets spawn; a fork start is refused; nothing decided for FreeMoCap | accepted |
 | [0AMX](entries/0AMX-propose-from-skellycam-and-review-in-the-kit.md) | Q657: a skellycam agent runs `propose`; the kit session reviews and commits the result in its own repository | accepted |
+| [TC9B](entries/TC9B-ci-runner-with-no-device.md) | Q660: the CI exception of the other-systems rule says "a CI runner with no device", so it fits each repository | accepted |
 
 ### Proposed
 

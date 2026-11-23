@@ -15,10 +15,9 @@ task. Delete an item when its work is done. The PR that closes an item records t
   repository then sets its own `EXEMPT_PATHS`, spec path and self-test pointer. The design
   choices of [ADR-K9B7](entries/K9B7-design-of-the-other-systems-rule-skill-and-check.md) are
   accepted (Q649).
-  - 2026-11-23: `propose` wrote the four units and the hook into the kit working tree
-    ([ADR-0AMX](entries/0AMX-propose-from-skellycam-and-review-in-the-kit.md)). Not done: the kit
-    review and commit (with `SELF_TEST` and `CERTIFY_REPO` in its `kit.toml` template), then a
-    `pull` here.
+  - The kit took the rule at c426019 ([ADR-0AMX](entries/0AMX-propose-from-skellycam-and-review-in-the-kit.md)).
+    The wording of [ADR-TC9B](entries/TC9B-ci-runner-with-no-device.md) waits in the kit working
+    tree: the kit reviews and commits it, pushes, then a `pull` here.
 - **An exact name lookup in `tools/check_other_systems.py`.** On 2026-11-23 (Q649) the user asked
   how the lookup of a `certify-check` name can be exact, and what it means that it is not. Today it
   takes the code spans of `specs/certify.md` with the form of a check name (item 6 of
