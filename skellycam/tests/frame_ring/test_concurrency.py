@@ -369,7 +369,7 @@ def test_a_killed_process_keeps_the_lock_of_a_shared_value(spawn, procs):
     blocked.start()
     blocked.join(1.0)
     assert blocked.is_alive(), "is_set returned after the holder of the lock was killed"
-    for test in (test_t_ring_12_reader_killed, test_bgr_ring.test_t_ring_36_reader_killed):
+    for test in (_reader_killed_run, test_bgr_ring.test_t_ring_36_reader_killed):  # the run of T-RING-12 (16.1)
         source = inspect.getsource(test)
         assert 'spawn.Value("i", 0, lock=False)' in source, test.__name__
         assert "phase, victim_stop, victim_results" in source, f"{test.__name__}: the victim shares `stop`"
