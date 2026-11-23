@@ -1,14 +1,14 @@
 # MX8V — Decisions of the user on capture timings
 
 **Status:** accepted, 2026-11-23 (user; Q565 to Q571, to which the user answered "agree to all"; Q576 and
-Q577, agreed; Q578, the user refused "always on").
+Q577, agreed; Q578, the user refused "always on"; Q580 to Q583, "Q580-Q583 agree"; Q586, agreed).
 
 ## Decision
 
 The request of the user (2026-11-23): "I want to be able to see capture timings in the realtime pipeline UI
 in FreeMoCap, that is - any codec work - anything else you think might take more than 1ms to complete". The
 user decided these items on 2026-11-23. They are not built. The spec
-[`specs/capture-timings.md`](../../specs/capture-timings.md) (draft 1) applies them, and its section 14 gives
+[`specs/capture-timings.md`](../../specs/capture-timings.md) (draft 2) applies them, and its section 14 gives
 each one.
 
 1. **Q565.** The split of the work: skellycam measures and publishes; FreeMoCap displays. The spec covers the
@@ -39,7 +39,18 @@ each one.
     other metrics in skellytracker". The measurement has an on and off switch, as close to the pattern of
     skellytracker and of FreeMoCap `log_pipeline_times` as the process model of skellycam permits, and the
     host app can set it through the API. The details of the switch are agent choices
-    ([ADR-8Z0Q](8Z0Q-choices-of-the-capture-timings-spec.md) item 3).
+    ([ADR-8Z0Q](8Z0Q-choices-of-the-capture-timings-spec.md) item 2).
+11. **Q580.** `performance_data` goes, with its live inter-camera rows (`grab_range_ms`, `grab_stddev_ms`).
+12. **Q581.** One switch for the whole app (all groups and all cameras), not one switch for each camera.
+13. **Q582.** The route `POST /camera/timings`, together with the Python call.
+14. **Q583.** The interface note recommends that FreeMoCap sets the switch from its `log_pipeline_times`.
+15. **Q586.** The goal stands that the player and the 4b preview are built one time in skellycam, and the
+    FreeMoCap UI takes a copy of the folder `skellycam-ui/src/player/`
+    ([`player.md`](../../specs/player.md) 4.3, [`preview-4b.md`](../../specs/preview-4b.md) section 8). No
+    measurement in the interim worker files `frame-decode.worker.ts` and `offscreen-renderer.worker.ts`,
+    which step 4b replaces. The decode and draw timing goes into the shared tile module
+    (`skellycam-ui/src/player/tile/`), behind the same switch, in the same summary shape, built together
+    with step 4b. FreeMoCap gets it when it takes the folder.
 
 ## Reason
 
@@ -55,6 +66,8 @@ The user gave no reason other than the words above. The facts that the questions
    capture timings.
 7. Q578: FreeMoCap has `log_pipeline_times: bool = False`. A skellytracker run has no timing span on by
    default.
+8. Q580: no code sends `performance_data`, and no UI reads it.
+9. Q586: the interim worker files go in step 4b; the tile is the code that FreeMoCap copies.
 
 ## Open work
 

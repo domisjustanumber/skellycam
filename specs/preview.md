@@ -124,7 +124,11 @@ depend on the lockstep gate [E].
 | `test_websocket_frame_acknowledgment` in `tests/test_websocket.py` | T-PRV-21 |
 | The parser of the group message in the UI and its `frameAcknowledgment` message | Section 10 |
 
-`read_latest_ring_frames` stays for `get_latest_performance_data` [ring A5].
+`read_latest_ring_frames` stays for `get_latest_performance_data` [ring A5]. Changed 2026-11-23: the
+capture timings remove `get_latest_performance_data`
+([`capture-timings.md`](capture-timings.md) 6.4,
+[ADR-MX8V](../decisions/entries/MX8V-decisions-of-the-user-on-capture-timings.md) Q580).
+`read_latest_ring_frames` stays for the interim relay.
 
 ### 2.4 One format on the wire, and no time without a preview [A1]
 
