@@ -1,5 +1,5 @@
 """The caller part of a certify run of skellycam (specs/certify.md 2.1, 2.5, 4.1, 8.3, 9; contract `report-format.md`
-of `skellycertify`, format 1.6.0): the plan, the progress, the cancel, the time limits, phase G, the local record and
+of `skellycertify`, format 1.7.0): the plan, the progress, the cancel, the time limits, phase G, the local record and
 the module report.
 
 The caller imports no `comtypes` and opens no camera. The camera steps (`session.py`) run in a spawn session child
@@ -36,7 +36,7 @@ from skellycam.core.certify.session import Stopped, Unit, run_session
 
 logger = logging.getLogger(__name__)
 
-SCHEMA = "skellycertify.report/1.6.0"
+SCHEMA = "skellycertify.report/1.7.0"  # 3.6.1
 LEVELS = ("quick", "full")
 QUICK_BUDGET_S = 30.0  # 4.1
 FULL_SESSION_LIMIT_S = 240.0  # 9.3: the limit of a camera block, for the session of this step

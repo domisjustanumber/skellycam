@@ -328,7 +328,7 @@ def test_t_cert_01_the_plan(tmp_path):
 
 def test_t_cert_03_07_17_26_a_quick_run_with_good_fakes(monkeypatch, tmp_path):
     """T-CERT-03, T-CERT-07, T-CERT-17, T-CERT-26: three good fakes, two of one model. The report obeys the
-    rules of C 1.4.0; each check of the five groups passes; one summary item for each model, `pass`, in the
+    rules of the contract (schema `skellycertify.report/1.7.0`, 3.6.1); each check of the five groups passes; one summary item for each model, `pass`, in the
     detection order, with `<model>:units`; no row would be in the table of the checks that did not pass, except
     the checks that are not built; the work folder is gone; no cleanup row and no notice; one record row for each
     model; the progress names each check before its result; at most 10 messages each second."""
@@ -338,6 +338,7 @@ def test_t_cert_03_07_17_26_a_quick_run_with_good_fakes(monkeypatch, tmp_path):
         report = run_with(app, tmp_path, devices=devices,
                           progress=lambda m: messages.append((time.monotonic(), json.loads(json.dumps(m)))))
     assert_valid(report)
+    assert report["schema"] == "skellycertify.report/1.7.0"
     checks = by_name(report)
     a0, a1, b0 = labels(devices)
     assert a0.endswith(".0") and a1.endswith(".1") and b0.endswith(".0")

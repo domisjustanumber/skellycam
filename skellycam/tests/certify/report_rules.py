@@ -1,4 +1,4 @@
-"""The rules of a module report of `report-format.md` format 1.6.0 (repository `skellycertify`) that code can
+"""The rules of a module report of `report-format.md` format 1.7.0 (repository `skellycertify`) that code can
 check (specs/certify.md T-CERT-03, T-CERT-04, T-CERT-67, T-CERT-70). Test code only.
 
 `problems(report)` gives one text for each broken rule; an empty list means that the report obeys each rule
@@ -8,7 +8,8 @@ of C 3.7 (group, name, device of the form `vvvv:pppp` for a camera, result, `rea
 `not-installed` only for a `component`, `gate` names a roll-up check of the report, one `camera` item for each
 `device`), `notices` of C 3.8, `cleanup` as `fail` check objects, `test_media` of C 3.9,
 `host.gpus[].shared_memory_bytes` of C 3.3, `evidence` of C 7.1 (with the reasons that the package fields give),
-and the privacy rules 1 to 7, 9, 10 and 19 of C 6 on each string of the JSON object. The Markdown rules (8, 17, 20)
+and the privacy rules 1 to 7, 9, 10 and 19 of C 6 on each string of the JSON object (format 1.7.0: the `name` of an
+item of `test_media` is exempt from rule 7). The Markdown rules (8, 17, 20)
 apply to the report file, which the app writes; `markdown_problems(text)` checks rules 17 and 20 on a value that
 the Markdown part shows.
 """
@@ -16,7 +17,7 @@ the Markdown part shows.
 import json
 import re
 
-SCHEMA = "skellycertify.report/1.6.0"
+SCHEMA = "skellycertify.report/1.7.0"
 NAME = re.compile(r"^[A-Za-z0-9][A-Za-z0-9_.:@-]{0,127}$")
 REASON = re.compile(r"^[A-Za-z0-9][A-Za-z0-9_-]{0,79}$")
 RESULTS = ("pass", "fail", "not-run", "record-only")
@@ -207,6 +208,9 @@ def problems(report) -> list[str]:
             if due and reason not in reasons:
                 out.append(f"evidence.reasons lacks {reason}")
     keys = []
+    # 1.7.0: the name of a test media file is exempt from rule 7; the same string elsewhere is not
+    media_names = {item["name"] for item in media if isinstance(item, dict) and isinstance(item.get("name"), str)}         if isinstance(media, list) else set()
+    media_names -= set(_strings({k: v for k, v in report.items() if k != "test_media"}, []))
     for text in _strings(report, keys):
         if PATH.search(text):
             out.append(f"rule 1: a path in {text!r}")
@@ -218,7 +222,7 @@ def problems(report) -> list[str]:
             out.append(f"rule 5: an email address in {text!r}")
         if len(text) > 2000:
             out.append("rule 6: a string over 2000 characters")
-        if text.lower().endswith(MEDIA):
+        if text.lower().endswith(MEDIA) and text not in media_names:
             out.append(f"rule 7: a media file name {text!r}")
         if "Traceback (most recent call last)" in text:
             out.append("rule 10: a traceback")
