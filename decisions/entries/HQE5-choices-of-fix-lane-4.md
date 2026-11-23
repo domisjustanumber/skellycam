@@ -15,8 +15,8 @@ and Q-C go to the user with the review of this work.
    `reset_for_start` replaced, because a spawned camera process opens each shared array by its name while it
    starts.
    Not: `fork` with `gc.freeze()` before each start (it stops this one deadlock, not the next library with
-   threads). Not: a `spawn` context object in each product call (37 calls, and the log queue of `skellylogs` comes
-   from the default context).
+   threads). Not: a `spawn` context object in each product call (37 calls; the log queue of `skellylogs` uses the
+   default context).
 2. **The skip guard** (unix-capture.md 4.11). `SKELLYCAM_NO_SKIP` holds test paths. A skip under one of them
    fails the run (`skellycam/tests/skip_guard.py`, root `conftest.py`). The recorder workflow sets it to
    `test_connection.py`. The capture and recorder workflows also run on each push to `dom/integration`.
@@ -32,8 +32,8 @@ and Q-C go to the user with the review of this work.
    `continue-on-error: true`, `if: ${{ !cancelled() }}`, `SKELLYCAM_PACE_MARGIN: "3"`, a warning annotation and the
    summary lines in the job summary. `skellycam/tests/pace.py` gives `margin()`; a test multiplies the tolerance of
    each bound, never the nominal value. The marked tests: T-UNX-26, T-UNX-76 (two tests), the hanging restore of
-   F7, T-RING-12, T-RING-23 and the slow stop. They are the tests that the entries of fix lanes 1 to 3 name as
-   failures of the pace of a runner, with a bound of time. A test of item 1 has no marker.
+   F7, T-RING-12, T-RING-23 and the slow stop. The entries of fix lanes 1 to 3 name them as pace failures of a
+   runner. A test of item 1 has no marker.
    Not: `xfail(strict=False)` when `GITHUB_ACTIONS` is set (a failure shows only as an `x` in the log, not on the
    run page). Not: a skip on CI (no report at all).
 5. **The restore file (Q-A)** (unix-capture.md 4.7.1). One file `<key>.json` for each camera in `camera_restore`
