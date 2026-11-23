@@ -307,15 +307,16 @@ def hand_stop_fields(cameras_rows):
 
 
 def hand_mean_framerate(cameras_rows):
-    """`mean_framerate` of 8.2 by hand (decision M of the user, 2026-11-20): for each camera, the group frames
-    from its first to its last row with a time, divided by the time between them (arrival, s); the mean over
-    the cameras, rounded to 2 decimals. NaN (null) when no camera has two rows with a time."""
-    rates = []
+    """`mean_framerate` of 8.2 by hand (decision M of the user, 2026-11-20; Q609, 2026-11-23): for each camera, the
+    group frames F from its first to its last row with a time, and the time T between them (arrival, s); the sum
+    of F over the sum of T, rounded to 2 decimals. NaN (null) when no camera has two rows with a time."""
+    frames = seconds = 0
     for rows in cameras_rows:
         timed = [(k, t) for k, (t, missing) in enumerate(rows) if not missing and t is not None]
         if len(timed) >= 2 and timed[-1][1] > timed[0][1]:
-            rates.append((timed[-1][0] - timed[0][0]) / ((timed[-1][1] - timed[0][1]) / 1e9))
-    return round(sum(rates) / len(rates), 2) if rates else float("nan")
+            frames += timed[-1][0] - timed[0][0]
+            seconds += (timed[-1][1] - timed[0][1]) / 1e9
+    return round(frames / seconds, 2) if seconds else float("nan")
 
 
 def tree(root):
