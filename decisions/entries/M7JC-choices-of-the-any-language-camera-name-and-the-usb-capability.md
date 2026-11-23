@@ -1,7 +1,7 @@
 # M7JC — Choices of the agent for the camera name in any language and the USB 3 capability
 
-**Status:** proposed, 2026-11-23 (agent; Q628, after the answers of the user in ADR-63D9 and of the contract
-owner).
+**Status:** accepted, 2026-11-23 (user; Q628 of ADR-BG8P, except item 10, which ADR-H7PX replaces; commit to
+dom/certify-4; was proposed, 2026-11-23 (agent)).
 
 ## Decision
 

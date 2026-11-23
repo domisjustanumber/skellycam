@@ -1140,8 +1140,8 @@ or `null` [C 6 rule 9]. A result in `details` gives no evidence [C 7].
 | `result` | `pass`, `fail`, `partial`, `skipped` | The four rules of the summary item (3.4), applied to the checks of this unit only [U Q627, MEE1 14]. |
 | `failed` | a check name without `<label>:`, or `null` | The first check of the unit, in the order of `checks`, whose result is not `pass` and not `record-only` [U Q627, MEE1 14]. `null` when the result is `pass`. |
 | `reason` | a reason code, or `null` | The reason of the check that `failed` names. |
-| `name_usb` | a string of the name rule of 9.4, or `null` | Only for a unit whose USB id is not in the list of known cameras and whose firmware text has no Apple word (9.4) [U Q596]. The display name of the OS is not copied [A, pending Q628]. |
-| `usb3_capable` | `true`, `false`, `null` | 3.6.13 [A, pending Q628]. |
+| `name_usb` | a string of the name rule of 9.4, or `null` | Only for a unit whose USB id is not in the list of known cameras and whose firmware text has no Apple word (9.4) [U Q596]. The display name of the OS is not copied [U Q628]. |
+| `usb3_capable` | see 3.6.13 | 3.6.13. |
 
 The other keys are in 3.5.5 and 3.5.9. A unit that the run did not check (a `reviewed` model) has no item.
 
@@ -1711,28 +1711,74 @@ the agent are in [ADR-DBF8](../decisions/entries/DBF8-choices-of-the-certify-nam
   this list that the rule of 3.6.10 gives to the model.
 - The catalogue of 3.6.2 gets these rows at their levels. 3.6.8 counts them.
 
-#### 3.6.13 The USB 3 capability on each system [U Q624k, 63D9; A, pending Q628]
+#### 3.6.13 The USB 3 capability on each system [U Q624k, 63D9, Q628; macOS and the three-state fact: A, pending Q629]
 
 The user asked for the notice of a USB 3 camera on a USB 2 link on macOS and Linux too [U, ADR-63D9]. The notice
 needs two facts: the operating speed of the link (`usb_link`, read today by
 `skellycam/core/device_detection/usb_connection.py` on the three systems) and the USB 3 capability of the
 device. `bcd_usb` alone is not a fact: a USB 3 device on a USB 2 link presents `bcdUSB` 0x0210 there, and many
-pure USB 2 cameras also declare 0x0210. `details.cameras[]` gets one key [A]:
+pure USB 2 cameras also declare 0x0210. `details.cameras[]` gets one key [U Q628]:
 
 | Key | Type and values | Present (else) | Privacy |
 |---|---|---|---|
-| `usb3_capable` | `true`, `false`, `null` | always; `null` when the system cannot tell without extra rights or an open of the device | a model fact |
+| `usb3_capable` | `yes`, `no`, `possible`, `null` [A, pending Q629: was `true`, `false`, `null` in Q628] | always; `null` when no source below tells | a model fact |
+| `usb3_capable_source` | `os`, `list`, `bcd`, or `null` with `usb3_capable` `null` [A, pending Q629] | always | a closed name |
 
-**The notice rule (each system) [A].** `camera-usb3-on-usb2-link` fires when `usb3_capable` is `true` and
-`usb_link` is `USB 2`. With `usb3_capable` `null`, no notice.
+**The order of the sources [A, pending Q629].** The first source that gives an answer sets the fact:
+
+1. `os`: the fact of the system (the table below): `yes` or `no`.
+2. `list`: the field `usb3_capable` of the model in the list of known cameras (9.4): `yes` or `no`. Thus the
+   fact is exact for a known model on each system.
+3. `bcd`: `bcdUSB` of the device descriptor with the running link. On a SuperSpeed link the answer is `yes`. On a
+   USB 2 link, `bcdUSB` 0x0200 or 0x0201 gives `no`: a USB 3 device that runs at high speed presents 0x0210 or
+   higher, and the host asks a BOS only from a device above 0x0200 [NV: the USB 3.x specification is not read
+   here; Microsoft, "USB 2.1, 2.0, 1.1 device enumeration changes in Windows 8", describes the BOS request above
+   0x0200]. 0x0210 or higher gives only `possible`, because many pure USB 2 cameras declare 0x0210 with LPM. The
+   lab cameras of 2026-11-23 [M, relayed]: the C922, the C930e and the generic camera present 2.00 (`no`); the
+   Kiyo Pro presents 3.20 on its USB 3 link (`yes`). This source also serves Linux with no `bos_descriptors`.
+
+**The notice rule (each system) [U Q628; A, pending Q629 for `possible`].** `camera-usb3-on-usb2-link` fires when
+`usb3_capable` is `yes` and `usb_link` is `USB 2`. With `possible` on a USB 2 link, the milder notice
+`camera-maybe-faster-usb-port` fires, with the text "Camera <name> may support a faster USB port. If the
+computer has a USB 3 port (often blue), try it there." [A, pending Q629]. With `no` or `null`, no notice. A
+guess never gives the text of a fact.
 
 | System | Operating speed (today) | USB 3 capability | Uncertain |
 |---|---|---|---|
 | Windows | the connection information of the hub, `IOCTL_USB_GET_NODE_CONNECTION_INFORMATION_EX_V2`, bit 0 of its flags (`DeviceIsOperatingAtSuperSpeedOrHigher`) | bit 1 of the same flags (`DeviceIsSuperSpeedCapableOrHigher`); `usb_connection.py` already reads the flags word at offset 12 | [NV]: a check on hardware is open (a Kiyo Pro on a USB 2 port) |
 | Linux | sysfs `speed` of the USB device (Mbit/s: 480 is USB 2, 5000 or more is USB 3) | sysfs `bos_descriptors` of the USB device: the cached BOS of the device, a binary file, read-only for each user (`BIN_ATTR_RO`, mode 0444), present only when the device has a BOS. `usb3_capable` is `true` when it holds a SuperSpeed USB Device Capability (`bDevCapabilityType` 0x03) or a SuperSpeedPlus capability (0x0A), `false` when the file exists with neither, `null` when the file does not exist | The attribute came in 2024 (the ABI file says "March 2024"; probably kernel 6.9) [NV: the first release]. On an older kernel the BOS is not in sysfs: the `descriptors` file holds only the device and configuration descriptors, and a BOS request through usbfs (`/dev/bus/usb/BBB/DDD`) needs a control request and so write access to the node, which a normal user usually does not have [NV]. Then `usb3_capable` is `null`. The kernel reads the BOS only from a device with `bcdUSB` 0x0201 or higher, which each USB 3 device on a USB 2 link has. |
-| macOS | IORegistry property `USBSpeed` of the `IOUSBHostDevice` (`ioreg -a -r -c IOUSBHostDevice`); 3 is high speed, 4 or more is SuperSpeed | No documented IORegistry property gives the capability. The BOS is the property `capabilityDescriptors` of an `IOUSBHostObject`, and that object sets up a communication channel to the kernel for the device: an open of a user client, which certify does not do (10.7 forbids `deviceCapture`, and a camera that streams is held by its driver) [NV]. `system_profiler SPUSBDataType` showed "Speed: Up to ..." (a capability, not the link) on older macOS, but Apple users report that recent macOS lacks that data type [NV]. Thus `usb3_capable` is `null` on macOS for now, and no notice | Whether a user client without capture can read the cached BOS while the camera driver holds the device [NV]. A later macOS probe (10.7) can test it. |
+| macOS | IORegistry property `USBSpeed` of the `IOUSBHostDevice` (`ioreg -a -r -c IOUSBHostDevice`); 3 is high speed, 4 or more is SuperSpeed | The BOS of the device through one standard GET_DESCRIPTOR(BOS) request on the default pipe, through the IOUSBLib device interface, with no open of the device (method 2 below) [A, pending Q629]; else the known list; else `bcdUSB` | [NV] on each point: the probe of this section answers them on a Mac |
 
-Sources (read on 2026-11-23, as data): the Linux USB sysfs ABI file
+**macOS: the methods, ranked [A, pending Q629].** The user asked: "try a little harder to build a test we can
+include into certify to find out this information" [U, ADR-BG8P]. Each method must not disturb the camera: no
+stream, no claim of an interface, no exclusive open. Everything below is [NV] until the user runs the probe.
+
+| Rank | Method | What it tells | Rights and risk |
+|---|---|---|---|
+| 1 | The known list (`usb3_capable` of the model, 9.4) | exact for a listed model, on each system | none |
+| 2 | GET_DESCRIPTOR(BOS) on the default pipe through `IOUSBDeviceInterface::DeviceRequest`, with no `USBDeviceOpen` and no `USBDeviceOpenSeize`: a read of 5 bytes, then of the total length; it changes no state | exact (a SuperSpeed or SuperSpeedPlus device capability in the BOS) | No root. No entitlement for a program outside the App Sandbox; a sandboxed app needs `com.apple.security.device.usb` [NV]. Apple's documentation says that the device must be open for a device request, but libusb notes that Apple's USB Prober sends a descriptor request with no open; the request can fail with `kIOReturnNotOpen`, and then the fact is `null` [NV]. libusb itself calls `USBDeviceOpenSeize` before its descriptor request; certify must not, because a seize asks the driver of the camera to let go. The request is the kind that enumeration sends; certify sends it at detection, before any stream. The IOUSBLib interface is old but still works on Apple Silicon and Intel through libusb [NV]. Before the request, the code reads the vendor id, the product id and the release number through the same function table and compares them with the registry; on any difference it sends nothing, because a wrong slot of the table could reset the device. |
+| 3 | `bcdUSB` with the running link (`ioreg`) | `no` (0x0200, 0x0201) or `possible` (0x0210 and higher) on a USB 2 link; `yes` on a SuperSpeed link | none (a registry read) |
+| 4 | The IORegistry keys of the `IOUSBHostDevice` (`ioreg -a -l -r -c IOUSBHostDevice`): `USBSpeed`, `UsbLinkSpeed`, `bcdUSB`, and any key with "BOS", "SuperSpeed" or "Capab" in its name | today only the running speed; no documented key gives the capability; the probe lists each such key name, in case macOS has one | none |
+| 5 | `system_profiler -json SPUSBDataType` | its "speed" ("Up to 480 Mb/s") follows the running link, not the capability (an iPhone shows 10 Gb/s with a USB 3 cable and 480 Mb/s with a USB 2 cable); new macOS versions may lack `SPUSBDataType` | none; about 1 s to 10 s |
+
+**The probe.** `decisions/scripts/probe_usb3_capability_macos.py` (standard library only, Python 3.9 or later)
+tries each method and prints one JSON object for each attached USB video device: the USB id, the product text,
+the running link, `bcdUSB`, and the answer and the error class of each method. It prints no serial number, no
+location id and no registry path, opens no stream and never opens the device. Run it on a Mac from the repository
+root: `python3 decisions/scripts/probe_usb3_capability_macos.py`. The parsers have tests with synthetic samples:
+`decisions/scripts/tests/test_probe_usb3_capability_macos.py`. The user runs the probe with a USB 3 camera on a
+USB 3 port and on a USB 2 port (open work). Certify uses method 2 only when the probe shows that it answers and
+that the camera keeps working; until then macOS gives the list, then `bcd`.
+
+Sources for macOS (read on 2026-11-23, as data): the libusb darwin backend
+(`https://github.com/libusb/libusb/blob/master/libusb/os/darwin_usb.c`: "According to Apple's documentation the
+device must be open for DeviceRequest but we may not be able to open some devices and Apple's USB Prober doesn't
+bother to open the device before issuing a descriptor request", and the call of `USBDeviceOpenSeize` before it);
+Apple IOUSBLib documentation in the IOUSBFamily sources (`https://opensource.apple.com/source/IOUSBFamily/`);
+a Japanese blog that compares the `system_profiler` speed of one iPhone with two cables
+(`https://dev.classmethod.jp/articles/20250110-check-the-data-transfer-speed-of-usbc-cable-with-system_profiler/`).
+
+Sources for Linux and Windows (read on 2026-11-23, as data): the Linux USB sysfs ABI file
 (`https://www.kernel.org/doc/Documentation/ABI/testing/sysfs-bus-usb`, entries `bos_descriptors` and `speed`); the
 patch "usb: Export BOS descriptor to sysfs" (`https://lkml.iu.edu/hypermail/linux/kernel/2403.0/03549.html`:
 `BIN_ATTR_RO(bos_descriptors, 65535)`, visible only when `udev->bos` is set); Apple `IOUSBHostObject`
@@ -1750,9 +1796,12 @@ layouts of the specifications and are marked as such [NV until a recording repla
   USB 2.0 Extension capability `07 10 02 06 00 00 00`, then a SuperSpeed capability `0A 10 03 00 0E 00 01 0A FF
   07`: `usb3_capable` `true` and the notice; the same with only the USB 2.0 Extension (the header set to its length): `false`, no notice; no
   `bos_descriptors` file: `null`, no notice.
-- macOS: an `ioreg -a` plist sample with `USBSpeed` 3 and no capability: `usb3_capable` `null`, no notice.
+- macOS: the samples of the probe tests (a USB 3 camera on a USB 2 link with `bcdUSB` 0x0210, a USB 2 camera
+  with 0x0200, a BOS with and without a SuperSpeed capability): `possible` and the milder notice with no BOS
+  answer, `yes` and the notice with the BOS answer, `no` and no notice for 0x0200.
+- Each system: a known model with `usb3_capable` `true` in the list and no system fact: `yes` (`list`).
 
-**A wider USB speed test? [A].** The recommendation: no streaming throughput test. The inventory already holds
+**A wider USB speed test? [U Q628, M7JC 11].** The recommendation: no streaming throughput test. The inventory already holds
 the negotiated link of each camera (`usb_link`), its capability (`usb3_capable`), its host controller and its hub
 depth (`controller`, `controller_id`, `hub_depth`, 3.5.5), so a developer sees how many cameras share one
 controller. The effect that matters, cameras that lose frames or fail to open when they share a controller, is
@@ -2389,12 +2438,12 @@ The contract rules 1 to 16 apply [C 6]. In addition:
 - `host` [C 3.3]: a field whose value skellycam does not know is left out or `null`. The module report
   has no key two times in one object [C 6 rule 19].
 
-**Camera names [U Q596; point 5 withdrawn; the any-language rule pending Q628].** The user decided the rule on
+**Camera names [U Q596; point 5 withdrawn; the any-language rule U Q628].** The user decided the rule on
 2026-11-23. His reason: "we need to know the names of the cameras, so if we find one that does or does not work,
 we can tell end-users". He refused a rule for Latin letters only (Q625): "this needs to work for any language,
 latin letters only is not sufficient" [U, ADR-63D9]. The rule below works for any script. The parts that he did
-not say are marked [A] ([ADR-M7JC](../decisions/entries/M7JC-choices-of-the-any-language-camera-name-and-the-usb-capability.md),
-pending Q628). The rule uses no language model and no name recognition. It replaces the name cleaning of draft 3
+not say were choices of the agent ([ADR-M7JC](../decisions/entries/M7JC-choices-of-the-any-language-camera-name-and-the-usb-capability.md));
+the user agreed to the rule as written (Q628, [ADR-BG8P](../decisions/entries/BG8P-decision-of-the-user-on-the-any-language-camera-name.md)), so they are marked [U Q628]. The rule uses no language model and no name recognition. It replaces the name cleaning of draft 3
 (the steps 1 to 5 of `clean_name`). Each name of a summary item, a `module`, a notice and the plan comes from it.
 The first rule that applies gives the name:
 
@@ -2402,14 +2451,14 @@ The first rule that applies gives the name:
    phone or a computer that a person named in any script, for example a Continuity camera.
 2. **An Apple device word** in the firmware product text, after NFKC and case folding: `iPhone`, `iPad`,
    `MacBook`, `iMac`, `FaceTime`, `Continuity`, as a whole word. A word is a run of letters or a run of digits, so
-   `Annas-iPhone`, `iPhone15` and a fullwidth `ｉＰｈｏｎｅ` hold the word, and `Primacam` does not hold `iMac` [A].
-   The text is never copied. The name is a fixed class [U Q596; the map is A]: `iPad` gives `iPad used as
+   `Annas-iPhone`, `iPhone15` and a fullwidth `ｉＰｈｏｎｅ` hold the word, and `Primacam` does not hold `iMac` [U Q628].
+   The text is never copied. The name is a fixed class [U Q596; the map U Q628]: `iPad` gives `iPad used as
    camera`; `iPhone` or `Continuity` gives `iPhone used as camera`; `MacBook`, `iMac` or `FaceTime` gives `Mac
    built-in camera`. The words are tested in this order.
 3. **A USB id in the list of known cameras**: the name of the list.
 4. **A real USB camera with a USB id that is not in the list**: the product text of the firmware (the iProduct
-   string of the device), through the filter below [U Q596; A: the firmware text only]. The display name of the
-   OS is not copied, because a person or the OS can set or translate it [A]. When the firmware text cannot be
+   string of the device), through the filter below [U Q596, Q628]. The display name of the
+   OS is not copied, because a person or the OS can set or translate it [U Q628]. When the firmware text cannot be
    read, or the filter refuses it: `Camera vvvv:pppp`. `details.cameras[].name_usb` holds the filtered text, or
    `null` (3.6.3).
    - Windows: the device property "bus reported device description"
@@ -2425,7 +2474,7 @@ The protection is the filter below, and the person who sends the report sees the
 "send" [C 4.1]. The contract owner confirmed on 2026-11-23 that the relay keeps a name in any script and that the
 format needs no change.
 
-**The filter [U Q596; A, pending Q628].** It works on one string, in this order:
+**The filter [U Q596, Q628].** It works on one string, in this order:
 
 1. Normalise with Unicode NFKC.
 2. Remove the direction control characters U+200E, U+200F, U+202A to U+202E and U+2066 to U+2069, so that a name
@@ -2435,14 +2484,14 @@ format needs no change.
    letter (category L) and each mark (category M, with Mn and Mc, so that Devanagari, Thai and decomposed accents
    keep their characters) and each number (category N) of any script, the space, and `.` `,` `:` `;` `_` `+` `=`
    `(` `)` `'` `%` `/` `?` `·` `-`. Each other character becomes a space. The earlier stricter set (with no `:`
-   `/` `;` `=` `%` `?`) is not needed: step 8 refuses each path, URL and email form [A].
+   `/` `;` `=` `%` `?`) is not needed: step 8 refuses each path, URL and email form [U Q628].
 4. Join each run of spaces into one space, and remove the spaces at the ends.
 5. Remove a possessive head: the text up to and with `'s ` (`Bob's Webcam` gives `Webcam`) [C 6 rule 16].
 6. Remove a group of 8 or more letters and digits that has at least 4 digits (a serial number), and brackets that
    become empty.
 7. Cut to at most 60 code points (as Python `len`; the limit of a summary `name` is 80 [C 3.7]). The cut never
    falls between a base character and its marks: it moves back to the start of that base character. Thus a name
-   has at most 240 bytes in UTF-8, and at most 720 bytes in the JSON of `json.dumps` with its `\u` escapes [A].
+   has at most 240 bytes in UTF-8, and at most 720 bytes in the JSON of `json.dumps` with its `\u` escapes [U Q628].
 8. Test the result with the ASCII patterns of the contract rules 1, 3, 4, 5, 7, 17 and 20 [C 6]: a path, a PCI
    bus address, a MAC address (also with `-`), an email address, a final extension of a media file, `<`, `](`,
    `]:`, `://`, `www.` (any case), an IPv4 address. On any hit, the result is `Camera vvvv:pppp`. Nothing is
@@ -2450,11 +2499,11 @@ format needs no change.
 9. A word that mixes letters of two scripts (a spoof, for example a Latin word with one Cyrillic letter) gives
    `Camera vvvv:pppp`. The script of a letter is the first word of its Unicode name in `unicodedata` (`LATIN`,
    `CYRILLIC`, `CJK`, `ARABIC`, ...), so no extra library is needed; digits, marks and signs belong to no script
-   [A].
+   [U Q628].
 10. The user name and the host name of the run, in any script: both sides get NFKC and case folding. A user name
     or host name of 3 code points or more is refused when it stands anywhere in the raw string or in the result.
     One of 1 or 2 code points is refused only when it is a whole word of the result, so that a short user name
-    does not blank real names; in a script with no spaces (for example CJK) a whole word is the whole result [A].
+    does not blank real names; in a script with no spaces (for example CJK) a whole word is the whole result [U Q628].
     A refusal gives `Camera vvvv:pppp`.
 11. An empty result gives `Camera vvvv:pppp`.
 
@@ -2471,13 +2520,15 @@ package:
 
 ```json
 {"format": 1,
- "cameras": {"046d:085c": "Logitech C922",
-             "046d:0843": "Logitech C930e",
-             "1532:0e05": "Razer Kiyo Pro"}}
+ "cameras": {"046d:085c": {"name": "Logitech C922", "usb3_capable": false},
+             "046d:0843": {"name": "Logitech C930e", "usb3_capable": false},
+             "1532:0e05": {"name": "Razer Kiyo Pro", "usb3_capable": true}}}
 ```
 
-- A key is a USB id `vvvv:pppp` in lower-case hex. A name passes the filter and has at most 60 characters. A test
-  checks the file (T-CERT-100).
+- A key is a USB id `vvvv:pppp` in lower-case hex. A name passes the filter and has at most 60 characters. The
+  optional field `usb3_capable` (`true` or `false`) gives the USB 3 capability of the model for 3.6.13 [A,
+  pending Q629]: the seed is the Kiyo Pro `true`, the C922 and the C930e `false` [M, lab data of 2026-11-23,
+  relayed]. A test checks the file (T-CERT-100).
 - The generic id `4c4a:4a55` has no entry, because many different cameras share it. A camera with such a shared
   generic id gets the name of rule 3. A pass of one camera with a shared generic id never proves that another
   camera with the same id works.
@@ -3219,9 +3270,12 @@ important is first.
         before the open (system, quick).
 18. Refused by the user (Q625, ADR-63D9): a name rule for Latin letters only is not sufficient.
 19. Decided (Q626, [ADR-63D9](../decisions/entries/63D9-decisions-of-the-user-on-the-processors-the-build-order-and-the-certify-choices.md)): the build order of 3.6.7 replaces the order of Q575.
-20. Q628: the any-language name rule of 9.4 (the firmware text only, the filter of the relay set with the direction
+20. Decided (Q628, [ADR-BG8P](../decisions/entries/BG8P-decision-of-the-user-on-the-any-language-camera-name.md)), except the macOS part, which Q629 replaces: the any-language name rule of 9.4 (the firmware text only, the filter of the relay set with the direction
     marks removed, the cut at 60 code points, the spoof and short-name rules) and the USB 3 capability of 3.6.13
-    (the hub flags on Windows, `bos_descriptors` on Linux, `null` on macOS for now). Yes?
+    (the hub flags on Windows, `bos_descriptors` on Linux).
+21. Q629: the three-state fact `usb3_capable` (`yes`, `no`, `possible`) with its source, the order `os`, `list`,
+    `bcd`, the field `usb3_capable` of the known list, the milder notice for `possible` on a USB 2 link, and the
+    macOS method 2 (the BOS request with no open) once the probe shows that it is safe (3.6.13). Yes?
 
 ## 15. Reason codes (proposed `skellycam/REASON_CODES.md`) [A]
 
@@ -3275,6 +3329,7 @@ of a product failure gives the product code as its reason, with one exception: t
 | `not-applicable`, `no-reference` | macOS probes (10.7) | The listing found no object or format for this approach; the evidence file has no JPEG reference for the model. |
 | `prior-failure`, `prior-check-failed` | any, `<label>:not-reached` | The camera hung or failed earlier; a check that this check needs did not pass. Both are in `skellycam/REASON_CODES.md` (3.6.1). |
 | `mkv-not-readable`, `mkv-frames-differ`, `memory-low`, `shm-too-small`, `report-rules` | checks of 3.6.12; `report-rules` also in `evidence.reasons` | The MKV does not open through the reader of the product; its frame count is not the frame count of the take; the free memory, or the shared-memory mount on Linux, is below the need of the rings; the report breaks a privacy or form rule. |
+| `camera-maybe-faster-usb-port` | notice [C 3.8] | 3.6.13, `usb3_capable` `possible` on a USB 2 link. Text: "Camera <name> may support a faster USB port. If the computer has a USB 3 port (often blue), try it there." |
 | `camera-usb3-on-usb2-link` | notice [C 3.8] | Text: "Camera <name> is a USB 3 camera on a USB 2 port. Plug it into a USB 3 port (often blue) if the computer has one." |
 | `not-decided-one-model` | `details.pipeline.reason` | A pipeline check failed, and with one model only the run cannot tell the pipeline from the camera (3.6.10). |
 | `recording-volume-not-fixed` | notice [C 3.8] | The recording folder is on a removable or network drive (3.6.11). Text: "The recording folder is on a removable or network drive. A recording can lose frames there. Choose a folder on an internal drive." |
@@ -3447,7 +3502,7 @@ tests only the self-check.
 | T-CERT-97 | 3 OS. A fake with 40 modes, one mode string of 50 characters. | `modes` has 32 strings of the largest area, each at most 48 characters; `modes_cut` is 8 (the long string and the 7 modes of the smallest area) (3.6.5); a camera with 32 modes or fewer has no `modes_cut`. |
 | T-CERT-98 | 3 OS. Full with 4 good fakes of 4 models; with one model whose rate fails; with the sign-off checks faked as built and passing. | Today: each item `partial` (never `pass`), each `<model>:gate` and `pipeline:gate` `not-run` `not-built`, `details.gates` names `cycles` and `group:take-30:finished` with `not-built`; each record row has `"sign-off": "not-built"` and is no local pass; the plan has `risks` empty and `seconds_estimate` near 30; the failed model has `<model>:gate` `fail` and `details.gates` names its `rate`. With the checks faked as built: items `pass` and gates `pass` (3.6.4). |
 | T-CERT-99 | 3 OS. The take with fakes: a CSV that does not read; a CSV with one row less; a `missing` row; a dead camera; a take of 2 s; a rate 1.5 % off in a take of 3 s and in a take of 30 s. | `rows-complete` `fail` `rows-differ` (two cases), `missing-rows` (two cases); `group:take:rate` `fail` `too-few-frames`; the 1.5 % case `pass` for 3 s and `fail` `group-rate-off` for 30 s; the report has no row `group:take:csv-rows`, `:no-missing` or `:frame-count` (3.6.2). |
-| T-CERT-100 | 3 OS. The file `known_cameras.json`: the shipped file; a file with a key `46d:85c`, a name of 61 characters, a name with `:`. | The shipped file has the three entries of 9.4 and no `4c4a:4a55`; the checker refuses each bad entry. |
+| T-CERT-100 | 3 OS. The file `known_cameras.json`: the shipped file; a file with a key `46d:85c`, a name of 61 characters, a name with `<`, an entry with `usb3_capable` `"yes"`. | The shipped file has the three entries of 9.4 with their `usb3_capable` (Kiyo Pro `true`, C922 and C930e `false`) and no `4c4a:4a55`; the checker refuses each bad entry. |
 | T-CERT-101 | 3 OS. `clock:near-arrival` with fake `frame_log` rows: each sample 0 to 16.5 ms before its arrival; one with p5 at -60 ms. | The first `pass`, the second `fail` `sample-too-early`; the limit is read from `details.limits`; with `clock:base` `not-run` `clock-unknown` the gate needs only `before-arrival` and `near-arrival` (Q585). |
 | T-CERT-102 | 3 OS. Counters in the take window: fake D-3 counters with `discontinuity_flags` 1 and `frames` 300 before the take, and 1 and 390 after. | The take rows hold `discontinuity_flags` 0 and `frames` 90 (3.6.6 item 4). |
 | T-CERT-103 | 3 OS. The plan total with a clean exit and with a hang at exit. | The plan counts `session:exit`; with a clean exit no `session:exit` row and the last `done` equals `total`; with a hang, the row `record-only` `hung-at-exit` and `done` equals `total`. |
@@ -3461,7 +3516,7 @@ tests only the self-check.
 | T-CERT-111 | 3 OS. `group:in-step` with fake sample times and arrival times. | `record-only`, never `fail`; `spread_source` `sample` when `sample_time_kept` is true, else `arrival`; `details.limits.in_step_ms` is one frame period; no gate requires it (3.6.11). |
 | T-CERT-112 | 3 OS. `records:mkv-opens` with fake takes: a good MKV; an MKV with a broken index whose blocks still read at their sidecar offsets; an MKV with one frame less than the take; a good MKV with a CSV one row short. | `pass` with no `numbers`; `fail` `mkv-not-readable` (the byte-offset read alone would pass); `fail` `mkv-frames-differ`; `pass` (only `rows-complete` fails, `rows-differ`) (3.6.12). |
 | T-CERT-113 | 3 OS. `bursts` with fake arrival times: even intervals; one camera that gives frames in pairs. | `record-only`; `burst_share` 0 and about 0.5; no gate requires it. |
-| T-CERT-114 | 3 OS. The USB 3 capability and the notice with the sample data of 3.6.13 for Windows, Linux and macOS. | `usb3_capable` and the notice as 3.6.13 states for each sample; no notice from `bcd_usb` alone; no notice with `usb3_capable` `null`; no check row. |
+| T-CERT-114 | 3 OS. The USB 3 capability and the notices with the sample data of 3.6.13 for Windows, Linux and macOS, the known list and `bcdUSB`. | `usb3_capable` and `usb3_capable_source` follow the order `os`, `list`, `bcd`; the notice only with `yes` on a `USB 2` link; the milder notice only with `possible`; no notice with `no` or `null`; no check row. |
 | T-CERT-115 | 3 OS. `system:memory` with fake memory facts: enough; less free memory than the need; on Linux a `/dev/shm` of 64 MiB for four cameras. | `pass`; `fail` `memory-low`; `fail` `shm-too-small`; the need equals the sum of `ring_total_size` of the rings of the product; the open still runs. |
 | T-CERT-116 | 3 OS. `group:take-again` with fakes: a good second take; a second take whose writer is not released. | `pass`; `fail` with the reason of the take; the first take keeps its own rows. |
 | T-CERT-117 | 3 OS. `report:rules` with a good report and with planted faults (a path in a value, a bad reason code). | `pass` with no `numbers`; `fail` `report-rules` with `problems`, `report-rules` in `evidence.reasons`, the pipeline item unchanged; no text of a problem is in the report; the validator is in the package. |

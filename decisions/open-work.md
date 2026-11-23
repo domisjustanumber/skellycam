@@ -175,9 +175,13 @@ task. Delete an item when its work is done. The PR that closes an item records t
   - The name rule of Q596 depends on a change of the wording of rule 16 of section 6 of the contract, for the
     name of the list of known cameras, the fixed class texts and a name in any script. The contract owner decides
     it; it is pending. The relay already keeps a name in any script (the answer of the contract owner).
-  - Q628 waits for the user: the any-language name rule of 9.4 and the USB 3 capability of 3.6.13. Not verified:
+  - Q628 is decided ([ADR-BG8P](entries/BG8P-decision-of-the-user-on-the-any-language-camera-name.md)). Not verified:
     the hub flag of Windows on hardware (a Kiyo Pro on a USB 2 port), the kernel release of `bos_descriptors`
     on Linux, and a read of the BOS on macOS without an open of the device.
+  - Q629 waits for the user ([ADR-H7PX](entries/H7PX-choices-of-the-usb-3-capability-on-macos-and-the-three-state-fact.md)):
+    the three-state USB 3 fact and the milder notice for `possible`. The user runs the probe
+    `decisions/scripts/probe_usb3_capability_macos.py` on a Mac with a USB 3 camera on a USB 3 port and on a
+    USB 2 port; its synthetic test samples are then replaced by the recorded output.
   - Later work, not specified: an optional question to the person, "What make and model is this?".
   - The sign-off checks `<label>:cycles`, `group:take-30`, `group:contention` and `group:open` (Q599, Q610), and
     `group:restore-after-kill` when the product keeps the "before" values on disk (Q608, Q615).
