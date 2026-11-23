@@ -164,3 +164,9 @@ task. Delete an item when its work is done. The PR that closes an item records t
   camera whose capture failed for a reason other than a hang gets its settings back at the close.
 - **Deferred by the user (2026-11-23).** At 60 fps the exposure search never tries a value longer
   than the frame period. The product switches low light compensation off after each open.
+- **Fix lane 4 follow-ups** ([ADR-HQE5](entries/HQE5-choices-of-fix-lane-4.md)).
+  - The user decides Q-A (the restore file), Q-B (the take rate as a sum over a sum) and Q-C (the pace step).
+  - Certify: `group:restore-after-kill` (Q615) can use the restore file with a folder of its own run.
+  - FreeMoCap reads `framerate_stats.median` from the old `*_stats.json`, not from the stop response; a reader of
+    new takes must use `mean_framerate` (Q609).
+  - The first CI run with `spawn` on Linux and macOS, the skip guard and the pace steps is not done yet.

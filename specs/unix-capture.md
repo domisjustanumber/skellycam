@@ -1305,9 +1305,71 @@ the record), 6 (the citation of 0) and 7 (4.4.10 filled) are applied here.
   write reads as no record. "Apply again" keeps the record (`reset_for_start`), and
   `CameraGroupManager` keeps it from a group close to the next group, for the life of the app, also
   when the close raises for a process that cannot be killed. A group close does not restore a camera
-  whose process ended: the rule above forbids an open only to restore. The record is in memory, not
-  on disk: a restart of the app loses it. The camera process finds the record through
-  `RESTORE_RECORDS` of `capture/source.py` [ADR-NYT6](../decisions/entries/NYT6-choices-of-fix-lane-2.md).
+  whose process ended: the rule above forbids an open only to restore. The camera process finds the
+  record through `RESTORE_RECORDS` of `capture/source.py` [ADR-NYT6](../decisions/entries/NYT6-choices-of-fix-lane-2.md).
+  The record is also on disk (4.7.1), so that a restart of the app keeps it.
+
+#### 4.7.1 The restore record on disk [U Q608]
+
+The user decided on 2026-11-23 (Q608) that the restore record stays on disk, so that a restore survives
+a kill of the whole server [ADR-81RE](../decisions/entries/81RE-decisions-of-the-user-on-the-restore-file-the-take-rate-and-pace-tests.md).
+Before, the record was only in the memory of the server: after a kill, a new server read the manual
+value of this app as the camera's own value, and three cameras stayed in manual exposure (a real-camera
+run of 2026-11-23). The agent chose the details [ADR-HQE5](../decisions/entries/HQE5-choices-of-fix-lane-4.md).
+
+- **Place.** One file for each camera in the folder `camera_restore` of the data folder of the app
+  (`get_default_skellycam_base_folder_path()`, the folder of `camera_checks.json`). Never in a
+  recording folder. The functions of `skellycam/core/camera/capture/restore_store.py` take the folder
+  as an argument. Only the server of the app (`get_or_create_camera_group_manager`) gives the default
+  folder. Each other `CameraGroupManager` (certify, the tests) has no folder unless its caller gives
+  one; with no folder it reads and writes no file.
+- **Key.** The key of a camera is the SHA-256 (64 hex digits) of the input of its `camera_id` hash
+  (`CameraDeviceInfo.identity_input()`, [W 7.2] and A-2: the Media Foundation link, the device path,
+  or the USB IDs with the index). The main process computes it from the detection result and gives it
+  to the camera process. The file never holds that input itself, because it can hold a serial number
+  or a link. A camera with no such input (the index alone) has no file.
+- **Name and form.** `<key>.json`, UTF-8 JSON:
+  `{"version": 1, "key": "<64 hex>", "vendor_id": <int or null>, "product_id": <int or null>,
+  "written_utc": "<ISO 8601>", "record": {"before": ..., "names": [...], "set": ...}}`. The record is
+  the record of 4.7.
+- **Write (the camera process).** Each write of a record with names also writes the file: the first
+  set of a control, each later set and each read-back that changes the record. The camera process
+  writes it, in the call that writes `controls_before`. The write goes to a temporary file in the same
+  folder, then `os.replace` gives it its name: a reader sees the old file or the new file, never a
+  part of one. A failed write is logged one time for each file in each process. A write error never
+  fails an open or a set: the camera opens as with no file.
+- **Removal.** The camera process removes the file when its record becomes empty: a restore with no
+  failure, or a first read that drops each control of the record. The main process removes the file
+  of each entry that it drops at a read.
+- **Read (the main process).** At each group creation, the main process reads the file of each camera
+  of the request that has no record in memory. It uses the entry only when the camera of the
+  detection result with that key has the `vendor_id` and the `product_id` of the entry (detection
+  refuses two equal `camera_id` values). Else it drops the entry. A camera that is not in the
+  detection result keeps its file. The source then uses the entry under the rule above: a control
+  whose current read holds the value that this app set last (within one step) takes its "before"
+  value, and the record drops each other control
+  [ADR-Z7F3](../decisions/entries/Z7F3-choices-of-fix-lane-3.md).
+- **Two cameras of one model.** When two or more cameras of the detection result have the USB IDs of
+  an entry, the entry is used only when the `camera_id` of its camera comes from a stable input: the
+  camera has a serial number (`has_serial` true), its `id_source` is `serial`, `id-path`, `unique-id`
+  or `mf-link` (4.2 item 8), or its `path` is a Media Foundation link (`\\?\`, [W 7.2]: it holds the
+  USB port). Else the two cameras cannot be told apart across a restart (for
+  example an OpenCV index or a `/dev/video<n>` path, whose order can change), and the entry is
+  dropped. With one camera of that model, the `camera_id` and the USB IDs are enough. What is left is
+  the case of 4.7: two cameras of one model with no serial number that change ports between two
+  servers. A replug resets most cameras to their own values; then the value rule drops the entry.
+- **A damaged file.** A file that cannot be read, that is not JSON, that has another `version` or
+  that has no valid record is dropped: one log line, and the file is removed. It never fails a group
+  creation or an open.
+- **Age.** No age limit. The value rule is the guard: an old entry applies only when the camera still
+  holds the value that this app set last.
+- **Two servers.** One file for each camera, and a camera is open in one server at a time. The atomic
+  replace keeps each file whole. The last writer wins.
+- **Privacy.** The file holds the key (a SHA-256), the USB IDs, the time and the control values. It
+  holds no path, no link, no user name, no host name, no camera name and no serial number, although
+  it is a local file. A tracked file never holds the path of the folder: the code finds it with its own
+  function.
+- **Tests.** T-UNX-96 to T-UNX-100 (`skellycam/tests/capture/test_restore_store.py`).
 
 ### 4.8 Threads
 
@@ -1435,6 +1497,31 @@ The signal and the watch [ADR-AC5B](../decisions/entries/AC5B-choices-of-the-thi
   not known [K23] [NV]; no done item depends on it.
 - `capture-macos` also runs `capture_macos_runner` tests; `uv sync` installs PyObjC through its markers.
 - The build workflow runs T-UNX-88 on its macOS jobs.
+- The recorder workflow sets `SKELLYCAM_NO_SKIP` to `skellycam/tests/take_recorder/test_connection.py`:
+  a skipped test of that file fails the run (`skellycam/tests/conftest.py`). Before, a module skip of
+  that file (the connection tests before the connection commit) made the run green on each system,
+  and the first run of these tests on Linux came three days after the code [ADR-HQE5](../decisions/entries/HQE5-choices-of-fix-lane-4.md).
+  The capture and recorder workflows also run on each push to `dom/integration`.
+
+### 4.12 The start method of a camera process [A]
+
+- Each camera process starts with `spawn` on each system: `skellycam/__init__.py` sets the start
+  method `spawn` when no start method is set yet, before any shared object is made (also the log queue
+  of `skellylogs`). A host program that set a start method before it imports `skellycam` keeps it.
+  Windows and macOS used `spawn` before; Linux used `fork` [ADR-HQE5](../decisions/entries/HQE5-choices-of-fix-lane-4.md).
+- Reason (CI run 45214740615, reproduced on Linux): a forked camera process of a main process that
+  had decoded a video with PyAV (T-REC-31 before T-REC-44; in the app, the player) freed a PyAV
+  `VideoReformatter` right after the fork. `sws_freeContext` waited for the FFmpeg slice threads,
+  which the fork does not copy. The camera process never answered, and the group gave it
+  `open-failed` after 30 s. A fork of a process with threads can deadlock in this way in each library
+  with threads; Python 3.13 warns about it.
+- What `spawn` asks: each argument of a camera process pickles (Windows asks the same today); each
+  shared object comes from the default context, which is then `spawn`; the `parent_process()` guards
+  work as on Windows. A camera process opens each shared lock and array by its name while it starts,
+  so the main process keeps each array that it replaced (`CameraStatus.retired`): another camera
+  process can still start with the old array.
+- Cost: on Linux each camera process imports the package again (as on Windows), so its start takes
+  longer. The stagger of the starts stays a Windows rule (`_SPAWN_STAGGER_SECONDS`).
 
 ## 5. Parity with the Windows spec
 
@@ -1680,6 +1767,11 @@ facts of macOS only.
 | T-UNX-93 | fake | A frame decision with no take (first frame -1) while another thread holds the lock of the last frame. | It returns "no record, no finish" in under 0.2 s and starts no stretch with no lock (4.10). |
 | T-UNX-94 | fake | `CameraManager.close()` with a camera process that cannot be killed and a camera with a restore record. | The close raises; `restore_records` holds the record of that camera (4.7). |
 | T-UNX-95 | fake | A camera whose exposure the open set and whose loop then fails: with `rate-low` (the start-up rate check), with `not-ready`, and with `stalled` (the stall rule of [W 9.5]). | `rate-low` and `not-ready`: the close restores the "before" values, `restore_ok` true; `stalled`: no set at the close, `restore_ok` null (4.7) [ADR-Z7F3](../decisions/entries/Z7F3-choices-of-fix-lane-3.md). |
+| T-UNX-96 | fake | A camera in auto -6 opens in MANUAL -7 with a restore folder; it stalls (no restore); its server goes (a new `CameraGroupManager` with the same folder and the same camera); the new server opens it and closes it. | The file `<camera_id>.json` exists after the first set, with `version` 1, the USB IDs and no path; the second close restores auto -6; the file is gone (4.7.1) [ADR-HQE5](../decisions/entries/HQE5-choices-of-fix-lane-4.md). |
+| T-UNX-97 | fake | The file of a camera holds bytes that are not JSON, then JSON of another `version`. | The open and the close have no error; one log line; the file is removed; no restore of an old value (4.7.1). |
+| T-UNX-98 | fake | Two cameras of one model (the same USB IDs), each with its own entry of other "before" values; a new server opens both and closes them. An entry whose USB IDs differ from the camera with its `camera_id`. | Each camera restores its own "before" values; the entry with other USB IDs is dropped and its camera is not restored to it (4.7.1). |
+| T-UNX-99 | fake | A camera whose entry is used; its close restores with no failure. | The file is gone after the close; a later group creates no file before a set (4.7.1). |
+| T-UNX-100 | fake | The camera reads a manual value two steps from the value of the entry at the open of the new server. | The entry is dropped: the file is gone, and the close does not set the "before" value of the entry (4.7, 4.7.1). |
 | T-UNX-79 | fake | `capture_timing`. A paused camera process with `V4L2Source` and with `AVFoundationSource` over the fakes, 10 s. | Process CPU under 2 % of one core (the rule of T-CAP-49). Not calibrated on a hosted runner: a failure is recorded and the user decides [A]. |
 
 ### 6.6 Runner and build tests

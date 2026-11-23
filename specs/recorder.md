@@ -853,6 +853,12 @@ A frame with no bit of the error mask 0x0F gives one block and one row. `flags` 
    `last_recording_frame_number`, and only when the value is still −1: a last frame that a camera set
    first stays. Then it unpauses the cameras, with no wait, so that a paused camera records to that
    frame. (The public pause route is removed: [ADR-V8RS](../decisions/entries/V8RS-pause-freezes-the-ui-display-only.md).)
+   While the stop holds that lock, a camera that decides a frame waits for it, and a camera that waits
+   at the gate for that camera reads no frame. A push source replaces each frame that comes in that
+   time (5.2). Thus a hold that is longer than one frame interval (a main process that is busy between
+   the read and the write) can give a `gap` on the last row of the take, and a `camera_gap` warning.
+   The warning is true: frames were lost. It can come only on the last row: the frame of each row
+   before it was in hand before the hold [ADR-HQE5](../decisions/entries/HQE5-choices-of-fix-lane-4.md).
 2. The main process tells each camera to end, with the frame count of the take (7.6).
 3. Each camera process calls `end(frame_count)` and sends its `CameraTakeResult` (4.3).
 4. The main process waits for each camera while its writer makes progress, and at most the stall
@@ -893,9 +899,9 @@ finished [SFF-724].
 | `number_of_cameras` | `group_size`. |
 | `number_of_frames` | The frame count of the take (7.6). |
 | `total_duration_sec` | `duration_s` of the manifest summary [SFF-728, F-1]. |
-| `mean_framerate` | Frames divided by the elapsed time (M of [ADR-JMS0](../decisions/entries/JMS0-review-decisions.md), changed on 2026-11-20): for each camera, the group frames from its first to its last row that is not `missing`, divided by the time between their `arrival_ns`, in s; the mean over the cameras. Rounded to 2 decimals. Null (NaN) when no camera has two such rows. Before, the mean of a rate for each frame: two frames 1 ms apart counted as 1000 fps. |
+| `mean_framerate` | The frame rate of the take: frames divided by the elapsed time (M of [ADR-JMS0](../decisions/entries/JMS0-review-decisions.md), changed on 2026-11-20; the user decided on 2026-11-23 (Q609) that this is the headline rate of a take [ADR-81RE](../decisions/entries/81RE-decisions-of-the-user-on-the-restore-file-the-take-rate-and-pace-tests.md)). For camera i: F_i is the group frames from its first to its last row that is not `missing` (the row index of the last minus the row index of the first), and T_i is the time between the `arrival_ns` of these two rows, in s. A camera with fewer than two such rows, or with T_i not above 0, is left out. The group value is ΣF_i / ΣT_i over the cameras that are left, rounded to 2 decimals. Null (NaN) when no camera is left. Changed on 2026-11-23 [ADR-HQE5](../decisions/entries/HQE5-choices-of-fix-lane-4.md): before, the group value was the mean of F_i / T_i, and a camera with two rows 1 ms apart (a process killed after its first frames) gave 1000 fps for itself. With ΣF / ΣT, such a camera adds almost nothing. With cameras of the same length, the value is the mean of before. The arrival grid of 16 ms changes T_i by one step at most at each end: 0.1 % of a take of 30 s. The name stays (a client reads it); its meaning is the rate of the take. |
 | `mean_inter_camera_sync_ms` | The mean of the range of frame k: the largest minus the smallest `arrival_ns` of the cameras whose row is not `missing`, in ms. Rounded to 2 decimals. |
-| `framerate_stats` | Median, mean, standard deviation, min and max of the rate of each group frame k ≥ 1: 1 / the median over the cameras of `arrival_ns`(k) − `arrival_ns`(k − 1), in s, for each camera with neither row `missing` and a time that increases ([ADR-F8C0](../decisions/entries/F8C0-third-review-choices.md) item 11). A median, not a mean (a decision of the user of 2026-11-21): a burst of queued frames of one camera (one run gave a mean of 136 fps and a max of 2775 fps) does not make the rate of the frame [ADR-Z7F3](../decisions/entries/Z7F3-choices-of-fix-lane-3.md). With two cameras, the median is the mean of the two durations. |
+| `framerate_stats` | Median, mean, standard deviation, min and max of the rate of each group frame k ≥ 1: 1 / the median over the cameras of `arrival_ns`(k) − `arrival_ns`(k − 1), in s, for each camera with neither row `missing` and a time that increases ([ADR-F8C0](../decisions/entries/F8C0-third-review-choices.md) item 11). A median, not a mean (a decision of the user of 2026-11-21): a burst of queued frames of one camera (one run gave a mean of 136 fps and a max of 2775 fps) does not make the rate of the frame [ADR-Z7F3](../decisions/entries/Z7F3-choices-of-fix-lane-3.md). With two cameras, the median is the mean of the two durations. These are figures of each frame interval, not the rate of the take [U Q609]: on a camera whose arrival times fall on a 16 ms grid, the intervals are 16, 33 or 50 ms, and `framerate_stats.median` reads 31.25 for a take at 30.02 fps (a real-camera run of 2026-11-23). The rate of the take is `mean_framerate`. The median of B2 of [ADR-TFD7](../decisions/entries/TFD7-search-limit-stop-rate-median-role-flag-and-restore-after-a-failed-loop.md) stays only here. |
 | `frame_duration_stats` | The same of the median frame duration of each frame k ≥ 1 (the median over the cameras), in ms. |
 | `inter_camera_grab_range_ms_stats` | The same of the ranges of `mean_inter_camera_sync_ms`. |
 
@@ -1120,6 +1126,9 @@ plan test T-REC-MF-DEFER needs a camera. It is not in R11 and waits for the conn
   `skellycam/tests/take_recorder/test_connection.py` (the stop of 8.1 step 1) runs on the real clock.
   A code step gives it the marker `capture_timing`, so that the macOS job runs it in its own step
   [ADR-AC5B](../decisions/entries/AC5B-choices-of-the-third-consistency-check.md).
+  It also has the marker `pace` of [cap 16.1]: its warnings depend on the pace of the runner (8.1 step 1).
+  It accepts a `camera_gap` only on the last row of a camera, and no other warning
+  [ADR-HQE5](../decisions/entries/HQE5-choices-of-fix-lane-4.md).
 - **Workflow** [C4] [agent 34]: a new `.github/workflows/recorder.yml`, on the pattern of
   `ring-arm64.yml` and of the capture workflow of [cap 15]: the same actions pinned by full SHA, uv
   `0.13.9`, Python `3.13.18`, `permissions: contents: read`, a concurrency group. Trigger: each push to

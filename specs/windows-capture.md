@@ -1240,6 +1240,22 @@ section adds only what capture adds.
 - **local**: a test with the fake source that runs only on the Windows development machine. It has
   the marker `capture_local`, and the hosted runners leave it out (section 15) [agent 2]. T-CAP-49
   and T-CAP-50 are of this kind.
+- **pace**: a test whose result depends on the pace of the machine or on a wall-clock limit. It has
+  the marker `pace` (a decision of the user of 2026-11-23, Q619: "A red workflow should mean a real
+  fault") [ADR-81RE](../decisions/entries/81RE-decisions-of-the-user-on-the-restore-file-the-take-rate-and-pace-tests.md).
+  On a real machine it runs strict, in the normal run. Each workflow of `.github/workflows/` runs the
+  tests of its paths with `-m "not pace"` in its blocking step. Then it runs `-m pace` in a step of its
+  own with `continue-on-error: true` and `SKELLYCAM_PACE_MARGIN: "3"`: a failure there shows as a
+  failed step, and the workflow stays green. `skellycam/tests/pace.py` gives the margin (`margin()`,
+  1 when the setting is not there). In a `pace` test, the tolerance of each bound (the part of the bound
+  past its nominal value, for example 0.5 s of a bound of 5.5 s for a limit of 5 s) is the strict
+  tolerance times the margin. The nominal value does not move: a limit of 5 s that ends at 4 s still
+  fails. A test
+  that fails for a reason that does not depend on the pace (for example a camera process that gives no
+  answer) does not get the marker [ADR-HQE5](../decisions/entries/HQE5-choices-of-fix-lane-4.md).
+  The tests with the marker: T-UNX-26, T-UNX-76 (both tests), the hanging restore of F7, T-RING-12,
+  T-RING-23 and `test_a_slow_stop_ends_each_camera_at_the_last_frame` ([`recorder.md`](recorder.md)
+  12.1).
 
 Systems [U18, U20, U21]:
 
