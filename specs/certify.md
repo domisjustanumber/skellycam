@@ -7,14 +7,15 @@ Status: draft 3 for the user, 2026-11-20; the first code step on 2026-11-21. The
 `:native-jpeg:valid`, `:native-jpeg:size`, `:native-jpeg:ring-equals-mkv`, `:native-jpeg:source-equals-ring`,
 `:settings-stick:readback`, `:settings-stick:holds`, `:settings-stick:image-effect`, `:records:rows-complete`,
 `:records:blocks-decode`, `:records:gaps-explained`, and on Linux and macOS in quick and on each system in full
-`:clock:base`, `:clock:before-arrival`, `:clock:near-arrival`, `:sequence`, `:time-gaps`; `group:take:finished`,
+`:clock:base`, `:clock:before-arrival`, `:clock:near-arrival`, `:sequence`, `:time-gaps`, and `:live-at-close`
+(3.6.1, Q646 [ADR-056Z](../decisions/entries/056Z-decisions-of-the-user-on-a-late-camera-failure-the-release-build-file-and-the-open-rows.md)); `group:take:finished`,
 `:csv-rows`, `:no-missing`, `:frame-count`, `:rate`; `<model>:units`; in full the roll-up checks
 `<model>:gate:<step>` and `<model>:gate` and the check `<model>:gate:no-hang`; the cleanup rows `release:<label>`,
-`delete-work-folder` and `write-record`; and `session:exit`. Each other check of this spec is `not-run` with
-`not-built`: `group:open` with the retry alone (4.2), `self:hang-100ms:gap` and `:hard-end`, the camera block of
+`delete-work-folder` and `write-record`; and `session:exit`. Steps 1 to 4 of 3.6.7 are built [ADR-0Z6Q](../decisions/entries/0Z6Q-choices-of-the-certify-report-shape-build.md): each other
+check of this spec is not in `checks`, and `details.not_built` names it: `group:open` with the retry alone (4.2), `self:hang-100ms:gap` and `:hard-end`, the camera block of
 `full` (5, 8.2, 10.2), and the group, system and self checks of `full` (6, 7). The checks of a mode above `<base>`
 and the macOS probes (10.7) are not in the report yet. On Linux and macOS the native detection is not built:
-`detect` is `not-run` `not-built`. The decisions of the user that it builds on are in
+`detect` is `not-run` `not-built` (the check has code; the product value is missing). The decisions of the user that it builds on are in
 [ADR-GVC0](../decisions/entries/GVC0-certify-decisions-of-the-user.md) and
 [ADR-KG00](../decisions/entries/KG00-certify-decisions-of-the-user-on-draft-2.md). The choices of the
 agent are in [ADR-KY81](../decisions/entries/KY81-certify-spec-choices-of-the-agent.md) (draft 2) and
@@ -26,7 +27,8 @@ On 2026-11-23 the user decided the report shape of quick and full (Q591 to Q599,
 [ADR-H2A0](../decisions/entries/H2A0-decisions-of-the-user-on-the-certify-report-shape.md); Q608 to Q618,
 [ADR-BW5M](../decisions/entries/BW5M-decisions-of-the-user-on-the-two-verdicts-and-the-certify-test-set.md)). Section 3.6 states
 it, with the choices of the agent ([ADR-MEE1](../decisions/entries/MEE1-choices-of-the-certify-report-shape.md)).
-It is not built. The list of built checks above tells what the code gives today. Where an older section and 3.6
+Steps 1 to 4 of its build order (3.6.7) are built, and the code writes the schema 1.7.0 [ADR-0Z6Q](../decisions/entries/0Z6Q-choices-of-the-certify-report-shape-build.md). The other steps are
+not built. The list of built checks above tells what the code gives today. Where an older section and 3.6
 differ, 3.6 is the rule.
 
 Draft 3 puts in the decisions of the user of 2026-11-20 on draft 2: the answers C1 to C9 (questions 1
@@ -55,14 +57,14 @@ of the supervisor and of the agent ([ADR-FC1C](../decisions/entries/FC1C-choices
   `skipped` with `busy` and the code `cameras-busy`. Format 1.4.0
   ([ADR-V1TR of skellycertify](https://github.com/domisjustanumber/skellycertify/blob/1c9c1917d8524931ff43ffae52051a529a875a3b/decisions/entries/V1TR-format-1-4-0.md))
   gives one check for each test, the roll-up check, `notices`, the plan fields `risks` and `total`,
-  the table of the checks that did not pass, and `over-budget`. Each module report of skellycam has
-  the schema `skellycertify.report/1.6.0`. Commit `9e6d575` of `main` (skellycertify ADR-T191 and
+  the table of the checks that did not pass, and `over-budget`. Each module report of skellycam had
+  the schema `skellycertify.report/1.6.0` until step 2 of 3.6.7; it now has `skellycertify.report/1.7.0`
+  (3.6.1). Commit `9e6d575` of `main` (skellycertify ADR-T191 and
   ADR-MM1F, still format 1.4.0) adds the optional `gate` of a summary item [C 3.7], the reviewed row of
   a `partial` item whose `gate` check is `pass` [C 7.2], the forms of `host` [C 3.3] and the privacy
   rules 17 to 20 [C 6]. "[C x.y]" cites that commit.
   Section 3.6 was written against format 1.7.0 (commit `e569c29` of `main`, read on 2026-11-23). The user
-  decided that the code writes the schema `skellycertify.report/1.7.0` (3.6.1; not built: the code still writes
-  1.6.0). Commit `cf9c7a2` of the contract allows a local unit id of a camera [C 6]. skellycam does not use it
+  decided that the code writes the schema `skellycertify.report/1.7.0` (3.6.1; built in step 2 of 3.6.7 [ADR-0Z6Q](../decisions/entries/0Z6Q-choices-of-the-certify-report-shape-build.md)). Commit `cf9c7a2` of the contract allows a local unit id of a camera [C 6]. skellycam does not use it
   [U Q595].
 - **[cap x.y]** is a section of [`windows-capture.md`](windows-capture.md). **[rec x.y]** is a section
   of [`recorder.md`](recorder.md). **[P §n]** is section n of `research/NATIVE_JPEG_CAPTURE_PLAN.md`.
@@ -460,8 +462,8 @@ The names, the places, the vocabularies and the bounds of this section are choic
 ([ADR-NQ77](../decisions/entries/NQ77-choices-of-the-certify-report-fields.md)). The user accepted them
 as a set on 2026-11-23 [U Q572]
 ([ADR-10HT](../decisions/entries/10HT-acceptance-of-the-certify-report-field-choices-and-the-build-order.md)).
-"[U Q572]" marks them in this section. Nothing in
-this section is built yet. Each field fits format 1.6.0 and format 1.7.0 of the contract as they are:
+"[U Q572]" marks them in this section. Of this section,
+only 3.5.2 and the failure facts of a B1 row of 3.6.1 are built [ADR-0Z6Q](../decisions/entries/0Z6Q-choices-of-the-certify-report-shape-build.md). Each field fits format 1.6.0 and format 1.7.0 of the contract as they are:
 flat values in `numbers` [C 3.4], structured values in the module `details` [C 3.1]. No field needs a
 `details` object on a check, a list of numbers in `numbers`, or an attached file.
 
@@ -534,10 +536,15 @@ The names that the analysis of 2026-11-21 proposed and that this section changes
 
 | Key | Place | Type and values | Present (else) | Example | Source | Privacy |
 |---|---|---|---|---|---|---|
-| `package.commit` | `package` [C 3.2] | 40 lower-case hex digits, or `null` | always; `null` when the package has no valid build file | `"0123456789abcdef0123456789abcdef01234567"` | small code: the wheel build writes `skellycam/build_info.json`, `{"commit": "<40 hex>", "tree_modified": <bool>}`, from git at build time; certify reads it; no git at run time [C 2.5] | a commit of the public repository; no rule applies |
+| `package.commit` | `package` [C 3.2] | 40 lower-case hex digits, or `null` | always; `null` when the package has no valid build file | `"0123456789abcdef0123456789abcdef01234567"` | small code: each build writes `skellycam/build_info.json` (the bullets below), `{"commit": "<40 hex>", "tree_modified": <bool>}`, from git at build time; certify reads it; no git at run time [C 2.5] | a commit of the public repository; no rule applies |
 | `package.tree_modified` | `package` [C 3.2] | `true`, `false`, `null` | always; `null` with no valid build file | `false` | small code: the same file; `true` when `git status --porcelain` was not empty at build time | none |
 
 - A build file that does not parse, or that has another form, counts as no file.
+- Each build carries the file [U Q647] [ADR-056Z](../decisions/entries/056Z-decisions-of-the-user-on-a-late-camera-failure-the-release-build-file-and-the-open-rows.md). A wheel from a checkout writes it from git. The sdist carries it,
+  and a wheel built from the sdist copies it. The installer build of CI writes it from git before a step changes
+  the tree, and `skellycam.spec` puts it into `datas`. Only a source root that is the top of its git work tree
+  gives a commit; a source tree inside another repository gives none [ADR-0Z6Q](../decisions/entries/0Z6Q-choices-of-the-certify-report-shape-build.md). An error of git gives no commit and
+  never fails the build.
 - With a valid commit, `evidence.reasons` has no `no-commit`. With `tree_modified` `false`, it has no
   `modified-tree` [C 7.1]. The code must stop to add the two codes in all cases (today `run.py` adds them to each
   report). It adds `no-commit` only when `commit` is `null` or not 40 hex digits, and `modified-tree` only when
@@ -912,7 +919,7 @@ change has its tests.
 | P4 | `exit_code` (D-5): the main process puts the exit code of a camera process that ended into the kept diagnostics (the form of `_note_failure`). | product | `exit_code` |
 | P5 | The rate window keys (D-3) of the start-up rate check: `rate_interval_max_ms`, `rate_interval_max_end_ns`, `rate_long_intervals`, `rate_luma_mean` (`rate_window_frames` and `rate_interval_p95_ms` are dropped, Q594). | product | the rate rows of 3.5.6 |
 | P6 | `usb_connection.py`: `usb_facts(path)` gives `usb_link`, `bcd_usb`, `bcd_device`, `controller_id`, `hub_depth`, `driver_kind` and `driver_version` from the walk of `_windows_usb_link` (Windows first). | product | 3.5.5 |
-| P7 | The wheel build writes `skellycam/build_info.json`. | build | 3.5.2 |
+| P7 | Each build writes or carries `skellycam/build_info.json`: the wheel, the sdist, a wheel from the sdist and the installer (3.5.2) [U Q647]. | build | 3.5.2 |
 | C1 | The run clock and `details.steps` (3.5.4, 3.6.3); `take_seconds`. | certify | each `_at_s` key |
 | C2 | The failure facts of 3.5.3. It can land before P1 to P4, with `null` values. | certify | 3.5.3 |
 | C3 | `details.cameras` with the verdict and the names of 3.6.3 and 9.4 (needs P6 for the USB keys). No unit id (Q595). | certify | 3.5.5, 3.6.3 |
@@ -941,7 +948,8 @@ agent were marked [A] ([ADR-MEE1](../decisions/entries/MEE1-choices-of-the-certi
 them as a set (Q627), so they are marked [U Q627, MEE1 n] or [U Q627, DBF8 n] with the item number of the entry,
 except the choices that Q628 changes (the camera names and the USB link notice), which stay [A]. The contract
 owner confirmed on 2026-11-23 that format 1.7.0 carries the two verdicts of Q611 and the "gate not complete" of
-Q610 with no change of the format [C 3.4, 3.7, 4.2, 5.3, 7.2]. This section is not built.
+Q610 with no change of the format [C 3.4, 3.7, 4.2, 5.3, 7.2]. Steps 1 to 4 of 3.6.7 are built [ADR-0Z6Q](../decisions/entries/0Z6Q-choices-of-the-certify-report-shape-build.md); the other
+steps are not built.
 
 #### 3.6.1 Rules of the rows
 
@@ -972,7 +980,9 @@ Q610 with no change of the format [C 3.4, 3.7, 4.2, 5.3, 7.2]. This section is n
     `device-removed`, `hung`; `process-ended` gives `crashed`, 10.5) and the failure facts of 3.5.3 that have a
     value.
   - The row is the first check of that camera that has no result yet, in the order of the plan [U Q627, MEE1 1]. In the take
-    and after it, the row is `<label>:records:rows-complete` [U Q627, DBF8 14, review finding 5]. For
+    and after it, the row is `<label>:records:rows-complete` [U Q627, DBF8 14, review finding 5], while it has no
+    result. Certify looks once more after the take rows and after the close [U Q646]. A camera that leaves there
+    gets its row on `<label>:live-at-close` (3.6.2), the last check of the camera [ADR-0Z6Q](../decisions/entries/0Z6Q-choices-of-the-certify-report-shape-build.md). For
     example, a camera that stalls after `ready` and before the settings change gives
     `<label>:settings-stick:readback` `fail` `stalled`. Its other checks give one `<label>:not-reached` row.
   - The row has `module` = the name of the model, also when its check is a pipeline check, and the model item is
@@ -981,6 +991,9 @@ Q610 with no change of the format [C 3.4, 3.7, 4.2, 5.3, 7.2]. This section is n
   - `<model>:gate:no-hang` reads each `fail` row of the model. It fails with the reason `hung`, `crashed` or
     `stalled` [U Q627, MEE1 2]. A `device-removed` row does not fail it: the person removed the camera.
   - `details.cameras[]` of that unit names the row in `failed` (3.6.3).
+- **A camera that fails at the open [U Q648].** The open names `opens`, `rate` and `modes:granted:<base>` in its
+  progress messages before the one apply, so each of the three keeps its own row. The camera has these three rows
+  and one `<label>:not-reached` row.
 - **No zero counts on a `pass` row [U Q627, DBF8 16, review].** On a `pass` row, a count whose value is 0 is absent (for example
   `frames_damaged`, `decode_failures`, `missing`, `gaps`, `end_gaps`, `long_intervals`, `discontinuity_flags`,
   `frames_differ`, `frames_wrong_size`, `later_than_arrival`, `problems`). A reader reads an absent count of a
@@ -1006,7 +1019,7 @@ Q610 with no change of the format [C 3.4, 3.7, 4.2, 5.3, 7.2]. This section is n
 of the row. A key with "fail" is on a `fail` row only. The failure facts of 3.5.3 are on each failure row and are
 not repeated here. 3.6.10 gives the kind of each check (camera, pipeline or system) and its `module`.
 
-**Quick, each camera [U Q593, Q624i]: eleven checks.**
+**Quick, each camera [U Q593, Q624i, Q646]: twelve checks.**
 
 | Check | Numbers | Fail and not-run reasons |
 |---|---|---|
@@ -1021,6 +1034,7 @@ not repeated here. 3.6.10 gives the kind of each check (camera, pipeline or syst
 | `<label>:records:rows-complete` | `rows`, `missing`, `take_fps`, `interval_p95_ms`, `interval_max_ms`, `interval_max_at_s`, `long_intervals`, `discontinuity_flags`, the gap keys of 3.5.7 | `rows-differ`, `missing-rows` |
 | `<label>:records:blocks-decode` | `decode_failures` | `frame-not-decodable` |
 | `<label>:records:mkv-opens` [U Q624i] | fail: `mkv_frames`, `frame_count` | `mkv-not-readable`, `mkv-frames-differ` |
+| `<label>:live-at-close` [U Q646] [ADR-0Z6Q](../decisions/entries/0Z6Q-choices-of-the-certify-report-shape-build.md) | fail: the failure facts of 3.5.3 | `pass` when the camera gives no product failure code from the end of its take checks to the end of the close; else `fail` with the product code (B1, 3.6.1) |
 
 On Linux and macOS, quick also has `clock:base`, `clock:before-arrival`, `clock:near-arrival` and one of
 `sequence` and `time-gaps` (10.6). They stay in quick [U Q620] ([ADR-G0AC](../decisions/entries/G0AC-decisions-of-the-user-on-the-certify-verdict-questions.md)).
@@ -1039,7 +1053,7 @@ On Linux and macOS, quick also has `clock:base`, `clock:before-arrival`, `clock:
 | `report:rules` [U Q624m] | `problems` | `report-rules` (3.6.12) |
 | `session:exit` | none | `record-only` `hung-at-exit`, `crashed`, `timed-out` [C 2.5] |
 
-**Full, each camera: the eleven of quick and these six [U Q593], with the clock checks.**
+**Full, each camera: the twelve of quick and these six [U Q593], with the clock checks.**
 
 | Check | Numbers | Fail reasons |
 |---|---|---|
@@ -1065,8 +1079,8 @@ the list of the review are the same.
 blocks the gate of that model, not `pipeline:gate`. `<model>:gate` requires, for each unit of the model whose
 `opens` judged, each row of this list whose `module` is the name of the model:
 
-- the camera checks `opens`, `modes:granted:<base>`, `rate`, `native-jpeg:format`, `native-jpeg:valid` and
-  `native-jpeg:size`;
+- the camera checks `opens`, `modes:granted:<base>`, `rate`, `native-jpeg:format`, `native-jpeg:valid`,
+  `native-jpeg:size` and `live-at-close` [U Q646];
 - each pipeline and system check of 3.6.10 that the rule gives to the model, by its name: the pipeline checks of
   the list of `pipeline:gate` below, `group:take:finished`, `group:take:rate` and `group:cycles`;
 - `<model>:gate:no-hang`;
@@ -1264,11 +1278,11 @@ step on, and a part of a test that needs a later step joins at that step (the co
 
 | Step | Change | Tests | Parts that join later |
 |---|---|---|---|
-| 1 | B1 (3.6.6 item 1): the `fail` row, its reason and `module`, and `gate:no-hang` with `stalled`; P7 and the commit, the tree state and the two evidence codes (3.5.2) | T-CERT-93, T-CERT-77, T-CERT-27 | T-CERT-93: the `not-reached` row of the other checks at step 4; `details.cameras[].failed` at step 8; `exit_code` 3 at step 10 (P4) |
+| 1 | B1 (3.6.6 item 1): the `fail` row, its reason and `module`, and `gate:no-hang` with `stalled`; P7 and the commit, the tree state and the two evidence codes (3.5.2) | T-CERT-93, T-CERT-77, T-CERT-27 | T-CERT-93: the `not-reached` row of the other checks at step 4; `details.cameras[].failed` at step 8; the model item `fail` of a B1 row at step 6; `exit_code` 3 from the failure of the status now, from D-5 after P4 (step 10) [ADR-0Z6Q](../decisions/entries/0Z6Q-choices-of-the-certify-report-shape-build.md) |
 | 2 | The schema id 1.7.0, also in the validator | T-CERT-03 (schema), the validator tests | T-CERT-03 pipeline item: step 6 |
 | 3 | `details.not_built` and the plan with no not-built check; no `same-model` rows; the plan total with `session:exit` | T-CERT-91, T-CERT-01, T-CERT-103 | |
 | 4 | `<label>:not-reached` and the `done` count | T-CERT-92, T-CERT-17 | |
-| 5 | Quick with ten checks for each camera, full with the six; `group:take` with two rows; `system:recording-space` and `group:in-step`; no `<label>:detect`, no `<model>:units` | T-CERT-07, T-CERT-99, T-CERT-26, T-CERT-110, T-CERT-111 | |
+| 5 | Quick with eleven checks for each camera (with `live-at-close`, Q646), full with the six; `group:take` with two rows; `system:recording-space` and `group:in-step`; no `<label>:detect`, no `<model>:units` | T-CERT-07, T-CERT-99, T-CERT-26, T-CERT-110, T-CERT-111 | T-CERT-07: the pipeline item at step 6; T-CERT-26: `details.cameras` at step 8; T-CERT-99: the cases of a rate 1.5 % off at step 11; T-CERT-111: `details.limits.in_step_ms` at step 9 [ADR-0Z6Q](../decisions/entries/0Z6Q-choices-of-the-certify-report-shape-build.md) |
 | 6 | The two verdicts of 3.6.10: the pipeline item, the kind and the `module` of each check, the count of the models, the B1 and wedge rules, no `module` with no item, `details.pipeline`, the pipeline row of the record | T-CERT-105 to T-CERT-109, T-CERT-123, T-CERT-125, T-CERT-126, T-CERT-44 | |
 | 7 | The gates: two rows for each model and `pipeline:gate`, each wired by `module`; `details.gates`; "gate not complete" with `not-built`, `partial` items and `"sign-off": "not-built"` in the record; the plan of full | T-CERT-65, T-CERT-98, T-CERT-47, T-CERT-124 | |
 | 8 | `details.cameras` with the verdict and the names of 9.4; the list of known cameras; the record key with no USB id | T-CERT-94, T-CERT-95, T-CERT-100, T-CERT-127 | |
@@ -1315,14 +1329,14 @@ Media Foundation, one model for each camera. "Today" is the code at `54d915c59`.
 
 | Rows | Quick today | Quick after | Full today | Full after |
 |---|---|---|---|---|
-| Each camera | 17 | 11 | 45 (23 of them `not-built`) | 21 |
+| Each camera | 17 | 12 | 45 (23 of them `not-built`) | 22 |
 | Each model | 1 (`units`) | 0 | 10 (`units`, 9 gate rows) | 2 |
 | The run | 9 | 8 | 41 (35 of them `not-built`) | 12 (with `pipeline:gate`) |
 | `session:exit` | 1 after a hang at exit | the same | the same | the same |
-| 3 cameras | 63 (64 measured, with `session:exit`) | 41 | 206 (207 measured, with `session:exit`) | 81 |
-| 4 cameras | 81 | 52 | 261 | 104 |
-| 8 cameras | 153 | 96 | 481 | 196 |
-| Rows of a failed camera in the Markdown table [C 4.2 part 8] | 13 | 2 | 47 | about 3 |
+| 3 cameras | 63 (64 measured, with `session:exit`) | 44 | 206 (207 measured, with `session:exit`) | 84 |
+| 4 cameras | 81 | 56 | 261 | 108 |
+| 8 cameras | 153 | 104 | 481 | 204 |
+| Rows of a camera that failed at the open in the Markdown table [C 4.2 part 8] | 13 | 4 | 47 | about 6 |
 
 | Bytes (`indent=1`) | Quick today | Quick after | Full today | Full after |
 |---|---|---|---|---|
@@ -1331,9 +1345,11 @@ Media Foundation, one model for each camera. "Today" is the code at `54d915c59`.
 | 4 cameras | 24 kB | 18 kB | 52 kB | 30 kB |
 | 8 cameras | 46 kB | 33 kB | 98 kB | 56 kB |
 
-- The row counts are computed from the plan, with no `session:exit`: quick 18 N + 9 today and 11 N + 8 after; full
-  55 N + 41 today and 23 N + 12 after, for N cameras of N models. The real reports of 2026-11-23 (3 cameras) had 64
-  and 207 rows with `session:exit`, which agrees [M review pass 2].
+- The row counts are computed from the plan, with no `session:exit`: quick 18 N + 9 today and 12 N + 8 after; full
+  55 N + 41 today and 24 N + 12 after, for N cameras of N models. The real reports of 2026-11-23 (3 cameras) had 64
+  and 207 rows with `session:exit`, which agrees [M review pass 2]. "After" has the row `<label>:live-at-close`
+  [U Q646]. A camera that fails at the open has four rows in the table: `opens`, `rate`, `modes:granted:<base>` and
+  `not-reached` (3.6.1) [U Q648]; in full also `<model>:gate:no-hang` and `<model>:gate`.
 - The bytes "today" for 3 cameras are measured; the others are the first-pass measurements on fake cameras,
   scaled by the real-to-fake ratio (0.90 quick, 0.94 full) [M review pass 2]. The bytes "after" are estimates of
   the review (`slim.py` on the real reports, plus an estimate of the slim fields of 3.5, without the gate step
@@ -1342,7 +1358,8 @@ Media Foundation, one model for each camera. "Today" is the code at `54d915c59`.
 - "After" counts the checks of 3.6.12 as built, and the checks of sections 5 to 8 as not built. They add about
   0.15 kB for each camera in quick and 0.3 kB in full, and about 0.6 kB (quick) and 1.2 kB (full) for the run
   [estimate].
-- The examples of 3.6.9 show the shape before Q624: they do not show the rows of 3.6.12.
+- The examples of 3.6.9 show the shape before Q624 and Q646: they do not show the rows of 3.6.12. Each camera also
+  has the row `<label>:live-at-close`, and each `not-reached` count of a camera is one higher.
 - With the fields of 3.5 as first specified, the review estimated 38.6 kB for quick and 74.8 kB for full with four
   cameras [estimate].
 
@@ -1526,7 +1543,7 @@ contract owner confirmed its form [C 3.7]:
 
 | Kind | Checks |
 |---|---|
-| camera | `detect:mjpg-mode`, `opens`, `rate`, `modes:granted:<mode>`, `native-jpeg:format`, `native-jpeg:valid`, `native-jpeg:size`, `settings-stick:readback`, `:holds`, `:image-effect`, `:each-open`; in full when built: `rate:<mode>`, `rate:<w>x<h>@60`, `exposure:<base>:readback`, `control:gain`, `control:focus`, `auto-off:*`, `group-open`, `cycles`; `<model>:gate:no-hang`; `<label>:not-reached`; the cleanup rows `release:<label>` |
+| camera | `detect:mjpg-mode`, `opens`, `rate`, `modes:granted:<mode>`, `native-jpeg:format`, `native-jpeg:valid`, `native-jpeg:size`, `settings-stick:readback`, `:holds`, `:image-effect`, `:each-open`, `live-at-close`; in full when built: `rate:<mode>`, `rate:<w>x<h>@60`, `exposure:<base>:readback`, `control:gain`, `control:focus`, `auto-off:*`, `group-open`, `cycles`; `<model>:gate:no-hang`; `<label>:not-reached`; the cleanup rows `release:<label>` |
 | pipeline | `native-jpeg:not-reencoded`, `native-jpeg:source-equals-ring`, `native-jpeg:ring-equals-mkv`, `records:rows-complete`, `records:blocks-decode`, `records:gaps-explained`, `records:mkv-opens`, `clock:base`, `clock:before-arrival`, `clock:near-arrival`, `sequence`, `time-gaps`; the run checks `group:take-again` and `group:preview-during-take`, which count against the pipeline as a system check does, unless the rule below gives them to a model; in full when built: `identity:*`, `controls`, `controls:exposure-scale`, `auto-exposure:*`, `in-use` |
 | system | `detect`, `system:recording-space`, `system:memory`, `group:take:finished`, `group:take:rate`, `session:exit`; in full when built: `group:cycles`, `group:restore-after-kill`, `group:take-30:*`, `group:take-60:*`, `group:open`, `group:contention`, `system:*`, `self:*`; the cleanup rows `delete-work-folder` and `write-record` |
 | no verdict | the `record-only` checks (`group:in-step` [U Q616], `<label>:bursts` with the `module` of its model, `system:camera-access`, `system:power`, `system:timer`, `timestamps`, the sweeps); `report:rules` (its failure goes into `evidence.reasons`) and the macOS probes of 10.7, which keep the `module` `macOS probes` and count toward no item (10.4) |
@@ -3538,7 +3555,7 @@ tests only the self-check.
 | T-CERT-90 | Hardware, Windows: quick on the four test cameras, then a second quick run. | Each field of 3.5 that is built has a value of its vocabulary; `controller_id` and `usb_link` agree with the device manager; the two runs give the same `unit_id` for each camera that did not move; the report passes T-CERT-87 and T-CERT-88. |
 | T-CERT-91 | 3 OS. Quick and full plans and runs with 4 fakes of 3 models, two of one model. | No row has the reason `not-built` for a check with no code, and no row has `same-model`; `details.not_built.camera` and `.run` hold each such name one time, sorted, with `base` for the mode of `<base>`; the plan `total` and `details.checks` count no such check; a check with code whose diagnostics key is `null` keeps `not-run` `not-built` and counts in `total` (3.6.1). |
 | T-CERT-92 | 3 OS. Fakes that stop at each step: no MJPG mode; in use; a hang at the open; a rate failure; a cancel during the take; the end of the budget before the take. | Each such camera has one `<label>:not-reached` row with `not-run`, the reason of the first check that it stands for, `module` = the name of its summary item and `numbers.checks` equal to the count of the checks it stands for; each check that a progress message named keeps its own row; the last progress message has `done` equal to `total`, and no message has `done` above `total` (3.6.1). |
-| T-CERT-93 | 3 OS, session child. B1: a fake that stalls after `ready` and before the settings change; one whose camera process ends there with `os._exit(3)`; one with a stream error before the take; one removed before the take. | Each gets one `fail` row on the first check that has no result (`settings-stick:readback` `fail` `stalled`; `crashed` with `exit_code` 3; `stream-error`; `device-removed`), with the failure facts that have a value and `module` = its model; its other checks are one `not-reached` row; `<model>:gate:no-hang` is `fail` for the stall and the crash, `pass` for the removal; `details.cameras[].failed` names the row (3.6.1). |
+| T-CERT-93 | 3 OS, session child. B1: a fake that stalls after `ready` and before the settings change; one whose camera process ends there with `os._exit(3)`; one with a stream error in the take; one removed in the take [ADR-0Z6Q](../decisions/entries/0Z6Q-choices-of-the-certify-report-shape-build.md). | Each gets one `fail` row on the first check that has no result (`settings-stick:readback` `fail` `stalled`; `crashed` with `exit_code` 3; `stream-error`; `device-removed`), with the failure facts that have a value and `module` = its model; its other checks are one `not-reached` row; `<model>:gate:no-hang` is `fail` for the stall and the crash, `pass` for the removal; `details.cameras[].failed` names the row (3.6.1). |
 | T-CERT-94 | 3 OS. Camera names of 9.4 with made-up firmware texts: `Caméra HD Pro`; `Kamera von Jürgen`; `Bob's Webcam`; `HD Webcam SN12AB34CD56`; `Logitech® C920`; `Primacam`; CJK `网络摄像头 HD`; Cyrillic `Веб-камера Logi`; Arabic, right to left, `كاميرا ويب`; Devanagari `वेबकैम`; decomposed `Came\u0301ra`; a name with U+202E inside; a name with U+200B (Cf, not a direction mark); a mixed-script spoof `Logitеch` (Cyrillic `е`); `Cam <x>`; `See https://x`; `www.cam.example`; `Cam 192.0.2.7`; `Cam 00-1A-2B-3C-4D-5E`; `Webcam.jpg`; a string of 70 letters with a mark at code point 60; the user name `李明` inside the text; a one-letter user name `a` with the text `HD Camera A1` and with `Camera a`; the host name inside a word; the Apple texts `Annas-iPhone`, `iPhone15`, a fullwidth `ｉＰｈｏｎｅ`, `iPad von Jürgen`, `FaceTime HD Camera`, `iMac Kamera`, `Continuity Camera`; a camera with no USB id and the text `李明的 iPhone`; the ids `046d:085c` and `4c4a:4a55` with the text `USB Camera`; a camera whose firmware text cannot be read. | `Caméra HD Pro`, `Kamera von Jürgen`, `Webcam`, `HD Webcam`, `Logitech C920`, `Primacam`, `网络摄像头 HD`, `Веб-камера Logi`, the Arabic and the Devanagari texts unchanged (each mark kept), `Caméra` (NFKC composes it); the U+202E name without U+202E; `Camera vvvv:pppp` for U+200B, the spoof, `Cam <x>`, the URL, `www.`, the IPv4 and MAC forms, the media extension, `李明` and the host name; the 70-letter string cut before the base of the mark; `HD Camera A1` kept and `Camera a` refused for the user name `a`; the Apple texts give their fixed classes; no USB id gives `Camera (no USB id)`; `046d:085c` gives `Logitech C922`; `4c4a:4a55` gives `USB Camera` with `name_usb`; the unreadable text gives `Camera vvvv:pppp`; no report holds a display name of the OS. |
 | T-CERT-95 | 3 OS. `details.cameras[]` with fakes: a pass; a rate failure; a `too-dark` image check (full); a busy unit; two units of one model with different results. | Each unit has `result`, `failed` and `reason` by the rules of 3.6.3 (`pass`/`null`/`null`; `fail`/`rate`/`rate-low`; `partial`/`settings-stick:image-effect`/`too-dark`; `skipped`/`opens`/`camera-in-use`); `reason` is a reason code or `null`; the summary item of the model with two units follows 3.4. |
 | T-CERT-96 | 3 OS. One number, one row: a quick and a full report of 4 fakes. | No two rows hold an equal `numbers` object; each key stands only on the row that 3.6.2 names; a `pass` row of `modes:granted` and of `detect:mjpg-mode` has no `numbers`; no row has `t_start_s`, `seconds` (except `detect` with no key), `failed_calls`, `window_frames`, `grid_16ms_share`, `grain_ms`, `exposure` on a rate row, `has_serial`, `unit_id`; `details.limits` holds each limit of 3.6.3; `measured_fps`, `take_fps` and `rate` have at most 2 decimals; no `clock:base` row on Media Foundation; one row of the pair `sequence` and `time-gaps`. |
@@ -3578,6 +3595,8 @@ tests only the self-check.
 | T-CERT-130 | macOS and Linux fakes. The guard: a fake interface whose vendor id, product id or release number differs from the registry or sysfs. | No request is sent; `bos_request` `null` and `bos_request_error` `FunctionTableNotVerified`. |
 | T-CERT-131 | macOS and Linux fakes. The listing after: a camera that stays listed; one that is gone after the request. | `still_listed` `true` and no notice; `still_listed` `false` and the notice `camera-gone-after-usb-trial` with the camera name; the row stays `record-only`; no gate and no item changes. |
 | T-CERT-132 | macOS and Linux fakes. The rows of the trial with each method answering, and with each method failing (no write access to usbfs, `kIOReturnNotOpen`, a missing `system_profiler`). | Each row is `record-only` with the `module` of its model and the keys of 3.6.13; each failure gives its class name in `<method>_error`; no row holds free text, a serial, a location id, a path or the product text; `usb3_capable` of `details.cameras` is the value of detection. |
+| T-CERT-133 | 3 OS, session child [U Q646]. Fakes that leave after their take checks: a process exit and a stall; a hang at the close; a process exit at the close. | Each gets `<label>:live-at-close` `fail` with the product code (`crashed` with `exit_code` 3, `stalled`, `hung`, `crashed`) and the failure facts that have a value; no written result changes; the model item, `<model>:gate:no-hang` and `<model>:gate` are not `pass`; a good camera has `live-at-close` `pass`. |
+| T-CERT-134 | The build file of 3.5.2 [U Q647]: a wheel from a checkout; the sdist and a wheel from the sdist; a source tree inside another git repository; a git that fails or gives text that does not decode; the `datas` of `skellycam.spec`; the CI step of the installer. | The commit and the tree state in the wheel, in the sdist and in the wheel from the sdist; no commit for the tree inside another repository; no commit and no failed build for a git error; `skellycam.spec` takes the file into `datas`; the CI step writes the file before a step changes the tree. |
 
 **The changes of 3.6 to the tests above [U Q591 to Q599, Q610 to Q618, A].** Where a row above and this list
 differ, this list is the rule. T-CERT-91 to T-CERT-132 are new. Q624 also changes T-CERT-61 to T-CERT-64:
@@ -3587,8 +3606,9 @@ differ, this list is the rule. T-CERT-91 to T-CERT-132 are new. Q624 also change
   from the built checks (Q610).
 - T-CERT-03: the schema id `skellycertify.report/1.7.0`; the pipeline item of `group` `component` (3.6.10).
 - T-CERT-05 and T-CERT-70: replaced by T-CERT-94 (the name rule of 9.4).
-- T-CERT-07: each camera has the ten quick checks of 3.6.2; the run has five checks; the pipeline item `pass`.
-- T-CERT-12 and T-CERT-73: the later checks are one `not-reached` row.
+- T-CERT-07: each camera has the eleven quick checks of 3.6.2 (with `live-at-close`); the run has five checks; the pipeline item `pass`.
+- T-CERT-12 and T-CERT-73: the later checks are one `not-reached` row; a camera that fails at the open keeps
+  `opens`, `rate` and `modes:granted:<base>` and has one `not-reached` row [U Q648].
 - T-CERT-13: `image-effect` cases run at `full`.
 - T-CERT-14: `not-reencoded` and `size` cases run at `full`.
 - T-CERT-17: `done` counts a `not-reached` row as its checks (T-CERT-92).
