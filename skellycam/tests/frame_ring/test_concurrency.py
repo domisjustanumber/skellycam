@@ -228,6 +228,7 @@ def test_t_ring_11_writer_killed(cleanup, spawn, procs):
     assert hits >= 1, f"no kill hit the payload copy in {trial + 1} trials"
 
 
+@pytest.mark.pace  # Q619: two p99 values of real time; the tolerance of 10 % grows by the margin
 @pytest.mark.ring_portable
 @pytest.mark.ring_slow
 def test_t_ring_12_reader_killed(cleanup, spawn, procs):
@@ -261,7 +262,7 @@ def test_t_ring_12_reader_killed(cleanup, spawn, procs):
     survivor = survivor_results.get(timeout=WAIT_TIMEOUT_S)
     before = np.percentile(durations[0], 99)
     after = np.percentile(durations[1], 99)
-    assert after <= 1.10 * before, f"writer p99 {before / 1e3:.1f} us before, {after / 1e3:.1f} us after"
+    assert after <= (1.0 + 0.10 * margin()) * before, f"writer p99 {before / 1e3:.1f} us before, {after / 1e3:.1f} us after"
     assert survivor["wrong"] == 0
     assert not survivor["errors"], survivor["errors"][:3]
     assert survivor["ok_after_kill"] > 0

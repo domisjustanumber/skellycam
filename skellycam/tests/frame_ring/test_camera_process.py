@@ -32,6 +32,7 @@ from skellycam.tests.frame_ring.ring_spec import (
 REPO_ROOT = Path(__file__).resolve().parents[3]
 
 
+@pytest.mark.pace  # Q619: a p99 of real time; the bound grows by the margin on a hosted runner
 @pytest.mark.ring_slow
 def test_t_ring_23_write_p99_with_four_readers(cleanup, spawn, procs):
     """T-RING-23, sections 5.3 and 11.3 [A48]: 4 reader processes read the newest frame without a
@@ -69,7 +70,7 @@ def test_t_ring_23_write_p99_with_four_readers(cleanup, spawn, procs):
         stop.set()
     assert all(process.is_alive() for process in procs), "a reader died"
     p99_ms = np.percentile(durations, 99) / 1e6
-    assert p99_ms <= 1.0, f"JPEG write p99 {p99_ms:.3f} ms > 1.0 ms (target with four readers, paced at 60 frames/s)"
+    assert p99_ms <= 1.0 * margin(), f"JPEG write p99 {p99_ms:.3f} ms > {margin():g} ms (target with four readers, paced at 60 frames/s)"
 
 
 DELETED_MODULES = [

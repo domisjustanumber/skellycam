@@ -9,6 +9,7 @@ import sys
 import pytest
 
 from skellycam.tests.capture.capture_session import product
+from skellycam.tests.pace import margin
 
 pytestmark = pytest.mark.skipif(sys.platform != "win32", reason="the media_foundation package is Windows only (U18)")
 
@@ -23,6 +24,7 @@ def run_case(case):
     return json.loads(process.stdout.strip().splitlines()[-1])
 
 
+@pytest.mark.pace  # Q619: the sample-minus-arrival value depends on the pace of the stand-in threads
 def test_t_unx_76_media_foundation_diagnostics():
     """T-UNX-76: every key of 4.6.2; `id_source` `mf-link`; `native_domain` `hresult`; `clock` `unknown`;
     the `t_*_ms` keys of the steps that Media Foundation has are filled (it has no buffer step)."""
@@ -40,7 +42,7 @@ def test_t_unx_76_media_foundation_diagnostics():
     assert data["frames"] >= 10 and len(data["frame_log"]) == min(64, data["frames"])
     # The stand-in stamps the sample time (arrival - 4 ms) before the callback stamps the arrival: a delay of the
     # thread between the two stamps (a loaded machine) only makes the value more negative.
-    assert -9.0 <= data["sample_minus_arrival_p50_ms"] <= -4.0, data["sample_minus_arrival_p50_ms"]
+    assert -4.0 - 5.0 * margin() <= data["sample_minus_arrival_p50_ms"] <= -4.0, data["sample_minus_arrival_p50_ms"]
     assert data["later_than_arrival"] == 0 and data["sample_time_kept"] is True
     # the last read-back is that of the restore at the close (4.7): the value of before the open
     assert (data["exposure_present"], data["exposure_value"], data["control_path"]) == (True, -6, "iam")
@@ -51,6 +53,7 @@ def test_t_unx_76_media_foundation_diagnostics():
     assert all(data[k] is None for k in ("error_flag_frames", "drops_reported", "long_intervals_with_seq_gap"))
 
 
+@pytest.mark.pace  # Q619: the gap of 150 ms of the stand-in is real time
 def test_t_unx_76_long_intervals_count_with_the_period_of_the_granted_mode():
     """T-UNX-76, unix-capture.md 4.6.2 D-2, D-3 [Z7F3]: the Media Foundation source gives `FrameLog` the period of the
     granted mode (30 fps), so an interval of 150 ms counts in `long_intervals`; `clock` stays `unknown`."""
@@ -134,13 +137,14 @@ def test_f7_no_restore_when_the_loop_failed():
     assert sets == [], calls
 
 
+@pytest.mark.pace  # Q619: the tolerance of 1 s grows by the margin on a hosted runner
 @pytest.mark.capture_timing  # real time: the bound of 5 s
 def test_f7_a_hanging_restore_ends_the_close_as_hung_within_its_bound():
     """F7 (reviewer list): the restore `Set` of gain does not return. The close stops there as hung (stage
     `close`, code `hung`) within the bound of one call (5 s), and goes to no later step (W 6.6, 6.9)."""
     result = run_case("restore-hangs")
     assert result["close_failure"] == ["close", "hung", True]
-    assert 5.0 - EARLY_S <= result["close_s"] <= 6.0, result["close_s"]
+    assert 5.0 - EARLY_S <= result["close_s"] <= 5.0 + 1.0 * margin(), result["close_s"]
     assert ["flush"] not in result["calls"]
 
 

@@ -48,4 +48,22 @@ jobs:
       - name: Run the portable ring tests
         env:
           SKELLYCAM_RING_FULL: "1"
-        run: uv run pytest skellycam/tests/frame_ring -m ring_portable -q
+        run: uv run pytest skellycam/tests/frame_ring -m "ring_portable and not pace" -q
+
+      # Q619 of the user ("A red workflow should mean a real fault"): the tests with the marker `pace` run here with
+      # wide margins. A failure shows as a failed step, a warning and lines in the job summary; the job stays green.
+      - name: Run the pace tests of the ring
+        if: ${{ !cancelled() }}
+        continue-on-error: true
+        shell: bash
+        env:
+          SKELLYCAM_PACE_MARGIN: "3"
+          SKELLYCAM_RING_FULL: "1"
+        run: |
+          status=0
+          uv run pytest skellycam/tests/frame_ring -m "ring_portable and pace" -rfE > pace.log 2>&1 || status=$?
+          cat pace.log
+          if [ "$status" -eq 5 ]; then status=0; fi
+          { echo "### Pace tests (reported, not blocking: Q619)"; echo '```'; grep -E '^(FAILED|ERROR)|(passed|failed|error)' pace.log | tail -n 20; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
+          if [ "$status" -ne 0 ]; then echo "::warning title=Pace tests::pace tests failed on this runner (reported, not blocking: Q619)"; fi
+          exit "$status"

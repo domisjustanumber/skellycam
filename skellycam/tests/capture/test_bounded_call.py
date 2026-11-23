@@ -15,6 +15,7 @@ import time
 import pytest
 
 from skellycam.tests.capture.capture_session import product
+from skellycam.tests.pace import margin
 
 BOUNDED_MODULE = "skellycam.core.camera.capture.bounded"
 
@@ -24,6 +25,7 @@ BOUNDED_MODULE = "skellycam.core.camera.capture.bounded"
 EARLY_S = 0.002
 
 
+@pytest.mark.pace  # Q619: the tolerances of 0.5 s grow by the margin on a hosted runner
 @pytest.mark.capture_timing  # real time: the limits of 5 s and 11 s
 def test_t_unx_26_generic_bounded_call_with_a_limit():
     """T-UNX-26: a close step that hangs (default limit 5 s); a slow call of 8 s with the limit of 11 s; a
@@ -55,12 +57,12 @@ def test_t_unx_26_generic_bounded_call_with_a_limit():
     kind, failure, took = results["streamoff"]
     assert kind == "failure" and (failure.stage, failure.code, failure.hung) == ("close", "hung", True)
     assert failure.reason == "STREAMOFF did not return in 5 s"
-    assert 5.0 - EARLY_S <= took <= 5.5, took
+    assert 5.0 - EARLY_S <= took <= 5.0 + 0.5 * margin(), took
     assert results["slow s-fmt"][:2] == ("value", 7) and 8.0 <= results["slow s-fmt"][2] < 11.0
     kind, failure, took = results["hung s-fmt"]
     assert kind == "failure" and (failure.stage, failure.code) == ("set mode", "hung")
     assert failure.reason == "S_FMT did not return in 11 s"
-    assert 11.0 - EARLY_S <= took <= 11.5, took
+    assert 11.0 - EARLY_S <= took <= 11.0 + 0.5 * margin(), took
     assert bounded.abandoned() - before == 2
 
 

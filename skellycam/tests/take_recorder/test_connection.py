@@ -1221,13 +1221,17 @@ def test_the_stop_costs_no_source_frame_before_the_last_rows(monkeypatch, tmp_pa
 # Fix round 4 (2026-11-20)
 # ---------------------------------------------------------------------------
 
+@pytest.mark.pace  # Q619: whether a camera is one frame behind at the read of the gate count depends on the pace
 @pytest.mark.capture_timing  # real time: a stop that comes late under load moves the last frame (recorder.md 12.1)
 @pytest.mark.parametrize("fps", [30, 60])
 @pytest.mark.parametrize("delay", [0.05, 0.2, 1.0])
 def test_a_slow_stop_ends_each_camera_at_the_last_frame(monkeypatch, tmp_path, fps, delay):
     """Round 4, item 1: the main process is busy for `delay` between the read of the largest gate count and
     the write of the last frame (real time). The stop reads and writes the last frame under its lock, so no
-    camera decides a new frame between them: each sidecar has `number_of_frames` rows, with no warning."""
+    camera decides a new frame between them: each sidecar has `number_of_frames` rows. Fix lane 4 [HQE5] (recorder.md
+    8.1 step 1): a camera that waits at the gate during the hold loses the frames of its push source, so the last row
+    of a camera can have `gap` (the Windows runner: `row=30 from=125 to=131`). That `camera_gap` is true and allowed on
+    the last row only; no other warning."""
     from skellycam.core.camera_group.camera_orchestrator import CameraOrchestrator
 
     largest = CameraOrchestrator.largest_gate_count
@@ -1246,7 +1250,9 @@ def test_a_slow_stop_ends_each_camera_at_the_last_frame(monkeypatch, tmp_path, f
         time.sleep(1.0)
         summary = stop(app)
     assert all(len(take_rows(tmp_path, cid)) == summary["number_of_frames"] for cid in app.factory.camera_ids)
-    assert take_manifest(tmp_path)["warnings"] == []
+    last_row = f"row={summary['number_of_frames'] - 1} "
+    warnings = take_manifest(tmp_path)["warnings"]
+    assert [w for w in warnings if w["code"] != "camera_gap" or not w["detail"].startswith(last_row)] == [], warnings
 
 
 def test_the_stop_keeps_a_last_frame_that_a_camera_set(monkeypatch, tmp_path):
