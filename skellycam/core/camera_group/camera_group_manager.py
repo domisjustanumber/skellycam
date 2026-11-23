@@ -50,6 +50,7 @@ class CameraGroupManager:
     closing: bool = False
     closed_diagnostics: dict = field(default_factory=dict)  # the last dicts of each camera of a closed group (F4)
     searching: bool = False  # an exposure search of the endpoint runs (camera-requests.md 1.5)
+    creating: bool = False  # an apply request makes a group: no second one may (camera-requests.md 2.4a item 7) [Z7F3]
     restore_records: dict = field(default_factory=dict)  # unix-capture.md 4.7 [NYT6]: from a group to the next
     camera_groups: dict[CameraGroupIdString, CameraGroup] = field(default_factory=dict)
     camera_group_framerate_subscriptions: dict[CameraGroupIdString, TopicSubscriptionQueue] = field(
@@ -106,7 +107,10 @@ class CameraGroupManager:
             return await self._create_or_update(camera_configs, flagged, retry)
         finally:
             for camera_group in flagged:
-                camera_group.request_runs = False
+                if camera_group is self:
+                    self.creating = False
+                else:
+                    camera_group.request_runs = False
 
     async def _create_or_update(self, camera_configs: CameraConfigs, flagged: list,
                                 retry=()) -> tuple[CameraGroup, dict, list]:
@@ -127,6 +131,11 @@ class CameraGroupManager:
         if len(camera_groups) > 1:
             raise NotImplementedError("Cannot update multiple camera groups at once (yet).")
         camera_group = self.get_camera_group(next(iter(camera_groups))) if camera_groups else None
+        if camera_group is None:  # 2.4a item 7 [Z7F3]: no group yet, so no group flag; no wait between check and set
+            if self.creating:
+                raise RequestRefused(409, REQUEST_RUNS)
+            self.creating = True
+            flagged.append(self)
         if any(camera_id not in self.detected_cameras for camera_id, config in camera_configs.items()
                if config.use_this_camera):
             # 7.1, U17: the check needs the detection data, also to refuse a virtual camera (ADR-PDD3 W5)

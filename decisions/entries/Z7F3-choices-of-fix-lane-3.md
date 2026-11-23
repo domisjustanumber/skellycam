@@ -23,6 +23,9 @@ The supervisor gave the items. The agent chose these details:
    settings back at its close. The agent chose the codes with no restore: `stalled`, `hung` and `device-removed`
    (`WEDGE_CODES` of `failure_codes.py`, the wedge of [`certify.md`](../../specs/certify.md) 10.7 item 5). Certify
    gives `camera-not-restored` to a failed camera only for these codes or for `restore_ok` false (8.3).
+4. The flag `creating` of `CameraGroupManager`: an apply request that finds no group sets it with no wait after
+   that check and clears it at its end; a second such request gets the 409 of `request_runs` with its reason
+   ([`camera-requests.md`](../../specs/camera-requests.md) 2.4a item 7).
 
 ## Reason
 
@@ -36,6 +39,8 @@ The supervisor gave the items. The agent chose these details:
    cannot reopen a camera that dies between its scan and its apply.
 3. A camera that failed its rate check stayed at MANUAL -7 (a generic camera at 25.7 fps in a 30 fps mode, the
    first real certify run of 2026-11-21). A stall can be a wedged camera (the Kiyo Pro), so it gets no call.
+4. A request with no detection result detects before it makes the group (seconds); a second request in that
+   time made a second group on the same cameras.
 
 ## Consequences
 
@@ -59,6 +64,7 @@ The supervisor gave the items. The agent chose these details:
    `skellycam/tests/certify/test_certify_review2.py`; both failed on the old code (the camera opened again).
 3. Tests: T-UNX-95 in `skellycam/tests/capture/test_restore.py`; the two cases of
    `test_review_2_a_failed_camera_that_was_set_is_flagged_only_when_the_product_does_not_restore_it`.
+4. Test: `test_t_req_96_two_requests_with_no_group_make_one_group` in `skellycam/tests/capture/test_frame_rate.py`.
 
 ## Alternatives rejected
 

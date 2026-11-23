@@ -442,6 +442,40 @@ def test_t_req_94_the_texts_of_the_fall_back(monkeypatch):
         assert opens(app, camera_id) == 1  # the configs did not change: no reopen
 
 
+def test_t_req_96_two_requests_with_no_group_make_one_group(monkeypatch):
+    """T-REQ-96, 2.4a item 7 [Z7F3]: two apply requests come while no camera group exists, and the detection of the
+    first one is slow. The second gets 409 with the reason of 2.4a (the flag `creating` of the manager); the first
+    makes the one group."""
+    from skellycam.core.camera_group import camera_group_manager as manager_module
+
+    started, go_on, calls = threading.Event(), threading.Event(), []
+    detect = manager_module.detect_available_cameras
+
+    def slow_first(*args, **kwargs):
+        calls.append(1)
+        if len(calls) == 1:
+            started.set()
+            go_on.wait(30)
+        return detect(*args, **kwargs)
+
+    with capture_app(monkeypatch, [FakeScript(modes=MODES)]) as app:
+        monkeypatch.setattr(manager_module, "detect_available_cameras", slow_first)
+        camera_id = app.factory.camera_ids[0]
+        first = {}
+        thread = threading.Thread(target=lambda: first.setdefault("response", app.apply([app.config(camera_id)])))
+        thread.start()
+        try:
+            app.wait(started.is_set, "the first request detects")
+            second = app.apply([app.config(camera_id)])
+        finally:
+            go_on.set()
+            thread.join(60)
+        assert second.status_code == 409 and REQUEST_RUNS in second.text, second.text
+        assert first["response"].status_code == 200, first["response"].text
+        assert len(app.manager.camera_groups) == 1
+        app.wait_state(camera_id, "ready")
+
+
 def test_t_req_96_no_second_change_while_a_request_runs(monkeypatch):
     """T-REQ-96, 2.4a item 7: the apply of a request at 60 waits after it returned (B failed at 60). During the wait, a
     request at 30 with -9, the button and "Search again" get 409 with the reason of 2.4a. Then the first request falls

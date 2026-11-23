@@ -1079,7 +1079,10 @@ The rules above do not give these points. Each item is a proposed choice of the 
    clears its configs only when they are still the configs that it read. Thus two changes of the
    cameras never run at the same time, a fall back never replaces a later request of the user, and the
    `rate_fallback` items keep the lifetimes of 1.5. The close is not refused: it ends a change that
-   runs.
+   runs. With no camera group, the flag `creating` of `CameraGroupManager` does the same job: an apply
+   request that would make a group sets it with no wait after it found no group, and clears it at its
+   end. A second apply request that finds no group while the flag is set gets the same HTTP 409 with the
+   same reason. Thus two requests never make two groups [ADR-Z7F3](../decisions/entries/Z7F3-choices-of-fix-lane-3.md).
 8. T-REQ-19 at 60 fps: the fall back comes after the failure, so the status then holds the result at
    30 fps. The test reads the reason at 60 fps in the log line of the failure.
 9. A recording is never changed by a change of the rate (a decision of the user). A fall back does not
@@ -1222,7 +1225,7 @@ Change to section 16.2, T-CAP-20 item (3): "apply a request that gives all three
 | T-REQ-93 | fake | As T-REQ-92, but the apply of the fall back waits until a request of the user (`MANUAL -9` at 30) has answered; then the fall back ends; then a new request of the user. | The first request of the user gets 409 with the reason of 2.4a item 7; the camera then runs the configs of the fall back, with its `rate_fallback` item; the new request clears the item (2.4a item 7, 1.5). |
 | T-REQ-94 | fake | One camera `ready` at 30. On the event loop, `CameraGroup.fall_back` with a camera that has no measured rate after a search, then with a camera whose mode rate at the failure was 60, then with a measured rate and no exposure value. | The texts `The group runs at 30 fps. Camera <id> found no exposure that keeps 60 fps.`, `... measured 29.66 fps in its 60 fps mode at exposure -7.` and `... measured 29.66 fps in its 60 fps mode.` (2.4a item 4). |
 | T-REQ-98 | ui-unit | `replacesDesired` for the response of a pick, of a settings request and for a camera that the request did not send. | false, true, false: the response of a pick keeps the unapplied edits of the list (2.8). |
-| T-REQ-96 | fake | Two fakes `ready` at 30 in `MANUAL -7`; B delivers 29.66 fps. A request at 60 for both; its apply waits after it returned. During the wait: a request at 30 with `exposure` -9, a press of the button and "Search again" for A. | Each gets 409 with the reason of 2.4a item 7. Then the first request falls back: both cameras run at 30 with -7; B has one `rate_fallback` item (2.4a item 7). |
+| T-REQ-96 | fake | Two fakes `ready` at 30 in `MANUAL -7`; B delivers 29.66 fps. A request at 60 for both; its apply waits after it returned. During the wait: a request at 30 with `exposure` -9, a press of the button and "Search again" for A. | Each gets 409 with the reason of 2.4a item 7. Then the first request falls back: both cameras run at 30 with -7; B has one `rate_fallback` item (2.4a item 7). Also: two apply requests while no group exists, the detection of the first one slow: the second gets the same 409 (the flag `creating`), and one group is made [ADR-Z7F3](../decisions/entries/Z7F3-choices-of-fix-lane-3.md). |
 | T-REQ-97 | fake | As T-REQ-96, but with no wait in the product code: the reopen of A at 60 waits in its open (`hold_opens`), so B fails at 60 while A is `starting`. Then a request for B alone at 30 with -9. | That request gets 409. After the release of A, the first request falls back: A and B run at 30 and are `ready`; no camera is `dead` (2.4a item 7). |
 | T-REQ-95 | ui-unit | `pendingCameraChanges` with a group camera whose desired rate is 30 and applied rate 60, one at 30 and 29.97, and one ticked camera not in the group; `withChosenRate` with an old list at 60 and a new list at 30, and with an empty old list. | The first camera is in `renumber`, the second is not, the third is in `add`; each new camera gets 60, then the rate of the first selected camera of the new list (2.8). |
 
