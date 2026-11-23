@@ -1,12 +1,12 @@
-"""Each script that names or guards for a system states its purpose (decisions VV4Q, K3BX and C307).
+"""Each script that names or guards for a system states its purpose.
 
 You can test only on the system that you work on. Each other system is reached only through the
 self-test of the project (``SELF_TEST``). A script outside the product code that names or guards for
 any system has the comment ``script-purpose: <kind> ...`` in its first lines. A ``certify-check``
 name must be a check name of the spec ``CERTIFY_SPEC``. Each mode gives the same result on each
 system. The product folders and the CI workflows (``EXEMPT_PATHS``) and the tests are exempt. The
-pre-commit hook runs the tool on the files that a commit adds. The values come from ``kit.toml``;
-``test_repo_values.py`` tests the values of this repository.
+pre-commit hook runs the tool on the files that a commit adds. The values come from ``kit.toml``.
+Each repository tests its own values in a test of its own.
 """
 
 from __future__ import annotations
@@ -211,11 +211,6 @@ def test_an_old_marker_is_refused_and_named(tmp_path: Path, marker: str) -> None
 
 def test_a_purpose_field_is_checked_also_with_no_signal(tmp_path: Path) -> None:
     assert refused(tmp_path, {"plain.py": "# script-purpose: certify-check x:y\nprint(1)\n"}) == ["plain.py"]
-
-
-def test_the_real_spec_has_check_names() -> None:
-    """The spec of this repository exists and has check names. test_repo_values.py checks which names."""
-    assert cos.spec_names(REPO_ROOT)
 
 
 @pytest.mark.parametrize(

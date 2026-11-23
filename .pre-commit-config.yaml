@@ -31,6 +31,13 @@ repos:
         entry: uv run python tools/check_line_ends.py
         language: system
         pass_filenames: false
+      # A new script that names or guards for a system needs a script-purpose field.
+      # Only the files that the commit adds. The doc test and CI check each tracked file.
+      - id: other-systems
+        name: other systems only through certify
+        entry: uv run python tools/check_other_systems.py
+        language: system
+        pass_filenames: false
       # An entry or a table file of a decision log in the commit. The hook names the skill. It does not stop the commit.
       - id: decision-log
         name: decision log reminder
@@ -54,10 +61,3 @@ repos:
         stages: [commit-msg]
         verbose: true
       # /kit
-      # A new script that names or guards for a system needs a script-purpose field (ADR-VV4Q, ADR-K3BX, ADR-C307).
-      # Only the files that the commit adds. The doc test and CI check each tracked file.
-      - id: other-systems
-        name: other systems only through certify
-        entry: uv run python tools/check_other_systems.py
-        language: system
-        pass_filenames: false

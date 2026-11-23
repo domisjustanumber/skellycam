@@ -122,6 +122,11 @@ one of its first 5 lines is the comment `script-purpose: <kind> ...`. The kinds 
 docstring). `<name>` must be a check name of `specs/certify.md`. If the check is not in the spec,
 add it to the spec first (see the skill). The result of a `local-study` is a fact about the system
 of its author only. Mark it not verified for each other system.
+The rule, the skill and the check come from
+[ADR-VV4Q](decisions/entries/VV4Q-other-systems-only-through-certify.md),
+[ADR-K3BX](decisions/entries/K3BX-certify-check-names-must-be-in-the-certify-spec.md),
+[ADR-C307](decisions/entries/C307-script-purpose-field-and-check-names-of-the-certify-spec.md) and
+[ADR-K9B7](decisions/entries/K9B7-design-of-the-other-systems-rule-skill-and-check.md).
 
 ## 5. Decision Log
 
