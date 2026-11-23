@@ -67,9 +67,10 @@ each camera once per second. FreeMoCap shows the summaries [U Q565].
 ### 1.4 Terms
 
 - **Step.** One named part of the path of a frame, with a fixed id (section 3).
-- **Bracket.** The exact code between the two clock reads of a step. No bracket contains the
-  bracket of another step. Where a step encloses other steps, its sample is its time minus the
-  samples of the enclosed steps, and the table says so [A 6].
+- **Bracket.** The exact code between the two clock reads of a step. No time is in two samples
+  [A 6]. Two brackets can nest: `opencv_retrieve` is inside the `_read` calls of `camera_wait`, and
+  `mkv_mux`, `csv_row` and `fsync` are inside `_finish` of `mkv_close`. Then the sample of the outer
+  step is the time of its bracket minus the samples of the inner steps, and table 3.1 says so.
 - **Work and wait** [U Q567] [A 4]. The kind of a step comes from the job of the step:
   - A **wait** step has the job to wait for another part: the camera frame, the other cameras (the
     lockstep gate), space in the recorder queue, or the end of the recorder thread.
@@ -168,7 +169,7 @@ ids are stable `snake_case` [A 5].
 | `take_start` | work | event | `camera_loop` | `start_take_writer(...)` in `_start_take` (`camera_loop.py:701-702`): the file opens, the MKV header, the CSV header, the thread start. | Not measured. | all |
 | `take_end` | wait | event | `camera_loop` | `writer.end(...)` or `writer.abandon()` in `_end_take` (`camera_loop.py:763`, `:747`). It waits for the recorder thread to write each queued frame and to finish the files. | Up to the stall limit of the take (10 s) [rec 5.3]. Not measured. | all |
 | `bgr_decode` | work | frame | `decode_thread` | `self._to_bgr(item)` in `DecodeStage._run` (`decode.py:107`, `:122-128`): `cv2.imdecode` of a JPEG, or `cv2.cvtColor` of YUY2 or NV12. No sample for a BGR input, which needs no work. Only with a BGR ring. | 2.60 / 5.42 ms median [M ring 11.1]; 8 processes: 3.17 / 7.11 ms | all |
-| `bgr_ring_write` | work | frame | `decode_thread` | `writer.write(bgr, ...)` of the BGR ring (`decode.py:114-116`; `writer.py:59-116`). Only with a BGR ring. | 0.79 / 1.83 ms median, 1.24 / 2.46 ms p99 at 720p / 1080p [M ADR-ETJ1] | all |
+| `bgr_ring_write` | work | frame | `decode_thread` | `writer.write(bgr, ...)` of the BGR ring (`decode.py:115-117`; `writer.py:59-116`). Only with a BGR ring. | 0.79 / 1.83 ms median, 1.24 / 2.46 ms p99 at 720p / 1080p [M ADR-ETJ1] | all |
 | `mkv_mux` | work | frame | `recorder_thread` | `self._mkv.mux(block, self._k)` (`camera_writer.py:290`; `skellycam/core/take_recorder/mkv.py:49`). | One write call: p50 0.01 ms, p99 0.09 to 0.10 ms, max 3.7 to 46 ms [M ADR-8RES] | all |
 | `csv_row` | work | frame | `recorder_thread` | `_write_row` without its fsync (`camera_writer.py:300-308`): `sidecar.row_line` and `_write_line`. | `row_line`: 1.1 µs p50 [M ADR-3TYP]. The write: not measured. | all |
 | `fsync` | work | second | `recorder_thread` | `self._fsync_both()` (`camera_writer.py:311`, `:348`): `os.fsync` of the MKV and of the CSV. | p50 2.0 to 2.1 ms, max 29 to 182 ms with 16 writers at 1080p60 [M ADR-8RES] | all |
@@ -234,10 +235,14 @@ Rules and limits:
 
 ### 5.1 Threads, buffers and the clock [A 7]
 
-- `TimingControl`: the flag `on` and the clock `clock()`. The `CameraLoop` makes one, with its module
-  name `perf_counter_ns` as the clock, so a test gives one virtual clock to each bracket of the
-  camera process (ADR-HP7D item 12). It gives the same `TimingControl` to each source, each
-  `DecodeStage` and each `CameraTakeWriter` that it makes. Each bracket reads `control.clock()`.
+- `TimingControl`: the flag `on` and the method `clock()`. `clock()` forwards to a clock function
+  that the `CameraLoop` gives when it makes the `TimingControl`: its module name `perf_counter_ns`,
+  so a test gives one virtual clock to each bracket of the camera process (ADR-HP7D item 12). The
+  `CameraLoop` gives the same `TimingControl` to each source, each `DecodeStage` and each
+  `CameraTakeWriter` that it makes. Each bracket reads `control.clock()`, and only a bracket calls
+  it. The other jobs of the loop (the stall watch, the diagnostics interval) still read
+  `perf_counter_ns` directly. Thus a test counts the calls of `clock()` to count the reads of the
+  measurement only.
 - `StepSamples`: a fixed `array.array("q")` of `CAPACITY = 512` durations in nanoseconds, and an
   integer `total` of all samples since its creation. `add(duration_ns)` stores at `total % 512`,
   then increases `total`.
@@ -250,10 +255,13 @@ Rules and limits:
 - **Retire.** When `end()` or `abandon()` returns, when a source closes and when a decode stage stops,
   the loop moves its `StepSet` to a retired list. The next summary reads the retired sets and the
   current sets, then drops the retired sets. A sample that an old thread writes after that is lost.
+- **Merge.** In one window, the samples of a retired set and of the current set with the same step
+  id go into one step entry: one `n`, and one sort for the percentiles.
 - **One reader.** Only the loop thread reads the `StepSet`s of the camera process, in
   `_publish_diagnostics`. When another thread calls `_publish_diagnostics` (the control thread calls
   `_fail` at a hang, `camera_loop.py:1009`), that publish reads no buffer and records no sample: it
-  sends the last summary again, with the same `seq`.
+  sends the last summary again, with the same `seq`. When there is no earlier summary (for example a
+  hang during the start-up), it sends `timings = None`.
 - The reader keeps the `total` of its last read of each buffer. The samples of the window are the
   samples from that `total` to the new `total`. The reader writes nothing into a buffer. Thus there
   is no reset and no race with the writer.
@@ -551,7 +559,7 @@ frame-ring API of skellycam [U Q577].
 | Field | Meaning |
 |---|---|
 | `source` | `"camera"` from this call; `"ui"` from the tile (8.7). |
-| `camera_group_id`, `camera_id` | The group and the camera. |
+| `camera_group_id`, `camera_id` | The group and the camera. `camera_group_id` is `null` in a tile summary when the host gave no group. |
 | `clock` | `"perf_counter_ns"`: `time.perf_counter_ns` of the camera process. It is the clock of the FreeMoCap `PipelineTimingEvent` (`clock_domain` `"perf_counter"`) on the same machine. `"performance.now"` for the tile. |
 | `seq` | The number of the summary, +1 for each new one. |
 | `window_end_ns` | The end of the window, in nanoseconds of `clock`. |
@@ -580,7 +588,7 @@ exposure search).
 | `camera_wait` | wait | frame | `camera_loop` | Wait for the next camera frame |
 | `gate_wait` | wait | frame | `camera_loop` | Wait at the lockstep gate for the other cameras |
 | `camera_sample_copy` | work | frame | `camera_callback` | Copy of the frame out of Media Foundation (Windows) |
-| `opencv_retrieve` | work | frame | `camera_loop` | OpenCV `retrieve()`, with its hidden JPEG decode |
+| `opencv_retrieve` | work | frame | `camera_loop` | OpenCV `retrieve()`, with its hidden JPEG decode. On Windows DirectShow it also holds the wait for the camera. |
 | `jpeg_encode` | work | frame | `camera_loop` | JPEG encode of an OpenCV frame |
 | `capture_check` | work | frame | `camera_loop` | JPEG marker check, and the DHT insertion |
 | `frame_hash` | work | frame | `camera_loop` | Two SHA-256 of the first 30 frames after a ready or a record start |
@@ -671,7 +679,7 @@ user and a change of the certify spec. This spec does not change certify [A 17].
 | T-TIM-02 | Window: a window takes the samples between two totals; more than 512 samples give the full `n` and statistics over the newest 512. | no |
 | T-TIM-03 | Order of store and total: a writer thread stores the consecutive integers 1 to 200,000 in groups of 400 and waits for the reader after each group; the reader closes windows at the same time. Each window holds consecutive integers, and the windows join with no gap and no overlap. A writer that increases `total` before its store gives a gap or a wrong value, and the test fails. | no |
 | T-TIM-04 | Default off: a new `CameraGroupManager` has `log_capture_times` False; each status of a new group has False; `reset_for_start` keeps the value; `capture_timings()` gives `log_capture_times` false and `summaries` []. | no |
-| T-TIM-05 | Off costs no clock read: with the switch off, the camera loop reads the clock of `TimingControl` zero times; `DiagnosticsMessage.timings` is None. | no |
+| T-TIM-05 | Off costs no clock read: with the switch off, a camera loop on the virtual clock calls `TimingControl.clock()` zero times; `DiagnosticsMessage.timings` is None. | no |
 | T-TIM-06 | On: a fake source whose steps take scripted virtual times gives a summary with each step of 5.4 that applies, the expected `n` and values, and the `kind`, `cadence` and `where` of table 3.1. | no |
 | T-TIM-07 | Change while running: on, then off, then on, through `set_log_capture_times`; the summaries start and stop at the next publish; the fake source opens one time only. | no |
 | T-TIM-08 | When a change takes effect: a change during the start-up applies at the publish at the end of the open; a change during a `take_end` wait applies at the first publish after it. A group made after a change to on starts on. | no |
@@ -689,7 +697,7 @@ user and a change of the certify spec. This spec does not change certify [A 17].
 | T-TIM-20 | Route: `POST /camera/timings` sets the switch and answers its value; a body with no boolean gets HTTP 422. | no |
 | T-TIM-21 | Removal: `WebsocketMessageType` has `CAPTURE_TIMINGS` and no `PERFORMANCE_DATA`; the module `performance_data` does not import; `CameraGroupManager` has no `get_latest_performance_data`; `test_websocket_internals.py` still imports and runs `TestServerFramerateCalculator`. | no |
 | T-TIM-22 | Step registry: the `STEPS` constant (id, kind, cadence, where) equals table 3.1 and table 8.5; each id in each summary of T-TIM-06, T-TIM-12, T-TIM-13, T-TIM-19 and T-TIM-26 is in `STEPS`. | no |
-| T-TIM-23 | Budget: with the switch on, the camera loop reads the clock of `TimingControl` at most 10 times for each frame plus one time for each refused pass. | no |
+| T-TIM-23 | Budget: with the switch on, the camera loop calls `TimingControl.clock()` at most 10 times for each frame plus one time for each refused pass. | no |
 | T-TIM-24 | One shape (node): the summary function of `tile/timings.ts` and the Python function give the same JSON for one shared fixture file of samples. | no |
 | T-TIM-25 | Tile off (playwright): with `timings.on` false, a tile with a handle calls `now` zero times; `takeSummaries()` gives summaries with `n` 0; a tile with no handle works as today. | no |
 | T-TIM-26 | Tile on (playwright): a fake decode seam and a fake `now` give `ui_jpeg_decode`, `ui_draw` and `receive_to_draw` with the expected values; an update with `image` gives no `ui_jpeg_decode`; a resize redraw and an overlay-only update give no `ui_draw`; a replaced message gives no sample; a second `takeSummaries()` with no new step gives `n` 0 and `seq` + 1. | no |

@@ -22,11 +22,12 @@ gives its spec section, and "Not" gives the rejected alternative and its reason.
    calls are work; `cadence` is `frame`, `second` or `event`. Not: a third kind `io`.
 5. **Steps** (3.1, 5.4): the 24 ids and the values of `where`; a later native source uses the
    Media Foundation ids.
-6. **Brackets** (1.4, 3.1): no bracket holds another; `camera_wait` and `gate_wait` are sums over
+6. **Brackets** (1.4, 3.1): no time is in two samples; `camera_wait` and `gate_wait` are sums over
    the passes of a frame; `opencv_retrieve` comes out of `camera_wait`; `mkv_close` is `_finish`
    minus its enclosed steps. Not: one step for `read_frame` (it hides the decode).
-7. **Threads** (5.1, 6.2): one `TimingControl` clock; one `StepSet` for each writer instance;
-   retire; one reader; a publish from another thread repeats the last summary; a snapshot swap in
+7. **Threads** (5.1, 6.2): one `TimingControl` with a forwarding `clock()`; one `StepSet` for each
+   writer instance; retire and merge by step id; one reader; a publish from another thread repeats
+   the last summary, or sends `None` when there is none; a snapshot swap in
    the main process; a `step_set` argument for the shared preview methods. Not: one shared set for
    all instances (two writers after a stall), or a lock for each sample.
 8. **Statistics** (5.2): nearest rank over the window between two summaries; `null` for `n` 0; over
