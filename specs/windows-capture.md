@@ -1197,7 +1197,7 @@ section adds only what capture adds.
 ## 15. CI [D47]
 
 - A new workflow `.github/workflows/capture.yml` [agent 39], made on the pattern of
-  `.github/workflows/ring-arm64.yml`: the same pinned actions (by full SHA), uv `0.13.9`, Python
+  `.github/workflows/ring-arm64.yml`: the same pinned actions (by full SHA), uv `0.13.7`, Python
   `3.13.18`, `permissions: contents: read`, a concurrency group.
 - Trigger: each push to `dom/native-jpeg` that changes `skellycam/core/camera/**`,
   `skellycam/core/camera_group/**`, `skellycam/core/device_detection/**`,

@@ -48,10 +48,10 @@ commit 47545bc (round 1), and at kit commits 57a878c and 05a3d2d (round 2). Each
     `tools/tests/test_kit_sync.py` runs `check`.
 11. **uv (Q656).** The agent reads the words of the user "the same version of uv as every other
     repo" as: each uv pin of this repository ends at the version of the kit. The kit text pins
-    `doc-checks.yml` to 0.13.7. The other pins stay at 0.13.9 for now: 9 lines of 5 workflows and
-    2 lines of 2 specs. Unmerged branches change those workflows. The supervisor scheduled the move
-    for round 3 of this lane, after those branches merge. Until then this repository runs two uv
-    versions, and the branch is not pushed. The local uv 0.13.7 reads `uv.lock` with no change.
+    `doc-checks.yml` to 0.13.7. The other 9 lines of 5 workflows and 2 lines of 2 specs moved from
+    0.13.9 to 0.13.7 in round 3, after the merge of the branches that change those workflows, as the
+    supervisor scheduled. A decided entry that names 0.13.9 does not change. The local uv 0.13.7
+    reads `uv.lock` with no change.
 12. **Line ends.** At 3dc5377b4, `decisions/historical.md` was the one text file whose blob held CR
     (CRLF lines). The marker edit of round 1 (79ea16e96) made it LF in git. It stays LF, because LF
     is now the rule of the user (ADR-X1T8 item 8). `git add --renormalize .` changed no file. A line
