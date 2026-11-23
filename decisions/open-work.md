@@ -170,3 +170,6 @@ task. Delete an item when its work is done. The PR that closes an item records t
   - FreeMoCap reads `framerate_stats.median` from the old `*_stats.json`, not from the stop response; a reader of
     new takes must use `mean_framerate` (Q609).
   - The first CI run with `spawn` on Linux and macOS, the skip guard and the pace steps is not done yet.
+  - FreeMoCap on Linux makes its log queue before it imports `skellycam`, so its start method is `fork` and its
+    camera processes can deadlock (`unix-capture.md` 4.12). FreeMoCap must call
+    `multiprocessing.set_start_method("spawn")` at the start of `main()`.

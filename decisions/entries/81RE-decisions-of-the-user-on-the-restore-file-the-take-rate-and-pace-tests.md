@@ -13,8 +13,6 @@ the push of a branch, not a decision of this log. The questions that the user ag
    [`unix-capture.md`](../../specs/unix-capture.md) 4.7.1 states it.
 2. **Q609.** "Frame rate statistic: The headline rate of a take becomes frames divided by elapsed time. The median
    stays only for the per-frame interval figures. Yes?" [`recorder.md`](../../specs/recorder.md) 8.2 states it.
-   It replaces B2 of [ADR-TFD7](TFD7-search-limit-stop-rate-median-role-flag-and-restore-after-a-failed-loop.md)
-   for the rate of the take; the median of B2 stays in `framerate_stats`.
 3. **Q619.** "Timing tests on CI: Tests that depend on pace or wall-clock limits get a marker. On GitHub runners
    they run with wide margins and a failure there is reported but does not turn the workflow red; on a real
    machine they run strict. Yes?" The principle, which the user agreed to: "A red workflow should mean a real

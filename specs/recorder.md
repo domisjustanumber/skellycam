@@ -1126,8 +1126,9 @@ plan test T-REC-MF-DEFER needs a camera. It is not in R11 and waits for the conn
   `skellycam/tests/take_recorder/test_connection.py` (the stop of 8.1 step 1) runs on the real clock.
   A code step gives it the marker `capture_timing`, so that the macOS job runs it in its own step
   [ADR-AC5B](../decisions/entries/AC5B-choices-of-the-third-consistency-check.md).
-  It also has the marker `pace` of [cap 16.1]: its warnings depend on the pace of the runner (8.1 step 1).
-  It accepts a `camera_gap` only on the last row of a camera, and no other warning
+  It has no marker `pace` of [cap 16.1]: its row counts are the lock rule of 8.1 step 1, not the pace,
+  so it blocks. A gap on the last row depends on the pace (8.1 step 1), so the test accepts a
+  `camera_gap` only on the last row of a camera, and no other warning
   [ADR-HQE5](../decisions/entries/HQE5-choices-of-fix-lane-4.md).
 - **Workflow** [C4] [agent 34]: a new `.github/workflows/recorder.yml`, on the pattern of
   `ring-arm64.yml` and of the capture workflow of [cap 15]: the same actions pinned by full SHA, uv

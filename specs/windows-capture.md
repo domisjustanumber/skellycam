@@ -1250,11 +1250,16 @@ section adds only what capture adds.
   1 when the setting is not there). In a `pace` test, the tolerance of each bound (the part of the bound
   past its nominal value, for example 0.5 s of a bound of 5.5 s for a limit of 5 s) is the strict
   tolerance times the margin. The nominal value does not move: a limit of 5 s that ends at 4 s still
-  fails. A test
+  fails. A target of a percentile (T-RING-23: write p99 under 1.0 ms) has no nominal value: its whole
+  bound is the tolerance, and the margin multiplies it.
+  A `pace` test holds only its bounds of time. Each other check of the same run is in a test with no
+  marker, in the blocking step, with a loose bound of time (10 times the limit) where it waits: a test
   that fails for a reason that does not depend on the pace (for example a camera process that gives no
-  answer) does not get the marker [ADR-HQE5](../decisions/entries/HQE5-choices-of-fix-lane-4.md).
-  The tests with the marker: T-UNX-26, T-UNX-76 (both tests), the hanging restore of F7, T-RING-12,
-  T-RING-23 and `test_a_slow_stop_ends_each_camera_at_the_last_frame` ([`recorder.md`](recorder.md)
+  answer, or wrong ring data) blocks [ADR-HQE5](../decisions/entries/HQE5-choices-of-fix-lane-4.md).
+  The `pace` tests: the times of T-UNX-26, the sample-minus-arrival value of T-UNX-76, the close time of
+  the hanging restore of F7, the writer p99 of T-RING-12 and of T-RING-23. Their other checks are in
+  blocking tests of the same files. The long-interval test of T-UNX-76 has no bound of time and no
+  marker. `test_a_slow_stop_ends_each_camera_at_the_last_frame` blocks too ([`recorder.md`](recorder.md)
   12.1).
 
 Systems [U18, U20, U21]:
