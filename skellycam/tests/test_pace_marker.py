@@ -23,9 +23,10 @@ PACE_TESTS = [
     ("skellycam.tests.capture.test_media_foundation_source", "test_f7_the_hung_close_ends_within_its_tolerance"),
     ("skellycam.tests.frame_ring.test_concurrency", "test_t_ring_12_the_writer_timing_is_unchanged_after_a_reader_kill"),
     ("skellycam.tests.frame_ring.test_camera_process", "test_t_ring_23_write_p99_with_four_readers"),
+    ("skellycam.tests.take_recorder.test_connection", "test_a_slow_stop_has_a_gap_only_on_the_last_row"),
 ]
 # A test whose failure does not depend on the pace blocks (16.1): the functional halves of the split tests, the
-# long-interval test (no bound of time), the slow stop (the row counts are the lock rule), and the tests of item 1
+# long-interval test (no bound of time), the slow stop (its row counts are the lock rule), and the tests of item 1
 # of fix lane 4 (no answer from a camera process).
 NOT_PACE = [
     ("skellycam.tests.capture.test_bounded_call", "test_t_unx_26_generic_bounded_call_with_a_limit"),

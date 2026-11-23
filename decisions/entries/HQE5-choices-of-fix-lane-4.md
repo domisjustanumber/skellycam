@@ -17,8 +17,9 @@ the user with the review.
    `_ChildSession` reads the sentinel. Not: only a warning (a forked camera never answers).
 2. **Skip guard** (4.11). `SKELLYCAM_NO_SKIP`; run reports and collect reports. Not: a minimum test count.
 3. **Slow stop** ([`recorder.md`](../../specs/recorder.md) 8.1, 12.1). A fault of the test: a camera at the gate
-   during the hold of the last-frame lock loses frames of its push source, a true gap on the last row. The test
-   allows a `camera_gap` on the last row only and blocks. Not: no lock in a frame decision below the last frame.
+   during the hold of the last-frame lock loses frames of its push source, a true gap on the last row. The row
+   counts block; the gap rows are a `pace` test (under load a gap comes in any row). Not: no lock in a frame
+   decision below the last frame.
 4. **Pace tests (Q-C)** ([`windows-capture.md`](../../specs/windows-capture.md) 16.1). A `pace` test holds only
    its bounds of time; its other checks block. Steps: `-m "... and not pace"` blocks; the pace step has
    `continue-on-error`, `SKELLYCAM_PACE_MARGIN: "3"`, a warning and the job summary. The margin multiplies the
