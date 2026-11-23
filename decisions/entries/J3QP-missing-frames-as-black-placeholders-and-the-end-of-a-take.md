@@ -1,7 +1,9 @@
 # J3QP — Missing frames as black placeholders (M1 to M10) and the end of a take (C1 to C7)
 
-**Status:** accepted, 2026-11-19 (user; relayed after the first spec drafts and their reviews;
-commit to dom/recorder; the second case of M5 added 2026-11-20 by the user).
+**Status:** absorbed into
+[`specs/recorder.md#18-decisions-of-the-user`](../../specs/recorder.md#18-decisions-of-the-user),
+2026-11-23 (commit to dom/absorb-2; was accepted, 2026-11-19 (user; relayed after the first spec drafts and
+their reviews; commit to dom/recorder; the second case of M5 added 2026-11-20 by the user)).
 
 ## Decision
 

@@ -1279,7 +1279,9 @@ the record), 6 (the citation of 0) and 7 (4.4.10 filled) are applied here.
   write reads as no record. "Apply again" keeps the record (`reset_for_start`), and
   `CameraGroupManager` keeps it from a group close to the next group, for the life of the app, also
   when the close raises for a process that cannot be killed. A group close does not restore a camera
-  whose process ended: the rule above forbids an open only to restore.
+  whose process ended: the rule above forbids an open only to restore. The record is in memory, not
+  on disk: a restart of the app loses it. The camera process finds the record through
+  `RESTORE_RECORDS` of `capture/source.py` [ADR-NYT6](../decisions/entries/NYT6-choices-of-fix-lane-2.md).
 
 ### 4.8 Threads
 

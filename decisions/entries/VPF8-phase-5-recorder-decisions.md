@@ -1,6 +1,10 @@
 # VPF8 — Phase 5 decisions R1 to R12: steps, dead and hung cameras, damaged frames, old files
 
-**Status:** accepted, 2026-11-19 (user; grilling of Q205 to Q216; commit to dom/recorder).
+**Status:** absorbed into
+[`specs/recorder.md#18-decisions-of-the-user`](../../specs/recorder.md#18-decisions-of-the-user),
+[`specs/recorder.md#14-edits-needed-in-specswindows-capturemd`](../../specs/recorder.md#14-edits-needed-in-specswindows-capturemd),
+2026-11-23 (commit to dom/absorb-2; was accepted, 2026-11-19 (user; grilling of Q205 to Q216; commit to
+dom/recorder)).
 
 ## Decision
 
