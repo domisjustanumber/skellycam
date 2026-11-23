@@ -60,11 +60,11 @@ def test_bad_markers_are_refused(text: str, error: str) -> None:
         ks.blocks(text, "f")
 
 
-def test_a_block_keeps_the_line_ends_and_the_text_around_it() -> None:
+def test_a_block_keeps_the_text_around_it_and_gets_lf_line_ends() -> None:
     unit = ks.Unit("f", "bootstrap/f", "a")
     text = "x\r\n  <!-- kit:a -->\r\nold\r\n  <!-- /kit -->\r\ny\r\n"
     assert ks.unit_text(text, unit, "f") == "old"
-    assert ks.put_unit(text, unit, "new\nlines", "f") == "x\r\n  <!-- kit:a -->\r\nnew\r\nlines\r\n  <!-- /kit -->\r\ny\r\n"
+    assert ks.put_unit(text, unit, "new\nlines", "f") == "x\n  <!-- kit:a -->\nnew\nlines\n  <!-- /kit -->\ny\n"
 
 
 def test_unfill_takes_the_placeholder_of_the_kit_line_and_refuses_a_new_value() -> None:

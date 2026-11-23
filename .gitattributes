@@ -1,4 +1,8 @@
 # kit:line-ends
+# LF line ends in the index and in each working tree, on each system, also when core.autocrlf is
+# set (decision 0001). git finds the binary files and does not change them. Put the lines of this
+# repository after this block: a later line wins.
+* text=auto eol=lf
 # /kit
 # Git hook scripts run under sh, also on Windows. They must keep LF line ends.
 .githooks/* text eol=lf

@@ -9,8 +9,11 @@ In each `AGENTS.md`, `notes/`, `.claude/skills/` and folder named `decisions`, a
 GitHub `blob`, `tree` or `commit` link must pin a full 40-character SHA
 (decision 0001).
 
-The check skips the files in the folders of `specs/model-sidecar/proposals/`. A proposal record
-is a frozen byte copy. The check covers `specs/model-sidecar/proposals/README.md` (decision 1HKJ).
+The check covers each `AGENTS.md`, each folder named `decisions`, `.claude/skills/` and each folder
+and each path of `doc_paths` in the table `[check_links]` of `kit.toml` in the repository root: a
+path that ends with `/` is a folder, each other path is one file, for example `README.md`
+(default: `specs/` and `notes/`). It skips the files in each folder of `skipped_folders` of that table, for example a folder of frozen byte copies of proposal records.
+It still checks the `README.md` of such a folder (decision 0001).
 """
 
 from __future__ import annotations
@@ -20,6 +23,7 @@ import re
 import shutil
 import subprocess
 import sys
+import tomllib
 from pathlib import Path
 from urllib.parse import unquote
 
@@ -156,7 +160,25 @@ def repo_files(root: Path) -> list[str]:
     return names
 
 
-PROPOSAL_RECORDS = "specs/model-sidecar/proposals/"
+def kit_values(section: str, keys: set[str]) -> dict:
+    """The table ``[section]`` of ``kit.toml`` in the repository root, or {} when there is no file."""
+    path = Path(__file__).resolve().parents[1] / "kit.toml"
+    if not path.is_file():
+        return {}
+    with path.open("rb") as file:
+        table = tomllib.load(file).get(section, {})
+    unknown = sorted(set(table) - keys)
+    if unknown:
+        raise SystemExit(f"kit.toml [{section}]: unknown keys: {', '.join(unknown)}")
+    return table
+
+
+KIT = kit_values("check_links", {"doc_paths", "skipped_folders"})
+# The docs that the check covers, from kit.toml: a folder ends with /, each other path is a file.
+# The skills are always covered.
+DOC_PATHS: tuple[str, ...] = (".claude/skills/", *KIT.get("doc_paths", ["specs/", "notes/"]))
+# The folders of frozen byte copies, from kit.toml. Their links name the files as they were then.
+SKIPPED_FOLDERS: tuple[str, ...] = tuple(KIT.get("skipped_folders", []))
 
 
 def markdown_files(root: Path) -> list[Path]:
@@ -166,10 +188,9 @@ def markdown_files(root: Path) -> list[Path]:
         parts = rel.split("/")
         if not rel.endswith(".md") or not (root / rel).is_file():
             continue
-        # A proposal record is a frozen byte copy of a bundle. Its links name the spec as it was then.
-        if rel.startswith(PROPOSAL_RECORDS) and rel != PROPOSAL_RECORDS + "README.md":
+        if any(rel.startswith(folder) and rel != folder + "README.md" for folder in SKIPPED_FOLDERS):
             continue
-        if rel.startswith(("specs/", "notes/", ".claude/skills/")):
+        if any(rel == p or (p.endswith("/") and rel.startswith(p)) for p in DOC_PATHS):
             files.append(root / rel)
         # Hidden folders and the local plans/ folder hold no tracked AGENTS.md or decision log.
         elif not any(p.startswith(".") or p == "plans" for p in parts[:-1]) and (

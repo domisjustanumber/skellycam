@@ -44,11 +44,14 @@ commit taken; ``[kit.hashes]``, the SHA-256 of the filled text of each unit at t
   their placeholders. It refuses when the kit HEAD changed the unit after the commit in
   ``kit.toml`` (run ``pull`` first). A value in a changed line becomes its placeholder only when the
   same line of the kit text has the placeholder at that position. In each other case it refuses,
-  unless ``--fill NAME`` (a placeholder) or ``--literal NAME`` (text) tells it. A new block needs
+  unless ``--fill NAME`` (a placeholder) or ``--literal NAME`` (text) tells it. It also refuses a
+  new citation of a decision entry: the kit text cites only the kit entry 0001. A new block needs
   its marker lines in the kit file first. ``propose`` never commits and never pushes.
 
 The tool finds the kit checkout with ``--kit PATH``, then ``kit`` in ``[sync]``, then ``../project``,
 or two folders up when this repository is in the ``repos/`` folder of that checkout.
+
+The tool writes LF line ends into each file that it writes. It reads CRLF as LF.
 
 Exit codes: 0 for a pass, 1 for a failure or a refusal, 2 for a usage error. Standard library and
 the git CLI only. Python 3.13 or later.
@@ -78,6 +81,11 @@ MARKER = re.compile(
     r"|#[ \t]*(?:kit:(?P<hash>[a-z0-9-]+)|(?P<hash_end>/kit)))[ \t]*$"
 )
 PLACEHOLDER = re.compile(r"\{\{([A-Z][A-Z0-9_]*)\}\}")
+# A citation of a decision entry other than the kit entry 0001: ADR-<ID>, (decision <ID>) or an entry
+# link. XXXX is the example ID of the docs, not an entry.
+CITATION = re.compile(
+    r"ADR-(?!0001\b|XXXX\b)[0-9A-Z]{4}\b|\(decisions? (?!0001\b|XXXX\b)[0-9A-Za-z]{4}[),; ]|entries/(?!0001-)[0-9A-Za-z]{4}-"
+)
 GIT = shutil.which("git") or "git"
 
 
@@ -145,24 +153,25 @@ def unit_text(text: str | None, unit: Unit, where: str) -> str | None:
 
 
 def put_unit(text: str | None, unit: Unit, new: str, where: str) -> str:
-    """The text of the file with the new text of the unit. The file keeps its line ends."""
+    """The text of the file with the new text of the unit, with LF line ends."""
     if not unit.block:
-        return new.replace("\n", "\r\n") if text is not None and "\r\n" in text else new
+        return norm(new)
     assert text is not None
     lines = norm(text).split("\n")
     start, end = blocks(text, where)[unit.block]
-    lines[start:end] = new.split("\n") if new else []
-    joined = "\n".join(lines)
-    return joined.replace("\n", "\r\n") if "\r\n" in text else joined
+    lines[start:end] = norm(new).split("\n") if new else []
+    return "\n".join(lines)
 
 
 def read_file(path: Path) -> str | None:
-    return path.read_text(encoding="utf-8") if path.is_file() else None
+    """The text of the file with its line ends unchanged, or None when there is no file."""
+    return path.read_bytes().decode("utf-8") if path.is_file() else None
 
 
 def write_file(path: Path, text: str) -> None:
+    """Write the text with LF line ends: each repository uses LF on each system."""
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(text, encoding="utf-8", newline="")
+    path.write_text(norm(text), encoding="utf-8", newline="\n")
 
 
 # Values and placeholders.
@@ -186,17 +195,26 @@ def fill(text: str, values: dict[str, str], where: str) -> str:
     return PLACEHOLDER.sub(lambda m: values[m.group(1)], text)
 
 
+def entry_citations(text: str, path: str) -> list[str]:
+    """The citations of entries other than 0001. A test cites by ``(decision XXXX)`` only: its other IDs are data."""
+    found = [m.group().rstrip("),; ") for m in CITATION.finditer(text)]
+    return [c for c in found if c.startswith("(")] if path.startswith("tools/tests/") else found
+
+
 def placeholder(name: str) -> str:
     return "{" * 2 + name + "}" * 2
 
 
 def value_pattern(values: dict[str, str]) -> re.Pattern[str] | None:
-    """A value as a whole token: not a part of a longer word, path or name. The longest value wins."""
+    """A value as a whole token: not a part of a longer word, path or name. The longest value wins.
+
+    A value with a / is a path. It can follow a /, for example in the link target ../../<value>.
+    """
     if not values:
         return None
 
     def token(value: str) -> str:
-        before = r"(?<![\w./-])" if re.match(r"\w", value[0]) else ""
+        before = (r"(?<![\w.-])" if "/" in value else r"(?<![\w./-])") if re.match(r"\w", value[0]) else ""
         after = r"(?![\w/-]|\.\w)" if re.match(r"\w", value[-1]) else ""
         return before + re.escape(value) + after
 
@@ -221,54 +239,67 @@ class Unfill:
         if both:
             raise KitError(f"--fill and --literal both name {', '.join(both)}")
 
-    def base_tokens(self, line: str) -> list[tuple[str | None, str]]:
-        """In order: (name, value) for each placeholder, and (None, text) for each value that is text."""
-        parts = [PLACEHOLDER.pattern] + ([self.pattern.pattern] if self.pattern else [])
-        return [
-            (m.group(1), self.values.get(m.group(1), "")) if m.group(1) else (None, m.group())
-            for m in re.finditer("|".join(f"(?:{p})" for p in parts), line)
-        ]
-
     def line(self, line: str, base: str | None) -> tuple[str, list[str]]:
-        """The kit form of a changed line, and the problems. `base` is the kit line at that place."""
-        hits = list(self.pattern.finditer(line)) if self.pattern else []
-        if not hits:
-            return line, []
-        flagged = any(set(self.names[h.group()]) & (self.fill_names | self.literal_names) for h in hits)
-        if base is not None and not flagged:
-            tokens = self.base_tokens(base)
-            if [value for _, value in tokens] == [h.group() for h in hits]:
-                return self.replace(line, hits, [name for name, _ in tokens]), []
-        names: list[str | None] = []
+        """The kit form of a changed line, and the problems. `base` is the kit line at that place.
+
+        The filled kit line and the local line are compared character by character. A placeholder
+        whose filled value is in an unchanged part stays a placeholder. A value in an unchanged part
+        that is text in the kit stays text. Each other value goes by --fill and --literal, or it is
+        a problem.
+        """
+        spans: dict[tuple[int, int], str | None] = {}
+        unchanged: list[tuple[int, int]] = []
+        if base is not None:
+            filled, placeholders = self.fill_spans(base)
+            matcher = difflib.SequenceMatcher(None, filled, line, autojunk=False)
+            blocks = [(a, b, n) for a, b, n in matcher.get_matching_blocks() if n]
+            unchanged = [(b, b + n) for _, b, n in blocks]
+            for start, end, name in placeholders:
+                for a, b, n in blocks:
+                    if a <= start and end <= a + n:
+                        spans[(b + start - a, b + end - a)] = name
+                        break
         problems: list[str] = []
-        for hit in hits:
+        for hit in self.pattern.finditer(line) if self.pattern else ():
+            if any(s < hit.end() and hit.start() < e for s, e in spans):
+                continue
             candidates = self.names[hit.group()]
             chosen = [n for n in candidates if n in self.fill_names]
+            if any(s <= hit.start() and hit.end() <= e for s, e in unchanged):
+                continue
             if len(chosen) == 1:
-                names.append(chosen[0])
-            elif all(n in self.literal_names for n in candidates):
-                names.append(None)
-            else:
+                spans[hit.span()] = chosen[0]
+            elif not all(n in self.literal_names for n in candidates):
                 problems.append(
                     f"`{hit.group()}` is the value of {', '.join(candidates)}, but the kit text has no"
                     " placeholder at this place; give --fill NAME or --literal NAME"
                 )
-                names.append(None)
-        return self.replace(line, hits, names), problems
-
-    @staticmethod
-    def replace(line: str, hits: list[re.Match[str]], names: list[str | None]) -> str:
         out, last = [], 0
-        for hit, name in zip(hits, names, strict=True):
-            out += [line[last : hit.start()], placeholder(name) if name else hit.group()]
-            last = hit.end()
-        return "".join(out) + line[last:]
+        for (start, end), name in sorted(spans.items()):
+            out += [line[last:start], placeholder(name) if name else line[start:end]]
+            last = end
+        return "".join(out) + line[last:], problems
+
+    def fill_spans(self, base: str) -> tuple[str, list[tuple[int, int, str]]]:
+        """The filled kit line, and the place and name of each filled placeholder in it."""
+        out: list[str] = []
+        spans: list[tuple[int, int, str]] = []
+        last = length = 0
+        for match in PLACEHOLDER.finditer(base):
+            text = base[last : match.start()]
+            value = self.values.get(match.group(1), match.group())
+            out += [text, value]
+            spans.append((length + len(text), length + len(text) + len(value), match.group(1)))
+            length += len(text) + len(value)
+            last = match.end()
+        return "".join(out) + base[last:], spans
 
     def text(self, kit: str, local: str, where: str) -> tuple[str, list[str]]:
         """The kit form of the local text, and a note for each value that became a placeholder.
 
         A line that is the same as the filled kit text takes its kit line. Each other line goes
-        through line(). A raised KitError lists each problem.
+        through line(), with the most similar kit line of its changed part, for example after a
+        paragraph is wrapped again. A raised KitError lists each problem.
         """
         base = kit.split("\n") if kit else []
         filled = fill(kit, self.values, where).split("\n") if kit else []
@@ -281,9 +312,12 @@ class Unfill:
             if tag == "equal":
                 out += base[i1:i2]
                 continue
-            aligned = tag == "replace" and i2 - i1 == j2 - j1
-            for k, j in enumerate(range(j1, j2)):
-                new, found = self.line(mine[j], base[i1 + k] if aligned else None)
+            for j in range(j1, j2):
+                ratio, near = max(
+                    ((difflib.SequenceMatcher(None, filled[i], mine[j], autojunk=False).ratio(), i) for i in range(i1, i2)),
+                    default=(0.0, -1),
+                )
+                new, found = self.line(mine[j], base[near] if ratio >= 0.5 else None)
                 problems += [f"{where}: line {j + 1}: {p}" for p in found]
                 if new != mine[j]:
                     notes.append(f"{where}: line {j + 1}: {new.strip()}")
@@ -579,6 +613,12 @@ def propose(
             text, found = unfill.text(base, local, unit.id)
         except KitError as error:
             refusals.append(str(error))
+            continue
+        cited = sorted(set(entry_citations(text, unit.path)) - set(entry_citations(base or "", unit.path)))
+        if cited:
+            refusals.append(
+                f"{unit.id}: the kit text cites only the kit entry 0001; remove or replace {', '.join(cited)}"
+            )
             continue
         notes += found
         target = kit / KIT_FOLDER / unit.kit

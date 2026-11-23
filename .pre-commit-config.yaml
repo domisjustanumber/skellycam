@@ -25,6 +25,12 @@ repos:
         entry: uv run python tools/check_camera_media.py
         language: system
         verbose: true
+      # A CRLF line end in the index. Each repository uses LF line ends on each system.
+      - id: line-ends
+        name: LF line ends
+        entry: uv run python tools/check_line_ends.py
+        language: system
+        pass_filenames: false
       # An entry or a table file of a decision log in the commit. The hook names the skill. It does not stop the commit.
       - id: decision-log
         name: decision log reminder

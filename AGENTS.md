@@ -20,7 +20,7 @@ package in `skellycam/`, the Electron UI in `skellycam-ui/` and the docs site in
 | `CLAUDE.md` | A local file. Git does not track it, because `.gitignore` ignores it. If you want one, put only `@AGENTS.md` in it ([ADR-XT31](decisions/entries/XT31-kit-adoption-choices-camera-media-check-and-fills.md)). |
 | `decisions/` | Decision log ([`README.md`](decisions/README.md)) and its open work ([`open-work.md`](decisions/open-work.md)) |
 | `specs/` | The specifications. An accepted decision entry links each one. |
-| `tools/` | The doc checks: `check_decision_log.py`, `check_links.py`, `check_private_data.py`, `check_camera_media.py` and `check_other_systems.py`, and the kit sync `kit_sync.py`. Their tests are in `tools/tests/`. |
+| `tools/` | The doc checks: `check_decision_log.py`, `check_links.py`, `check_private_data.py`, `check_camera_media.py`, `check_line_ends.py` and `check_other_systems.py`, and the kit sync `kit_sync.py`. Their tests are in `tools/tests/`. |
 | `kit.toml` | The values of this repository for the tools, and the kit commit that it took ([section 4](#4-project-rules)) |
 | `plans/` | A local working folder. Git ignores it. |
 | `.claude/skills/` | The skills ([section 2](#2-skills)) |
@@ -64,7 +64,7 @@ Run `uv run pytest`.
 These tests must pass.
 Run `uv run pytest tools/tests` to run only the doc checks.
 The doc checks test the decision log, the relative links, the private-data rule, the camera-media
-rule, the other-systems rule and the kit text.
+rule, the line ends, the other-systems rule and the kit text.
 Report each new test failure to the user.
 Fix the failures of one root cause in one PR.
 
@@ -90,6 +90,10 @@ the commit that takes it.
 <!-- /kit -->
 
 <!-- kit:line-ends -->
+Each text file uses LF line ends, on each system. The kit block of `.gitattributes` makes git
+write LF, also when `core.autocrlf` is set. Do not change that block.
+`tools/check_line_ends.py` fails a commit and CI when the index holds a CRLF line end.
+To repair the index, run `git add --renormalize .` and commit the result by itself.
 <!-- /kit -->
 
 ### Other systems only through certify

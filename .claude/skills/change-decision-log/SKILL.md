@@ -32,7 +32,7 @@ the rules for a change to a log.
   repair of its citations. Each edit adds `_Edited YYYY-MM-DD (#PR): <kind>._` at the end of the
   entry, for example `re-ID from XXXX`. For a
   change of ID, the renamed entry gets `re-ID from XXXX`, and each repaired entry gets
-  `citation repair`. Add these two lines only to an entry that is on `development`. A plain-text
+  `citation repair`. Add these two lines only to an entry that is on upstream `development`. A plain-text
   old path in a decided entry or a script stays, and means the same file at
   its new path.
 - An entry in a commit that is not pushed to a remote can change in that commit, in each part. Make
@@ -93,9 +93,14 @@ the rules for a change to a log.
 - Do not shorten the index row of an entry that you did not write.
 - An ID changes only on a `re-ID:` line of `tools/check_decision_log.py`, to the ID of a new `--new`
   run.
-- Until a commit is on `development`, cite its PR number and the file path, not its SHA.
+- Until a commit is on upstream `development`, cite its PR number and the file path, not its SHA.
   The `ADR-` prefix is for citations only: a file name, a
   heading, an index row and a status line hold the bare ID. Cite a provisional entry of another repo
   by the repo name, the PR number and the slug. Do not edit a decided entry only to add or move the
   prefix or the link.
 <!-- /kit -->
+
+In this repository, the rules "A normative document is binding text" and "Do not shorten the index
+row of an entry that you did not write" come from
+[ADR-N2NH](../../../decisions/entries/N2NH-index-limit-24000-no-shortened-rows-and-binding-specs.md).
+An absorb into a spec goes into a spec heading.

@@ -1,9 +1,10 @@
-"""Every relative link in each `AGENTS.md`, `decisions/`, `specs/`, `notes/` and `.claude/skills/` resolves, except in the frozen proposal records."""
+"""Every relative link in each `AGENTS.md`, `decisions/`, `.claude/skills/` and doc folder resolves, except in the skipped folders."""
 
 import shutil
 import subprocess
 from pathlib import Path
 
+import check_links
 import pytest
 from check_links import anchors, check_file, github_slug, links, markdown_files
 
@@ -123,8 +124,19 @@ def test_decision_logs_in_any_folder_are_checked_and_pinned(tmp_path: Path) -> N
         ]
 
 
-def test_proposal_records_are_skipped(tmp_path: Path) -> None:
-    records = tmp_path / "specs" / "model-sidecar" / "proposals"
+def test_the_doc_paths_of_kit_toml_are_covered(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setattr(check_links, "DOC_PATHS", (".claude/skills/", "model-sidecars/", "README.md"))
+    (tmp_path / "README.md").write_text("[gone](gone.md)\n", encoding="utf-8")
+    (tmp_path / "OTHER.md").write_text("[gone](gone.md)\n", encoding="utf-8")
+    for folder in ("model-sidecars", "specs"):
+        (tmp_path / folder).mkdir()
+        (tmp_path / folder / "doc.md").write_text("[gone](gone.md)\n", encoding="utf-8")
+    assert markdown_files(tmp_path) == [tmp_path / "README.md", tmp_path / "model-sidecars" / "doc.md"]
+
+
+def test_the_skipped_folders_are_skipped_except_their_readme(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setattr(check_links, "SKIPPED_FOLDERS", ("specs/records/",))
+    records = tmp_path / "specs" / "records"
     (records / "slug").mkdir(parents=True)
     for doc in (records / "README.md", records / "slug" / "proposal.md"):
         doc.write_text("[gone](gone.md)\n", encoding="utf-8")
