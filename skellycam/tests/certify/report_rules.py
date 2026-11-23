@@ -209,7 +209,9 @@ def problems(report) -> list[str]:
                 out.append(f"evidence.reasons lacks {reason}")
     keys = []
     # 1.7.0: the name of a test media file is exempt from rule 7; the same string elsewhere is not
-    media_names = {item["name"] for item in media if isinstance(item, dict) and isinstance(item.get("name"), str)}         if isinstance(media, list) else set()
+    media_names = set()
+    if isinstance(media, list):
+        media_names = {item["name"] for item in media if isinstance(item, dict) and isinstance(item.get("name"), str)}
     media_names -= set(_strings({k: v for k, v in report.items() if k != "test_media"}, []))
     for text in _strings(report, keys):
         if PATH.search(text):

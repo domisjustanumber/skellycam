@@ -140,7 +140,7 @@ def _number(text: str | None) -> int | None:
 
 
 def failure_facts(failure: dict, data: dict, code: str, reason: str) -> dict:
-    """3.5.3: the failure facts of a failure row, each only with a value: `stage` of the failure object, `call`,
+    """3.5.3: the failure facts of a failure row, each only with a value [ADR-0Z6Q item 5]: `stage` of the failure object, `call`,
     `native_code` (with `native_domain`) and `first_fail_code` (when it differs from the code) of the diagnostics;
     `exit_code` from the failure of the status, on each `crashed` row (also `null`) and on a `hung` row that has it.
     The failure text is never copied (9.4)."""
@@ -207,7 +207,7 @@ class Session:
     def leave_code(self, unit) -> tuple:
         """(code, failure object): a wedge code (`hung`, `process-ended`, `device-removed`) from the status of the
         camera or its last dict; for a live camera that failed or died, also another product code of its status
-        (`stalled`, `stream-error`, ...). Else (None, the failure object)."""
+        (`stalled`, `stream-error`, ...) [ADR-0Z6Q item 1]. Else (None, the failure object)."""
         group = self.group()
         status = group.cameras.orchestrator.camera_statuses.get(unit.camera_id) if group is not None else None
         info = status.info_dict() if status is not None else {}
@@ -220,7 +220,8 @@ class Session:
         return None, failure
 
     def first_without_result(self, unit) -> str | None:
-        """3.6.1 B1: the first check of a live camera, in the order of the plan, that has no result yet."""
+        """3.6.1 B1: the first check of a live camera, in the order of the plan, that has no result yet; the checks
+        of the open are never one [ADR-0Z6Q items 2, 3]."""
         names = catalog.camera_names(unit.label, unit.base, self.level, self.unix)
         return next((name for step in ("ready", "settings", "take", "clock") for name in names[step]
                      if name not in self.results), None)
@@ -229,7 +230,8 @@ class Session:
         """2.3, 8.3: a camera that hung, whose process ended or that was removed is wedged. It is never opened again,
         its later checks are `prior-failure`, and phase G gives `camera-wedged`. 3.6.1 B1: a live camera (one that
         passed its open) that leaves the run with another product code (`stalled`, `stream-error`, ...) is not
-        judged again; its later checks are `prior-check-failed`. A live camera that leaves gets one `fail` row with
+        judged again; its later checks are `prior-check-failed`, and it counts as failed for the restore of 8.3
+        [ADR-0Z6Q items 1, 4, 14]. A live camera that leaves gets one `fail` row with
         the reason of its code (`process-ended` gives `crashed`) and the failure facts of 3.5.3: on `running(unit)`,
         the check that ran, else on its first check with no result. Returns the units that are wedged or left."""
         found = []
@@ -312,9 +314,8 @@ class Session:
     async def open_step(self):
         usable = []
         for unit in self.units:
-            if unit.base is None:
-                self.done(row(f"{unit.label}:opens", "not-run", "no-mjpg-mode", unit.module))
-                self.prior(unit, "prior-check-failed")
+            if unit.base is None:  # each check after the detection is a filled row `no-mjpg-mode` [ADR-0Z6Q item 11]
+                self.prior(unit, "no-mjpg-mode")
             else:
                 usable.append(unit)
         if not usable:

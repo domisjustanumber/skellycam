@@ -86,6 +86,18 @@ def group_checks(label):
             *(f"{label}:records:{c}" for c in ("rows-complete", "blocks-decode", "gaps-explained"))]
 
 
+def own(report, label):
+    """The names of the rows of one camera, in the order of the report."""
+    return [c["name"].split(":", 1)[1] for c in report["checks"] if c["name"].startswith(label + ":")]
+
+
+def planned_count(label, level="quick", base=(640, 480, 30.0)):
+    """The count of the planned checks of one camera (3.6.1: `numbers.checks` of a `not-reached` row)."""
+    catalog = product(CATALOG)
+    names = catalog.camera_names(label, base, level, catalog.system_backend() != "media-foundation")
+    return sum(len(step) for step in names.values())
+
+
 def write_evidence(path, device, backend):
     path.write_text(json.dumps({"schema": 1, "systems": [], "cameras": [
         {"device": device, "model": "Fake", "backend": backend, "os": "Windows", "os_key": OS_KEY, "abi": ABI,
@@ -405,9 +417,17 @@ def test_t_cert_08_and_17_a_slow_camera_and_a_progress_that_raises(monkeypatch, 
     slow, fine = labels(devices)
     assert checks[f"{slow}:rate"]["result"] == "fail" and checks[f"{slow}:rate"]["reason"] == "rate-low"
     assert checks[f"{slow}:opens"]["result"] == "pass"
-    assert f"{slow}:records:rows-complete" not in checks  # 3.6.1: in the one `not-reached` row
+    # 3.6.1: the rows up to the cause, the `modes:granted` row of the same apply, then one `not-reached` row
+    assert own(report, slow) == ["detect", "detect:mjpg-mode", "opens", "rate", "modes:granted:640x480@30",
+                                 "not-reached"]
     assert checks[f"{slow}:not-reached"] == {**checks[f"{slow}:not-reached"], "result": "not-run",
-                                             "reason": "prior-check-failed"}
+                                             "reason": "prior-check-failed",
+                                             "numbers": {"checks": planned_count(slow) - 5}}
+    # the local record reads the settings checks in the `not-reached` row: a row with no `controls`
+    record = json.loads((tmp_path / "camera_checks.json").read_text(encoding="utf-8"))["rows"]
+    assert [(r["device"], r["item"], "controls" in r) for r in record if r["device"] == "feed:0000"] == [
+        ("feed:0000", "fail", False)]
+    assert not [c for c in report.get("cleanup", []) if c["name"] == "write-record"]
     assert [i["result"] for i in report["summary"]] == ["fail", "pass"], [
         c for c in report["checks"] if c["name"].startswith(fine) and c["result"] != "pass"]
     assert checks[f"{fine}:records:rows-complete"]["result"] == "pass"
@@ -442,10 +462,13 @@ def test_t_cert_10_a_camera_in_use(monkeypatch, tmp_path):
     assert_valid(report)
     checks = by_name(report)
     busy, fine = labels(devices)
-    for name in group_checks(busy):
-        check = checks.get(name) or checks[f"{busy}:not-reached"]
+    # the three checks of the open have a progress message, so each keeps its own row (3.6.1)
+    assert own(report, busy) == ["detect", "detect:mjpg-mode", "opens", "rate", "modes:granted:640x480@30",
+                                 "not-reached"]
+    for name in ("opens", "rate", "modes:granted:640x480@30", "not-reached"):
+        check = checks[f"{busy}:{name}"]
         assert check["result"] == "not-run" and check["reason"] == "camera-in-use", check
-    assert checks[f"{busy}:opens"]["reason"] == "camera-in-use"
+    assert checks[f"{busy}:not-reached"]["numbers"] == {"checks": planned_count(busy) - 5}
     assert report["summary"][0] == {"group": "camera", "name": "Fake camera 0", "device": "feed:0000",
                                     "result": "skipped", "reason": "busy"}
     assert report["summary"][1]["result"] == "pass"
@@ -650,7 +673,11 @@ def test_t_cert_12_a_camera_that_hangs_at_the_open(monkeypatch, tmp_path):
     checks = by_name(report)
     hung, fine = labels(devices)
     assert checks[f"{hung}:opens"]["result"] == "fail" and checks[f"{hung}:opens"]["reason"] == "hung"
+    # Q648 (ADR-056Z): the three rows of the open and one `not-reached` row
+    assert own(report, hung) == ["detect", "detect:mjpg-mode", "opens", "rate", "modes:granted:640x480@30",
+                                 "not-reached"]
     assert checks[f"{hung}:not-reached"]["reason"] == "prior-failure"
+    assert checks[f"{hung}:not-reached"]["numbers"] == {"checks": planned_count(hung, "full") - 5}
     assert opens == 1
     assert report["cleanup"] == [{"name": f"release:{hung}", "result": "fail", "reason": "camera-wedged",
                                   "module": "Fake camera 0"}]

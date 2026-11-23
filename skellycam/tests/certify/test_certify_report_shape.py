@@ -41,17 +41,18 @@ def test_t_cert_93_the_gate_no_hang_reads_each_fail_row():
 
 def test_t_cert_93_b1_a_camera_that_leaves_the_run_between_two_steps(tmp_path):
     """T-CERT-93, 3.6.1 B1, session child: a camera that stalls after `ready` and before the settings change, one
-    whose camera process ends there with `os._exit(3)`, one with a stream error in the take and one removed in the
-    take. Each gets one `fail` row on the first check that has no result (`settings-stick:readback` `stalled` and
-    `crashed`; `records:rows-complete` `stream-error` and `device-removed`), with the failure facts that have a
-    value and `module` = its model; its later checks are one `not-reached` row; `<model>:gate:no-hang` is `fail` for the stall and the crash and `pass` for the others. The take in
-    place of "before the take": no progress message comes between the settings change and the take."""
+    whose camera process ends there with `os._exit(3)`, one with a stream error in the take, one removed in the take
+    and one with a stream error in the ready step (a code that is not a wedge code). Each gets one `fail` row on the
+    first check that has no result, with the failure facts that have a value and `module` = its model. Each other
+    check that no progress message named is in its one `not-reached` row, wherever it stands (ADR-0Z6Q item 11).
+    `<model>:gate:no-hang` is `fail` for the stall and the crash and `pass` for the others."""
     scripts = [good(on_arm="stall"), good(on_arm="exit"), good(on_arm="remove", removed_code="stream-error"),
-               good(on_arm="remove")]
+               good(on_arm="remove"), good(on_arm="remove", removed_code="stream-error")]
     factory = FakeSourceFactory(scripts)
-    stall, crash, error, removed = labels(factory.device_infos())
-    log = {label: factory.logs[camera_id] for label, camera_id in zip((stall, crash, error, removed),
+    stall, crash, error, removed, ready_error = labels(factory.device_infos())
+    log = {label: factory.logs[camera_id] for label, camera_id in zip(labels(factory.device_infos()),
                                                                       factory.camera_ids)}
+    named = set()
 
     def arm_in_take():
         log[error].arm()
@@ -59,10 +60,14 @@ def test_t_cert_93_b1_a_camera_that_leaves_the_run_between_two_steps(tmp_path):
 
     def progress(message):
         name = (message.get("step") or {}).get("name")
+        named.add(name)
         if name == f"{crash}:native-jpeg:source-equals-ring":  # the last check of the ready step of these two
             log[stall].arm()
             log[crash].arm()
             time.sleep(3.5)  # the product declares a stall after 2 s with no frame
+        elif name == f"{ready_error}:native-jpeg:format":  # the ready step scans this camera after this message
+            log[ready_error].arm()
+            time.sleep(2.0)
         elif name == "group:take:finished":
             threading.Timer(2.0, arm_in_take).start()  # in the take of 3 s, after the record start
     before = descendants()
@@ -71,7 +76,8 @@ def test_t_cert_93_b1_a_camera_that_leaves_the_run_between_two_steps(tmp_path):
     assert_valid(report)
     checks = by_name(report)
     expected = {stall: ("settings-stick:readback", "stalled"), crash: ("settings-stick:readback", "crashed"),
-                error: ("records:rows-complete", "stream-error"), removed: ("records:rows-complete", "device-removed")}
+                error: ("records:rows-complete", "stream-error"), removed: ("records:rows-complete", "device-removed"),
+                ready_error: ("native-jpeg:format", "stream-error")}
     for index, (label, (check, reason)) in enumerate(expected.items()):
         row = checks[f"{label}:{check}"]
         assert (row["result"], row["reason"], row["module"]) == ("fail", reason, f"Fake camera {index}"), row
@@ -80,11 +86,14 @@ def test_t_cert_93_b1_a_camera_that_leaves_the_run_between_two_steps(tmp_path):
         assert all(value is not None for key, value in numbers.items() if key != "exit_code"), row
         own = [c for c in report["checks"] if c["name"].startswith(label + ":")]
         assert [c["name"] for c in own if c["result"] == "fail"] == [row["name"]], own
-        after = own[own.index(row) + 1:]
-        assert after and all(c["result"] == "not-run" for c in after), after
-        assert after[-1]["name"] == f"{label}:not-reached" and after[-1]["module"] == row["module"], after
+        reached = [c for c in own if c["name"] == f"{label}:not-reached"]
+        assert len(reached) == 1 and reached[0]["module"] == row["module"], own
+        # M1 of the review: no filled row outside the `not-reached` row, also before the fail row
+        assert not [c["name"] for c in own if c["result"] == "not-run" and c is not reached[0]
+                    and c["name"] not in named], own
     assert checks[f"{crash}:settings-stick:readback"]["numbers"]["exit_code"] == 3
-    for label, result in ((stall, "fail"), (crash, "fail"), (error, "pass"), (removed, "pass")):
+    for label, result in ((stall, "fail"), (crash, "fail"), (error, "pass"), (removed, "pass"),
+                          (ready_error, "pass")):
         assert checks[f"{label.rsplit('.', 1)[0]}:gate:no-hang"]["result"] == result, label
     assert_no_new_process(before)
 
@@ -259,6 +268,9 @@ def test_t_cert_92_17_one_not_reached_row_for_a_camera_that_cannot_go_on(monkeyp
                                                 slow: "prior-check-failed"}, labels(devices))
     checks = by_name(report)
     assert checks[f"{busy}:opens"]["reason"] == "camera-in-use"  # named by its progress message: its own row
+    # ADR-0Z6Q item 11: a camera with no MJPG mode has no row of its own after the detection
+    assert [c["name"] for c in report["checks"] if c["name"].startswith(no_mjpg + ":")] == [
+        f"{no_mjpg}:detect", f"{no_mjpg}:detect:mjpg-mode", f"{no_mjpg}:not-reached"]
     assert checks[f"{slow}:rate"]["reason"] == "rate-low"
     assert [i["result"] for i in report["summary"]] == ["skipped", "partial", "fail", "pass"]
 
@@ -303,3 +315,63 @@ def test_t_cert_92_a_cancel_in_the_take_and_the_end_of_the_budget(monkeypatch, t
     assert_valid(report)
     (label,) = labels(devices)
     assert_not_reached(report, plan, messages, {label: "over-budget"}, [label])
+
+
+# ---------------------------------------------------------------------------
+# The fix round of the review of 2026-11-23
+# ---------------------------------------------------------------------------
+
+def test_a_gate_step_whose_check_is_in_the_not_reached_row_is_not_run():
+    """ADR-0Z6Q item 12: a gate step whose required check stands in the `not-reached` row is `not-run`
+    `gate-check-not-run`; a step whose checks all have their own `pass` rows passes; the item is `partial`."""
+    catalog = product(CATALOG)
+    model, label = "cam.x.0001-0002", "cam.x.0001-0002.0"
+    names = ["detect", "detect:mjpg-mode", "opens", "rate", "modes:granted:640x480@30", "native-jpeg:format",
+             "native-jpeg:not-reencoded", "native-jpeg:source-equals-ring", "settings-stick:readback",
+             "settings-stick:holds", "settings-stick:image-effect", "native-jpeg:valid", "native-jpeg:size",
+             "native-jpeg:ring-equals-mkv"]
+    rows = {f"{label}:{n}": {"name": f"{label}:{n}", "result": "pass", "reason": None} for n in names}
+    rows[f"{label}:not-reached"] = {"name": f"{label}:not-reached", "result": "not-run", "reason": "cancelled",
+                                    "numbers": {"checks": 4}}
+    gate = {r["name"]: r for r in catalog.gate_rows(model, [rows], "Fake")}
+    assert (gate[f"{model}:gate:records"]["result"], gate[f"{model}:gate:records"]["reason"]) == (
+        "not-run", "gate-check-not-run")
+    assert gate[f"{model}:gate:native-jpeg"]["result"] == "pass"
+    assert gate[f"{model}:gate"]["result"] == "not-run"
+    assert catalog.item_result([rows]) == "partial"
+
+
+def test_the_failure_facts_of_a_b1_row():
+    """3.5.3, ADR-0Z6Q item 5: each failure fact only with a value; `native_domain` only beside `native_code`;
+    `first_fail_code` only when it differs from the code; `exit_code` on each `crashed` row (also `null`) and on a
+    `hung` row that has it; the failure text is not copied."""
+    facts = product("skellycam.core.certify.session").failure_facts
+    data = {"call": "reader-release", "native_code": 2147942405, "native_domain": "hresult",
+            "first_fail_code": "first-frame-timeout"}
+    assert facts({"stage": "first frame", "reason": "camera process ended (exit code 1)"}, data, "hung", "hung") == {
+        "stage": "first-frame", "call": "reader-release", "native_code": 2147942405, "native_domain": "hresult",
+        "first_fail_code": "first-frame-timeout", "exit_code": 1}
+    assert facts({"stage": "streaming", "reason": "no frame"}, {"native_domain": "hresult"}, "stalled", "stalled") == {
+        "stage": "streaming"}
+    assert facts({}, {"first_fail_code": "process-ended"}, "process-ended", "crashed") == {"exit_code": None}
+
+
+def test_done_equals_total_after_a_refused_run(monkeypatch, tmp_path):
+    """3.6.1, ADR-0Z6Q item 10: a run that an open camera group refuses ends with `done` equal to `total`."""
+    manager_module = product("skellycam.core.camera_group.camera_group_manager")
+    monkeypatch.setattr(manager_module, "_CAMERA_GROUP_MANAGER", type("M", (), {"camera_groups": {"g": 1}})())
+    factory = FakeSourceFactory([good()])
+    messages = []
+    report = product(RUN).run("quick", messages.append, devices=factory.device_infos(), source_factory=factory,
+                              **paths(tmp_path))
+    assert_valid(report)
+    assert "cameras-busy" in report["evidence"]["reasons"]
+    last = messages[-1]
+    assert last["state"] == "done" and last["done"] == last["total"] == len(report["checks"]) + 1
+
+
+def test_the_default_build_file_path():
+    """3.5.2: the run reads `skellycam/build_info.json` beside the package code."""
+    import skellycam
+    from pathlib import Path
+    assert product(RUN).BUILD_INFO == Path(skellycam.__file__).resolve().parent / "build_info.json"

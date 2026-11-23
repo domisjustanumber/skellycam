@@ -31,8 +31,15 @@ def test_review2_n1_the_live_change_never_reopens_a_wedged_camera(monkeypatch, t
     assert_valid(report)
     checks = by_name(report)
     assert opens == 1
-    readback = checks.get(f"{ended}:settings-stick:readback") or checks[f"{ended}:not-reached"]  # 3.6.1
-    assert readback["reason"] == "prior-failure"
+    # the crash gives one `fail` row (B1): on a check of the ready step, or on the read-back when the settings step
+    # finds it; no check of the settings step has a progress message, so no `not-run` row of it stays (3.6.1)
+    fails = [c for c in report["checks"] if c["name"].startswith(ended + ":") and c["result"] == "fail"]
+    assert [(c["reason"]) for c in fails] == ["crashed"], fails
+    assert fails[0]["name"].split(":", 1)[1] in ("native-jpeg:format", "native-jpeg:not-reencoded",
+                                                 "native-jpeg:source-equals-ring", "settings-stick:readback"), fails
+    assert not [c for c in report["checks"] if c["name"].startswith(ended + ":settings-stick")
+                and c["result"] == "not-run"]
+    assert checks[f"{ended}:not-reached"]["reason"] == "prior-failure"
     assert {"code": "camera-wedged", "values": {"camera": "Fake camera 0"}} in report["notices"]
     assert checks[f"{fine}:settings-stick:readback"]["result"] == "pass"
 

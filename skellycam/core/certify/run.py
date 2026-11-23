@@ -826,8 +826,8 @@ def _run(out, level, reporter, stops, cameras, devices, manager, source_factory,
         label for name in driven.pending for label in ([_unit_of(name, units)] if _unit_of(name, units) else
                                                         [unit.label for unit in units])}
     computed = {name for name in rows if name.endswith(":units") or ":gate" in name}
-    _fill(rows, modules, context, level, stop, facts["prior"], skip=computed)
-    _not_reached(rows, context, reporter.named)
+    filled = _fill(rows, modules, context, level, stop, facts["prior"], skip=computed)
+    _not_reached(rows, context, reporter.named, filled)
     if stop not in STOPS:
         _computed_rows(rows, context, level, reporter)
     _fill(rows, modules, context, level, stop, facts["prior"], skip=set())
@@ -879,7 +879,9 @@ def _row(name, result, reason=None, module=None, **numbers) -> dict:
 
 def _fill(rows, modules, context, level, stop, prior, skip):
     """Each planned check with no result: the stop cause (C 2.4, 4.1), or the reason that the session gave for its
-    camera (`prior-failure`, `camera-in-use`, ...). A check with no code is not planned (3.6.1)."""
+    camera (`prior-failure`, `camera-in-use`, ...). A check with no code is not planned (3.6.1). Returns the names
+    that it filled."""
+    filled = set()
     for name in rows:
         if rows[name] is not None or name in skip:
             continue
@@ -893,26 +895,25 @@ def _fill(rows, modules, context, level, stop, prior, skip):
         else:
             reason = "prior-check-failed"
         rows[name] = _row(name, "not-run", reason, modules.get(name))
+        filled.add(name)
+    return filled
 
 
 NOT_REACHED = ("prior-check-failed", "prior-failure", "camera-in-use", "no-mjpg-mode", "cancelled", "over-budget",
                "interrupted")  # 3.6.1: the reasons of a camera that cannot go on
 
 
-def _not_reached(rows, context, named) -> None:
-    """3.6.1: the checks at the end of a camera, in the order of the plan, that are `not-run` because the camera
-    could not go on (a reason of NOT_REACHED) and that no progress message named, give one row
-    `<label>:not-reached` in their place: `not-run`, the reason of the first of them, the `module` of the camera and
-    `numbers.checks`. A check that a progress message named keeps its own row."""
+def _not_reached(rows, context, named, filled) -> None:
+    """3.6.1: the filled rows of a camera (`_fill` wrote them; no step gave a result) with a reason of a camera that
+    could not go on (NOT_REACHED) and that no progress message named give one row `<label>:not-reached` in their
+    place, wherever they stand [ADR-0Z6Q item 11]: `not-run`, the reason of the first of them, the `module` of the
+    camera and `numbers.checks`. The row stands at the place of the first of them. A check that a progress message
+    named, and a row that the session gave, keep their own rows. A check counts as named when the run announced it,
+    also with no progress callable [ADR-0Z6Q item 13]."""
     tails = {}
     for camera in context.units:
-        own = [name for name in rows if name.startswith(camera["label"] + ":")]
-        tail = []
-        for name in reversed(own):
-            r = rows[name]
-            if r is None or r["result"] != "not-run" or r["reason"] not in NOT_REACHED or name in named:
-                break
-            tail.insert(0, name)
+        tail = [name for name in rows if name.startswith(camera["label"] + ":") and name in filled
+                and name not in named and rows[name]["result"] == "not-run" and rows[name]["reason"] in NOT_REACHED]
         if tail:
             tails[tail[0]] = (camera["label"], tail)
     if not tails:

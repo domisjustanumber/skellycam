@@ -71,9 +71,13 @@ def test_review_1_a_hang_after_the_open_gives_camera_wedged(monkeypatch, tmp_pat
     checks = by_name(report)
     assert (checks[f"{hung}:settings-stick:readback"]["result"], checks[f"{hung}:settings-stick:readback"]["reason"]) \
         == ("fail", "hung")
-    for name in ("settings-stick:holds", "settings-stick:image-effect", "records:rows-complete"):
-        check = checks.get(f"{hung}:{name}") or checks[f"{hung}:not-reached"]  # 3.6.1: named, or not reached
-        assert check["reason"] == "prior-failure", check
+    # the settings step named `holds` and `image-effect`: each keeps its own row; the take rows are not reached
+    for name in ("settings-stick:holds", "settings-stick:image-effect", "not-reached"):
+        check = checks[f"{hung}:{name}"]
+        assert (check["result"], check["reason"]) == ("not-run", "prior-failure"), check
+    names = [c["name"].split(":", 1)[1] for c in report["checks"] if c["name"].startswith(hung + ":")]
+    assert names[names.index("settings-stick:readback"):] == [
+        "settings-stick:readback", "settings-stick:holds", "settings-stick:image-effect", "not-reached"], names
     assert checks[f"{hung.rsplit('.', 1)[0]}:gate:no-hang"]["result"] == "fail"
     assert {"name": f"release:{hung}", "result": "fail", "reason": "camera-wedged", "module": "Fake camera 0"} \
         in report["cleanup"]
