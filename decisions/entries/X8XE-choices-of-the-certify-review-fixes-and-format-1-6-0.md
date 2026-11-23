@@ -1,7 +1,19 @@
 # X8XE — Choices of the certify review fixes and format 1.6.0
 
-**Status:** accepted, 2026-11-21 (user; commit to dom/accept-choices; was proposed, 2026-11-21 (agent; the user
-approved the review fixes and the move to format 1.6.0)).
+**Status:** absorbed into
+[`specs/certify.md#0-how-to-read-this-spec`](../../specs/certify.md#0-how-to-read-this-spec),
+[`specs/certify.md#45-the-take-and-its-files`](../../specs/certify.md#45-the-take-and-its-files),
+[`specs/certify.md#83-phase-g-re-check-u-a`](../../specs/certify.md#83-phase-g-re-check-u-a),
+[`specs/certify.md#91-certify_planlevel-a`](../../specs/certify.md#91-certify_planlevel-a),
+[`specs/certify.md#93-cancel-and-time-limits-a`](../../specs/certify.md#93-cancel-and-time-limits-a),
+[`specs/certify.md#95-cleanup-a`](../../specs/certify.md#95-cleanup-a),
+[`specs/certify.md#96-progress-before-each-step-u-a`](../../specs/certify.md#96-progress-before-each-step-u-a),
+[`specs/certify.md#97-cameras-busy-u-a-c-25`](../../specs/certify.md#97-cameras-busy-u-a-c-25),
+[`specs/certify.md#17-test-list-of-the-certify-code`](../../specs/certify.md#17-test-list-of-the-certify-code),
+[`specs/certify.md#191-the-first-code-u`](../../specs/certify.md#191-the-first-code-u),
+[`specs/certify.md#192-the-review-fixes-and-format-160-u`](../../specs/certify.md#192-the-review-fixes-and-format-160-u),
+2026-11-23 (commit to dom/absorb-2; was accepted, 2026-11-21 (user; commit to dom/accept-choices; was proposed,
+2026-11-21 (agent; the user approved the review fixes and the move to format 1.6.0))).
 
 ## Decision
 
