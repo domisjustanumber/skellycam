@@ -50,6 +50,7 @@ These entries are `accepted`.
 | [XT31](entries/XT31-kit-adoption-choices-camera-media-check-and-fills.md) | Supersedes NMM1, 4A7H: kit adoption choices; the media check refuses PNG, GIF, WebP, SVG with an allow by path; index limit 24,000 | accepted |
 | [6T78](entries/6T78-choices-of-the-sfn26-integration.md) | Choices of the `sfn26` integration: OpenCV helpers stay ours, kept and dropped items, forms of the four ports, Rust removal | accepted |
 | [TFD7](entries/TFD7-search-limit-stop-rate-median-role-flag-and-restore-after-a-failed-loop.md) | Decisions B1, B2, B7 to B9 of 2026-11-21: search limit stays 20 s; median stop rate, role flag, no restart, restore after a failed loop (not built) | accepted |
+| [VV4Q](entries/VV4Q-other-systems-only-through-certify.md) | Tests on other systems run only through certify; no script or manual step for a person on another system; CI with no cameras stays | accepted |
 
 ### Evidence
 
@@ -82,6 +83,7 @@ These entries wait for a decision of the user. Section is the section or area of
 | [GEH0](entries/GEH0-choices-of-code-step-3.md) | Choices of code step 3: `not_streaming`, held value through the status, search flag, exposure range (`no-value-in-range`), 409 and 422 rules | none | proposed |
 | [QJH6](entries/QJH6-choices-of-the-fix-lane.md) | Choices of the fix lane: held value at the nearest search value, `cameras_left_out`, status locks, failed start keeps the summary, OpenCV mode FOURCC | none | proposed |
 | [Z7F3](entries/Z7F3-choices-of-fix-lane-3.md) | Choices of fix lane 3: restore record within one step, retry list, restore after a failure, one group creation, Media Foundation clock, median rate | none | proposed |
+| [K9B7](entries/K9B7-design-of-the-other-systems-rule-skill-and-check.md) | Design of the other-systems rule: block text, skill, `check_other_systems.py` scope and signals, `LAB_PLATFORMS`, two markers, added files only | none | proposed |
 
 The entries that are `rejected`, `superseded by XXXX`, `absorbed into <path>#<anchor>`,
 `evidence; used by XXXX` or `done` are in [historical.md](historical.md).
