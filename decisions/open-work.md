@@ -169,6 +169,9 @@ task. Delete an item when its work is done. The PR that closes an item records t
   and the tests T-CERT-91 to T-CERT-111. The choices of the agent wait for the user
   ([ADR-MEE1](entries/MEE1-choices-of-the-certify-report-shape.md)), with question 17 of section 14 (the user asked for more detail on it; Q620 to Q623 decided the
   questions 13 to 16, [ADR-G0AC](entries/G0AC-decisions-of-the-user-on-the-certify-verdict-questions.md)).
+  - Open, asked of the user: Q625 (confirm the name rule of Q596 without its point 5, "a human reviewer still
+    sees each report", which was wrong: the relay publishes first) and Q626 (the build order of 3.6.7 against
+    Q575). Questions 18 and 19 of section 14 of the spec.
   - The name rule of Q596 depends on a change of the wording of rule 16 of section 6 of the contract, for the
     name of the list of known cameras and the fixed class texts. The contract owner decides it; it is pending.
   - Not verified: on Windows the firmware product text is the device property "bus reported device

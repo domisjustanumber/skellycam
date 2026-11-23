@@ -26,17 +26,19 @@ The words of the user: "Otherwise Q591-Q599 agree"; "Q595 agree"; "Agree" (Q596,
    needs to say if a camera model works. Units get plain labels that can differ between runs. The permission of
    the contract for a unit id stays unused.
 6. **Q596.** Camera names. (1) A USB id in the list of known cameras of the package gives the name of the list.
-   (2) A real USB camera with a new id gives the name text of the device through a safety filter: plain letters,
-   digits, space and a few signs, at most 60 characters, never a string that holds the user name or the host
-   name. (3) A name with an Apple device word (iPhone, iPad, MacBook, iMac, FaceTime, Continuity) is never
-   copied; the report holds a fixed class: "iPhone used as camera", "iPad used as camera", "Mac built-in
-   camera". (4) No USB id and no known word: "Camera (no USB id)". (5) A human reviewer still sees each report
-   before it is public. For a new USB id the report holds both the display name of the OS and the product text
+   (2) A real USB camera with a new id gives the name text of the device through a safety filter. The question
+   text that the user agreed to: "plain letters, digits and a few signs only, at most 60 characters, and never a
+   string that holds the user name or the computer name". (3) A name with an Apple device word (iPhone, iPad,
+   MacBook, iMac, FaceTime, Continuity) is never copied; the report holds a fixed class: "iPhone used as camera",
+   "iPad used as camera", "Mac built-in camera". (4) No USB id and no known word: "Camera (no USB id)". (5) is
+   withdrawn (see below). For a new USB id the report holds both the display name of the OS and the product text
    of the firmware, where they can be read, each through the same filter. The reason, in the words of the user:
    "we need to know the names of the cameras, so if we find one that does or does not work, we can tell
-   end-users". No language model and no name recognition. An optional question to the person ("what make and
-   model is this?") is later work. The list is seeded with 046d:085c Logitech C922, 046d:0843 Logitech C930e and
-   1532:0e05 Razer Kiyo Pro. The generic 4c4a:4a55 has no entry, because many cameras share that id.
+   end-users". No language model and no name recognition. The generic 4c4a:4a55 has no entry in the list, because many cameras share
+   that id. The seed list of the file is a choice of the agent (ADR-DBF8).
+   Correction before the first push: point (5), "a human reviewer still sees each report before it is
+   public", was a false premise of the supervisor: the relay publishes first (contract 4.1). The user is asked
+   to confirm Q596 without it (Q625).
 7. **Q597.** The seven rows `<model>:gate:<step>` go. `<model>:gate` and `gate:no-hang` stay. `details` names the
    first check that did not pass, never `numbers` and never a key `reason`. The spec names the checks that each
    gate requires.
@@ -67,10 +69,9 @@ contract.
 
 ## Reason
 
-The review of 2026-11-23 measured the reports: quick wrote 17 rows for each camera, and 127 of 261 rows of a
-four-camera full report said only `not-built`. About half of the bytes were repeats or filler. A camera that left
-the run between two steps had no `fail` row. The full run gave no production sign-off. The user wants a smoke
-test in quick, a sign-off or the facts for a fix in full, no leak of user data, and short reports.
+The review of 2026-11-23 measured the reports: 17 quick rows for each camera, 127 of 261 full rows `not-built`,
+and about half of the bytes repeats or filler. The user wants a smoke test in quick, a sign-off or the facts for
+a fix in full, no leak of user data, and short reports.
 
 ## Open work
 

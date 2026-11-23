@@ -41,11 +41,9 @@ choices [A]. "Not:" gives the rejected alternative.
 17. "Gate not complete" of Q610: the gate `not-run` `not-built`, a full item `partial` at most, and
     `"sign-off": "not-built"` in `gate` of the record row; `risks` of full empty today. Not: a package code in
     `evidence.reasons` (it makes each full report invalid; the contract owner gave a form with no new code).
-18. Names: the file `skellycam/core/camera/known_cameras.json`; the filter set (letters, marks, digits, space,
-    `( ) - . , _ + '`); the Apple words first; the firmware text before the OS name; the keys `name_os` and
-    `name_usb`; a user name or host name gives `Camera vvvv:pppp`; `Continuity` gives the iPhone class. Not: the
-    `model` field of `camera_evidence.json` (keyed by OS); the whole relay set (`:` and `/` let a path or a URL
-    form).
+18. Names: the file `skellycam/core/camera/known_cameras.json`; the firmware text before the OS name; the keys
+    `name_os` and `name_usb`; `Continuity` gives the iPhone class. The strict filter of the review fixes and the
+    seed list are in ADR-DBF8. Not: the `model` field of `camera_evidence.json` (keyed by OS).
 19. `modes`: at most 32 strings of 48 characters, `modes_cut`; the bound 96 KiB for full and 64 KiB for quick
     with eight cameras at the longest form. Not: 64 KiB for the module (97 % of it for a typical eight-camera
     full report, and above it at the longest form).
