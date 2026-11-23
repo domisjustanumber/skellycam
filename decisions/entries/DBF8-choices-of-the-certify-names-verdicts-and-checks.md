@@ -1,7 +1,7 @@
 # DBF8 — Choices of the agent for the certify checks of Q624 and the fixes of the review
 
-**Status:** proposed, 2026-11-23 (agent; on the decisions of the user in ADR-493E, and the independent review of
-the spec at commit 65197a7c6).
+**Status:** accepted, 2026-11-23 (user; Q627 of ADR-63D9, except items 2 and 9, which ADR-M7JC replaces;
+commit to dom/certify-4; was proposed, 2026-11-23 (agent)).
 
 ## Decision
 

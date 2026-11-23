@@ -185,7 +185,7 @@ gives it the state `replug` (8.3).
 
 | Option | Default | Meaning |
 |---|---|---|
-| `cameras` | `None` (each real camera) | A list of labels of section 3.1. Only these cameras are checked. A run of a part of the cameras is complete for each camera that it checks, so it is not `partial-run`. The run lists the cameras with no activation first and reads the modes only of these cameras, so a camera that the list leaves out is never activated (3.6.6 item 9) [A]. |
+| `cameras` | `None` (each real camera) | A list of labels of section 3.1. Only these cameras are checked. A run of a part of the cameras is complete for each camera that it checks, so it is not `partial-run`. The run lists the cameras with no activation first and reads the modes only of these cameras, so a camera that the list leaves out is never activated (3.6.6 item 9) [U Q627, MEE1 25]. |
 | `test_media_dir` | `None` | The shared test media folder of the app [C 2.8]. Both functions accept it. skellycam needs no test media: the full level makes its synthetic frames. Thus skellycam reads and writes nothing in this folder [A]. The disk checks write in the work folder inside `recording_folder`, because the user decided that the benchmark runs in the recording folder [U]. |
 | `long_take` | `False` | `full` only: add the take of 5 minutes of 3.6.11 [U Q618]. |
 | `recording_folder` | `None` (the temporary folder of the system) | The folder where the person records. The app passes its data folder. The quick take, the disk check and the disk benchmark write in a new work folder inside it, and certify deletes it (9.5). No path is in the report. |
@@ -219,7 +219,7 @@ This spec owns the local record. The details [A]:
   deletes it.
 - **The key of a row.** The USB id `vvvv:pppp`, the backend (3.1), the ABI (`lp64`, `ilp32`) and the
   OS key of 11.2, and the level. A camera with no USB ids has `device` `nousb:<raw name>`, with the raw OS
-  display name [A, review]. The local record never leaves the system and is never in a report, so the raw name
+  display name [U Q627, DBF8 15, review]. The local record never leaves the system and is never in a report, so the raw name
   can stand there; the fixed `Camera (no USB id)` would put each such model in one row.
   A newer row for the same key replaces the older one. A `quick` row marks the model as checked; a
   `full` row also gives the local pass of 11.3.
@@ -253,7 +253,7 @@ This spec owns the local record. The details [A]:
     - On macOS each other route gets the result of its probe of 10.7 for that control.
     - `works`: the read-back, the hold and the image check passed. `unproven`: the read-back and the
       hold passed, and the image check is `not-run` (for example `too-dark`), or not in the level: quick has no
-      image check (Q593), so a quick row gives `unproven` at most [A]. `no`: a check failed.
+      image check (Q593), so a quick row gives `unproven` at most [U Q627, MEE1 20]. `no`: a check failed.
       A route whose checks did not run for another reason (`not-applicable`, `prior-failure`) is
       left out.
     - The product chooses the route of the local row first: a route whose result is `works` in the
@@ -473,7 +473,7 @@ flat values in `numbers` [C 3.4], structured values in the module `details` [C 3
   row, `grid_16ms_share`, `grain_ms`, `has_serial`.
 - There is no unit id: `unit_id`, `unit_ids_new` and the key file `certify_unit_key` are removed (3.5.10).
 - Each number stands on one row only. A limit stands one time in `details.limits`. The exposure range and the
-  "before" values stand in `details.cameras` [A] ([ADR-MEE1](../decisions/entries/MEE1-choices-of-the-certify-report-shape.md)).
+  "before" values stand in `details.cameras` [U Q627, MEE1 14] ([ADR-MEE1](../decisions/entries/MEE1-choices-of-the-certify-report-shape.md)).
 
 The tables below give the slim form. A text in a table that names a removed key or another place is replaced by
 the bullets above and by 3.6.
@@ -542,7 +542,7 @@ The names that the analysis of 2026-11-21 proposed and that this section changes
   report). It adds `no-commit` only when `commit` is `null` or not 40 hex digits, and `modified-tree` only when
   `tree_modified` is not `false`. These are the common codes of [C 5.3], with their meaning there.
 - Build order: this addition is step 1 of 3.6.7, with the fix of B1 (3.6.1). The order of 3.6.7 differs from
-  Q575; the user decides (Q626).
+  Q575; the user agreed to it (Q626).
 - Size: about 80 bytes more than today.
 
 #### 3.5.3 Addition 2: the failure facts [U Q557]
@@ -552,7 +552,7 @@ product [ux 4.6.3] (also `rate-low`, `rate-high`, `not-ready`, `first-frame-time
 `crashed` that comes from `process-ended` (10.5), or `not-run` with `camera-in-use`. The B1 row of 3.6.1 is a
 failure row too. A failure row has each key of this table that has a value [U Q594]. No other row has these keys,
 with one exception: each row with the reason `crashed` has `exit_code`, also `null` when it is not known [C 2.5]
-[A]. The values come from the newest diagnostics dict of the camera (`CameraGroupManager.diagnostics()`, live or
+[U Q627, MEE1 11]. The values come from the newest diagnostics dict of the camera (`CameraGroupManager.diagnostics()`, live or
 closed), read after the failure, and from the failure object of the camera status (cap 12).
 
 | Key | Place | Type and values | Present (else absent) | Example | Source | Privacy |
@@ -613,7 +613,7 @@ keys of 9.4 and the exposure facts of 3.5.9. The module `details` also gets `cpu
   serial, a port number or a hub chain (9.4). The controller is an anonymous index and PCI ids. No key has a
   name of rule 2 of [C 6], also not deep in `details`.
 - The USB id of a unit is in its label, and its name is in its summary item (9.4), so the item does not repeat
-  them. The name keys of 9.4 (`name_os`, `name_usb`) are the one exception: they are only for a new USB id.
+  them. The name key of 9.4 (`name_usb`) is the one exception: it is only for a new USB id.
 - Size: about 300 bytes for each unit, plus 25 bytes for each mode, at most about 1.5 kB for the mode list.
 
 #### 3.5.6 Addition 5: frame timing [U Q557, Q594]
@@ -633,12 +633,12 @@ each system, so Windows quick has timing also without the `clock`, `sequence` an
 
 - `window_frames` and `interval_p95_ms` of the rate row are dropped [U Q594]: the window is fixed (frames 6 to
   90), and the p95 sits on the 16 ms grid.
-- `measured_fps` has 2 decimals [A]. The 16 ms arrival grid makes it good to about 0.5 % over the window of
+- `measured_fps` has 2 decimals [U Q627, MEE1 10]. The 16 ms arrival grid makes it good to about 0.5 % over the window of
   about 2.8 s [M review pass 2 of 2026-11-23: the C922 gave 29.84 and 30.00 fps in two runs 34 s apart]. The
   limit of 3 % is six times that error.
 
 **The `records` rows**, from the timing sidecar that certify already reads. Each key stands on
-`<label>:records:rows-complete` only [A]:
+`<label>:records:rows-complete` only [U Q627, MEE1 21]:
 
 | Key | Place | Type and values | Present (else) | Example | Source | Privacy |
 |---|---|---|---|---|---|---|
@@ -648,9 +648,9 @@ each system, so Windows quick has timing also without the `clock`, `sequence` an
 | `discontinuity_flags` | `numbers` of `rows-complete` | the change of D-3 `discontinuity_flags` in the take window | as `long_intervals` | `0` | run time | count |
 
 - `grid_16ms_share` is dropped [U Q594].
-- `sample_time_kept` is a fact of the source: it stands one time in `details.cameras` [A].
+- `sample_time_kept` is a fact of the source: it stands one time in `details.cameras` [U Q627, MEE1 14].
 - `sample_minus_arrival_p50_ms` and `sample_minus_arrival_p95_ms` leave the `records` rows. The clock rows hold
-  the sample-minus-arrival numbers, one time (10.2) [A] [review pass 2, finding 2].
+  the sample-minus-arrival numbers, one time (10.2) [U Q627, MEE1 21] [review pass 2, finding 2].
 - A counter on a take row is always the change in the take window [U Q573]. The real full run of 2026-11-23 wrote
   counts since the open (`discontinuity_flags` 1 on two passing cameras, `frames` 396 for a take of 90 rows)
   [M review pass 2, finding 4]. This is a fault of the code (3.6.6).
@@ -668,7 +668,7 @@ after the stop. d is an arrival interval in ms, and P is the period of the mode.
 #### 3.5.7 Addition 6: the warnings of the take, the first gap, the exit codes [U Q557]
 
 The exit codes are in 3.5.3 (`exit_code`). The take keys stand on `group:take:finished` only, and the gap keys on
-`<label>:records:rows-complete` only [A].
+`<label>:records:rows-complete` only [U Q627, MEE1 21].
 
 | Key | Place | Type and values | Present (else) | Example | Source | Privacy |
 |---|---|---|---|---|---|---|
@@ -701,7 +701,7 @@ The exit codes are in 3.5.3 (`exit_code`). The take keys stand on `group:take:fi
 
 | Key | Place | Type and values | Present (else) | Example | Source | Privacy |
 |---|---|---|---|---|---|---|
-| `exposure_before`, `exposure_before_auto` | item of `details.cameras` [A] | integer in the unit of `exposure_unit` / boolean; or `null` | each unit that opened; `null` when the source read no "before" value | `-6`, `true` | run time: D-4 `exposure_before`, `exposure_before_auto` (the first read of the open, before any set, ux 4.7) | numbers |
+| `exposure_before`, `exposure_before_auto` | item of `details.cameras` [U Q627, MEE1 14] | integer in the unit of `exposure_unit` / boolean; or `null` | each unit that opened; `null` when the source read no "before" value | `-6`, `true` | run time: D-4 `exposure_before`, `exposure_before_auto` (the first read of the open, before any set, ux 4.7) | numbers |
 | `exposure_min`, `exposure_max`, `exposure_step`, `exposure_default` | item of `details.cameras` [U Q594] | integers in the unit of `exposure_unit`; or `null` (the KS route has no range) | each unit that opened | `-11`, `-2`, `1`, `-6` | run time: D-4 | numbers |
 | `gain_value_at_m7`, `gain_auto_at_m7` | `numbers` of `<label>:settings-stick:image-effect` only (full) | native gain value (integer) / boolean; or `null` (no gain control) | each such row from a step | `32`, `true` | run time: D-4 `gain_value`, `gain_auto` of the dict that certify reads with `luma_at_m7` | numbers |
 | `gain_value_at_m8`, `gain_auto_at_m8` | the same row | as above, from the dict that certify reads with `luma_at_m8` | each such row from a step | `61`, `true` | run time | numbers |
@@ -743,7 +743,7 @@ allows a local unit id [C 6, commit `cf9c7a2`]; skellycam does not use that perm
 - **Never sent.** Certify never sends a log, never copies a log line into the report, and never puts
   the path of the folder in the report. The logs hold symbolic links, `camera_id` values and paths.
   They stay on the system. The person or the app can send them by another way; certify does not.
-- **What the person sees [A].** The text of the app that offers the logs tells what they hold: "These files can
+- **What the person sees [U Q627, MEE1 26].** The text of the app that offers the logs tells what they hold: "These files can
   hold the names of folders on this computer, which can hold your user name, and the ids of your cameras. Read
   them before you send them." A product log line prints the full path of the evidence file with the text of a
   `FileNotFoundError` [M review pass 2 of 2026-11-23]. That line is a product fault (open work).
@@ -757,7 +757,7 @@ allows a local unit id [C 6, commit `cf9c7a2`]; skellycam does not use that perm
 - The relay refuses a file over 262,144 bytes (256 KiB), with each module report and the Markdown in
   it (`relay/README.md` of the contract). skellytracker shares the file: its full module was about 90 kB on
   2026-11-20 [M review of 2026-11-23].
-- The bound of 128 KiB and 48 KiB of Q572 is replaced by the bound of 3.6.5 [A].
+- The bound of 128 KiB and 48 KiB of Q572 is replaced by the bound of 3.6.5 [U Q627, MEE1 19].
 
 #### 3.5.13 Worked example [U Q572; slim form of Q594]
 
@@ -820,7 +820,7 @@ run. Its USB id `4c4a:4a55` is not in the list of known cameras, so its name com
  "details": {"limits": {"rate_tolerance": 0.03, "exposure_open": -7},
   "cameras": [
   {"label": "cam.media-foundation.4c4a-4a55.0", "result": "fail", "failed": "rate", "reason": "rate-low",
-   "name_os": "USB Camera", "name_usb": "USB Camera", "usb_link": "USB 2", "bcd_usb": "0200", "bcd_device": "0100",
+   "name_usb": "USB Camera", "usb_link": "USB 2", "bcd_usb": "0200", "bcd_device": "0100",
    "controller": 0, "controller_id": "8086:7ae0", "hub_depth": 0, "driver_kind": "uvc-inbox",
    "driver_version": "10.0.26100.1150", "exposure_before": -6, "exposure_before_auto": true,
    "exposure_min": -11, "exposure_max": -2, "exposure_step": 1, "exposure_default": -6,
@@ -924,8 +924,7 @@ change has its tests.
 
 Order [U Q575]: P3, P1, P2 and P4; then C1, C2, P6 with C3, C4, C5, C6, C7, then P5 with C8. C9
 comes with each step. P7 can come at any time. 3.6.7 puts the fix of B1, P7 and the steps of the report shape
-(steps 1 to 9) before P3, P1, P2 and P4 (step 10). That overrides this order of Q575: the user decides (open
-question Q626, 3.6.7). The build starts only after the branch of the third
+(steps 1 to 9) before P3, P1, P2 and P4 (step 10). This replaces the order of Q575 [U Q626] (3.6.7). The build starts only after the branch of the third
 fix lane (`dom/fix-lane-3`) is merged into `dom/integration` [U Q575].
 
 ### 3.6 The report shape of quick and full [U Q591 to Q599, Q608 to Q624]
@@ -937,7 +936,9 @@ noise and no duplicates. The review of 2026-11-23 and its second pass on the rea
 day measured the reports, and a gap review read the test set. On 2026-11-23 the user decided Q591 to Q599
 ([ADR-H2A0](../decisions/entries/H2A0-decisions-of-the-user-on-the-certify-report-shape.md)) and Q608 to Q618
 ([ADR-BW5M](../decisions/entries/BW5M-decisions-of-the-user-on-the-two-verdicts-and-the-certify-test-set.md)). The choices of the
-agent are marked [A] ([ADR-MEE1](../decisions/entries/MEE1-choices-of-the-certify-report-shape.md)). The contract
+agent were marked [A] ([ADR-MEE1](../decisions/entries/MEE1-choices-of-the-certify-report-shape.md)); the user accepted
+them as a set (Q627), so they are marked [U Q627, MEE1 n] or [U Q627, DBF8 n] with the item number of the entry,
+except the choices that Q628 changes (the camera names and the USB link notice), which stay [A]. The contract
 owner confirmed on 2026-11-23 that format 1.7.0 carries the two verdicts of Q611 and the "gate not complete" of
 Q610 with no change of the format [C 3.4, 3.7, 4.2, 5.3, 7.2]. This section is not built.
 
@@ -948,17 +949,17 @@ Q610 with no change of the format [C 3.4, 3.7, 4.2, 5.3, 7.2]. This section is n
 - **Not built [U Q591].** A check that has no code in this version is not in `checks`. Its name stands one time in
   `details.not_built` (3.6.3). The plan does not count it.
   - Only a check with no code leaves `checks`. A check that has code, but whose product value is missing at run
-    time (for example a diagnostics key that is `null`), keeps its row `not-run` with `not-built` [A]. The plan
+    time (for example a diagnostics key that is `null`), keeps its row `not-run` with `not-built` [U Q627, MEE1 3]. The plan
     counts it.
   - A check of the camera block of `full` for a second unit of a model (5.1) is not planned and gives no row,
-    in place of `not-run` with `same-model` [A]. The label of the unit (`.1`, `.2`) tells the reader that the
+    in place of `not-run` with `same-model` [U Q627, MEE1 4]. The label of the unit (`.1`, `.2`) tells the reader that the
     first unit of the model had the block.
 - **One row for a camera that could not go on [U Q592].** When a camera cannot go on, the checks of that camera
   that no progress message named yet give one row `<label>:not-reached` in place of their filled `not-run` rows.
   - `result` is `not-run`. `reason` is the reason of the first check that it stands for: `prior-check-failed`,
-    `prior-failure`, `camera-in-use`, `no-mjpg-mode`, `cancelled`, `over-budget` or `interrupted` [A].
+    `prior-failure`, `camera-in-use`, `no-mjpg-mode`, `cancelled`, `over-budget` or `interrupted` [U Q627, MEE1 6].
   - `module` is the `name` of the summary item of the camera [C 3.4, 4.2 part 8].
-  - `numbers` holds `checks`: the count of the checks that the row stands for [A].
+  - `numbers` holds `checks`: the count of the checks that the row stands for [U Q627, MEE1 6].
   - A check that a progress message named keeps its own row, with its own result.
   - `prior-failure` and `prior-check-failed` are codes of skellycam. `skellycam/REASON_CODES.md` lists both
     [C 5.4].
@@ -969,31 +970,31 @@ Q610 with no change of the format [C 3.4, 3.7, 4.2, 5.3, 7.2]. This section is n
   - Such a camera gets one `fail` row with the product failure code (`stalled`, `stream-error`,
     `device-removed`, `hung`; `process-ended` gives `crashed`, 10.5) and the failure facts of 3.5.3 that have a
     value.
-  - The row is the first check of that camera that has no result yet, in the order of the plan [A]. In the take
-    and after it, the row is `<label>:records:rows-complete` [A, review finding 5]. For
+  - The row is the first check of that camera that has no result yet, in the order of the plan [U Q627, MEE1 1]. In the take
+    and after it, the row is `<label>:records:rows-complete` [U Q627, DBF8 14, review finding 5]. For
     example, a camera that stalls after `ready` and before the settings change gives
     `<label>:settings-stick:readback` `fail` `stalled`. Its other checks give one `<label>:not-reached` row.
   - The row has `module` = the name of the model, also when its check is a pipeline check, and the model item is
     `fail`, whatever the group of the check (3.4): a product failure code of a camera tells a fault of that
-    camera [A]. Rule (c) of 3.6.10 applies when each model gives such a row.
+    camera [U Q627, DBF8 12]. Rule (c) of 3.6.10 applies when each model gives such a row.
   - `<model>:gate:no-hang` reads each `fail` row of the model. It fails with the reason `hung`, `crashed` or
-    `stalled` [A]. A `device-removed` row does not fail it: the person removed the camera.
+    `stalled` [U Q627, MEE1 2]. A `device-removed` row does not fail it: the person removed the camera.
   - `details.cameras[]` of that unit names the row in `failed` (3.6.3).
-- **No zero counts on a `pass` row [A, review].** On a `pass` row, a count whose value is 0 is absent (for example
+- **No zero counts on a `pass` row [U Q627, DBF8 16, review].** On a `pass` row, a count whose value is 0 is absent (for example
   `frames_damaged`, `decode_failures`, `missing`, `gaps`, `end_gaps`, `long_intervals`, `discontinuity_flags`,
   `frames_differ`, `frames_wrong_size`, `later_than_arrival`, `problems`). A reader reads an absent count of a
   `pass` row as 0. A `fail` row writes each count of its rule.
 - **One number, one row [U Q594, A].** No `numbers` object repeats another. Each key stands on the one row whose
   rule reads it (3.6.2). A `pass` row has `numbers` only when it measured something, and it does not echo the
-  request [A]. A key of a failure fact is in a row only when it has a value (3.5.3) [U Q594].
-- **Rounding [A].** `measured_fps`, `take_fps` and the take `rate`: 2 decimals. `free_gb`: an integer. A time in
+  request [U Q627, MEE1 9]. A key of a failure fact is in a row only when it has a value (3.5.3) [U Q594].
+- **Rounding [U Q627, MEE1 10].** `measured_fps`, `take_fps` and the take `rate`: 2 decimals. `free_gb`: an integer. A time in
   ms: 1 decimal, and 2 decimals for the clock keys.
-- **The plan total [A].** `total` of the plan [C 2.6] is the count of the rows of a run in which each planned
+- **The plan total [U Q627, MEE1 7].** `total` of the plan [C 2.6] is the count of the rows of a run in which each planned
   check gives its own row. It counts `session:exit` [review pass 2, finding 5]. In the progress messages,
   `done` counts a `<label>:not-reached` row as the count of the checks that it stands for, and counts the end
   of the session child as one ended check, with or without a `session:exit` row. Thus `done` equals `total` at
   `state` `done`, and `done` is never above `total`.
-- **Checks that never judge on a backend [A].** On Media Foundation, `clock:base` is not planned: the source can
+- **Checks that never judge on a backend [U Q627, MEE1 8].** On Media Foundation, `clock:base` is not planned: the source can
   never tell its clock (`clock-unknown`, ADR-Z7F3). The gate then requires the two measured clock checks [U Q585].
   Of the pair `sequence` and `time-gaps`, the run writes only the check that judges, and the plan counts one
   check for the pair.
@@ -1050,7 +1051,7 @@ On Linux and macOS, quick also has `clock:base`, `clock:before-arrival`, `clock:
 | `<label>:clock:base` (not on Media Foundation) | `clock`, `tstamp_src`, `ts_conversion` | `clock-base-differs`; `not-run` `clock-unknown` |
 | `<label>:clock:before-arrival` | `later_than_arrival` | `sample-after-arrival` |
 | `<label>:clock:near-arrival` | `sample_minus_arrival_p5_ms`, `sample_minus_arrival_p50_ms`, `jitter_p95_ms` | `sample-too-early` |
-| `<label>:sequence` or `<label>:time-gaps` | the counters of 10.2, each the change in the take window; `time-gaps` writes no `frames` (`rows-complete` has `rows`) [A] | `sequence-unreliable` or `frame-gaps` |
+| `<label>:sequence` or `<label>:time-gaps` | the counters of 10.2, each the change in the take window; `time-gaps` writes no `frames` (`rows-complete` has `rows`) [U Q627, DBF8 18] | `sequence-unreliable` or `frame-gaps` |
 | `<label>:bursts` [U Q624j] | `burst_share`, `intervals` | none: `record-only` (3.6.12) |
 
 The six checks that move are the six that the review names in its sections 3.3 and 6. The list of the user and
@@ -1059,7 +1060,7 @@ the list of the review are the same.
 **Full, each model: two checks [U Q597].** `<model>:gate:no-hang` (an ordinary check, 3.6.1) and `<model>:gate`
 (a roll-up check, 11.3). The seven roll-up checks `<model>:gate:<step>` are removed. The two verdicts of Q611
 (3.6.10) split the old gate in two. Each gate requires only rows whose `module` is the `name` of its own item
-[A, review finding 3]. Thus a row that the rule of 3.6.10 gives to a model (for example a take row by Q621)
+[U Q627, DBF8 13, review finding 3]. Thus a row that the rule of 3.6.10 gives to a model (for example a take row by Q621)
 blocks the gate of that model, not `pipeline:gate`. `<model>:gate` requires, for each unit of the model whose
 `opens` judged, each row of this list whose `module` is the name of the model:
 
@@ -1082,13 +1083,13 @@ blocks the gate of that model, not `pipeline:gate`. `<model>:gate` requires, for
   source gives a sequence number, else `time-gaps`;
 - `group:take-30:finished`, `group:take-30:rate`, `group:contention` and `group:open` [U Q599, Q610]. They are
   not built, so today `pipeline:gate` is `not-run` with `not-built` (3.6.4);
-- `group:restore-after-kill` [U Q615] and `group:cycles` [A] (3.6.11), when they are built;
+- `group:restore-after-kill` [U Q615] and `group:cycles` [U Q627, MEE1 30] (3.6.11), when they are built;
 - `system:recording-space` and, when they are built, `system:disk` [U Q612] and the self-checks of section 7 that
   have a pass rule.
 
 With one model only, `pipeline:gate` cannot pass when a pipeline check failed (3.6.10 rule e).
 
-**The result of a roll-up check [A].** `fail` with `gate-check-failed` when a required check is `fail`; else
+**The result of a roll-up check [U Q627, MEE1 17].** `fail` with `gate-check-failed` when a required check is `fail`; else
 `not-run` with `not-built` when a required check is not built [U Q610, C 5.3]; else `not-run` with
 `gate-check-not-run` when a required check is `not-run`; else `pass` (3.3). A check with no code is not in
 `checks` (Q591), but the gate row itself stays in `checks`: it is `not-run` with `not-built` while a check that it
@@ -1105,13 +1106,13 @@ Each test of the five old rows keeps a check that carries its failure:
 | Old row | Its test | The check that carries its failure now |
 |---|---|---|
 | `group:take:finished` | The manifest has `state` `"finished"` and no `take_error`. | `group:take:finished`, no change |
-| `group:take:csv-rows` | Each CSV reads with `sidecar.read_strict` and has the frame count of the take as its row count. | `<label>:records:rows-complete` of that camera, `fail` `rows-differ` [A] |
+| `group:take:csv-rows` | Each CSV reads with `sidecar.read_strict` and has the frame count of the take as its row count. | `<label>:records:rows-complete` of that camera, `fail` `rows-differ` [U Q627, MEE1 16] |
 | `group:take:no-missing` | No live camera has a `missing` row; no `camera_dead`, no `camera_file_short`. | `<label>:records:rows-complete` of that camera, `fail` `missing-rows` (a dead camera and a short file give `missing` rows) |
-| `group:take:frame-count` | The frame count is at least 80 % of 3 s times the mode rate. | `group:take:rate`, `fail` `too-few-frames`: the rate needs enough frames to judge [A] |
+| `group:take:frame-count` | The frame count is at least 80 % of 3 s times the mode rate. | `group:take:rate`, `fail` `too-few-frames`: the rate needs enough frames to judge [U Q627, MEE1 16] |
 | `group:take:rate` | The take rate is within the limit of the mode rate. | `group:take:rate`, `fail` `group-rate-off` |
 
 `<label>:records:rows-complete` is one test: each frame of the take has a present row in the CSV of that camera.
-The same two rows replace the five rows of `group:take-30` and `group:take-60` (6.1, 8.2) [A].
+The same two rows replace the five rows of `group:take-30` and `group:take-60` (6.1, 8.2) [U Q627, MEE1 16].
 
 **Rows that go [U Q591 to Q599].** `<label>:detect` (its facts are in `details.cameras[].modes`; it is
 `record-only`, so it carries no test, and `<label>:detect:mjpg-mode` carries the one detect test of a named
@@ -1128,7 +1129,7 @@ above; each `not-built` row of a check with no code; each `same-model` row; the 
 | `details.limits` | object | Each limit of a pass rule of the level, one time. |
 | `details.not_built` | object `{"camera": [...], "run": [...]}` | The names of the checks with no code [U Q591]. |
 | `details.gates` | list, one item for each `<model>:gate` and `pipeline:gate` that is not `pass` (full only) | The first required check that did not pass [U Q597]. |
-| `details.pipeline` | object `{"failed", "reason"}` | The cause of the pipeline verdict (3.6.10) [A]. The result is in the summary item only. |
+| `details.pipeline` | object `{"failed", "reason"}` | The cause of the pipeline verdict (3.6.10) [U Q627, MEE1 27]. The result is in the summary item only. |
 | `details.backend`, `os_key`, `abi`, `cpu_logical`, `logs_kept` | as today, 3.5.8, 3.5.11 | |
 
 **`details.cameras[]`, the verdict of a unit.** The contract owner requires each `reason` to be a reason code
@@ -1136,20 +1137,21 @@ or `null` [C 6 rule 9]. A result in `details` gives no evidence [C 7].
 
 | Key | Values | Rule |
 |---|---|---|
-| `result` | `pass`, `fail`, `partial`, `skipped` | The four rules of the summary item (3.4), applied to the checks of this unit only [A]. |
-| `failed` | a check name without `<label>:`, or `null` | The first check of the unit, in the order of `checks`, whose result is not `pass` and not `record-only` [A]. `null` when the result is `pass`. |
+| `result` | `pass`, `fail`, `partial`, `skipped` | The four rules of the summary item (3.4), applied to the checks of this unit only [U Q627, MEE1 14]. |
+| `failed` | a check name without `<label>:`, or `null` | The first check of the unit, in the order of `checks`, whose result is not `pass` and not `record-only` [U Q627, MEE1 14]. `null` when the result is `pass`. |
 | `reason` | a reason code, or `null` | The reason of the check that `failed` names. |
-| `name_os`, `name_usb` | a string of the name rule of 9.4, or `null` | Only for a unit whose USB id is not in the list of known cameras and whose name has no Apple word (9.4) [U Q596]. |
+| `name_usb` | a string of the name rule of 9.4, or `null` | Only for a unit whose USB id is not in the list of known cameras and whose firmware text has no Apple word (9.4) [U Q596]. The display name of the OS is not copied [A, pending Q628]. |
+| `usb3_capable` | `true`, `false`, `null` | 3.6.13 [A, pending Q628]. |
 
 The other keys are in 3.5.5 and 3.5.9. A unit that the run did not check (a `reviewed` model) has no item.
 
 **`details.steps[]`.** Each item has `step`, `t_start_s` and `seconds` (3.5.4). The items `open` and `take` also
-have `cpu_cores_used` and `cpu_share_p95` (3.5.8). The step names [A]: `detect`, `open`, `retry`, `ready`,
+have `cpu_cores_used` and `cpu_share_p95` (3.5.8). The step names [U Q627, MEE1 12]: `detect`, `open`, `retry`, `ready`,
 `settings`, `take`, `checks` (the checks that only compute), `close`, `recheck` (phase G); in `full` also one item
 for each later phase that started (`full-c`, `full-d`, `full-e`, `full-f`). The sum of `seconds` shows the time of
 the run against its budget of 30 s (4.1).
 
-**`details.limits` [A].** The keys and the values of today:
+**`details.limits` [U Q627, MEE1 13].** The keys and the values of today:
 
 | Level | Keys and values |
 |---|---|
@@ -1188,14 +1190,14 @@ pass of the pipeline needs the take of 30 s and the check of all cameras togethe
   are built, the key holds the result of the gate.
 - **The plan [U Q610].** The plan of full states what the run does today: `seconds_estimate` from the built
   checks (about 30 s: the quick estimate and 5 s), and `risks` holds no sentence of a check that is not built.
-  Today no built check of full opens a camera more than one time, so `risks` is empty [A]. The sentences of 8.4
+  Today no built check of full opens a camera more than one time, so `risks` is empty [U Q627, MEE1 17]. The sentences of 8.4
   come back with the checks of phase F. The review saw a plan of 565 s with the text "opens each camera many
   times" for a run of 28 s with one open [M review pass 2, finding 1].
 - **Quick does not change [U Q610].** A quick pass stays a smoke-test pass: a valid quick report makes an item
   usable on that system [C 7.2].
 - When the three checks are built and in the gates, a gate can be `pass`, and the full item can be `pass`.
 
-#### 3.6.5 The size bound [A]
+#### 3.6.5 The size bound [U Q627, MEE1 19]
 
 - The contract owner asks for a hard bound of the `modes` list, in code, with a test. The bound: at most 32
   strings, each at most 48 characters (3.5.5). With more modes, the code keeps the 32 of the largest area and
@@ -1207,7 +1209,7 @@ pass of the pipeline needs the take of 30 s and the check of all cameras togethe
   about 13 kB for eight cameras.
 - The bound: a module report written with `json.dumps(report, indent=1)`, with eight cameras and each field at
   its longest form (32 modes of 48 characters, each failure key, each warning, each camera failed), is at most
-  96 KiB (98,304 bytes) for full and at most 64 KiB (65,536 bytes) for quick [A, not calibrated]. With the
+  96 KiB (98,304 bytes) for full and at most 64 KiB (65,536 bytes) for quick [U Q627, MEE1 19, not calibrated]. With the
   skellytracker full module of about 90 kB, the file stays under the relay limit of 256 KiB.
 - The bound of 3.5.12 (128 KiB and 48 KiB for four cameras) is replaced.
 
@@ -1223,12 +1225,12 @@ except where a mark says so.
 3. **The schema id**: `skellycertify.report/1.7.0` (3.6.1).
 4. **Counters since the open on take rows** [U Q573]: each counter of the `records`, `clock`, `sequence` and
    `time-gaps` rows is the change in the take window, also `frames` and `discontinuity_flags` (3.5.1).
-5. **`clock:near-arrival` cannot fail** [A]: the sample time is always before the arrival, so each value is
+5. **`clock:near-arrival` cannot fail** [U Q627, MEE1 22]: the sample time is always before the arrival, so each value is
    negative, and the check reads `abs(p95) <= 200 ms`, which is the value nearest to zero [M review pass 2: p5
    about -16.5 ms, p95 about -0.25 ms on two cameras]. The new rule judges the far side:
    `sample_minus_arrival_p5_ms >= near_arrival_p5_ms` (-50 ms, 1.5 frame periods at 30 fps, not calibrated);
    else `fail` `sample-too-early`. `clock:before-arrival` keeps `later_than_arrival` 0. Q585 does not change.
-6. **The take rate limit** [A]: the take rate is the frame count divided by the elapsed time [U Q609]. The
+6. **The take rate limit** [U Q627, MEE1 23]: the take rate is the frame count divided by the elapsed time [U Q609]. The
    arrival grid of 16 ms gives an error of up to one step at each end: about 1.1 % at most, about 0.5 % in
    practice, over a take of 3 s [M review pass 2: 29.92 and 29.99 fps for the same cameras]. The limit of 1 % is
    the size of that error, so a false `group-rate-off` is possible. The limit becomes 2 % for a take under
@@ -1239,7 +1241,7 @@ except where a mark says so.
    `group:take:finished` to the `record-only` check `group:in-step` of 3.6.11, with their limit shown in
    `details.limits`.
 8. **The plan total and `session:exit`** (3.6.1): the plan counts `session:exit`; the progress said 64 of 63.
-9. **Leave a camera out before the detection touches it** [A]: today the detection of the run reads the modes of
+9. **Leave a camera out before the detection touches it** [U Q627, MEE1 25]: today the detection of the run reads the modes of
    each attached camera, and that read activates each camera, also a camera that is known dead. The option
    `cameras` (2.4) filters only after the detection (`run.py` `_detect` with `modes=True`). The fix: the run
    first lists the cameras with no activation, as the plan does (`detect_media_foundation_cameras(modes=False)`,
@@ -1253,11 +1255,11 @@ kept on disk, so a restore survives a kill of the server [U Q608] (a later fix r
 `camera-not-restored` in 8.3 does not change here); the headline frame rate of a take is the frame count divided
 by the elapsed time, and the median is only for the figures of each frame interval [U Q609] (4.5).
 
-#### 3.6.7 Build order [A]
+#### 3.6.7 Build order [U Q627, DBF8 17]
 
 The steps are small. Each step passes its own tests: a test of the list below runs in its new form from its
 step on, and a part of a test that needs a later step joins at that step (the column "Parts that join later")
-[A, review finding 4].
+[U Q627, DBF8 17, review finding 4].
 
 | Step | Change | Tests | Parts that join later |
 |---|---|---|---|
@@ -1281,13 +1283,13 @@ step on, and a part of a test that needs a later step joins at that step (the co
 `not-built` is valid only when a check that it requires is in `details.not_built`; the rules of 3.6 join at step
 9 (T-CERT-87), when the validator moves into the package (3.6.12).
 
-**The conflict with Q575 [open, Q626].** The user decided on 2026-11-23 (Q575 of
+**The order replaces Q575 [U Q626].** The user decided on 2026-11-23 (Q575 of
 [ADR-10HT](../decisions/entries/10HT-acceptance-of-the-certify-report-field-choices-and-the-build-order.md)):
 "build order: product changes first (P3, P1, P2, P4), then C1 and later". This order puts the product changes at
 step 10. The recommendation: keep this order. Reason: steps 1 to 9 make every report valid as evidence (the
 commit), stop the hidden fault B1, and change the shape that the product changes then fill; with P3 to P4
-first, each later step of the shape changes the new fields again. The supervisor asks the user (Q626). With
-"no", P3, P1, P2 and P4 move before step 1, and the other steps keep their order.
+first, each later step of the shape changes the new fields again. The user agreed (Q626, [ADR-63D9](../decisions/entries/63D9-decisions-of-the-user-on-the-processors-the-build-order-and-the-certify-choices.md)):
+this order replaces the order of Q575.
 
 **The tests of today that change.** The test files `skellycam/tests/certify/` hold 52 test functions. A scan of
 their names and assertions [NV] shows that about 25 of them test a row or a key that 3.6 changes, so they change
@@ -1415,7 +1417,7 @@ writes the name in full.
    {"label": "cam.media-foundation.046d-0843.0", "result": "pass", "failed": null, "reason": null, "usb_link": "USB 2", "...": "..."},
    {"...": "the C922 and the Kiyo Pro"},
    {"label": "cam.media-foundation.4c4a-4a55.0", "result": "fail", "failed": "rate", "reason": "rate-low",
-    "name_os": "USB Camera", "name_usb": "USB Camera", "usb_link": "USB 2", "bcd_usb": "0200", "bcd_device": "0100",
+    "name_usb": "USB Camera", "usb_link": "USB 2", "bcd_usb": "0200", "bcd_device": "0100",
     "controller": 0, "controller_id": "8086:7ae0", "hub_depth": 0, "driver_kind": "uvc-inbox",
     "driver_version": "10.0.26100.1150", "exposure_before": -6, "exposure_before_auto": true,
     "exposure_min": -11, "exposure_max": -2, "exposure_step": 1, "exposure_default": -6, "sample_time_kept": true,
@@ -1508,7 +1510,7 @@ contract owner confirmed its form [C 3.7]:
 - `{"group": "component", "name": "<pipeline name>", "device": null, "result": ...}`. `device` is present and
   `null`. A group `pipeline` is not allowed: the relay refuses it. The allowed groups are `ep`, `gpu-jpeg`,
   `camera`, `benchmark` and `component`.
-- The name [A]: `<OS>, <backend>, native JPEG`, with `<OS>` from `host.os.name` (`Windows`, `Linux`, `macOS`) and
+- The name [U Q627, MEE1 27]: `<OS>, <backend>, native JPEG`, with `<OS>` from `host.os.name` (`Windows`, `Linux`, `macOS`) and
   `<backend>` one of `Media Foundation`, `V4L2`, `AVFoundation`. Example: `Windows, Media Foundation, native
   JPEG` (38 characters; the limit is 80).
 - In `full` the item has `"gate": "pipeline:gate"` [C 3.7]. [C 7.2] applies as for a camera item.
@@ -1516,8 +1518,8 @@ contract owner confirmed its form [C 3.7]:
   [C 4.2 part 6].
 - The item has no `reason` (the contract allows a reason only for `skipped`). `details.pipeline` gives the cause:
   `result`, `failed` (the full name of the first check that the rule below gives to the pipeline and that did not
-  pass) and `reason` (its reason code, or `not-decided-one-model` for rule e) [A].
-- A run with no camera to check, and a refused run, have no pipeline item [A].
+  pass) and `reason` (its reason code, or `not-decided-one-model` for rule e) [U Q627, MEE1 27].
+- A run with no camera to check, and a refused run, have no pipeline item [U Q627, MEE1 27].
 
 **The kind of each check.** Each check has one kind. The kind decides who the check counts against.
 
@@ -1530,7 +1532,7 @@ contract owner confirmed its form [C 3.7]:
 
 **The rule [U Q611].** A check has one `module` [C 3.4]. The rule gives it. For one pipeline check (one name
 without the label), the models that count are the models with at least one unit where that check judged
-(`pass` or `fail`); a unit where the check is `not-run` or in a `not-reached` row does not count [A, review
+(`pass` or `fail`); a unit where the check is `not-run` or in a `not-reached` row does not count [U Q627, DBF8 11, review
 finding 2]. A model "fails" the check when the check is `fail` on one of its units, and "passes" it when the
 check is `pass` on each of its units that judged.
 
@@ -1545,34 +1547,34 @@ check is `pass` on each of its units that judged.
 - (e) With one model that counts (one or more units of it), a pipeline check that fails cannot be given to
   either part. This is also the case of two models when the other model stopped early and did not judge the
   check. The model item fails (the row has `module` = the name of the model), the pipeline item is `partial`,
-  and `details.pipeline.reason` is `not-decided-one-model` [A]. `pipeline:gate` cannot pass.
+  and `details.pipeline.reason` is `not-decided-one-model` [U Q627, MEE1 27]. `pipeline:gate` cannot pass.
 - A pipeline check that passes, or that is `not-run` for a reason of the pipeline, has `module` = the pipeline
-  name [A]. A `not-run` pipeline check of a camera that could not go on is in its `<label>:not-reached` row.
+  name [U Q627, MEE1 27]. A `not-run` pipeline check of a camera that could not go on is in its `<label>:not-reached` row.
 - A B1 row (3.6.1: a product failure code of a camera, also on a pipeline check) counts against the model of
-  its camera, and the model item is `fail` [A, review finding 5]. Rule (c) applies to B1 rows too: when each
+  its camera, and the model item is `fail` [U Q627, DBF8 12, review finding 5]. Rule (c) applies to B1 rows too: when each
   model that counts gives a B1 row in the same step, the rows have the pipeline name as `module`, and the
   pipeline item fails.
-- A wedge of one camera does not fail another model [A, review finding 6]. When a camera wedges (`hung`,
+- A wedge of one camera does not fail another model [U Q627, DBF8 12, review finding 6]. When a camera wedges (`hung`,
   `crashed`, `stalled`, `device-removed`) in a step, a check of a camera of another model that fails in the same
   step keeps the `module` of its model, but it does not make that model `fail`: the model item is `partial`,
   and its item of `details.cameras` gets `"blocked_by": "<label of the wedged camera>"`. Example: case 1 of
   3.5.13, where the C922 fails `rate` during the wedge of the Kiyo Pro.
   - "The same step" is one item of `details.steps`: the checks that one progress message of a step started, from
     its `t_start_s` to the result of its last check. For the open, this is the one apply of all cameras, from the
-    apply request to the end of the wait for the states (about 12 s with a wedge) [A].
+    apply request to the end of the wait for the states (about 12 s with a wedge) [U Q627, DBF8 18].
   - A unit with `blocked_by` writes no row into the local record (2.5), so the app checks that model again at
     its next open. When each unit of a model is blocked, the model writes no row.
   - A failed row of a blocked unit counts neither for `<model>:gate` nor for the known-bad rule of 11.5: the gate
     reads it as `not-run`, so the gate is `not-run` with `gate-check-not-run`, never `fail`, and
     `details.gates` names no blocked row. Two systems with a wedge of a Kiyo Pro thus never make a C922
     known-bad.
-- A row has `module` only when a summary item of that `name` exists in the report [C 3.4] [A, review finding
+- A row has `module` only when a summary item of that `name` exists in the report [C 3.4] [U Q627, DBF8 13, review finding
   7]. With no camera to check, and in a refused run, there is no pipeline item, so the run rows have no
   `module`.
 - A check given to a model keeps its group of 3.4 for the model item: a failed `records` check makes the model
   `fail`.
 
-**The pipeline item result [A].** The first rule that applies:
+**The pipeline item result [U Q627, MEE1 27].** The first rule that applies:
 
 1. `fail`: a check whose `module` is the pipeline name is `fail`.
 2. `partial`: rule (e) applied; or a check whose `module` is the pipeline name is `not-run` (except
@@ -1629,14 +1631,14 @@ on 2026-11-23 [U Q612 to Q618]. Each check below is not built, except where it s
     (`jpeg_kb_mean` x 1000 x `measured_fps`), in whole minutes. `free_gb` moves to this row.
   - `fail` with `disk-full` when `minutes_free` is less than `minutes_free_min` (5) of `details.limits`.
   - A `removable` or `network` volume does not fail the check. It gives the notice `recording-volume-not-fixed`
-    with `{"kind": "<volume_kind>"}` [A]. Its text: "The recording folder is on a removable or network drive. A
+    with `{"kind": "<volume_kind>"}` [U Q627, MEE1 29]. Its text: "The recording folder is on a removable or network drive. A
     recording can lose frames there. Choose a folder on an internal drive."
 - **Cycles [U Q614].** `<label>:cycles` runs 30 opens and closes of the product source for the first unit of
-  each model, alone. `group:cycles` runs 10 opens and closes of the whole group [A: the name]. Together about
+  each model, alone. `group:cycles` runs 10 opens and closes of the whole group [U Q627, MEE1 30: the name]. Together about
   one minute for each model. Known cost: on some runs this wedges a camera that is prone to wedges. The run then
   gives the notice `camera-wedged` ("please replug"), and the camera is not touched again in the run (2.3).
   `<model>:gate` requires `<label>:cycles`. `group:cycles` is a system check in `pipeline:gate`; when a camera
-  wedges in it, it counts against the model of that camera, as for the take (3.6.10) [A].
+  wedges in it, it counts against the model of that camera, as for the take (3.6.10) [U Q627, MEE1 30].
 - **The restore after a kill of the server [U Q615].** `group:restore-after-kill`: a kill of the main process
   during a stream, a new start, and a read of the controls of each camera: each control has its "before" value
   again. It is a pipeline check in `pipeline:gate`. It needs the "before" values on disk (Q608, product work of a
@@ -1645,12 +1647,12 @@ on 2026-11-23 [U Q612 to Q618]. Each check below is not built, except where it s
   the take (`spread_p50_ms`, `spread_p95_ms`, 1 decimal), from the sample times where `sample_time_kept` is true,
   else from the arrival times (`spread_source` `sample` or `arrival`). It is `record-only` for now: it fails
   nothing and is in no gate. Its limit stands in `details.limits` (`in_step_ms`, one frame period, not
-  calibrated). It is in quick and in full, from the take, at no cost [A]. More runs on the test system calibrate
+  calibrated). It is in quick and in full, from the take, at no cost [U Q627, MEE1 24]. More runs on the test system calibrate
   the limit (open work).
 - **60 fps [U Q617].** `<label>:exposure:<w>x<h>@60`, `<label>:auto-exposure:searched:<w>x<h>@60` and
   `<label>:auto-exposure:holds-rate:<w>x<h>@60` are removed (5.3, 8.2). `<label>:rate:<w>x<h>@60` stays.
 - **The long take [U Q618].** A take of 5 minutes is an option of full, not part of the default run: the package
-  option `long_take=False` of `certify()` and `certify_plan()` [C 2.2] [A: the name]. With `long_take=True`, the
+  option `long_take=False` of `certify()` and `certify_plan()` [C 2.2] [U Q627, MEE1 30: the name]. With `long_take=True`, the
   run adds `group:take-300:finished` and `group:take-300:rate` (the two rows of Q598) and the facts of 5.5 over
   5 minutes. The default full keeps the take of 30 s. The option changes which checks run, so the plan counts
   them; a run without the option is complete for its level [C 2.2].
@@ -1671,18 +1673,17 @@ the agent are in [ADR-DBF8](../decisions/entries/DBF8-choices-of-the-certify-nam
 - (b) `system:virtual-cameras` is dropped: `detect` holds the count (`virtual`).
 - (c) `control:white-balance` and `control:power-line` are not checks. Their values are facts of
   `details.cameras[]`: `white_balance`, `white_balance_auto` and `power_line` (the native values, or `null`)
-  [A: the key names].
+  [U Q627, DBF8 1: the key names].
 - (d) `control:focus:sharpness` and `control:autofocus` are dropped until a pass rule exists. Focus matters for
   calibration boards, so they come back with a pass rule (open work).
 - (e) `<label>:timings` merges into `<label>:cycles` and `details.steps`: `cycles` gets `open_ms_p50`,
   `open_ms_max`, `first_frame_ms_max` and `close_ms_max` over its opens.
 - (f) The scale self-check runs at two points, 3 and 12 cameras: `self:scale-3` and `self:scale-12` replace
   `self:scale-4` and `self:scale-8` (7). The proposal of one check at 8 is refused.
-- (g) `self:idle-cpu`, `self:ring:torn` and `self:ring:lapped` are planned only on an ARM processor (`os.arch`
-  `arm64` or `aarch64`, for example Apple Silicon). On x86-64 they are not planned: the test suite proves them
-  there.
+- (g) Replaced by a later answer of the user [U, [ADR-63D9](../decisions/entries/63D9-decisions-of-the-user-on-the-processors-the-build-order-and-the-certify-choices.md)]: `self:idle-cpu`, `self:ring:torn` and
+  `self:ring:lapped` run on every processor, not on ARM only. The first answer (ARM only) does not apply.
 - (h) [U Q624h: read the rule, and drop them if they only served the unit id.] The outcome is a choice of the
-  agent [A] (ADR-DBF8 item 8): `identity:stable` and `identity:unique` stay. Their rule (10.2) is about the
+  agent [U Q627, DBF8 8] (ADR-DBF8 item 8): `identity:stable` and `identity:unique` stay. Their rule (10.2) is about the
   `camera_id` of the product,
   not about the unit id of the report: the product keys the settings of a camera, its restore record and the
   selection of the UI by `camera_id`, so an id that changes between two detections, or two units of one model
@@ -1692,14 +1693,14 @@ the agent are in [ADR-DBF8](../decisions/entries/DBF8-choices-of-the-certify-nam
 
 | Check | Level | Kind | Pass rule | Numbers | Test | Build step |
 |---|---|---|---|---|---|---|
-| `<label>:records:mkv-opens` (i) | both | pipeline | The MKV of the camera opens through the reader of the product, with its index, and its frame count equals the frame count of the take (not the rows of the CSV: a short CSV then fails only `rows-complete`) [A, review]; `fail` `mkv-not-readable` or `mkv-frames-differ`. Today certify reads each block at its byte offset from the sidecar, so a broken index passes. | fail: `mkv_frames`, `frame_count`; none on a `pass` | T-CERT-112 | 13 |
+| `<label>:records:mkv-opens` (i) | both | pipeline | The MKV of the camera opens through the reader of the product, with its index, and its frame count equals the frame count of the take (not the rows of the CSV: a short CSV then fails only `rows-complete`) [U Q627, DBF8 18, review]; `fail` `mkv-not-readable` or `mkv-frames-differ`. Today certify reads each block at its byte offset from the sidecar, so a broken index passes. | fail: `mkv_frames`, `frame_count`; none on a `pass` | T-CERT-112 | 13 |
 | `<label>:bursts` (j) | full | no verdict | `record-only` for now, as `group:in-step`, with the `module` of its model: the share of the arrival intervals of the take that are shorter than half a frame period. | `burst_share` (3 decimals), `intervals` | T-CERT-113 | 13 |
-| the notice `camera-usb3-on-usb2-link` (k) | quick | system | No check row [A]. The notice fires only on a fact, never on `bcd_usb` alone: a USB 3 camera on a USB 2 link presents `bcdUSB` 0210 there, and many pure USB 2 cameras also declare 0210 [A, review]. On Windows the fact is the connection information of the hub (`IOCTL_USB_GET_NODE_CONNECTION_INFORMATION_EX_V2`, which `skellycam/core/device_detection/usb_connection.py` already calls for `usb_link`): bit 1 of its flags (the device is SuperSpeed capable or higher) is set, and bit 0 (the device operates at SuperSpeed or higher, used today) is not [NV: a check on hardware is open, a Kiyo Pro on a USB 2 port]. On Linux and macOS the notice fires only when the system gives the same fact, for example the SuperSpeed capability of the BOS descriptor of the device [NV]; else no notice. Its values: `{"camera": "<name>"}`. Its text: "Camera <name> is a USB 3 camera on a USB 2 port. Plug it into a USB 3 port (often blue) if the computer has one." The summed need of the cameras on one controller waits for `group:contention`. | the facts of `details.cameras` and the flag | T-CERT-114 | 13 |
+| the notice `camera-usb3-on-usb2-link` (k) | quick | system | No check row [A]. It fires only on a fact of the system, never on `bcd_usb` alone: `usb3_capable` `true` and `usb_link` `USB 2`. 3.6.13 gives the fact on each system. Its values: `{"camera": "<name>"}`. Its text: "Camera <name> is a USB 3 camera on a USB 2 port. Plug it into a USB 3 port (often blue) if the computer has one." The summed need of the cameras on one controller waits for `group:contention`. | `usb3_capable` and `usb_link` of `details.cameras` | T-CERT-114 | 13 |
 | `system:memory` (l) | quick | system | Before the open: the free memory is at least the need of the rings of the cameras to open; on Linux also the size of the shared-memory mount (`/dev/shm`) is at least that need; `fail` `memory-low` or `shm-too-small`. The need of a camera is the sum of `ring_total_size(slot_count(history_s, fps), slot_capacity)` of `skellycam/core/ipc/frame_ring/layout.py` for each ring that the product makes for it (about 26.5 MiB for the JPEG ring at 720p30 [M log]). The open still runs after a `fail`. | `memory_free_mib`, `rings_need_mib`, `shm_size_mib` (Linux; else `null`) | T-CERT-115 | 13 |
 | `group:take-again` (m) | full | pipeline | A second take of 2 s right after the first finishes, and each camera has its rows; `fail` with the reasons of `group:take:finished` and `missing-rows`. One test: "a second take works". | `cameras`, `take_seconds`, `frame_count` | T-CERT-116 | 14 |
 | `group:preview-during-take` (m) | full | pipeline | A reader decodes the preview frames of each camera during `group:take-30`; the take loses no frame because of it. Planned only: it is built when the preview UI of step 4b exists, and it stays in `details.not_built` until then. | `preview_fps`, `preview_skipped_share` | T-CERT-122 | later |
-| `report:rules` (m) | both | no verdict | Before `certify()` returns, the report meets the privacy and form rules of the validator (today `skellycam/tests/certify/report_rules.py`; it moves into the package, `skellycam/core/certify/report_rules.py` [A]). It checks the report without its own row. A failure is a fault of the writer of skellycam, not of the pipeline of the person: `fail` `report-rules` with the count, and the code `report-rules` goes into `evidence.reasons` [C 7.1 statement 7: the package adds its own codes] [A, review]. The row gives no verdict to the pipeline item and is not in `pipeline:gate`. The problems are never copied as text. | `problems` | T-CERT-117 | 9 |
-| `system:camera-access` on Windows (m) | quick | system | `record-only` with the fact `access` [A, review]: the check reads a setting and judges nothing of its own. Before the opens: the privacy setting of Windows lets desktop programs use the camera, or not. With `denied`, each camera is `not-run` `no-access`, not `fail` (10.2). Windows reads the consent store of `webcam` for desktop programs [NV]. | `access` (`allowed`, `denied`, `unknown`) | T-CERT-118 | 13 |
+| `report:rules` (m) | both | no verdict | Before `certify()` returns, the report meets the privacy and form rules of the validator (today `skellycam/tests/certify/report_rules.py`; it moves into the package, `skellycam/core/certify/report_rules.py` [U Q627, DBF8 5]). It checks the report without its own row. A failure is a fault of the writer of skellycam, not of the pipeline of the person: `fail` `report-rules` with the count, and the code `report-rules` goes into `evidence.reasons` [C 7.1 statement 7: the package adds its own codes] [U Q627, DBF8 5, review]. The row gives no verdict to the pipeline item and is not in `pipeline:gate`. The problems are never copied as text. | `problems` | T-CERT-117 | 9 |
+| `system:camera-access` on Windows (m) | quick | system | `record-only` with the fact `access` [U Q627, DBF8 6, review]: the check reads a setting and judges nothing of its own. Before the opens: the privacy setting of Windows lets desktop programs use the camera, or not. With `denied`, each camera is `not-run` `no-access`, not `fail` (10.2). Windows reads the consent store of `webcam` for desktop programs [NV]. | `access` (`allowed`, `denied`, `unknown`) | T-CERT-118 | 13 |
 | `system:power` (m) | full | system | `record-only`. | `on_battery`, `power_plan` (`balanced`, `high-performance`, `power-saver`, `other`; never the name of a plan of the person), `usb_selective_suspend`, `usb3_link_power_saving` (booleans or `null`) | T-CERT-119 | 14 |
 | `system:timer` (m) | full | system | `record-only`, about 1 s: the real length of a sleep of 1 ms, and the step of the clock. | `sleep_1ms_p50_ms`, `sleep_1ms_p99_ms`, `clock_step_us` | T-CERT-120 | 14 |
 
@@ -1709,6 +1710,55 @@ the agent are in [ADR-DBF8](../decisions/entries/DBF8-choices-of-the-certify-nam
   `group:take-again` and `system:memory`. `report:rules` is in no gate. `<model>:gate` also requires a row of
   this list that the rule of 3.6.10 gives to the model.
 - The catalogue of 3.6.2 gets these rows at their levels. 3.6.8 counts them.
+
+#### 3.6.13 The USB 3 capability on each system [U Q624k, 63D9; A, pending Q628]
+
+The user asked for the notice of a USB 3 camera on a USB 2 link on macOS and Linux too [U, ADR-63D9]. The notice
+needs two facts: the operating speed of the link (`usb_link`, read today by
+`skellycam/core/device_detection/usb_connection.py` on the three systems) and the USB 3 capability of the
+device. `bcd_usb` alone is not a fact: a USB 3 device on a USB 2 link presents `bcdUSB` 0x0210 there, and many
+pure USB 2 cameras also declare 0x0210. `details.cameras[]` gets one key [A]:
+
+| Key | Type and values | Present (else) | Privacy |
+|---|---|---|---|
+| `usb3_capable` | `true`, `false`, `null` | always; `null` when the system cannot tell without extra rights or an open of the device | a model fact |
+
+**The notice rule (each system) [A].** `camera-usb3-on-usb2-link` fires when `usb3_capable` is `true` and
+`usb_link` is `USB 2`. With `usb3_capable` `null`, no notice.
+
+| System | Operating speed (today) | USB 3 capability | Uncertain |
+|---|---|---|---|
+| Windows | the connection information of the hub, `IOCTL_USB_GET_NODE_CONNECTION_INFORMATION_EX_V2`, bit 0 of its flags (`DeviceIsOperatingAtSuperSpeedOrHigher`) | bit 1 of the same flags (`DeviceIsSuperSpeedCapableOrHigher`); `usb_connection.py` already reads the flags word at offset 12 | [NV]: a check on hardware is open (a Kiyo Pro on a USB 2 port) |
+| Linux | sysfs `speed` of the USB device (Mbit/s: 480 is USB 2, 5000 or more is USB 3) | sysfs `bos_descriptors` of the USB device: the cached BOS of the device, a binary file, read-only for each user (`BIN_ATTR_RO`, mode 0444), present only when the device has a BOS. `usb3_capable` is `true` when it holds a SuperSpeed USB Device Capability (`bDevCapabilityType` 0x03) or a SuperSpeedPlus capability (0x0A), `false` when the file exists with neither, `null` when the file does not exist | The attribute came in 2024 (the ABI file says "March 2024"; probably kernel 6.9) [NV: the first release]. On an older kernel the BOS is not in sysfs: the `descriptors` file holds only the device and configuration descriptors, and a BOS request through usbfs (`/dev/bus/usb/BBB/DDD`) needs a control request and so write access to the node, which a normal user usually does not have [NV]. Then `usb3_capable` is `null`. The kernel reads the BOS only from a device with `bcdUSB` 0x0201 or higher, which each USB 3 device on a USB 2 link has. |
+| macOS | IORegistry property `USBSpeed` of the `IOUSBHostDevice` (`ioreg -a -r -c IOUSBHostDevice`); 3 is high speed, 4 or more is SuperSpeed | No documented IORegistry property gives the capability. The BOS is the property `capabilityDescriptors` of an `IOUSBHostObject`, and that object sets up a communication channel to the kernel for the device: an open of a user client, which certify does not do (10.7 forbids `deviceCapture`, and a camera that streams is held by its driver) [NV]. `system_profiler SPUSBDataType` showed "Speed: Up to ..." (a capability, not the link) on older macOS, but Apple users report that recent macOS lacks that data type [NV]. Thus `usb3_capable` is `null` on macOS for now, and no notice | Whether a user client without capture can read the cached BOS while the camera driver holds the device [NV]. A later macOS probe (10.7) can test it. |
+
+Sources (read on 2026-11-23, as data): the Linux USB sysfs ABI file
+(`https://www.kernel.org/doc/Documentation/ABI/testing/sysfs-bus-usb`, entries `bos_descriptors` and `speed`); the
+patch "usb: Export BOS descriptor to sysfs" (`https://lkml.iu.edu/hypermail/linux/kernel/2403.0/03549.html`:
+`BIN_ATTR_RO(bos_descriptors, 65535)`, visible only when `udev->bos` is set); Apple `IOUSBHostObject`
+(`https://developer.apple.com/documentation/iousbhost/iousbhostobject`: "Creates a USB host object and sets up a
+communication channel to the kernel", property `capabilityDescriptors`); Apple `IOUSBHostDevicePropertyKey`
+(`https://developer.apple.com/documentation/iousbhost/iousbhostdevicepropertykey`: no speed or capability key);
+an Apple Community thread on the missing `SPUSBDataType` (`https://discussions.apple.com/thread/256180514`).
+
+**Tests (T-CERT-114) with sample data.** No recording on hardware exists yet, so the samples are made from the
+layouts of the specifications and are marked as such [NV until a recording replaces them]:
+
+- Windows: a flags word `0x2` (capable, not operating) with `usb_link` `USB 2`: notice; `0x3`: no notice; `0x0`
+  with `bcd_usb` `0210`: no notice.
+- Linux: a fake sysfs tree with `speed` `480` and a `bos_descriptors` file of the bytes `05 0F 16 00 02`, then a
+  USB 2.0 Extension capability `07 10 02 06 00 00 00`, then a SuperSpeed capability `0A 10 03 00 0E 00 01 0A FF
+  07`: `usb3_capable` `true` and the notice; the same with only the USB 2.0 Extension (the header set to its length): `false`, no notice; no
+  `bos_descriptors` file: `null`, no notice.
+- macOS: an `ioreg -a` plist sample with `USBSpeed` 3 and no capability: `usb3_capable` `null`, no notice.
+
+**A wider USB speed test? [A].** The recommendation: no streaming throughput test. The inventory already holds
+the negotiated link of each camera (`usb_link`), its capability (`usb3_capable`), its host controller and its hub
+depth (`controller`, `controller_id`, `hub_depth`, 3.5.5), so a developer sees how many cameras share one
+controller. The effect that matters, cameras that lose frames or fail to open when they share a controller, is
+measured by `group:contention` and `group:open` with the real modes (Q599). A separate throughput test would
+stream each camera at each mode, cost minutes, and add opens, which is the main cause of a wedge. A summed
+bandwidth figure for each controller can come later from the same inventory facts, beside `group:contention`.
 
 ## 4. Level `quick`
 
@@ -1817,7 +1867,7 @@ The checks use frames that the run already has. They need no extra time.
 
 Numbers: `format` (`MJPG`, `YUY2`, `NV12`), `delivered`, `frames_checked`, `encoded_by_skellycam`,
 `decoded_by_skellycam`, `dht_inserted` (count), `dqt_distinct` (count), `dqt_sha256`. 3.6.2 gives the one row of
-each key; `decoded_by_skellycam` is read by no check and is not written [A].
+each key; `decoded_by_skellycam` is read by no check and is not written [U Q627, MEE1 9].
 
 - The frames: 30 frames of the JPEG ring after the rate check, and each block of the take of 4.5.
 - A JPEG with no DHT gets the standard table from the capture check (`DHT_INSERTED`, rec 4.1). That is
@@ -1928,7 +1978,7 @@ passed, the run selects:
 One camera of each model [A, question 4]: the camera blocks of phases C, D and F run for the first
 camera of each model (USB id and backend) only. Each other camera of that model has its quick checks,
 takes part in the group checks, and gets `not-run` with `same-model` for the camera block checks. In the report
-shape of 3.6 the block is not planned for such a camera, and it gives no row [A]. This
+shape of 3.6 the block is not planned for such a camera, and it gives no row [U Q627, MEE1 4]. This
 follows the rule that a model is checked one time on a system [U] (2.5), and it keeps a full run with
 two cameras of one model near the time of one camera.
 
@@ -2083,8 +2133,8 @@ source is fake. The fake source must move from the tests into the package for th
 | `self:crash-take:finishes`, `:equal-rows`, `:others-record` | full | Three fakes record; the process of one ends with `os._exit(3)` at frame 100 (T-CAP-109 case 2). | `finishes`: the take finishes with `camera_dead` or `camera_file_short` as rec 7.3 and 7.4. `equal-rows`: the rows are equal. `others-record`: the others record to the stop. `others_gap_ms_max` is a number and decides nothing [A]: the 100 ms rule is for a hung camera, and a killed camera process cost the others 1 and 3 frames (a hole of 128 ms on one camera) [M run 11-20]. | The take survives a camera crash on this system. | A real driver crash. |
 | `self:server-gone:ends`, `:files-finished`, `:source-closed` | full | Two fakes record; the main process of the session child ends with `os._exit`. | `ends`: each camera process ends within 10 s plus 5 s [A, not calibrated] [U: a dead server is noticed after 10 s, not 300]. `files-finished`: its files are finished. `source-closed`: its source is closed. | A crash of the app or of certify releases the cameras on this system. | A real camera. |
 | `self:stall:take-error`, `:others-finished`, `:stalled-failed`, `:no-healthy-dead` | full | Two fakes record; the MKV file object of one blocks past the stall limit (10 s, rec 5.3). | `take-error`: `take_error` "disk stall on camera <id>". `others-finished`: the other camera's files are finished. `stalled-failed`: the stalled camera is `failed`. `no-healthy-dead`: no healthy camera is `dead`. | The stall rule holds on this system. | A real disk. |
-| `self:idle-cpu` (ARM only, Q624g) | full | One paused fake camera process, 10 s (T-CAP-49). | Under 2 % of one core. | No thread spins on this OS. | — |
-| `self:ring:torn`, `self:ring:lapped` (ARM only, Q624g) | full | The torn-read and lapped-read checks of the JPEG ring with two processes (T-RING-05 to 14, 28, 30, as product calls). | `torn`: each torn read is refused. `lapped`: each lapped read is refused. | The ring is safe on this CPU and its memory model, for example Apple Silicon (T-RING-34). | — |
+| `self:idle-cpu` (every processor, ADR-63D9) | full | One paused fake camera process, 10 s (T-CAP-49). | Under 2 % of one core. | No thread spins on this OS. | — |
+| `self:ring:torn`, `self:ring:lapped` (every processor, ADR-63D9) | full | The torn-read and lapped-read checks of the JPEG ring with two processes (T-RING-05 to 14, 28, 30, as product calls). | `torn`: each torn read is refused. `lapped`: each lapped read is refused. | The ring is safe on this CPU and its memory model, for example Apple Silicon (T-RING-34). | — |
 | `self:scale-3`, `self:scale-12` (Q624f; were `self:scale-4`, `self:scale-8`) | full | 3 and 12 fakes at 1920x1080@30 with JPEGs of 200 kB, recording, 15 s each. | `record-only` (facts only, no pass rule) | The CPU that the software needs for N cameras: the headroom for more cameras than are attached. | USB bandwidth, a real driver. |
 
 ## 8. Risky checks last, restore, and the message to the person
@@ -2339,71 +2389,81 @@ The contract rules 1 to 16 apply [C 6]. In addition:
 - `host` [C 3.3]: a field whose value skellycam does not know is left out or `null`. The module report
   has no key two times in one object [C 6 rule 19].
 
-**Camera names [U Q596, point 5 withdrawn; confirmation pending Q625].** The user decided the rule on 2026-11-23.
-His reason: "we need to know the names of the cameras, so if we find one that does or does not work, we can tell
-end-users". The rule uses no language model and no name recognition. It replaces the name cleaning of draft 3 (the
-steps 1 to 5 of `clean_name`). Each name of a summary item, a `module`, a notice and the plan comes from it. The
-first rule that applies gives the name:
+**Camera names [U Q596; point 5 withdrawn; the any-language rule pending Q628].** The user decided the rule on
+2026-11-23. His reason: "we need to know the names of the cameras, so if we find one that does or does not work,
+we can tell end-users". He refused a rule for Latin letters only (Q625): "this needs to work for any language,
+latin letters only is not sufficient" [U, ADR-63D9]. The rule below works for any script. The parts that he did
+not say are marked [A] ([ADR-M7JC](../decisions/entries/M7JC-choices-of-the-any-language-camera-name-and-the-usb-capability.md),
+pending Q628). The rule uses no language model and no name recognition. It replaces the name cleaning of draft 3
+(the steps 1 to 5 of `clean_name`). Each name of a summary item, a `module`, a notice and the plan comes from it.
+The first rule that applies gives the name:
 
-1. **An Apple device word** in the OS display name or in the firmware text, after NFKC (step 1 of the filter):
-   `iPhone`, `iPad`, `MacBook`, `iMac`, `FaceTime`, `Continuity`, in any case, as a whole word. A word is a run of
-   letters, or a run of digits, so `Annas-iPhone`, `iPhone15` and a fullwidth `ｉＰｈｏｎｅ` hold the word, and
-   `Primacam` does not hold `iMac` [A]. The text is never copied. The name is a fixed class [A: the map]:
-   - `iPad` gives `iPad used as camera`;
-   - `iPhone` or `Continuity` gives `iPhone used as camera`;
-   - `MacBook`, `iMac` or `FaceTime` gives `Mac built-in camera`.
-   The words are tested in this order. This rule comes first, before any text of the device is copied [A].
-2. **A USB id in the list of known cameras**: the name of the list.
-3. **A real USB camera with a USB id that is not in the list**: the text of the device, through the filter
-   below. The firmware product text (`name_usb`) is used when it passes the filter; else the OS display name
-   (`name_os`); else `Camera vvvv:pppp` [A]. Where they can be read, `details.cameras[]` holds both strings, each
-   through the same filter, or `null` (3.6.3). The firmware text: on Windows probably the device property
-   "bus reported device description" (`DEVPKEY_Device_BusReportedDeviceDesc`), which a read of the device
-   properties gives with no open of the camera [NV: a check on the four lab cameras comes later]; on Linux the
-   sysfs `product` of the USB device; on macOS the IORegistry `USB Product Name` [NV]. The OS display name: the
-   friendly name of Media Foundation, the `card` of `VIDIOC_QUERYCAP`, the `localizedName` of AVFoundation.
-4. **No USB id and no Apple word**: `Camera (no USB id)`.
+1. **No USB id**: `Camera (no USB id)` [U Q596]. The text of such a camera is never copied. This protects a
+   phone or a computer that a person named in any script, for example a Continuity camera.
+2. **An Apple device word** in the firmware product text, after NFKC and case folding: `iPhone`, `iPad`,
+   `MacBook`, `iMac`, `FaceTime`, `Continuity`, as a whole word. A word is a run of letters or a run of digits, so
+   `Annas-iPhone`, `iPhone15` and a fullwidth `ｉＰｈｏｎｅ` hold the word, and `Primacam` does not hold `iMac` [A].
+   The text is never copied. The name is a fixed class [U Q596; the map is A]: `iPad` gives `iPad used as
+   camera`; `iPhone` or `Continuity` gives `iPhone used as camera`; `MacBook`, `iMac` or `FaceTime` gives `Mac
+   built-in camera`. The words are tested in this order.
+3. **A USB id in the list of known cameras**: the name of the list.
+4. **A real USB camera with a USB id that is not in the list**: the product text of the firmware (the iProduct
+   string of the device), through the filter below [U Q596; A: the firmware text only]. The display name of the
+   OS is not copied, because a person or the OS can set or translate it [A]. When the firmware text cannot be
+   read, or the filter refuses it: `Camera vvvv:pppp`. `details.cameras[].name_usb` holds the filtered text, or
+   `null` (3.6.3).
+   - Windows: the device property "bus reported device description"
+     (`DEVPKEY_Device_BusReportedDeviceDesc`), read with no open of the camera. A check of 2026-11-23 on the four
+     lab cameras [M, relayed by the supervisor]: it was readable for all four; it equals the display name for the
+     two Logitech cameras; it gives `Razer Kiyo Pro` where the display name is only `USB Video Device`; it gives
+     `USB Camera` for the generic camera.
+   - Linux: the sysfs file `product` of the USB device [NV].
+   - macOS: the IORegistry property `USB Product Name` of the `IOUSBHostDevice` [NV].
 
-Point 5 of Q596 ("a human reviewer still sees each report before it is public") is withdrawn: it was a false
-premise of the supervisor. The relay publishes a report before a person of the project reads it [C 4.1,
-`relay/README.md` of the contract]. The protection is only the filter below, and the person who sends the report
-sees the exact file and gives a clear "send" [C 4.1]. The supervisor asks the user to confirm Q596 again with this
-correction (Q625). Because no reviewer stands in front, the filter is strict [A]: on any doubt it gives
-`Camera vvvv:pppp`.
+The relay publishes a report before a person of the project reads it [C 4.1, `relay/README.md` of the contract].
+The protection is the filter below, and the person who sends the report sees the exact file and gives a clear
+"send" [C 4.1]. The contract owner confirmed on 2026-11-23 that the relay keeps a name in any script and that the
+format needs no change.
 
-**The filter [U Q596, A].** It works on one string. The user agreed to: "plain letters, digits and a few signs
-only, at most 60 characters, and never a string that holds the user name or the computer name". The steps:
+**The filter [U Q596; A, pending Q628].** It works on one string, in this order:
 
-1. Normalise the string with Unicode NFKC, before any test. Thus a fullwidth or a compatibility form becomes its
-   plain form.
-2. Remove the marks `(R)`, `(TM)`, `®` and `™`.
-3. When the string holds a letter that is not of the Latin script, stop: the result is `Camera vvvv:pppp` [A]. A
-   filter cannot judge a name in another script (for example CJK, Cyrillic, Greek or Arabic). Latin letters with
-   marks (`é`, `ü`) are Latin.
-4. Remove a possessive head: the text up to and with `'s ` or `’s ` (`Bob's Webcam` gives `Webcam`) [C 6 rule 16].
-5. When a character is not a Latin letter, a mark, an ASCII digit, a space or one of `(` `)` `-` `.` `,` `_` `+`
-   `'`, stop: the result is `Camera vvvv:pppp`. This set is inside the set that the relay keeps in an issue [C 6
-   rule 18], and it has no `:` `;` `=` `%` `/` `?` `@` `<`.
+1. Normalise with Unicode NFKC.
+2. Remove the direction control characters U+200E, U+200F, U+202A to U+202E and U+2066 to U+2069, so that a name
+   cannot reorder the text around it in the Markdown part. When another character of the categories Cf, Cc, Co,
+   Cs or Cn is left, the result is `Camera vvvv:pppp`.
+3. Keep exactly the set that the relay keeps in an issue [C 6 rule 18, the answer of the contract owner]: each
+   letter (category L) and each mark (category M, with Mn and Mc, so that Devanagari, Thai and decomposed accents
+   keep their characters) and each number (category N) of any script, the space, and `.` `,` `:` `;` `_` `+` `=`
+   `(` `)` `'` `%` `/` `?` `·` `-`. Each other character becomes a space. The earlier stricter set (with no `:`
+   `/` `;` `=` `%` `?`) is not needed: step 8 refuses each path, URL and email form [A].
+4. Join each run of spaces into one space, and remove the spaces at the ends.
+5. Remove a possessive head: the text up to and with `'s ` (`Bob's Webcam` gives `Webcam`) [C 6 rule 16].
 6. Remove a group of 8 or more letters and digits that has at least 4 digits (a serial number), and brackets that
-   become empty. Join the spaces.
-7. Cut the text to 60 characters at most, and remove the spaces at its ends. The tests below run after the cut.
-8. Test the result with the pattern rules 1 to 7, 17 and 20 of the contract [C 6]: a path, a key of rule 2 as a
-   word, a PCI bus address, a MAC address (also with `-`), an email address, more than 2000 characters, a final
-   extension of a media file, `<`, `](`, `]:`, `://`, `www.` (any case, also more than one), an IPv4 address. On
-   any hit, the result is `Camera vvvv:pppp`. Nothing is removed to pass a test.
-9. When the raw string or the result holds the user name or the host name of the run (any case, also inside a
-   word; each of 3 characters or more) [C 6 rule 12], the result is `Camera vvvv:pppp`.
-10. An empty result gives `Camera vvvv:pppp`.
+   become empty.
+7. Cut to at most 60 code points (as Python `len`; the limit of a summary `name` is 80 [C 3.7]). The cut never
+   falls between a base character and its marks: it moves back to the start of that base character. Thus a name
+   has at most 240 bytes in UTF-8, and at most 720 bytes in the JSON of `json.dumps` with its `\u` escapes [A].
+8. Test the result with the ASCII patterns of the contract rules 1, 3, 4, 5, 7, 17 and 20 [C 6]: a path, a PCI
+   bus address, a MAC address (also with `-`), an email address, a final extension of a media file, `<`, `](`,
+   `]:`, `://`, `www.` (any case), an IPv4 address. On any hit, the result is `Camera vvvv:pppp`. Nothing is
+   removed to pass a test.
+9. A word that mixes letters of two scripts (a spoof, for example a Latin word with one Cyrillic letter) gives
+   `Camera vvvv:pppp`. The script of a letter is the first word of its Unicode name in `unicodedata` (`LATIN`,
+   `CYRILLIC`, `CJK`, `ARABIC`, ...), so no extra library is needed; digits, marks and signs belong to no script
+   [A].
+10. The user name and the host name of the run, in any script: both sides get NFKC and case folding. A user name
+    or host name of 3 code points or more is refused when it stands anywhere in the raw string or in the result.
+    One of 1 or 2 code points is refused only when it is a whole word of the result, so that a short user name
+    does not blank real names; in a script with no spaces (for example CJK) a whole word is the whole result [A].
+    A refusal gives `Camera vvvv:pppp`.
+11. An empty result gives `Camera vvvv:pppp`.
 
-When the filter gives `Camera vvvv:pppp`, the string of that source in `details.cameras[]` is `null`. A camera
-with no USB id gets `Camera (no USB id)` in place of `Camera vvvv:pppp`.
-
-A name of a person in Latin letters, for example `Kamera von Jürgen`, passes the filter. Only the person who sends
-the report can see it there, in the exact file [C 4.1]. The firmware text of a USB camera rarely holds such a
-name, and the Apple words catch the common case. Rule 16 of the contract says today that the package takes the
-name from the model string of the device; the contract owner decides a change of its wording for the list name
-and the fixed classes (open work). The fixed texts and `Camera vvvv:pppp` pass the pattern rules of the contract,
-and a summary `name` has at most 80 characters [C 3.7].
+When the filter gives `Camera vvvv:pppp`, `name_usb` is `null`. A name of a person in any script, for example
+`Kamera von Jürgen`, can pass the filter. Only the person who sends the report sees it there, in the exact file
+[C 4.1]. The firmware text of a USB camera rarely holds such a name, and a camera with no USB id never has its
+text copied. Rule 16 of the contract says today that the package takes the name from the model string of the
+device; the contract owner decides a change of its wording for the list name, the fixed class texts and any
+script (open work).
 
 **The list of known cameras [U Q596; the path, the form and the seed list are A].** One small data file in the
 package:
@@ -2540,7 +2600,7 @@ number that comes straight from the diagnostics has the name of its diagnostics 
 | `<label>:native-jpeg:*` (W) | Linux: the camera gives its own MJPG bytes through `VIDIOC_DQBUF` on mmap buffers, with no re-encode. macOS: AVFoundation hands over the camera's JPEG in a block buffer (`'dmb1'`), not only decoded pixels. | the six checks of 4.4 | `requested_fourcc`, `granted_fourcc`, `granted_w`, `granted_h`, `delivered` (`jpeg`, `decoded`, `none`), `video_settings` (macOS: `nil`, `empty`, `dmb1`, `null`), `bytesused_equals_payload`, `error_flag_frames`, `zero_bytes`, `dqt_sha256`, the numbers of 4.4 | xplat §2.5 item 1, §2.6 G-MJPEG; L-MJPEG, M-MJPEG. One third-party run on macOS saw MJPEG only as decoded `420v`. On macOS the probes of 10.7 try each other way. | D-1, D-3, D-10, D-11 |
 | `<label>:clock:base` (W; not planned on Media Foundation, 3.6.1) | The driver time of a frame is on the clock of `arrival_ns` (Linux `CLOCK_MONOTONIC`, the clock of `perf_counter_ns`; macOS host time). | `clock` is the arrival clock; `not-run` with `clock-unknown` when `clock` is `unknown` (the source cannot tell; Media Foundation), with `not-built` when it is null [ADR-Z7F3](../decisions/entries/Z7F3-choices-of-fix-lane-3.md) | `clock` (`monotonic`, `realtime`, `host`, `device`, `unknown`), `tstamp_src` (`soe`, `eof`, `unknown`), `ts_conversion`, `sample_time_kept` | Apple documents only the `synchronizationClock`. | D-2 |
 | `<label>:clock:before-arrival` (W) | Each sample time is before its arrival. | `later_than_arrival` is 0 | `later_than_arrival` (`sample_minus_arrival_p5_ms` moves to `near-arrival`, 3.6.2) | — | D-2 |
-| `<label>:clock:near-arrival` (W) | Each sample time is near its arrival. | `sample_minus_arrival_p5_ms` is `near_arrival_p5_ms` (-50 ms) or more, not calibrated; `fail` with `sample-too-early` (3.6.6 item 5) [A]. Before: p95 within 200 ms (cap 4.2), which cannot fail because each value is negative | `sample_minus_arrival_p5_ms`, `sample_minus_arrival_p50_ms`, `jitter_p95_ms` (certify computes it from `frame_log`); `grain_ms` and `sample_minus_arrival_p95_ms` are dropped (Q594, 3.6.2) | Linux: the buffer time is taken at the first payload, in steps of URB completions (up to about 4 ms). Windows: arrival minus sample 0.33 ms (Logitech) and 32 ms (Kiyo Pro) [M hardware_run_3a]. | D-2 |
+| `<label>:clock:near-arrival` (W) | Each sample time is near its arrival. | `sample_minus_arrival_p5_ms` is `near_arrival_p5_ms` (-50 ms) or more, not calibrated; `fail` with `sample-too-early` (3.6.6 item 5) [U Q627, MEE1 22]. Before: p95 within 200 ms (cap 4.2), which cannot fail because each value is negative | `sample_minus_arrival_p5_ms`, `sample_minus_arrival_p50_ms`, `jitter_p95_ms` (certify computes it from `frame_log`); `grain_ms` and `sample_minus_arrival_p95_ms` are dropped (Q594, 3.6.2) | Linux: the buffer time is taken at the first payload, in steps of URB completions (up to about 4 ms). Windows: arrival minus sample 0.33 ms (Logitech) and 32 ms (Kiyo Pro) [M hardware_run_3a]. | D-2 |
 | `<label>:time-gaps` (Linux, macOS, and W in `full`, only where `sequence_available` is false) | With no sequence number, a lost frame shows as a long interval between arrivals. | `long_intervals` (D-3, intervals over 1.5 periods of the mode rate) does not rise from the start to the stop of the take of 4.5; `fail` with `frame-gaps` [A, not calibrated] [ADR-FC1C](../decisions/entries/FC1C-choices-of-the-spec-integration.md) | `long_intervals`, `drops_reported`, `frames` | The user decided that the sequence check does not block the gate where the source gives no sequence number; the gaps are then judged from the timestamps [ADR-H0BQ](../decisions/entries/H0BQ-user-rulings-of-the-spec-integration.md). | D-3 |
 | `<label>:sequence` (W where the driver gives a count) | The driver sequence number counts each frame that the camera sent, so that a drop shows as a gap. | each long interval has a sequence gap; `fail` with `sequence-unreliable`; `not-run` with `no-sequence` | `sequence_available`, `sequence_gaps`, `sequence_lost`, `long_intervals`, `long_intervals_with_seq_gap` (D-3), `discontinuity_flags`, `drops_reported` | Linux `v4l2_buffer.sequence`; macOS `CMIOSampleBufferGetSequenceNumber`. Windows: a dropped C930e frame showed only as a 64 ms gap and the discontinuity flag [M free_run_log §2]. | D-3 |
 | `<label>:controls` (W, phase C) | The source lists each control with its range, its route and its scale. | record only | for each control `c` of exposure, gain, focus, white balance, power line: `c_present`, `c_min`, `c_max`, `c_step`, `c_default`, `c_auto_supported`; `exposure_unit`, `control_path` | macOS: the widest supported route wins over the unit [U, ADR-BVK7] [ux 4.4.6, 4.4.10]. | D-4 |
@@ -2983,7 +3043,7 @@ no YAML library and must not add one for this [A]. The app never downloads it.
      also holds the result of each route of each control (`controls`). A `partial` item whose `gate`
      check is `pass` gives the row, with `not_passed` (11.2) [C 7.2]; a `skipped` item never does.
    - **Camera known-bad**: 2 valid reports from 2 systems whose `details.gates[]` item of the model names the
-     same `failed` check (without the label) with the same `reason`; or 1 maintainer report [A, review finding
+     same `failed` check (without the label) with the same `reason`; or 1 maintainer report [U Q627, DBF8 15, review finding
      8]. The reason of the gate row is always `gate-check-failed`, so the cause comes from `details.gates`. A
      row of a unit with `blocked_by` (3.6.10) never counts.
    - **OS key verified** for (OS key, backend): 3 valid `full` reports from 2 different systems, each
@@ -3157,11 +3217,11 @@ important is first.
         controller (system, quick, no cost).
     11. Read the free memory and, on Linux, the size of the shared-memory mount against the need of the rings
         before the open (system, quick).
-18. Q625: the user confirms the camera name rule of Q596 without its point 5, because the relay publishes a report
-    before a person of the project reads it, and with the strict filter of 9.4 (a name in another script than Latin
-    gives `Camera vvvv:pppp`). Yes?
-19. Q626: the build order of 3.6.7 (the fix of B1, the commit and the report shape first, then P3, P1, P2, P4)
-    replaces the order of Q575 (P3, P1, P2, P4 first). Yes?
+18. Refused by the user (Q625, ADR-63D9): a name rule for Latin letters only is not sufficient.
+19. Decided (Q626, [ADR-63D9](../decisions/entries/63D9-decisions-of-the-user-on-the-processors-the-build-order-and-the-certify-choices.md)): the build order of 3.6.7 replaces the order of Q575.
+20. Q628: the any-language name rule of 9.4 (the firmware text only, the filter of the relay set with the direction
+    marks removed, the cut at 60 code points, the spoof and short-name rules) and the USB 3 capability of 3.6.13
+    (the hub flags on Windows, `bos_descriptors` on Linux, `null` on macOS for now). Yes?
 
 ## 15. Reason codes (proposed `skellycam/REASON_CODES.md`) [A]
 
@@ -3381,7 +3441,7 @@ tests only the self-check.
 | T-CERT-91 | 3 OS. Quick and full plans and runs with 4 fakes of 3 models, two of one model. | No row has the reason `not-built` for a check with no code, and no row has `same-model`; `details.not_built.camera` and `.run` hold each such name one time, sorted, with `base` for the mode of `<base>`; the plan `total` and `details.checks` count no such check; a check with code whose diagnostics key is `null` keeps `not-run` `not-built` and counts in `total` (3.6.1). |
 | T-CERT-92 | 3 OS. Fakes that stop at each step: no MJPG mode; in use; a hang at the open; a rate failure; a cancel during the take; the end of the budget before the take. | Each such camera has one `<label>:not-reached` row with `not-run`, the reason of the first check that it stands for, `module` = the name of its summary item and `numbers.checks` equal to the count of the checks it stands for; each check that a progress message named keeps its own row; the last progress message has `done` equal to `total`, and no message has `done` above `total` (3.6.1). |
 | T-CERT-93 | 3 OS, session child. B1: a fake that stalls after `ready` and before the settings change; one whose camera process ends there with `os._exit(3)`; one with a stream error before the take; one removed before the take. | Each gets one `fail` row on the first check that has no result (`settings-stick:readback` `fail` `stalled`; `crashed` with `exit_code` 3; `stream-error`; `device-removed`), with the failure facts that have a value and `module` = its model; its other checks are one `not-reached` row; `<model>:gate:no-hang` is `fail` for the stall and the crash, `pass` for the removal; `details.cameras[].failed` names the row (3.6.1). |
-| T-CERT-94 | 3 OS. Camera names of 9.4 with made-up strings: `Caméra HD Pro`, `Kamera von Jürgen`, `Bob's Webcam`, `HD Webcam SN12AB34CD56`, `Logitech® C920`, `Primacam`, `Веб-камера Logi`, `网络摄像头 HD`, `カメラ Pro`, `Cam <x>`, `See https x`, `www.cam.example`, `cam www.www.x`, `Cam 192.0.2.7`, `Cam 00-1A-2B-3C-4D-5E`, `Webcam.jpg`, `Cam@Home Pro`, a string of 90 Latin letters whose cut at 60 ends in `.mp4`, a string that holds the user name of the run inside a word, one that holds the host name; `Anna's iPhone Camera`, `Annas-iPhone`, `iPhone15`, a fullwidth `ｉＰｈｏｎｅ`, `IPHONE`, `iPad von Jürgen`, `MacBook Pro Camera`, `FaceTime HD Camera`, `iMac Kamera`, `Continuity Camera`; a camera with no USB id and the name `Integrated Camera`; the ids `046d:085c` and `4c4a:4a55` with the text `USB Camera`. | `Caméra HD Pro`, `Kamera von Jürgen`, `Webcam`, `HD Webcam`, `Logitech C920`, `Primacam`; each other string of the first group gives `Camera vvvv:pppp` and a `null` string (another script; a character outside the set; `www.`; an IPv4 or MAC form; a media extension after the cut; the user name or the host name); the Apple words give `iPhone used as camera` (six), `iPad used as camera`, `Mac built-in camera` (three); no USB id gives `Camera (no USB id)`; `046d:085c` gives `Logitech C922` and no name strings; `4c4a:4a55` gives `USB Camera` with `name_os` and `name_usb`; the summary item, each `module`, each notice and the plan use the same name. |
+| T-CERT-94 | 3 OS. Camera names of 9.4 with made-up firmware texts: `Caméra HD Pro`; `Kamera von Jürgen`; `Bob's Webcam`; `HD Webcam SN12AB34CD56`; `Logitech® C920`; `Primacam`; CJK `网络摄像头 HD`; Cyrillic `Веб-камера Logi`; Arabic, right to left, `كاميرا ويب`; Devanagari `वेबकैम`; decomposed `Came\u0301ra`; a name with U+202E inside; a name with U+200B (Cf, not a direction mark); a mixed-script spoof `Logitеch` (Cyrillic `е`); `Cam <x>`; `See https://x`; `www.cam.example`; `Cam 192.0.2.7`; `Cam 00-1A-2B-3C-4D-5E`; `Webcam.jpg`; a string of 70 letters with a mark at code point 60; the user name `李明` inside the text; a one-letter user name `a` with the text `HD Camera A1` and with `Camera a`; the host name inside a word; the Apple texts `Annas-iPhone`, `iPhone15`, a fullwidth `ｉＰｈｏｎｅ`, `iPad von Jürgen`, `FaceTime HD Camera`, `iMac Kamera`, `Continuity Camera`; a camera with no USB id and the text `李明的 iPhone`; the ids `046d:085c` and `4c4a:4a55` with the text `USB Camera`; a camera whose firmware text cannot be read. | `Caméra HD Pro`, `Kamera von Jürgen`, `Webcam`, `HD Webcam`, `Logitech C920`, `Primacam`, `网络摄像头 HD`, `Веб-камера Logi`, the Arabic and the Devanagari texts unchanged (each mark kept), `Caméra` (NFKC composes it); the U+202E name without U+202E; `Camera vvvv:pppp` for U+200B, the spoof, `Cam <x>`, the URL, `www.`, the IPv4 and MAC forms, the media extension, `李明` and the host name; the 70-letter string cut before the base of the mark; `HD Camera A1` kept and `Camera a` refused for the user name `a`; the Apple texts give their fixed classes; no USB id gives `Camera (no USB id)`; `046d:085c` gives `Logitech C922`; `4c4a:4a55` gives `USB Camera` with `name_usb`; the unreadable text gives `Camera vvvv:pppp`; no report holds a display name of the OS. |
 | T-CERT-95 | 3 OS. `details.cameras[]` with fakes: a pass; a rate failure; a `too-dark` image check (full); a busy unit; two units of one model with different results. | Each unit has `result`, `failed` and `reason` by the rules of 3.6.3 (`pass`/`null`/`null`; `fail`/`rate`/`rate-low`; `partial`/`settings-stick:image-effect`/`too-dark`; `skipped`/`opens`/`camera-in-use`); `reason` is a reason code or `null`; the summary item of the model with two units follows 3.4. |
 | T-CERT-96 | 3 OS. One number, one row: a quick and a full report of 4 fakes. | No two rows hold an equal `numbers` object; each key stands only on the row that 3.6.2 names; a `pass` row of `modes:granted` and of `detect:mjpg-mode` has no `numbers`; no row has `t_start_s`, `seconds` (except `detect` with no key), `failed_calls`, `window_frames`, `grid_16ms_share`, `grain_ms`, `exposure` on a rate row, `has_serial`, `unit_id`; `details.limits` holds each limit of 3.6.3; `measured_fps`, `take_fps` and `rate` have at most 2 decimals; no `clock:base` row on Media Foundation; one row of the pair `sequence` and `time-gaps`. |
 | T-CERT-97 | 3 OS. A fake with 40 modes, one mode string of 50 characters. | `modes` has 32 strings of the largest area, each at most 48 characters; `modes_cut` is 8 (the long string and the 7 modes of the smallest area) (3.6.5); a camera with 32 modes or fewer has no `modes_cut`. |
@@ -3401,14 +3461,14 @@ tests only the self-check.
 | T-CERT-111 | 3 OS. `group:in-step` with fake sample times and arrival times. | `record-only`, never `fail`; `spread_source` `sample` when `sample_time_kept` is true, else `arrival`; `details.limits.in_step_ms` is one frame period; no gate requires it (3.6.11). |
 | T-CERT-112 | 3 OS. `records:mkv-opens` with fake takes: a good MKV; an MKV with a broken index whose blocks still read at their sidecar offsets; an MKV with one frame less than the take; a good MKV with a CSV one row short. | `pass` with no `numbers`; `fail` `mkv-not-readable` (the byte-offset read alone would pass); `fail` `mkv-frames-differ`; `pass` (only `rows-complete` fails, `rows-differ`) (3.6.12). |
 | T-CERT-113 | 3 OS. `bursts` with fake arrival times: even intervals; one camera that gives frames in pairs. | `record-only`; `burst_share` 0 and about 0.5; no gate requires it. |
-| T-CERT-114 | 3 OS. The USB link notice with fake hub facts: capable bit set and operating bit not set; both set; neither set with `bcd_usb` `0210` on `USB 2`; on a fake Linux system with `bcd_usb` `0320` and no capability fact. | The notice `camera-usb3-on-usb2-link` for the first case only, with the camera name; no notice from `bcd_usb` alone; no check row. |
+| T-CERT-114 | 3 OS. The USB 3 capability and the notice with the sample data of 3.6.13 for Windows, Linux and macOS. | `usb3_capable` and the notice as 3.6.13 states for each sample; no notice from `bcd_usb` alone; no notice with `usb3_capable` `null`; no check row. |
 | T-CERT-115 | 3 OS. `system:memory` with fake memory facts: enough; less free memory than the need; on Linux a `/dev/shm` of 64 MiB for four cameras. | `pass`; `fail` `memory-low`; `fail` `shm-too-small`; the need equals the sum of `ring_total_size` of the rings of the product; the open still runs. |
 | T-CERT-116 | 3 OS. `group:take-again` with fakes: a good second take; a second take whose writer is not released. | `pass`; `fail` with the reason of the take; the first take keeps its own rows. |
 | T-CERT-117 | 3 OS. `report:rules` with a good report and with planted faults (a path in a value, a bad reason code). | `pass` with no `numbers`; `fail` `report-rules` with `problems`, `report-rules` in `evidence.reasons`, the pipeline item unchanged; no text of a problem is in the report; the validator is in the package. |
 | T-CERT-118 | Windows, fakes. `system:camera-access` with the fake setting allowed, denied and unreadable. | Each case `record-only` with `access` `allowed`, `denied` or `unknown`; `denied` makes each camera `not-run` `no-access` and no `fail`; with `unknown` the opens run. |
 | T-CERT-119 | 3 OS. `system:power` with fake facts, and a power plan with a name of the person. | `record-only`; `power_plan` from the closed list, `other` for the named plan, and the name is not in the report. |
 | T-CERT-120 | 3 OS. `system:timer` on the virtual clock and with a fake sleep of 15.6 ms. | `record-only`; `sleep_1ms_p50_ms` 15.6; the check ends within 2 s. |
-| T-CERT-121 | 3 OS. The catalogue after Q624 on an x86-64 and an ARM fake system. | No `system:backend`, `system:virtual-cameras`, `control:focus:sharpness`, `control:autofocus`, `control:white-balance`, `control:power-line` or `timings` in the plan or in `details.not_built`; `details.cameras` has `white_balance`, `white_balance_auto` and `power_line`; `self:scale-3` and `self:scale-12`; `self:idle-cpu` and the two ring self-checks only on ARM; `identity:stable` and `identity:unique` stay. |
+| T-CERT-121 | 3 OS. The catalogue after Q624 on an x86-64 and an ARM fake system. | No `system:backend`, `system:virtual-cameras`, `control:focus:sharpness`, `control:autofocus`, `control:white-balance`, `control:power-line` or `timings` in the plan or in `details.not_built`; `details.cameras` has `white_balance`, `white_balance_auto` and `power_line`; `self:scale-3` and `self:scale-12`; `self:idle-cpu` and the two ring self-checks on both systems; `identity:stable` and `identity:unique` stay. |
 | T-CERT-122 | 3 OS. A full plan before the preview UI of step 4b exists. | `group:preview-during-take` is in `details.not_built.run` and not in `total`. |
 | T-CERT-123 | 3 OS. Rule (b) and the count of the models: 3 models where one pipeline check fails on two and passes on one; 2 models where one stops before the take and the other fails `rows-complete`. | First: each of the two failing rows has the `module` of its model, the pipeline item does not fail. Second: rule (e): the failing model `fail`, the pipeline `partial` with `not-decided-one-model` (3.6.10). |
 | T-CERT-124 | 3 OS. The gates by `module`: a take whose error names one camera of 4 models (Q621), with the sign-off checks faked as built. | `<model>:gate` of that model `fail`; `pipeline:gate` `pass`; each gate requires only rows with its own `module`. |

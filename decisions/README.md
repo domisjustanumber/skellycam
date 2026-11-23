@@ -58,6 +58,9 @@ These entries are `accepted`.
 | [BW5M](entries/BW5M-decisions-of-the-user-on-the-two-verdicts-and-the-certify-test-set.md) | Q610 to Q618: pipeline and model verdicts, gate not complete, one disk check, 30 cycles, spread record only (not built) | accepted |
 | [G0AC](entries/G0AC-decisions-of-the-user-on-the-certify-verdict-questions.md) | Q620 to Q623: quick keeps the clock rows on Linux and macOS; take and pipeline faults by model; a model pass needs the pipeline gate | accepted |
 | [493E](entries/493E-decisions-of-the-user-on-the-certify-check-drops-and-additions.md) | Q624a to Q624m: drops and merges of planned certify checks, scale at 3 and 12, six added checks and one notice (not built) | accepted |
+| [MEE1](entries/MEE1-choices-of-the-certify-report-shape.md) | Choices for the report shape of `specs/certify.md` 3.6: B1 row, not-built list, not-reached, limits, name filter, verdict rules, size bound | accepted |
+| [DBF8](entries/DBF8-choices-of-the-certify-names-verdicts-and-checks.md) | Choices for the checks of Q624 and the review fixes of `specs/certify.md` 3.6: strict name filter, model count, wedge rule, gates by module | accepted |
+| [63D9](entries/63D9-decisions-of-the-user-on-the-processors-the-build-order-and-the-certify-choices.md) | Q624g reversed (ring and idle self-checks on every processor), Q626 build order, Q627 accepts MEE1 and DBF8; Q625 refused | accepted |
 
 ### Evidence
 
@@ -90,8 +93,7 @@ These entries wait for a decision of the user. Section is the section or area of
 | [GEH0](entries/GEH0-choices-of-code-step-3.md) | Choices of code step 3: `not_streaming`, held value through the status, search flag, exposure range (`no-value-in-range`), 409 and 422 rules | none | proposed |
 | [QJH6](entries/QJH6-choices-of-the-fix-lane.md) | Choices of the fix lane: held value at the nearest search value, `cameras_left_out`, status locks, failed start keeps the summary, OpenCV mode FOURCC | none | proposed |
 | [Z7F3](entries/Z7F3-choices-of-fix-lane-3.md) | Choices of fix lane 3: restore record within one step, retry list, restore after a failure, one group creation, Media Foundation clock, median rate | none | proposed |
-| [DBF8](entries/DBF8-choices-of-the-certify-names-verdicts-and-checks.md) | Choices for the checks of Q624 and the review fixes of `specs/certify.md` 3.6: strict name filter, model count, wedge rule, gates by module | `certify` | proposed |
-| [MEE1](entries/MEE1-choices-of-the-certify-report-shape.md) | Choices for the report shape of `specs/certify.md` 3.6: B1 row, not-built list, not-reached, limits, name filter, verdict rules, size bound | `certify` | proposed |
+| [M7JC](entries/M7JC-choices-of-the-any-language-camera-name-and-the-usb-capability.md) | Choices for Q628 in `specs/certify.md` 9.4 and 3.6.13: any-language camera name from the firmware text, USB 3 capability on each system | `certify` | proposed |
 
 The entries that are `rejected`, `superseded by XXXX`, `absorbed into <path>#<anchor>`,
 `evidence; used by XXXX` or `done` are in [historical.md](historical.md).

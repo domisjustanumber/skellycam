@@ -1,7 +1,7 @@
 # MEE1 — Choices of the agent for the shape of the certify report
 
-**Status:** proposed, 2026-11-23 (agent; after the reviews of the report and the conditions of the contract
-owner).
+**Status:** accepted, 2026-11-23 (user; Q627 of ADR-63D9, except item 18, which ADR-M7JC replaces; commit to
+dom/certify-4; was proposed, 2026-11-23 (agent)).
 
 ## Decision
 
