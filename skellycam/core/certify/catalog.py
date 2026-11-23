@@ -26,6 +26,7 @@ SETTINGS = ("settings-stick:readback", "settings-stick:holds", "settings-stick:i
 AFTER_TAKE = ("native-jpeg:valid", "native-jpeg:size", "native-jpeg:ring-equals-mkv",
               "records:rows-complete", "records:blocks-decode", "records:gaps-explained")
 CLOCK = ("clock:base", "clock:before-arrival", "clock:near-arrival", "sequence", "time-gaps")  # 10.2, 10.6
+LIVE = "live-at-close"  # 3.6.2 [U Q646]: the last check of each camera [ADR-0Z6Q item 15]
 TAKE = tuple(f"group:take:{c}" for c in ("finished", "csv-rows", "no-missing", "frame-count", "rate"))
 QUICK_NOT_BUILT = ("group:open",)  # with the retry alone of 4.2
 SELF_QUICK = ("self:hang-100ms:gap", "self:hang-100ms:hard-end")  # 7: not built in this step
@@ -50,7 +51,8 @@ GATE_STEPS = ("opens", "mode", "rate", "native-jpeg", "timestamps", "sequence", 
 HANG_REASONS = ("hung", "crashed", "stalled")  # the reasons that fail `<model>:gate:no-hang` (3.6.1 B1)
 
 # The item groups of 3.4: Open, Rate and Records decide `fail`.
-FATAL = ("opens", "rate", "modes:granted", "records:rows-complete", "records:blocks-decode", "records:gaps-explained")
+FATAL = ("opens", "rate", "modes:granted", "records:rows-complete", "records:blocks-decode", "records:gaps-explained",
+         LIVE)
 ITEM = FATAL + SETTINGS + ("native-jpeg:format", "native-jpeg:not-reencoded", "native-jpeg:valid",
                            "native-jpeg:size", "native-jpeg:ring-equals-mkv", "native-jpeg:source-equals-ring")
 
@@ -144,6 +146,7 @@ def camera_names(unit_label: str, base, level: str, unix: bool) -> dict:
         "settings": [f"{unit_label}:{c}" for c in SETTINGS],
         "take": [f"{unit_label}:{c}" for c in AFTER_TAKE],
         "clock": [f"{unit_label}:{c}" for c in CLOCK] if unix or level == "full" else [],
+        "close": [f"{unit_label}:{LIVE}"],
     }
     return names
 
@@ -163,7 +166,7 @@ def planned_checks(level: str, units: list, backend: str) -> list:
         out += [(name, module) for _, module, names in by_unit for name in names[step]]
     if units:
         out += [(name, None) for name in TAKE]
-    for step in ("take", "clock"):
+    for step in ("take", "clock", "close"):
         out += [(name, module) for _, module, names in by_unit for name in names[step]]
     out += [(f"{model}:units", module) for model, module in models.items()]
     if level == "full":
@@ -276,7 +279,7 @@ def gate_rows(model: str, units: list, module: str | None) -> list:
         lab = _label_of(unit)
         pick = {"opens": ("opens",), "mode": ("modes:granted",), "rate": ("rate",),
                 "native-jpeg": tuple(c for c in ITEM if c.startswith("native-jpeg:")),
-                "timestamps": CLOCK[:3], "records": tuple(c for c in FATAL if c.startswith("records:"))}.get(step)
+                "timestamps": CLOCK[:3], "records": tuple(c for c in FATAL if c.startswith("records:")) + (LIVE,)}.get(step)
         if step == "timestamps":  # Q585 of the user [Z7F3]: a source that cannot tell its clock needs the two others
             base = unit.get(f"{lab}:clock:base")
             pick = CLOCK[1:3] if base is not None and base["reason"] == "clock-unknown" else CLOCK[:3]

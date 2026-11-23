@@ -375,3 +375,62 @@ def test_the_default_build_file_path():
     import skellycam
     from pathlib import Path
     assert product(RUN).BUILD_INFO == Path(skellycam.__file__).resolve().parent / "build_info.json"
+
+
+# ---------------------------------------------------------------------------
+# Q646 (ADR-056Z): a camera that leaves after its take checks and at the close
+# ---------------------------------------------------------------------------
+
+def test_t_cert_133_a_camera_that_leaves_after_its_take_checks_or_at_the_close(tmp_path):
+    """T-CERT-133, 3.6.1, 3.6.2 [U Q646], ADR-0Z6Q item 15, session child, full: a camera process that ends after the
+    take checks, a camera that stalls there, a camera that hangs at the close and a camera process that ends at the
+    close, beside a good camera. Each of the four gets `<label>:live-at-close` `fail` with the product code and the
+    failure facts that have a value; each check that had a result keeps it; its item, `<model>:gate:no-hang` and
+    `<model>:gate` are not `pass`; the stalled camera gets the cleanup row and the notice `camera-not-restored`
+    (ADR-0Z6Q item 14); the good camera has `live-at-close` `pass`."""
+    scripts = [good(on_arm="exit"), good(on_arm="stall"), good(hang_at="close"), good(exit_at="close"), good()]
+    factory = FakeSourceFactory(scripts)
+    exits, stalls, hangs, ends, fine = labels(factory.device_infos())
+    log = {label: factory.logs[camera_id] for label, camera_id in zip(labels(factory.device_infos()),
+                                                                      factory.camera_ids)}
+    results = {}
+
+    def progress(message):
+        name = (message.get("step") or {}).get("name")
+        for check in message["checks"]:
+            if check["result"] is not None and check["name"] not in results:
+                results[check["name"]] = check["result"]
+        if name == f"{exits}:time-gaps":  # the last check of its take rows
+            log[exits].arm()
+            time.sleep(3.0)
+        elif name == f"{stalls}:time-gaps":
+            log[stalls].arm()
+            time.sleep(3.5)  # the product declares a stall after 2 s with no frame
+        elif name == f"{hangs}:time-gaps":
+            log[hangs].arm_hang()
+    before = descendants()
+    report = product(RUN).run("full", progress, devices=factory.device_infos(), source_factory=factory,
+                              **paths(tmp_path))
+    assert_valid(report)
+    checks = by_name(report)
+    expected = {exits: {"crashed"}, stalls: {"stalled"}, hangs: {"hung", "crashed"}, ends: {"crashed"}}
+    for index, (label, reasons) in enumerate(expected.items()):
+        row = checks[f"{label}:live-at-close"]
+        assert row["result"] == "fail" and row["reason"] in reasons and row["module"] == f"Fake camera {index}", row
+        if row["reason"] == "crashed":
+            assert "exit_code" in row["numbers"], row
+        assert all(value is not None for key, value in row.get("numbers", {}).items() if key != "exit_code"), row
+        assert checks[f"{label}:records:rows-complete"]["result"] == "pass"  # a written result does not change
+        model = label.rsplit(".", 1)[0]
+        assert checks[f"{model}:gate:no-hang"]["result"] == "fail", label
+        assert checks[f"{model}:gate"]["result"] != "pass", label
+        item = next(i for i in report["summary"] if i["name"] == f"Fake camera {index}")
+        assert item["result"] != "pass", item
+    assert checks[f"{exits}:live-at-close"]["numbers"]["exit_code"] == 3
+    assert checks[f"{fine}:live-at-close"]["result"] == "pass"
+    assert {"name": f"release:{stalls}", "result": "fail", "reason": "camera-not-restored",
+            "module": "Fake camera 1"} in report["cleanup"]
+    assert {"code": "camera-not-restored", "values": {"camera": "Fake camera 1"}} in report["notices"]
+    # each result that a progress message showed is the result of the report
+    assert all(checks[name]["result"] == result for name, result in results.items() if name in checks), results
+    assert_no_new_process(before)

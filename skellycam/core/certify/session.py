@@ -171,6 +171,7 @@ class Session:
         self.left: dict[str, str] = {}  # label: the failure code of a live camera that left the run (3.6.1 B1)
         self.sent_before: set[str] = set()
         self.touched: list[Unit] = []
+        self.closing: list[Unit] = []  # the cameras whose `live-at-close` the close judges [U Q646]
         # cameras whose loop failed: label -> the code of the status failure (the main process writes it, so a late
         # dict of the camera cannot change it); no restore after a wedge code (unix 4.7) [Z7F3]
         self.failed: dict[str, str | None] = {}
@@ -223,7 +224,7 @@ class Session:
         """3.6.1 B1: the first check of a live camera, in the order of the plan, that has no result yet; the checks
         of the open are never one [ADR-0Z6Q items 2, 3]."""
         names = catalog.camera_names(unit.label, unit.base, self.level, self.unix)
-        return next((name for step in ("ready", "settings", "take", "clock") for name in names[step]
+        return next((name for step in ("ready", "settings", "take", "clock", "close") for name in names[step]
                      if name not in self.results), None)
 
     def scan(self, units, running=None) -> list:
@@ -289,6 +290,13 @@ class Session:
                 await self.ready_step()
                 await self.settings_step()
             await self.take_step()
+            # Q646 [ADR-0Z6Q item 15]: look once more after the take rows; `live-at-close` of each camera that is
+            # still live starts here and ends at the end of the close
+            self.scan(self.live)
+            for unit in self.live:
+                if unit.label not in self.wedged and unit.label not in self.left:
+                    self.begin(f"{unit.label}:{catalog.LIVE}")
+                    self.closing.append(unit)
         finally:
             for watch in self.watches.values():
                 watch.stop()
@@ -738,7 +746,12 @@ class Session:
         if group is None:
             return
         self.fact("closing", None)  # 9.3: from here the caller does not kill the tree before the close limit
+        workers = dict(group.cameras.camera_workers)
         await self.manager.close_all_camera_groups()
+        late = self.late_codes(group, workers)
+        for label, (code, _, _) in late.items():
+            if code not in WEDGED:
+                self.failed[label] = code  # as a B1 row [ADR-0Z6Q item 14]
         for unit in self.touched:  # also a camera that left the group before the take: its last dict is here
             data = group.camera_diagnostics.get(unit.camera_id, {})
             if unit.label in self.wedged:
@@ -751,6 +764,44 @@ class Session:
                     and data.get("restore_ok") is not True
                     and any(data.get(f"{name}_before_auto") is not None for name in CONTROL_NAMES)):
                 self.fact("release", (unit.label, "camera-not-restored"))
+        for unit in self.closing:  # 3.6.2 [U Q646]: the camera gave no product failure code up to the end of the close
+            name = f"{unit.label}:{catalog.LIVE}"
+            if name in self.results:
+                continue
+            if unit.label in late:
+                code, failure, data = late[unit.label]
+                reason = WEDGED.get(code, code)
+                self.done(row(name, "fail", reason, unit.module, **failure_facts(failure, data, code, reason)))
+            else:
+                self.done(row(name, "pass", None, unit.module))
+
+    def late_codes(self, group, workers) -> dict:
+        """label: (code, failure object, last dict) of each camera of `closing` with a product failure code after
+        the close: from its status, else from its last dict [U Q646]. Else the exit code of its camera process
+        [ADR-0Z6Q item 15]: a code above 0 is `process-ended` (the process ended by itself, for example in its
+        close); a code below 0 is `hung` (the product ended the process: its close did not return in the limit)."""
+        out = {}
+        statuses = group.cameras.orchestrator.camera_statuses
+        for unit in self.closing:
+            if unit.label in self.wedged or unit.label in self.left:
+                continue
+            status = statuses.get(unit.camera_id)
+            failure = {}
+            with contextlib.suppress(Exception):
+                failure = (status.info_dict().get("failure") or {}) if status is not None else {}
+            data = dict(group.camera_diagnostics.get(unit.camera_id) or {})
+            code = failure.get("code") or data.get("fail_code")
+            if not code:
+                exit_code = None
+                with contextlib.suppress(Exception):
+                    exit_code = workers[unit.camera_id].worker.exitcode
+                if isinstance(exit_code, int) and exit_code > 0:
+                    code, failure = "process-ended", dict(stage="close", reason=f"exit code {exit_code}")
+                elif isinstance(exit_code, int) and exit_code < 0:
+                    code, failure = "hung", dict(stage="close")
+            if code:
+                out[unit.label] = (code, failure, data)
+        return out
 
 
 def _finite(value):

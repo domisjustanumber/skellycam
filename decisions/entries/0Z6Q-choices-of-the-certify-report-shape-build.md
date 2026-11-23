@@ -41,7 +41,9 @@ alternative.
 15. Q646 ([ADR-056Z](056Z-decisions-of-the-user-on-a-late-camera-failure-the-release-build-file-and-the-open-rows.md)):
     the fail row of a camera that leaves after its take checks is `<label>:live-at-close`, a planned check, the last
     of the camera: `pass` with no product failure code from the end of its take checks to the end of the close,
-    else `fail` with the code and its facts. It is in the Open group of the item and in the gate step `records`.
+    else `fail` with the code and its facts. After the close, a camera with no code but an exit code of its
+    process above 0 gives `crashed`, and below 0 (the product ended a close that did not return) `hung`. It is in
+    the Open group of the item and in the gate step `records`.
     Not: a second result of a written row (one test, one check, contract 3.4); not: a cleanup row (contract 3.1:
     a failed cleanup step); not: a row that the plan does not count (`done` above `total`).
 16. The build file has a commit only when `git rev-parse --show-toplevel` is the source root. An error of git, also

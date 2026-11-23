@@ -243,7 +243,7 @@ class FakeScript:
     rate_windows: tuple = ()  # (from_s, to_s, rate): the delivered rate between two clock times
     drop_at_window_end: bool = False  # the camera drops one frame when a rate window ends
     close_delay_s: float = 0.0  # the close of the source takes this long (clock time)
-    exit_at: str | None = None  # "open", or "frame:<n>": the camera process ends there with os._exit(3)
+    exit_at: str | None = None  # "open", "close" or "frame:<n>": the camera process ends there with os._exit(3)
     on_arm: str | None = None  # after FakeLog.arm(), at the next frame: "stall", "exit" (os._exit(3)) or "remove"
     name: str | None = None  # the friendly name in the detection result; None: "Fake camera <index>"
     no_dht: bool = False  # each JPEG has no DHT segment, as many UVC cameras send it
@@ -509,6 +509,8 @@ class FakeSource:
         t0 = time.perf_counter_ns()
         with self._lock:
             self.log.closes.value += 1
+        if self.script.exit_at == "close":
+            os._exit(3)  # a camera process that ends in its close (a native crash)
         self._maybe_hang("close", "close")
         # the restore of 4.7, before the stream stops; never after a wedge (as Media Foundation) [Z7F3]
         if restore and self._restore is not None and self._opened and (
