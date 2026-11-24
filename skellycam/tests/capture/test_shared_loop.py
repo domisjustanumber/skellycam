@@ -41,8 +41,8 @@ def test_t_cap_05_replaced_count_matches_the_gaps(monkeypatch):
     """T-CAP-05, sections 5.2 and 5.3 [D26, D27, agent 49, agent 65]: three fake cameras in one group,
     each in a 30 fps mode. The ring frame counts differ by at most one, and the last frames of the rings
     arrive within 1 ms of each other (Q696 [ADR-8ACV]): the gate lets one camera be one frame ahead
-    (specs/recorder.md 9; 5.8: previews "can be one gate round apart"), so equal counts at the end are not a rule
-    [ADR-7GC1]. For each camera, the sum of the gaps of
+    (5.3: frames with the same number can be about one frame period apart [ADR-WWR1]; specs/recorder.md 9), so
+    equal counts at the end are not a rule [ADR-7GC1]. For each camera, the sum of the gaps of
     `source_frame_number` between taken frames, from the first frame taken in the gate, equals the
     increase of `replaced_count` from that frame; one log line per camera at stop with that count.
 

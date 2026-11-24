@@ -319,7 +319,9 @@ A failing ring write does not stop capture or recording, as in the 2a loop [ring
 
 - `frame_number` in the ring is the count of frames that the loop took since the ring was created,
   from 0 [ring 7.5, A17] [agent 5]. Thus the frame numbers of the cameras of a group stay equal under
-  the gate. The interim relay sends the newest frame of each camera on its own (5.8) [U13].
+  the gate. Frames with the same number can be up to about one frame period apart in time, because the gate pairs
+  frames by count and not by the nearest time; a later stage of the work on the gate addresses this
+  ([ADR-WWR1](../decisions/entries/WWR1-decision-of-the-user-on-frames-with-the-same-number.md), Q719). The interim relay sends the newest frame of each camera on its own (5.8) [U13].
 - `source_frame_number` in the ring is the running count of the source (4.2) [D27].
 - The gate count (`frame_count` of the camera status, and the frame number of the old frame record)
   continues across a ring recreation, as `check_for_new_config` does today [agent 5].
