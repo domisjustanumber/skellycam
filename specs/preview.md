@@ -575,8 +575,10 @@ A share of frames and a count of camera messages in a time window depend on the 
 machine. They are `pace` tests ([cap 16.1]), split from the blocking tests on the same run (Q669,
 Q670) [ADR-F4N7](../decisions/entries/F4N7-decisions-of-the-user-on-the-pace-tests-of-fix-lane-6.md):
 
-- A share of frames (T-PRV-05, T-PRV-09, T-PRV-10, T-PRV-13) is at least 80 % on a real machine. On
-  CI, with the margin, the warning level is 40 %.
+- A share of frames (T-PRV-05, T-PRV-09, T-PRV-10, T-PRV-13) is at least 80 % on a real machine
+  (margin 1, or no margin set). When a margin above 1 is set (CI), the warning level is a fixed
+  40 %. This level does not change with the value of the margin (Q690)
+  [ADR-B1DE](../decisions/entries/B1DE-decisions-of-the-user-on-the-share-level-and-the-test-clock.md).
 - A count of camera messages in a window (T-PRV-15, T-PRV-16) is the time to the n-th camera
   message. Its nominal value is n frame periods (n / 30 s), and its tolerance is the window minus
   that time, times the margin [ADR-B7YV](../decisions/entries/B7YV-choices-of-fix-lane-6.md).

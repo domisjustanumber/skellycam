@@ -319,7 +319,9 @@ A failing ring write does not stop capture or recording, as in the 2a loop [ring
 
 - `frame_number` in the ring is the count of frames that the loop took since the ring was created,
   from 0 [ring 7.5, A17] [agent 5]. Thus the frame numbers of the cameras of a group stay equal under
-  the gate. The interim relay sends the newest frame of each camera on its own (5.8) [U13].
+  the gate. Frames with the same number can be up to about one frame period apart in time, because the gate pairs
+  frames by count and not by the nearest time; a later stage of the work on the gate addresses this
+  ([ADR-WWR1](../decisions/entries/WWR1-decision-of-the-user-on-frames-with-the-same-number.md), Q719). The interim relay sends the newest frame of each camera on its own (5.8) [U13].
 - `source_frame_number` in the ring is the running count of the source (4.2) [D27].
 - The gate count (`frame_count` of the camera status, and the frame number of the old frame record)
   continues across a ring recreation, as `check_for_new_config` does today [agent 5].
@@ -1293,6 +1295,11 @@ section adds only what capture adds.
   clock, as the control thread does for a request
   [ADR-DC43](../decisions/entries/DC43-choices-of-fix-lane-5.md)
   ([ADR-F4N7](../decisions/entries/F4N7-decisions-of-the-user-on-the-pace-tests-of-fix-lane-6.md), Q673).
+  A camera loop at the lockstep gate does not hold the virtual clock while its gate stays shut. When its gate
+  opens, the loop holds the clock until its next gate probe. The forced steps still move the clock, so a loop that
+  does not come back cannot stop it
+  [ADR-7GC1](../decisions/entries/7GC1-choices-of-the-gate-on-the-test-clock-and-the-end-of-t-cap-05.md)
+  ([ADR-B1DE](../decisions/entries/B1DE-decisions-of-the-user-on-the-share-level-and-the-test-clock.md), Q692).
 
 Systems [U18, U20, U21]:
 
@@ -1341,7 +1348,7 @@ T-CAP-36) are [agent 41]. They can be changed when the tests are written.
 | T-CAP-02 | 3a | fake | The fake delivers frames 0 to 4 before the first `read_frame`, then frame 5 after it. | The read gives frame 4; `replaced_count` is 4; the next read waits and gives frame 5. |
 | T-CAP-03 | 3a | fake | A consumer holds the waiting place busy; the producer puts 1,000 frames. | Each put takes at most 1 ms at p99; no put waits on the consumer. |
 | T-CAP-04 | 3a | fake | `read_frame(2.0)` with no frame. | It returns `None` after 2.0 s (±0.1 s); the thread uses under 2 % of one core while it waits. The blocking test: `None`, not before 1.9 s and not after 20 s, and the share of the core. The `pace` test `test_t_cap_04_read_frame_returns_within_its_tolerance`: not after 2.1 s (16.1) [ADR-F4N7](../decisions/entries/F4N7-decisions-of-the-user-on-the-pace-tests-of-fix-lane-6.md). |
-| T-CAP-05 | 3a | fake | Three fake cameras, each in a 30 fps mode, in one group. The frames of each fake are on one 100 ms grid of the clock. One fake delivers 60 frames per second from 20 s to 30 s of the clock while the two others hold the gate at 30 rounds per second; at 30 s it drops one frame and goes back to 30 fps. Each fake delivers its last frame at 40 s [agent 65]. | Equal ring frame counts; for each camera, the sum of the gaps of `source_frame_number` between taken frames, from the first frame taken in the gate, equals the increase of `replaced_count` from that frame; the fast camera has 200 or more replaced frames; one log line per camera at stop with that count; the last frames of the three fakes are on one gate round. The window ends at 29.995 s, because the fake rounds each interval to whole ns ([ADR-6EKB](../decisions/entries/6EKB-choices-of-the-3a-review-fixes.md)). |
+| T-CAP-05 | 3a | fake | Three fake cameras, each in a 30 fps mode, in one group. The frames of each fake are on one 100 ms grid of the clock. One fake delivers 60 frames per second from 20 s to 30 s of the clock while the two others hold the gate at 30 rounds per second; at 30 s it drops one frame and goes back to 30 fps. Each fake delivers its last frame at 40 s [agent 65]. | The ring frame counts differ by at most one, and the last frames of the rings arrive within 1 ms of each other ([ADR-8ACV](../decisions/entries/8ACV-decision-of-the-user-on-the-end-check-of-t-cap-05.md), Q696); for each camera, the sum of the gaps of `source_frame_number` between taken frames, from the first frame taken in the gate, equals the increase of `replaced_count` from that frame; the fast camera has 200 or more replaced frames; one log line per camera at stop with that count; the last frames of the three fakes are on one gate round. The window ends at 29.995 s, because the fake rounds each interval to whole ns ([ADR-6EKB](../decisions/entries/6EKB-choices-of-the-3a-review-fixes.md)). |
 | T-CAP-06 | 3a | fake | Run, change the resolution, run again. | Ring `frame_number` is 0, 1, 2, ... in each ring; `source_frame_number` is the source count; the gate count continues across the change. |
 | T-CAP-07 | 3a | fake | Fake with scripted arrival and sample times; record 30 frames. | Slot `arrival_ns` and `sample_ns` equal the source values; the CSV time of each recorded frame is the recorder CSV `arrival_ns` (note of 2026-11-20); a source with no sample time writes `NO_SAMPLE_NS`. |
 | T-CAP-08 | 3a | fake | Spy on the recorder, the JPEG ring write and the BGR hand-over. | For each frame: recorder, then JPEG ring, then BGR [ring 5.3]; a ring write that raises leaves the recorder and the next frame unaffected. |

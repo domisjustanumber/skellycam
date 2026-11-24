@@ -46,6 +46,9 @@
     minus 2. With the late answer, the test fails for each of these two changes of `preview_relay.py`.
 12. **Not changed.** The safety-net counts (4 to 7) of T-PRV-09 and T-PRV-13 and the answer windows of T-PRV-15 stay
     blocking: they did not fail on CI.
+13. **The share level** (Q690 of [ADR-B1DE](B1DE-decisions-of-the-user-on-the-share-level-and-the-test-clock.md)).
+    `share_level()` of `skellycam/tests/preview/test_ws_flow.py`: `SHARE` (0.8) when `margin()` is 1, `CI_SHARE`
+    (0.4) when it is above 1. Two small tests check 0.8 with no setting, and 0.4 at margin 3 and at margin 10.
 
 ## Reason
 
