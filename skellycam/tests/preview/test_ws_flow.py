@@ -24,7 +24,7 @@ from skellycam.tests.frame_ring.ring_spec import ring
 from skellycam.tests.preview.preview_helpers import (
     CAMERA_INDEX_BASE, HEADER_SIZE, ROUTE, FakeRing, PacedWriter, WsClient, manager_with, preview_app, pump,
     run_errors, tag_of)
-from skellycam.tests.pace import bound, one_run
+from skellycam.tests.pace import MARGIN_SETTING, bound, margin, one_run
 
 A, B, C, D = "a1b2", "c3d4", "e5f6", "a7b8"
 
@@ -51,12 +51,31 @@ def received_in_window(ws, camera_id, t0, t1):
     return set(ws.frames(camera_id, t0, t1))
 
 
-SHARE = 0.8  # of the frames written: 9.2; on CI the margin makes it 40 % (Q670) [ADR-F4N7]
+SHARE = 0.8  # of the frames written, on a real machine: 9.2
+CI_SHARE = 0.4  # of the frames written, at each margin above 1 (Q690 of the user) [ADR-B1DE]
+
+
+def share_level():
+    """The level of a share of frames (9.1): `SHARE` at margin 1, a fixed `CI_SHARE` at each margin above 1. It does
+    not follow the value of the margin, so a large margin does not make the check always pass (Q690) [ADR-B1DE]."""
+    return SHARE if margin() <= 1 else CI_SHARE
+
+
+def test_the_share_level_is_80_percent_without_a_margin(monkeypatch):
+    monkeypatch.delenv(MARGIN_SETTING, raising=False)
+    assert share_level() == SHARE == 0.8
+
+
+@pytest.mark.parametrize("value", ["3", "10"])
+def test_the_share_level_is_40_percent_at_each_ci_margin(monkeypatch, value):
+    """Q690: the level is a fixed 40 %. `bound(1.0, 0.8)` gave 40 % only at margin 3, and 0 at margin 5 or more."""
+    monkeypatch.setenv(MARGIN_SETTING, value)
+    assert share_level() == CI_SHARE == 0.4
 
 
 def assert_share(ws, fake_ring, t0, t1):
-    """The `pace` check of a share of frames (9.1): `SHARE` on a real machine, 1 - (1 - `SHARE`) x the margin on CI."""
-    share = bound(1.0, SHARE)
+    """The `pace` check of a share of frames (9.1): at least `share_level()` of the frames written."""
+    share = share_level()
     written = fake_ring.written_between(t0, t1)
     got = received_in_window(ws, fake_ring.camera_id, t0, t1) & set(written)
     assert len(got) >= share * len(written), (

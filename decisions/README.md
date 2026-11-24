@@ -59,6 +59,7 @@ These entries are `accepted`.
 | [53VB](entries/53VB-decision-of-the-user-on-the-exact-skip-after-a-live-change.md) | Q663 option B: the skip after a live change is exact, counted from the change; T-CAP-31 is strict | accepted |
 | [JWZ1](entries/JWZ1-decision-of-the-user-on-the-exact-skip-after-a-search.md) | Q666: the check after an exposure search uses the same exact skip rule; spec and test first | accepted |
 | [F4N7](entries/F4N7-decisions-of-the-user-on-the-pace-tests-of-fix-lane-6.md) | Q669 to Q673, Q675: real-time tests split in blocking and `pace` halves; CI share level 40 %; conditions in T-CAP-110 and gate test; loop threads on the clock | accepted |
+| [B1DE](entries/B1DE-decisions-of-the-user-on-the-share-level-and-the-test-clock.md) | Q690, Q692: the CI level of a share of frames is a fixed 40 %; an agent proposes a fix of the test clock for T-CAP-86, and the test stays blocking | accepted |
 
 ### Proposed
 
