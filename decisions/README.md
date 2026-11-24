@@ -60,6 +60,7 @@ These entries are `accepted`.
 | [JWZ1](entries/JWZ1-decision-of-the-user-on-the-exact-skip-after-a-search.md) | Q666: the check after an exposure search uses the same exact skip rule; spec and test first | accepted |
 | [F4N7](entries/F4N7-decisions-of-the-user-on-the-pace-tests-of-fix-lane-6.md) | Q669 to Q673, Q675: real-time tests split in blocking and `pace` halves; CI share level 40 %; conditions in T-CAP-110 and gate test; loop threads on the clock | accepted |
 | [X5MZ](entries/X5MZ-rules-of-the-owner-for-the-playback-of-freemocap-v1-recordings.md) | v1 playback rules of the owner: reliable first, short seek second; play as-is; UI on another machine; no server decode; only v1; Q693 libav.js with Dependabot | accepted |
+| [8EBK](entries/8EBK-answers-of-the-owner-q685-q688-q697-q698-q700.md) | v1 playback answers Q685, Q688, Q697, Q698, Q700: server route, one player, decoder built in CI, sample data in CI, HEVC refused, K, warnings | accepted |
 
 ### Proposed
 
@@ -87,7 +88,7 @@ These entries wait for a decision of the user. Section is the section or area of
 | [DC43](entries/DC43-choices-of-fix-lane-5.md) | Choices of fix lane 5: control thread on the test clock, test waits for a short `ready` and for a killed process, Windows Server OS key | none | proposed |
 | [0R76](entries/0R76-choices-of-the-exact-skip-after-a-live-change.md) | Choices of the exact skip after a live change and a search: anchors, the time-out anchor, replay of 1024 taken frames, limits | `skellycam.core.camera.capture` | proposed |
 | [B7YV](entries/B7YV-choices-of-fix-lane-6.md) | Choices of fix lane 6: one run for the two halves, nominal values and loose checks, T-PRV-54, loop threads on the test clock, T-CAP-86 diagnostics | none | proposed |
-| [A56K](entries/A56K-choices-of-the-v1-playback-spec.md) | Draft `specs/player-legacy.md`, T-LEG-01 to 63: route by codec to WASM, HTTP range path, one player, decoder built in CI, Dependabot | `player` | proposed |
+| [A56K](entries/A56K-choices-of-the-v1-playback-spec.md) | Draft `specs/player-legacy.md` rev. 2, T-LEG-01 to 63: route by codec to WASM, frame table and seek rules, locked play, decoder build, Dependabot | `player` | proposed |
 
 The entries that are `rejected`, `superseded by XXXX`, `absorbed into <path>#<anchor>`,
 `evidence; used by XXXX`, `evidence; replaced by XXXX` or `done` are in [historical.md](historical.md).
