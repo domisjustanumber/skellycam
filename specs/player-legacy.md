@@ -1,15 +1,17 @@
 # Phase 6 player specification: step 6c, part 1, playback of FreeMoCap v1 recordings (draft)
 
-Status: **draft for the review of the owner, revision 2, 2026-11-24. Not accepted.** No test and no
+Status: **draft for the review of the owner, revision 3, 2026-11-24. Not accepted.** No test and no
 code comes before the owner accepts this spec. The rules of the owner are in
 [ADR-X5MZ](../decisions/entries/X5MZ-rules-of-the-owner-for-the-playback-of-freemocap-v1-recordings.md)
 (accepted). His answers Q685, Q688, Q697, Q698 and Q700 are in
-[ADR-8EBK](../decisions/entries/8EBK-answers-of-the-owner-q685-q688-q697-q698-q700.md) (accepted).
+[ADR-8EBK](../decisions/entries/8EBK-answers-of-the-owner-q685-q688-q697-q698-q700.md) (accepted), and
+his answers Q701 to Q706 are in [ADR-0C4Y](../decisions/entries/0C4Y-answers-of-the-owner-q701-to-q706.md)
+(accepted).
 Each choice of the agent is in [ADR-A56K](../decisions/entries/A56K-choices-of-the-v1-playback-spec.md)
 (proposed). Section 16 gives the open questions. A "yes" to a question accepts its recommendation.
 
-Revision 2 applies an independent review of revision 1 (39 findings) and the answers of the owner of
-2026-11-24.
+Revision 2 applied an independent review of revision 1 (39 findings) and the answers of 8EBK.
+Revision 3 applies the answers of 0C4Y.
 
 This spec extends [`player.md`](player.md) (step 6a, accepted). The rules of `player.md` apply to a v1
 recording, unless this spec gives a different rule. Section 14 lists each difference.
@@ -23,8 +25,9 @@ Marks:
   Only his own words have this mark.
 - **[X5MZ item 7]**: a standing rule of the owner, as the coordinator listed it (not his exact words).
 - **[Qnnn yes]**: a question that the owner answered "yes" on 2026-11-24
-  ([ADR-8EBK](../decisions/entries/8EBK-answers-of-the-owner-q685-q688-q697-q698-q700.md)). The text
-  under the mark applies that answer.
+  ([ADR-8EBK](../decisions/entries/8EBK-answers-of-the-owner-q685-q688-q697-q698-q700.md),
+  [ADR-0C4Y](../decisions/entries/0C4Y-answers-of-the-owner-q701-to-q706.md)). The text under the
+  mark applies that answer.
 - **[S n]**: the H.264 study, part A, `research/h264_study/part_a/NOTES.md`, section n, on branch
   `dom/h264-scrub-study` at commit 71caa2d0b. `[S RT]` is its `RESULTS_TABLE.md`. The study files
   `wasm_build.sh`, `app/mp4.mjs`, `app/wasm.mjs` and `app/wasm_worker.mjs` are in the same folder.
@@ -78,12 +81,15 @@ compressed bytes on the HTTP link, and the page decodes them [agent 10] [Q688 ye
   versions" [O]. Section 2.2 tells how the player refuses a v2 alpha folder [agent 3].
 - **FreeMoCap v0.0.x and v0.1.0.** They are older than v1. The player does not refuse a v0.1.0
   folder, because it has the v1 form (section 2.2). No test covers it [agent 3] [Q713].
-- **The release candidates v1.0.0-rc to v1.0.23-rc.** The inventory leaves them out [INV]. The agent
-  proposes to leave them out [Q706].
+- **The release candidates v1.0.0-rc to v1.0.23-rc.** Out of scope [Q706 yes]. The inventory also
+  leaves them out [INV].
 - **The annotated videos** (`annotated_videos/*.mp4`). They are a result of the processing, not a
   camera file. The player does not show them in this step [Q700 yes].
 - **A conversion** [O "must not be converted"], **a server decode** [O], **a repair** (6a Y5: the
-  player offers no repair), **a copy of a file next to the recording** [agent 10].
+  player offers no repair), **a copy of a file next to the recording** [agent 10]. The "upgrade
+  recording" converter, step 6d of 6a 1.3, is cancelled [Q705 yes].
+- **A UI page that the server hands to a browser.** The remote UI is the installed Electron app
+  [Q701 yes].
 - **Audio.** A v1 recording has no audio file of the cameras.
 
 ### 1.4 Terms
@@ -275,7 +281,12 @@ Against WASM only, the measured cost on long-GOP H.264 (shared machine, ms) [S 1
 - The review of option B (open work of 6a 14.4) decides later if the take-scheme goes. A v1 load is
   small: six `mp4v` tiles used 79 Mbit/s of link in the study [S 12.4].
 
-### 4.4 Network exposure (open; Q702, Q701)
+### 4.4 Network exposure [Q701 yes] [Q702 yes]
+
+The remote UI is the installed Electron app on the other machine, not a page that the server hands
+to a browser [Q701 yes]. The owner accepted: "Remove the 'any origin' rule for these routes, check
+the Host header, and put login or pairing for a remote UI in the spec as a requirement before the
+server listens beyond localhost" [Q702 yes].
 
 Code facts of today:
 
@@ -292,11 +303,33 @@ Code facts of today:
   request and open each folder below it [C `_resolve_recording_path`]. Section 5 removes the last two
   [Q685 yes].
 
-The token and the allowed roots of Q688 do not close this exposure. Question Q702 proposes to remove
-the `*` CORS rule for these routes (an allow-list of the UI origins), to check the `Host` header
-against an allow-list, and to require a login or a pairing before the server listens on any address
-other than `localhost`. Question Q701 asks if the remote UI is the Electron app or a page from the
-server.
+The token and the allowed roots of Q688 do not close this exposure. These requirements close it
+[Q702 yes]. "These routes" are the routes of 4.2 and `list_recordings`.
+
+1. **CORS for these routes.** The rule `allow_origins=["*"]` of `cors.py` does not apply to these
+   routes. They answer with `Access-Control-Allow-Origin` only for an origin of the allow-list, and
+   they never send `Access-Control-Allow-Credentials`. The allow-list of a packaged app holds only
+   the origin of its page. The app loads its page with `loadFile` [C
+   `skellycam-ui/electron/main/services/window-manager.ts`], so that origin is the opaque origin
+   `null`. A development build adds the origin of its Vite dev server. A request with another
+   `Origin` gets 403 "origin not allowed" and no CORS header. A preflight (`OPTIONS`) from another
+   origin gets 403 with no CORS header [agent 37].
+2. **Host allow-list.** These routes accept a request only when its `Host` header is in the
+   allow-list: `localhost`, `127.0.0.1` and `[::1]`, each with the port of the server, and, for a
+   bind beyond `localhost`, the host names and addresses that the settings of the server name. Each
+   other `Host` gets 403 "host not allowed". This stops a DNS rebinding page, because its requests
+   carry the host name of the attacker [agent 37].
+3. **Login or pairing before any bind beyond `localhost`.** The server must not listen on an address
+   other than `localhost` (and the loopback addresses) until a login or a pairing protects these
+   routes. With no such protection configured, the server refuses a bind setting beyond `localhost`
+   at start, with the text "a remote UI needs login or pairing; the server listens on localhost
+   only". **The design of the login or the pairing is owed** (a separate spec and decision). That
+   design must also cover the origin `null`: each sandboxed page and each `file://` page sends
+   `null`, so the origin check of item 1 cannot tell the app from such a page. On `localhost`, item 1
+   then still lets a sandboxed page with the origin `null` read these routes [agent 37] [NV: not
+   tested].
+
+T-LEG-17 to T-LEG-19 test items 1 to 3.
 
 ## 5. One player [Q685 yes]
 
@@ -476,9 +509,8 @@ The times serve the clock, the labels and the pace only:
 
 ### 7.2 Load of the module and the CSP [agent 18] [Q707]
 
-- In the Electron app, the decoder files come with the UI bundle (section 9.4), not from the server
-  of the recording [Q697 yes]. A UI page from the server (if the answer to Q701 is no) would get them
-  from the server, and section 9.5 then applies to that page too.
+- The decoder files come with the UI bundle of the Electron app (section 9.4), not from the server
+  of the recording [Q697 yes] [Q701 yes].
 - The page fetches the WASM file once and lets the HTTP cache keep it. The study fetched and compiled
   it once for each worker (2.4 MB; import 2 to 5 ms, instantiate 19 to 30 ms; all tiles ready with
   the file open in 46 to 73 ms) [S 12.4].
@@ -553,7 +585,8 @@ A new folder `skellycam-ui/decoder/`:
 
 | File | Content |
 |---|---|
-| `package.json`, `package-lock.json` | One dev dependency: `"libav.js": "6.10.9"` (exact). The lock file holds the integrity hash of the tarball. FFmpeg comes inside this tarball (`sources/ffmpeg-9.0.tar.xz`) [S 12.2]. |
+| `package.json`, `package-lock.json` | One dev dependency: `"libav.js": "6.10.9"` (exact). The lock file holds the integrity hash of the tarball. The tarball also holds FFmpeg 9.0 (`sources/ffmpeg-9.0.tar.xz`) [S 12.2]; the build does not use it [Q703 yes]. |
+| `ffmpeg.json` | The FFmpeg source of the build [Q703 yes]: `{"version": "9.0.2", "url": "https://ffmpeg.org/releases/ffmpeg-9.0.2.tar.xz", "sha256": "<hash>"}`. `build.sh` downloads the tarball outside the container, checks the SHA-256 (a mismatch fails the build), puts it in the `build/` folder of the libav.js source tree, and runs `make FFMPEG_VERSION_MAJOR=9 FFMPEG_VERSION_MINREV=0.2 ...`, the override that [LJ] documents [agent 38]. |
 | `Dockerfile` | One stage only: `FROM emscripten/emsdk:6.0.8@sha256:<digest>` and the build steps. |
 | `build.sh` | The build steps of the study `wasm_build.sh`, with the part list of 9.2 and the variant name `skellycam-legacy`. |
 | `parts.json` | The part list (the input of `mkconfig.js`) and the expected component lists of the checks (9.3). |
@@ -617,7 +650,8 @@ A job `decoder-build` on `ubuntu-24.04` (Docker is on the Linux runners) does th
    `FFMPEG_CONFIGURATION` holds `--disable-network` and no `--enable-lib`.
 5. Check the size of the WASM file: at most 4 MiB [agent 24].
 6. Check the pins: `package.json` has an exact version (no `^`, no `~`, no range); the `FROM` line
-   has a tag and a digest.
+   has a tag and a digest; `ffmpeg.json` has an exact version and a SHA-256; the `RELEASE` file of the
+   FFmpeg source that the build used reads that version (9.0.2) [Q703 yes].
 7. Check that `license.js` has a section for each source that the build links. The built `license.js`
    of the study has sections for ffmpeg, `jrevdct.c`, and emscripten and musl. The tarball also holds
    `emfiberthreads-1.3.tar.gz`, and `license.js` has no section for it [NV: whether the build links
@@ -661,8 +695,8 @@ Therefore, if you distribute this library, you must provide sources." The duties
    "0-clause BSD" licence, "which does not require that the license text itself appear in derivative
    works" [LJ]. (The study notes name it ISC; that is wrong.)
 2. **Source.** Each release offers the exact source: the libav.js npm tarball named by its lock-file
-   integrity (it holds the FFmpeg and libav.js sources in `sources/`), the FFmpeg tarball of Q703 if
-   that answer is yes, and the recipe of 9.1. The release workflow attaches the tarballs to the GitHub
+   integrity (it holds the libav.js sources in `sources/`), the FFmpeg 9.0.2 tarball of 9.1
+   [Q703 yes], and the recipe of 9.1. The release workflow attaches the tarballs to the GitHub
    release, with the same retention as the release.
 3. **Replace the library.** The decoder is a separate file that the app loads at run time. The
    `README.md` of 9.1 tells a user how to build a changed library with the recipe and where to put it
@@ -675,8 +709,8 @@ Therefore, if you distribute this library, you must provide sources." The duties
 4. **Modification and reverse engineering.** The app is AGPL-3.0-or-later (`LICENSE`,
    `skellycam-ui/package.json` `"license"`) [C]. Thus its terms permit the modification and reverse
    engineering that LGPL 2.1 section 6 asks for.
-5. **A page from the server** (if the answer to Q701 is no): the source offer and the replacement
-   path must reach that page too.
+5. **No web-served UI.** The UI is the Electron app [Q701 yes], so the source offer and the
+   replacement path go with the app and its release.
 6. **No GPL part, no non-free part** in the decoder (the checks of 9.3).
 
 This is not legal advice. Question Q699 asks the owner about the patent position.
@@ -691,9 +725,9 @@ Q693].
 
 | Input | Pin | Watched by |
 |---|---|---|
-| libav.js (and FFmpeg 9.0 inside its tarball) | `skellycam-ui/decoder/package.json`, exact | Dependabot `npm`, directory `/skellycam-ui/decoder` |
+| libav.js | `skellycam-ui/decoder/package.json`, exact | Dependabot `npm`, directory `/skellycam-ui/decoder` |
 | emsdk image | `skellycam-ui/decoder/Dockerfile`, tag and digest | Dependabot `docker`, directory `/skellycam-ui/decoder` |
-| The FFmpeg tarball of Q703 (if yes) | the recipe, version and SHA-256 | the weekly workflow of 10.3 (Dependabot cannot see it) |
+| The FFmpeg 9.0.2 tarball [Q703 yes] | `skellycam-ui/decoder/ffmpeg.json`, version and SHA-256 | the weekly workflow of 10.3, which opens a bump PR [Q704 yes] (Dependabot cannot see it) |
 | The build tools of libav.js (`npm ci` inside the source tree, 9.1) | the lock file inside the libav.js tarball | nobody directly; a libav.js bump changes them |
 | CI actions (checkout, setup-node, cache, upload and download artefact, setup-uv) | full SHA with the version comment on the same line | Dependabot `github-actions`, directory `/` |
 | PyAV (makes the test media and the reference, section 13.1) | `pyproject.toml` `av==19.0.2` | not by this work: the Python pins have their own review [NV: no `pip`/`uv` entry in `dependabot.yml` today] |
@@ -739,41 +773,77 @@ Facts from the documentation [D ecosystems] [D options] [D registries]:
 - The pages do not say if Dependabot updates the digest of a `FROM` line with a tag and a digest [NV].
   Check 1 of 9.3 fails a PR whose digest does not belong to its tag.
 
-### 10.3 What Dependabot cannot see, and how the gap is covered [agent 29] [Q703] [Q704]
+### 10.3 What Dependabot cannot see, and how the gap is covered [agent 29] [Q703 yes] [Q704 yes]
 
 | Gap | Why | Cover |
 |---|---|---|
-| FFmpeg point releases | The tarball of libav.js 6.10.9 holds FFmpeg **9.0, with no point release** (`ffmpeg-9.0/RELEASE` reads `9.0`) [FF `RELEASE`]. The reference of the study was the FFmpeg 9.0.2 CLI [S 12.4]. Thus the decoder misses the fixes of 9.0.1 and 9.0.2 from day 1. | Q703: build with FFmpeg 9.0.2. The weekly workflow below reports each later point release. |
-| A security fix of FFmpeg before a libav.js release | FFmpeg is inside the libav.js tarball. It is not an npm package, so no npm advisory names it [NV]. | The weekly workflow below. |
+| FFmpeg point releases | The tarball of libav.js 6.10.9 holds FFmpeg **9.0, with no point release** (`ffmpeg-9.0/RELEASE` reads `9.0`) [FF `RELEASE`]. The reference of the study was the FFmpeg 9.0.2 CLI [S 12.4]. | The build uses FFmpeg 9.0.2 through the override [Q703 yes]. The weekly workflow below opens a bump PR for each later point release [Q704 yes]. |
+| A security fix of FFmpeg before a libav.js release | FFmpeg is not an npm package, so no npm advisory names it [NV]. | The weekly workflow below: a fix in a point release gives a bump PR; a CVE with no release gives an issue. |
 | A security fix of the emsdk image | Dependabot has no security updates for `docker` [D ecosystems]. | The weekly version updates of `docker`. A CVE of the toolchain affects the build machine; the WASM output holds the emscripten runtime and musl parts only [NV]. |
 | The build tools of libav.js | pinned by the lock file inside the tarball (10.1) | They change only with a libav.js bump, which the PR pipeline builds. |
 | A libav.js release that changes its build or its API | Dependabot gives a version number only. | The PR pipeline of 10.4 builds and tests the bump. |
 
-**Another FFmpeg version.** [LJ] documents it: "To build against, for instance, FFmpeg 4.3.6, use
-`make FFMPEG_VERSION_MAJOR=4 FFMPEG_VERSION_MINREV=3.6`". The same text says that libav.js "should
-generally build against any version of FFmpeg in the 4, 5, or 6 series", and that "you should use the
-default version unless you have some specific compatibility issue" [LJ]. A build of libav.js 6.10.9
-with FFmpeg 9.0.2 is [NV]. With Q703 yes, the recipe pins the FFmpeg tarball by its version and its
-SHA-256 as one more input. That input is outside Dependabot, so the weekly workflow watches it.
+**The FFmpeg override** [Q703 yes]. [LJ] documents it: "To build against, for instance, FFmpeg 4.3.6,
+use `make FFMPEG_VERSION_MAJOR=4 FFMPEG_VERSION_MINREV=3.6`". The same text says that libav.js
+"should generally build against any version of FFmpeg in the 4, 5, or 6 series", and that "you should
+use the default version unless you have some specific compatibility issue" [LJ]. The recipe pins the
+FFmpeg 9.0.2 tarball by its version and its SHA-256 in `ffmpeg.json` (9.1). A build of libav.js
+6.10.9 with FFmpeg 9.0.2 is [NV] until the build and the conformance tests of section 13 pass. When a
+later libav.js release packs an FFmpeg version at or above the version of `ffmpeg.json`, the bump PR
+of that release may drop the override; that is a review point of that PR.
 
-**The weekly workflow** `decoder-upstream.yml` (scheduled, and by hand):
+**The weekly workflow** `decoder-upstream.yml` (scheduled each week, and by hand):
 
-1. Reads the FFmpeg version that the recipe uses (the one in the libav.js tarball, or the pinned
-   tarball of Q703).
+1. Reads the FFmpeg version of `ffmpeg.json`.
 2. Lists the FFmpeg release tags with `git ls-remote --tags` of the FFmpeg git repository (read
    only, no token).
 3. Lists the libav.js release tags of its GitHub repository.
 4. Reads the FFmpeg security page (`https://ffmpeg.org/security.html`) and keeps each CVE listed under
-   a version newer than the FFmpeg version of the recipe.
-5. Proposed in phase 1: opens one issue, or updates the open one, with the title "decoder upstream:
-   <summary>", when it finds a newer FFmpeg point release, a newer libav.js release that Dependabot
-   has not opened yet, or a CVE of step 4. The job has `permissions: issues: write` and
-   `contents: read` only.
-6. With Q704 yes: in place of the issue, it opens a bump PR that changes the FFmpeg tarball of the
-   recipe (version and SHA-256). A PR that a workflow opens with `GITHUB_TOKEN` starts no workflow
-   run, so this needs a GitHub App token or a personal access token as a repository secret
-   [the review] [NV]. Then the PR pipeline of 10.4 runs, as the owner asked ("trigger build and pr
-   tests" [O]).
+   a version newer than the version of `ffmpeg.json`.
+5. **A newer FFmpeg point release** of the same major and minor version (for example 9.0.3): the job
+   downloads its tarball, computes the SHA-256, writes the new `ffmpeg.json` on the branch
+   `decoder/ffmpeg-<version>`, and opens a bump PR, or updates its open PR [Q704 yes]. It pushes and
+   opens the PR with the token of the item "The token" below. The PR then starts the pipeline of 10.4.
+   A new major or minor FFmpeg version gives an issue, not a PR: libav.js patches FFmpeg by its major
+   version [LJ], so that change needs a person.
+6. **Each other finding** (a newer libav.js release that Dependabot has not opened yet, a CVE of step
+   4 with no release) gives one issue, or updates the open one, with the title "decoder upstream:
+   <summary>". The job writes issues with `GITHUB_TOKEN` and `permissions: issues: write`. An issue
+   needs no new workflow run.
+
+**Why a token secret.** GitHub: "events triggered by the `GITHUB_TOKEN` will not create a new
+workflow run", except some events; for a `pull_request` event of the types `opened`, `synchronize` or
+`reopened`, the runs "require approval" first. To start the runs, "use a GitHub App installation
+access token or a personal access token instead of `GITHUB_TOKEN`" [D trigger]. Without the token,
+each bump PR would wait for a person to approve its runs.
+
+**The token** that the owner must create [Q704 yes] [D fine-grained] [D PAT]:
+
+- **Type:** a fine-grained personal access token.
+- **Resource owner:** the owner of the repository (`freemocap`). If the organisation requires approval
+  of fine-grained tokens, the token stays `pending` until an organisation administrator approves it;
+  until then it "will only be able to read public resources" [D PAT].
+- **Repository access:** "Only select repositories", with this one repository only.
+- **Repository permissions, and no other:**
+  - **Contents: Read and write**, to push the branch `decoder/ffmpeg-<version>` (git push, and the
+    git refs and contents endpoints need "Contents" write) [D fine-grained].
+  - **Pull requests: Read and write**, to open the PR (`POST /repos/{owner}/{repo}/pulls`) and to
+    update it (`PATCH /repos/{owner}/{repo}/pulls/{pull_number}`) [D fine-grained].
+  - **Metadata: Read-only.** GitHub lists Metadata as a read-only repository permission [D PAT]
+    [NV: that GitHub adds it by itself to each fine-grained token].
+  - **Not Workflows.** The job never changes a file in `.github/workflows/`, so it needs no
+    "Workflows" permission. A test checks that the job writes only `skellycam-ui/decoder/ffmpeg.json`
+    (T-LEG-62).
+  - **Not Issues.** The issues of step 6 use `GITHUB_TOKEN`.
+- **Expiry:** the longest that the organisation policy allows. The default is "30 days, or less if
+  the target has a token lifetime policy set" [D PAT]. The workflow fails with the text "decoder bump
+  token missing or expired" when the token does not work, so that the expiry is visible.
+- **Secret:** a repository secret for GitHub Actions with the name `DECODER_BUMP_TOKEN`. The
+  scheduled workflow is not started by Dependabot, so it can read Actions secrets [D troubleshoot].
+- **An alternative of the same scope:** a GitHub App with the same two permissions (Contents and Pull
+  requests, read and write), installed on this repository only, with its app ID and private key as
+  secrets [D trigger]. GitHub advises an app "for long-lived integrations" [D PAT]. The owner chose a
+  token [Q704 yes]; the app stays an option for later.
 
 Limits, said plainly:
 
@@ -784,7 +854,7 @@ Limits, said plainly:
 
 ### 10.4 The pipeline of a bump PR [agent 30] [Q710]
 
-A Dependabot PR (or a PR of Q704) that changes a file of `skellycam-ui/decoder/` or a workflow starts
+A Dependabot PR (or a bump PR of 10.3 [Q704 yes]) that changes a file of `skellycam-ui/decoder/` or a workflow starts
 these jobs:
 
 1. `decoder-build`: the build, the checks of 9.3 and the artefact.
@@ -836,6 +906,12 @@ folder"]: the directory becomes `/skellycam-ui`, in the CI PR of this work.
   `https://docs.github.com/en/code-security/reference/supply-chain-security/troubleshoot-dependabot/dependabot-on-actions`.
 - [D required]: "Troubleshooting required status checks",
   `https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/collaborating-on-repositories-with-code-quality-features/troubleshooting-required-status-checks`.
+- [D trigger]: "Triggering a workflow" (triggering a workflow from a workflow),
+  `https://docs.github.com/en/actions/how-tos/write-workflows/choose-when-workflows-run/trigger-a-workflow`.
+- [D fine-grained]: "Permissions required for fine-grained personal access tokens",
+  `https://docs.github.com/en/rest/authentication/permissions-required-for-fine-grained-personal-access-tokens`.
+- [D PAT]: "Managing your personal access tokens",
+  `https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens`.
 
 ## 11. Changes of the module and of the host
 
@@ -1000,9 +1076,12 @@ bytes that the test builds with no codec data (box structures, NPY headers, file
 | T-LEG-14 | unit | W, L, M | none | The shared `TakeFiles` check suite of 6a 5.1 on `http-take-files.ts` against a Node test server; the answers 200 with the whole file and 206 with a wrong start; a 404 for an expired token, then a re-open with the same snapshot and with a changed snapshot; two 404 in a row. | The results of T-PLAY-39; the two wrong answers are read errors; the first re-open repeats the read and passes; the changed snapshot gives "recording changed on disk"; two 404 give a read error. |
 | T-LEG-15 | server | W, L, M | none | The route of 4.2: open, the range table of 6a 5.6, the snapshot, a deleted token, an expired token (a test clock), an unknown path, `..` forms, a link to an outside file, a folder outside the roots, a root whose name is a string prefix of an outside folder, a root in another case (Windows and macOS), a file replaced after the open, a `recording_parent_directory` parameter, a CORS preflight for the `POST` and for `Range`. | Status, bytes and headers as 6a 5.6 and 4.2; 403 "folder not allowed" outside the roots and for the prefix case; the other case is inside on Windows and macOS; the replaced file gets 404; the parameter adds no root; the preflight allows the method and the header; the expose header is on each range answer. |
 | T-LEG-16 | server | W, L, M | none | Read 6 files by range for 20 s through the route while a spy counts the bytes that the server reads and sends, and a log capture counts the log lines. | Each response body is a byte range of an original file; no route writes a file; no log line for a range request. |
+| T-LEG-17 | server | W, L, M | none | Origin rule of 4.4 item 1 on each route of 4.2 and on `list_recordings`: requests and preflights with `Origin` `https://example.org`, `http://localhost:1234`, `null`, the dev server origin in a development build and in a packaged build, and no `Origin`. | `https://example.org` and `http://localhost:1234`: 403 "origin not allowed", no `Access-Control-Allow-Origin`; `null`: allowed, with `Access-Control-Allow-Origin: null`; the dev origin: allowed only in a development build; no answer has `Access-Control-Allow-Credentials`; other routes of the app keep their CORS rule of today. |
+| T-LEG-18 | server | W, L, M | none | Host rule of 4.4 item 2: `Host` `localhost:<port>`, `127.0.0.1:<port>`, `[::1]:<port>`, `localhost:<other port>`, `attacker.example`, `attacker.example:<port>`, a name of the bind settings, and no `Host`. | The first three and the name of the settings: served; each other: 403 "host not allowed", with no byte of a file. |
+| T-LEG-19 | server | W, L, M | none | Start the server with a bind setting beyond `localhost` and no login or pairing configured; and with only `localhost`. | The first start refuses the bind with the text of 4.4 item 3 and listens on no address other than the loopback addresses; the second starts normally. |
 | T-LEG-20 | build | L | none | The checks of 9.3, steps 4, 5 and 7, on the built outputs. | `CONFIG_GPL 0`, `CONFIG_NONFREE 0`, `CONFIG_VERSION3 0`; the decoder, demuxer, parser, bit-stream filter and protocol sets equal `parts.json` with the additions of 9.2; `--disable-network`; no `--enable-lib`; WASM at most 4 MiB; a licence section for each linked source. |
 | T-LEG-21 | build | L | none | Two clean builds of the same recipe. | Equal SHA-256 for each output [NV until it runs]. |
-| T-LEG-22 | build | L | none | The pin checks of 9.3, steps 1 and 6. | Exact npm version; a tag and a digest in the `FROM` line; the digest belongs to the tag. |
+| T-LEG-22 | build | L | none | The pin checks of 9.3, steps 1 and 6. | Exact npm version; a tag and a digest in the `FROM` line; the digest belongs to the tag; `ffmpeg.json` has an exact version and a SHA-256, a wrong SHA-256 fails the build, and the `RELEASE` file of the built FFmpeg reads 9.0.2. |
 | T-LEG-23 | build | L | none | The licence files in the outputs and in an app package. | `license.js`, the recipe reference and the source tarball reference are present; the decoder files are outside the `asar`. |
 | T-LEG-24 | unit (real decoder) | W, L, M | gen | Decode each frame of the generated `mp4v` files (720x1280, 640x480, 1228x574) in Node with the built decoder. | Each frame hash equals the x86-64 PyAV reference; the frame count equals the table. |
 | T-LEG-25 | unit (real decoder) | W, L, M | gen | As T-LEG-24 for the H.264 files, the edit-list files and the `yuvj420p` file. | Each frame hash equals the reference; the edit-list file gives the frames with M ≤ CTS < M + D only. |
@@ -1033,11 +1112,11 @@ bytes that the test builds with no codec data (box structures, NPY headers, file
 | T-LEG-53 | certify | L, M (certify report) | gen | The check `player-legacy-decode` of 10.5 [Q708]. | The report gives the seek and play times; no target until the owner sets one. |
 | T-LEG-60 | tool | W, L, M | none | A test of `tools/tests/` reads `.github/dependabot.yml`. | The three entries of 10.2 exist with their directories; the `npm` entry of the UI has `/skellycam-ui`; each directory holds the manifest that its ecosystem reads; the `Dockerfile` has one `FROM` and no `ARG` before it. |
 | T-LEG-61 | tool | W, L, M | none | A test of `tools/tests/` reads the workflows. | The workflow of 10.4 has no `paths:` filter and has a changed-paths job; each test job needs `decoder-build`; each action is pinned to a full SHA with a same-line version comment; no job of the bump path uses a secret. |
-| T-LEG-62 | tool | W, L, M | none | The parser of `decoder-upstream.yml` on stored text samples (a tag list, a part of the security page) and a fake GitHub API. | It finds the newer release and the CVE; it opens one issue (or one PR with Q704 yes), and on a second run it updates the same one. |
+| T-LEG-62 | tool | W, L, M | none | The logic of `decoder-upstream.yml` on stored text samples (a tag list with 9.0.3 and 9.1.0, a part of the security page, a libav.js tag list), a fake tarball and a fake GitHub API; and a run with no token. | For 9.0.3: one branch and one bump PR with a new `ffmpeg.json` (version and the SHA-256 of the fake tarball), made with the token, and no other changed file (no file in `.github/workflows/`); a second run updates the same PR; for 9.1.0 and for the CVE: one issue with `GITHUB_TOKEN`, updated on a second run; with no token: the job fails with "decoder bump token missing or expired". |
 | T-LEG-63 | rehearsal (once) | CI | none | A PR that changes only the libav.js pin (a real bump or a rehearsal on a branch). It needs the approval of the owner, because a PR is visible outside the machine. | Each job of 10.4 runs; the PR is mergeable with no other commit. |
 
-Counts: 18 unit, 19 component, 2 server, 4 build, 3 tool, 3 benchmark, 1 certify, 1 rehearsal:
-51 tests.
+Counts: 18 unit, 19 component, 5 server, 4 build, 3 tool, 3 benchmark, 1 certify, 1 rehearsal:
+54 tests.
 
 ### 13.4 Rules to tests
 
@@ -1056,9 +1135,13 @@ Counts: 18 unit, 19 component, 2 server, 4 build, 3 tool, 3 benchmark, 1 certify
 | Q697 yes | T-LEG-23, T-LEG-47, T-LEG-48 |
 | Q698 yes | T-LEG-27 |
 | Q700 yes | T-LEG-07 (HEVC), T-LEG-08, T-LEG-33, T-LEG-60 |
+| Q701 yes, Q702 yes | T-LEG-17, T-LEG-18, T-LEG-19 |
+| Q703 yes | T-LEG-22, T-LEG-24 to T-LEG-26 |
+| Q704 yes | T-LEG-62, T-LEG-63 |
+| Q705 yes, Q706 yes | No test: a cancelled step and a scope rule. |
 | 2.2, 2.3, 2.4 | T-LEG-01 to T-LEG-05 |
 | 3 | T-LEG-07, T-LEG-13, T-LEG-41, T-LEG-44, T-LEG-45 |
-| 4 | T-LEG-14 to T-LEG-16, T-LEG-38 |
+| 4 | T-LEG-14 to T-LEG-19, T-LEG-38 |
 | 6 | T-LEG-03 to T-LEG-06, T-LEG-08 to T-LEG-10, T-LEG-26, T-LEG-30 to T-LEG-35, T-LEG-46 |
 | 7, 8 | T-LEG-11, T-LEG-12, T-LEG-35 to T-LEG-37, T-LEG-42, T-LEG-43 |
 | 9, 10 | T-LEG-20 to T-LEG-26, T-LEG-47, T-LEG-48, T-LEG-53, T-LEG-60 to T-LEG-63 |
@@ -1082,8 +1165,9 @@ Counts: 18 unit, 19 component, 2 server, 4 build, 3 tool, 3 benchmark, 1 certify
 3. **Y1 and L1** (6a 18.1, 18.3): step 6c is "the switch between the new player and the old
    video-element path, and old takes". This spec is the old-takes part, for v1 only [O]. With Q685
    yes, the switch is a removal.
-4. **6a 1.3, step 6d** ("The 'upgrade recording' converter"). The owner said "old recordings must not
-   be converted" [O]. Question Q705 asks if this cancels step 6d.
+4. **6a 1.3, step 6d** ("The 'upgrade recording' converter"). Cancelled [Q705 yes]. The 6d row of
+   6a 1.3 says so and cites
+   [ADR-0C4Y](../decisions/entries/0C4Y-answers-of-the-owner-q701-to-q706.md).
 5. **6a 7.3, frame choice by time.** For v1, the frame index chooses the frame (6.4). The rule of 6a
    7.3 stays for the new format.
 6. **6a 8.1, `ImageDecoder` on the main thread.** For v1, the decoder runs in a worker for each tile
@@ -1145,40 +1229,34 @@ marks each one [agent n].
 35. The targets (12.2).
 36. The synthetic media plan, the x86-64 reference, the hash rule, the test list and its pass
     criteria (13).
+37. The concrete form of Q702: the routes it covers, the origin allow-list (`null` and the dev
+    origin), 403 texts, no credentials header, the Host allow-list, the refusal of a bind beyond
+    `localhost` at start, and the `null`-origin limit that the login or pairing design must cover
+    (4.4).
+38. The concrete form of Q703 and Q704: `ffmpeg.json`, the download outside the container, the
+    `make` variables, the branch name, PR for a point release and issue for a major or minor
+    release, the token type, scope, permissions, secret name and the failure text (9.1, 10.3).
 
 ## 16. Open questions for the owner
 
 Each question is worded so that "yes" accepts the recommendation. The owner decided Q685, Q688,
-Q697, Q698 and Q700 on 2026-11-24
-([ADR-8EBK](../decisions/entries/8EBK-answers-of-the-owner-q685-q688-q697-q698-q700.md)); they are
-not in this list.
+Q697, Q698 and Q700
+([ADR-8EBK](../decisions/entries/8EBK-answers-of-the-owner-q685-q688-q697-q698-q700.md)) and Q701 to
+Q706 ([ADR-0C4Y](../decisions/entries/0C4Y-answers-of-the-owner-q701-to-q706.md)) on 2026-11-24; they
+are not in this list.
 
 - **Q694. H.264 route.** In phase 1, the WASM decoder plays `mp4v` and H.264, with no WebCodecs route;
   a WebCodecs (GPU) route for H.264 is decided in phase 2, after a real import sample exists. Yes?
   (The cost table is in 3.2: on long-GOP H.264, WASM seeks and steps back 2.6 to 3 times slower than
   the GPU, for example 654 to 660 ms per seek and about 1.5 s per backward step at GOP 250 with three
   tiles; on short-GOP 720p H.264 it is as fast as the GPU; at 1080p CRF 18 it keeps up where
-  WebCodecs on the CPU does not.)
+  WebCodecs on the CPU does not. The owner is now considering WebCodecs for all H.264 in each
+  phase, with WASM for `mp4v`; that is not decided, and section 3 is not rewritten until it is. See
+  Q717.)
 - **Q699. Patents.** Accept that the build holds the MPEG-4 Part 2 and H.264 decoders, and that their
   patent position is a decision of the owner outside this spec; the technical work does not wait for
   it. Yes? (The libav.js README warns that builds with MPEG-controlled codecs are not made by
   default.)
-- **Q701. Remote UI.** The remote UI is the Electron app on the other machine (it carries the decoder
-  and the LGPL source offer itself), not a page that the server delivers to a browser. Yes?
-- **Q702. Network exposure.** Close it before any bind beyond `localhost`: remove the any-origin CORS
-  rule (`allow_origins=["*"]` with credentials) for these routes and allow only the UI origins; check
-  the `Host` header against an allow-list (against DNS rebinding); and require a login or a pairing
-  before the server listens on any address other than `localhost`. Yes?
-- **Q703. FFmpeg point release.** Build against FFmpeg 9.0.2 through the documented libav.js override
-  (`FFMPEG_VERSION_MAJOR`, `FFMPEG_VERSION_MINREV`), as one more pinned input with a SHA-256, because
-  the tarball of libav.js 6.10.9 holds FFmpeg 9.0 with no point release. Yes? (A build of libav.js
-  6.10.9 with FFmpeg 9.0.2 is not verified; the conformance tests prove it.)
-- **Q704. Upstream watch opens PRs.** The weekly upstream workflow opens a bump PR (the version and
-  the SHA-256 of the FFmpeg tarball) in place of an issue, so that the build and the PR tests start;
-  this needs a GitHub App token or a personal access token as a repository secret. Yes?
-- **Q705. Step 6d.** "must not be converted" cancels step 6d, the "upgrade recording" converter of
-  `player.md` 1.3. Yes?
-- **Q706. Release candidates.** FreeMoCap v1.0.0-rc to v1.0.23-rc are out of scope. Yes?
 - **Q707. CSP.** Change the CSP of `skellycam-ui/index.html` to
   `script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval'; worker-src 'self' blob:;`, so that the
   decoder compiles and the module workers start. Yes?
@@ -1206,13 +1284,27 @@ not in this list.
   `timeEstimated` and the mark `decoder_failed` of 11.2. Yes?
 - **Q716. Spec place.** Keep this spec as the new file `specs/player-legacy.md`, linked from 6a 1.3,
   as the v1 part of step 6c. Yes?
+- **Q717. WASM fallback for H.264.** If H.264 goes to WebCodecs, keep the `h264` decoder in the WASM
+  build as the fallback when WebCodecs refuses a file (`isConfigSupported` says no) or a decode fails.
+  Yes? (Reason: the study advises this fallback, and the decoder was exact on each H.264 file of the
+  study [S 12.4, S 12.5]; it costs build size only.)
+- **Q718. Phase 2 output format.** Phase 2 writes 8-bit 4:2:0 H.264, so that the GPU decoder applies.
+  Yes? (Reason: Chromium sends a 4:2:2 H.264 file to the software decoder; in the study, a set of six
+  720p30 GOP 250 tiles with four 4:2:2 tiles (`no-preference`) had a seek p50 of 861 ms, against
+  529 ms for six 4:2:0 tiles on the GPU [S RT]. This question belongs to the writer of phase 2, not to the v1 player; this spec lists it as
+  the coordinator asked.)
 
 ## 17. Not verified
 
 - No real sample of a v1 import, of v1.0.26 to v1.0.30, or of an HEVC file [S 12.6].
 - The reduced part list of 9.2 was not built. The study built the larger list [S 12.2].
 - A byte-identical rebuild of the decoder (T-LEG-21); a build with no network (9.1).
-- A build of libav.js 6.10.9 with FFmpeg 9.0.2 (Q703).
+- A build of libav.js 6.10.9 with FFmpeg 9.0.2 (9.1, 10.3) [Q703 yes].
+- That GitHub adds the Metadata permission by itself to a fine-grained token; whether the
+  organisation requires approval of fine-grained tokens; the longest token life that its policy
+  allows (10.3).
+- That an origin `null` is the only origin of the packaged app page in Electron 45.3.4, and the
+  design of the login or pairing (4.4).
 - Whether the build links `emfiberthreads`, and its licence (9.3 step 7); what `--enable-pthreads`
   does in this build (9.2).
 - The decoder timing on Linux and macOS, and on a weak CPU; hours-long files; many plays in a row
@@ -1273,3 +1365,22 @@ The answers of the owner of 2026-11-24
 - Q700: "HEVC refused until a real sample exists; playback length is the smallest frame count of the
   cameras, with a warning; no annotated videos in this step; a warning above 16 cameras; repair the
   Dependabot npm folder?"
+
+The answers of the owner of 2026-11-24
+([ADR-0C4Y](../decisions/entries/0C4Y-answers-of-the-owner-q701-to-q706.md)). His words: "Q701 - Q706
+agree". The questions, each with the recommendation that he agreed to:
+
+- Q701: "When the UI runs on another machine, is it the installed skellycam app, or a page that the
+  server hands to any browser?" Recommendation: the installed Electron app.
+- Q702: "Remove the 'any origin' rule for these routes, check the Host header, and put login or
+  pairing for a remote UI in the spec as a requirement before the server listens beyond localhost?"
+  Recommendation: yes.
+- Q703: "Use the documented libav.js override to build against FFmpeg 9.0.2, not the plain 9.0 inside
+  the package?" Recommendation: yes (one more pinned input with a checksum).
+- Q704: "When FFmpeg publishes a new point release, the weekly job opens a bump PR that runs the full
+  build and tests? This needs a token stored as a repository secret, because GitHub does not run
+  workflows on a PR opened with the default token." Recommendation: yes; the owner creates the token,
+  with the exact minimum permissions stated for him.
+- Q705: "Does 'old recordings must not be converted' cancel that step [the 'upgrade recording'
+  converter, step 6d of player.md 1.3]?" Recommendation: yes, cancel it.
+- Q706: "Leave the v1.0.0-rc to v1.0.23-rc builds out of scope?" Recommendation: yes.

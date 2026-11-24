@@ -2,13 +2,14 @@
 
 **Status:** proposed, 2026-11-24 (agent; builds the rules of the owner in
 [ADR-X5MZ](X5MZ-rules-of-the-owner-for-the-playback-of-freemocap-v1-recordings.md) and his answers in
-[ADR-8EBK](8EBK-answers-of-the-owner-q685-q688-q697-q698-q700.md)).
+[ADR-8EBK](8EBK-answers-of-the-owner-q685-q688-q697-q698-q700.md) and
+[ADR-0C4Y](0C4Y-answers-of-the-owner-q701-to-q706.md)).
 
 ## Decision
 
-The draft spec [`player-legacy.md`](../../specs/player-legacy.md), revision 2, and its test list
-T-LEG-01 to T-LEG-63 (51 tests). Section 15 of the spec lists the choices of the agent. Section 16
-gives the open questions Q694, Q699 and Q701 to Q716; a "yes" accepts the recommendation. The main
+The draft spec [`player-legacy.md`](../../specs/player-legacy.md), revision 3, and its test list
+T-LEG-01 to T-LEG-63 (54 tests). Section 15 of the spec lists the choices of the agent. Section 16
+gives the open questions Q694, Q699 and Q707 to Q718; a "yes" accepts the recommendation. The main
 choices:
 
 1. **Scope.** v1.0.25 and v1.0.31 to v1.8.2, the sample data and import folders; a v1 recording has
@@ -37,9 +38,11 @@ choices:
    (`h263` decoder, `iso_media`, `riffdec`, two bit-stream filters, the `data` and `file` protocols).
    CI builds twice and checks the licence flags, the component sets, `--disable-network`, the size, the
    pins and `license.js`. The decoder sits outside the `asar`; an unknown decoder file gives a warning.
-9. **Dependabot.** `npm` and `docker` on `/skellycam-ui/decoder`, `github-actions` on `/`, weekly. A
-   weekly workflow reports FFmpeg point releases, libav.js releases and CVEs (an issue in phase 1, a
-   PR with Q704). The bump pipeline runs in a workflow with no `paths:` filter, with jobs skipped by
+9. **Dependabot.** `npm` and `docker` on `/skellycam-ui/decoder`, `github-actions` on `/`, weekly.
+   FFmpeg 9.0.2 is pinned in `ffmpeg.json` (Q703). A weekly workflow opens a bump PR for an FFmpeg
+   point release with a fine-grained token `DECODER_BUMP_TOKEN` (this repository only; Contents and
+   Pull requests read and write; Metadata read; no Workflows), and an issue for other findings (Q704).
+   The CORS, Host and bind rules of spec 4.4 give Q702 its concrete form. The bump pipeline runs in a workflow with no `paths:` filter, with jobs skipped by
    `if:`, so that required checks never stay pending.
 10. **Tests.** Synthetic media at test time with PyAV `av==19.0.2`; the reference from the x86-64 Linux
     job only; decoder timing on Linux and macOS from a certify check `player-legacy-decode` (Q708).

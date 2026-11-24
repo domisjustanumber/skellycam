@@ -79,7 +79,7 @@ recorder step 5a opens, so the two can land together [Y1].
 |---|---|---|
 | 6b | Audio in the player. It needs recorder step 5b [Y1]. | 6a reads no audio file [agent 14]. |
 | 6c | The rest of the switch, old takes, the full reader result and the conformance run [Y1, L1, L2, E2]. | 6a does not read an old take. The draft [`player-legacy.md`](player-legacy.md) (not accepted) proposes the part for FreeMoCap v1 recordings. |
-| 6d | The "upgrade recording" converter [Y1]. | None. |
+| 6d | The "upgrade recording" converter [Y1]. Cancelled on 2026-11-24 ([ADR-0C4Y](../decisions/entries/0C4Y-answers-of-the-owner-q701-to-q706.md), Q705). | None. |
 | recorder 5c | The repair step. It can also fill the file of a killed camera process later [M5]. | 6a opens an unfinished take read only and offers no repair [Y5]. |
 | phase 4 | The live preview. | Section 8 gives the tile interface that the preview uses [L6]. |
 | step 4b | The measurement of the tile with 8 cameras at 60 fps. A worker only if it misses its target [L6]. | Section 8.1. |
