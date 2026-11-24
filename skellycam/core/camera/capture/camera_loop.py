@@ -10,6 +10,7 @@ import pickle
 import queue
 import threading
 import time
+from collections import deque
 from collections.abc import Callable
 from multiprocessing import parent_process
 
@@ -68,6 +69,7 @@ perf_counter_ns = time.perf_counter_ns
 STALL_NS = 2_000_000_000  # 9.5, D38
 READY_LIMIT_NS = 15_000_000_000  # 9.3, D21
 CONTROL_READ_INTERVAL_S = 1.0  # 11.4, U16
+RECENT_FRAMES = 1024  # 10.2 [ADR-0R76]: the taken frames that a check gets: a set of 5 s (the bounded call) at 200 fps
 JPEG_Q90 = [int(cv2.IMWRITE_JPEG_QUALITY), 90]  # ring 2.3, 8.8
 DIAGNOSTICS_INTERVAL_NS = 1_000_000_000  # unix-capture.md 4.2 item 2: one dict each second
 DIAGNOSTICS_LIMIT_BYTES = 32 * 1024  # the pickled message; a larger dict is not sent
@@ -128,6 +130,7 @@ class CameraLoop:
         self.reference_rate = 0.0
         self.last_arrival = 0
         self.last_number = -1
+        self.recent_frames: deque[tuple[int, int]] = deque(maxlen=RECENT_FRAMES)  # (sfn, arrival) of taken frames
         self.last_wait_end = 0  # the end of the last wait of the loop at the gate or in `give` (recorder.md 5.2)
         self.stage = "open"
         self.started = False
@@ -277,6 +280,7 @@ class CameraLoop:
                                                  height=config.resolution.height, framerate=config.framerate,
                                                  capture_fourcc=config.capture_fourcc))
         self.last_arrival, self.last_number = perf_counter_ns(), -1
+        self.recent_frames.clear()  # the source frame numbers start again at each open
         rate = opened.fps_num / opened.fps_den if opened.fps_num > 0 else 0.0
         if rate and not at_floor(rate):
             raise CaptureFailure("set mode", NO_FLOOR_MODE, code="below-floor")  # 14.1: OpenCV reports a rate under the floor
@@ -540,30 +544,32 @@ class CameraLoop:
             logger.exception(f"Frame ring write failed for camera {self.camera_id}: {error}")
         self.status.frame_count.value = number
         self.status.replaced_count.value = self.replaced_total + self.source.replaced_count - self.replaced_base
-        self._feed_check(frame)
+        self.recent_frames.append((frame.source_frame_number, frame.arrival_ns))
+        self._feed_check(frame.source_frame_number, frame.arrival_ns)
         if self.search is not None:
             self.search.frame(frame.source_frame_number, frame.arrival_ns,
                               lambda: self._brightness(payload, image, flags))
         self._feed_block(frame)
 
-    def _feed_check(self, frame: CapturedFrame) -> None:
-        """The check after a live change (10.2): skip 15 delivered frames, then measure over 60."""
+    def _feed_check(self, sfn: int, arrival_ns: int) -> None:
+        """The check after a live change (10.2): skip 15 delivered frames, then measure over 60. Skipped frame 1
+        is the first frame that arrived after `after` (the start of the set) [ADR-53VB]."""
         check = self.check
-        if check is None or self.search is not None or frame.arrival_ns <= check["after"]:
+        if check is None or self.search is not None or arrival_ns <= check["after"]:
             return
         if check["first"] is None:
-            check["first"] = frame.source_frame_number
+            check["first"] = sfn
         if check["start"] is None:
-            if frame.source_frame_number >= check["first"] + rate_check.CHECK_SKIP:
-                check["start"] = (frame.source_frame_number, frame.arrival_ns)
-                check["deadline"] = rate_check.early_deadline_ns(frame.arrival_ns, self.reference_rate)
+            if sfn >= check["first"] + rate_check.CHECK_SKIP:
+                check["start"] = (sfn, arrival_ns)
+                check["deadline"] = rate_check.early_deadline_ns(arrival_ns, self.reference_rate)
             return
-        if frame.source_frame_number < check["start"][0] + rate_check.CHECK_FRAMES - 1:
-            if frame.arrival_ns > check["deadline"]:
+        if sfn < check["start"][0] + rate_check.CHECK_FRAMES - 1:
+            if arrival_ns > check["deadline"]:
                 # 10.2: a later frame came after the deadline, so frame s_a + 59 did not come in time
-                self._too_slow(rate_check.measured_rate(*check["start"], frame.source_frame_number, frame.arrival_ns))
+                self._too_slow(rate_check.measured_rate(*check["start"], sfn, arrival_ns))
             return
-        measured = rate_check.measured_rate(*check["start"], frame.source_frame_number, frame.arrival_ns)
+        measured = rate_check.measured_rate(*check["start"], sfn, arrival_ns)
         self.check = None
         self.status.update_info(measured_fps=measured)
         if self.signals.empty():  # a newer change starts a new check (agent 27)
@@ -619,6 +625,9 @@ class CameraLoop:
             self.config = config
             self.check = dict(after=after_ns, first=None, start=None, deadline=None)
             self.status.set_state("checking")
+            # 10.2 [ADR-53VB, ADR-0R76]: the frames that the loop took after the change and before this read count
+            for sfn, arrival_ns in [frame for frame in self.recent_frames if frame[1] > after_ns]:
+                self._feed_check(sfn, arrival_ns)
         if self.status.search_requested.value:
             self._requested_search()
 

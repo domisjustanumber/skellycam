@@ -1055,6 +1055,7 @@ def bare_loop(config, state="ready"):
     loop.update_sub, loop.recording_sub, loop.signals, loop.search_replies = (queue.Queue() for _ in range(4))
     loop.search = loop.search_before = loop.search_final = loop.take_writer = loop.check = loop.exposure_range = None
     loop.no_exposure, loop.reference_rate = False, 30.0
+    loop.recent_frames = __import__("collections").deque()  # the taken frames that a new check gets (ADR-0R76)
     return loop
 
 
