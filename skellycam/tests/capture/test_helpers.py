@@ -309,6 +309,65 @@ def test_virtual_clock_drops_an_expected_thread_that_ends_leaves_or_does_not_sta
         assert clock.describe()["expected"] == [], case
 
 
+def _gate_loop(clock, opened, probed, go):
+    """A camera loop at the gate: one probe with the gate shut, then the real work of its pass until `go`, then the
+    next probe (the gate is open), then it leaves the clock."""
+    def loop():
+        clock.gate(True, shut=lambda: not opened.is_set())
+        probed.set()
+        go.wait(30)
+        clock.gate(False)
+        clock.leave()
+
+    thread = threading.Thread(target=loop, daemon=True)
+    clock.expect(thread)
+    thread.start()
+    probed.wait(5)
+    return thread
+
+
+def _wait_on_the_clock(clock, seconds):
+    waiter = threading.Thread(target=lambda: clock.wait_until(clock.now_ns() + round(seconds * 1e9)), daemon=True)
+    waiter.start()
+    return waiter
+
+
+def test_virtual_clock_holds_the_time_for_a_loop_whose_gate_opened():
+    """T-CAP-86 on 2 cores [ADR-7GC1]: a loop at a shut gate does not hold the time. When its gate opens, it holds
+    the time until its next gate probe, as a loop in "run" (`fallback_s` is 60 s, so no forced step). Without the
+    rule, a waiter moved the time 1 s at once while the loop still had to take its frame."""
+    clock = VirtualClock(fallback_s=60.0)
+    opened, probed, go = threading.Event(), threading.Event(), threading.Event()
+    loop = _gate_loop(clock, opened, probed, go)
+    first = _wait_on_the_clock(clock, 1.0)
+    first.join(5)
+    assert not first.is_alive() and clock.now_ns() == VirtualClock.START_NS + 10**9, "a shut gate holds the time"
+    opened.set()
+    second = _wait_on_the_clock(clock, 1.0)
+    time.sleep(0.3)
+    assert clock.now_ns() == VirtualClock.START_NS + 10**9, "the time moved before the loop at an open gate ran"
+    go.set()
+    loop.join(5)
+    second.join(5)
+    assert not second.is_alive() and clock.now_ns() == VirtualClock.START_NS + 2 * 10**9
+
+
+def test_virtual_clock_moves_by_forced_steps_past_a_loop_that_does_not_come_back():
+    """[ADR-7GC1]: a loop whose gate opened and that does not probe again (a hung call) does not stop the clock: the
+    forced steps move the time to the wake time of the waiter."""
+    clock = VirtualClock(fallback_s=0.05, forced_step_s=0.01)
+    opened, probed, go = threading.Event(), threading.Event(), threading.Event()
+    loop = _gate_loop(clock, opened, probed, go)
+    opened.set()
+    waiter = _wait_on_the_clock(clock, 0.05)
+    waiter.join(10)
+    stuck = loop.is_alive()
+    go.set()
+    loop.join(5)
+    assert not waiter.is_alive() and stuck, "the waiter did not end while the loop did not come back"
+    assert clock.now_ns() >= VirtualClock.START_NS + 5 * 10**7
+
+
 def test_real_clock_waits_real_time():
     clock = RealClock()
     t0 = time.perf_counter()

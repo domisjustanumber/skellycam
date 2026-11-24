@@ -1293,6 +1293,11 @@ section adds only what capture adds.
   clock, as the control thread does for a request
   [ADR-DC43](../decisions/entries/DC43-choices-of-fix-lane-5.md)
   ([ADR-F4N7](../decisions/entries/F4N7-decisions-of-the-user-on-the-pace-tests-of-fix-lane-6.md), Q673).
+  A camera loop at the lockstep gate does not hold the virtual clock while its gate stays shut. When its gate
+  opens, the loop holds the clock until its next gate probe. The forced steps still move the clock, so a loop that
+  does not come back cannot stop it
+  [ADR-7GC1](../decisions/entries/7GC1-choices-of-the-gate-on-the-test-clock-and-the-end-of-t-cap-05.md)
+  ([ADR-B1DE](../decisions/entries/B1DE-decisions-of-the-user-on-the-share-level-and-the-test-clock.md), Q692).
 
 Systems [U18, U20, U21]:
 

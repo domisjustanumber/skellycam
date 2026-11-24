@@ -109,6 +109,12 @@ class VirtualClock:
     6d496aa24, macOS, T-CAP-108).
 
     A camera loop thread is a participant from its start (`expect`), before its first wait.
+
+    A loop at the gate waits only while its gate stays shut (`gate(True, shut)`). When `shut()` is false, the loop
+    can pass, but it does not run yet: it sleeps 1 ms of real time and then does its next pass up to the next gate
+    probe. Until that probe, the loop holds the time as in "run", so the time does not run on past its frames
+    (T-CAP-86 on 2 cores: in the failed runs, the time moved 99 % of the collection while a loop at the gate could
+    pass) [ADR-7GC1]. A forced step still moves the time, so a loop that does not come back cannot stop the clock.
     """
     virtual = True
     START_NS = 1_000_000_000_000
@@ -119,6 +125,7 @@ class VirtualClock:
         self._states = {}  # thread ident -> "run" | "gate" | "hold" | ("wait", wake_ns)
         self._threads = {}
         self._expected = []  # threads of `expect` that did not wait on the clock yet
+        self._shut = {}  # thread ident -> `shut` of its "gate": a callable, true while the gate stays shut
         self._changed = time.monotonic()
         self.fallback_s = fallback_s
         self.forced_step_ns = round(forced_step_s * 1e9)
@@ -152,7 +159,10 @@ class VirtualClock:
             with self._condition:
                 self._set(me, "run")
 
-    def gate(self, blocked):
+    def gate(self, blocked, shut=None):
+        """The result of a gate probe of a camera loop. With `blocked`, `shut()` tells if the gate is still shut: the
+        loop holds the time from when `shut()` is false until its next probe. With no `shut`, the gate counts as
+        shut until the next probe."""
         me = threading.get_ident()
         with self._condition:
             if me not in self._states and threading.current_thread() not in self._expected:
@@ -161,8 +171,9 @@ class VirtualClock:
             state = "gate" if blocked else "run"
             if self._states.get(me) != state:
                 self._set(me, state)
-                if blocked:
-                    self._advance()
+            if blocked:
+                self._shut[me] = shut
+                self._advance()
 
     def leave(self):
         with self._condition:
@@ -244,15 +255,31 @@ class VirtualClock:
 
     def _set(self, me, state):
         self._states[me] = state
+        if state != "gate":
+            self._shut.pop(me, None)
         self._changed = time.monotonic()
+
+    def _holds(self, ident, state):
+        """True when the participant can run, so the time must wait for it: "run", or "gate" with an open gate. A
+        `shut` that raises counts as an open gate: the next probe of the loop or a forced step decides."""
+        if state != "gate":
+            return state == "run"
+        shut = self._shut.get(ident)
+        try:
+            return shut is not None and not shut()
+        except Exception:
+            return True
 
     def _advance(self, force=False):
         for ident in [i for i in self._states if not self._threads[i].is_alive()]:
             del self._states[ident]
+            self._shut.pop(ident, None)
         # a thread of `expect` that started and ended with no wait on the clock
         self._expected = [t for t in self._expected if t.ident is None or t.is_alive()]
         waits = [state[1] for state in self._states.values() if isinstance(state, tuple)]
-        if not waits or (not force and ("run" in self._states.values() or self._expected)):
+        if not waits:
+            return
+        if not force and (self._expected or any(self._holds(i, s) for i, s in self._states.items())):
             return
         target = min(waits)
         if force:

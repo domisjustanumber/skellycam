@@ -87,6 +87,7 @@ These entries wait for a decision of the user. Section is the section or area of
 | [DC43](entries/DC43-choices-of-fix-lane-5.md) | Choices of fix lane 5: control thread on the test clock, test waits for a short `ready` and for a killed process, Windows Server OS key | none | proposed |
 | [0R76](entries/0R76-choices-of-the-exact-skip-after-a-live-change.md) | Choices of the exact skip after a live change and a search: anchors, the time-out anchor, replay of 1024 taken frames, limits | `skellycam.core.camera.capture` | proposed |
 | [B7YV](entries/B7YV-choices-of-fix-lane-6.md) | Choices of fix lane 6: one run for the two halves, nominal values and loose checks, T-PRV-54, loop threads on the test clock, T-CAP-86 diagnostics | none | proposed |
+| [7GC1](entries/7GC1-choices-of-the-gate-on-the-test-clock-and-the-end-of-t-cap-05.md) | Choices of fix lane 6: a loop at an open gate holds the test clock until its next probe; forced steps still move it | none | proposed |
 
 The entries that are `rejected`, `superseded by XXXX`, `absorbed into <path>#<anchor>`,
 `evidence; used by XXXX`, `evidence; replaced by XXXX` or `done` are in [historical.md](historical.md).

@@ -39,3 +39,10 @@ load changed during the runs.
 5. **Windows** (the development machine, Windows 11, Python 3.13.18): each changed test file passed one time, with
    its `pace` tests (margin 1); the 12 new `pace` tests alone with `SKELLYCAM_PACE_MARGIN=3` passed; the other test
    files that use the capture harness passed with `-m "not pace"`.
+6. **The gate on the test clock** (item 1 of [ADR-7GC1](../entries/7GC1-choices-of-the-gate-on-the-test-clock-and-the-end-of-t-cap-05.md)),
+   the set-up above, each run T-CAP-13 (two cases) and T-CAP-86. Before the change, 30 runs: T-CAP-86 failed 25 times (each failure took about 61 s), T-CAP-13 0
+   times. After the change, 30 runs: 0 failures (each run about 2 s). The diagnosis of this lane read the trace of
+   the failed runs: the time moved more than 99 % of the virtual time of the collection while a loop in "gate"
+   could pass. This step did not measure that share again. The two new self-tests of the clock pass on Windows and
+   in WSL. With the change, T-CAP-05 failed at each run: "ring frame counts differ: {'e605': 1109, '17ae': 1109,
+   '4a36': 1110}". The decision Q696 of the user then changed the end check of T-CAP-05.
