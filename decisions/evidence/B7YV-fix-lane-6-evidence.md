@@ -50,9 +50,10 @@ load changed during the runs.
    Q696 of [ADR-8ACV](../entries/8ACV-decision-of-the-user-on-the-end-check-of-t-cap-05.md)), with the clock change
    of item 6. On Windows (the machine of item 5):
    - 5 runs: 5 passed. Ring frame counts 1109, 1109 and 1110 (the fast camera). The last ring frames arrive at
-     39.9999996 s, 39.9999996 s and 39.9999999 s of the clock. From ring frame 900 (33 s) on, ring frame n of the
-     fast camera arrives one frame period (33 ms) before ring frame n of the two others: it is one frame ahead
-     after the drop at the end of its 60 fps window.
+     39.9999996 s, 39.9999996 s and 39.9999999 s of the clock. From ring frame 811 to the end (frame 811 of the
+     two others arrives at 30.1 s, of the fast camera at 30.0667 s), ring frame n of the fast camera arrives one
+     frame period (33 ms) before ring frame n of the two others: it is one frame ahead after the drop at the end
+     of its 60 fps window. At ring frame 810 the difference is 66.7 ms, and at ring frames 780 to 809 it is 50 ms (a trace of one run).
    - The fast window at 60.0000018 frames per second (frames a few ns early), a temporary change: 3 runs, 3
      passed. Ring frame counts 1109, 1109 and 1109; the last ring frames at 39.9999996 s, 39.9999996 s and
      39.9999993 s.

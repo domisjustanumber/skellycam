@@ -12,7 +12,8 @@ Q692.
 2. **Q692.** "Have an agent propose a fix of the test clock for T-CAP-86, proved by 2-core runs, and leave the
    test blocking meanwhile?" Yes.
 
-The choices of the agent that build these items are in [ADR-B7YV](B7YV-choices-of-fix-lane-6.md) (proposed).
+The choices of the agent that build these items are in [ADR-B7YV](B7YV-choices-of-fix-lane-6.md) (proposed) and,
+for Q692, in [ADR-7GC1](7GC1-choices-of-the-gate-on-the-test-clock-and-the-end-of-t-cap-05.md) (proposed).
 
 ## Reason
 

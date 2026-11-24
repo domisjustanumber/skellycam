@@ -13,7 +13,8 @@
    that raises counts as an open gate. A gate with no `shut` counts as shut, as before. Each probe with a shut gate
    keeps its `shut` and tries to move the time, not only the first probe.
    `capture_session.install_gate_probe` gives `shut` as the product probe `should_grab_by_id` again, with no clock
-   call. That probe only reads the shared status values of the group. The forced steps (`fallback_s` 50 ms, step
+   call. `shut` runs under the lock of the clock, so it must not block, take a lock or call the clock. That probe
+   only reads the shared status values of the group, and they have no lock (`lock=False`). The forced steps (`fallback_s` 50 ms, step
    10 ms) do not change, so a loop that does not come back does not stop the clock. Two self-tests in
    `test_helpers.py`. The 15 s ready limit of the product and the checks of T-CAP-86 do not change, and T-CAP-86
    stays blocking.

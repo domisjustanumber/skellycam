@@ -341,7 +341,8 @@ def test_virtual_clock_holds_the_time_for_a_loop_whose_gate_opened():
     loop = _gate_loop(clock, opened, probed, go)
     first = _wait_on_the_clock(clock, 1.0)
     first.join(5)
-    assert not first.is_alive() and clock.now_ns() == VirtualClock.START_NS + 10**9, "a shut gate holds the time"
+    assert not first.is_alive() and clock.now_ns() == VirtualClock.START_NS + 10**9, (
+        "the time did not move past a loop at a shut gate")
     opened.set()
     second = _wait_on_the_clock(clock, 1.0)
     time.sleep(0.3)
@@ -361,11 +362,14 @@ def test_virtual_clock_moves_by_forced_steps_past_a_loop_that_does_not_come_back
     opened.set()
     waiter = _wait_on_the_clock(clock, 0.05)
     waiter.join(10)
+    ended = not waiter.is_alive()  # read before `go`: the loop has not come back yet
     stuck = loop.is_alive()
+    now_ns = clock.now_ns()
     go.set()
     loop.join(5)
-    assert not waiter.is_alive() and stuck, "the waiter did not end while the loop did not come back"
-    assert clock.now_ns() >= VirtualClock.START_NS + 5 * 10**7
+    assert stuck, "the loop came back before the check"
+    assert ended, "the forced steps did not move the time past a loop that did not come back"
+    assert now_ns >= VirtualClock.START_NS + 5 * 10**7
 
 
 def test_real_clock_waits_real_time():

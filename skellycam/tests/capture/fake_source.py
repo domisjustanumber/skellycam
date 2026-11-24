@@ -162,7 +162,8 @@ class VirtualClock:
     def gate(self, blocked, shut=None):
         """The result of a gate probe of a camera loop. With `blocked`, `shut()` tells if the gate is still shut: the
         loop holds the time from when `shut()` is false until its next probe. With no `shut`, the gate counts as
-        shut until the next probe."""
+        shut until the next probe. `shut` runs under the lock of the clock, in any thread that moves the time: it
+        must not block, take a lock or call the clock. A `shut` that raises counts as an open gate."""
         me = threading.get_ident()
         with self._condition:
             if me not in self._states and threading.current_thread() not in self._expected:
