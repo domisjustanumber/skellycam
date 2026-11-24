@@ -39,7 +39,9 @@ def record(app, spies, directory, frames=30, camera_id=None):
 
 def test_t_cap_05_replaced_count_matches_the_gaps(monkeypatch):
     """T-CAP-05, sections 5.2 and 5.3 [D26, D27, agent 49, agent 65]: three fake cameras in one group,
-    each in a 30 fps mode. Equal ring frame counts; for each camera, the sum of the gaps of
+    each in a 30 fps mode. The ring frame counts differ by at most one, and the last frames of the rings
+    arrive within 1 ms of each other (Q696 [ADR-8ACV]): the gate lets one camera be one frame ahead (5.2), so equal
+    counts at the end are not a rule [ADR-7GC1]. For each camera, the sum of the gaps of
     `source_frame_number` between taken frames, from the first frame taken in the gate, equals the
     increase of `replaced_count` from that frame; one log line per camera at stop with that count.
 
@@ -64,7 +66,10 @@ def test_t_cap_05_replaced_count_matches_the_gaps(monkeypatch):
         last = {cid: max(app.factory.logs[cid].frames.values())[0] for cid in app.factory.camera_ids}
         assert max(last.values()) - min(last.values()) < 1_000_000, f"the last frames are not on one round: {last}"
         counts = {cid: len(spies.of("jpeg", cid)) for cid in app.factory.camera_ids}
-        assert len(set(counts.values())) == 1, f"ring frame counts differ: {counts}"
+        ring_last = {cid: max(event["arrival_ns"] for event in spies.of("jpeg", cid)) for cid in app.factory.camera_ids}
+        assert max(counts.values()) - min(counts.values()) <= 1, f"ring frame counts differ by more than one: {counts}"
+        assert max(ring_last.values()) - min(ring_last.values()) < 1_000_000, (
+            f"the last ring frames are not on one round: {ring_last}, counts {counts}")
         assert min(counts.values()) >= 600, f"less than 20 s of frames in the gate: {counts}"
         replaced = {}
         for camera_id in app.factory.camera_ids:

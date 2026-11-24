@@ -46,3 +46,24 @@ load changed during the runs.
    could pass. This step did not measure that share again. The two new self-tests of the clock pass on Windows and
    in WSL. With the change, T-CAP-05 failed at each run: "ring frame counts differ: {'e605': 1109, '17ae': 1109,
    '4a36': 1110}". The decision Q696 of the user then changed the end check of T-CAP-05.
+7. **The end check of T-CAP-05** (item 2 of [ADR-7GC1](../entries/7GC1-choices-of-the-gate-on-the-test-clock-and-the-end-of-t-cap-05.md),
+   Q696 of [ADR-8ACV](../entries/8ACV-decision-of-the-user-on-the-end-check-of-t-cap-05.md)), with the clock change
+   of item 6. On Windows (the machine of item 5):
+   - 5 runs: 5 passed. Ring frame counts 1109, 1109 and 1110 (the fast camera). The last ring frames arrive at
+     39.9999996 s, 39.9999996 s and 39.9999999 s of the clock. From ring frame 900 (33 s) on, ring frame n of the
+     fast camera arrives one frame period (33 ms) before ring frame n of the two others: it is one frame ahead
+     after the drop at the end of its 60 fps window.
+   - The fast window at 60.0000018 frames per second (frames a few ns early), a temporary change: 3 runs, 3
+     passed. Ring frame counts 1109, 1109 and 1109; the last ring frames at 39.9999996 s, 39.9999996 s and
+     39.9999993 s.
+   - The clock before the change, a temporary reverse of the clock files: 3 runs at 60 frames per second and 1
+     run at 60.0000018 frames per second, each passed.
+   - A temporary mutation of the gate in `should_grab_by_id` (`own <= status.frame_count.value + 1`, so a camera
+     can be two frames ahead): T-CAP-05 failed, "ring frame counts differ by more than one: {'e605': 1109,
+     '17ae': 1109, '4a36': 1111}". After the undo, the diff of `skellycam/core` and `skellycam/api` was empty.
+   - `-m "not pace"`, each test file of `skellycam/tests/capture/` in 7 slices, and `test_pace_marker.py`: each
+     passed (464 passed, 49 skipped; the `pace` tests and T-CAP-46 deselected).
+
+   In WSL (the set-up above, a new copy of the worktree): 20 runs, each one pytest process with T-CAP-86,
+   T-CAP-13 (two cases) and T-CAP-05: 0 failures (80 of 80 tests passed, about 3 s for each run).
+   `test_helpers.py`: 34 passed.
