@@ -29,6 +29,11 @@
    `test_the_loop_passes_have_no_pause_above_1_s_under_load` takes the parameter `workers` ("thread", "process"). It
    uses the same run as the blocking test (`one_run`) and the same bound for each kind: `bound(1 / 30, 1.0)`. The
    blocking test keeps the same three checks for each kind. The test names do not change.
+4. **The slow period of T-REQ-17.** `FakeSource.slow_period(rate, seconds, at_next_set=False)`: with
+   `at_next_set=True`, the period is armed, and the next live set of `set_controls` starts it (from the next
+   frame). T-REQ-17 arms its slow period of 5 fps for 60 s so, for the search that must time out. A self-test of
+   the fake in `test_helpers.py`. T-CAP-113 has a similar race, but its slow camera gets no live set: no change
+   there (evidence item 8).
 
 ## Reason
 
@@ -36,6 +41,9 @@
    moved more than 99 % of the virtual time of the collection while a loop in "gate" could pass (evidence item 6).
 2. Item 2: Q696 asks for the last frames of all cameras. The rings hold the frames that the product took, so their
    last frames show that the gate ended on one round. The last frames of the fakes show only the script.
+3. Item 4: only the camera loop is on the virtual clock, so the time runs on while a request goes through HTTP.
+   A slow period that starts before the request can end before the search, and then the search ends `done`. The
+   spec row of T-REQ-17 says that each value of the search is slow.
 
 ## Evidence
 

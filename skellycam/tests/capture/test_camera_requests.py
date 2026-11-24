@@ -854,7 +854,8 @@ def test_t_req_17_failed_sets_and_the_limit_with_the_loop(monkeypatch):
                  "readback-differs": "exposure -9 read back as -8", "timed-out": "it took more than 20 s"}
         for reason in ("set-failed", "readback-differs", "timed-out"):
             if reason == "timed-out":
-                app.factory.sources[camera_id].slow_period(rate=5.0, seconds=60.0)
+                # from the first set of the search, not from now: the request takes real time [ADR-7GC1]
+                app.factory.sources[camera_id].slow_period(rate=5.0, seconds=60.0, at_next_set=True)
             response = press(app)
             assert response.status_code == 200, response.text
             body = response.json()

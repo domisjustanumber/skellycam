@@ -453,6 +453,7 @@ class FakeSource:
         self._remove_after = script.removed_after_frame
         self._stop_after = script.stop_after_frame
         self._slow = None  # [rate, seconds, start_ns or None]
+        self._slow_armed = None  # (rate, seconds): a slow period that the next live set starts
         self._drops = set(script.drop_before_frames)  # frames after a camera drop
         self._drop_next = False
         self._in_window = False
@@ -566,6 +567,10 @@ class FakeSource:
             fault = None
             if live:
                 self._live_changes += 1
+                if self._slow_armed is not None:  # `slow_period(..., at_next_set=True)`
+                    self._slow = [*self._slow_armed, None]
+                    self._slow_armed = None
+                    self.slow_finished_ns = None
                 faults = self.script.live_set_faults
                 fault = faults[self._live_changes - 1] if self._live_changes <= len(faults) else None
             if self._restore is not None:
@@ -659,9 +664,14 @@ class FakeSource:
         """End a hold (`hold_opens`, `hold_after_change`)."""
         self._released.set()
 
-    def slow_period(self, rate, seconds):
-        """Deliver `rate` frames per second for `seconds` (clock time) from the next frame."""
+    def slow_period(self, rate, seconds, at_next_set=False):
+        """Deliver `rate` frames per second for `seconds` (clock time) from the next frame. With `at_next_set`, the
+        slow period starts at the next live set of `set_controls`, not now: the time that a request takes before
+        its first set (only the camera loop is on the virtual clock) then does not use up the period [ADR-7GC1]."""
         with self._lock:
+            if at_next_set:
+                self._slow_armed = (rate, seconds)
+                return
             self._slow = [rate, seconds, None]
             self.slow_finished_ns = None
 
