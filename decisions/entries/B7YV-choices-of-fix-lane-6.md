@@ -39,7 +39,12 @@
    and the pass, time and gate counts at each new relay message. T-CAP-13 gives the times of the opens.
 10. **CI.** No change of `capture.yml`: its pace step (`-m "pace and ..."`, margin 3) and its blocking steps
     (`not pace`) take the new tests. `test_pace_marker.py` lists each new test.
-11. **Not changed.** The safety-net counts (4 to 7) of T-PRV-09 and T-PRV-13 and the answer windows of T-PRV-15 stay
+11. **T-PRV-54 answers late** (it replaces the answer at once of item 7). After each camera message, the writer
+    of the ring writes 5 more frames and pauses (`PacedWriter.stop_after`, as in T-PRV-07). Then the client
+    answers. Thus the newest frame at the send is the pause frame, and the check is exact at each pace. With the
+    answer at once, the test passed for a sender of the next frame in sequence and for a sender of the newest frame
+    minus 2. With the late answer, the test fails for each of these two changes of `preview_relay.py`.
+12. **Not changed.** The safety-net counts (4 to 7) of T-PRV-09 and T-PRV-13 and the answer windows of T-PRV-15 stay
     blocking: they did not fail on CI.
 
 ## Reason

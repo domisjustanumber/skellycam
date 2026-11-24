@@ -195,7 +195,7 @@ def busy(stop):
 def _under_load_run(workers):
     """The run of the risk guard under load: two fake cameras stream for 12 s on the real clock while four threads of
     the main process run Python with no pause. Gives the facts that the blocking test and the `pace` test check."""
-    with pytest.MonkeyPatch.context() as monkeypatch,             capture_app(monkeypatch, [FakeScript(), FakeScript()], workers=workers, virtual=False) as app:
+    with pytest.MonkeyPatch.context() as monkeypatch, capture_app(monkeypatch, [FakeScript(), FakeScript()], workers=workers, virtual=False) as app:
         ready_app_steps(app)
         watchers = {cid: StateWatcher(app, cid) for cid in app.factory.camera_ids}
         counts = {cid: status_of(app, cid).alive_count.value for cid in app.factory.camera_ids}

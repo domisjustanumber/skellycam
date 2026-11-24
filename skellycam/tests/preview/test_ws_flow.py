@@ -265,7 +265,7 @@ def _answered_run(cleanup, writers, cameras, answer, seconds):
     rings = fake_rings(cleanup, cameras)
     with server(manager_with({cid: r.reader() for cid, r in rings.items()})) as (_, client), \
             client.websocket_connect(ROUTE) as session:
-        ws = WsClient(session, answer=answer, rings=rings)
+        ws = WsClient(session, answer=answer)
         t0 = time.monotonic()
         start_writers(writers, rings.values())
         pump(ws, duration=seconds)
@@ -311,20 +311,48 @@ def test_t_prv_10_each_camera_gets_its_share(cleanup, writers):
         assert_share(run.ws, fake_ring, run.t0, run.t1)
 
 
+AHEAD = 5  # T-PRV-54: the frames that each ring writes after a camera message, before the answer [ADR-B7YV]
+
+
 def test_t_prv_54_the_next_message_after_an_answer_holds_the_newest_frame(cleanup, writers):
-    """T-PRV-54, section 4.3 (Q670 of the user) [ADR-F4N7]: four rings at 30 fps for 5 s; the client answers at
-    once and notes the newest frame of the ring at each answer. After each answer, the next camera message of that
-    camera holds the newest frame at the send or one older: its `frame_number` is at least the newest frame at the
-    answer minus 1, because the send comes after the answer. `frame_number` increases; each camera gets more camera
-    messages than the safety net gives. The rule does not depend on the pace: blocking."""
-    run = _answered_run(cleanup, writers, (A, B, C, D), True, 5.0)
-    for cid in run.rings:
-        frames, newest = run.ws.frames(cid), run.ws.newest_at_answer[cid]
-        assert len(newest) == len(frames), (cid, len(newest), len(frames))
-        old = [(newest[i], frames[i + 1]) for i in range(len(frames) - 1) if frames[i + 1] < newest[i] - 1]
-        assert old == [], f"camera {cid}: (newest frame at the answer, the next camera message): {old[:5]}"
+    """T-PRV-54, section 4.3 (Q670 of the user) [ADR-F4N7]: four rings at 30 fps for 5 s; the client answers late.
+    After each camera message, the writer of that ring writes `AHEAD` more frames and pauses, as in T-PRV-07; then
+    the client answers. While the writer pauses, the newest frame at the send is the pause frame. After each answer,
+    the next camera message of that camera holds the newest frame at the send or one older: its `frame_number` is at
+    least the pause frame minus 1. A sender that sends the next frame in sequence, or a frame two older than the
+    newest, fails [ADR-B7YV]. `frame_number` increases; each camera gets more camera messages than the safety net
+    gives. The rule does not depend on the pace: blocking."""
+    cameras = (A, B, C, D)
+    rings = fake_rings(cleanup, cameras)
+    paused_at = {cid: [] for cid in cameras}  # the pause frame of the ring at each answer
+    with server(manager_with({cid: r.reader() for cid, r in rings.items()})) as (_, client), \
+            client.websocket_connect(ROUTE) as session:
+        ws = WsClient(session)
+        paced = {cid: PacedWriter(rings[cid], stop_after=0).start_thread() for cid in cameras}
+        writers.extend(paced.values())
+        first_messages(ws, cameras, timeout=2.0)
+        t0 = time.monotonic()
+        while time.monotonic() < t0 + 5.0:
+            counts = {cid: len(ws.camera[cid]) for cid in cameras}
+            for cid in cameras:
+                paced[cid].stop_after = ws.frames(cid)[-1] + AHEAD
+            pump(ws, until=lambda: all(rings[cid].last == paced[cid].stop_after for cid in cameras), timeout=2.0,
+                 what="the pause frame of each ring")
+            assert {cid: len(ws.camera[cid]) for cid in cameras} == counts, (
+                "a camera message before the answer: the writers were too slow for the safety net")
+            for cid in cameras:
+                paused_at[cid].append(rings[cid].last)
+                ws.send_ready(cid)
+            pump(ws, until=lambda: all(len(ws.camera[cid]) > counts[cid] for cid in cameras), timeout=2.0,
+                 what="the answer of each camera")
+        t1 = time.monotonic()
+    for cid in cameras:
+        frames = ws.frames(cid)
+        assert len(frames) == len(paused_at[cid]) + 1, (cid, len(frames), len(paused_at[cid]))
+        old = [(p, f) for p, f in zip(paused_at[cid], frames[1:]) if f < p - 1]
+        assert old == [], f"camera {cid}: (the pause frame at the answer, the next camera message): {old[:5]}"
         assert all(b > a for a, b in zip(frames, frames[1:])), f"camera {cid}: frame numbers do not increase"
-        assert_more_than_the_safety_net(run.ws, cid, run.t1 - run.t0)
+        assert_more_than_the_safety_net(ws, cid, t1 - t0)
 
 
 def test_t_prv_11_safety_net_only(cleanup, writers):

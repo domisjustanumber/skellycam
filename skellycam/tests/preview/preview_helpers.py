@@ -178,7 +178,8 @@ class PacedWriter:
     """Writes frames `first`, `first + 1`, ... to a fake ring at `fps`, in a thread (`start_thread`)
     or as a task of the running event loop (`start_task`). `script(k)` gives extra write arguments for
     frame k. A frame with `newer_frame_waiting=True` is followed at once by the next frame, in the same
-    step. After `stop_after`, the writer writes nothing more."""
+    step. After `stop_after`, the writer writes nothing more. When a test then makes `stop_after` larger, the writer
+    continues at `fps` from that time (T-PRV-54)."""
 
     def __init__(self, ring_, fps=30, first=None, stop_after=None, script=None):
         self.ring = ring_
@@ -208,6 +209,7 @@ class PacedWriter:
             while not self._stop.is_set():
                 if not self.step():
                     self._stop.wait(0.005)
+                    next_t = time.perf_counter()
                     continue
                 next_t += self.period
                 delay = next_t - time.perf_counter()
@@ -224,6 +226,7 @@ class PacedWriter:
             while not self._stop.is_set():
                 if not self.step():
                     await asyncio.sleep(0.005)
+                    next_t = loop.time()
                     continue
                 next_t += self.period
                 await asyncio.sleep(max(0.0, next_t - loop.time()))
@@ -535,12 +538,10 @@ class WsClient:
     the time it was taken from the socket, and answers at once for the cameras in `answer`
     (`True` = each camera)."""
 
-    def __init__(self, session, answer=frozenset(), rings=None):
+    def __init__(self, session, answer=frozenset()):
         self.session = session
         self.answer = answer
-        self.rings = rings or {}  # camera id -> FakeRing: an answer notes the newest frame of the ring (T-PRV-54)
         self.camera = defaultdict(list)  # camera id -> [(time, message)]
-        self.newest_at_answer = defaultdict(list)  # camera id -> the newest frame at the answer to each message
         self.json = []  # [(time, object)]
         self.order = []  # [(time, camera id)] in arrival order
 
@@ -565,8 +566,6 @@ class WsClient:
             self.camera[parsed.camera_id].append((now, parsed))
             self.order.append((now, parsed.camera_id))
             if self.answer is True or parsed.camera_id in self.answer:
-                if parsed.camera_id in self.rings:
-                    self.newest_at_answer[parsed.camera_id].append(self.rings[parsed.camera_id].last)
                 self.session.send_text(ready_text(parsed.camera_id))
             return parsed
         self.json.append((now, json.loads(message["text"])))

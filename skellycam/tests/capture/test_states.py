@@ -916,7 +916,7 @@ def _gate_test_run(tmp_path):
     """The run of the gate test (NEW-B): see `test_a_camera_selected_again_shares_the_gate_with_a_restarted_camera`.
     Gives (the rows of A and of B, `number_of_frames` of the stop)."""
     gap_after_frame_299 = FakeScript(intervals_ms=(1000 / 30,) * 299 + (GAP_OF_A_S * 1000,))
-    with pytest.MonkeyPatch.context() as monkeypatch,             capture_app(monkeypatch, [gap_after_frame_299, FakeScript()], workers="process") as app:
+    with pytest.MonkeyPatch.context() as monkeypatch, capture_app(monkeypatch, [gap_after_frame_299, FakeScript()], workers="process") as app:
         ready_app_steps(app)
         a, b = app.factory.camera_ids
         response = app.apply([app.config(a, use_this_camera=False), app.config(b)])
