@@ -270,13 +270,14 @@ def test_t_cap_31_the_skip_counts_the_frames_of_a_slow_set(monkeypatch):
     script = FakeScript(rate_after_change=(20.0,), live_set_delay_s=0.2)
     with one_camera(monkeypatch, script, track=True) as (app, camera_id, _):
         anchors = spy_check_anchors(monkeypatch)
+        t_request = app.clock.now_ns()  # the anchor is read after the request: the clock does not go back
         assert app.apply([app.config(camera_id, exposure=-6)]).status_code == 200
         app.wait_state(camera_id, "too_slow")
         log = app.factory.logs[camera_id]
         t_set = [t for name, t, d in log.events if name == "set_controls" and d.get("exposure")][-1]
         during = [k for k, (arrival, _) in log.frames.items() if t_set < arrival <= t_set + 200_000_000]
         assert len(during) >= 5, during  # frames came during the set
-        too_slow_after_the_window_start(app, camera_id, anchors)
+        too_slow_after_the_window_start(app, camera_id, anchors, not_before=t_request)
 
 
 def test_t_cap_31_too_slow_after_a_live_change(monkeypatch, tmp_path):
@@ -292,9 +293,10 @@ def test_t_cap_31_too_slow_after_a_live_change(monkeypatch, tmp_path):
     with one_camera(monkeypatch, script, track=True) as (app, camera_id, _):
         spies = Spies(monkeypatch, app)
         anchors = spy_check_anchors(monkeypatch)
+        t_request = app.clock.now_ns()  # the anchor is read after the request: the clock does not go back
         assert app.apply([app.config(camera_id, exposure=-6)]).status_code == 200
         app.wait_state(camera_id, "too_slow")
-        t_a, t_slow = too_slow_after_the_window_start(app, camera_id, anchors)
+        t_a, t_slow = too_slow_after_the_window_start(app, camera_id, anchors, not_before=t_request)
         assert t_slow < t_a + round(59 / 20 * 1e9)
         app.wait(lambda: any(e["arrival_ns"] > t_slow for e in spies.of("jpeg")), "preview after too_slow")
         refused = app.record_start(tmp_path)
