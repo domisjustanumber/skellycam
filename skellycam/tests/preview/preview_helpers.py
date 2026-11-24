@@ -178,7 +178,8 @@ class PacedWriter:
     """Writes frames `first`, `first + 1`, ... to a fake ring at `fps`, in a thread (`start_thread`)
     or as a task of the running event loop (`start_task`). `script(k)` gives extra write arguments for
     frame k. A frame with `newer_frame_waiting=True` is followed at once by the next frame, in the same
-    step. After `stop_after`, the writer writes nothing more."""
+    step. After `stop_after`, the writer writes nothing more. When a test then makes `stop_after` larger, the writer
+    continues at `fps` from that time (T-PRV-54)."""
 
     def __init__(self, ring_, fps=30, first=None, stop_after=None, script=None):
         self.ring = ring_
@@ -208,6 +209,7 @@ class PacedWriter:
             while not self._stop.is_set():
                 if not self.step():
                     self._stop.wait(0.005)
+                    next_t = time.perf_counter()
                     continue
                 next_t += self.period
                 delay = next_t - time.perf_counter()
@@ -224,6 +226,7 @@ class PacedWriter:
             while not self._stop.is_set():
                 if not self.step():
                     await asyncio.sleep(0.005)
+                    next_t = loop.time()
                     continue
                 next_t += self.period
                 await asyncio.sleep(max(0.0, next_t - loop.time()))

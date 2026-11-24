@@ -15,9 +15,10 @@ import time
 import pytest
 
 from skellycam.tests.capture.capture_session import (
-    Spies, camera_key_of, capture_app, capture_logs, numbers_in, one_camera, parse_relay, product, ready_app_steps,
-    sfn_gaps, spy_check_anchors, stop_line_count, take_rows, too_slow_after_the_window_start)
+    RingWatcher, Spies, camera_key_of, capture_app, capture_logs, numbers_in, one_camera, parse_relay, product,
+    ready_app_steps, sfn_gaps, spy_check_anchors, stop_line_count, take_rows, too_slow_after_the_window_start)
 from skellycam.tests.capture.fake_source import FakeScript
+from skellycam.tests.pace import bound, one_run
 
 FRAME_NS = round(1e9 / 30)
 MODES_30_60 = ((640, 480, 30, 1, "MJPG"), (640, 480, 60, 1, "MJPG"), (320, 240, 30, 1, "MJPG"))
@@ -65,7 +66,12 @@ def test_t_cap_13_warm_up_and_wait_for_the_others(monkeypatch, late_first_write)
         assert not spies.of("record")
         passed = min(t for t, s in app.tracker.states(second) if s in ("waiting", "ready"))
         waited = [t for t, s in app.tracker.states(first) if s == "waiting"]
-        assert waited and waited[0] < passed, "the first camera was not `waiting` while the second started"
+        opened = {cid: [round((t - app.clock.START_NS) / 1e9, 3) for name, t, _ in app.factory.logs[cid].events
+                        if name == "open"] for cid in (first, second)}
+        assert waited and waited[0] < passed, (
+            f"the first camera was not `waiting` while the second started (s from the clock start: waiting "
+            f"{[round((t - app.clock.START_NS) / 1e9, 3) for t in waited[:1]]}, second passed "
+            f"{round((passed - app.clock.START_NS) / 1e9, 3)}, opens {opened})")
         early = [e for e in spies.of("jpeg", first) if e["arrival_ns"] < passed - FRAME_NS - 1_000_000]
         assert not early, "the first camera was not paused while it waited"
 
@@ -618,47 +624,78 @@ def test_t_cap_86_relay_sends_each_camera_on_its_own(monkeypatch):
     6d496aa24, Linux)."""
     scripts = [FakeScript(modes=MODES_30_60), FakeScript(modes=MODES_30_60), FakeScript(modes=MODES_30_60, hold_opens=(2,))]
     with capture_app(monkeypatch, scripts) as app:
-        ready_app_steps(app)
-        a, b, reopened = app.factory.camera_ids
-        result = []
-        configs = [app.config(a), app.config(b), app.config(reopened, width=320, height=240)]
-        thread = threading.Thread(target=lambda: result.append(app.apply(configs)))
-        app.clock.wait_until(app.clock.now_ns())  # join the clock: the time moves only when this thread waits on it
-        source = None
+        messages, snapshots, trace = [], [], []
         try:
-            thread.start()
-            app.wait(lambda: reopened in app.factory.sources and app.factory.sources[reopened].holding.is_set(),
-                     "the reopened camera holds in `starting`")
-            source = app.factory.sources[reopened]
-            assert app.state(reopened) == "starting"
-            messages = []
-            _collect_one_frame_apart(app, messages, 20)
-            for header, frames in messages:
-                assert reopened not in frames and {a, b} <= set(frames), frames
-                assert header == max(frames.values())
-            for camera_id in (a, b):
-                assert messages[-1][1][camera_id] > messages[0][1][camera_id], f"camera {camera_id} did not advance"
+            ready_app_steps(app)
+            a, b, reopened = app.factory.camera_ids
+            result = []
+            configs = [app.config(a), app.config(b), app.config(reopened, width=320, height=240)]
+            thread = threading.Thread(target=lambda: result.append(app.apply(configs)))
+            app.clock.wait_until(app.clock.now_ns())  # join the clock: the time moves only when this thread waits on it
+            source = None
+            try:
+                thread.start()
+                app.wait(lambda: reopened in app.factory.sources and app.factory.sources[reopened].holding.is_set(),
+                         "the reopened camera holds in `starting`")
+                source = app.factory.sources[reopened]
+                snapshots.append(("the hold is seen", app.clock.describe()))
+                assert app.state(reopened) == "starting"
+                _collect_one_frame_apart(app, messages, 20, trace)
+                snapshots.append(("the relay messages are collected", app.clock.describe()))
+                for header, frames in messages:
+                    assert reopened not in frames and {a, b} <= set(frames), frames
+                    assert header == max(frames.values())
+                for camera_id in (a, b):
+                    assert messages[-1][1][camera_id] > messages[0][1][camera_id], f"camera {camera_id} did not advance"
+            finally:
+                snapshots.append(("before the release", app.clock.describe()))
+                if source is not None:
+                    source.release()
+                    app.wait(lambda: not source.holding.is_set(), "the held camera runs again")
+                app.clock.leave()
+                thread.join(60)
+            assert result and result[0].status_code == 200
+            app.wait_state(reopened, "ready")
+            after = []
+            app.wait(lambda: _collect(app, after) and reopened in after[-1][1], "the reopened camera in the relay")
         finally:
-            if source is not None:
-                source.release()
-                app.wait(lambda: not source.holding.is_set(), "the held camera runs again")
-            app.clock.leave()
-            thread.join(60)
-        assert result and result[0].status_code == 200
-        # The virtual times of the reopen (s from the open), for the CI log if the next wait fails.
-        events = [(name, t) for name, t, _ in app.factory.logs[reopened].events]
-        open_ns = [t for name, t in events if name == "open"][-1]
-        print("T-CAP-86 reopen:", [(name, round((t - open_ns) / 1e9, 3)) for name, t in events if t >= open_ns])
-        app.wait_state(reopened, "ready")
-        after = []
-        app.wait(lambda: _collect(app, after) and reopened in after[-1][1], "the reopened camera in the relay")
+            _print_t_cap_86_diagnostics(app, messages, snapshots, trace)
 
 
-def _collect_one_frame_apart(app, messages, count):
+def _print_t_cap_86_diagnostics(app, messages, snapshots, trace):
+    """Q673 [ADR-F4N7]: the virtual time, the clock states, the state and the frame count of each camera, the relay
+    messages and the events of the reopened camera (s from the clock start). Also the clock at three points of the
+    test, and (pass of the collection, virtual time, message count) at each new relay message. Pytest shows them for
+    a failed test."""
+    try:
+        group = app.group_or_none()
+        counts = group.cameras.orchestrator.camera_frame_counts if group is not None else {}
+        cameras = {cid: (app.status(cid).get("state") if group is not None else None, counts.get(cid),
+                         len(app.factory.logs[cid].taken)) for cid in app.factory.camera_ids}
+        start = app.clock.START_NS
+        reopened = app.factory.camera_ids[-1]
+        events = [(name, round((t - start) / 1e9, 3), "" if d is None else str(d)[:60])
+                  for name, t, d in app.factory.logs[reopened].events]
+        print("T-CAP-86 clock:", app.clock.describe())
+        print("T-CAP-86 cameras (state, gate frame count, frames taken from the fake):", cameras)
+        print("T-CAP-86 relay messages:", len(messages), [frames for _, frames in messages[-3:]])
+        print("T-CAP-86 clock during the test:", snapshots)
+        print("T-CAP-86 collection (pass, s, messages, gate counts):", trace)
+        print("T-CAP-86 events of the reopened camera:", events)
+    except Exception as error:  # the diagnostics must not hide the failure of the test
+        print("T-CAP-86 diagnostics failed:", repr(error))
+
+
+def _collect_one_frame_apart(app, messages, count, trace=None):
     """Collect relay messages one frame of virtual time apart. The caller has joined the clock, so the
-    virtual time does not run on while a poll builds a payload."""
-    for _ in range(50 * count):
-        if _collect(app, messages) >= count:
+    virtual time does not run on while a poll builds a payload. `trace` gets (pass, virtual s, message count, gate
+    frame count of each camera) at each new message."""
+    for index in range(50 * count):
+        before = len(messages)
+        if _collect(app, messages) > before and trace is not None:
+            counts = list(app.group.cameras.orchestrator.camera_frame_counts.values())
+            trace.append((index, round((app.clock.now_ns() - app.clock.START_NS) / 1e9, 3), len(messages), counts))
+        if len(messages) >= count:
             return
         app.clock.wait_until(app.clock.now_ns() + FRAME_NS)
     raise AssertionError(f"{len(messages)} relay messages, not {count}")
@@ -872,18 +909,14 @@ def test_t_cap_113_a_frame_that_waits_at_the_gate_is_not_too_slow(monkeypatch):
         assert abs(app.status(changed)["measured_fps"] - 30.0) <= 0.9
 
 
-@pytest.mark.capture_timing  # real time, process workers: rows 100 ms apart at most; load moves them (review item 8)
-def test_a_camera_selected_again_shares_the_gate_with_a_restarted_camera(monkeypatch, tmp_path):
-    """Suspected fault NEW-B (coordinator, 2026-11-20), sections 5.2 and 8.3: each camera process gets the
-    status table of the group as it was at its own start. Camera A is unselected; camera B is killed and
-    started again ("apply again"), so the table of B has no A; then A is selected again. In a take, A has
-    a gap of 500 ms (its source); B must wait for A at the gate, so that row k of both cameras is one
-    moment: the arrivals of a row differ by at most 100 ms, except at the gap, where the gate lets B take
-    one frame before A (5.2). PROCESS workers: THREAD workers share one table."""
-    from skellycam.core.take_recorder.sidecar import MISSING
+GAP_OF_A_S = 0.5  # the gap of camera A after its source frame 299 (10 s after each open)
 
-    gap_after_frame_299 = FakeScript(intervals_ms=(1000 / 30,) * 299 + (500.0,))  # 10 s after each open
-    with capture_app(monkeypatch, [gap_after_frame_299, FakeScript()], workers="process") as app:
+
+def _gate_test_run(tmp_path):
+    """The run of the gate test (NEW-B): see `test_a_camera_selected_again_shares_the_gate_with_a_restarted_camera`.
+    Gives (the rows of A and of B, `number_of_frames` of the stop)."""
+    gap_after_frame_299 = FakeScript(intervals_ms=(1000 / 30,) * 299 + (GAP_OF_A_S * 1000,))
+    with pytest.MonkeyPatch.context() as monkeypatch, capture_app(monkeypatch, [gap_after_frame_299, FakeScript()], workers="process") as app:
         ready_app_steps(app)
         a, b = app.factory.camera_ids
         response = app.apply([app.config(a, use_this_camera=False), app.config(b)])
@@ -895,15 +928,62 @@ def test_a_camera_selected_again_shares_the_gate_with_a_restarted_camera(monkeyp
         app.wait_state(b, "ready")
         response = app.apply([app.config(a), app.config(b)])
         assert response.status_code == 200, response.text
-        reopened = time.monotonic()
         app.wait_state(a, "ready")
         app.wait_state(b, "ready")
-        assert app.record_start(tmp_path).status_code == 200
-        time.sleep(max(0.0, reopened + 12.0 - time.monotonic()))  # past the gap of A at 10 s
+        ring = RingWatcher(app.ring_name(a))
+        try:
+            assert app.record_start(tmp_path).status_code == 200
+            # Q671: frame 300 of A comes after the gap; 30 frames more give rows after it. A loose limit: 10 times the
+            # 10 s of the gap after the open, not a fixed sleep [ADR-F4N7, ADR-B7YV]
+            app.wait(lambda: any(sfn >= 330 for _, _, sfn, _ in list(ring.frames)), "frame 330 of camera A",
+                     timeout=100.0)
+        finally:
+            ring.stop()
         stopped = app.record_stop()
         assert stopped.status_code == 200, stopped.text
-    rows = {cid: take_rows(tmp_path, cid) for cid in (a, b)}
-    assert len(rows[a]) == len(rows[b]) == stopped.json()[0]["number_of_frames"] > 200
+    return {cid: take_rows(tmp_path, cid) for cid in (a, b)}, stopped.json()[0]["number_of_frames"]
+
+
+@pytest.mark.capture_timing  # real time, process workers
+def test_a_camera_selected_again_shares_the_gate_with_a_restarted_camera(tmp_path):
+    """Suspected fault NEW-B (coordinator, 2026-11-20), sections 5.2 and 8.3: each camera process gets the
+    status table of the group as it was at its own start. Camera A is unselected; camera B is killed and
+    started again ("apply again"), so the table of B has no A; then A is selected again. In a take, A has
+    a gap of 500 ms (its source); B must wait for A at the gate, so that row k of both cameras is one
+    moment. PROCESS workers: THREAD workers share one table.
+
+    Blocking (Q671) [ADR-F4N7]: each sidecar has `number_of_frames` rows; the take holds the gap of A (a row of A
+    with source frame 300 or later after a row with 299 or earlier, 500 ms later); after the gap, the median
+    difference of the arrivals of a row is under half the gap. A camera B that does not wait for A at the gate is
+    ahead by the gap in each row after it [ADR-B7YV]. `test_a_row_of_the_two_cameras_is_one_moment` holds the
+    bound of 100 ms (16.1)."""
+    from skellycam.core.take_recorder.sidecar import MISSING
+
+    rows, number_of_frames = one_run("gate test", lambda: _gate_test_run(tmp_path))
+    a, b = list(rows)
+    assert len(rows[a]) == len(rows[b]) == number_of_frames
+    timed = [(ra, rb) for ra, rb in zip(rows[a], rows[b]) if not (ra.flags | rb.flags) & MISSING]
+    gap = [i for i in range(1, len(timed)) if timed[i - 1][0].source_frame_number <= 299 < timed[i][0].source_frame_number]
+    assert len(gap) == 1, f"the take does not hold the gap of A: {[(ra.frame, ra.source_frame_number) for ra, _ in timed[-5:]]}"
+    before, after = timed[gap[0] - 1][0], timed[gap[0]][0]
+    assert after.arrival_ns - before.arrival_ns >= (GAP_OF_A_S - 0.01) * 1e9, (before, after)
+    later = sorted(abs(rb.arrival_ns - ra.arrival_ns) for ra, rb in timed[gap[0] + 1:])
+    assert len(later) >= 5, f"{len(later)} rows after the gap of A"
+    median = later[len(later) // 2] / 1e9
+    assert median < GAP_OF_A_S / 2, f"after the gap of A, the arrivals of a row differ by {median * 1000:.0f} ms (median)"
+
+
+@pytest.mark.pace  # Q669: a busy machine moves the arrivals of a row (review item 8, CI run 45401541234)
+@pytest.mark.capture_timing
+def test_a_row_of_the_two_cameras_is_one_moment(tmp_path):
+    """NEW-B, the bound of time: the arrivals of a row of A and B differ by at most 100 ms, except at the gap,
+    where the gate lets B take one frame before A (5.2). The nominal difference is 0; the margin multiplies the
+    100 ms [ADR-B7YV]."""
+    from skellycam.core.take_recorder.sidecar import MISSING
+
+    rows, _ = one_run("gate test", lambda: _gate_test_run(tmp_path))
+    a, b = list(rows)
+    limit_ns = bound(0.0, 0.1) * 1e9
     apart = [(ra.frame, round((rb.arrival_ns - ra.arrival_ns) / 1e6)) for ra, rb in zip(rows[a], rows[b])
-             if not (ra.flags | rb.flags) & MISSING and abs(ra.arrival_ns - rb.arrival_ns) > 100_000_000]
-    assert len(apart) <= 1, f"{len(apart)} rows of the two cameras differ by more than 100 ms: {apart[:5]}"
+             if not (ra.flags | rb.flags) & MISSING and abs(ra.arrival_ns - rb.arrival_ns) > limit_ns]
+    assert len(apart) <= 1, f"{len(apart)} rows of the two cameras differ by more than {limit_ns / 1e6:.0f} ms: {apart[:5]}"

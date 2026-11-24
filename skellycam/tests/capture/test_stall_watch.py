@@ -24,6 +24,7 @@ import pytest
 from skellycam.tests.capture.capture_session import (
     CaptureApp, OpenCVFakeFactory, RingWatcher, Spies, StateWatcher, capture_app, ready_app_steps, wait_exit)
 from skellycam.tests.capture.fake_source import FakeScript
+from skellycam.tests.pace import bound, one_run
 
 pytestmark = pytest.mark.capture_timing
 
@@ -191,13 +192,10 @@ def busy(stop):
         sum(i * i for i in range(10_000))
 
 
-@pytest.mark.parametrize("workers", ["thread", "process"])
-def test_the_watch_ends_no_healthy_camera_under_load(monkeypatch, workers):
-    """The risk guard: two fake cameras stream for 12 s on the real clock while four threads of the main
-    process run Python with no pause (they hold the GIL in turns with the watch thread and, with THREAD
-    workers, with the camera loops: then a loop makes only about 5 passes each second). No camera ends;
-    each camera keeps its loop passes, with no pause near the limit of 2 s."""
-    with capture_app(monkeypatch, [FakeScript(), FakeScript()], workers=workers, virtual=False) as app:
+def _under_load_run(workers):
+    """The run of the risk guard under load: two fake cameras stream for 12 s on the real clock while four threads of
+    the main process run Python with no pause. Gives the facts that the blocking test and the `pace` test check."""
+    with pytest.MonkeyPatch.context() as monkeypatch, capture_app(monkeypatch, [FakeScript(), FakeScript()], workers=workers, virtual=False) as app:
         ready_app_steps(app)
         watchers = {cid: StateWatcher(app, cid) for cid in app.factory.camera_ids}
         counts = {cid: status_of(app, cid).alive_count.value for cid in app.factory.camera_ids}
@@ -215,12 +213,33 @@ def test_the_watch_ends_no_healthy_camera_under_load(monkeypatch, workers):
         time.sleep(0.5)
         for watcher in [*watchers.values(), *alive.values()]:
             watcher.stop()
-        assert not no_camera_ended(watchers), no_camera_ended(watchers)
-        assert all(app.state(cid) == "ready" for cid in counts)
-        passes = {cid: status_of(app, cid).alive_count.value - counts[cid] for cid in counts}
-        assert all(value > 30 for value in passes.values()), passes
-        gaps = {cid: round(watcher.max_gap, 3) for cid, watcher in alive.items()}
-        assert all(gap < 1.0 for gap in gaps.values()), gaps
+        return dict(ended=no_camera_ended(watchers), states={cid: app.state(cid) for cid in counts},
+                    passes={cid: status_of(app, cid).alive_count.value - counts[cid] for cid in counts},
+                    gaps={cid: round(watcher.max_gap, 3) for cid, watcher in alive.items()})
+
+
+@pytest.mark.parametrize("workers", ["thread", "process"])
+def test_the_watch_ends_no_healthy_camera_under_load(workers):
+    """The risk guard: two fake cameras stream for 12 s on the real clock while four threads of the main
+    process run Python with no pause (they hold the GIL in turns with the watch thread and, with THREAD
+    workers, with the camera loops: then a loop makes only about 5 passes each second). No camera ends;
+    each camera keeps its loop passes, with no pause near the limit of 2 s. With THREAD workers the bound on the
+    pause is in `test_the_loop_passes_have_no_pause_above_1_s_under_load` (Q672) [ADR-F4N7]: on the CI runners it
+    was 0.78 s to 1.20 s (CI runs 45401541234 and 45412934839)."""
+    facts = one_run(("under load", workers), lambda: _under_load_run(workers))
+    assert not facts["ended"], facts["ended"]
+    assert all(state == "ready" for state in facts["states"].values()), facts["states"]
+    assert all(value > 30 for value in facts["passes"].values()), facts["passes"]
+    if workers == "process":
+        assert all(gap < 1.0 for gap in facts["gaps"].values()), facts["gaps"]
+
+
+@pytest.mark.pace  # Q672: the pause of the loop passes under a load of the main process depends on the pace
+def test_the_loop_passes_have_no_pause_above_1_s_under_load():
+    """The risk guard with THREAD workers, the bound of time: no pause of the loop passes of 1 s or more. The nominal
+    pause is one frame period (1/30 s); the margin multiplies the part past it [ADR-B7YV]."""
+    facts = one_run(("under load", "thread"), lambda: _under_load_run("thread"))
+    assert all(gap < bound(1 / 30, 1.0) for gap in facts["gaps"].values()), facts["gaps"]
 
 
 # ---------------------------------------------------------------------------

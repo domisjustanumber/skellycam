@@ -102,6 +102,31 @@ def install_control_clock(monkeypatch, clock, loop_module):
     monkeypatch.setattr(loop_module._ControlThread, "__init__", init)
 
 
+def install_loop_clock(monkeypatch, clock):
+    """Q673 [ADR-F4N7]: each camera loop thread (a THREAD worker) is a participant of the virtual clock from its
+    start (`VirtualClock.expect`), as the control thread is for a request (`ClockQueue`) [ADR-DC43]. Else the time
+    moves on before the new loop waits on the clock for the first time."""
+    from skellycam.core.camera.camera_worker import CameraWorker
+    from skellycam.core.ipc.process_management.managed_worker import ManagedThread
+
+    start = CameraWorker.start
+
+    def start_on_the_clock(worker):
+        thread = worker.worker._thread if isinstance(worker.worker, ManagedThread) else None
+        if thread is not None:
+            clock.expect(thread)
+        try:
+            start(worker)
+        except BaseException:
+            if thread is not None:
+                clock.forget(thread)
+            raise
+        if thread is not None and not thread.is_alive() and thread.ident is None:
+            clock.forget(thread)  # the start returned with no thread (a start that the product refused)
+
+    monkeypatch.setattr(CameraWorker, "start", start_on_the_clock)
+
+
 def spy_check_anchors(monkeypatch):
     """The `after` time of each check that the loop feeds (windows-capture.md 10.2) [ADR-0R76]: after a live
     change, the time that the control thread read just before the set; after a search, the time that the loop
@@ -327,6 +352,7 @@ class CaptureApp:
             monkeypatch.setattr(loop_module, "perf_counter_ns", self.clock.now_ns)
             install_gate_probe(monkeypatch, self.clock)
             install_control_clock(monkeypatch, self.clock, loop_module)
+            install_loop_clock(monkeypatch, self.clock)
             # A dead camera waits on the group frames in real time (recorder.md 10 item 7): not on the clock.
             missing_until_end = loop_module.CameraLoop._missing_until_end
 

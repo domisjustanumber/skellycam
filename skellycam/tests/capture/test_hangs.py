@@ -6,7 +6,8 @@ limit (specs/windows-capture.md, sections 6.4, 6.6, 8.2 and 12). T-CAP-85 is rep
 These tests run PROCESS workers in real time: a hard end (`os._exit`) of a camera thread would end
 the test process. The fake simulates a hung bounded call: it raises `CaptureFailure(..., hung=True)`
 after `BOUNDED_CALL_LIMIT_S`, and a stuck thread stays (see `fake_source`). Each test takes 10 to 30 s.
-T-CAP-40 and T-CAP-82 measure real gaps of 100 ms (U16): they have the marker `capture_timing`.
+T-CAP-40 and T-CAP-82 measure real gaps of 100 ms (U16): they have the marker `capture_timing`. Each is a blocking
+test and a `pace` test on one run (16.1; Q669 of the user [ADR-F4N7]).
 """
 
 import threading
@@ -18,8 +19,10 @@ from skellycam.tests.capture.capture_session import (
     SOURCE_MODULE, RingWatcher, StateWatcher, camera_key_of, capture_app, product, ready_app_steps, ring_exists,
     take_rows, take_warnings, wait_exit)
 from skellycam.tests.capture.fake_source import FakeScript
+from skellycam.tests.pace import bound, one_run
 
 MODES = ((640, 480, 30, 1, "MJPG"), (320, 240, 30, 1, "MJPG"))
+FRAME_S = 1 / 30  # the nominal gap between two frames of one camera (16.1) [ADR-B7YV]
 
 
 def limit_s():
@@ -61,16 +64,11 @@ def test_t_cap_80_first_frame_limit_without_a_hard_end(monkeypatch):
             watcher.stop()
 
 
-@pytest.mark.capture_timing
-def test_t_cap_40_hang_in_open_ends_only_that_process(monkeypatch):
-    """T-CAP-40, sections 6.6 and 8.2 [D10, agent 16]: a fake source in a real camera process hangs in
-    `open` past the limit; a second camera streams. The failure arrives with stage `open`; the process
-    exits within the limit plus 2 s; the main process cleans up only that camera; the second camera
-    has no gap above 100 ms.
-
-    The hang is at the reopen of a resolution change, so that the second camera streams in `ready`."""
+def _t_cap_40_run():
+    """The run of T-CAP-40: the hang in `open` at the reopen of a resolution change, while a second camera streams.
+    Gives the facts that the blocking test and the `pace` test check (no live object)."""
     scripts = [FakeScript(modes=MODES, hang_at="open"), FakeScript(modes=MODES)]
-    with capture_app(monkeypatch, scripts, workers="process") as app:
+    with pytest.MonkeyPatch.context() as monkeypatch, capture_app(monkeypatch, scripts, workers="process") as app:
         ready_app_steps(app)
         hung, streaming = app.factory.camera_ids
         old_ring, streaming_ring = app.ring_name(hung), app.ring_name(streaming)
@@ -83,38 +81,63 @@ def test_t_cap_40_hang_in_open_ends_only_that_process(monkeypatch):
             thread, _ = apply_in_thread(app, [app.config(hung, width=320, height=240), app.config(streaming)])
             app.wait(lambda: log.hang_started_ns.value > 0, "the hang starts")
             app.wait(lambda: watcher.failure is not None, "the failure arrives")
-            assert watcher.failure["stage"] == "open"
+            stage = watcher.failure["stage"]
             worker = watcher.worker
             exited = wait_exit(worker)
             hang_ns = log.hang_started_ns.value
-            assert (exited - hang_ns) / 1e9 <= limit_s() + 2.0, f"exit {(exited - hang_ns) / 1e9:.2f} s after the hang"
-            assert worker.worker.exitcode not in (0, None)
+            exitcode = worker.worker.exitcode
             time.sleep(1.0)
             thread.join(60)
-            assert app.state(hung) == "failed"
-            assert not ring_exists(old_ring)
             info = app.group.ring_infos.get(hung)
-            assert info is None or not ring_exists(info.jpeg_ring_name)
-            assert app.ring_name(streaming) == streaming_ring and app.worker(streaming).worker.pid == streaming_pid
-            assert app.worker(streaming).is_alive() and app.state(streaming) == "ready"
+            facts = dict(stage=stage, exit_s=(exited - hang_ns) / 1e9, exitcode=exitcode, state=app.state(hung),
+                         old_ring=ring_exists(old_ring),
+                         new_ring=info is not None and ring_exists(info.jpeg_ring_name),
+                         same_streaming=(app.ring_name(streaming), app.worker(streaming).worker.pid)
+                         == (streaming_ring, streaming_pid),
+                         streaming=(app.worker(streaming).is_alive(), app.state(streaming)))
         finally:
             watcher.stop()
             ring.stop()
-        gap = ring.largest_gap_s(hang_ns - 10**9)
-        assert gap <= 0.1, f"the streaming camera had a gap of {gap * 1000:.0f} ms"
+        facts["gap_s"] = ring.largest_gap_s(hang_ns - 10**9)
+    return facts
 
 
 @pytest.mark.capture_timing
-def test_t_cap_82_hung_control_read_while_ready(monkeypatch):
-    """T-CAP-82, sections 6.6, 8.2 and 11.4 [D10, D38, agent 60]: two fakes are `ready`; a control read
-    of one hangs past its limit. That camera reports stage `streaming` and its process ends hard; the
-    main process cleans up only it; the other camera has no gap above 100 ms.
+def test_t_cap_40_hang_in_open_ends_only_that_process():
+    """T-CAP-40, sections 6.6 and 8.2 [D10, agent 16]: a fake source in a real camera process hangs in
+    `open` past the limit; a second camera streams. The failure arrives with stage `open`; the process
+    exits; the main process cleans up only that camera; the second camera streams on.
 
-    The periodic control read runs on the control thread of the camera process [U16], so the hung
-    call does not hold the gate. The fake raises its failure from `set_controls` with stage `set
-    controls`; the camera process reports `streaming` for a failure after the start-up (ADR-HP7D)."""
+    The hang is at the reopen of a resolution change, so that the second camera streams in `ready`. Blocking: the
+    exit within 10 times the limit and no gap above 1 s (a camera that the hang holds stops for the 5 s of the
+    limit); `test_t_cap_40_the_exit_and_the_gap_are_within_their_tolerance` holds the bounds of the spec (16.1)
+    [ADR-F4N7]."""
+    facts = one_run("T-CAP-40", _t_cap_40_run)
+    assert facts["stage"] == "open"
+    assert facts["exit_s"] <= 10 * limit_s(), f"exit {facts['exit_s']:.2f} s after the hang"
+    assert facts["exitcode"] not in (0, None)
+    assert facts["state"] == "failed"
+    assert not facts["old_ring"] and not facts["new_ring"]
+    assert facts["same_streaming"] and facts["streaming"] == (True, "ready"), facts
+    assert facts["gap_s"] <= 1.0, f"the streaming camera had a gap of {facts['gap_s'] * 1000:.0f} ms"
+
+
+@pytest.mark.pace  # Q669: only the bounds of time; their tolerances grow by the margin on a hosted runner
+@pytest.mark.capture_timing
+def test_t_cap_40_the_exit_and_the_gap_are_within_their_tolerance():
+    """T-CAP-40, the bounds of time: the process exits within the limit plus 2 s (times the margin) after the hang
+    starts, and the streaming camera has no gap above 100 ms. The nominal gap is one frame period (1/30 s); the
+    margin multiplies the 67 ms past it [ADR-B7YV]. A CI run on macOS: 167 ms (CI run 45401541234)."""
+    facts = one_run("T-CAP-40", _t_cap_40_run)
+    assert facts["exit_s"] <= bound(limit_s(), limit_s() + 2.0), f"exit {facts['exit_s']:.2f} s after the hang"
+    assert facts["gap_s"] <= bound(FRAME_S, 0.1), f"the streaming camera had a gap of {facts['gap_s'] * 1000:.0f} ms"
+
+
+def _t_cap_82_run():
+    """The run of T-CAP-82: the periodic control read of one camera hangs while both are `ready`. Gives the facts
+    that the blocking test and the `pace` test check (no live object)."""
     scripts = [FakeScript(hang_at="set_controls"), FakeScript()]
-    with capture_app(monkeypatch, scripts, workers="process") as app:
+    with pytest.MonkeyPatch.context() as monkeypatch, capture_app(monkeypatch, scripts, workers="process") as app:
         ready_app_steps(app)
         hung, other = app.factory.camera_ids
         hung_ring, other_ring = app.ring_name(hung), app.ring_name(other)
@@ -127,19 +150,48 @@ def test_t_cap_82_hung_control_read_while_ready(monkeypatch):
             log.arm_hang()
             app.wait(lambda: log.hang_started_ns.value > 0, "the periodic control read hangs")
             app.wait(lambda: watcher.failure is not None, "the failure arrives")
-            assert watcher.failure["stage"] == "streaming"
+            stage = watcher.failure["stage"]
             wait_exit(worker)
-            assert worker.worker.exitcode not in (0, None), "the process did not end hard"
+            exitcode = worker.worker.exitcode
             hang_ns = log.hang_started_ns.value
             time.sleep(1.0)
-            assert not ring_exists(hung_ring)
-            assert app.ring_name(other) == other_ring and app.worker(other).worker.pid == other_pid
-            assert app.worker(other).is_alive() and app.state(other) == "ready"
+            facts = dict(stage=stage, exitcode=exitcode, hung_ring=ring_exists(hung_ring),
+                         same_other=(app.ring_name(other), app.worker(other).worker.pid) == (other_ring, other_pid),
+                         other=(app.worker(other).is_alive(), app.state(other)))
         finally:
             watcher.stop()
             ring.stop()
-        gap = ring.largest_gap_s(hang_ns - 500_000_000)
-        assert gap <= 0.1, f"the other camera had a gap of {gap * 1000:.0f} ms"
+        facts["gap_s"] = ring.largest_gap_s(hang_ns - 500_000_000)
+    return facts
+
+
+@pytest.mark.capture_timing
+def test_t_cap_82_hung_control_read_while_ready():
+    """T-CAP-82, sections 6.6, 8.2 and 11.4 [D10, D38, agent 60]: two fakes are `ready`; a control read
+    of one hangs past its limit. That camera reports stage `streaming` and its process ends hard; the
+    main process cleans up only it; the other camera streams on.
+
+    The periodic control read runs on the control thread of the camera process [U16], so the hung
+    call does not hold the gate. The fake raises its failure from `set_controls` with stage `set
+    controls`; the camera process reports `streaming` for a failure after the start-up (ADR-HP7D). Blocking: no gap
+    above 1 s (a hung read on the loop thread holds the gate for the 5 s of the limit);
+    `test_t_cap_82_the_other_camera_has_no_gap_above_100_ms` holds the limit of U16 (16.1) [ADR-F4N7]."""
+    facts = one_run("T-CAP-82", _t_cap_82_run)
+    assert facts["stage"] == "streaming"
+    assert facts["exitcode"] not in (0, None), "the process did not end hard"
+    assert not facts["hung_ring"]
+    assert facts["same_other"] and facts["other"] == (True, "ready"), facts
+    assert facts["gap_s"] <= 1.0, f"the other camera had a gap of {facts['gap_s'] * 1000:.0f} ms"
+
+
+@pytest.mark.pace  # Q669: U16, no gap above 100 ms: strict on a real machine; on CI it warns, it does not block
+@pytest.mark.capture_timing
+def test_t_cap_82_the_other_camera_has_no_gap_above_100_ms():
+    """T-CAP-82, the bound of time of U16: the other camera has no gap above 100 ms. The nominal gap is one frame
+    period (1/30 s); the margin multiplies the 67 ms past it [ADR-B7YV]. A CI run on macOS: 200 ms (CI run
+    45401541234)."""
+    facts = one_run("T-CAP-82", _t_cap_82_run)
+    assert facts["gap_s"] <= bound(FRAME_S, 0.1), f"the other camera had a gap of {facts['gap_s'] * 1000:.0f} ms"
 
 
 @pytest.mark.parametrize("state", ["starting", "recording"])
@@ -184,14 +236,18 @@ def test_t_cap_109_a_camera_process_that_ends_without_unwinding(monkeypatch, tmp
     assert [len(take_rows(tmp_path, cid)) for cid in (ended, other)] == [frame_count, frame_count]
 
 
-@pytest.mark.capture_timing  # 200 rows in 10 s of real time
+@pytest.mark.capture_timing  # real time: a take of 10 s
 def test_t_cap_110_files_after_a_hang(monkeypatch, tmp_path):
     """T-CAP-110, section 6.6 [ADR-PDD3], changed by step 5a [R4, M5, M8]: during a recording of 10 s, the
     control read of one fake hangs; its process ends at once. After the stop, the take level completed its
     files: the manifest names the camera in `camera_dead` with the reason "hang" and the `last_frame` of
     the last row of its sidecar with a block, not `none`; `camera_file_short` names it; its sidecar has
     the frame count of the take. Before step 5a the camera process sent a files message of more than a
-    pipe buffer before its hard end (U12)."""
+    pipe buffer before its hard end (U12).
+
+    The last row with a block is not before the row of the frame count that the test reads when it arms the hang
+    (Q671): each frame that the camera took before the arm is in its file. No fixed count of rows: on a slow CI
+    runner the last row with a block was 188 after 10 s (CI run 45401541234, macOS) [ADR-F4N7]."""
     from skellycam.core.take_recorder.sidecar import MISSING
 
     scripts = [FakeScript(hang_at="set_controls"), FakeScript()]
@@ -201,6 +257,8 @@ def test_t_cap_110_files_after_a_hang(monkeypatch, tmp_path):
         worker = app.worker(hung)
         assert app.record_start(tmp_path).status_code == 200
         time.sleep(10.0)
+        orchestrator = app.group.cameras.orchestrator
+        armed_row = orchestrator.camera_statuses[hung].frame_count.value - orchestrator.first_recording_frame_number.value
         app.factory.logs[hung].arm_hang()
         app.wait_state(hung, "dead")
         wait_exit(worker)
@@ -214,7 +272,7 @@ def test_t_cap_110_files_after_a_hang(monkeypatch, tmp_path):
     key = camera_key_of(tmp_path, hung)
     dead = [w for w in take_warnings(tmp_path, "camera_dead") if w["camera_key"] == key]
     assert len(dead) == 1 and dead[0]["detail"] == f"last_frame={last} reason=hang", dead
-    assert last >= 200, f"the last row with a block is {last} after 10 s of a take at 30 fps"
+    assert armed_row > 0 and last >= armed_row, f"the last row with a block is {last}; the row at the arm was {armed_row}"
     assert [w["camera_key"] for w in take_warnings(tmp_path, "camera_file_short")] == [key]
 
 

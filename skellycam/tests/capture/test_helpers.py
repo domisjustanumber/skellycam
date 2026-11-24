@@ -262,6 +262,53 @@ def test_virtual_clock_work_for_a_waiting_thread_keeps_its_wait():
     assert not control.is_alive() and clock.now_ns() == VirtualClock.START_NS + 10**9
 
 
+def test_virtual_clock_holds_the_time_for_an_expected_thread_until_it_waits():
+    """Q673 [ADR-F4N7]: a camera loop thread is a participant from its start (`expect`). A participant that waits
+    for 3 s does not move the time while the expected thread is not started or has not waited on the clock yet
+    (`fallback_s` is 10 s, so no forced step). When it waits, the time moves to the earliest wake time. Without
+    `expect`, the first waiter moved the time 3 s at once (T-CAP-13 on 2 cores: the first camera opened 3 s
+    after the second)."""
+    clock = VirtualClock(fallback_s=10.0)
+    go, joined = threading.Event(), []
+
+    def late_loop():
+        go.wait(5)
+        joined.append(clock.now_ns())
+        clock.wait_until(clock.now_ns() + 10**8)
+
+    first = threading.Thread(target=lambda: clock.wait_until(clock.now_ns() + 3 * 10**9), daemon=True)
+    late = threading.Thread(target=late_loop, daemon=True)
+    clock.expect(late)
+    late.start()
+    first.start()
+    time.sleep(0.3)
+    assert clock.now_ns() == VirtualClock.START_NS, "the time moved before the expected thread waited"
+    go.set()
+    late.join(5)
+    first.join(5)
+    assert joined == [VirtualClock.START_NS]
+    assert not first.is_alive() and clock.now_ns() == VirtualClock.START_NS + 3 * 10**9
+
+
+def test_virtual_clock_drops_an_expected_thread_that_ends_leaves_or_does_not_start():
+    """Q673 [ADR-F4N7]: an expected thread that ends with no wait on the clock, that leaves the clock before its first
+    wait, or whose start raised (`forget`), no longer holds the time."""
+    for case in ("ends", "leaves", "forget"):
+        clock = VirtualClock(fallback_s=10.0)
+        thread = threading.Thread(target=clock.leave if case == "leaves" else (lambda: None), daemon=True)
+        clock.expect(thread)
+        if case == "forget":
+            clock.forget(thread)
+        else:
+            thread.start()
+            thread.join(5)
+        waiter = threading.Thread(target=lambda: clock.wait_until(clock.now_ns() + 10**9), daemon=True)
+        waiter.start()
+        waiter.join(5)
+        assert not waiter.is_alive() and clock.now_ns() == VirtualClock.START_NS + 10**9, case
+        assert clock.describe()["expected"] == [], case
+
+
 def test_real_clock_waits_real_time():
     clock = RealClock()
     t0 = time.perf_counter()
