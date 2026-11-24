@@ -24,6 +24,11 @@
    1,000,000 ns. The check of the last frames that the fakes deliver (`FakeLog.frames`) stays before it, as a check
    of the script. The check of at least 600 ring frames, the replaced-count check and the check of 200 or more
    replaced frames of the fast camera do not change.
+3. **The stall test with PROCESS workers** (Q721 of
+   [ADR-2AQT](2AQT-decision-of-the-user-on-the-gap-of-the-stall-test-with-process-workers.md)). The `pace` test
+   `test_the_loop_passes_have_no_pause_above_1_s_under_load` takes the parameter `workers` ("thread", "process"). It
+   uses the same run as the blocking test (`one_run`) and the same bound for each kind: `bound(1 / 30, 1.0)`. The
+   blocking test keeps the same three checks for each kind. The test names do not change.
 
 ## Reason
 

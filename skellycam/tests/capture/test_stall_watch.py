@@ -223,22 +223,23 @@ def test_the_watch_ends_no_healthy_camera_under_load(workers):
     """The risk guard: two fake cameras stream for 12 s on the real clock while four threads of the main
     process run Python with no pause (they hold the GIL in turns with the watch thread and, with THREAD
     workers, with the camera loops: then a loop makes only about 5 passes each second). No camera ends;
-    each camera keeps its loop passes, with no pause near the limit of 2 s. With THREAD workers the bound on the
-    pause is in `test_the_loop_passes_have_no_pause_above_1_s_under_load` (Q672) [ADR-F4N7]: on the CI runners it
-    was 0.78 s to 1.20 s (CI runs 45401541234 and 45412934839)."""
+    each camera keeps its loop passes, with no pause near the limit of 2 s. The bound on the pause is in
+    `test_the_loop_passes_have_no_pause_above_1_s_under_load`, with THREAD workers (Q672) [ADR-F4N7] and with
+    PROCESS workers (Q721) [ADR-2AQT]. On the CI runners it was 0.78 s to 1.20 s with THREAD workers (CI runs
+    45401541234 and 45412934839), and 1.067 s with PROCESS workers (CI run 45493213866)."""
     facts = one_run(("under load", workers), lambda: _under_load_run(workers))
     assert not facts["ended"], facts["ended"]
     assert all(state == "ready" for state in facts["states"].values()), facts["states"]
     assert all(value > 30 for value in facts["passes"].values()), facts["passes"]
-    if workers == "process":
-        assert all(gap < 1.0 for gap in facts["gaps"].values()), facts["gaps"]
 
 
-@pytest.mark.pace  # Q672: the pause of the loop passes under a load of the main process depends on the pace
-def test_the_loop_passes_have_no_pause_above_1_s_under_load():
-    """The risk guard with THREAD workers, the bound of time: no pause of the loop passes of 1 s or more. The nominal
-    pause is one frame period (1/30 s); the margin multiplies the part past it [ADR-B7YV]."""
-    facts = one_run(("under load", "thread"), lambda: _under_load_run("thread"))
+@pytest.mark.pace  # Q672, Q721: the pause of the loop passes under a load of the main process depends on the pace
+@pytest.mark.parametrize("workers", ["thread", "process"])
+def test_the_loop_passes_have_no_pause_above_1_s_under_load(workers):
+    """The risk guard, the bound of time: no pause of the loop passes of 1 s or more, with THREAD workers (Q672) and
+    with PROCESS workers (Q721) [ADR-2AQT]. The nominal pause is one frame period (1/30 s); the margin multiplies
+    the part past it [ADR-B7YV]."""
+    facts = one_run(("under load", workers), lambda: _under_load_run(workers))
     assert all(gap < bound(1 / 30, 1.0) for gap in facts["gaps"].values()), facts["gaps"]
 
 

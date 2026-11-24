@@ -29,6 +29,7 @@ PACE_TESTS = [
     ("skellycam.tests.capture.test_hangs", "test_t_cap_40_the_exit_and_the_gap_are_within_their_tolerance"),
     ("skellycam.tests.capture.test_hangs", "test_t_cap_82_the_other_camera_has_no_gap_above_100_ms"),
     ("skellycam.tests.capture.test_states", "test_a_row_of_the_two_cameras_is_one_moment"),
+    # THREAD workers (Q672) and PROCESS workers (Q721 [ADR-2AQT])
     ("skellycam.tests.capture.test_stall_watch", "test_the_loop_passes_have_no_pause_above_1_s_under_load"),
     ("skellycam.tests.preview.test_ws_flow", "test_t_prv_05_the_cameras_that_fit_get_their_share"),
     ("skellycam.tests.preview.test_ws_flow", "test_t_prv_09_the_answered_cameras_get_their_share"),
