@@ -1045,8 +1045,9 @@ def test_no_switch_to_auto_during_a_record_start(monkeypatch, tmp_path):
 def bare_loop(config, state="ready"):
     """A `CameraLoop` with no source, rings or threads, for the unit tests of its update order."""
     import queue
+    from collections import deque
 
-    from skellycam.core.camera.capture.camera_loop import CameraLoop
+    from skellycam.core.camera.capture.camera_loop import RECENT_FRAMES, CameraLoop
     from skellycam.core.camera_group.camera_status import CameraStatus
 
     loop = CameraLoop.__new__(CameraLoop)
@@ -1055,7 +1056,7 @@ def bare_loop(config, state="ready"):
     loop.update_sub, loop.recording_sub, loop.signals, loop.search_replies = (queue.Queue() for _ in range(4))
     loop.search = loop.search_before = loop.search_final = loop.take_writer = loop.check = loop.exposure_range = None
     loop.no_exposure, loop.reference_rate = False, 30.0
-    loop.recent_frames = __import__("collections").deque()  # the taken frames that a new check gets (ADR-0R76)
+    loop.recent_frames = deque(maxlen=RECENT_FRAMES)  # the taken frames that a new check gets (ADR-0R76)
     return loop
 
 
