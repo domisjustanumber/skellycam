@@ -13,6 +13,7 @@ import pytest
 
 from skellycam.tests.capture.capture_session import SOURCE_MODULE, product
 from skellycam.tests.capture.fake_source import FakeScript, FakeSource, RealClock, VirtualClock
+from skellycam.tests.pace import bound, one_run
 
 
 def _request(source_module, width=640, height=480, framerate=30.0):
@@ -96,18 +97,36 @@ def test_t_cap_03_a_put_never_waits_on_the_consumer():
     assert max(durations) < 40e6, f"a put waited {max(durations) / 1e6:.1f} ms: it waited on the consumer"
 
 
-@pytest.mark.capture_timing  # real-time bounds (0.1 s, 2 % of one core)
-def test_t_cap_04_read_frame_times_out_without_spinning():
-    """T-CAP-04, sections 4.1 and 4.3 [ring 8.10]: `read_frame(2.0)` with no frame. It returns `None`
-    after 2.0 s (+/-0.1 s); the thread uses under 2 % of one core while it waits. Real time."""
+def _t_cap_04_run():
+    """The run of T-CAP-04: `read_frame(2.0)` with no frame, in real time. Gives (frame, elapsed s, thread CPU s)."""
     source_module = product(SOURCE_MODULE)
     fake = FakeSource(FakeScript(stop_after_frame=0), clock=RealClock())
     fake.open(_request(source_module))
-    assert fake.read_frame(1.0).source_frame_number == 0
-    cpu0, t0 = time.thread_time(), time.perf_counter()
-    frame = fake.read_frame(2.0)
-    elapsed, cpu = time.perf_counter() - t0, time.thread_time() - cpu0
-    fake.close()
+    try:
+        assert fake.read_frame(1.0).source_frame_number == 0
+        cpu0, t0 = time.thread_time(), time.perf_counter()
+        frame = fake.read_frame(2.0)
+        return frame, time.perf_counter() - t0, time.thread_time() - cpu0
+    finally:
+        fake.close()
+
+
+@pytest.mark.capture_timing  # real time: 2 s with no frame
+def test_t_cap_04_read_frame_times_out_without_spinning():
+    """T-CAP-04, sections 4.1 and 4.3 [ring 8.10]: `read_frame(2.0)` with no frame. It returns `None`, not before
+    1.9 s; the thread uses under 2 % of one core while it waits. Real time. Blocking: the bound above is loose (10
+    times the limit); `test_t_cap_04_read_frame_returns_within_its_tolerance` holds the bound of 2.1 s (16.1)
+    [ADR-F4N7]."""
+    frame, elapsed, cpu = one_run("T-CAP-04", _t_cap_04_run)
     assert frame is None
-    assert 1.9 <= elapsed <= 2.1, f"read_frame returned after {elapsed:.3f} s"
+    assert 1.9 <= elapsed <= 20.0, f"read_frame returned after {elapsed:.3f} s"
     assert cpu / elapsed < 0.02, f"the waiting thread used {cpu / elapsed:.1%} of one core"
+
+
+@pytest.mark.pace  # Q669: only the bound of time; the tolerance of 0.1 s grows by the margin on a hosted runner
+@pytest.mark.capture_timing
+def test_t_cap_04_read_frame_returns_within_its_tolerance():
+    """T-CAP-04, the bound of time: `read_frame(2.0)` returns within 0.1 s (times the margin) after 2.0 s. A CI run
+    on macOS: a plain wait of 2 s returned after 2.141 s (CI run 45401541234) [ADR-F4N7]."""
+    _, elapsed, _ = one_run("T-CAP-04", _t_cap_04_run)
+    assert elapsed <= bound(2.0, 2.1), f"read_frame returned after {elapsed:.3f} s"

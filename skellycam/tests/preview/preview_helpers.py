@@ -535,10 +535,12 @@ class WsClient:
     the time it was taken from the socket, and answers at once for the cameras in `answer`
     (`True` = each camera)."""
 
-    def __init__(self, session, answer=frozenset()):
+    def __init__(self, session, answer=frozenset(), rings=None):
         self.session = session
         self.answer = answer
+        self.rings = rings or {}  # camera id -> FakeRing: an answer notes the newest frame of the ring (T-PRV-54)
         self.camera = defaultdict(list)  # camera id -> [(time, message)]
+        self.newest_at_answer = defaultdict(list)  # camera id -> the newest frame at the answer to each message
         self.json = []  # [(time, object)]
         self.order = []  # [(time, camera id)] in arrival order
 
@@ -563,6 +565,8 @@ class WsClient:
             self.camera[parsed.camera_id].append((now, parsed))
             self.order.append((now, parsed.camera_id))
             if self.answer is True or parsed.camera_id in self.answer:
+                if parsed.camera_id in self.rings:
+                    self.newest_at_answer[parsed.camera_id].append(self.rings[parsed.camera_id].last)
                 self.session.send_text(ready_text(parsed.camera_id))
             return parsed
         self.json.append((now, json.loads(message["text"])))

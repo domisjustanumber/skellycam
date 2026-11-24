@@ -24,10 +24,22 @@ PACE_TESTS = [
     ("skellycam.tests.frame_ring.test_concurrency", "test_t_ring_12_the_writer_timing_is_unchanged_after_a_reader_kill"),
     ("skellycam.tests.frame_ring.test_camera_process", "test_t_ring_23_write_p99_with_four_readers"),
     ("skellycam.tests.take_recorder.test_connection", "test_a_slow_stop_has_a_gap_only_on_the_last_row"),
+    # fix lane 6 (Q669 to Q672 of the user [ADR-F4N7])
+    ("skellycam.tests.capture.test_source_interface", "test_t_cap_04_read_frame_returns_within_its_tolerance"),
+    ("skellycam.tests.capture.test_hangs", "test_t_cap_40_the_exit_and_the_gap_are_within_their_tolerance"),
+    ("skellycam.tests.capture.test_hangs", "test_t_cap_82_the_other_camera_has_no_gap_above_100_ms"),
+    ("skellycam.tests.capture.test_states", "test_a_row_of_the_two_cameras_is_one_moment"),
+    ("skellycam.tests.capture.test_stall_watch", "test_the_loop_passes_have_no_pause_above_1_s_under_load"),
+    ("skellycam.tests.preview.test_ws_flow", "test_t_prv_05_the_cameras_that_fit_get_their_share"),
+    ("skellycam.tests.preview.test_ws_flow", "test_t_prv_09_the_answered_cameras_get_their_share"),
+    ("skellycam.tests.preview.test_ws_flow", "test_t_prv_10_each_camera_gets_its_share"),
+    ("skellycam.tests.preview.test_ws_flow", "test_t_prv_13_client_1_gets_its_share"),
+    ("skellycam.tests.preview.test_ws_flow", "test_t_prv_15_b_gets_8_messages_within_0_5_s"),
+    ("skellycam.tests.preview.test_ws_flow", "test_t_prv_16_b_gets_30_messages_within_2_s"),
 ]
 # A test whose failure does not depend on the pace blocks (16.1): the functional halves of the split tests, the
 # long-interval test (no bound of time), the slow stop (its row counts are the lock rule), and the tests of item 1
-# of fix lane 4 (no answer from a camera process).
+# of fix lane 4 (no answer from a camera process). Fix lane 6 adds its blocking halves and T-PRV-54.
 NOT_PACE = [
     ("skellycam.tests.capture.test_bounded_call", "test_t_unx_26_generic_bounded_call_with_a_limit"),
     ("skellycam.tests.capture.test_media_foundation_source", "test_t_unx_76_media_foundation_diagnostics"),
@@ -41,6 +53,20 @@ NOT_PACE = [
     ("skellycam.tests.take_recorder.test_connection",
      "test_t_rec_44_hang_ends_the_process_and_the_take_level_completes_its_file"),
     ("skellycam.tests.take_recorder.test_connection", "test_a_busy_main_process_does_not_look_dead"),
+    # fix lane 6: the blocking halves, the tests with conditions in place of fixed counts (Q671) and T-PRV-54 (Q670)
+    ("skellycam.tests.capture.test_source_interface", "test_t_cap_04_read_frame_times_out_without_spinning"),
+    ("skellycam.tests.capture.test_hangs", "test_t_cap_40_hang_in_open_ends_only_that_process"),
+    ("skellycam.tests.capture.test_hangs", "test_t_cap_82_hung_control_read_while_ready"),
+    ("skellycam.tests.capture.test_hangs", "test_t_cap_110_files_after_a_hang"),
+    ("skellycam.tests.capture.test_states", "test_a_camera_selected_again_shares_the_gate_with_a_restarted_camera"),
+    ("skellycam.tests.capture.test_stall_watch", "test_the_watch_ends_no_healthy_camera_under_load"),
+    ("skellycam.tests.preview.test_ws_flow", "test_t_prv_05_camera_ids_that_do_not_fit"),
+    ("skellycam.tests.preview.test_ws_flow", "test_t_prv_09_a_camera_with_no_answer_does_not_hold_back_the_others"),
+    ("skellycam.tests.preview.test_ws_flow", "test_t_prv_10_four_cameras_that_keep_up"),
+    ("skellycam.tests.preview.test_ws_flow", "test_t_prv_13_two_clients"),
+    ("skellycam.tests.preview.test_ws_flow", "test_t_prv_15_ring_recreated"),
+    ("skellycam.tests.preview.test_ws_flow", "test_t_prv_16_a_camera_stops"),
+    ("skellycam.tests.preview.test_ws_flow", "test_t_prv_54_the_next_message_after_an_answer_holds_the_newest_frame"),
 ]
 
 
