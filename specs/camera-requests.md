@@ -906,6 +906,7 @@ the text of a slow camera.
 | T-REQ-24 | hardware | Windows. The C922 alone at 1280x720 60 fps in `MANUAL -7`; press the button. | The result keeps 58.2 fps or more, or the search fails with its text. The trials are recorded (the notes predict -7). |
 | T-REQ-25 | hardware | Windows, `SKELLYCAM_HARDWARE_DARK=1`. Each camera at 30 fps; press the button. | No camera holds a value at which its 10.2 check fails; the flag `add_light` and the brightness at the brightest kept value are recorded, so that the user can set the limit of 64 [Q6]. |
 | T-REQ-26 | hardware | Windows. The Kiyo Pro alone in `AUTO`; connect and close five times; then press the button. | Each connect searches and reaches `ready` with its value, or records its diagnostics; the trials of each search are recorded, with the `first_fps` of each value measured again (1.3 item 2.7); the Kiyo Pro wedge rule applies [cap 16.1]. |
+| T-REQ-99 | fake | One fake `ready` in `MANUAL -7`; each set takes 0.2 s, so frames arrive during the set; the fake keeps 30 fps for the 8 values of the search and goes to 20 fps at the last set; press the button. | The search ends `done` at -9 with 8 trials; then `too_slow` at t_a + 59 / (0.97 x 30) s, within ±25 ms, where t_a is the 16th taken frame from skipped frame 1 of [cap 10.2]: the anchor is not later than the start of the last set, and the frames of that set count [ADR-JWZ1](../decisions/entries/JWZ1-decision-of-the-user-on-the-exact-skip-after-a-search.md). |
 
 ## 2. Part 2: one frame rate for all cameras
 

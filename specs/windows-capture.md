@@ -922,10 +922,12 @@ Reason: on the C930e the gain read 6 before the stream started and 0 after it st
 - After a live control change, skipped frame 1 is the first frame that the loop takes whose arrival time
   is later than the time that the control thread reads just before it calls the set of the change, also
   when the loop took that frame before it read the result of the change [ADR-53VB](../decisions/entries/53VB-decision-of-the-user-on-the-exact-skip-after-a-live-change.md).
-- The check after an exposure search ([`camera-requests.md`](camera-requests.md) 1.3) does not use
-  that rule today: its skipped frame 1 is the first frame that the loop takes after it read the result of
-  the last set, so a frame that arrived after that set returned and that the loop took before that read is
-  not counted [ADR-0R76](../decisions/entries/0R76-choices-of-the-exact-skip-after-a-live-change.md).
+- After an exposure search ([`camera-requests.md`](camera-requests.md) 1.3), skipped frame 1 is the first
+  frame that the loop takes whose arrival time is later than the time that the loop reads just before it
+  sends the last set of the search to the control thread, also when the loop took that frame before it read
+  the result of that set [ADR-JWZ1](../decisions/entries/JWZ1-decision-of-the-user-on-the-exact-skip-after-a-search.md).
+  The last set is the set of the result, or the held value again after a failure; when it gives no answer
+  in time, the anchor is the same.
 - Early decision: the camera is too slow as soon as the 60 frames can no longer arrive in time
   [D32]. With `t_a` the arrival of the first frame of the window and `r` the mode rate, that is when
   `now - t_a > 59 / (0.97 x r)` and frame `s_a + 59` has not arrived. A frame that arrived in time and
