@@ -8,7 +8,8 @@ except the restore at the close.
 import cv2
 import pytest
 
-from skellycam.tests.capture.capture_session import capture_app, ready_app_steps
+from skellycam.tests.capture.capture_session import (
+    capture_app, ready_app_steps, spy_check_anchors, too_slow_after_the_window_start)
 from skellycam.tests.capture.fake_source import FakeScript
 
 pytestmark = pytest.mark.usefixtures("no_camera_auto_exposure")
@@ -619,6 +620,55 @@ def test_t_req_01_a_switch_to_auto_searches_on_the_open_stream(monkeypatch):
         assert not app.status(camera_id)["warnings"]
         wait_run_end(app, camera_id, "ready")
         assert run_of_states(app, camera_id)[-4:] == ["ready", "adjusting", "checking", "ready"]
+
+
+def test_t_req_99_the_skip_after_a_search_counts_the_frames_of_the_last_set(monkeypatch):
+    """T-REQ-99, cap 10.2 [ADR-JWZ1]: each set takes 0.2 s of clock time, so frames arrive during the last set of
+    the search, and the loop takes them before it reads the result. The fake keeps 30 fps for the 8 values and
+    goes to 20 fps at the last set (the 9th set). The search ends `done` at -9; the check skips from the time
+    read just before the last set, so the window starts at the 16th frame from it, and `too_slow` comes at
+    t_a + 2.0275 s, within +/-25 ms."""
+    script = FakeScript(brightness=MODEL, rate_after_change=(30.0,) * 8 + (20.0,), live_set_delay_s=0.2)
+    with capture_app(monkeypatch, [script], track=True) as app:
+        camera_id = app.factory.camera_ids[0]
+        ready_manual(app)
+        anchors = spy_check_anchors(monkeypatch)
+        assert press(app).status_code == 200
+        app.wait_state(camera_id, "too_slow")
+        search = app.status(camera_id)["exposure_search"]
+        assert (search["state"], search["chosen"], len(search["trials"])) == ("done", -9, 8), search
+        log = app.factory.logs[camera_id]
+        sets = [t for name, t, d in log.events if name == "set_controls" and d.get("exposure")]
+        t_set = sets[-1]
+        during = [k for k, (arrival, _) in log.frames.items() if t_set < arrival <= t_set + 200_000_000]
+        assert len(during) >= 5, during  # frames came during the last set
+        # The result exists only after the frame that ended the last trial (1.3 items 2.2 and 2.4): settle frame 10
+        # and 30 intervals after the 8th set returned, 0.2 s or more after its start. A later return only moves
+        # that frame later, so this is a lower bound of the anchor.
+        first = min(k for k, (arrival, _) in log.frames.items() if arrival > sets[-2] + 200_000_000)
+        too_slow_after_the_window_start(app, camera_id, anchors, not_before=log.frames[first + 9 + 30][0])
+
+
+def test_t_req_100_a_last_set_with_no_answer_checks_from_the_time_out(monkeypatch):
+    """T-REQ-100, cap 10.2 [ADR-0R76]: the last set of the search (the 9th set) waits 7 s of clock time, longer than
+    the limit of 6 s for its answer. The fake keeps 30 fps (the exposure of the last trial) until that set lands,
+    then delivers 20 fps. The search fails with `set-failed`; the check starts at the time-out and counts no frame
+    from before it, so it judges the camera at 20 fps: `too_slow`, not `ready`."""
+    from skellycam.core.camera.capture.camera_loop import FINAL_SET_LIMIT_NS
+
+    script = FakeScript(brightness=MODEL, rate_after_change=(30.0,) * 8 + (20.0,), live_set_delays=((9, 7.0),))
+    with capture_app(monkeypatch, [script], track=True) as app:
+        camera_id = app.factory.camera_ids[0]
+        ready_manual(app)
+        anchors = spy_check_anchors(monkeypatch)
+        assert press(app).status_code == 200
+        app.wait(lambda: app.state(camera_id) in ("ready", "too_slow"), "the check decides")
+        search = app.status(camera_id)["exposure_search"]
+        assert (search["state"], search["reason"]) == ("failed", "set-failed"), search
+        log = app.factory.logs[camera_id]
+        t_set = [t for name, t, d in log.events if name == "set_controls" and d.get("exposure")][-1]
+        assert anchors[-1] >= t_set + FINAL_SET_LIMIT_NS - 100_000_000, (anchors[-1], t_set)
+        assert app.state(camera_id) == "too_slow", app.status(camera_id)
 
 
 def test_t_req_02_the_button_searches_with_no_reopen(monkeypatch):

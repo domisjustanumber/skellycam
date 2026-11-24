@@ -253,6 +253,7 @@ class FakeScript:
     hold_after_change: bool = False  # the first read after a live change waits until release()
     hold_first_change: bool = False  # as hold_after_change, for the first live change of each open only
     live_set_delay_s: float = 0.0  # a live change waits this long (clock time) before it sets: frames arrive meanwhile
+    live_set_delays: tuple = ()  # (n, seconds): the n-th live change also waits that long (clock time) before it sets
     rate_by_exposure: tuple = ()  # (exposure, rate) pairs: the delivered rate at that exposure value
     exposure_range: tuple | None = (-13, 0)  # (min, max) or (min, max, step) of the camera; None: no range
     out_of_range: str = "refuse"  # an exposure set outside the range: "refuse" (an error) or "clamp" (to the range)
@@ -480,9 +481,11 @@ class FakeSource:
         self.log.settings.append(dict(changes))
         self._maybe_hang("set_controls", "set controls")
         start = self.log.first_sfn_after_readback
-        if (self.script.live_set_delay_s and changes and start is not None and self.log.taken
-                and self.log.taken[-1] >= start + 90):  # the rule of `live` below; the wait is outside the lock
-            self._wait(self.script.live_set_delay_s)
+        if changes and start is not None and self.log.taken and self.log.taken[-1] >= start + 90:
+            # the rule of `live` below; the wait is outside the lock
+            delay = self.script.live_set_delay_s + dict(self.script.live_set_delays).get(self._live_changes + 1, 0.0)
+            if delay:
+                self._wait(delay)
         with self._lock:
             if self.clock.virtual and self._opened:
                 self._deliver_until(self.clock.now_ns())
