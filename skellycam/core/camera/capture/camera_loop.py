@@ -423,14 +423,14 @@ class CameraLoop:
             if value != self.search_final:  # a reply of a value tried before the result
                 continue
             if error is None and (readback is None or readback == value):
-                self._end_search(returned_ns)
+                self._end_search()
                 return
             text = f"the camera refused exposure {value} ({error})" if error else f"exposure {value} read back as {readback}"
             if search.result["state"] == "done":
                 search.fail("set-failed" if error else "readback-differs", text)
             held = self.search_before["exposure"]
             if value == held:  # the held value failed too: the camera keeps what it has
-                self._end_search(returned_ns)
+                self._end_search()
                 return
             self.search_final, self.search_final_ns = held, perf_counter_ns()
             self.control.requests.put(("search", held))
@@ -439,7 +439,7 @@ class CameraLoop:
             if search.result["state"] == "done":  # [GEH0]: no camera stays `adjusting` for ever
                 search.fail("set-failed", f"the set of exposure {self.search_final} gave no answer in "
                                           f"{FINAL_SET_LIMIT_NS / 1e9:g} s")
-            self._end_search(now)
+            self._end_search()
             return
         search.tick(now)
         if search.result is None:
@@ -452,8 +452,9 @@ class CameraLoop:
             self.search_final_ns = perf_counter_ns()
             self.control.requests.put(("search", self.search_final))
 
-    def _end_search(self, after_ns: int) -> None:
-        """The config holds the result, or its fields of before the search after a failure; then the check of 10.2."""
+    def _end_search(self) -> None:
+        """The config holds the result, or its fields of before the search after a failure; then the check of 10.2.
+        Its anchor is the time read just before the last set went to the control thread [ADR-JWZ1, ADR-0R76]."""
         search, before = self.search, self.search_before
         self.search = None
         result = search.result
@@ -473,8 +474,16 @@ class CameraLoop:
         # `held`: the main process copies the held value into its config once for each search (camera_group.py)
         self.status.update_info(exposure_search=result, held=dict(
             count=self.status.search_count.value, **{name: getattr(self.config, name) for name in HELD_FIELDS}))
+        self._start_check(self.search_final_ns)  # `self.search` is None: the frames taken since then count once
+
+    def _start_check(self, after_ns: int) -> None:
+        """A new check of 10.2 from `after_ns`: the time read just before the set of a live change, or just before
+        the last set of a search went to the control thread. Each frame that the loop took after `after_ns`, before
+        this call, counts, so the skip of 15 is exact [ADR-53VB, ADR-JWZ1, ADR-0R76]."""
         self.check = dict(after=after_ns, first=None, start=None, deadline=None)
         self.status.set_state("checking")
+        for sfn, arrival_ns in [frame for frame in self.recent_frames if frame[1] > after_ns]:
+            self._feed_check(sfn, arrival_ns)
 
     def _brightness(self, payload: bytes, image, flags: int) -> float | None:
         """1.3 item 2.3: the mean of all pixels of the decoded image (`np.mean`, all channels), as sfn26. The bytes
@@ -623,11 +632,7 @@ class CameraLoop:
                 self.config = config.model_copy(update={name: getattr(self.config, name) for name in HELD_FIELDS})
                 continue
             self.config = config
-            self.check = dict(after=after_ns, first=None, start=None, deadline=None)
-            self.status.set_state("checking")
-            # 10.2 [ADR-53VB, ADR-0R76]: the frames that the loop took after the change and before this read count
-            for sfn, arrival_ns in [frame for frame in self.recent_frames if frame[1] > after_ns]:
-                self._feed_check(sfn, arrival_ns)
+            self._start_check(after_ns)  # 10.2: the frames taken after the change and before this read count
         if self.status.search_requested.value:
             self._requested_search()
 

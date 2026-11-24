@@ -17,8 +17,12 @@
    later than `after_ns`, in order. Thus a frame that the loop took before it read the signal counts. 1024
    frames hold a set of 5 s (`BOUNDED_CALL_LIMIT_S`, the longest set) only up to about 204 fps. The signal
    and the control thread do not change.
-3. **The search path is unchanged.** The check after an exposure search starts at the return time of the last
-   set and gets no replay, so it skips 15 + k frames. Spec 10.2 says so. The user decides if it gets the rule.
+3. **The search path** ([ADR-JWZ1](JWZ1-decision-of-the-user-on-the-exact-skip-after-a-search.md)). The anchor
+   is `search_final_ns`: the time that the loop reads just before it sends the last set of the search (the
+   result, or the held value) to the control thread. That is the same anchor when the set gives no answer in
+   `FINAL_SET_LIMIT_NS`. The live change and the search share `CameraLoop._start_check`: the check, the state
+   `checking` and the replay. `_end_search` sets `self.search` to None first, so a frame taken during the search
+   (which `_feed_check` ignored) counts once, in the replay. T-REQ-99 tests it.
 4. **Test.** The fake source gets `live_set_delay_s`: a live change waits that long on the clock before it
    sets, outside the lock of the fake. `test_t_cap_31_the_skip_counts_the_frames_of_a_slow_set` uses 0.2 s
    (about 6 frames during the set). T-CAP-31 again has one exact window: the 16th frame from skipped frame 1.
@@ -32,7 +36,10 @@
    change of the user, and the skip exists for such frames.
 2. The replay needs no new field in the signal and no read of a loop field by the control thread. The arrival
    filter of item 1 stays the only rule.
-3. With no virtual time in a set ([ADR-DC43](DC43-choices-of-fix-lane-5.md) item 1), only a set that waits on
+3. The control thread reads no time before a search set, and the reply holds only the return time. A new
+   field in the reply changes each reader of the reply; the time of the loop comes at once before the request,
+   and on the virtual clock the two times are equal.
+4. With no virtual time in a set ([ADR-DC43](DC43-choices-of-fix-lane-5.md) item 1), only a set that waits on
    the clock makes k > 0 in a fixed way.
 
 ## Alternatives rejected
@@ -42,6 +49,8 @@
 2. The last taken `source_frame_number` sent with the signal (the suggestion of the review): a frame that
    arrived before `after_ns` but waited in the waiting place would count.
 3. A buffer only while a change runs: a flag between two threads, for the same result.
+4. For the search, the return time of the last set: it does not count the frames of that set, unlike the live
+   change.
 
 ## Open work
 
