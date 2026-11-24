@@ -1283,7 +1283,8 @@ section adds only what capture adds.
   `pace` test with the bounds of time. More `pace` tests: the time-out of T-CAP-04; the exit time and the gap of
   T-CAP-40; the gap of T-CAP-82 (the limit of 100 ms of U16 is strict on a real machine; on CI it warns, it does
   not block); the arrivals of a row of `test_a_camera_selected_again_shares_the_gate_with_a_restarted_camera`; the
-  largest gap of the loop passes of `test_the_watch_ends_no_healthy_camera_under_load` with THREAD workers; and
+  largest gap of the loop passes of `test_the_watch_ends_no_healthy_camera_under_load` with THREAD workers, and
+  with PROCESS workers (Q721, [ADR-2AQT](../decisions/entries/2AQT-decision-of-the-user-on-the-gap-of-the-stall-test-with-process-workers.md)); and
   the shares and the counts of messages of [`preview.md`](preview.md) 9.2. T-CAP-110 (16.2) and the gate test
   have no fixed count of rows (Q671): conditions replace the counts. The gate test waits for frame 300 of camera A
   with a loose time limit, not for 12 s, and the take must hold the gap of A.
