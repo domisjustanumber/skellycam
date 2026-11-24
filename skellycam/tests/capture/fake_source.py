@@ -107,6 +107,8 @@ class VirtualClock:
     way (for example a paused loop) only slows the test, and a loop that is slow on a busy machine
     does not let the time jump to a far wake time, for example the end of a 2 s close (CI run of
     6d496aa24, macOS, T-CAP-108).
+
+    A camera loop thread is a participant from its start (`expect`), before its first wait.
     """
     virtual = True
     START_NS = 1_000_000_000_000
@@ -116,6 +118,7 @@ class VirtualClock:
         self._condition = threading.Condition()
         self._states = {}  # thread ident -> "run" | "gate" | "hold" | ("wait", wake_ns)
         self._threads = {}
+        self._expected = []  # threads of `expect` that did not wait on the clock yet
         self._changed = time.monotonic()
         self.fallback_s = fallback_s
         self.forced_step_ns = round(forced_step_s * 1e9)
@@ -152,10 +155,11 @@ class VirtualClock:
     def gate(self, blocked):
         me = threading.get_ident()
         with self._condition:
-            if me not in self._states:
+            if me not in self._states and threading.current_thread() not in self._expected:
                 return
+            self._join()
             state = "gate" if blocked else "run"
-            if self._states[me] != state:
+            if self._states.get(me) != state:
                 self._set(me, state)
                 if blocked:
                     self._advance()
@@ -163,6 +167,22 @@ class VirtualClock:
     def leave(self):
         with self._condition:
             self._states.pop(threading.get_ident(), None)
+            self._drop_expected(threading.current_thread())
+            self._advance()
+
+    def expect(self, thread):
+        """`thread`, not started yet, is a participant from its start: a camera loop thread
+        (`capture_session.install_loop_clock`). Until it waits on the clock, ends or leaves the clock, the time
+        moves only by the forced steps, as for a participant in "run". Else the other participants run the time
+        on before the new loop opens its camera: T-CAP-13 on macOS and on 2 cores, where the first camera opened
+        3 s or more of virtual time after the second (Q673) [ADR-F4N7]."""
+        with self._condition:
+            self._expected.append(thread)
+
+    def forget(self, thread):
+        """`thread` of `expect` does not start (its start raised)."""
+        with self._condition:
+            self._drop_expected(thread)
             self._advance()
 
     def give_work(self, thread, put):
@@ -187,6 +207,23 @@ class VirtualClock:
                 self._set(me, "idle")
                 self._advance()
 
+    def describe(self):
+        """The virtual time (s from `START_NS`) and the state of each participant by thread name, for the
+        diagnostics of a failed test (T-CAP-86) [ADR-F4N7]."""
+        with self._condition:
+            def name(ident):
+                thread = self._threads.get(ident)
+                return thread.name if thread is not None else str(ident)
+
+            def text(state):
+                if isinstance(state, tuple):
+                    return f"wait {(state[1] - self.START_NS) / 1e9:.3f}"
+                return state
+
+            return {"now_s": round((self._now - self.START_NS) / 1e9, 3),
+                    "states": {name(ident): text(state) for ident, state in self._states.items()},
+                    "expected": [thread.name for thread in self._expected]}
+
     def advance_to(self, t_ns):
         """Move the time from a test thread that is not a participant."""
         with self._condition:
@@ -198,7 +235,12 @@ class VirtualClock:
     def _join(self):
         thread = threading.current_thread()
         self._threads[thread.ident] = thread
+        self._drop_expected(thread)  # the caller gives its state now
         return thread.ident
+
+    def _drop_expected(self, thread):
+        if thread in self._expected:
+            self._expected.remove(thread)
 
     def _set(self, me, state):
         self._states[me] = state
@@ -207,8 +249,10 @@ class VirtualClock:
     def _advance(self, force=False):
         for ident in [i for i in self._states if not self._threads[i].is_alive()]:
             del self._states[ident]
+        # a thread of `expect` that started and ended with no wait on the clock
+        self._expected = [t for t in self._expected if t.ident is None or t.is_alive()]
         waits = [state[1] for state in self._states.values() if isinstance(state, tuple)]
-        if not waits or (not force and "run" in self._states.values()):
+        if not waits or (not force and ("run" in self._states.values() or self._expected)):
             return
         target = min(waits)
         if force:
