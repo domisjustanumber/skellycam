@@ -571,6 +571,21 @@ messages also flow during each ws test; a criterion about camera messages does n
 pass thresholds are [agent 23]. They are loose so that a slow CI runner (macOS) passes. They can
 change when the tests are written.
 
+A share of frames and a count of camera messages in a time window depend on the pace of the
+machine. They are `pace` tests ([cap 16.1]), split from the blocking tests on the same run (Q669,
+Q670) [ADR-F4N7](../decisions/entries/F4N7-decisions-of-the-user-on-the-pace-tests-of-fix-lane-6.md):
+
+- A share of frames (T-PRV-05, T-PRV-09, T-PRV-10, T-PRV-13) is at least 80 % on a real machine. On
+  CI, with the margin, the warning level is 40 %.
+- A count of camera messages in a window (T-PRV-15, T-PRV-16) is the time to the n-th camera
+  message. Its nominal value is n frame periods (n / 30 s), and its tolerance is the window minus
+  that time, times the margin [ADR-B7YV](../decisions/entries/B7YV-choices-of-fix-lane-6.md).
+- The blocking half keeps each other check. In place of the share, it checks that an answered camera
+  gets more camera messages than the safety net can give (more than the seconds of the run plus 2);
+  in place of the count, it waits for the n-th camera message with a loose time limit (10 times the
+  window) [ADR-B7YV](../decisions/entries/B7YV-choices-of-fix-lane-6.md). T-PRV-54 checks the rule
+  of 4.3, which does not depend on the pace.
+
 ### 9.2 Test list
 
 | ID | Kind | Input and action | Pass criterion |
@@ -579,18 +594,18 @@ change when the tests are written.
 | T-PRV-02 | ws | Three fake rings at 30 fps for 5 s; the client answers at once. A second reader per ring reads each received `frame_number`. | Each field that the independent parser reads equals the slot field of that frame; the JPEG bytes equal the ring payload (the rule of T-RING-33). |
 | T-PRV-03 | fake | Frames with each flag bit 0x01 to 0x20, and with 0x30 and 0x14. | Each message has the 32 bits of the slot; 0x10, 0x20 and 0x30 carry the JPEG; each frame with a bit of 0x0F has `jpeg_len` 0 and no bytes after the header. |
 | T-PRV-04 | ws | One ring; rotation 0, then 90, 180, 270, 0 on consecutive frames; the client answers at once. | Each camera message has the rotation of its own frame. |
-| T-PRV-05 | ws | Camera ids `a1b2`, `abcdefghijklmnop` (16), `abcdefghijklmnopq` (17) and `cámara`. | The first two are sent, NUL-padded to 16 bytes; the last two get no camera message and one ERROR record each for the connection; the first two are not affected. |
+| T-PRV-05 | ws | Camera ids `a1b2`, `abcdefghijklmnop` (16), `abcdefghijklmnopq` (17) and `cámara`. | The first two are sent, NUL-padded to 16 bytes; the last two get no camera message and one ERROR record each for the connection; the first two are not affected: at least 80 % of their frames in 1.5 s (`pace`; 40 % on CI) (9.1). |
 | T-PRV-06 | ws | Two rings with frames 0 to 9; connect; send no ready message; the writers continue. | Exactly one camera message per camera, frame 9 or newer, within 1 s of the connect; no other camera message until 0.8 s after it. |
 | T-PRV-07 | ws | After T-PRV-06, within its 0.8 s: pause the writers at frame 20; send a ready message for one camera. | One camera message for that camera, frame 20; none for the other camera until its safety net. |
 | T-PRV-08 | ws | A ready message while the newest frame is the last sent frame; then write one frame. | No camera message before the write; one camera message with the new frame within 0.5 s after the write. |
-| T-PRV-09 | ws | Three rings at 30 fps for 5 s; the client answers at once for cameras A and B; it never answers for camera C. | A and B each get at least 80 % of the frames written in that time; C gets 4 to 7 camera messages (the safety net). |
-| T-PRV-10 | ws | Four rings at 30 fps for 10 s; the client answers at once. | Each camera gets at least 80 % of its frames; `frame_number` increases in the camera messages of each camera. |
+| T-PRV-09 | ws | Three rings at 30 fps for 5 s; the client answers at once for cameras A and B; it never answers for camera C. | A and B each get at least 80 % of the frames written in that time (`pace`; 40 % on CI) (9.1); C gets 4 to 7 camera messages (the safety net). |
+| T-PRV-10 | ws | Four rings at 30 fps for 10 s; the client answers at once. | Each camera gets at least 80 % of its frames (`pace`; 40 % on CI) (9.1); `frame_number` increases in the camera messages of each camera. |
 | T-PRV-11 | ws | Two rings at 30 fps; the client never answers; 5.5 s. | Each camera gets 4 to 7 camera messages; each holds a frame that was written after the previous camera message of that camera; the intervals are 0.9 to 1.6 s. |
 | T-PRV-12 | ws | Connect, receive, close; connect again with a new client; send no ready message. | The `run` task of the first connection has ended within 1 s of the close; the new client gets the newest frame of each camera. |
-| T-PRV-13 | ws | Two clients on two rings at 30 fps for 5 s. Client 1 answers at once; client 2 never. | Client 1 gets at least 80 % of the frames; client 2 gets only safety-net camera messages (4 to 7 per camera). |
+| T-PRV-13 | ws | Two clients on two rings at 30 fps for 5 s. Client 1 answers at once; client 2 never. | Client 1 gets at least 80 % of the frames (`pace`; 40 % on CI) (9.1); client 2 gets only safety-net camera messages (4 to 7 per camera). |
 | T-PRV-14 | ws | Two rings; after 1 s, add a third reader to the fake manager and write frames to it. | The newest frame of the third camera arrives with no ready message, within 0.5 s after its first commit. |
-| T-PRV-15 | ws | Ring A at frame 500, sent. (1) The client has answered; replace A's reader with a new ring at frames 0 to 3. (2) The client has not answered; replace it in the same way, then answer within 0.5 s of the last camera message for A (before the safety net). | (1) The next camera message for A has frame 3 of the new ring. (2) No camera message for A before the answer; then frame 3 or newer of the new ring. B continues in both cases (the rule of T-CAP-86). |
-| T-PRV-16 | ws | Two rings at 30 fps; A's writer stops (a failed or dead camera); the client answers at once. | After A's last frame, no camera message for A in 2 s; B gets at least 30 camera messages in those 2 s. |
+| T-PRV-15 | ws | Ring A at frame 500, sent. (1) The client has answered; replace A's reader with a new ring at frames 0 to 3. (2) The client has not answered; replace it in the same way, then answer within 0.5 s of the last camera message for A (before the safety net). | (1) The next camera message for A has frame 3 of the new ring. (2) No camera message for A before the answer; then frame 3 or newer of the new ring. B continues in both cases (the rule of T-CAP-86): 8 camera messages after the new frame of A, within 0.5 s (`pace`) (9.1). |
+| T-PRV-16 | ws | Two rings at 30 fps; A's writer stops (a failed or dead camera); the client answers at once. | After A's last frame, no camera message for A in 2 s; B gets at least 30 camera messages in those 2 s (`pace`) (9.1). |
 | T-PRV-17 | ws | Remove A's reader from the fake manager, then close it, as `_close_rings` does; then send a ready message for A. | No exception; no camera message for A; no log record at WARNING or above; B continues. |
 | T-PRV-18 | fake | Set A's ring `closed` while its reader stays in the fake manager; later replace the reader with a new ring. | No camera message for A while it is closed, and no exception; A's frames come again from the new ring. |
 | T-PRV-19 | fake | (1) Flip one payload bit of A's newest frame after commit (`CORRUPT`); run 20 passes; then write the next frame. A spy counts the reads of the passes by frame number; it does not count the tick reads. (2) A stub reader whose `read` gives `NOT_YET_WRITTEN` for the check and `LAPPED` for the probe two times, then `OK`; the test calls the passes directly, with no tick. | (1) No message for the bad frame; the passes read it in one pass only; the next frame goes out. (2) No message for the two `LAPPED` passes; the `OK` frame goes out. No log record at WARNING or above in either case. |
@@ -599,6 +614,7 @@ change when the tests are written.
 | T-PRV-22 | fake | Ring 1: `arrival_ns` in steps of 33,333,333 ns and `source_frame_number` in steps of 2; three frames flagged `OVERSIZE`; one write skipped with `newer_frame_waiting=True`. Ring 2: `arrival_ns` in steps of 33,333,333 ns and `source_frame_number` -1. Two runs of 1.1 s: the fake client answers at once; the fake client never answers. | 3 or more `framerate_update` messages for the group in each run; `delivered_framerate.mean_frames_per_second` is 60.0 ± 0.5 for ring 1 and 30.0 ± 0.5 for ring 2, in both runs; `oversize_count` is 3; `ring_skipped_count` is 1 [A8]; for ring 1, `not_shown_count` equals (last sent − first sent + 1) − the frames sent − the skipped writes between the first and the last sent frame; no `backend_framerate` key. |
 | T-PRV-23 | fake | Set `closing = True` on the fake manager for 0.5 s, then `False`. | No read and no message while it is `True`; messages again after. |
 | T-PRV-24 | fake | `ServerFramerateCalculator`: update, `clear()`, update; also one update with a jump of 10^9 frames. `oversize_count` of a ring after two oversize frames; `skipped_count` of a ring after three writes with `newer_frame_waiting=True`. | After `clear()`, one update gives one exact interval; the jump returns at once and keeps at most `maxlen` durations; `oversize_count` is 2; `skipped_count` is 3. |
+| T-PRV-54 | ws | Four rings at 30 fps for 5 s; the client answers at once. At each answer, the client reads the newest frame of the ring. | After each answer, the next camera message of that camera holds the newest frame at the send or one older (4.3): its `frame_number` is at least the newest frame at the answer minus 1. `frame_number` increases. Each camera gets more camera messages than the safety net can give. Blocking: the rule does not depend on the pace (Q670) [ADR-F4N7](../decisions/entries/F4N7-decisions-of-the-user-on-the-pace-tests-of-fix-lane-6.md). |
 
 ### 9.3 Parity of the systems [P7]
 
@@ -630,8 +646,9 @@ The states are those of [cap 16.7]. "runs": the test runs on that system and in 
 | T-PRV-22 | runs | runs | runs |
 | T-PRV-23 | runs | runs | runs |
 | T-PRV-24 | runs | runs | runs |
+| T-PRV-54 | runs | runs | runs |
 
-Short form: each of the 24 tests runs on Windows, Linux and macOS. No test has a counterpart or a
+Short form: each of the 25 tests runs on Windows, Linux and macOS. No test has a counterpart or a
 reason to skip. The rings use `multiprocessing.shared_memory` on each system [ring 1.1].
 
 ### 9.4 CI [P7] [agent 24]
