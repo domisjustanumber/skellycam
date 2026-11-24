@@ -18,8 +18,9 @@ the recommendation that he agreed to:
    full build and tests? This needs a token stored as a repository secret, because GitHub does not run
    workflows on a PR opened with the default token." Recommendation: yes; the owner creates the token,
    with the exact minimum permissions stated for him.
-5. **Q705.** "Does 'old recordings must not be converted' cancel that step [the 'upgrade recording'
-   converter, step 6d of player.md 1.3]?" Recommendation: yes, cancel it.
+5. **Q705.** "Does 'old recordings must not be converted' cancel that step?" Recommendation: yes,
+   cancel it. Context added by the coordinator when he relayed the question, not in the quote:
+   "that step" is the "upgrade recording" converter, step 6d of player.md 1.3.
 6. **Q706.** "Leave the v1.0.0-rc to v1.0.23-rc builds out of scope?" Recommendation: yes.
 
 ## Reason

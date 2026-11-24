@@ -12,8 +12,9 @@ way to go". The questions that he answered "yes":
    `mp4v`?"
 2. **Q717.** "Keep the H.264 decoder in our WebAssembly build, and switch a tile to it when WebCodecs
    refuses the file or fails?"
-3. **Q718.** "[Phase 2 writes 8-bit 4:2:0 H.264:] Fix this now as the format of the later compression
-   stage, so that GPU decode always applies?"
+3. **Q718.** "Fix this now as the format of the later compression stage, so that GPU decode always
+   applies?" Context added by the coordinator when he relayed the question, not in the quote:
+   "this" is "Phase 2 writes 8-bit 4:2:0 H.264".
 
 ## Reason
 

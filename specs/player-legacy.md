@@ -1,6 +1,6 @@
 # Phase 6 player specification: step 6c, part 1, playback of FreeMoCap v1 recordings (draft)
 
-Status: **draft for the review of the owner, revision 4, 2026-11-24. Not accepted.** No test and no
+Status: **draft for the review of the owner, revision 5, 2026-11-24. Not accepted.** No test and no
 code comes before the owner accepts this spec. The rules of the owner are in
 [ADR-X5MZ](../decisions/entries/X5MZ-rules-of-the-owner-for-the-playback-of-freemocap-v1-recordings.md)
 (accepted). His answers Q685, Q688, Q697, Q698 and Q700 are in
@@ -12,7 +12,9 @@ Each choice of the agent is in [ADR-A56K](../decisions/entries/A56K-choices-of-t
 (proposed). Section 16 gives the open questions. A "yes" to a question accepts its recommendation.
 
 Revision 2 applied an independent review of revision 1 (39 findings) and the answers of 8EBK.
-Revision 3 applied the answers of 0C4Y. Revision 4 applies the answers of VHD3: section 3 is new.
+Revision 3 applied the answers of 0C4Y. Revision 4 applied the answers of VHD3 (a new section 3).
+Revision 5 applies a second independent review of revision 4; it records no new decision of the
+owner.
 
 This spec extends [`player.md`](player.md) (step 6a, accepted). The rules of `player.md` apply to a v1
 recording, unless this spec gives a different rule. Section 14 lists each difference.
@@ -206,18 +208,20 @@ route. It is unchanged from revision 2.
 ### 3.3 The WebCodecs route (H.264) [agent 6]
 
 The study measured this route as "route 1": WebCodecs fed by its own MP4 reader, with the frames
-exact on each seek, step and play, with the GPU decoder and with the software decoder [S 9.2, S 10.3].
+exact on each seek, step and play, with the GPU decoder and with the software decoder: 726 of 726
+seeks and 288 of 288 steps for each set, also with B-frames [S 9.2, S 10.2, S 10.3].
 
 - **Where it runs.** One `VideoDecoder` for each tile, on the page main thread, as the study ran it
   [C study `app/wc.mjs`]. The tile draws the output `VideoFrame` (6a 8.3).
-- **Samples.** The TypeScript MP4 reader of 6.1 gives the frame table: for each sample its byte
-  offset and size, its decode position, its key flag, its CTS and its frame time stamp. The page reads
-  the sample bytes through `TakeFiles.readRange`, one range request for each contiguous run of
+- **Samples.** The TypeScript MP4 reader of 6.1 gives the sample list and the frame table. The page
+  reads the sample bytes through `TakeFiles.readRange`, one range request for each contiguous run of
   samples, as the study did [C study `app/wc.mjs` `fetchSamples`]. No FFmpeg code runs on this route.
 - **Configuration.** `codec` is `avc1.PPCCLL`, made from the profile, the profile compatibility and
   the level bytes of the `avcC` box; `description` is the body of the `avcC` box; `codedWidth` and
   `codedHeight` come from the sample entry; `optimizeForLatency` is true, as in the study
-  [C study `app/wc.mjs`].
+  [C study `app/wc.mjs`]. The WebCodecs specification defines `optimizeForLatency` only as a hint about
+  the output latency; the study was exact with it on D3D11 and on the software decoder of Chromium
+  [S 9.2]; its effect on other platform decoders is [NV].
 - **`hardwareAcceleration: 'no-preference'`** [agent 6]. The reason from the study: with
   `prefer-hardware`, the 4:2:2 tiles failed to configure and only 102 of 306 seeks were exact;
   `no-preference` chose the software decoder for 4:2:2 and the GPU decoder for 4:2:0, for each stream,
@@ -226,32 +230,54 @@ exact on each seek, step and play, with the GPU decoder and with the software de
 - **`isConfigSupported`.** At open, the route calls `VideoDecoder.isConfigSupported(config)` with this
   configuration. `supported: true` lets the tile use the route. Each other result is fallback
   condition F1 (3.4). The route never uses the result to choose between GPU and CPU.
-- **Chunks.** Each sample becomes one `EncodedVideoChunk` in decode order: `type` `key` for a sample
-  of `stss` (each sample when `stss` is absent), else `delta`; `data` the sample bytes; `timestamp`
-  the frame time stamp of 6.1 (CTS − M + E) in microseconds, rounded down. At open the route checks that
-  these microsecond values are unique and keep the presentation order; when they are not, the
-  camera uses the WASM route (fallback condition F5, 3.4). The decoder copies the `timestamp` of a
-  chunk to its output frame; the route maps the output `timestamp` back to frame k with this exact
-  table [C study `app/wc.mjs`].
-- **B-frames.** The decoder takes the chunks in decode order and gives the frames in presentation
-  order. The route finds frame k only by the output `timestamp`, never by the count of outputs. The
-  same frame-time rule with edit lists holds as for the WASM route (6.1): a sample outside
-  [M, M + D) that a kept frame needs is still sent as a chunk, and its output frame is closed and not
-  shown.
-- **Seek to frame k (key frame and decode forward).** Let d be the decode position of frame k. G is
-  the last key sample at or before d in decode order whose presentation position is at or before k
-  (the rule of the study, `decodeRange` [C study `app/mp4.mjs`]). The route sends the chunks G to d,
-  and keeps the decoder live (the "feed" mode of the study): it does not flush when frame k comes out.
-  When frame k has not come out after the chunk d + 24, it flushes once. When frame k does not come
-  out after the flush, fallback condition F4 applies (3.4). The study measured both modes exact; the
-  feed mode makes a forward step nearly free (forward step p50 0.2 ms against 63 ms with a flush, at
-  720p GOP 250) and a seek about 18 % slower (624 ms against 529 ms) [S 10.2] [agent 6].
-- **Step and play.** A forward step uses a kept output frame (at most 8, as 7.3) or sends the next
-  chunks to the live decoder. A backward step seeks (the rule above). In play, the route sends chunks
-  in decode order and keeps at most 8 output frames ahead of the clock; the locked rule of 6.5
+- **Chunks.** Each sample of the sample list (6.1) becomes one `EncodedVideoChunk`, sent in decode
+  order: `type` `key` for a sample of `stss` (each sample when `stss` is absent), else `delta`; `data`
+  the sample bytes; `timestamp` = round((CTS − M + E) × 10^6 / the track time scale), with
+  `Math.round`, as the study did [C study `app/wc.mjs`]. A sample outside the edit gets its value in
+  the same way (it can be negative). At open the route checks that the values of the kept frames are
+  unique; when they are not, the camera uses the WASM route (fallback condition F5, 3.4). The decoder
+  copies the `timestamp` of a chunk to its output frame; the route maps the output `timestamp` back to
+  frame k with an exact table [C study `app/wc.mjs`]. An output whose `timestamp` is not a kept frame
+  (a sample outside the edit) is closed and not shown.
+- **Output order.** The route does not rely on the order of the outputs. It finds frame k only by the
+  output `timestamp`. The play queue holds its frames sorted by k. The route counts each output whose
+  k is not above the k of the output before it (`outOfOrder`, as the study did), and the decoder
+  report gives the count [agent 6].
+- **The live decoder and its reset.** The route keeps the decoder "live" between requests, as the
+  "feed" mode of the study [C study `app/wc.mjs` `seekFeed`]:
+  - **Continue** when the decoder is live, frame k is above the highest k that has come out, and G of
+    frame k (6.2, one rule for both routes) is at or before the next decode position. Then the route
+    sends the next chunks from the next decode position.
+  - **Reset** in each other case: `reset()`, then `configure(config)` again, close each kept frame,
+    and start at G. Thus no output of an earlier request can mix with the new request.
+  - **After each `flush()`** the decoder is not live. The next request is a reset and starts at a
+    key chunk. The route never sends a `delta` chunk after a flush: WebCodecs requires a key chunk
+    after a flush, and a `delta` chunk would make `decode()` throw [the review] [NV in Electron
+    45.3.4]; that throw would be a false F2.
+- **Seek to frame k.** Let d be the decode position of frame k. The route sends the chunks from G (a
+  reset) or from the next decode position (a continue) up to d. Then, while frame k has not come out,
+  it sends at most 24 more chunks, one at a time, with a wait of 4 ms after each of the first two and
+  2 ms after each later one, so that outputs can come back between them, as the study did
+  [C study `app/wc.mjs` `seekFeed`]. The extra chunks stop at the last sample of the file. When frame
+  k still has not come out, the route flushes once (and the decoder is then not live). When frame k
+  does not come out after that flush, fallback condition F4 applies (3.4).
+- **Kept frames.** After a seek, the route keeps at most 4 output frames above k for the next forward
+  steps, as the study did; it closes each other output [C study `app/wc.mjs`].
+- **Step and play.** A forward step uses a kept frame, or continues (the rule above), or resets. A
+  backward step resets. In play, the route sends chunks in decode order and keeps at most 8 output
+  frames ahead of the clock (7.3); it sends no chunk while `decodeQueueSize` is 4 or more, as the study
+  did in play [C study `app/wc.mjs` `feed`]; at the end of the file it flushes. The locked rule of 6.5
   applies.
-- **Exact frame.** The tile shows only the output frame whose `timestamp` maps to frame k. Each other
-  output frame is kept for a later step (at most 8) or closed.
+- **Exact frame.** The tile shows only the output frame whose `timestamp` maps to frame k.
+- **The cost of this feed mode in the study** (720p, GOP 250, 6 tiles, GPU): seek p50 624 ms against
+  529 ms with a flush after each seek; forward step p50 0.2 ms against 63 ms [S 10.2].
+- **A read error** of `readRange` is not a fallback condition. It gives the mark "read error" of 8.2
+  on both routes.
+- **A reclaimed codec** [Q728] [agent 39]. Chromium can reclaim the codec of a page that is hidden or
+  not active for some time; the `error` callback then gets a `QuotaExceededError` and the state
+  becomes `closed` [the review] [NV in Electron 45.3.4]. The proposal of Q728: the route then makes a
+  new `VideoDecoder` with the same configuration and resets at the next request. It is not F2, and the
+  tile does not switch.
 
 ### 3.4 The fallback to the WASM `h264` decoder [Q717 yes] [agent 39]
 
@@ -260,18 +286,32 @@ these conditions:
 
 | ID | Condition | Source |
 |---|---|---|
-| F1 | `VideoDecoder` does not exist in the page, or `isConfigSupported(config)` rejects, or resolves with `supported` not true. | "WebCodecs refuses the file" [Q717 yes] |
-| F2 | `configure(config)` throws, or the `error` callback of the `VideoDecoder` runs, or the decoder state becomes `closed` while the player did not close it, or `decode()` or `flush()` throws or rejects. | "fails" [Q717 yes] |
-| F3 | After the route sends a `key` chunk, no output frame comes and no error comes within **3 s** while chunks wait in the decoder (`decodeQueueSize` above 0, or a `flush()` that has not resolved). | [agent 39] |
-| F4 | A seek sends G to d and then flushes, the flush resolves, and frame k did not come out. | [agent 39] |
-| F5 | At open, the microsecond `timestamp` values of 3.3 are not unique or not in presentation order. | [agent 39] |
+| F1 | `VideoDecoder` does not exist in the page, or `isConfigSupported(config)` rejects, or resolves with `supported` not true. | the agent's reading of "WebCodecs refuses the file" [Q717 yes] |
+| F2 | `configure(config)` throws, or the `error` callback of the `VideoDecoder` runs, or the decoder state becomes `closed` while the player did not close it, or `decode()` or `flush()` throws or rejects. A reclaimed codec is not F2 (3.3, Q728). | the agent's reading of "fails" [Q717 yes] |
+| F3 | For **3 s**, no output frame and no error comes, while the route has sent chunks whose frames have not come out yet, or while a `flush()` has not resolved. This holds at each point: after a key chunk, in the middle of a GOP, in a continue, and in play (also when the back-pressure of 3.3 holds the next chunk back). | [agent 39] |
+| F4 | A seek that the newest-request rule (6a 7.5) did not cancel sends its chunks, flushes, the flush resolves, and frame k did not come out. | [agent 39] |
+| F5 | At open, the microsecond `timestamp` values of the kept frames are not unique. | [agent 39] |
+| F6 | Proposed in Q724 only (not part of this rule until the owner decides): play behind the clock. | [Q724] |
+
+How each condition can err:
+
+- F3 can fire falsely on a very loaded machine, or when a decoder starts cold. That is harmless: the
+  WASM route is exact too. F3 does not fire on a long GOP, because the outputs keep coming during a
+  long seek (the route closes the frames that it does not need).
+- F4 cannot fire falsely, because it counts only a seek that was not cancelled. F4 does not cover a
+  frame that is missing in play: in play, the locked rule holds the tile, and F3 fires when no output
+  comes.
+- **Wrong pixels with the right time stamp cannot be detected in the product**, on either route. The
+  tests find them (3.5); the product does not.
+
+The switch:
 
 - **Per tile.** The switch affects only the tile of that camera. The other tiles keep their route.
 - **What happens at the switch.** The page closes the `VideoDecoder`, starts the tile worker of 7.1
   with the `h264` decoder, runs the cross-check of 6.1, and asks for frame k*. During the switch the
-  tile keeps its last image and is not live (6.5). From then on, sections 6.2, 7 and 8.2 apply to that
-  tile. When the WASM route also fails at frame k, the mark "damaged at frame k" of 8.2 applies; the
-  player does not try WebCodecs again.
+  tile keeps its last image and is not live (6.5); it rejoins by the rule of 6.5. From then on,
+  sections 6.2, 7 and 8.2 apply to that tile. When the WASM route also fails at frame k, the mark
+  "damaged at frame k" of 8.2 applies; the player does not try WebCodecs again.
 - **No switch back.** A tile that switched stays on the WASM route until the player closes the take.
   A new open of the take starts again with the WebCodecs route.
 - **Shown to the user.** The tile shows a detail text, in small type under the camera part of the
@@ -283,16 +323,28 @@ these conditions:
   `legacy-player: camera <label> switched to the WASM h264 decoder: <reason> (<detail of the error>)`.
   It logs no more line for that tile while the take is open.
 - **The camera state** gives the route (11.2), so that the host and the tests can read it.
-- **A CPU decoder inside WebCodecs.** The browser can decode H.264 in software inside WebCodecs, for
-  example with no GPU, for 4:2:2, or after a GPU decoder fault. `VideoDecoder` does not report which
-  decoder it uses. The spec does not guess, and such a decode is not a fallback condition. The route
-  reports only what the API exposes: the `hardwareAcceleration` value that it asked for, the result of
-  `isConfigSupported`, and the `format` of the first output `VideoFrame` (for example `NV12` or
-  `I420`; `null` for a frame with no readable format). In the study the GPU decoder gave `NV12` and
-  the software decoder gave `I420` on one Windows machine [S 9.2]. The spec does not use the format to
-  conclude GPU or CPU: that mapping is [NV] on other systems and other GPUs. For information only, the
-  route also calls `isConfigSupported` with `prefer-hardware` once at open and reports the answer; it
-  never configures the decoder with it [agent 39].
+
+A CPU decoder inside WebCodecs:
+
+- The browser can decode H.264 in software inside WebCodecs, for example with no GPU decoder, for
+  4:2:2, or after a GPU fault. Chromium on Linux often has hardware video decode turned off by
+  default, so in Electron on Linux this can be the usual case [the review] [NV].
+- `VideoDecoder` does not report which decoder it uses. The spec does not guess, and such a decode is
+  not a fallback condition (unless Q724 adds one).
+- **What the user then sees:** the tile shows "decoder: WebCodecs". With six 1080p CRF 18 tiles, play
+  was behind the clock on 99 to 100 % of refreshes [S 13.2]; with 1080p GOP 250 files in software, a
+  seek took 2.6 s (p50 2655 ms) and a backward step 3.8 s (p50 3803 ms) for six tiles [S 10.2]. The
+  locked rule keeps the tiles together, so play is slow, not out of sync. Nothing in the tile tells the
+  user why.
+- The route reports only what the API exposes: the `hardwareAcceleration` value that it asked for,
+  the result of `isConfigSupported`, the `format` of the first output `VideoFrame` (for example `NV12`
+  or `I420`; `null` for a frame with no readable format), and the `outOfOrder` count. In the study
+  the GPU decoder gave `NV12` and the software decoder gave `I420` on one Windows machine [S 9.2]. The
+  spec does not use the format to conclude GPU or CPU: that mapping is [NV] on other systems and other
+  GPUs. For information only, the route also calls `isConfigSupported` with `prefer-hardware` once at
+  open and reports the answer; it never configures the decoder with it [agent 39].
+- The certify check of 10.5 would report these values on the systems where certify runs [Q708, open].
+  Certify does not run on the machines of the users.
 
 ### 3.5 Frame exactness of both routes
 
@@ -336,17 +388,24 @@ Short-GOP H.264, 6 tiles, 20 s of play (renderer CPU seconds per 20 s: GPU / CPU
 | 1080p30 GOP 13, B-frames, CRF 18 | 140 to 141 | 287 | 192 to 197 | 0 % / 99 % / 0 % | 1.9 / 16.4 / 41.2 |
 | 1080p30 GOP 15, no B-frames, CRF 18 | 144 to 145 | 381 | 221 | 0 % / 99 to 100 % / 0 % | 1.8 / 17.6 / 45.3 |
 
-- **For WebCodecs:** with a GPU decoder it seeks and steps back 2.6 to 3 times faster than WASM on
-  long-GOP H.264, and it uses about 0.1 of a core for six tiles in play [S 12.4, S 13.2].
-- **Against WebCodecs, the no-GPU case:** when the browser decodes in software inside WebCodecs, six
-  1080p CRF 18 tiles fell behind the clock on 99 to 100 % of refreshes; the software decoder used
-  about 0.85 of a core and seemed not to use more cores. WASM, one worker per tile, kept up with 2.1 to
-  2.3 cores [S 13.2]. The fallback of 3.4 does not catch this case, because a software decoder inside
-  WebCodecs is not a fallback condition (3.4). The locked rule of 6.5 then keeps the tiles together,
-  and the refreshes behind the clock go up. The certify check of 10.5 reports it.
-- **Against both, the import case:** an import that the v1 wizard "synchronised" can be an FFmpeg
-  re-encode with the x264 defaults (GOP 250 with B-frames) [INV section 5] [NV]. Then a seek takes
-  0.2 to 0.7 s on either route.
+- **For WebCodecs with a GPU decoder:** it seeks and steps back 2.6 to 3 times faster than WASM on
+  long-GOP H.264. In play the renderer used 1.0 to 1.9 s of CPU per 20 s for six tiles (about 0.1 of
+  a core) [S 13.2]; the GPU process used 1 to 2.5 s per 20 s [S 12.4], and 3.8 to 5.1 s per 20 s at
+  1080p30 GOP 250 [S 10.1].
+- **Against WebCodecs, the no-GPU case.** When the browser decodes in software inside WebCodecs:
+  - six 1080p CRF 18 tiles were behind the clock on 99 to 100 % of refreshes; the software decoder
+    used about 0.85 of a core and seemed not to use more cores; WASM, one worker per tile, kept up
+    with 2.1 to 2.3 cores [S 13.2];
+  - six 1080p GOP 250 tiles: seek p50 2655 ms, backward step p50 3803 ms [S 10.2];
+  - the tile shows "decoder: WebCodecs", so the user gets no hint (3.4);
+  - the fallback of 3.4 does not catch this case. The locked rule of 6.5 keeps the tiles together,
+    and the refreshes behind the clock go up. Q724 asks about a switch for it.
+- **The import case.** An import that the v1 wizard "synchronised" can be an FFmpeg re-encode with
+  the x264 defaults (GOP 250 with B-frames) [INV section 5] [NV]. The study measured such files
+  (x264, GOP 250, B-frames, 6 tiles): with the GPU decoder, seek p50 529 ms at 720p and 1054 ms at
+  1080p, backward step p50 966 ms at 720p and 1608 ms at 1080p; with the software decoder at 1080p,
+  seek p50 2655 ms and backward step p50 3803 ms [S 10.2]; with WASM (3 tiles, 720p), seek p50 654 to
+  660 ms and backward step p50 1531 to 1535 ms [S 12.4].
 
 ### 3.7 Other properties of a camera file
 
@@ -432,12 +491,21 @@ The token and the allowed roots of Q688 do not close this exposure. These requir
 
 1. **CORS for these routes.** The rule `allow_origins=["*"]` of `cors.py` does not apply to these
    routes. They answer with `Access-Control-Allow-Origin` only for an origin of the allow-list, and
-   they never send `Access-Control-Allow-Credentials`. The allow-list of a packaged app holds only
-   the origin of its page. The app loads its page with `loadFile` [C
-   `skellycam-ui/electron/main/services/window-manager.ts`], so that origin is the opaque origin
-   `null`. A development build adds the origin of its Vite dev server. A request with another
-   `Origin` gets 403 "origin not allowed" and no CORS header. A preflight (`OPTIONS`) from another
-   origin gets 403 with no CORS header [agent 37].
+   they never send `Access-Control-Allow-Credentials`. A request with another `Origin` gets 403
+   "origin not allowed" and no CORS header. A preflight (`OPTIONS`) from another origin gets 403 with
+   no CORS header [agent 37].
+   - **The origin of the app page.** The app loads its page with `loadFile` [C
+     `skellycam-ui/electron/main/services/window-manager.ts`], so its origin is the opaque origin
+     `null` [NV in Electron 45.3.4]. A development build has the origin of its Vite dev server.
+   - **The `null` hole.** Each web page in each browser on the machine can make a sandboxed frame or
+     a `data:` document, whose origin is `null` too. MDN, `Access-Control-Allow-Origin`: "The value
+     `null` should not be used", because any origin can make a document with a `null` origin [the
+     review] [NV: MDN not read by the agent]. Thus an allow-list with `null` does not close the "any
+     origin" rule that Q702 removes. The Host check of item 2 does not help, because such a page sends
+     `Host: localhost`.
+   - **Until Q723 is decided** the allow-list holds the dev origin only in a development build, and
+     `null` only together with the secret header of Q723. Question Q723 proposes how to close the hole
+     now.
 2. **Host allow-list.** These routes accept a request only when its `Host` header is in the
    allow-list: `localhost`, `127.0.0.1` and `[::1]`, each with the port of the server, and, for a
    bind beyond `localhost`, the host names and addresses that the settings of the server name. Each
@@ -453,7 +521,10 @@ The token and the allowed roots of Q688 do not close this exposure. These requir
    then still lets a sandboxed page with the origin `null` read these routes [agent 37] [NV: not
    tested].
 
-T-LEG-17 to T-LEG-19 test items 1 to 3.
+T-LEG-17 to T-LEG-19 test items 1 to 3. Question Q727 asks if the same Origin and Host checks also
+cover the camera WebSocket `/connect` (`skellycam/api/websocket/websocket_connect.py`) and the other
+routes of the app: CORS does not apply to a WebSocket, so any web page can open `/connect` unless the
+server checks the `Origin` of the upgrade request [the review].
 
 ## 5. One player [Q685 yes]
 
@@ -501,9 +572,16 @@ restructuring of today's player") of 6a 18. Section 14 lists it.
 - **The edit list.** Let M be the media time of the one non-empty edit (in track units), D its
   segment duration converted from the movie time scale (`mvhd`) to track units, and E the sum of the
   leading empty edits in track units. With no `elst`, M = 0, E = 0 and the edit covers all samples.
-  - The frame table holds each sample with M ≤ CTS < M + D, in the order of CTS (equal CTS: the
-    decode order).
+  - **The sample list** holds each sample of the track, in decode order: DTS, CTS, the key flag,
+    the byte offset and the size. The routes feed from it and choose G from it (6.2). A sample
+    outside the edit stays in it, because a kept frame can need it as a reference.
+  - **The frame table** (the kept frames) holds each sample with M ≤ CTS < M + D, in the order of CTS
+    (equal CTS: the decode order). Frame k is entry k of this table, and K counts these frames.
   - The frame time stamp of frame k is CTS − M + E.
+  - The exclusion of the samples outside [M, M + D) was never measured on either route: the study's
+    index kept each sample and only shifted the time stamps [C study `app/mp4.mjs` `buildIndex`].
+    T-LEG-25, T-LEG-26 and T-LEG-56 test it with a file whose edit cuts frames at the start and at the
+    end, in the middle of a GOP (13.1).
   - FFmpeg's demuxer does the same [FF `libavformat/mov.c` `mov_fix_index`]: it keeps the key frame
     before the edit start and the frames up to the next key frame after the edit end in its index,
     and it marks each frame with a CTS outside [M, M + D) with `AV_PKT_FLAG_DISCARD`, so that it is
@@ -513,11 +591,12 @@ restructuring of today's player") of 6a 18. Section 14 lists it.
     `buildIndex`]. T-LEG-26 compares the two tables on each test file.
 - For `mp4v` from v1 there are no B-frames, so the decode order is the presentation order, and
   M = 0 [S 11.1].
-- For each frame the table holds: the frame time stamp, the decode position, the key flag (from
-  `stss`; all frames are key frames when `stss` is absent), the byte offset and the size.
+- For each frame the frame table holds: the frame time stamp, the decode position in the sample
+  list, the key flag (from `stss`; all frames are key frames when `stss` is absent), the byte offset
+  and the size.
 - The frame count of a camera is the number of frames of its table whose bytes lie inside the
   snapshot size of the file. It is not `duration × fps` (as 6a F21 did).
-- **The WebCodecs route** (3.3) uses this table as its only index.
+- **The WebCodecs route** (3.3) uses the sample list and the frame table as its only index.
 - **The WASM route:** the tile worker opens the same file with FFmpeg's own MP4 demuxer, as the study
   measured [S 12.3]. At open, the worker reports the frame count and the time stamps of the kept frames of the
   demuxer index. A difference from the table refuses the camera: "camera file index mismatch"
@@ -533,9 +612,15 @@ The player asks the tile worker for frame k. The worker:
 2. **Continue.** When the last frame that it gave out is j < k and no key frame is in (j, k] (in
    presentation order), it continues the live decoder. The study continued up to 30 frames ahead; the
    rule here is stricter, as the study advises [S 12.4, S 12.5 product notes].
-3. **Seek.** Else it takes from the frame table the key frame G: the last key frame at or before
-   frame k in decode order. It seeks with `av_seek_frame` and `AVSEEK_FLAG_BACKWARD` on the frame
-   time stamp of **G** (in the time base of the demuxer), not on the time stamp of frame k. Then it
+3. **Seek.** Else it takes G from the sample list. **G (one rule for both routes):** the last key
+   sample at or before the decode position d of frame k, in decode order, whose CTS is at or before
+   the CTS of frame k. This is the rule of the study's `decodeRange` [C study `app/mp4.mjs`]; the
+   condition on the CTS stops a key sample for which frame k is a leading picture (an open GOP). G can
+   be a sample before the edit start. The worker seeks with `av_seek_frame` and
+   `AVSEEK_FLAG_BACKWARD` on the time stamp CTS − M + E of **G** (in the time base of the demuxer),
+   not on the time stamp of frame k. For a G before the edit start this value is below 0; then
+   `mov_seek_stream` takes the first entry of its index, and `mov_fix_index` keeps the key frame
+   before the edit start as that entry [FF `libavformat/mov.c`]. Then it
    flushes the decoder. The first packet that the demuxer gives must have the byte offset of G. When
    it does not, the worker seeks again on the key frame before G, once; a second miss is the error of
    step 6.
@@ -600,8 +685,8 @@ The times serve the clock, the labels and the pace only:
 
 ### 6.5 Synchronised play: the locked rule [agent 17]
 
-- Each tile worker streams decoded frames ahead of the clock, with one credit for each frame, at most
-  8 frames ahead [S 12.3].
+- Each tile streams decoded frames ahead of the clock, at most 8 frames ahead: a tile worker with one
+  credit for each frame [S 12.3], or a `VideoDecoder` by the back-pressure of 3.3.
 - At each display refresh, t advances (6.4) and gives the target k_t: the largest k with T_k ≤ t.
 - A **live tile** is a tile that has no mark `not_readable`, `read_error` or "decoder failed", and
   that is not in a restart (8.2). A frame that the decoder reported as damaged counts as ready: the
@@ -609,6 +694,10 @@ The times serve the clock, the labels and the pace only:
 - The frame that each tile shows is k* = min(k_t, the newest frame that each live tile has ready).
   Thus all live tiles show the same frame number on each refresh. A tile that is not live keeps its
   last image and its mark. It does not hold the others.
+- **Rejoin** [agent 17]. A tile that was not live (a switch of 3.4, a restart of 8.2) becomes live
+  again only when it has a frame ready at or above the k* that the other tiles show. Until then it
+  drops each frame below k_t and is not in the minimum. Thus the frame number that the tiles show
+  never goes down during play (except after a seek or a loop).
 - t does not stop for a late tile. When a tile is late, k* stays below k_t. That refresh is "behind
   the clock". The late tile drops each queued frame below k_t, so that it catches up. This is the
   `locked` mode of the study. The study advises it: in the `free` mode at 100 Mbit/s, tiles were one
@@ -622,7 +711,7 @@ The times serve the clock, the labels and the pace only:
 ### 7.1 One worker for each tile on the WASM route [S 12.3]
 
 This section applies to the WASM route (`mp4v`, and a tile after the fallback of 3.4). The WebCodecs
-route has one `VideoDecoder` for each tile on the page main thread (3.3).
+route has no worker: it has one `VideoDecoder` for each tile on the page main thread (3.3).
 
 - Each tile has one module worker. The worker loads the decoder, opens the original file with
   FFmpeg's demuxer through a libav.js block reader device, and decodes with FFmpeg's decoder.
@@ -658,7 +747,8 @@ route has one `VideoDecoder` for each tile on the page main thread (3.3).
 | Item | Limit | Source |
 |---|---|---|
 | Decoded frames ahead of the clock, each tile | 8, on both routes | [S 12.3] |
-| WebCodecs: chunks waiting in the decoder, each tile | the route sends no more chunk while `decodeQueueSize` is 16 or more | [agent 39] |
+| WebCodecs: chunks waiting in the decoder, each tile | the route sends no chunk in play while `decodeQueueSize` is 4 or more | the study's value in play [C study `app/wc.mjs` `feed`] |
+| WebCodecs: kept frames after a seek, each tile | 4 | the study's value [C study `app/wc.mjs` `seekFeed`] |
 | Decoded frames inside the worker, each tile | 8. The worker stops the decode when 8 decoded frames wait. It reads packets in batches of at most 64 KiB, and it keeps the packets that it has not decoded as compressed bytes. | [agent 19]. The study decoded each 64 KiB batch at once: about 50 small frames in one batch [S 12.4] [C study `wasm_worker.mjs` `pump`]. |
 | Decoded frames held in the page, each tile | 8 + 1 (on the tile) + 1 (in transfer) | as 6a 9.4 |
 | Block cache, each tile | 16 × 256 KiB = 4 MiB | [S 12.3] |
@@ -688,8 +778,9 @@ route has one `VideoDecoder` for each tile on the page main thread (3.3).
 
 ### 8.2 During play and seek [agent 21]
 
-On the WebCodecs route, each decoder fault is a fallback condition of 3.4; the tile then continues
-on the WASM route, and this table applies there.
+On the WebCodecs route, a decoder fault is a fallback condition of 3.4 (a reclaimed codec is not,
+3.3); after the switch the tile continues on the WASM route, and this table applies there. A read
+error is the row "read error" of this table on both routes; it is not a fallback condition.
 
 | Fault | Result |
 |---|---|
@@ -801,7 +892,7 @@ of this job.
 ### 9.4 How the UI gets the built files [Q697 yes]
 
 The owner accepted: "The 2.4 MB decoder is built by CI from the pinned recipe and packaged with the
-UI" (not committed) [Q697 yes].
+UI" [Q697 yes]. The coordinator added "not committed" when he relayed the question.
 
 - `skellycam-ui/decoder/dist/` is in `.gitignore`.
 - `npm run decoder:build` builds with Docker. `npm run decoder:fetch` downloads the artefact of the CI
@@ -945,11 +1036,16 @@ of that release may drop the override; that is a review point of that PR.
    <summary>". The job writes issues with `GITHUB_TOKEN` and `permissions: issues: write`. An issue
    needs no new workflow run.
 
-**Why a token secret.** GitHub: "events triggered by the `GITHUB_TOKEN` will not create a new
-workflow run", except some events; for a `pull_request` event of the types `opened`, `synchronize` or
-`reopened`, the runs "require approval" first. To start the runs, "use a GitHub App installation
-access token or a personal access token instead of `GITHUB_TOKEN`" [D trigger]. Without the token,
-each bump PR would wait for a person to approve its runs.
+**Why a token secret, and the fact behind Q704.** GitHub: "events triggered by the `GITHUB_TOKEN`
+will not create a new workflow run", except some events. A `pull_request` event (types `opened`,
+`synchronize`, `reopened`) of a PR that a workflow opens or updates with `GITHUB_TOKEN` "creates
+workflow runs in an approval-required state": "a user with write access to the repository can start
+the runs by selecting **Approve workflows to run**". A GitHub App installation token or a personal
+access token "also lets `pull_request` workflows run automatically", without that prompt [D trigger].
+Thus the question text of Q704 ("GitHub does not run workflows on a PR opened with the default
+token") is not exact: with the default token, each bump PR waits for one approval click. Question
+Q725 asks the owner to confirm the token or to take the click. Until then the text below applies
+[Q704 yes].
 
 **The token** that the owner must create [Q704 yes] [D fine-grained] [D PAT]:
 
@@ -971,8 +1067,10 @@ each bump PR would wait for a person to approve its runs.
     "Workflows" permission. A test checks that the job writes only `skellycam-ui/decoder/ffmpeg.json`
     (T-LEG-62).
   - **Not Issues.** The issues of step 6 use `GITHUB_TOKEN`.
-- **Expiry:** the longest that the organisation policy allows. The default is "30 days, or less if
-  the target has a token lifetime policy set" [D PAT]. The workflow fails with the text "decoder bump
+- **Expiry:** the owner chooses. The default is "30 days, or less if the target has a token lifetime
+  policy set"; "Infinite lifetimes are allowed but may be blocked by a maximum lifetime policy set by
+  your organization or enterprise owner" [D PAT]. A repository under a personal account has no such
+  policy, so the owner can choose no expiry or a renewal date in his calendar. The workflow fails with the text "decoder bump
   token missing or expired" when the token does not work, so that the expiry is visible.
 - **Secret:** a repository secret for GitHub Actions with the name `DECODER_BUMP_TOKEN`. The
   scheduled workflow is not started by Dependabot, so it can read Actions secrets [D troubleshoot].
@@ -980,13 +1078,36 @@ each bump PR would wait for a person to approve its runs.
   requests, read and write), installed on this repository only, with its app ID and private key as
   secrets [D trigger]. GitHub advises an app "for long-lived integrations" [D PAT]. The owner chose a
   token [Q704 yes]; the app stays an option for later.
+- **Notes on the token.** The token makes the owner the author of each bump PR; when a branch rule
+  requires an approving review, he cannot approve his own PR (a GitHub App avoids that) [the review]
+  [NV]. Contents write also allows a push to the default branch, unless a branch rule blocks it.
+- **The commit identity.** The job commits with a noreply address of GitHub, never a private address:
+  the noreply address of the owner's account (the form that the reference gives, with the account ID
+  and the user name at `users.noreply.github.com`) [D email], or the noreply address of the
+  `github-actions[bot]` account with the default token [NV: its exact form was not read in the docs].
+
+**Where the watch and Dependabot run** [Q726]:
+
+- Scheduled workflows "will only run on the default branch". "In a public repository, scheduled
+  workflows are automatically disabled when no repository activity has occurred in 60 days" [D events].
+- "Notifications for scheduled workflows are sent to the user who last modified the cron syntax in the
+  workflow file" [D events].
+- "Version updates are not automatically enabled on forks when a `dependabot.yml` configuration file
+  is present"; on the fork, the owner must enable them under Settings, Advanced Security,
+  "Dependabot version updates" [D dependabot-config].
+- The default-token way of Q725 also needs the repository setting "Allow GitHub Actions to create and
+  approve pull requests". For a new repository in a personal account, "workflows are not allowed to
+  create or approve pull requests" by default, and `GITHUB_TOKEN` "only has read access" for the
+  `contents` and `packages` scopes by default; the workflow then asks for `contents: write` and
+  `pull-requests: write` with its `permissions` key [D actions-settings]. The agent found no
+  documented reason why a scheduled workflow cannot open a PR this way.
 
 Limits, said plainly:
 
 - A CVE list seldom names the decoder that it affects. A person must decide if a CVE touches
   `mpeg4`, `h264` or the `mov` demuxer.
-- When the format of a page changes, the workflow fails. A failed scheduled run is red in the
-  Actions tab [NV: who gets the notice of a failed scheduled run].
+- When the format of a page changes, the workflow fails. GitHub sends the notice of a scheduled run
+  to the user who last changed its cron line [D events].
 
 ### 10.4 The pipeline of a bump PR [agent 30] [Q710]
 
@@ -1046,6 +1167,14 @@ folder"]: the directory becomes `/skellycam-ui`, in the CI PR of this work.
   `https://docs.github.com/en/actions/how-tos/write-workflows/choose-when-workflows-run/trigger-a-workflow`.
 - [D fine-grained]: "Permissions required for fine-grained personal access tokens",
   `https://docs.github.com/en/rest/authentication/permissions-required-for-fine-grained-personal-access-tokens`.
+- [D events]: "Events that trigger workflows", section `schedule`,
+  `https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows`.
+- [D dependabot-config]: "Configuring Dependabot version updates",
+  `https://docs.github.com/en/code-security/how-tos/secure-your-supply-chain/secure-your-dependencies/configure-version-updates`.
+- [D actions-settings]: "Managing GitHub Actions settings for a repository",
+  `https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/enabling-features-for-your-repository/managing-github-actions-settings-for-a-repository`.
+- [D email]: "Email addresses reference", section "Your noreply email address",
+  `https://docs.github.com/en/account-and-profile/reference/email-addresses-reference`.
 - [D PAT]: "Managing your personal access tokens",
   `https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens`.
 
@@ -1153,7 +1282,10 @@ media is a proposal [Q712]:
   - a v1 folder around them: `synchronized_videos/Camera_000_synchronized.mp4` and its time file with
     perf-counter-like values, NaN values, duplicates, a long gap and a short file;
   - H.264 in MP4: `libx264` Baseline GOP 30; High with B-frames, GOP 250 and an edit list (media time
-    above 0); a file with a leading empty edit; a file with two non-empty edits (for the refusal); a
+    above 0, as the B-frame delay gives); **an edit that cuts frames**: a High file with B-frames and
+    GOP 30 whose `elst` the tool writes after the mux, so that the edit starts at the CTS of frame 40
+    and ends at the CTS of frame 140 (both in the middle of a GOP) [agent 36]; a file with a leading
+    empty edit; a file with two non-empty edits (for the refusal); a
     `yuvj420p` file; a 10-bit `yuv420p10le` file and a file with two video tracks (for the refusal
     and the warning);
   - the reference: the SHA-256 of each decoded frame, from a PyAV decode on the **x86-64 Linux** CI
@@ -1222,7 +1354,7 @@ bytes that the test builds with no codec data (box structures, NPY headers, file
 | T-LEG-14 | unit | W, L, M | none | The shared `TakeFiles` check suite of 6a 5.1 on `http-take-files.ts` against a Node test server; the answers 200 with the whole file and 206 with a wrong start; a 404 for an expired token, then a re-open with the same snapshot and with a changed snapshot; two 404 in a row. | The results of T-PLAY-39; the two wrong answers are read errors; the first re-open repeats the read and passes; the changed snapshot gives "recording changed on disk"; two 404 give a read error. |
 | T-LEG-15 | server | W, L, M | none | The route of 4.2: open, the range table of 6a 5.6, the snapshot, a deleted token, an expired token (a test clock), an unknown path, `..` forms, a link to an outside file, a folder outside the roots, a root whose name is a string prefix of an outside folder, a root in another case (Windows and macOS), a file replaced after the open, a `recording_parent_directory` parameter, a CORS preflight for the `POST` and for `Range`. | Status, bytes and headers as 6a 5.6 and 4.2; 403 "folder not allowed" outside the roots and for the prefix case; the other case is inside on Windows and macOS; the replaced file gets 404; the parameter adds no root; the preflight allows the method and the header; the expose header is on each range answer. |
 | T-LEG-16 | server | W, L, M | none | Read 6 files by range for 20 s through the route while a spy counts the bytes that the server reads and sends, and a log capture counts the log lines. | Each response body is a byte range of an original file; no route writes a file; no log line for a range request. |
-| T-LEG-17 | server | W, L, M | none | Origin rule of 4.4 item 1 on each route of 4.2 and on `list_recordings`: requests and preflights with `Origin` `https://example.org`, `http://localhost:1234`, `null`, the dev server origin in a development build and in a packaged build, and no `Origin`. | `https://example.org` and `http://localhost:1234`: 403 "origin not allowed", no `Access-Control-Allow-Origin`; `null`: allowed, with `Access-Control-Allow-Origin: null`; the dev origin: allowed only in a development build; no answer has `Access-Control-Allow-Credentials`; other routes of the app keep their CORS rule of today. |
+| T-LEG-17 | server | W, L, M | none | Origin rule of 4.4 item 1 on each route of 4.2 and on `list_recordings`: requests and preflights with `Origin` `https://example.org`, `http://localhost:1234`, `null`, the dev server origin in a development build and in a packaged build, and no `Origin`. | `https://example.org` and `http://localhost:1234`: 403 "origin not allowed", no `Access-Control-Allow-Origin`; `null` with no secret header: 403 and no byte of a file; `null` with the secret header of Q723: served [Q723]; the dev origin: allowed only in a development build; no `Origin` and no secret header: 403 [Q723]; no answer has `Access-Control-Allow-Credentials`; other routes of the app keep their CORS rule of today. |
 | T-LEG-18 | server | W, L, M | none | Host rule of 4.4 item 2: `Host` `localhost:<port>`, `127.0.0.1:<port>`, `[::1]:<port>`, `localhost:<other port>`, `attacker.example`, `attacker.example:<port>`, a name of the bind settings, and no `Host`. | The first three and the name of the settings: served; each other: 403 "host not allowed", with no byte of a file. |
 | T-LEG-19 | server | W, L, M | none | Start the server with a bind setting beyond `localhost` and no login or pairing configured; and with only `localhost`. | The first start refuses the bind with the text of 4.4 item 3 and listens on no address other than the loopback addresses; the second starts normally. |
 | T-LEG-20 | build | L | none | The checks of 9.3, steps 4, 5 and 7, on the built outputs. | `CONFIG_GPL 0`, `CONFIG_NONFREE 0`, `CONFIG_VERSION3 0`; the decoder, demuxer, parser, bit-stream filter and protocol sets equal `parts.json` with the additions of 9.2; `--disable-network`; no `--enable-lib`; WASM at most 4 MiB; a licence section for each linked source. |
@@ -1230,7 +1362,7 @@ bytes that the test builds with no codec data (box structures, NPY headers, file
 | T-LEG-22 | build | L | none | The pin checks of 9.3, steps 1 and 6. | Exact npm version; a tag and a digest in the `FROM` line; the digest belongs to the tag; `ffmpeg.json` has an exact version and a SHA-256, a wrong SHA-256 fails the build, and the `RELEASE` file of the built FFmpeg reads 9.0.2. |
 | T-LEG-23 | build | L | none | The licence files in the outputs and in an app package. | `license.js`, the recipe reference and the source tarball reference are present; the decoder files are outside the `asar`. |
 | T-LEG-24 | unit (real decoder) | W, L, M | gen | Decode each frame of the generated `mp4v` files (720x1280, 640x480, 1228x574) in Node with the built decoder. | Each frame hash equals the x86-64 PyAV reference; the frame count equals the table. |
-| T-LEG-25 | unit (real decoder) | W, L, M | gen | The WASM `h264` decoder (the fallback of 3.4): as T-LEG-24 for the H.264 files, the edit-list files and the `yuvj420p` file. | Each frame hash equals the reference; the edit-list file gives the frames with M ≤ CTS < M + D only. |
+| T-LEG-25 | unit (real decoder) | W, L, M | gen | The WASM `h264` decoder (the fallback of 3.4): as T-LEG-24 for the H.264 files, the edit-list files (also the file whose edit cuts frames) and the `yuvj420p` file. | Each frame hash equals the reference; the cut file gives exactly the 100 frames 40 to 139 and no other frame; the other edit-list files give the frames with M ≤ CTS < M + D only. |
 | T-LEG-26 | unit (real decoder) | W, L, M | gen | The frame table of `legacy/mp4.ts` against the index of FFmpeg's demuxer in the worker, on each generated file, the edit-list files included. | Equal frame counts and equal frame time stamps; `index_mismatch` for a test file whose `stts` the test changed. |
 | T-LEG-27 | component | L (CI, sample data); W (owner machine, treadmill session) | real | Full decode and 100 random seeks + 48 steps per set. | Each frame hash equals a PyAV reference made at test time on that system (x86-64); each seek and step lands on the asked frame. |
 | T-LEG-30 | component | W, L, M | gen | 6 tiles of 720x1280 `mp4v`: 100 random seeks (seed 1), the first and the last frame, each key frame and its neighbours, and repeated seeks to a kept frame. | Each tile gives the plane hash of frame k (checked in the decoder client before the draw) and draws its barcode; a seek to a kept frame makes no demuxer seek. |
@@ -1254,10 +1386,19 @@ bytes that the test builds with no codec data (box structures, NPY headers, file
 | T-LEG-48 | unit | W, L, M | none | `npm run decoder:fetch` with a fake artefact store: a good artefact, one with a wrong SHA-256. | The good one is in `dist/`; the wrong one is refused and `dist/` is unchanged. |
 | T-LEG-54 | unit | W, L, M | none | The WebCodecs chunk plan on built frame tables: no B-frames; B-frames with `ctts`; an edit list with media time 1024 and a leading empty edit; a table whose microsecond time stamps collide; `avcC` boxes of the Baseline, Main and High profiles; a seek to each frame of a GOP. | The `codec` string and `description` from `avcC`; one chunk per sample in decode order with the right `key` or `delta` type and the time stamp CTS − M + E in microseconds; the samples outside [M, M + D) are sent and their outputs are marked to close; the seek range G to d by the rule of 3.3; the colliding table gives fallback condition F5. |
 | T-LEG-55 | unit | W, L, M | none | The fallback rules with a fake `VideoDecoder` and a fake tile worker: no `VideoDecoder`; `isConfigSupported` rejects; it says `supported: false`; `configure` throws; the `error` callback; `decode` throws; no output for 3 s after a `key` chunk (a test clock); output at 2.9 s; a flush that resolves with frame k missing; then a later success of the fake; then the WASM route fails at the same frame. | F1, F1, F1, F2, F2, F2, F3 give the switch; 2.9 s does not; F4 gives the switch; each switch is for that tile only, logs one line, sets `route` `wasm_fallback` with its reason and the detail text of 3.4; no switch back after the later success; a WASM failure at the frame gives "damaged at frame k" and no new WebCodecs try. |
-| T-LEG-56 | component | W, L, M | gen | The WebCodecs route on generated H.264 files: Baseline GOP 30 (no B-frames), High with B-frames GOP 250, and the High file with an edit list; 100 random seeks (seed 1), the first and the last frame, each key frame and its neighbours, steps +1, −1, +10, −10 across key frames. | Each tile shows frame k: the plane hash through `VideoFrame.copyTo` (with `NV12` split into U and V) equals the x86-64 reference, and the barcode equals k; a frame with `format` `null` is checked by barcode only and recorded; no fallback happens. |
+| T-LEG-56 | component | W, L, M | gen | The WebCodecs route on generated H.264 files: Baseline GOP 30 (no B-frames), High with B-frames GOP 250, the High file with an edit list, and the file whose edit cuts frames; 100 random seeks (seed 1), the first and the last frame, each key frame and its neighbours, steps +1, −1, +10, −10 across key frames. | Each tile shows frame k: the plane hash through `VideoFrame.copyTo` (with `NV12` split into U and V) equals the x86-64 reference, and the barcode equals k; a frame with `format` `null` is checked by barcode only and recorded; the cut file shows K = 100 and never a frame outside the edit; no fallback happens. |
 | T-LEG-57 | component | W, L, M | gen | Play 20 s at speed 1, locked, 6 tiles of H.264 High with B-frames on the WebCodecs route; every 30th frame hashed. | 0 refreshes with different frame numbers; each hashed frame is exact; the share behind the clock and the `decoderInfo` of each tile are recorded. |
-| T-LEG-58 | component | W, L, M | gen | Forced fallback in a 4-tile H.264 take: a test hook makes `isConfigSupported` say no for tile 2; a hook injects a decoder error into tile 3 during play; then the hooks are removed and the player seeks 50 times. | Tiles 2 and 3 end on the WASM route with `routeReason` `not_supported` and `error`; for the same seeks they show the same frames (hash and barcode) as tiles 0 and 1 and as the reference; their detail text shows "decoder: WASM (WebCodecs ...)"; one log line each; no switch back after the hooks are removed; tiles 0 and 1 stay on WebCodecs. |
-| T-LEG-59 | component | W, L, M | gen | The decoder report of 3.4 on each system. | For each WebCodecs tile: `hardwareAcceleration` `no-preference`, the `isConfigSupported` results with `no-preference` and with `prefer-hardware`, and the format of the first output frame; the route is the same whatever these values are. |
+| T-LEG-58 | component | W, L, M | gen | Forced fallback in a 4-tile H.264 take: a test hook makes `isConfigSupported` say no for tile 2; a hook injects a decoder error into tile 3 during play; then the hooks are removed and the player seeks 50 times. | Tiles 2 and 3 end on the WASM route with `routeReason` `not_supported` and `error`; for the same seeks they show the same frames (hash and barcode) as tiles 0 and 1 and as the reference; their detail text shows "decoder: WASM (WebCodecs ...)", also with `showLabel` off; one log line each; no switch back after the hooks are removed; tiles 0 and 1 stay on WebCodecs. |
+| T-LEG-59 | component (report) | W, L, M | gen | The decoder report of 3.4 on each system. | For each WebCodecs tile the report holds `hardwareAcceleration` `no-preference`, the `isConfigSupported` results with `no-preference` and with `prefer-hardware`, the format of the first output frame and the `outOfOrder` count. The values are recorded, not judged. |
+| T-LEG-64 | unit | W, L, M | none | A fake `VideoDecoder` gives each combination of: `isConfigSupported` with `prefer-hardware` true or false; first output format `NV12`, `I420` or `null`; `outOfOrder` 0 or 3. | The route stays WebCodecs in each combination (only F1 to F5 switch); the report gives the values. |
+| T-LEG-65 | unit | W, L, M | none | F3 and F4 with a fake decoder and a test clock: a stall after the first outputs of a GOP; a stall in a continue (no key chunk sent); a stall in play while back-pressure holds the next chunk; a decoder that takes each chunk (`decodeQueueSize` 0) and then gives nothing, with no flush pending; outputs every 2.9 s; a seek with frame k missing after the flush that a newer request cancelled; the same seek not cancelled. | F3 within 3 s in each of the four stalls; no F3 at 2.9 s; no F4 for the cancelled seek; F4 for the seek that was not cancelled. |
+| T-LEG-66 | unit | W, L, M | none | The feed rules of 3.3 with a fake decoder that gives outputs 2 ms after each chunk: a seek that continues and one that does not; a target that comes out only after 3 extra chunks; d + 24 past the last sample; a forward step after a flush; a time scale whose values need rounding. | A seek that does not continue calls `reset` and `configure` and shows no output of the earlier request; the target comes out with no flush (the waits let outputs back); the extra chunks stop at the last sample, then one flush; after a flush the next request starts at a key chunk and sends no `delta` chunk first (no F2); the continue condition and at most 4 kept frames as 3.3; chunk time stamps by `Math.round`. |
+| T-LEG-67 | unit | W, L, M | none | A fake decoder that gives the outputs of a B-frame GOP out of order. | The play queue is sorted by k; the shown frame number never goes down; `outOfOrder` counts each such output. |
+| T-LEG-68 | component | W, L, M | gen | Play 20 s with 4 tiles: a test hook forces a switch of H.264 tile 2 (an injected decoder error) and a restart of the worker of an `mp4v` tile during play. | The frame number of each tile never goes down; each of the two tiles becomes live again only with a frame at or above the k* shown; the other tiles keep 0 different frame numbers among them. |
+| T-LEG-69 | component | W, L, M | gen | A test hook closes the `VideoDecoder` of tile 1 with a `QuotaExceededError` (a reclaimed codec), while paused; also a run with the window hidden for 5 minutes [NV: whether Electron 45.3.4 reclaims then]. | With the proposal of Q728: a new `VideoDecoder`, the next seek shows the exact frame, the detail text stays "decoder: WebCodecs", no switch and no log line of a switch. |
+| T-LEG-70 | component | W, L, M | gen | 6 tiles of 1080p H.264 on the WebCodecs route: play 30 s, 200 seeks, close. | Open `VideoFrame`s ≤ 10 for each tile at each time; kept frames after a seek ≤ 4; `decodeQueueSize` never above 4 in play when the route sends; 0 open frames after `close()` [NV: the frame pool of other GPUs]. |
+| T-LEG-71 | component | W, L, M | gen | A test hook makes the reads of H.264 tile 1 fail during play, then work again. | Tile 1 shows "read error" with its last image and stays on WebCodecs (no switch); the other tiles keep playing; after the reads work again, the next seek shows the exact frame on tile 1. |
+| T-LEG-72 | component | W, L, M | gen | `showLabel` off, on an `mp4v` tile, a WebCodecs tile and a switched tile. | The detail text shows on each: "decoder: WASM", "decoder: WebCodecs", "decoder: WASM (WebCodecs ...)"; the frame, camera and time parts do not show. |
 | T-LEG-50 | benchmark | W (test machine) | gen and real | 200 seeks, 48 steps and 60 s of play at 1, 3 and 6 tiles of 720x1280 `mp4v`; and the treadmill session. | The targets of 12.2; p50, p95 and maximum recorded. |
 | T-LEG-51 | benchmark | W (test machine) | gen | 16 tiles of 720x1280 `mp4v`, 60 s of play; CPU and working set. | The target of 12.2; results recorded. |
 | T-LEG-52 | benchmark | W (test machine) | gen and real | T-LEG-50 through the HTTP route with the link limited to 100 Mbit/s. | Results recorded for the owner. |
@@ -1267,8 +1408,8 @@ bytes that the test builds with no codec data (box structures, NPY headers, file
 | T-LEG-62 | tool | W, L, M | none | The logic of `decoder-upstream.yml` on stored text samples (a tag list with 9.0.3 and 9.1.0, a part of the security page, a libav.js tag list), a fake tarball and a fake GitHub API; and a run with no token. | For 9.0.3: one branch and one bump PR with a new `ffmpeg.json` (version and the SHA-256 of the fake tarball), made with the token, and no other changed file (no file in `.github/workflows/`); a second run updates the same PR; for 9.1.0 and for the CVE: one issue with `GITHUB_TOKEN`, updated on a second run; with no token: the job fails with "decoder bump token missing or expired". |
 | T-LEG-63 | rehearsal (once) | CI | none | A PR that changes only the libav.js pin (a real bump or a rehearsal on a branch). It needs the approval of the owner, because a PR is visible outside the machine. | Each job of 10.4 runs; the PR is mergeable with no other commit. |
 
-Counts: 20 unit, 23 component, 5 server, 4 build, 3 tool, 3 benchmark, 1 certify, 1 rehearsal:
-60 tests.
+Counts: 24 unit, 28 component, 5 server, 4 build, 3 tool, 3 benchmark, 1 certify, 1 rehearsal:
+69 tests.
 
 ### 13.4 Rules to tests
 
@@ -1287,18 +1428,18 @@ Counts: 20 unit, 23 component, 5 server, 4 build, 3 tool, 3 benchmark, 1 certify
 | Q697 yes | T-LEG-23, T-LEG-47, T-LEG-48 |
 | Q698 yes | T-LEG-27 |
 | Q700 yes | T-LEG-07 (HEVC), T-LEG-08, T-LEG-33, T-LEG-60 |
-| Q694 yes | T-LEG-07, T-LEG-54, T-LEG-56, T-LEG-57, T-LEG-59 |
-| Q717 yes | T-LEG-25, T-LEG-55, T-LEG-58 |
+| Q694 yes | T-LEG-07, T-LEG-54, T-LEG-56, T-LEG-57, T-LEG-59, T-LEG-64, T-LEG-66, T-LEG-67, T-LEG-70 |
+| Q717 yes | T-LEG-25, T-LEG-55, T-LEG-58, T-LEG-65, T-LEG-68, T-LEG-72 |
 | Q718 yes | No test here: a constraint on a later phase (section 19). |
 | Q701 yes, Q702 yes | T-LEG-17, T-LEG-18, T-LEG-19 |
 | Q703 yes | T-LEG-22, T-LEG-24 to T-LEG-26 |
 | Q704 yes | T-LEG-62, T-LEG-63 |
 | Q705 yes, Q706 yes | No test: a cancelled step and a scope rule. |
 | 2.2, 2.3, 2.4 | T-LEG-01 to T-LEG-05 |
-| 3 | T-LEG-07, T-LEG-13, T-LEG-41, T-LEG-44, T-LEG-45, T-LEG-54 to T-LEG-59 |
+| 3 | T-LEG-07, T-LEG-13, T-LEG-41, T-LEG-44, T-LEG-45, T-LEG-54 to T-LEG-59, T-LEG-64 to T-LEG-72 |
 | 4 | T-LEG-14 to T-LEG-19, T-LEG-38 |
 | 6 | T-LEG-03 to T-LEG-06, T-LEG-08 to T-LEG-10, T-LEG-26, T-LEG-30 to T-LEG-35, T-LEG-46 |
-| 7, 8 | T-LEG-11, T-LEG-12, T-LEG-35 to T-LEG-37, T-LEG-42, T-LEG-43 |
+| 7, 8 | T-LEG-11, T-LEG-12, T-LEG-35 to T-LEG-37, T-LEG-42, T-LEG-43, T-LEG-68, T-LEG-70, T-LEG-71 |
 | 9, 10 | T-LEG-20 to T-LEG-26, T-LEG-47, T-LEG-48, T-LEG-53, T-LEG-60 to T-LEG-63 |
 
 ### 13.5 Measurements owed
@@ -1396,7 +1537,11 @@ marks each one [agent n].
 39. The fallback conditions F1 to F5, the limit of 3 s of F3, the switch steps, the detail text and
     its reasons, the log line, the decoder report and the information call with `prefer-hardware`,
     the limit of 16 waiting chunks (3.4, 7.3).
-40. The note on later phases (section 19).
+40. The MKV path and the fallback in later phases (section 19).
+41. The revision 5 corrections: the sample list and the frame table, one G rule, the rejoin rule,
+    the reset, the waits and the end of the extra chunks, no `delta` chunk after a flush, the output
+    order, the wider F3, F4 only for a seek that was not cancelled, the queue values of the study (4),
+    the test file whose edit cuts frames (3.3, 3.4, 6.1, 6.2, 6.5, 7.3, 13).
 
 ## 16. Open questions for the owner
 
@@ -1405,7 +1550,7 @@ Q697, Q698 and Q700
 ([ADR-8EBK](../decisions/entries/8EBK-answers-of-the-owner-q685-q688-q697-q698-q700.md)) and Q701 to
 Q706 ([ADR-0C4Y](../decisions/entries/0C4Y-answers-of-the-owner-q701-to-q706.md)), and Q694, Q717 and
 Q718 ([ADR-VHD3](../decisions/entries/VHD3-answers-of-the-owner-q694-q717-q718.md)) on 2026-11-24; they
-are not in this list.
+are not in this list. Q723 to Q728 come from the second review of revision 4.
 
 - **Q699. Patents.** Accept that the build holds the MPEG-4 Part 2 and H.264 decoders, and that their
   patent position is a decision of the owner outside this spec; the technical work does not wait for
@@ -1439,6 +1584,59 @@ are not in this list.
   `timeEstimated` and `detail` and the mark `decoder_failed` of 11.2. Yes?
 - **Q716. Spec place.** Keep this spec as the new file `specs/player-legacy.md`, linked from 6a 1.3,
   as the v1 part of step 6c. Yes?
+- **Q723. Close the `Origin: null` hole now.** Gate these routes with a secret header, in place of an
+  allow-list entry for `null` alone (4.4 item 1). Yes? The three options:
+  - **A secret header (recommended).** At each start, the Electron main process (which starts the
+    server, `skellycam-ui/electron/main/services/python-server.ts` [C]) makes 128 random bits and
+    gives them to the server in an environment variable; a server that a person starts by hand writes
+    its own secret into a file that only the user can read. The main process gives the secret to the
+    page through the preload bridge. The page sends it in a header `X-Skellycam-Key` on each request
+    to these routes; the server refuses each request without the right value with 403 and no byte.
+    A custom header makes the browser send a preflight, and a foreign page cannot know the secret, so
+    a page with the origin `null` gets nothing. Cost: small; one secret in the page memory. It is
+    also the seed of the pairing of 4.4 item 3: a pairing gives this secret to a remote app.
+  - **A custom-scheme origin.** Serve the app page from a privileged scheme of the app (the app
+    already registers `skellycam-take` with `registerSchemesAsPrivileged`, 6a 5.2), so the page has a
+    real origin that no web page can claim. Cost: the whole app shell loads differently (each asset,
+    the CSP, the dev server path); a change of the UI far outside the player.
+  - **A fetch in the main process.** The page asks the main process, which reads from the server
+    with no browser `Origin`; the server then refuses each request that has a browser `Origin`. Cost:
+    each byte goes through the main process; that throughput is not measured for this path.
+  - None of the three stops another local program of the same user; that program can read the files
+    on the disk directly anyway. With Q723 yes, T-LEG-17 refuses `null` without the secret.
+- **Q724. A switch for play that is behind.** A WebCodecs tile that is the late tile (the tile whose
+  newest ready frame holds k* below k_t, 6.5) on more than 20 % of the refreshes in a window of 10 s
+  of play (counted from 2 s after each start of play) switches to the WASM decoder, with the reason
+  "too slow", once and with no switch back, as 3.4. The switch happens only when
+  `navigator.hardwareConcurrency` is at least 4 and at least the number of H.264 tiles. Yes? Reasons
+  and limits: with a GPU, the study had 0 % behind; with the software decoder inside WebCodecs, 99 to
+  100 % behind at six 1080p CRF 18 tiles; WASM kept up there with 2.1 to 2.3 cores for six tiles, on a
+  machine with many cores [S 13.2]. On a machine with few cores, WASM can be behind too, and the
+  switch then does not help; it does no harm to the frames, because both routes are exact. The values
+  20 % and 10 s are the agent's, not measured.
+- **Q725. The token of the upstream watch.** The owner's earlier yes to Q704 rested on the words
+  "GitHub does not run workflows on a PR opened with the default token". The documentation says that
+  such a PR "creates workflow runs in an approval-required state", which one click by a user with write
+  access starts [D trigger]. Use the default token and accept one "Approve workflows to run" click for
+  each bump PR, in place of the personal token. Yes? Costs: the default token needs the repository
+  setting "Allow GitHub Actions to create and approve pull requests" (off by default for a repository
+  in a personal account) and `contents: write` and `pull-requests: write` in the `permissions` of the
+  job [D actions-settings]; one click for each bump PR, on a PR that the owner reviews anyway. The
+  personal token needs no click, but it is a long-lived secret with a renewal or no expiry, and it
+  makes the owner the author of the PR (10.3). The agent found no documented reason why a scheduled
+  workflow cannot open a PR with the default token.
+- **Q726. Where the watch and Dependabot run.** They run on the owner's fork now, and on the upstream
+  repository later. Yes? On the fork this needs: Dependabot version updates turned on in the settings
+  (they are not on by default on a fork); the workflows on the default branch (scheduled workflows run
+  only there); activity in the repository within 60 days (else GitHub turns the scheduled workflow off
+  in a public repository) [D dependabot-config] [D events].
+- **Q727. The other routes and the WebSocket.** The Origin and Host checks of 4.4 also cover the camera
+  WebSocket `/connect` and the other routes of the app, as a separate small spec change outside the v1
+  player, listed as owed. Yes? (CORS does not apply to a WebSocket; any web page can open `/connect`
+  unless the server checks the `Origin` of the upgrade request.)
+- **Q728. A reclaimed codec.** When Chromium reclaims the codec of a hidden page (a
+  `QuotaExceededError` in the `error` callback), the route makes a new WebCodecs decoder and does not
+  switch to WASM (3.3). Yes?
 
 ## 17. Not verified
 
@@ -1464,12 +1662,21 @@ are not in this list.
 - The limit of 3 s of F3 on a slow machine, and the feed mode with one flush after d + 24 on files
   other than the study files (3.3, 3.4).
 - The WebCodecs colour space of a `yuvj` H.264 file (T-LEG-44).
+- That WebCodecs in Electron 45.3.4 throws on a `delta` chunk after a flush, and reclaims the codec of
+  a hidden page with a `QuotaExceededError` (3.3) [the review].
+- `optimizeForLatency` on VideoToolbox, VA-API and GPUs other than the study GPU (3.3).
+- That Chromium on Linux has hardware video decode off by default in Electron (3.4).
+- The frame pool of other GPUs with 8 frames ahead and 4 kept frames for each tile (T-LEG-70).
+- The exclusion of frames outside an edit, on either route, until T-LEG-25, T-LEG-26 and T-LEG-56
+  run (6.1).
+- The MDN text on `null` (4.4); the agent did not read MDN.
+- That a branch rule stops the owner from approving his own bump PR (10.3).
 - That a microsecond time stamp keeps each frame of an import unique (F5 catches each case where it
   does not).
 - That libav.js 6.10.9 accepts a compiled `WebAssembly.Module`; the CSP behaviour in Electron 45.3.4
   (7.2).
 - That Dependabot keeps an exact npm pin exact, and updates a `FROM` digest (10.2); the Docker Hub
-  limits for anonymous pulls (10.4); who gets the notice of a failed scheduled run (10.3).
+  limits for anonymous pulls (10.4).
 - That no npm advisory names an FFmpeg CVE (10.3).
 - The behaviour of a pushed commit on a Dependabot branch (9.4).
 - A DNS rebinding attack on this server (4.4).
@@ -1513,8 +1720,8 @@ The answers of the owner of 2026-11-24
   Electron direct path for now?"
 - Q685: "v1 plays in the canvas player, and a later PR removes the old `<video>` player and the server
   transcode code?"
-- Q697: "The 2.4 MB decoder is built by CI from the pinned recipe and packaged with the UI?" (not
-  committed)
+- Q697: "The 2.4 MB decoder is built by CI from the pinned recipe and packaged with the UI?"
+  Context added by the coordinator when he relayed the question, not in the quote: "not committed".
 - Q698: "CI downloads the official FreeMoCap sample data, checked by checksum and never committed. The
   treadmill take is used only on your machine?"
 - Q700: "HEVC refused until a real sample exists; playback length is the smallest frame count of the
@@ -1536,8 +1743,9 @@ agree". The questions, each with the recommendation that he agreed to:
   build and tests? This needs a token stored as a repository secret, because GitHub does not run
   workflows on a PR opened with the default token." Recommendation: yes; the owner creates the token,
   with the exact minimum permissions stated for him.
-- Q705: "Does 'old recordings must not be converted' cancel that step [the 'upgrade recording'
-  converter, step 6d of player.md 1.3]?" Recommendation: yes, cancel it.
+- Q705: "Does 'old recordings must not be converted' cancel that step?" Recommendation: yes, cancel it.
+  Context added by the coordinator when he relayed the question, not in the quote: "that step" is
+  the "upgrade recording" converter, step 6d of player.md 1.3.
 - Q706: "Leave the v1.0.0-rc to v1.0.23-rc builds out of scope?" Recommendation: yes.
 
 The answers of the owner of 2026-11-24
@@ -1548,21 +1756,25 @@ future phases. WebCodecs seems to be the way to go". The questions:
 - Q694: "Decode H.264 with WebCodecs in every phase, and use the WebAssembly decoder for `mp4v`?"
 - Q717: "Keep the H.264 decoder in our WebAssembly build, and switch a tile to it when WebCodecs
   refuses the file or fails?"
-- Q718: "[Phase 2 writes 8-bit 4:2:0 H.264:] Fix this now as the format of the later compression
-  stage, so that GPU decode always applies?"
+- Q718: "Fix this now as the format of the later compression stage, so that GPU decode always
+  applies?" Context added by the coordinator when he relayed the question, not in the quote:
+  "this" is "Phase 2 writes 8-bit 4:2:0 H.264".
 
 ## 19. Constraints on later phases
 
 These decisions bind later phases. This spec does not design them.
 
 - **Q694 in each phase** [Q694 yes]. H.264 is decoded with WebCodecs in each phase, in each container.
-  For MP4 the TypeScript MP4 reader of 6.1 feeds the WebCodecs route of 3.3. For MKV, the Matroska
-  reader of the module (6a `reader/matroska.ts`) gives the frame table and feeds the same WebCodecs
-  route. H.264 in MKV is not measured [NV]. The WASM `h264` decoder stays the fallback of 3.4 there
-  too [Q717 yes].
+  For MP4 the TypeScript MP4 reader of 6.1 feeds the WebCodecs route of 3.3. For MKV, the agent
+  proposes that the Matroska reader of the module (6a `reader/matroska.ts`) gives the sample list and
+  the frame table and feeds the same WebCodecs route [agent 40]. H.264 in MKV is not measured [NV].
+  The agent proposes that the WASM `h264` fallback of 3.4 applies there too [agent 40] [Q717 yes].
 - **Q718: 8-bit 4:2:0 H.264 for the later compression stage** [Q718 yes]. The stage that writes
-  compressed video in a later phase writes 8-bit 4:2:0 H.264, so that the GPU decoder applies. The
-  reason from the study: with `no-preference`, Chromium decoded the 4:2:2 tiles in software; a set of
-  six 720p30 GOP 250 tiles with four 4:2:2 tiles had a seek p50 of 861 ms, against 529 ms for six
-  4:2:0 tiles on the GPU [S 9.2] [S RT]. The other settings of that stage (GOP length, B-frames, the
-  encoder) are not decided here.
+  compressed video in a later phase writes 8-bit 4:2:0 H.264. The reason from the study: with
+  `no-preference`, Chromium decoded the 4:2:2 tiles in software; the study: "Software 4:2:2 seeks
+  cost about 1.3-2x the hardware 4:2:0 time here (shared machine)" [S 9.2].
+- **The wording of Q718 is not exact.** The question text that the owner accepted says "so that GPU
+  decode always applies". That wording was the coordinator's. 8-bit 4:2:0 makes GPU decode possible;
+  it does not guarantee it. A machine with no GPU decoder, or with hardware decode turned off (often the
+  case for Chromium on Linux [NV]), still decodes in software inside WebCodecs (3.4, 3.6).
+- The other settings of that stage (GOP length, B-frames, the encoder) are not decided here.

@@ -11,8 +11,8 @@ answered:
    the Electron direct path for now?"
 2. **Q685.** "v1 plays in the canvas player, and a later PR removes the old `<video>` player and the
    server transcode code?"
-3. **Q697.** "The 2.4 MB decoder is built by CI from the pinned recipe and packaged with the UI?" (not
-   committed)
+3. **Q697.** "The 2.4 MB decoder is built by CI from the pinned recipe and packaged with the UI?"
+   Context added by the coordinator when he relayed the question, not in the quote: "not committed".
 4. **Q698.** "CI downloads the official FreeMoCap sample data, checked by checksum and never
    committed. The treadmill take is used only on your machine?"
 5. **Q700.** "HEVC refused until a real sample exists; playback length is the smallest frame count of
