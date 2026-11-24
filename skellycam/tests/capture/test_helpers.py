@@ -588,6 +588,22 @@ def test_fake_triggers_slow_period_cut_off_remove_and_drift():
         source.read_frame(1.0)
 
 
+def test_fake_slow_period_at_the_next_set_starts_at_the_next_live_set():
+    """[ADR-7GC1]: `slow_period(..., at_next_set=True)` does not start at once. A set that is not live (the first
+    set after the open) does not start it. The next live set starts it, from the next frame."""
+    source, clock = virtual_source(FakeScript())
+    source.open(request())
+    source.set_controls({"exposure": StandInSetting(False, -7)})  # not live: it starts the frame count of the live rule
+    source.slow_period(rate=5.0, seconds=1.0, at_next_set=True)
+    frames = [source.read_frame(1.0) for _ in range(96)]
+    intervals = {b.arrival_ns - a.arrival_ns for a, b in zip(frames, frames[1:])}
+    assert intervals == {round(1e9 / 30)}, "the armed slow period started before a live set"
+    source.set_controls({"exposure": StandInSetting(False, -6)})  # live
+    slow = [source.read_frame(1.0) for _ in range(3)]
+    assert [b.arrival_ns - a.arrival_ns for a, b in zip(slow, slow[1:])] == [round(1e9 / 5)] * 2
+    assert source.slow_finished_ns is None
+
+
 # ---------------------------------------------------------------------------
 # The fake source with real time, the factory and a camera process
 # ---------------------------------------------------------------------------

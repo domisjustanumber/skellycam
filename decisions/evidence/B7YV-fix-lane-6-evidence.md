@@ -68,3 +68,20 @@ load changed during the runs.
    In WSL (the set-up above, a new copy of the worktree): 20 runs, each one pytest process with T-CAP-86,
    T-CAP-13 (two cases) and T-CAP-05: 0 failures (80 of 80 tests passed, about 3 s for each run).
    `test_helpers.py`: 34 passed.
+8. **The slow period of T-REQ-17** (item 4 of [ADR-7GC1](../entries/7GC1-choices-of-the-gate-on-the-test-clock-and-the-end-of-t-cap-05.md)).
+   The CI failure (run 45503344875): `('done', None) == ('failed', 'timed-out')`. The diagnosis of this lane: 23 of
+   60 runs failed on 2 cores (13 of 60 before the clock changes of this lane). On Windows (the machine of item 5),
+   with a temporary real sleep of 0.05 s between `slow_period` and the request:
+   - the test before the change: 3 runs, 3 failed with that same assertion;
+   - the test with `at_next_set=True`: 3 runs, 3 passed.
+
+   After the sleep was removed: `test_camera_requests.py` and `test_helpers.py` with `-m "not pace"`, 110 passed;
+   `test_states.py` with `-m "not pace"`, 38 passed. In WSL (the set-up above, a new copy of the worktree): 30
+   runs of T-REQ-17, 0 failures. In one run, after the test passed, the watch thread of the group logged "the
+   watch could not read the camera queues: handle is closed" at the end of the process.
+
+   T-CAP-113 (`test_t_cap_113_a_frame_that_waits_at_the_gate_is_not_too_slow`) has the same race. A temporary
+   probe asserted that the slow period of 12 s had not ended at the end of the check. With no sleep, the probe
+   passed. With a real sleep of 0.05 s or 0.5 s before `app.apply`, the probe failed: the slow period had ended
+   before the check, so the test then passes but does not test its case. The armed slow period does not fit:
+   the live set goes to the other camera. No change was made there.
