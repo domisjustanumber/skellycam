@@ -15,12 +15,10 @@
    thread never finds a `ClockQueue` with no clock. A read of the controls after the timeout of the queue
    does not stop the time, as before. A new test sets a real delay of 20 ms before each set; the search must
    end `done` at -9 with 8 trials. A test of the clock checks the kept wait.
-   T-CAP-31 then failed by one frame: with no virtual time in the set, a frame can arrive while the loop
-   waits in its read, before it takes the check signal. The check does not count that frame. Spec 10.2 of
-   [`windows-capture.md`](../../specs/windows-capture.md) names no first frame of the skip. Thus the test
-   accepts a window that starts at the 16th or the 17th frame after the change. The product stays.
-   The skip of the product is 15 + k frames, where k is the count of frames that the loop took after the
-   change and before it read the check signal. The spec names no first frame. The user decides this point.
+   T-CAP-31 then failed by one frame: the product skipped 15 + k frames, where k is the count of frames that
+   the loop took after the change and before it read the check signal. The user decided an exact skip and a
+   strict test ([ADR-53VB](53VB-decision-of-the-user-on-the-exact-skip-after-a-live-change.md)); the choices
+   that build it are in [ADR-0R76](0R76-choices-of-the-exact-skip-after-a-live-change.md).
 2. **T-UNX-95, `device-removed` (1 test).** A fault of the test. The test thread polls each 5 ms of real time.
    On the virtual clock the 2 s in `ready` before the removal can pass in less time. `one_camera` gets
    `until`. The two cases with `removed_after_frame` also accept `dead`.
@@ -58,7 +56,7 @@ WSL Ubuntu 24.04, a copy of commit 0d0dfa054, uv 0.13.9, Python 3.13.18, the sta
   files and `test_restore.py` on 2 cores, 115 passed; the 18 test files that use the harness (no hardware) on
   4 cores, 335 passed, 9 skipped.
 - T-CAP-31 with `ClockQueue`: the check started at frame 181 (first 166), one frame after the frame of the
-  test; `too_slow` came at its own t_a + 2.0275 s. With the new test rule it passes on 1, 2 and 28 cores.
+  test; `too_slow` came at its own t_a + 2.0275 s.
 - A poll of the state each 5 ms of `removed_after_frame=150` on 2 cores: `waiting` then `dead`, 5 ms of real
   time apart; `ready` was not seen.
 - F1 fails on 2 and on 28 cores; with the join it passes.
