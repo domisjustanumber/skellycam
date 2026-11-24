@@ -263,6 +263,60 @@ def test_t_cap_30_live_exposure_change_and_resolution_reopen(monkeypatch):
             "the other camera had no preview while the camera reopened"
 
 
+def spy_check_anchors(monkeypatch):
+    """The `after` time of each check that the loop feeds: the time that the control thread read just before
+    the set of the change (10.2) [ADR-0R76]. The virtual clock can take a forced step while the control thread
+    runs, so the `set_controls` event of the fake can come later than this anchor."""
+    from skellycam.core.camera.capture.camera_loop import CameraLoop
+
+    anchors = []
+    feed_check = CameraLoop._feed_check
+
+    def feed(self, sfn, arrival_ns):
+        if self.check is not None and (not anchors or anchors[-1] != self.check["after"]):
+            anchors.append(self.check["after"])
+        return feed_check(self, sfn, arrival_ns)
+
+    monkeypatch.setattr(CameraLoop, "_feed_check", feed)
+    return anchors
+
+
+def too_slow_after_the_window_start(app, camera_id, anchors):
+    """T-CAP-31: the exact window of 10.2 [ADR-53VB]. Skipped frame 1 is the first frame whose arrival is after
+    the anchor of the last check (`spy_check_anchors`); the anchor is not later than the `set_controls` event of
+    the fake. The window starts at the 16th frame from skipped frame 1, at t_a. `too_slow` comes at
+    t_a + 59 / (0.97 x 30) s, within +/-25 ms, after `checking`. Gives (t_a, the time of `too_slow`)."""
+    log = app.factory.logs[camera_id]
+    t_set = [t for name, t, d in log.events if name == "set_controls" and d.get("exposure")][-1]
+    t_change = anchors[-1]
+    assert t_change <= t_set, (t_change, t_set)
+    first_after = min(k for k, (arrival, _) in log.frames.items() if arrival > t_change)
+    t_a = log.frames[first_after + 15][0]
+    # The tracker writes a state at the next read of the fake, so it can be later than `wait_state`
+    app.wait(lambda: app.tracker.first(camera_id, "too_slow") is not None, "the tracker sees too_slow")
+    t_slow = app.tracker.first(camera_id, "too_slow")
+    assert app.tracker.first(camera_id, "checking", t_change) < t_slow
+    expected = t_a + round(59 / (0.97 * 30) * 1e9)
+    assert abs(t_slow - expected) <= 25_000_000, f"too_slow {(t_slow - t_a) / 1e9:.4f} s after t_a"
+    return t_a, t_slow
+
+
+def test_t_cap_31_the_skip_counts_the_frames_of_a_slow_set(monkeypatch):
+    """T-CAP-31, 10.2 [ADR-53VB]: the live set takes 0.2 s of clock time, so about 6 frames arrive during the set,
+    and the loop takes them before it reads the result of the change. The skip counts them: the window starts
+    at the 16th frame after the start of the set, as with a set that takes no time."""
+    script = FakeScript(rate_after_change=(20.0,), live_set_delay_s=0.2)
+    with one_camera(monkeypatch, script, track=True) as (app, camera_id, _):
+        anchors = spy_check_anchors(monkeypatch)
+        assert app.apply([app.config(camera_id, exposure=-6)]).status_code == 200
+        app.wait_state(camera_id, "too_slow")
+        log = app.factory.logs[camera_id]
+        t_set = [t for name, t, d in log.events if name == "set_controls" and d.get("exposure")][-1]
+        during = [k for k, (arrival, _) in log.frames.items() if t_set < arrival <= t_set + 200_000_000]
+        assert len(during) >= 5, during  # frames came during the set
+        too_slow_after_the_window_start(app, camera_id, anchors)
+
+
 def test_t_cap_31_too_slow_after_a_live_change(monkeypatch, tmp_path):
     """T-CAP-31, section 10.2 [D32, D33]: after a live change, the fake goes to 20 fps; after a later
     change, to 30 fps. State `checking`, then `too_slow` at t_a + 59 / (0.97 x 30) s = t_a + 2.0275 s,
@@ -270,23 +324,15 @@ def test_t_cap_31_too_slow_after_a_live_change(monkeypatch, tmp_path):
     window could end at 20 fps (t_a + 2.95 s); preview continues; record start returns 409; the next
     change at 30 fps gives `ready`.
 
-    The window starts at the 16th frame that the fake delivers after the change (skip 15), or at the 17th: the
-    loop takes the check after its next read, so a frame that arrives while the loop waits in that read is not
-    in the skip. With no virtual time in the set (`ClockQueue`), such a frame can come (spec 10.2 names no frame)."""
+    The window starts at the 16th frame that the fake delivers after the change (skip 15): skipped frame 1 is
+    the first frame whose arrival is after the time read just before the set (10.2) [ADR-53VB]."""
     script = FakeScript(rate_after_change=(20.0, 30.0))
     with one_camera(monkeypatch, script, track=True) as (app, camera_id, _):
         spies = Spies(monkeypatch, app)
-        log = app.factory.logs[camera_id]
+        anchors = spy_check_anchors(monkeypatch)
         assert app.apply([app.config(camera_id, exposure=-6)]).status_code == 200
         app.wait_state(camera_id, "too_slow")
-        t_change = [t for name, t, d in log.events if name == "set_controls" and d.get("exposure")][-1]
-        first_after = min(k for k, (arrival, _) in log.frames.items() if arrival > t_change)
-        t_slow = app.tracker.first(camera_id, "too_slow")
-        assert app.tracker.first(camera_id, "checking", t_change) < t_slow
-        t_a = min((log.frames[first_after + skip][0] for skip in (15, 16)),
-                  key=lambda t: abs(t_slow - t - round(59 / (0.97 * 30) * 1e9)))
-        expected = t_a + round(59 / (0.97 * 30) * 1e9)
-        assert abs(t_slow - expected) <= 25_000_000, f"too_slow {(t_slow - t_a) / 1e9:.4f} s after t_a"
+        t_a, t_slow = too_slow_after_the_window_start(app, camera_id, anchors)
         assert t_slow < t_a + round(59 / 20 * 1e9)
         app.wait(lambda: any(e["arrival_ns"] > t_slow for e in spies.of("jpeg")), "preview after too_slow")
         refused = app.record_start(tmp_path)

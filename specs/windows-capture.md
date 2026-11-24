@@ -919,6 +919,13 @@ Reason: on the C930e the gain read 6 before the stream started and 0 after it st
 
 - Skip 15 frames, then measure over the next 60 frames with the formula and the 3 % limit of 10.1
   [D32].
+- After a live control change, skipped frame 1 is the first frame that the loop takes whose arrival time
+  is later than the time that the control thread reads just before it calls the set of the change, also
+  when the loop took that frame before it read the result of the change [ADR-53VB](../decisions/entries/53VB-decision-of-the-user-on-the-exact-skip-after-a-live-change.md).
+- The check after an exposure search ([`camera-requests.md`](camera-requests.md) 1.3) does not use
+  that rule today: its skipped frame 1 is the first frame that the loop takes after it read the result of
+  the last set, so a frame that arrived after that set returned and that the loop took before that read is
+  not counted [ADR-0R76](../decisions/entries/0R76-choices-of-the-exact-skip-after-a-live-change.md).
 - Early decision: the camera is too slow as soon as the 60 frames can no longer arrive in time
   [D32]. With `t_a` the arrival of the first frame of the window and `r` the mode rate, that is when
   `now - t_a > 59 / (0.97 x r)` and frame `s_a + 59` has not arrived. A frame that arrived in time and
@@ -1336,7 +1343,7 @@ T-CAP-36) are [agent 41]. They can be changed when the tests are written.
 | T-CAP-28 | 3a | fake | Open with -1; compare 30.0 and 30.00003, 30 and 29.97. | The config stores the mode rate; the first pair is equal, the second is not. |
 | T-CAP-29 | 3a | fake | Group of two with mode rates 30 and 60; group of two with -1 that both give 30. | The first apply fails and opens no camera; the second opens both. |
 | T-CAP-30 | 3a | fake | Change the exposure, then the resolution, of one camera of two. | Exposure: no reopen, same ring name, state `checking`; resolution: only that camera reopens, new rings, warm-up and rate check again; the other camera keeps its preview. |
-| T-CAP-31 | 3a | fake | After a live change, the fake goes to 20 fps; after a later change, to 30 fps. | State `checking`, then `too_slow` at t_a + 59 / (0.97 x 30) s = t_a + 2.0275 s, within ±25 ms, where t_a is the arrival of the first frame of the window; this is before the window could end at 20 fps (t_a + 2.95 s); preview continues; record start returns 409; the next change at 30 fps gives `ready`. |
+| T-CAP-31 | 3a | fake | After a live change, the fake goes to 20 fps; after a later change, to 30 fps. Again with a set that takes 0.2 s, so frames arrive during the set. | State `checking`, then `too_slow` at t_a + 59 / (0.97 x 30) s = t_a + 2.0275 s, within ±25 ms, where t_a is the arrival of the first frame of the window: the 16th taken frame from skipped frame 1 of 10.2, also with the slow set; this is before the window could end at 20 fps (t_a + 2.95 s); preview continues; record start returns 409; the next change at 30 fps gives `ready`. |
 | T-CAP-32 | 3a | fake | Start a recording while a camera is `checking`. | 409, the detail names the camera and `checking`. |
 | T-CAP-33 | 3a | fake | Apply a change during a recording. | 409; the camera config and the ring name do not change. |
 | T-CAP-34 | 3a | fake | Start a recording with the config in `MANUAL`; the fake reports its exposure in auto (a script value), because a config cannot ask for the auto exposure of the camera now. | The recording starts; the response `warnings` holds the camera, `exposure` and the text of 11.3; the status shows the same item; the log has the text; the capture info has `controls.exposure_us.auto` true (note of 2026-11-20). |

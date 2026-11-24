@@ -56,6 +56,7 @@ These entries are `accepted`.
 | [T34M](entries/T34M-decision-of-the-user-on-the-start-method-of-camera-processes.md) | Q651 of 2026-11-23: no start method at import; the app sets spawn; a fork start is refused; nothing decided for FreeMoCap | accepted |
 | [0AMX](entries/0AMX-propose-from-skellycam-and-review-in-the-kit.md) | Q657: a skellycam agent runs `propose`; the kit session reviews and commits the result in its own repository | accepted |
 | [TC9B](entries/TC9B-ci-runner-with-no-device.md) | Q660: the CI exception of the other-systems rule says "a CI runner with no device", so it fits each repository | accepted |
+| [53VB](entries/53VB-decision-of-the-user-on-the-exact-skip-after-a-live-change.md) | Q663 option B: the skip after a live change is exact, counted from the change; T-CAP-31 is strict | accepted |
 
 ### Proposed
 
@@ -81,6 +82,7 @@ These entries wait for a decision of the user. Section is the section or area of
 | [HQE5](entries/HQE5-choices-of-fix-lane-4.md) | Choices of fix lane 4: spawn on Linux, skip guard, slow-stop gap, pace steps, restore file by hashed key, take rate sum over sum | none | proposed |
 | [6RVC](entries/6RVC-choices-of-the-first-propose.md) | Choices of the first propose (other-systems rule): no entry citation in the units, hook place, a test moves, `--fill` and `--literal` | none | proposed |
 | [DC43](entries/DC43-choices-of-fix-lane-5.md) | Choices of fix lane 5: control thread on the test clock, test waits for a short `ready` and for a killed process, Windows Server OS key | none | proposed |
+| [0R76](entries/0R76-choices-of-the-exact-skip-after-a-live-change.md) | Choices of the exact skip: anchor at the start of the set, replay of the last 1024 taken frames, a slow fake set | `skellycam.core.camera.capture` | proposed |
 
 The entries that are `rejected`, `superseded by XXXX`, `absorbed into <path>#<anchor>`,
 `evidence; used by XXXX`, `evidence; replaced by XXXX` or `done` are in [historical.md](historical.md).
