@@ -66,6 +66,9 @@ These entries are `accepted`.
 | [N14T](entries/N14T-decisions-of-the-user-on-the-ci-review-of-2026-11-25.md) | CI review of 2026-11-25: the macOS jobs run only by hand; find if "Too many open files" is a leak, no higher limit; find the cause of T-CAP-91 on Linux | accepted |
 | [R394](entries/R394-choices-of-fix-lane-7.md) | Choices of fix lane 7: macOS jobs by hand; the open files leak in the pubsub registry (product, proposal only); a group start holds the test clock | accepted |
 | [2SX2](entries/2SX2-acceptance-of-the-choices-of-fix-lane-7-and-its-follow-ups.md) | "Yes to all": ADR-R394 accepted (its clock rule changes B7YV item 8); fix the pubsub leak, spec and test first; look at the T-UNX-98 thread; merge lane 7 | accepted |
+| [MX8V](entries/MX8V-decisions-of-the-user-on-capture-timings.md) | Q565 to Q571, Q576 to Q578, Q580 to Q583, Q586: capture timings, step list, wait apart from work, summary each second, one shape, switch, tile (not built) | accepted |
+| [8Z0Q](entries/8Z0Q-choices-of-the-capture-timings-spec.md) | Spec `specs/capture-timings.md` draft 2, tests T-TIM-01 to 26: diagnostics field, message, switch details, kinds, brackets, threads, budget, tile | accepted |
+| [8B85](entries/8B85-acceptance-of-the-capture-timings-spec.md) | Q587: the user accepts `specs/capture-timings.md` with the ADR-8Z0Q choices; build after fix lane 3 merges, capture side first, tile with 4b (not built) | accepted |
 
 ### Proposed
 

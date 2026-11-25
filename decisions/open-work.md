@@ -171,6 +171,13 @@ task. Delete an item when its work is done. The PR that closes an item records t
   ([ADR-TFD7](entries/TFD7-search-limit-stop-rate-median-role-flag-and-restore-after-a-failed-loop.md)):
   a role flag in place of the `parent_process()`
   guards.
+- **Capture timings, decided 2026-11-23, not built**
+  ([ADR-MX8V](entries/MX8V-decisions-of-the-user-on-capture-timings.md)). The spec
+  [`specs/capture-timings.md`](../specs/capture-timings.md) and its test list T-TIM-01 to T-TIM-26 are
+  accepted, with the agent choices of [ADR-8Z0Q](entries/8Z0Q-choices-of-the-capture-timings-spec.md)
+  ([ADR-8B85](entries/8B85-acceptance-of-the-capture-timings-spec.md), Q587). Fix lane 3 is merged.
+  The capture side comes first; the tile part
+  comes with step 4b. The FreeMoCap display comes after FreeMoCap moves to the frame-ring API.
 - **Deferred by the user (2026-11-23).** At 60 fps the exposure search never tries a value longer
   than the frame period. The product switches low light compensation off after each open.
 - **Fix lane 4 follow-ups** ([ADR-HQE5](entries/HQE5-choices-of-fix-lane-4.md)).
