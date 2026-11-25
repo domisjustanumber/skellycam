@@ -1,8 +1,13 @@
 # S4TJ — Choices of revision 6 of the v1 playback spec: the skellyspecs pin, the details of F6, the secret header and the default token
 
-**Status:** proposed, 2026-11-25 (agent; applies the answers of the owner in
+**Status:** absorbed into
+[`specs/player-legacy.md#phase-6-player-specification-step-6c-part-1-playback-of-freemocap-v1-recordings`](../../specs/player-legacy.md#phase-6-player-specification-step-6c-part-1-playback-of-freemocap-v1-recordings),
+[`specs/certify.md#362-the-check-catalogue-for-each-level`](../../specs/certify.md#362-the-check-catalogue-for-each-level),
+2026-11-25 (commit to dom/legacy-player; was accepted, 2026-11-25 (user, Q801 of
+[ADR-2Z2D](2Z2D-answers-of-the-owner-q800-to-q803-and-acceptance-of-the-v1-playback-spec.md)); was
+proposed, 2026-11-25 (agent; applies the answers of the owner in
 [ADR-EM6A](EM6A-answers-of-the-owner-to-the-v1-playback-questions-of-revision-5.md), with the fixes
-of an independent review of the same day).
+of an independent review of the same day)).
 **Depends on:** skellyspecs 3XYN (accepted on 2026-11-25) and 91PB (proposed on 2026-11-25), in
 `recording-files/decisions/`, at commit `fd41818e472f93325f833eed15184bb4c51d879b` of the branch
 `dom/v1-player-rules`; no permalink until the owner approves its push.

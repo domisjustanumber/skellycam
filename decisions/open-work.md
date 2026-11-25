@@ -107,12 +107,10 @@ task. Delete an item when its work is done. The PR that closes an item records t
     spec must change); `xvfb` from the runner image (section 12.6 must change); a `.gitignore`
     exception for `skellycam-ui/src/player/`.
 - **Step 6c part 1 (v1 playback).** [`specs/player-legacy.md`](../specs/player-legacy.md) revision 6
-  applies [ADR-EM6A](entries/EM6A-answers-of-the-owner-to-the-v1-playback-questions-of-revision-5.md).
-  It waits for the acceptance of the owner. Open:
+  is accepted ([ADR-2Z2D](entries/2Z2D-answers-of-the-owner-q800-to-q803-and-acceptance-of-the-v1-playback-spec.md)).
+  Next: its failing tests. Open:
   - The skellyspecs pin `fd41818e4` (spec 2.1) resolves only after the owner's yes to push
     `dom/v1-player-rules` (better: a merge to its main).
-  - The owner answers QNEW-1 (spec 16).
-  - At acceptance: the name `player-legacy-decode` into `specs/certify.md`; the text of 6a 8.3 (Q742).
   - Owed, outside the player: the Origin and Host checks for `/connect` and the other routes (Q748).
   - Later: the Dependabot entries, the upstream watch and its fork settings (spec 10, Q767).
   - The owner decides the patent position separately (Q733).

@@ -318,6 +318,7 @@ backend and the OS [C 7.4]. The label holds the first two; `host.os` holds the t
 | `<label>:<group>:<condition>` | One condition of a group of checks of the camera (3.3, 3.4), for example `<label>:native-jpeg:valid`. |
 | `<label>:<check>[:<mode>]` | Another check of the camera. `<mode>` is `<w>x<h>@<rate>`, with the rate rounded as cap 7.3 rounds it: `1280x720@30`, `1920x1080@30`, `1280x720@60`, `640x480@29.97`. |
 | `detect` | The detection. |
+| `player-legacy-decode` | The decode check of the v1 player (3.6.2; [`player-legacy.md`](player-legacy.md) 10.5) [U Q735, Q766, Q803]. |
 | `group:<check>`, `system:<check>` | A check of the cameras together; a fact or a check of the system. |
 | `self:<check>` | A self-check with fake cameras (section 7). It never counts toward a camera item [U]. |
 | `probe:<check>`, `probe:<model>:<approach>[:<control>]` | A probe of 10.4: code of certify, outside the product path. |
@@ -1116,6 +1117,15 @@ not built (3.6.3), never `numbers` and never a key `reason` [C 3.4, C 6 rule 9].
 **Full, the run.** The run checks of quick, `group:take-again`, `system:power` and `system:timer` (3.6.12), and
 `session:exit`. The group, system and self checks of
 sections 6 and 7 are not built: their names are in `details.not_built`.
+
+**Full, the v1 player decoder: one check [U Q735, Q766, Q803] [ADR-2Z2D](../decisions/entries/2Z2D-answers-of-the-owner-q800-to-q803-and-acceptance-of-the-v1-playback-spec.md).** `player-legacy-decode`
+decodes the generated `mp4v` and H.264 sets of [`player-legacy.md`](player-legacy.md) section 10.5 in the page of the app, with the
+routes of the product, and reports for each tile the values that 10.5 lists (the route and its reason,
+`decoderInfo`, the seek, step and play times, `lateShare` at 12 s and 22 s, and the switch with
+`switchAt`). The row is `record-only`: no target until the owner sets one. Its values are in
+`details.player_legacy_decode`, not in `numbers`. Its `module` is the name of the pipeline item
+(3.6.10). It needs the page of the app: a run with no app page gives `not-run` `no-ui`. Until the code
+of the v1 player exists, its name is in `details.not_built` [A].
 
 **The take: five rows become two [U Q598].** The contract keeps one check for each test that can fail [C 3.4].
 Each test of the five old rows keeps a check that carries its failure:
@@ -3356,6 +3366,7 @@ of a product failure gives the product code as its reason, with one exception: t
 | `scale-too-short`, `auto-search-failed`, `not-camera-jpeg`, `frame-gap`, `ring-lapped` | 10.2, 5.3, 10.7, 4.4 | The unitless exposure route has fewer than 8 steps; the search ended `failed`; the JPEG is not the camera's own by the proof rules; a probe made a frame gap over 2 times the baseline; the ring no longer holds the hashed frame. |
 | `auto-not-searched` | `auto-exposure` checks | SkellyCam Auto did not search at the open, or after a change of the frame rate (5.3). |
 | `one-camera` | group checks | The check needs two cameras. |
+| `no-ui` | `player-legacy-decode` | The run has no page of the app, so the decode check of the v1 player cannot run (3.6.2) [A]. |
 | `no-mode` | mode checks | The camera does not declare this mode. |
 | `no-mjpg-mode` | `<label>:detect` | No MJPG mode at 30 fps or more (before 3b). |
 | `below-floor` | `opens` | The nearest mode is below 30 fps (cap 7.5). |
@@ -3599,6 +3610,7 @@ tests only the self-check.
 | T-CERT-132 | macOS and Linux fakes. The rows of the trial with each method answering, and with each method failing (no write access to usbfs, `kIOReturnNotOpen`, a missing `system_profiler`). | Each row is `record-only` with the `module` of its model and the keys of 3.6.13; each failure gives its class name in `<method>_error`; no row holds free text, a serial, a location id, a path or the product text; `usb3_capable` of `details.cameras` is the value of detection. |
 | T-CERT-133 | 3 OS, session child [U Q646; the row: [ADR-0Z6Q](../decisions/entries/0Z6Q-choices-of-the-certify-report-shape-build.md) item 15]. Fakes that leave after their take checks: a process exit and a stall; a hang at the close; a process exit at the close. | Each gets `<label>:live-at-close` `fail` with the product code (`crashed` with `exit_code` 3, `stalled`, `hung`, `crashed`) and the failure facts that have a value; no written result changes; the model item, `<model>:gate:no-hang` and `<model>:gate` are not `pass`; a good camera has `live-at-close` `pass`. |
 | T-CERT-134 | The build file of 3.5.2 [U Q647]: a wheel from a checkout; the sdist and a wheel from the sdist; a source tree inside another git repository; a git that fails or gives text that does not decode; the `datas` of `skellycam.spec`; the CI step of the installer. | The commit and the tree state in the wheel, in the sdist and in the wheel from the sdist; no commit for the tree inside another repository; no commit and no failed build for a git error; `skellycam.spec` takes the file into `datas`; the CI step writes the file before a step changes the tree. |
+| T-CERT-135 | 3 OS, fakes of the app page [U Q735, Q766, Q803]. A full run with a fake page result for the check `player-legacy-decode`: an `mp4v` tile, a WebCodecs tile, a tile switched by F6 and a tile that the core rule stopped; then a run with no app page; then a run before the v1 player code exists. | The row `player-legacy-decode` is `record-only` with the `module` of the pipeline item and blocks no gate; `details.player_legacy_decode` holds for each tile the fields of `player-legacy.md` 10.5 (T-LEG-79 checks their shape); with no app page: `not-run` `no-ui`; before the code: the name is in `details.not_built`. |
 
 **The changes of 3.6 to the tests above [U Q591 to Q599, Q610 to Q618, A].** Where a row above and this list
 differ, this list is the rule. T-CERT-91 to T-CERT-132 are new. Q624 also changes T-CERT-61 to T-CERT-64:

@@ -1,7 +1,7 @@
-# Phase 6 player specification: step 6c, part 1, playback of FreeMoCap v1 recordings (draft)
+# Phase 6 player specification: step 6c, part 1, playback of FreeMoCap v1 recordings
 
-Status: **draft for the review of the owner, revision 6, 2026-11-25. Not accepted.** No test and no
-code comes before the owner accepts this spec. The rules of the owner are in
+Status: **accepted, revision 6, 2026-11-25** (the owner, Q801 of [ADR-2Z2D](../decisions/entries/2Z2D-answers-of-the-owner-q800-to-q803-and-acceptance-of-the-v1-playback-spec.md)).
+The tests come before the code. The rules of the owner are in
 [ADR-X5MZ](../decisions/entries/X5MZ-rules-of-the-owner-for-the-playback-of-freemocap-v1-recordings.md)
 (accepted). His answers Q685, Q688, Q697, Q698 and Q700 are in
 [ADR-8EBK](../decisions/entries/8EBK-answers-of-the-owner-q685-q688-q697-q698-q700.md), his answers
@@ -10,11 +10,11 @@ Q701 to Q706 are in [ADR-HN92](../decisions/entries/HN92-answers-of-the-owner-q7
 his answers Q694, Q717 and Q718 are in
 [ADR-VHD3](../decisions/entries/VHD3-answers-of-the-owner-q694-q717-q718.md), and his answers to the
 questions Q699, Q707 to Q716 and Q723 to Q728 of revision 5 are in
-[ADR-EM6A](../decisions/entries/EM6A-answers-of-the-owner-to-the-v1-playback-questions-of-revision-5.md)
-(each accepted). The choices of the agent are in
+[ADR-EM6A](../decisions/entries/EM6A-answers-of-the-owner-to-the-v1-playback-questions-of-revision-5.md),
+and his answers Q800 to Q803 are in [ADR-2Z2D](../decisions/entries/2Z2D-answers-of-the-owner-q800-to-q803-and-acceptance-of-the-v1-playback-spec.md) (each accepted). The choices of the agent are in
 [ADR-A56K](../decisions/entries/A56K-choices-of-the-v1-playback-spec.md) (revision 5) and
-[ADR-S4TJ](../decisions/entries/S4TJ-choices-of-revision-6-of-the-v1-playback-spec.md) (revision 6),
-both proposed. One question is open: QNEW-1 (section 16).
+[ADR-S4TJ](../decisions/entries/S4TJ-choices-of-revision-6-of-the-v1-playback-spec.md) (revision 6);
+the owner accepted both with the spec (Q801). No question is open (section 16).
 
 Revision 2 applied an independent review of revision 1 (39 findings) and the answers of 8EBK.
 Revision 3 applied the answers of 0C4Y. Revision 4 applied the answers of VHD3 (a new section 3).
@@ -34,9 +34,12 @@ owner. Revision 6 applies the answers of EM6A:
   [Q767 yes].
 - Each other answer turns its open mark into a "yes" mark.
 - The fixes of an independent review of revision 6 (same day): the three old playback routes
-  (QNEW-1, 4.4), the form of the secret and the `playback.key` file (4.4 item 4), F6 at speed 1 and
+  (Q800, 4.4), the form of the secret and the `playback.key` file (4.4 item 4), F6 at speed 1 and
   the certify windows (3.4, 10.5), the macOS duties on Apple Silicon (9.5), the links to the
   skellyspecs rules SFF-896 to SFF-903 (2.1, 6), and more tests.
+- The answers Q800 to Q803 of 2026-11-25 ("agree to all"): the three old playback routes and the
+  `<video>` branch go in step 6c part 1 (Q800 A, 4.4, 5.2); the spec is accepted (Q801); 10.6 is
+  later (Q802); `player-legacy-decode` is in `specs/certify.md` (Q803, 10.5).
 
 This spec extends [`player.md`](player.md) (step 6a, accepted). The rules of `player.md` apply to a v1
 recording, unless this spec gives a different rule. Section 14 lists each difference.
@@ -56,7 +59,8 @@ Marks:
   [ADR-VHD3](../decisions/entries/VHD3-answers-of-the-owner-q694-q717-q718.md)), or on 2026-11-25
   ([ADR-EM6A](../decisions/entries/EM6A-answers-of-the-owner-to-the-v1-playback-questions-of-revision-5.md)).
   The text under the mark applies that answer.
-- **[Q764 yes] to [Q767 yes], [Q765 B]**: the follow-up questions of 2026-11-25 (EM6A). They have
+- **[Q764 yes] to [Q767 yes], [Q765 B], [Q800 A] to [Q803 yes]**: the follow-up questions of
+  2026-11-25 (EM6A, 2Z2D). They have
   the global numbers of that session; the spec questions Q699 to Q728 keep their own numbers.
 - **[SPECS]**, **[SFF-nnn]**: the v1 file rules in skellyspecs, module `recording-files/`, at commit
   `fd41818e472f93325f833eed15184bb4c51d879b` (section 2.1). [SFF-nnn] cites one draft rule of
@@ -540,8 +544,8 @@ Code facts of today:
 - A DNS rebinding attack gets around CORS [the review] [NV: not tested against this server].
 - `list_recordings`, `list_videos` and `stream_video` of
   `skellycam/api/http/playback/playback_router.py` take a `recording_parent_directory` from the
-  request and open each folder below it [C `_resolve_recording_path`]. Section 5 removes the last two
-  [Q685 yes].
+  request and open each folder below it [C `_resolve_recording_path`]. Section 5.2 removes the last two
+  in step 6c part 1 [Q685 yes] [Q800 A].
 
 The token and the allowed roots of Q688 do not close this exposure. These requirements close it
 [Q702 yes]. "These routes" are the routes of 4.2 and `list_recordings`.
@@ -617,20 +621,19 @@ The token and the allowed roots of Q688 do not close this exposure. These requir
      of another program cannot know the secret. Thus no web page on the machine gets a byte **from
      these routes**, also with the origin `null`. Another local program of the same user is not
      stopped; it can read the files on the disk directly anyway [Q723 yes].
-   - **The old playback routes are still open.** `list_videos`, `stream_video` and
+   - **The old playback routes go in step 6c part 1** [Q800 A]. `list_videos`, `stream_video` and
      `get_all_timestamps` of `skellycam/api/http/playback/playback_router.py` keep the rule
-     `allow_origins=["*"]` of `cors.py`, with no Host check and no secret [C]. `stream_video` serves
-     each camera file of a recording that the request names by a query path
+     `allow_origins=["*"]` of `cors.py`, with no Host check and no secret, today [C]. `stream_video`
+     serves each camera file of a recording that the request names by a query path
      (`recording_parent_directory`), and a plain `<video src>` of any web page needs no CORS to load
-     it. Thus, until those routes go, any web page on the machine can still load v1 camera files.
-     Section 5.2 removes them in a later PR; question QNEW-1 asks whether they go in step 6c part 1,
-     or get the Host and secret checks until they go.
+     it. The PR that lands the v1 player removes the three routes (5.2), so that no web page on the
+     machine can load a camera file through the server.
    - **The options that the owner did not take** [Q723 yes]: serve the whole UI from a custom scheme
      (a large change of the UI shell), or fetch through the main process (its throughput is not
      measured).
 
 T-LEG-17 to T-LEG-19 test items 1 to 3. T-LEG-17, T-LEG-73, T-LEG-74 and T-LEG-80 test item 4.
-T-LEG-77 or T-LEG-78 tests the answer to QNEW-1.
+T-LEG-77 tests the removal of the old routes [Q800 A].
 
 **The other routes and the WebSocket** [Q727 yes]. The same Origin and Host checks also cover the
 camera WebSocket `/connect` (`skellycam/api/websocket/websocket_connect.py`) and the other routes of
@@ -643,7 +646,8 @@ outside the v1 player. It is owed ([open-work.md](../decisions/open-work.md)).
 ### 5.1 The rule
 
 The owner accepted: "v1 plays in the canvas player, and a later PR removes the old `<video>` player
-and the server transcode code" [Q685 yes]. The reasons from the evidence:
+and the server transcode code" [Q685 yes]. He then moved the old routes and the `<video>` branch into
+step 6c part 1 [Q800 A]. The reasons from the evidence:
 
 - Chromium has no decoder for MPEG-4 Part 2. The `<video>` element does not play a v1 camera file
   (`DEMUXER_ERROR_NO_SUPPORTED_STREAMS`) [S 11.2]. Thus the player of today plays no file that v1
@@ -652,20 +656,24 @@ and the server transcode code" [Q685 yes]. The reasons from the evidence:
   HEVC v2 alpha files are out of scope [O "only v1"]. Imported H.264 goes to the WebCodecs route (section 3).
   An HEVC import that `<video>` can play on some systems today gets the refusal of 3.1 [Q700 yes].
 
-### 5.2 What the later PR removes [agent 12]
+### 5.2 What goes, and when [agent 12] [Q800 A] [agent 53]
 
-The list is a code reading of 2026-11-24 [C]. The removal is a separate "code" PR after the legacy
-player lands. Each item needs a check at that time.
+The list is a code reading of 2026-11-24 [C]. Each item needs a check at the time of its removal.
 
-| Item | File |
-|---|---|
-| The `<video>` player | `skellycam-ui/src/components/playback/SyncedVideoPlayer.tsx` (the type `PlaybackSettings` moves to `PlaybackControls.tsx`) |
-| The `video` result of the route | `skellycam-ui/src/components/playback/take-route.ts` (`routeTake`, `chooseTakePlayer`), and the `SyncedVideoPlayer` branch of `skellycam-ui/src/pages/PlaybackPage.tsx` |
-| The video loading of the context | `LoadedVideo` and the timestamp fetch of `skellycam-ui/src/contexts/PlaybackContext.tsx`; the `stream_url` use in `RecordingBrowser.tsx` |
-| The URLs of the old routes | `playbackVideos`, the stream URL and `playbackTimestamps` in `skellycam-ui/src/services/server/server-helpers/server-urls.ts` |
-| The old server routes | `list_videos`, `stream_video`, `get_all_timestamps` of `skellycam/api/http/playback/playback_router.py` (`list_recordings` stays, changed to list v1 recordings and new takes from the allowed roots, with no folder from the request) |
-| The server transcode | `skellycam/core/recorders/videos/browser_stream.py` (H.264 fragments from the server), with `skellycam/tests/test_browser_stream.py` and `skellycam/tests/browser_stream_server.py`; only tests use it [C] |
-| The sync warning | F16 of `PlaybackControls.tsx` and its prop `hideSyncInfo` (6a 10, U3), because no player shows it |
+- **In step 6c part 1** [Q800 A]: the PR that lands the v1 player removes the three old routes, their
+  URLs in `server-urls.ts` and the `<video>` player branch. It also removes the code that only these
+  parts use, so that no caller of a removed URL stays [agent 53].
+- **In a later "code" PR** [Q685 yes]: the server transcode and the sync warning.
+
+| Item | File | When |
+|---|---|---|
+| The old server routes | `list_videos`, `stream_video`, `get_all_timestamps` of `skellycam/api/http/playback/playback_router.py` (`list_recordings` stays, changed to list v1 recordings and new takes from the allowed roots, with no folder from the request) | step 6c part 1 [Q800 A] |
+| The URLs of the old routes | `playbackVideos`, the stream URL and `playbackTimestamps` in `skellycam-ui/src/services/server/server-helpers/server-urls.ts` | step 6c part 1 [Q800 A] |
+| The `video` result of the route | `skellycam-ui/src/components/playback/take-route.ts` (`routeTake`, `chooseTakePlayer`), and the `SyncedVideoPlayer` branch of `skellycam-ui/src/pages/PlaybackPage.tsx` | step 6c part 1 [Q800 A] |
+| The `<video>` player | `skellycam-ui/src/components/playback/SyncedVideoPlayer.tsx` (the type `PlaybackSettings` moves to `PlaybackControls.tsx`) | step 6c part 1: only the removed branch uses it [agent 53] |
+| The video loading of the context | `LoadedVideo` and the timestamp fetch of `skellycam-ui/src/contexts/PlaybackContext.tsx`; the `stream_url` use in `RecordingBrowser.tsx` | step 6c part 1: they call the removed URLs [agent 53] |
+| The server transcode | `skellycam/core/recorders/videos/browser_stream.py` (H.264 fragments from the server), with `skellycam/tests/test_browser_stream.py` and `skellycam/tests/browser_stream_server.py`; only tests use it [C] | the later PR |
+| The sync warning | F16 of `PlaybackControls.tsx` and its prop `hideSyncInfo` (6a 10, U3), because no player shows it | the later PR |
 
 `video_file_metadata.probe_video_files` and `recording_statistics` stay if another caller uses them
 [NV].
@@ -1234,9 +1242,8 @@ fails, the PR shows which part of the bump broke.
 The conformance tests prove the pixels on the three systems in CI. They do not prove the timing. The
 timing on Linux and macOS is a fact of another system. By the rule of `AGENTS.md` section 4, it comes
 only from the self-test: a certify check, with a name in `specs/certify.md` [X5MZ item 7]. The check
-is `player-legacy-decode` [Q708 yes]. Its name goes into `specs/certify.md` when the owner accepts
-this spec [agent 48] [NV: not in `specs/certify.md` yet]. Until a report gives the result, the timing
-on those systems is [NV].
+is `player-legacy-decode` [Q708 yes]. Its name and its row are in `specs/certify.md` section 3.6.2
+[Q803 yes]. Until a report gives the result, the timing on those systems is [NV].
 
 The check decodes a generated `mp4v` set and a generated H.264 set (Baseline GOP 30, and High with
 B-frames GOP 250) in the app page, with the routes of the product. It runs seeks, steps and 30 s of
@@ -1258,13 +1265,13 @@ The values are recorded, not judged, until the owner sets a target. The late sha
 switches of certify reports from many systems tune the 20 % and the 10 s of F6 [Q766 yes]. The check
 sets no test hook: it reports what the product does on that system.
 
-### 10.6 The `dependabot.yml` of today (later) [Q700 yes] [agent 47]
+### 10.6 The `dependabot.yml` of today (later) [Q700 yes] [Q802 yes]
 
 The present file has one entry: `npm` with directory `/` and a monthly schedule
 [C `.github/dependabot.yml`]. The repository root has no `package.json` [C]. The npm manifests of the
 UI are in `skellycam-ui/`. The owner accepted the repair [Q700 yes: "repair the Dependabot npm
 folder"]: the directory becomes `/skellycam-ui`. The repair lands with the later Dependabot work of
-10.2, not in step 6c part 1 [agent 47].
+10.2, not in step 6c part 1 [Q802 yes].
 
 ### 10.7 Documentation read
 
@@ -1353,15 +1360,14 @@ timeEstimated?: boolean;   // true: the tile shows `~` before the time (2.2)
 `image` when `jpeg` is null [C `tile/tile.ts` `update`]. The legacy player gives `image` with `jpeg`
 null, because it has no JPEG. 6a 8.3 then needs one sentence: "An update with `image` and `jpeg` null
 is a new image." The tile also needs the optional field `detail` of 11.2 (the detail text of 3.4), drawn in small type
-under the camera part, also with `showLabel` off. After the owner accepts this spec, 6a 8.3 gets
-this sentence, the fields `timeEstimated` and `detail`, and the mark `decoder_failed` of 11.2
-[Q715 yes]. This spec does not change `player.md` before the owner accepts it.
+under the camera part, also with `showLabel` off. 6a 8.3 now has this sentence, the fields
+`timeEstimated` and `detail`, and the mark `decoder_failed` of 11.2 [Q715 yes].
 
 ### 11.4 Host [agent 34]
 
 - The route of 6a 10 gets one more branch: a v1 folder (2.2) opens in `CanvasTakePlayer` with
   `openLegacyTake`. A v2 alpha folder and an unknown folder show their text of 2.2.
-- The `video` branch goes in the later PR of 5.2 [Q685 yes].
+- The `video` branch goes in step 6c part 1 (5.2) [Q800 A].
 - The host shows the take warnings (`frame_count_differs`, `time_file_unusable`, `matrix_ignored`,
   `extra_tracks`) as information, and the warning of 7.4.
 
@@ -1378,7 +1384,7 @@ Also: link 79 Mbit/s for the six treadmill tiles; at 100 Mbit/s, 0 to 0.7 % of r
 clock (single refreshes at the start); start of play 14 to 50 ms unlimited, 70 to 680 ms at
 100 Mbit/s [S 12.4]. H.264: section 3.6.
 
-### 12.2 Targets (proposed; the benchmarks of 13.3 verify them on the Windows test machine) [agent 35]
+### 12.2 Targets (the benchmarks of 13.3 verify them on the Windows test machine) [agent 35]
 
 | Case | Target |
 |---|---|
@@ -1530,8 +1536,7 @@ bytes that the test builds with no codec data (box structures, NPY headers, file
 | T-LEG-74 | unit | W, L, M | none | The Electron main process with a fake server start, a fake `playback.key` and a fake preload bridge: two starts; a server that it did not start; a server restart while the page is open; a fake server that answers 403 "key missing or wrong" once, and one that answers it twice. | Each start makes a new 32-character lower-case hexadecimal secret and passes it in `SKELLYCAM_PLAYBACK_KEY`; the bridge gives the value of `playback.key` at each call; after the restart, the next open of a take sends the new value; after one 403 the page asks the bridge again and repeats the request once, and it succeeds; after a second 403 the read is a read error (6a 5.7); no log line holds the secret. |
 | T-LEG-75 | unit | W, L, M | none | F6 with a fake refresh loop and a test clock: a WebCodecs tile late on 19 % and on 21 % of the refreshes of 10 s; late refreshes only in the first 2 s; a seek and a pause inside the window; a speed change to 2 and back to 1 during play; play at speed 2 only; the end of the file and a loop inside the window; two tiles late on the same refreshes; a WASM tile late on 50 %; `hardwareConcurrency` 2, and 4 with 3 and with 5 H.264 tiles; a later run where the tile keeps up. | 21 % switches once, with `routeReason` `too_slow`, the detail text "decoder: WASM (WebCodecs too slow)", one log line with the share, and `switchAt` with k* and the play time; 19 % does not; the first 2 s do not count; a seek, a pause, a speed change, the end and a loop stop the count, and a new count starts 2 s after play goes on at speed 1; no count at speed 2; both late tiles count; the WASM tile never switches but has its `lateShare`; no switch with 2 cores or with 5 H.264 tiles on 4 cores, a switch with 3, and the blocked tile still has its `lateShare`; `lateShare` is null before a full window and then equals the share; no switch back. |
 | T-LEG-76 | component | W, L, M | gen | 4 tiles of H.264 on the WebCodecs route, play 30 s at speed 1: a test hook lets tile 2 give at most 20 outputs per second of a 30 fps take, so that tile 2 is late. | Tile 2 switches to WASM with `too_slow` after its first full window, and plays on with the exact frames (hash and barcode); the frame number of each tile never goes down; the other tiles stay on WebCodecs with 0 different frame numbers among them; `lateShare` and `switchAt` of tile 2 are in the camera state. |
-| T-LEG-77 | server (only if QNEW-1 is A) | W, L, M | none | `GET` on the old routes `list_videos`, `stream_video` and `get_all_timestamps`, with each origin and with a good `Host` and secret; a search of `skellycam-ui/src/` for their URLs. | Each request gets 404 (no such route) and no byte of a file; no UI file names their URLs (`server-urls.ts`). |
-| T-LEG-78 | server (only if QNEW-1 is B) | W, L, M | none | The three old routes with the checks of 4.4 items 2 and 4: a wrong `Host`; no secret, an empty and a wrong secret; the right secret and `Host`; `Origin` `https://example.org`; a `<video src>`-style request with no custom header. | A wrong `Host`: 403 "host not allowed"; each request without the right secret, also the `<video src>`-style one: 403 "key missing or wrong" and no byte; the right secret and `Host`: served as today; no answer has `Access-Control-Allow-Origin: *`. |
+| T-LEG-77 | server | W, L, M | none | `GET` on the old routes `list_videos`, `stream_video` and `get_all_timestamps`, with each origin and with a good `Host` and secret; a search of `skellycam-ui/src/` for their URLs and for `SyncedVideoPlayer`. | Each request gets 404 (no such route) and no byte of a file; no UI file names their URLs (`server-urls.ts`) or `SyncedVideoPlayer`; `routeTake` gives no `video` result [Q800 A]. |
 | T-LEG-79 | unit | W, L, M | none | The report of the certify check `player-legacy-decode` (10.5), built from fake tile states: an `mp4v` tile, a WebCodecs tile, a tile switched by F6, a tile that the core rule stopped, a tile with no full window. | The report has, for each tile, the route and its reason, the `decoderInfo`, the seek, step and play times, the `lateShare` at 12 s and 22 s (null where no full window), and the switch with its reason and `switchAt` (or none); the blocked tile has its `lateShare`; a report with a field missing fails the format check. Runs in CI, with no certify run [Q766 yes]. |
 | T-LEG-80 | unit | W, L, M | none | The call of `list_recordings` by the recording browser, with a fake fetch and a fake bridge. | The request carries `X-Skellycam-Key` with the value of the bridge; the URL holds no secret. |
 | T-LEG-50 | benchmark | W (test machine) | gen and real | 200 seeks, 48 steps and 60 s of play at 1, 3 and 6 tiles of 720x1280 `mp4v`; and the treadmill session. | The targets of 12.2; p50, p95 and maximum recorded. |
@@ -1543,10 +1548,9 @@ bytes that the test builds with no codec data (box structures, NPY headers, file
 | T-LEG-62 | tool (later) | W, L, M | none | The logic of `decoder-upstream.yml` on stored text samples (a tag list with 9.0.3 and 9.1.0, a part of the security page, a libav.js tag list), a fake tarball and a fake GitHub API; and a run where the fake API refuses to create a PR. | For 9.0.3: one branch and one bump PR with a new `ffmpeg.json` (version and the SHA-256 of the fake tarball), made with `GITHUB_TOKEN` and the permissions of 10.3 only, and no other changed file (no file in `.github/workflows/`); a second run updates the same PR; for 9.1.0 and for the CVE: one issue, updated on a second run; the job uses no secret; when the API refuses the PR: the job fails with the text of 10.3 [Q725 yes]. |
 | T-LEG-63 | rehearsal (once, later) | CI | none | A PR that changes only the libav.js pin (a real bump or a rehearsal on a branch). It needs the approval of the owner, because a PR is visible outside the machine. | Each job of 10.4 runs; the PR is mergeable with no other commit. |
 
-Counts: 28 unit, 29 component, 8 server, 4 build, 3 tool, 3 benchmark, 1 certify, 1 rehearsal:
-77 tests. Three of them are later (T-LEG-60, T-LEG-62, T-LEG-63): step 6c part 1 does not write them
-[Q767 yes]. T-LEG-77 and T-LEG-78 are alternatives: the answer to QNEW-1 keeps one and drops the
-other.
+Counts: 28 unit, 29 component, 7 server, 4 build, 3 tool, 3 benchmark, 1 certify, 1 rehearsal:
+76 tests. Three of them are later (T-LEG-60, T-LEG-62, T-LEG-63): step 6c part 1 does not write them
+[Q767 yes]. T-LEG-78 was dropped by Q800 A.
 
 ### 13.4 Rules to tests
 
@@ -1561,7 +1565,7 @@ other.
 | [X5MZ item 7] exact pins | T-LEG-22, T-LEG-61 |
 | [X5MZ item 7] other systems through certify or CI | T-LEG-53 |
 | Q688 yes | T-LEG-14, T-LEG-15 |
-| Q685 yes | T-LEG-40 (the removal PR has its own tests) |
+| Q685 yes | T-LEG-40, T-LEG-77 (the later PR has its own tests) |
 | Q697 yes | T-LEG-23, T-LEG-47, T-LEG-48 |
 | Q698 yes | T-LEG-27 |
 | Q700 yes | T-LEG-07 (HEVC), T-LEG-08, T-LEG-33, T-LEG-60 |
@@ -1585,12 +1589,14 @@ other.
 | Q724 yes | T-LEG-75, T-LEG-76, T-LEG-53, T-LEG-79 |
 | Q766 yes | T-LEG-53, T-LEG-79 |
 | Q725 yes, Q726 yes, Q767 yes | later: T-LEG-60, T-LEG-62, T-LEG-63 |
-| QNEW-1 | T-LEG-77 (answer A) or T-LEG-78 (answer B) |
+| Q800 A | T-LEG-77 |
+| Q801 yes, Q802 yes | No test: the acceptance, and a later part. |
+| Q803 yes | T-LEG-53, T-LEG-79, T-CERT-135 of `specs/certify.md` |
 | Q727 yes | No test here: a separate spec change (4.4). |
 | Q728 yes | T-LEG-69 |
 | 2 and [SPECS] | T-LEG-01 to T-LEG-06 |
 | 3 | T-LEG-07, T-LEG-13, T-LEG-41, T-LEG-44, T-LEG-45, T-LEG-54 to T-LEG-59, T-LEG-64 to T-LEG-72, T-LEG-75, T-LEG-76, T-LEG-79 |
-| 4 | T-LEG-14 to T-LEG-19, T-LEG-38, T-LEG-73, T-LEG-74, T-LEG-77 or T-LEG-78, T-LEG-80 |
+| 4 | T-LEG-14 to T-LEG-19, T-LEG-38, T-LEG-73, T-LEG-74, T-LEG-77, T-LEG-80 |
 | 6 | T-LEG-03 to T-LEG-06, T-LEG-08 to T-LEG-10, T-LEG-26, T-LEG-30 to T-LEG-35, T-LEG-46 |
 | 7, 8 | T-LEG-11, T-LEG-12, T-LEG-35 to T-LEG-37, T-LEG-42, T-LEG-43, T-LEG-68, T-LEG-70, T-LEG-71 |
 | 9, 10 | T-LEG-20 to T-LEG-26, T-LEG-47, T-LEG-48, T-LEG-53, T-LEG-60 to T-LEG-63 |
@@ -1609,7 +1615,7 @@ other.
 ## 14. Differences from `player.md` and accepted text
 
 1. **E2** (6a 18.5): "Old recordings keep a `<video>` path." The answer Q685 yes changes it (section
-   5).
+   5); with Q800 A the `<video>` path goes in step 6c part 1.
 2. **L5** (6a 18.3): "No restructuring of today's player." The answer Q685 yes changes it for the
    removal PR of 5.2.
 3. **Y1 and L1** (6a 18.1, 18.3): step 6c is "the switch between the new player and the old
@@ -1724,9 +1730,9 @@ The choices of revision 6
     header on the `list_recordings` call (4.4 item 4).
 46. The details of the default token: the three job permissions, the refusal text, the
     `github-actions[bot]` identity (10.3).
-47. The repair of the `dependabot.yml` folder (10.6) is later too, with the other Dependabot work.
-48. The name `player-legacy-decode` goes into `specs/certify.md` when the owner accepts this spec,
-    not in revision 6 (10.5).
+47. The repair of the `dependabot.yml` folder (10.6) is later too (decided by Q802 yes).
+48. The name `player-legacy-decode` goes into `specs/certify.md` at the acceptance (decided by
+    Q803 yes).
 49. The new tests T-LEG-73 to T-LEG-76, the changes of T-LEG-14, T-LEG-17, T-LEG-53 and T-LEG-62,
     and the kind "later" (13).
 50. The review fixes of revision 6: a bad `SKELLYCAM_PLAYBACK_KEY` stops the start; the variable
@@ -1736,40 +1742,30 @@ The choices of revision 6
     403 only for an allowed origin (4.4 item 4).
 51. F6 counts only at speed 1; a speed change stops the count; `lateShare` for each tile on either
     route; the certify windows 2 s to 12 s and 12 s to 22 s (3.4, 10.5, 11.2).
-52. QNEW-1 and its alternative tests T-LEG-77 and T-LEG-78; the tests T-LEG-79 and T-LEG-80 (13).
+52. The test T-LEG-77 of Q800 A (T-LEG-78 dropped); the tests T-LEG-79 and T-LEG-80 (13).
+
+After the acceptance
+([ADR-TYH0](../decisions/entries/TYH0-choices-after-the-acceptance-of-the-v1-playback-spec.md),
+proposed):
+
+53. Q800 A also removes, in step 6c part 1, the code that only the removed parts use:
+    `SyncedVideoPlayer.tsx`, the video loading of `PlaybackContext.tsx` and the `stream_url` use of
+    `RecordingBrowser.tsx` (5.2).
+54. The row of `player-legacy-decode` in `specs/certify.md`: level `full`, `record-only`, the
+    `module` of the pipeline item, the values in `details.player_legacy_decode`, `not-run`
+    `no-ui` when no app page runs the check, and the test T-CERT-135.
 
 ## 16. Open questions for the owner
 
-The owner decided Q685, Q688, Q697, Q698 and Q700
+No question is open. The owner decided Q685, Q688, Q697, Q698 and Q700
 ([ADR-8EBK](../decisions/entries/8EBK-answers-of-the-owner-q685-q688-q697-q698-q700.md)), Q701 to
 Q706 ([ADR-HN92](../decisions/entries/HN92-answers-of-the-owner-q701-to-q706-with-the-default-token.md)),
 and Q694, Q717 and Q718 ([ADR-VHD3](../decisions/entries/VHD3-answers-of-the-owner-q694-q717-q718.md))
 on 2026-11-24. He decided Q699, Q707 to Q716 and Q723 to Q728, and the follow-ups Q764 to Q767, on
 2026-11-25
-([ADR-EM6A](../decisions/entries/EM6A-answers-of-the-owner-to-the-v1-playback-questions-of-revision-5.md)).
-The choices of the agents (section 15) wait for the owner in
-[ADR-A56K](../decisions/entries/A56K-choices-of-the-v1-playback-spec.md) and
-[ADR-S4TJ](../decisions/entries/S4TJ-choices-of-revision-6-of-the-v1-playback-spec.md), with the
-acceptance of this spec. The supervisor gives QNEW-1 its global number.
-
-- **QNEW-1. The three old playback routes in step 6c part 1.** `list_videos`, `stream_video` and
-  `get_all_timestamps` (`skellycam/api/http/playback/playback_router.py`) answer any origin
-  (`allow_origins=["*"]`), check no Host and no secret, and take the folder from the request
-  (`recording_parent_directory`) [C]. `stream_video` serves each camera file of such a folder, and a
-  plain `<video src>` of any web page loads it with no CORS. So the secret header of 4.4 item 4 does
-  not stop a web page from loading v1 camera files while these routes exist. Q685 yes removes them in
-  a later PR (5.2). The options:
-  - **A. Remove the three routes, their URLs in `server-urls.ts` and the `<video>` player branch in
-    step 6c part 1** (the items of 5.2 that touch them), in the same PR that lands the v1 player.
-    Cost: the old `<video>` player goes at once. It plays no file that v1 writes (`mp4v`, 5.1);
-    H.264 imports play in the canvas player from that PR on. Test: T-LEG-77.
-  - **B. Keep the routes until the removal PR, with the Host check (4.4 item 2) and the secret check
-    (4.4 item 4).** Cost: a `<video src>` cannot send a custom header, so the old player cannot load
-    a file through these routes either, unless the secret goes into the URL, which 4.4 item 4
-    forbids. Thus B also stops the old player, with more code to write and remove later. Test:
-    T-LEG-78.
-
-  Recommendation: **A.** It closes the hole with less code, and B stops the old player too. Yes?
+([ADR-EM6A](../decisions/entries/EM6A-answers-of-the-owner-to-the-v1-playback-questions-of-revision-5.md)),
+and Q800 to Q803 the same day ([ADR-2Z2D](../decisions/entries/2Z2D-answers-of-the-owner-q800-to-q803-and-acceptance-of-the-v1-playback-spec.md)): Q800 (the three old playback routes) was the open
+question QNEW-1 of the review fixes; he chose A, the removal in step 6c part 1.
 
 ## 17. Not verified
 
@@ -1934,6 +1930,16 @@ this for now, keep implementation for later", "Otherwise agree to all". On the f
 | Q37 | Q765 | Q716: B, the v1 file rules to skellyspecs `recording-files/`, the player here | B |
 | Q38 | Q766 | Q724: the certify check reports the late share, the route and the switch of each tile | yes |
 | Q39 | Q767 | Q725, Q726: keep the sections and their tests, marked later | yes |
+
+The answers of the owner of 2026-11-25 to Q800 to Q803 ([ADR-2Z2D](../decisions/entries/2Z2D-answers-of-the-owner-q800-to-q803-and-acceptance-of-the-v1-playback-spec.md)). His words: "otherwise agree
+to all" (his other words in that round were on Q811, not part of this spec). Each question was
+answered with its recommendation:
+
+- Q800 (QNEW-1): A. Remove the three old routes, their URLs in `server-urls.ts` and the old `<video>`
+  player branch in step 6c part 1, in the PR that lands the v1 player. T-LEG-78 is dropped.
+- Q801: revision 6 accepted, with the proposed choices of S4TJ and A56K.
+- Q802: the repair of the Dependabot folder (10.6) is later too.
+- Q803: `player-legacy-decode` goes into `specs/certify.md` at the acceptance.
 
 ## 19. Constraints on later phases
 

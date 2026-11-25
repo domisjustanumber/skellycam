@@ -78,7 +78,7 @@ recorder step 5a opens, so the two can land together [Y1].
 | Step | Delivers | This spec |
 |---|---|---|
 | 6b | Audio in the player. It needs recorder step 5b [Y1]. | 6a reads no audio file [agent 14]. |
-| 6c | The rest of the switch, old takes, the full reader result and the conformance run [Y1, L1, L2, E2]. | 6a does not read an old take. The draft [`player-legacy.md`](player-legacy.md) (not accepted) proposes the part for FreeMoCap v1 recordings. |
+| 6c | The rest of the switch, old takes, the full reader result and the conformance run [Y1, L1, L2, E2]. | 6a does not read an old take. [`player-legacy.md`](player-legacy.md) (accepted, [ADR-2Z2D](../decisions/entries/2Z2D-answers-of-the-owner-q800-to-q803-and-acceptance-of-the-v1-playback-spec.md)) is the part for FreeMoCap v1 recordings. |
 | 6d | The "upgrade recording" converter [Y1]. Cancelled on 2026-11-24 ([ADR-0C4Y](../decisions/entries/0C4Y-answers-of-the-owner-q701-to-q706.md), Q705). | None. |
 | recorder 5c | The repair step. It can also fill the file of a killed camera process later [M5]. | 6a opens an unfinished take read only and offers no repair [Y5]. |
 | phase 4 | The live preview. | Section 8 gives the tile interface that the preview uses [L6]. |
@@ -885,6 +885,7 @@ interface TileUpdate {
   mark: TileMark | null;
   image?: DecodedImage;                      // the decoded image of `jpeg`, made ahead (9.1)
   blank?: boolean;                           // true: drop the image and draw black
+  detail?: string | null;                    // a small text under the camera part (player-legacy.md 3.4)
 }
 
 interface DecodedImage { displayWidth: number; displayHeight: number; close(): void }  // a VideoFrame fits
@@ -895,6 +896,7 @@ interface TileLabel {
   camera: string;         // camera_label for the player
   timeNs: number | null;  // the time of the shown image, relative to the start; null: no time part
   nominalFps: number;     // for the timecode frame field
+  timeEstimated?: boolean; // true: `~` before the time part (player-legacy.md 2.2)
 }
 
 type CameraStateName = 'starting' | 'waiting' | 'failed' | 'checking' | 'too_slow'
@@ -907,7 +909,8 @@ type TileMark =
   | { kind: 'camera_lost'; frame: number }       // Y4, M8
   | { kind: 'no_frame' }                         // Y4, M9
   | { kind: 'flagged' }                          // L6: the live preview got a flagged frame
-  | { kind: 'unfinished' };                      // Y5
+  | { kind: 'unfinished' }                       // Y5
+  | { kind: 'decoder_failed' };                  // player-legacy.md 8.2
 ```
 
 - **One input for both callers.** The player and the live preview give the same `TileUpdate`. The tile
@@ -926,6 +929,12 @@ type TileMark =
   `'drawn'`. `jpeg` holds the bytes of the same frame. The player uses it for the images of its
   prefetch queue (9.1); the preview gives `jpeg` only
   ([ADR-1ACK](../decisions/entries/1ACK-corrections-and-choices-of-the-6a-player-code.md)).
+- **An image with no JPEG** (`image` with `jpeg` null): an update with `image` and `jpeg` null is a
+  new image. The tile draws and owns `image` as above. The v1 player gives it, because it has no JPEG
+  (`player-legacy.md` 11.3) [Q742 yes] [ADR-EM6A](../decisions/entries/EM6A-answers-of-the-owner-to-the-v1-playback-questions-of-revision-5.md).
+- **The detail text** (`detail`): the tile draws it in small type under the camera part of the
+  overlay, also when `showLabel` is off, as the rate text. `timeEstimated` puts a `~` before the time
+  part [Q742 yes].
 - **One mark.** An update has at most one mark. When more than one applies, the player gives the first
   in the order of the type above [agent 25].
 - **Newest wins.** A new `update` supersedes an update whose decode has not ended. The promise of the
@@ -952,6 +961,7 @@ Texts (English defaults; `texts` can replace each) [agent 26]:
 | `no_frame` | "no frame" |
 | `flagged` | "flagged frame" |
 | `unfinished` | "unfinished" |
+| `decoder_failed` | "decoder failed" |
 | each camera state | the state name, for example "too_slow" |
 
 ### 8.4 The label and the overlay [E6] [agent 24]

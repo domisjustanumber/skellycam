@@ -1,10 +1,12 @@
 # A56K — Choices of the v1 playback spec: frame table and seek rules, the WebCodecs route and its WASM fallback, locked play, decoder build in CI, Dependabot
 
-**Status:** proposed, 2026-11-24 (agent; builds the rules and answers of the owner in
+**Status:** accepted, 2026-11-25 (user, Q801 of
+[ADR-2Z2D](2Z2D-answers-of-the-owner-q800-to-q803-and-acceptance-of-the-v1-playback-spec.md); commit to
+dom/legacy-player; was proposed, 2026-11-24 (agent; builds the rules and answers of the owner in
 [ADR-X5MZ](X5MZ-rules-of-the-owner-for-the-playback-of-freemocap-v1-recordings.md),
 [ADR-8EBK](8EBK-answers-of-the-owner-q685-q688-q697-q698-q700.md),
 [ADR-0C4Y](0C4Y-answers-of-the-owner-q701-to-q706.md) and
-[ADR-VHD3](VHD3-answers-of-the-owner-q694-q717-q718.md)).
+[ADR-VHD3](VHD3-answers-of-the-owner-q694-q717-q718.md))).
 
 ## Decision
 
