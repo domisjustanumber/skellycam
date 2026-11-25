@@ -1591,7 +1591,7 @@ Counts: 28 unit, 29 component, 7 server, 4 build, 3 tool, 3 benchmark, 1 certify
 | Q725 yes, Q726 yes, Q767 yes | later: T-LEG-60, T-LEG-62, T-LEG-63 |
 | Q800 A | T-LEG-77 |
 | Q801 yes, Q802 yes | No test: the acceptance, and a later part. |
-| Q803 yes | T-LEG-53, T-LEG-79, T-CERT-135 of `specs/certify.md` |
+| Q803 yes | T-LEG-53, T-LEG-79, T-CERT-150 of `specs/certify.md` |
 | Q727 yes | No test here: a separate spec change (4.4). |
 | Q728 yes | T-LEG-69 |
 | 2 and [SPECS] | T-LEG-01 to T-LEG-06 |
@@ -1753,7 +1753,7 @@ proposed):
     `RecordingBrowser.tsx` (5.2).
 54. The row of `player-legacy-decode` in `specs/certify.md`: level `full`, `record-only`, the
     `module` of the pipeline item, the values in `details.player_legacy_decode`, `not-run`
-    `no-ui` when no app page runs the check, and the test T-CERT-135.
+    `no-ui` when no app page runs the check, and the test T-CERT-150.
 
 ## 16. Open questions for the owner
 

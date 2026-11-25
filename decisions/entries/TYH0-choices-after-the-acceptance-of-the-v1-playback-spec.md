@@ -15,7 +15,7 @@ Items 53 and 54 of section 15 of [`player-legacy.md`](../../specs/player-legacy.
 2. **The certify row (`specs/certify.md` 3.1, 3.6.2, 15, 17).** `player-legacy-decode` is a check
    of level `full`. Its row is `record-only`, with the `module` of the pipeline item, so it blocks no
    gate. Its values are in `details.player_legacy_decode`. With no app page it is `not-run` with the
-   new reason `no-ui`. Before the code exists, its name is in `details.not_built`. Test T-CERT-135.
+   new reason `no-ui`. Before the code exists, its name is in `details.not_built`. Test T-CERT-150.
 
 ## Reason
 
