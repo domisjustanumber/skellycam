@@ -70,9 +70,6 @@ These entries are `accepted`.
 | [ZEX9](entries/ZEX9-decisions-of-the-user-on-the-housekeeping-of-2026-11-25.md) | Q729 to Q732, Q751: untrack 65 media files of `dom/research`, trim plan section 15, push two branches, delete the H.264 temp files | accepted |
 | [N6X6](entries/N6X6-decisions-of-the-user-on-the-build-lanes-of-2026-11-25.md) | Q750, Q772, Q775, Q776, Q780: three build lanes, two certify lanes, quick tests only around fix lane 7; ask before performance tests | accepted |
 | [6YGH](entries/6YGH-acceptance-of-the-as-built-choices-of-fix-lanes-4-and-5-and-of-certify.md) | Q752 to Q757, Q759 to Q762, Q770: HQE5 Q-A to Q-C, DC43 1 to 4, KY81 rest, items of 8CP7 and FC1C accepted as built | accepted |
-| [AA4X](entries/AA4X-decisions-of-the-user-on-exclusive-access-of-a-camera.md) | Exclusive access is a product rule: strongest lock of each OS, only a streaming other process is in use, keep and mark a take, certify rules | accepted |
-| [13BB](entries/13BB-decisions-of-the-user-on-the-dark-rule-the-light-data-and-the-phase-7-items.md) | Q773, Q774, Q777: a pass in the dark stays `pass`; each report keeps `luma_mean` and the light answer; Linux and macOS certify items wait for phase 7 | accepted |
-| [CQ2X](entries/CQ2X-decisions-of-the-user-on-the-overlaps-with-freemocap.md) | Q778, Q779, Q789 to Q795: the five overlaps with freemocap, a public model call, full progress state, a group with no cameras, host facts, privacy list | accepted |
 
 ### Proposed
 
@@ -101,7 +98,7 @@ These entries wait for a decision of the user. Section is the section or area of
 | [0R76](entries/0R76-choices-of-the-exact-skip-after-a-live-change.md) | Choices of the exact skip after a live change and a search: anchors, the time-out anchor, replay of 1024 taken frames, limits | `skellycam.core.camera.capture` | proposed |
 | [B7YV](entries/B7YV-choices-of-fix-lane-6.md) | Choices of fix lane 6: one run for the two halves, nominal values and loose checks, T-PRV-54, loop threads on the test clock, T-CAP-86 diagnostics | none | proposed |
 | [7GC1](entries/7GC1-choices-of-the-gate-on-the-test-clock-and-the-end-of-t-cap-05.md) | Choices of fix lane 6: a loop at an open gate holds the test clock until its next probe, forced steps still move it; T-CAP-05 checks the last ring frames | none | proposed |
-| [FR2J](entries/FR2J-choices-of-the-exclusive-access-and-overlap-specs.md) | Choices of the exclusive access specs: own pid, process names, 409 at a record start, take marks, checks and calls for freemocap, test IDs | none | proposed |
+| [J1HD](entries/J1HD-choices-of-the-control-read-check.md) | Choices of the certify check of the control read: 30 s on and off, the 100 ms rule, `control_read` in the record, a harmed model pauses on each build | none | proposed |
 
 The entries that are `rejected`, `superseded by XXXX`, `absorbed into <path>#<anchor>`,
 `evidence; used by XXXX`, `evidence; replaced by XXXX` or `done` are in [historical.md](historical.md).

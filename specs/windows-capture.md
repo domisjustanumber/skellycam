@@ -31,9 +31,9 @@ T-CAP-53, T-CAP-55, T-CAP-77, T-CAP-94, T-CAP-104 and T-CAP-105 change with them
 retired: the certify checks are the hardware tests of Linux and macOS (item 10 of ADR-22EJ).
 
 Note of 2026-11-25 (exclusive access, [ADR-AA4X](../decisions/entries/AA4X-decisions-of-the-user-on-exclusive-access-of-a-camera.md)):
-section 21 is a draft for the review and the acceptance of the user. It adds the activity monitor, the control
-monitor, the code `0x80070020`, the take marks and the tests T-CAP-130 to T-CAP-145. Where section 21 and an older
-section differ, section 21 is the rule after its acceptance.
+section 21 is accepted by the user, with the choices of ADR-FR2J (Q813, [ADR-5PAR](../decisions/entries/5PAR-decisions-of-the-user-on-the-control-read-the-holder-and-the-exclusive-access-drafts.md)). It adds the activity monitor, the control
+monitor, the code `0x80070020`, the take marks and the tests T-CAP-130 to T-CAP-146. Where section 21 and an older
+section differ, section 21 is the rule.
 
 ## 0. How to read this spec
 
@@ -267,7 +267,7 @@ the cameras.
 | Media Foundation callback thread (a work-queue thread of Media Foundation) | `OnReadSample` takes `arrival_ns` first. It copies the buffer into one `bytes` object, puts the frame in the waiting place, and issues the next `ReadSample` [proto mf.py `ReaderCallback`]. It does no file I/O, no logging per frame, no decode and no wait other than the waiting-place lock. It never raises into Media Foundation. |
 | Waiting place | One place per source, at most one frame. A new frame replaces a waiting frame, and the replaced frame counts in `replaced_count` [D26]. When the replaced frame carried a discontinuity, the frame that replaces it carries it too. Thus the next taken frame has the flag [D34] [agent 46]. A source error puts an error marker in the place. The marker wakes the loop at once, and `read_frame` raises `CaptureFailure` [agent 50]. When a frame waits, the marker waits behind it: `read_frame` gives the frame, and the next call raises at once. The marker never replaces a frame [agent 66]. The source uses the rules of `WaitingPlace` of the ring package (`skellycam/core/ipc/frame_ring/decode.py`), with these two additions [agent 4]. The put never waits longer than the time to take the lock [ring 8.3]. |
 | Camera loop thread | Waits only in `read_frame`, on the condition of the waiting place, with a timeout [ring 8.10]. It never polls in a loop without a block or a sleep of at least 1 ms. After the start-up, it never calls `set_controls` [U16]. |
-| Control thread | One thread for each camera process [U16]. From the end of the start-up, it reads the controls one time per second with `set_controls({})` (11.4), and it applies each live control change (11.2). It sleeps between the reads, with no spin [ring 8.10]. It never waits on the gate. A hung control call blocks only this thread; the loop thread keeps taking frames until the camera process ends (6.6). During an exposure search, it does each set of the search, and it holds its read each second ([`camera-requests.md`](camera-requests.md) 1.3). |
+| Control thread | One thread for each camera process [U16]. From the end of the start-up, it reads the controls one time per second with `set_controls({})` (11.4), also during a take (21.6, Q811; it pauses during a take only for a camera model that certify shows it harms), and it applies each live control change (11.2). It sleeps between the reads, with no spin [ring 8.10]. It never waits on the gate. A hung control call blocks only this thread; the loop thread keeps taking frames until the camera process ends (6.6). During an exposure search, it does each set of the search, and it holds its read each second ([`camera-requests.md`](camera-requests.md) 1.3). |
 | Bounded-call workers | One short-lived thread per bounded call [proto bounded.py]. Each joins the multithreaded apartment (MTA) first [agent 43]. |
 | Decode thread (BGR ring) | As [ring 8.2, 8.3]. |
 
@@ -507,7 +507,7 @@ Each failure carries a failure code of [`unix-capture.md`](unix-capture.md) 4.6.
 (`USB_INSUFFICIENT_BANDWIDTH`) gives `usb-bandwidth`, and each other HRESULT gives `open-failed` at
 the open and `stream-error` in streaming ([`unix-capture.md`](unix-capture.md) 4.2 item 1, T-UNX-77).
 
-Section 21 (draft of 2026-11-25) adds `0x80070020` to the in-use set, names the holder of a `0xC00D3704` when the
+Section 21 (accepted on 2026-11-25) adds `0x80070020` to the in-use set, names the holder of a `0xC00D3704` when the
 activity monitor shows one, and adds the other processes that the activity monitor shows.
 
 ### 6.8 Controls
@@ -1087,6 +1087,8 @@ Changed on 2026-11-20 ([ADR-JK79](../decisions/entries/JK79-exposure-search-at-e
 - From 3a, the status reports exposure, gain and focus, read only. The control thread (4.3) reads them
   one time per second with `set_controls({})` [D30, U16] [agent 31]. Gain and focus are set through the config from 3c
   [D43].
+- The read goes on during a take. On a build with no control monitor it also finds a change by another program
+  (21.6, Q811). It pauses during a take only for a camera model that certify shows it harms (21.6).
 - Whether a camera in auto mode reports its true current value is not known (section 17.3).
 
 ### 11.5 Gain, focus, white balance, power line frequency (3c) [D43, D44]
@@ -2290,12 +2292,12 @@ and D38 replace the two older plan statements of 1.4.
 
 ## 21. Exclusive access of a camera
 
-Status: draft of 2026-11-25 for the review and for the acceptance of the user. The rules come from the
-decisions of the user of 2026-11-25
+Status: accepted by the user on 2026-11-25, with the choices of the agent (Q813, [ADR-5PAR](../decisions/entries/5PAR-decisions-of-the-user-on-the-control-read-the-holder-and-the-exclusive-access-drafts.md)). The rules come
+from the decisions of the user of 2026-11-25
 ([ADR-AA4X](../decisions/entries/AA4X-decisions-of-the-user-on-exclusive-access-of-a-camera.md)). The details
 that the user did not decide are choices of the agent
-([ADR-FR2J](../decisions/entries/FR2J-choices-of-the-exclusive-access-and-overlap-specs.md), proposed). The user
-accepts this section before its tests or its code. The Windows build lane starts after that (Q799). Section 4.13
+([ADR-FR2J](../decisions/entries/FR2J-choices-of-the-exclusive-access-and-overlap-specs.md)). The failing tests come
+before the code. The Windows build lane can start (Q799). Section 4.13
 of [`unix-capture.md`](unix-capture.md) holds the Linux and macOS parts. They land with phase 7.
 
 Marks: **[Qn]** is decision Qn of ADR-AA4X. **[X n]** is item n of ADR-FR2J. **[S n]** is a primary source of
@@ -2392,31 +2394,37 @@ of [`certify.md`](certify.md) section 20 verifies each of them (21.9).
   It starts the monitor after the first frame, and the monitor runs to the close [X 30]. Each `OnChange` is a control change, except
   a change of a control that the source itself set in the last 1 s [X 8]. [NV] that `OnChange` comes for a change
   of the own process: [S6] says "when another app makes changes".
-- **Older builds** (each Windows 10 build, and Windows 11 before 22621): no poll during a take (Q784). Each read
-  is a request to the camera, and the Kiyo Pro wedges around bursts of control requests.
+- **Older builds** (each Windows 10 build, and Windows 11 before 22621): the read of 11.4, one time each second,
+  stays during a take, and it finds a change by another program (Q811). Each read compares exposure, gain and focus
+  by the rule of the read-back at the take start below (the auto flag always, the value only in manual). A
+  difference gives the warning `control_changed_by_other` and a take mark `camera_control_changed` at the row of the
+  next frame after the read. Q811 supersedes the words "no poll during a take" of Q784 for this read. Its reason:
+  the four Kiyo Pro wedges "all began at a stream start or stop, never mid-stream and never during control polling
+  alone" [M `research/usb_cameras/docs/kiyo_pro_wedge_research.md` §1], and one read each second is not a burst. No
+  other control read is added during a take.
+- **A model that the read harms** (Q811). The certify check `<label>:control-read:gaps` ([`certify.md`](certify.md)
+  20.9) measures the frame gaps around each read for each camera model. When the local record or the shipped row of
+  the model says that the check failed (the local row has `control_read` `harms`, or the shipped row has the limit
+  code `control-read-harms`), the read of 11.4 pauses during a take for a camera of that model, on each build
+  ([ADR-J1HD](../decisions/entries/J1HD-choices-of-the-control-read-check.md) item 4, proposed). The
+  status then shows the last value read. On a build with no control monitor, the read-back at the take end then finds
+  a change; on a build with it, the control monitor does. With no evidence, or with `control_read` `ok`, the read
+  stays.
 - **Read-back at the take start** (each build, Q768): at the record start, the control thread reads each control
   one time (one bounded `set_controls({})`). For exposure, gain and focus it compares the auto flag always, and the
   value only for a control that is in manual: a take can start with a control in auto (11.3, D37), and the value of
   a control in auto changes by itself [X 37]. A difference from the config gives the warning `control_changed_by_other` and
   a take mark `camera_control_changed` at row 0. The source does not set the value back [X 9].
-- **Read-back at the take end** (builds with no control monitor, Q784): one read after the last frame of the take.
+- **Read-back at the take end** (builds with no control monitor, for a model whose read pauses during a take):
+  one read after the last frame of the take.
   A difference from the read of the take start, by the same rule (the auto flag always, the value only in manual),
   gives a take mark `camera_control_changed` with `row=unknown`.
 - A control change that the control monitor finds during a take gives the warning `control_changed_by_other` and
   a take mark at the row of the next frame. Outside a take, it gives only the warning.
-- The accepted gap (Q797): on a build with no control monitor, an attached tool can change a setting during a
-  take, and only the read-back at the take end finds it (with answer (a) of QX-1). The warning `camera_attached` names the tool before the
-  take, so that the person can quit it.
-- **Open question QX-1 for the user: the read of 11.4.** The control thread reads exposure, gain and focus one
-  time each second with `set_controls({})` (4.3, 11.4; `CONTROL_READ_INTERVAL_S = 1.0` in `camera_loop.py`), also
-  during a take. Each read is a set of requests to the camera, so it is the poll that Q784 forbids during a take.
-  The options: **(a)** on a build with no control monitor, the read of 11.4 pauses during a take, and the status
-  shows the last value read; **(b)** the read stays, and it is also used to find a change during a take (this needs
-  the explicit yes of the user, because it is a poll during a take). The recommendation is (a): one read each second
-  is the kind of repeated control request that Q784 avoids for the Kiyo Pro, and the evidence does not show that it
-  is safe. This section is written for (a). With (b), only this item, the end read of the item above (it is then not
-  needed) and T-CAP-137 change. On a build with the control monitor, the read of 11.4 does not change in either
-  case.
+- The accepted gap (Q797): on a build with no control monitor, a change by an attached tool is found at the next read
+  of 11.4, up to 1 s late; for a model whose read pauses during a take, only the read-back at the take end finds it.
+  The warning `camera_attached` names the tool before the take, so that the person can quit it.
+- QX-1 is decided (Q811, answer (b)): see the two items on older builds above.
 
 ### 21.7 The take marks [Q783]
 
@@ -2471,7 +2479,8 @@ uses a fake activity monitor and a fake control monitor (seams of the fake sourc
 | T-CAP-134 | 3a | fake | Two fakes record 10 s. At 3 s a streaming other process joins the first; it leaves at 6 s. | The take records to the stop with no lost frame; `camera_shared` is in the status from the join to the leave; the manifest has one `camera_shared` with the rows of 3 s to 6 s and the name; the second camera has no mark. |
 | T-CAP-135 | 3a | fake | A record start while a streaming other process is on one camera. | HTTP 409; the detail names the camera and the process; no take starts. |
 | T-CAP-136 | 3a | fake | Build 22621: the fake control monitor sends a change of exposure during a take, and a second change 0.5 s after an own set of exposure. Build 22000: the same take. | 22621: one `control_changed_by_other` and one `camera_control_changed` mark at the row of the next frame; the change after the own set gives nothing. 22000: no `MFCreateCameraControlMonitor` call. |
-| T-CAP-137 | 3a | fake | Needs answer (a) of QX-1. Build 19045. A take where the fake changed exposure from -7 to -5 before the record start; a second take where the fake changes gain during the take; a third take with focus in auto whose value changes, and whose auto flag another process then turns off. | First take: the warning at the start and a mark at row 0. Second take: no control request between the read of the start and the read of the end; a mark `row=unknown control=gain`. Third take: no mark for the value of focus in auto; one mark for its auto flag. With answer (b) the second take instead gets a mark at the row of the first one-second read that differs. |
+| T-CAP-137 | 3a | fake | Build 19045 (Q811). A take where the fake changed exposure from -7 to -5 before the record start; a second take where the fake changes gain at 4.2 s; a third take with focus in auto whose value changes, and whose auto flag another process then turns off. | First take: the warning at the start and a mark at row 0. Second take: the one-second reads go on; one `camera_control_changed` mark at the row of the next frame after the first read that sees the new gain (at most 1 s after 4.2 s); no end read. Third take: no mark for the value of focus in auto; one mark for its auto flag. |
+| T-CAP-146 | 3a | fake | Build 19045. A model whose local record row has `control_read` `harms`; a second model with no such row; a third whose shipped row has `control-read-harms`. A take of 10 s of each; the fake changes gain at 4 s during each. | First model: no control read between the read of the take start and the read of the take end; one mark `row=unknown control=gain`; the status shows the value of the start read. Second model: a read each second, and the mark at the row after the first read that sees the change. Third model: as the first. On build 22621 the first model also has no read during the take, and the control monitor gives the mark. |
 | T-CAP-138 | 3a | fake | The fake name call returns the path of `LogiTuneAgent.exe` in a user folder; then it fails. | The warning text and the log hold `LogiTuneAgent.exe` and no folder; after the failure, "another program". |
 | T-CAP-139 | 3a | fake | `MFCreateSensorActivityMonitor` fails, as on a build before 1703. | The camera opens as before this section; `activity_monitor` is `false`; no warning. |
 | T-CAP-140 | 3a | fake | A process of another camera group of skellycam (another process id) streams the camera. | The rule of an other process: `camera-in-use` (Q796). |
@@ -2482,6 +2491,6 @@ uses a fake activity monitor and a fake control monitor (seams of the fake sourc
 | T-CAP-145 | 3a | fake | A reopen of a camera in the same group while the earlier camera process of that camera still shows in the report for 0.5 s. | The result is recorded: `camera-in-use` or a short `camera_attached`, as 21.2 says; no hang. The test documents the risk of 21.2; it does not decide it. |
 
 Tests of each rule: 21.1 and 21.2 by T-CAP-130, 140 and 145; 21.3 by T-CAP-130, 138, 139, 141 and 142; 21.4 by
-T-CAP-130 to 133 and 135; 21.5 by T-CAP-134 and 143; 21.6 by T-CAP-136, 137 and 144; 21.7 by T-CAP-134, 136 and 137;
+T-CAP-130 to 133 and 135; 21.5 by T-CAP-134 and 143; 21.6 by T-CAP-136, 137, 144 and 146; 21.7 by T-CAP-134, 136 and 137;
 21.8 by T-CAP-130, 134 and 138. The line before a take (21.8) is a UI text; the 4b UI tests check it. The hardware
 side of these rules is the certify checks of section 20 of [`certify.md`](certify.md).

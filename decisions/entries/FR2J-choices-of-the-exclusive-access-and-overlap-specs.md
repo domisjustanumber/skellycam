@@ -1,7 +1,11 @@
 # FR2J — Choices of the agent in the specs of exclusive access, the overlaps with freemocap and the light data
 
-**Status:** proposed, 2026-11-25 (agent; the spec lane of Q799 of
-[ADR-AA4X](AA4X-decisions-of-the-user-on-exclusive-access-of-a-camera.md); commit to dom/exclusive-access-spec).
+**Status:** absorbed into [`specs/windows-capture.md#21-exclusive-access-of-a-camera`](../../specs/windows-capture.md#21-exclusive-access-of-a-camera),
+[`specs/unix-capture.md#413-exclusive-access-of-a-camera-lands-with-phase-7`](../../specs/unix-capture.md#413-exclusive-access-of-a-camera-lands-with-phase-7),
+[`specs/unix-capture.md#69-tests-of-exclusive-access-413-lands-with-phase-7`](../../specs/unix-capture.md#69-tests-of-exclusive-access-413-lands-with-phase-7),
+[`specs/certify.md#20-exclusive-access-the-public-calls-for-freemocap-and-the-light-data`](../../specs/certify.md#20-exclusive-access-the-public-calls-for-freemocap-and-the-light-data),
+2026-11-25 (commit to dom/exclusive-access-spec; was accepted, 2026-11-25 (user, Q813 of
+ADR-5PAR); was proposed, 2026-11-25 (agent; the spec lane of Q799 of [ADR-AA4X](AA4X-decisions-of-the-user-on-exclusive-access-of-a-camera.md); commit to dom/exclusive-access-spec)).
 
 ## Decision
 

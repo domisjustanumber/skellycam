@@ -43,15 +43,14 @@ put in. The spec integration of 2026-11-20 puts in the later rulings of the user
 of the supervisor and of the agent ([ADR-FC1C](../decisions/entries/FC1C-choices-of-the-spec-integration.md)), and the contract change of commit `9e6d575` of
 `skellycertify` (the `gate` of a summary item).
 
-Note of 2026-11-25: section 20 is a draft for the review and the acceptance of the user. It puts in the rule that
+Note of 2026-11-25: section 20 is accepted by the user, with the choices of ADR-FR2J (Q813, [ADR-5PAR](../decisions/entries/5PAR-decisions-of-the-user-on-the-control-read-the-holder-and-the-exclusive-access-drafts.md)). It puts in the rule that
 skellycam needs exclusive control of each camera ([ADR-AA4X](../decisions/entries/AA4X-decisions-of-the-user-on-exclusive-access-of-a-camera.md)):
 `shared` fails `<label>:in-use`, a camera in use at the run start is `not-run` `camera-in-use`, and the new checks
 `<label>:in-use:other-program`, `<label>:in-use-mid-take` and `probe:<model>:hog-mode`. It also puts in the public
 calls and the progress state that freemocap needs, the light data for `DARK_LUMA`, and the host facts and the
 privacy rule ([ADR-13BB](../decisions/entries/13BB-decisions-of-the-user-on-the-dark-rule-the-light-data-and-the-phase-7-items.md),
 [ADR-CQ2X](../decisions/entries/CQ2X-decisions-of-the-user-on-the-overlaps-with-freemocap.md)). Section 12 holds
-the overlaps with freemocap as settled. Where section 20 and an older section differ, section 20 is the rule after
-its acceptance.
+the overlaps with freemocap as settled. Where section 20 and an older section differ, section 20 is the rule.
 
 ## 0. How to read this spec
 
@@ -257,6 +256,8 @@ This spec owns the local record. The details [A]:
     values: certify computes them from the required checks. Until the sign-off checks are built, `gate` also holds
     `"sign-off": "not-built"`, so the row is no local pass (3.6.4) [U Q610].
   - A run also writes one row with `device` `"pipeline"` for the pipeline item (3.6.10) [U Q611].
+  - `control_read` (a `full` row only): `ok` or `harms`, the result of `<label>:control-read:gaps` (20.9, Q811). With
+    `harms`, the product pauses its one-second control read during a take for that model [cap 21.6].
   - `controls` holds, for each of exposure, gain and focus, the result of each route that the run
     tried, keyed by its `control_path` value of 10.2 (`v4l2`, `iam`, `ks`, `cmio-native`,
     `cmio-absolute`, `cmio-native-data`) [ADR-FC1C](../decisions/entries/FC1C-choices-of-the-spec-integration.md):
@@ -1127,14 +1128,15 @@ not built (3.6.3), never `numbers` and never a key `reason` [C 3.4, C 6 rule 9].
 `session:exit`. The group, system and self checks of
 sections 6 and 7 are not built: their names are in `details.not_built`.
 
-**Full, phase F of each camera: the in-use checks of section 20 (draft of 2026-11-25, not built).**
+**Full, each camera: the checks of section 20 (accepted on 2026-11-25, not built).**
 
 | Check | Numbers | Fail and not-run reasons |
 |---|---|---|
 | `<label>:in-use` | `outcome`, `stage`, `seconds` | `not-refused`, `hung`, `wrong-reason` (20.2) |
-| `<label>:in-use:other-program` | `outcome`, `fail_code`, `holder_seen`, `first_report_ms` | `not-refused`, `hung`, `wrong-reason`; `not-run` `holder-failed` (20.3, QX-2) |
+| `<label>:in-use:other-program` | `outcome`, `fail_code`, `holder_seen`, `first_report_ms` | `not-refused`, `hung`, `wrong-reason`; `not-run` `holder-failed` (20.3, Q812) |
 | `<label>:in-use-mid-take` | `warned_s`, `marked`, `control_marked`, `control_blocked`, `frames_lost` | `not-warned`, `not-marked`; `not-run` `no-shared-mode` (20.3) |
 | `probe:<model>:hog-mode` (macOS) | `hog_set`, `second_refused`, `hog_released` | `hog-not-settable`, `hog-not-exclusive` (20.4) |
+| `<label>:control-read:gaps` (phase D, the first unit of each model) | `reads`, `read_ms_p50`, `read_ms_max`, `gap_at_read_max_ms`, `gap_no_read_max_ms`, `reads_over_limit` | `read-gap`, `hung` (20.9) |
 
 **The take: five rows become two [U Q598].** The contract keeps one check for each test that can fail [C 3.4].
 Each test of the five old rows keeps a check that carries its failure:
@@ -3423,6 +3425,7 @@ of a product failure gives the product code as its reason, with one exception: t
 | `no-shared-mode` | `<label>:in-use-mid-take` | Windows before build 26100: certify cannot start a shared reader (20.3). |
 | `hog-not-settable`, `hog-not-exclusive` | `probe:<model>:hog-mode` | Hog mode does not read back; a second session still starts (20.4). |
 | `no-frame` | light-dependent checks | No frame or no ratio to judge (20.7). |
+| `read-gap` | `<label>:control-read:gaps` | The one-second control read made a frame gap above 100 ms that the stream with no read does not have (20.9). |
 | `device-removed`, `stalled` | any camera check | Removed; no frame for 2 s (cap 6.7). |
 | `previous-process-alive`, `stream-error`, `format-changed`, `process-ended` | any camera check | Product failure codes of [ux 4.6.3]: an earlier camera process still holds the camera; the stream gave an error; the format changed during the stream; the camera process ended (certify reports `crashed`). |
 | `take-not-finished`, `take-error`, `rows-differ`, `missing-rows`, `gaps-unexplained`, `group-rate-off`, `too-few-frames`, `frame-not-decodable` | take checks | Section 4.5. |
@@ -3545,7 +3548,7 @@ tests only the self-check.
 | T-CERT-28 | Cleanup after a pass, a crash, a time-out and a cancel; a locked file in the work folder; an old work folder with and without the marker; a file of the person in `recording_folder`. | The work folder is gone, or `not-deleted`; the marked old folder is gone; the rest stays. |
 | T-CERT-29 | Search the report, and the files that the run wrote outside the work folder. | No media file, no string that ends with a media extension, no frame bytes, no path. |
 | T-CERT-30 | 3 OS. Each reason code, each notice code and each `limits` code that the code can emit, against `skellycam/REASON_CODES.md`. | Each is in the file with one sentence; each notice code also has its text for the person [C 5.4]. |
-| T-CERT-31 | 3 OS. Each check name that the code can emit, with the longest backend, `nousb-nousb`, index 9, rate 29.97, the longest group and condition, and the longest probe and control; also the names of section 20 (`<label>:in-use:other-program`, `<label>:in-use-mid-take`, `probe:<model>:hog-mode`). | Each matches the pattern; the longest has 75 characters. |
+| T-CERT-31 | 3 OS. Each check name that the code can emit, with the longest backend, `nousb-nousb`, index 9, rate 29.97, the longest group and condition, and the longest probe and control; also the names of section 20 (`<label>:in-use:other-program`, `<label>:in-use-mid-take`, `probe:<model>:hog-mode`, `<label>:control-read:gaps`). | Each matches the pattern; the longest has 75 characters. |
 | T-CERT-32 | 3 OS. Patch the rate limit of `rate_check.py` and the stall limit of the take; spy on `CameraGroupManager`, `start_take` and the source factory; set `SKELLYCAM_WINDOWS_CAPTURE`, `SKELLYCAM_LINUX_CAPTURE` and `SKELLYCAM_MACOS_CAPTURE` to `opencv`. | The result follows the patched product limits; each open goes through the calls of 2.2; the native source is used; the OpenCV source is never created. |
 | T-CERT-33 | Quick and full with fakes; list the sockets of the process tree. | No listening socket. |
 | T-CERT-34 | 3 OS. Phase G with fake sources that keep the "before" values and restore them at each close: a fake whose controls were manual -6 and auto focus before the run; a fake whose restore at the close reports `restore_ok` false; a fake whose second open reports other "before" values than the first; a fake that fails the plain open of `full`; each case at `quick` and at `full`. | Quick: `healthy`, `camera-not-restored`, `camera-not-restored`, and no extra open in phase G. Full: `healthy`; `camera-not-restored`, or `restored` when the plain open sets the value back with a good read-back; `restored`; `camera-wedged`. |
@@ -3650,7 +3653,7 @@ tests only the self-check.
 | T-CERT-133 | 3 OS, session child [U Q646; the row: [ADR-0Z6Q](../decisions/entries/0Z6Q-choices-of-the-certify-report-shape-build.md) item 15]. Fakes that leave after their take checks: a process exit and a stall; a hang at the close; a process exit at the close. | Each gets `<label>:live-at-close` `fail` with the product code (`crashed` with `exit_code` 3, `stalled`, `hung`, `crashed`) and the failure facts that have a value; no written result changes; the model item, `<model>:gate:no-hang` and `<model>:gate` are not `pass`; a good camera has `live-at-close` `pass`. |
 | T-CERT-134 | The build file of 3.5.2 [U Q647]: a wheel from a checkout; the sdist and a wheel from the sdist; a source tree inside another git repository; a git that fails or gives text that does not decode; the `datas` of `skellycam.spec`; the CI step of the installer. | The commit and the tree state in the wheel, in the sdist and in the wheel from the sdist; no commit for the tree inside another repository; no commit and no failed build for a git error; `skellycam.spec` takes the file into `datas`; the CI step writes the file before a step changes the tree. |
 | T-CERT-135 | 3 OS; the Linux and macOS cases land with phase 7. `<label>:in-use` (20.2) with a fake holder in a second session child: the product refuses with `camera-in-use`; the product opens the camera (shared); the apply hangs. | `pass`; `fail` `not-refused` with `outcome` `shared`; `fail` `hung`. |
-| T-CERT-136 | 3 OS; the Linux and macOS cases land with phase 7; the holder follows the answer to QX-2. `<label>:in-use:other-program` (20.3) with a fake holder child of the backend of the OS: a refusal; a shared open; a holder that gets no frame. On Windows, a fake activity report with and without the holder. | `pass`; `fail` `not-refused`; `not-run` `holder-failed`; `holder_seen` true and false on Windows, `null` on Linux and macOS. |
+| T-CERT-136 | 3 OS; the Linux and macOS cases land with phase 7; the holder is an OpenCV holder child (Q812). `<label>:in-use:other-program` (20.3) with a fake holder child of the backend of the OS: a refusal; a shared open; a holder that gets no frame. On Windows, a fake activity report with and without the holder. | `pass`; `fail` `not-refused`; `not-run` `holder-failed`; `holder_seen` true and false on Windows, `null` on Linux and macOS. |
 | T-CERT-137 | 3 OS; the macOS and Linux cases land with phase 7. `<label>:in-use-mid-take` (20.3) with fakes: Windows build 26100 where the product warns 1 s after the join and marks the rows; the same with no mark; build 22000; macOS with the in-use flag; Linux where the holder gets `EBUSY` at `VIDIOC_S_CTRL`. | `pass` with `warned_s` 1 and `marked` true; `fail` `not-marked`; `not-run` `no-shared-mode`; `pass`; `pass` with `control_blocked` true; `frames_lost` 0 in each case. |
 | T-CERT-138 | 3 OS; the Linux and macOS cases land with phase 7, and the attached case is Windows only (the activity monitor). The run start (20.1): one fake camera with a streaming other process, one with an attached other process named `LogiTuneAgent.exe`, one free. | The first: `opens` `not-run` `camera-in-use` and each later check `not-run` `camera-in-use`; the second runs, with `others_attached` 1; no row, `details` or log line of the report holds `LogiTuneAgent`; `details.before_run` of the plan holds the line of 20.1. |
 | T-CERT-139 | 3 OS. `probe:<model>:hog-mode` (20.4) with the fake AVFoundation layer: hog mode settable and the second session refused; not settable; settable and not exclusive; the set back to -1 fails. | `pass`; `fail` `hog-not-settable`; `fail` `hog-not-exclusive`; the camera state `replug`. On Windows and Linux no such row. |
@@ -3662,7 +3665,8 @@ tests only the self-check.
 | T-CERT-145 | 3 OS. Host facts (20.8): a full report on a fake Linux system. | No row and no `details` key repeats a field of the host block of freemocap; `system:kernel` has no `kernel_major` and no `kernel_minor`, and it keeps `nodrop_param`, `clock_param` and the quirk numbers. |
 | T-CERT-146 | 3 OS. The privacy list of the contract (20.8): the camera rows of a report with a planted key of each kind that the list of the contract forbids. Written after the contract has the list. | Each planted key or value is refused by the check that reads the list of the contract; the test holds no copy of the list. |
 | T-CERT-147 | macOS fake, 3 OS. The permission (20.8): a quick run with the status `not-determined`. | Certify makes no request for the permission; `system:camera-access` gives the status, and each camera is `not-run` `no-permission`. |
-| T-CERT-148 | 3 OS. The reason codes of section 20 (`not-refused`, `holder-failed`, `not-marked`, `not-warned`, `no-shared-mode`, `hog-not-settable`, `hog-not-exclusive`, `no-frame`). | Each is in the list of section 15, and each reason that the checks of section 20 give is in it (the rule of T-CERT-30). |
+| T-CERT-148 | 3 OS. The reason codes of section 20 (`not-refused`, `holder-failed`, `not-marked`, `not-warned`, `no-shared-mode`, `hog-not-settable`, `hog-not-exclusive`, `no-frame`, `read-gap`). | Each is in the list of section 15, and each reason that the checks of section 20 give is in it (the rule of T-CERT-30). |
+| T-CERT-149 | 3 OS; the Linux and macOS cases land with phase 7. `<label>:control-read:gaps` (20.9) with fakes: (1) each read takes 3 ms and delays no frame; (2) each read holds the frames for 150 ms; (3) the fake has gaps of 150 ms also with the read off; (4) a read hangs. Then the local record and a product open of each model. | (1) `pass`, `reads_over_limit` 0, the row `control_read` `ok`; (2) `fail` `read-gap`, the row `control_read` `harms`, and a later take of that model has no read during the take (T-CAP-146); (3) `pass`: the gaps come from the camera; (4) `fail` `hung`, the camera state `replug`, `control_read` `harms`. `details.limits.control_read_gap_ms` is 100. |
 
 **The changes of 3.6 to the tests above [U Q591 to Q599, Q610 to Q618, A].** Where a row above and this list
 differ, this list is the rule. T-CERT-91 to T-CERT-132 are new. Q624 also changes T-CERT-61 to T-CERT-64:
@@ -3859,17 +3863,17 @@ not built); (6) item 14. Not built: the check for a camera group that another pr
 
 ## 20. Exclusive access, the public calls for freemocap, and the light data
 
-Status: draft of 2026-11-25 for the review and for the acceptance of the user. The rules come from the decisions
+Status: accepted by the user on 2026-11-25 (Q813, [ADR-5PAR](../decisions/entries/5PAR-decisions-of-the-user-on-the-control-read-the-holder-and-the-exclusive-access-drafts.md)). The rules come from the decisions
 of the user of 2026-11-25: exclusive access
 ([ADR-AA4X](../decisions/entries/AA4X-decisions-of-the-user-on-exclusive-access-of-a-camera.md)), the certify
 fixes ([ADR-13BB](../decisions/entries/13BB-decisions-of-the-user-on-the-dark-rule-the-light-data-and-the-phase-7-items.md))
 and the overlaps with freemocap
 ([ADR-CQ2X](../decisions/entries/CQ2X-decisions-of-the-user-on-the-overlaps-with-freemocap.md)). The details that
 the user did not decide are choices of the agent
-([ADR-FR2J](../decisions/entries/FR2J-choices-of-the-exclusive-access-and-overlap-specs.md), proposed). Marks:
-**[Qn]** is decision Qn of those entries; **[X n]** is item n of ADR-FR2J. The user accepts this section before
-its tests or its code (Q799). The Windows checks are built after that; the Linux and macOS checks land with phase 7
-(Q777). The tests are T-CERT-135 to T-CERT-148 (section 17).
+([ADR-FR2J](../decisions/entries/FR2J-choices-of-the-exclusive-access-and-overlap-specs.md)). Marks:
+**[Qn]** is decision Qn of those entries; **[X n]** is item n of ADR-FR2J. The failing tests come before the code
+(Q799). The Windows checks can be built; the Linux and macOS checks land with phase 7 (Q777). The tests are
+T-CERT-135 to T-CERT-149 (section 17).
 
 The product rule is [cap 21] and [ux 4.13]: skellycam needs exclusive control of each camera (Q771). Certify
 follows it: "if we don't get exclusive use, it's an in-use result and we don't run the test" (the user, Q769).
@@ -3900,7 +3904,7 @@ session child applies the camera. The result changes (Q788):
 
 | Check | How | Numbers | Result |
 |---|---|---|---|
-| `<label>:in-use:other-program` (phase F) | A holder child that does not use the product source holds the camera (Q785); QX-2 below decides what the holder is. Then the first session child applies the camera. | `outcome` (`refused`, `shared`, `hung`), `fail_code`, `holder_seen` (Windows: the activity monitor showed the holder; else `null`), `first_report_ms` (Windows: the time to the first report of the monitor, [cap 21.4]) | `pass` when the product refuses with `camera-in-use`; `fail` with `not-refused`, `hung` or `wrong-reason`; `not-run` with `holder-failed` when the holder child gets no frame |
+| `<label>:in-use:other-program` (phase F) | A holder child that does not use the product source holds the camera (Q785): an OpenCV holder child (`CAP_DSHOW` on Windows, `CAP_V4L2` on Linux, `CAP_AVFOUNDATION` on macOS; Q812 below). Then the first session child applies the camera. | `outcome` (`refused`, `shared`, `hung`), `fail_code`, `holder_seen` (Windows: the activity monitor showed the holder; else `null`), `first_report_ms` (Windows: the time to the first report of the monitor, [cap 21.4]) | `pass` when the product refuses with `camera-in-use`; `fail` with `not-refused`, `hung` or `wrong-reason`; `not-run` with `holder-failed` when the holder child gets no frame |
 | `<label>:in-use-mid-take` (phase F) | A take of 10 s in the first session child. At 3 s a holder child joins [X 20]. Windows: a Media Foundation source with the share-mode attribute of [S1] (build 26100 or later) streams, and at 5 s it sets exposure through `IAMCameraControl`; it leaves at 7 s. macOS: a second capture session starts on the camera, and it leaves at 7 s. Linux: the holder opens the node and at 5 s calls `VIDIOC_S_CTRL` for exposure. | `warned_s` (the seconds from the join to the warning), `marked` (the manifest has the mark of [cap 21.7]), `control_marked`, `control_blocked` (Linux: the holder got `EBUSY`), `frames_lost` | `pass` when the product warns within 2 s and marks the interval [X 20]; on Windows 11 22621 or later also the control mark [X 34]; on Linux, where no second stream can start, when the holder got `EBUSY` at `VIDIOC_S_CTRL` or the change is marked [X 35]; `fail` with `not-marked` or `not-warned`; `not-run` with `no-shared-mode` on Windows before build 26100 |
 
 These two checks verify the facts that the research did not verify: that the activity monitor sees a reader that
@@ -3908,7 +3912,8 @@ joins later, that a shared reader can change exposure, that a DirectShow client 
 RECORD priority on a real Linux kernel ([cap 21.9]). They run after `<label>:in-use` and before the 60 fps checks
 [X 36].
 
-**Open question QX-2 for the user: the holder of `<label>:in-use:other-program`.** The user ruled "no OpenCV
+**QX-2, decided by the user on 2026-11-25 (Q812, answer (a)): the holder of `<label>:in-use:other-program`.** The
+holder child opens the camera with OpenCV; certify never judges OpenCV. The question was: the user ruled "no OpenCV
 checks" (10.1; ADR-KG00 item 8: "Certify tests native capture only. OpenCV needs no test"). The holder must be a
 program that is not the product source. The options:
 
@@ -3921,7 +3926,8 @@ program that is not the product source. The options:
 - **(c)** No such check: only the skellycam holder of `<label>:in-use`.
 
 The recommendation is (a): the rule is about what certify judges, and here OpenCV is only the other program, not a
-thing under test. This section is written for (a) after a yes; until then the check is `not-built`.
+thing under test. The user chose (a) (Q812). The check is specified; it is `not-built` only until its code exists, as
+each check of this section.
 
 ### 20.4 macOS: hog mode [Q787]
 
@@ -3992,3 +3998,27 @@ section 14.
 - **The macOS camera permission** (Q791). When certify runs inside freemocap, freemocap asks for the permission,
   and the certify of skellycam never asks again. The stand-alone skellycam app asks for itself, as decided on
   2026-11-20. Certify itself never shows the dialog (10.3, `system:camera-access`).
+
+### 20.9 The control read during a take [Q811]
+
+The user decided (Q811) that the read of [cap 11.4], one time each second, stays during a take and finds a change of
+exposure, gain or focus by another program on a build with no control monitor [cap 21.6]. The reason: the four Kiyo
+Pro wedges all began at a stream start or stop, "never mid-stream and never during control polling alone"
+[M `research/usb_cameras/docs/kiyo_pro_wedge_research.md` §1]. Q811 supersedes the words "no poll during a take" of
+Q784 for this read. Certify checks for each camera model that the read does no harm. The details of the check are
+choices of the agent, marked **[R n]**: item n of [ADR-J1HD](../decisions/entries/J1HD-choices-of-the-control-read-check.md) (proposed). The user decides them before the code.
+
+
+| Check | How | Numbers | Result |
+|---|---|---|---|
+| `<label>:control-read:gaps` (full, phase D, the first unit of each model) | The camera streams alone at `<base>` in `MANUAL` at -7 for 30 s with the product read of 11.4 on, then 30 s with it off (the setting `SKELLYCAM_CONTROL_READ=0` of the session child [R 1]). Certify takes the time of each read from the diagnostics of the control thread (start and end of each `set_controls({})`) and the arrival time of each frame. A read "overlaps" a frame interval when the interval holds a part of the read, or ends less than one frame period after the read ends. | `reads`, `read_ms_p50`, `read_ms_max`, `gap_at_read_max_ms` (the largest interval that overlaps a read), `gap_no_read_max_ms` (the largest interval of the 30 s with the read off), `reads_over_limit` (the reads with an overlapping interval above `control_read_gap_ms`) | `pass` when `reads_over_limit` is 0, or when `gap_no_read_max_ms` is also above the limit (the gaps then come from the camera, not from the read) [R 2]; `fail` with `read-gap` otherwise; `fail` with `hung` when a read hangs (the camera then gets the state `replug`, 8.3) |
+
+- The limit `control_read_gap_ms` is 100 ms, the gap rule of U16 [cap 6.6, T-CAP-82]. It stands in `details.limits`.
+- The result goes to the local row of the model as `control_read` (2.5): `ok` after a `pass`, `harms` after a `fail`
+  [R 3].
+  A reviewed report can add the limit code `control-read-harms` to the shipped row of the model (11.2).
+- The rule that follows (Q811): for a model whose local row has `control_read` `harms`, or whose shipped row has
+  `control-read-harms`, the product pauses the read during a take on each build [cap 21.6] [R 4]. T-CAP-146 tests the rule,
+  and T-CERT-149 tests the check.
+- The check runs in phase D because the read is normal product behaviour [R 5]. It adds about 60 s for each model to a full
+  run (section 16).

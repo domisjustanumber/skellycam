@@ -200,12 +200,10 @@ task. Delete an item when its work is done. The PR that closes an item records t
     hand gives the result.
 - **The read path is over 90 % of its limit** (2026-11-25). Absorb each Active entry whose rules the specs state,
   then move the five entries of ADR-6YGH from Proposed. ZEX9 becomes `done` after the CI result of its item 4.
-- **Exclusive access** ([ADR-AA4X](entries/AA4X-decisions-of-the-user-on-exclusive-access-of-a-camera.md),
-  [ADR-FR2J](entries/FR2J-choices-of-the-exclusive-access-and-overlap-specs.md)). `windows-capture.md` 21,
-  `unix-capture.md` 4.13 and `certify.md` 20 are drafts: an independent review, then the user accepts them. Then the
-  Windows lane writes the tests and the code; Linux and macOS land with phase 7. ADR-AA4X, ADR-13BB and ADR-CQ2X are
-  absorbed in the commit that records the acceptance. The user decides QX-1 (the 1 Hz control read during a take,
-  `windows-capture.md` 21.6) and QX-2 (the holder of `<label>:in-use:other-program`, `certify.md` 20.3). Owed: the codes `camera_shared` and
+- **Exclusive access** (accepted, [ADR-5PAR](entries/5PAR-decisions-of-the-user-on-the-control-read-the-holder-and-the-exclusive-access-drafts.md)).
+  `windows-capture.md` 21, `unix-capture.md` 4.13 and `certify.md` 20 are accepted. Next: the Windows lane writes the
+  failing tests, then the code; Linux and macOS land with phase 7. The user decides the choices of the control-read
+  check ([ADR-J1HD](entries/J1HD-choices-of-the-control-read-check.md)). Owed: the codes `camera_shared` and
   `camera_control_changed` in `recorder.md` 6.6 and the format of skellyspecs; the three warnings in
   `camera-requests.md` 1.5; the line before a take in `preview-4b.md`; a contract field for `details.before_run`.
 - **Certify for freemocap** ([ADR-CQ2X](entries/CQ2X-decisions-of-the-user-on-the-overlaps-with-freemocap.md),

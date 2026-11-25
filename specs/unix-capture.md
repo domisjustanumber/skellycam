@@ -16,7 +16,7 @@ and of the record of checked models; this spec now points to them and keeps only
 V4L2 and AVFoundation. The macOS controls follow the widest working route (4.4.6) [U].
 
 Note of 2026-11-25: section 4.13 and its tests in 6.9 (exclusive access of a camera, the RECORD priority, control
-events, the macOS configuration lock and in-use flag) are a draft for the review and the acceptance of the user,
+events, the macOS configuration lock and in-use flag) are accepted by the user (Q813, [ADR-5PAR](../decisions/entries/5PAR-decisions-of-the-user-on-the-control-read-the-holder-and-the-exclusive-access-drafts.md)),
 [ADR-AA4X](../decisions/entries/AA4X-decisions-of-the-user-on-exclusive-access-of-a-camera.md). They land with
 phase 7. Section 4.13.2 reverses M-11.
 
@@ -302,7 +302,7 @@ after it [K26]. Thus the source calls `VIDIOC_REQBUFS` with `count = 0` first [A
 request and catches a holder that has buffers. A holder that set a format but has no buffers is not
 caught there; `S_FMT` then returns `EBUSY` after its PROBE. `EBUSY` at any open step gives the code
 `camera-in-use` and the reason "in use by another program" [W D13]. From phase 7 the source also holds the
-RECORD priority and watches control events (4.13.1, draft of 2026-11-25).
+RECORD priority and watches control events (4.13.1, accepted on 2026-11-25).
 - Confidence: high.
 - Diagnostics: `busy_call` (`reqbufs`, `s-fmt`, `s-parm`, `streamon`, or null).
 - Certify: `<label>:in-use` (`outcome`, `call`); `probe:camera-holders`. The summary item of a model
@@ -1600,11 +1600,11 @@ The signal and the watch [ADR-AC5B](../decisions/entries/AC5B-choices-of-the-thi
 
 ### 4.13 Exclusive access of a camera (lands with phase 7)
 
-Status: draft of 2026-11-25 for the review and for the acceptance of the user. It lands with phase 7. The rules
+Status: accepted by the user on 2026-11-25, with the choices of the agent (Q813, [ADR-5PAR](../decisions/entries/5PAR-decisions-of-the-user-on-the-control-read-the-holder-and-the-exclusive-access-drafts.md)). It lands with phase 7. The rules
 come from the decisions of the user of 2026-11-25
 ([ADR-AA4X](../decisions/entries/AA4X-decisions-of-the-user-on-exclusive-access-of-a-camera.md)). The details
 that the user did not decide are choices of the agent
-([ADR-FR2J](../decisions/entries/FR2J-choices-of-the-exclusive-access-and-overlap-specs.md), proposed). Marks:
+([ADR-FR2J](../decisions/entries/FR2J-choices-of-the-exclusive-access-and-overlap-specs.md)). Marks:
 **[Qn]** is decision Qn of ADR-AA4X; **[X n]** is item n of ADR-FR2J; **[S n]** is a source of the research in
 [the evidence of ADR-AA4X](../decisions/evidence/AA4X-exclusive-access-research.md).
 
@@ -2001,7 +2001,7 @@ tests; it does not repeat the certify spec.
 
 ### 6.9 Tests of exclusive access (4.13, lands with phase 7)
 
-Draft of 2026-11-25, with 4.13. The counts of 6.8 do not hold these tests yet.
+Accepted on 2026-11-25, with 4.13 (Q813). The counts of 6.8 do not hold these tests yet.
 
 | ID | Kind | What it does | Pass criterion |
 |---|---|---|---|
