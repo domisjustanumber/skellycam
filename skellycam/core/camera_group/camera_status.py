@@ -65,6 +65,9 @@ class CameraStatus:
     # unix-capture.md 4.7 [NYT6]: the "before" values and the changed names of the controls that this app changed and
     # did not restore yet, as JSON; empty when the camera holds its own values. It survives the camera process.
     controls_before: Any = field(default_factory=lambda: multiprocessing.Array("c", INFO_SIZE))
+    # capture-timings.md 2 item 2: the one switch of the app; the manager writes it, the loop reads it at each publish.
+    # `reset_for_start` keeps it.
+    log_capture_times: Any = field(default_factory=lambda: multiprocessing.Value("b", False, lock=False))
     # The main process only: the counter subset of the newest diagnostics of the camera (unix-capture.md 4.2 item 2).
     diagnostics: dict = field(default_factory=dict)
     # Per process, and never pickled: the worker of the camera (the main process sets it), whether that process

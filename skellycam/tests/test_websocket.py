@@ -22,7 +22,7 @@ class TestWebsocketConnect:
                 response = ws.receive_text()
                 try:
                     data = json.loads(response)
-                    if isinstance(data, dict) and data.get("message_type") in ("app_state", "framerate_update"):
+                    if isinstance(data, dict) and data.get("message_type") in ("app_state", "framerate_update", "capture_timings"):
                         continue
                 except json.JSONDecodeError:
                     pass
@@ -56,7 +56,7 @@ class TestWebsocketConnect:
                 response = ws.receive_text()
                 try:
                     data = json.loads(response)
-                    if isinstance(data, dict) and data.get("message_type") in ("app_state", "framerate_update"):
+                    if isinstance(data, dict) and data.get("message_type") in ("app_state", "framerate_update", "capture_timings"):
                         continue
                 except json.JSONDecodeError:
                     pass

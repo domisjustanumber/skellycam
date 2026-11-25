@@ -10,6 +10,7 @@ from fractions import Fraction
 
 import cv2
 
+from skellycam.core.capture_timings import OFF_SET, OPENCV_STEPS
 from skellycam.core.camera.capture.source import (
     CapturedFrame,
     CaptureFailure,
@@ -38,6 +39,8 @@ logger = logging.getLogger(__name__)
 
 class OpenCVSource:
     name = "opencv"
+    timing_steps = OPENCV_STEPS  # capture-timings.md 5.4; the loop writes `jpeg_encode`
+    timing_set = OFF_SET  # the loop gives each open source its own set (5.1)
 
     def __init__(self, config: CameraConfig):
         self.config = config
@@ -77,16 +80,21 @@ class OpenCVSource:
     def read_frame(self, timeout_s: float) -> CapturedFrame | None:
         deadline = time.perf_counter() + timeout_s
         while True:
+            steps = self.timing_set
+            on = steps.control.on
+            clock = steps.control.clock if on else time.perf_counter_ns  # capture-timings.md 3.1, 5.3
             with self._lock:
                 ok = image = None
                 if self._capture.grab():
                     arrival_ns = time.perf_counter_ns()
-                    pre_ns = time.perf_counter_ns()
+                    pre_ns = clock()
                     ok, image = self._capture.retrieve()
-                    post_ns = time.perf_counter_ns()
+                    post_ns = clock()
             if ok and image is not None:
                 number, self._grabs = self._grabs, self._grabs + 1
                 self.retrieve_ns = (pre_ns, post_ns)
+                if on:
+                    steps.add("opencv_retrieve", post_ns - pre_ns)
                 return CapturedFrame(payload=image, format="BGR", arrival_ns=arrival_ns, sample_ns=NO_SAMPLE_NS,
                                      delivered_len=0, driver_error=False, source_frame_number=number,
                                      discontinuity=False)

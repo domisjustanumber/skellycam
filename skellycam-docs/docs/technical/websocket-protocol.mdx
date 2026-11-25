@@ -196,6 +196,42 @@ Sent approximately every 250ms when cameras are active. The `backend_framerate` 
 
 Sent approximately every 1 second and whenever the application state changes (e.g., recording starts/stops).
 
+### Capture Timings
+
+```json
+{
+  "message_type": "capture_timings",
+  "version": 1,
+  "log_capture_times": true,
+  "summaries": [
+    {
+      "source": "camera",
+      "camera_group_id": "g1",
+      "camera_id": "a1b2",
+      "clock": "perf_counter_ns",
+      "seq": 812,
+      "window_end_ns": 81234567890123,
+      "window_s": 1.0,
+      "steps": {
+        "camera_wait": {"kind": "wait", "cadence": "frame", "where": "camera_loop", "n": 30, "p50_ms": 31.912, "p95_ms": 33.105, "max_ms": 34.877},
+        "ring_write": {"kind": "work", "cadence": "frame", "where": "camera_loop", "n": 30, "p50_ms": 0.092, "p95_ms": 0.14, "max_ms": 0.41}
+      },
+      "delays": {
+        "arrival_to_published": {"where": "camera_loop", "n": 30, "p50_ms": 0.21, "p95_ms": 1.402, "max_ms": 2.33}
+      }
+    }
+  ]
+}
+```
+
+Sent once per second. Each summary gives, for one camera and one window of about 1 s, the count `n` and the
+nearest-rank `p50_ms`, `p95_ms` and `max_ms` of each slow step of the frame path. A `wait` step is a wait for
+another part; never add it to the `work` steps. A step with `n` 0 applies but did not run in the window; its values
+are `null`. The summaries with `"source": "preview"` are the preview steps of this connection. The measurement is off
+by default. `POST /skellycam/camera/timings` with `{"log_capture_times": true}` switches it on for each camera. When it
+is off, the message has `"log_capture_times": false` and `"summaries": []`. The full list of the steps and the rules
+are in `specs/capture-timings.md` of the repository.
+
 ## Client -> Server Messages
 
 ### Frame Acknowledgment

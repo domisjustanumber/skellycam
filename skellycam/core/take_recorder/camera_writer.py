@@ -6,6 +6,7 @@ import threading
 import time
 from dataclasses import dataclass
 
+from skellycam.core.capture_timings import OFF_SET, RECORDER_STEPS, StepSet
 from skellycam.core.ipc.frame_ring import NO_SAMPLE_NS
 from skellycam.core.take_recorder import sidecar
 from skellycam.core.take_recorder.mkv import MkvFile
@@ -66,6 +67,8 @@ class CameraTakeWriter:
         # Progress (D1): the time.monotonic() at which a write call on the MKV or the CSV, or an fsync,
         # last returned. A call that does not return is no progress: the disk took nothing.
         self._progress_at = time.monotonic()
+        self.timing_set = OFF_SET  # capture-timings.md 5.1: `start` gives a measured writer its own set
+        self._inner_ns = 0  # the samples of the steps inside `_finish`, for `mkv_close`
 
     def _progress(self) -> None:
         self._progress_at = time.monotonic()
@@ -98,11 +101,14 @@ class CameraTakeWriter:
         return not self._thread.is_alive()
 
     @classmethod
-    def start(cls, spec, *, clock=None, progress=None, alive=None):
+    def start(cls, spec, *, clock=None, progress=None, alive=None, timing=None):
         """Open the files, write the MKV header and the CSV header, start the writer thread. `progress` is a
         shared double that gets the time of each progress, for the main process (recorder.md 5.3 item 4).
-        `alive` is the shared counter of the stall watch of the main process (unix-capture.md 4.10)."""
+        `alive` is the shared counter of the stall watch of the main process (unix-capture.md 4.10). `timing`: the
+        `TimingControl` of the camera loop; the writer thread writes its own StepSet (capture-timings.md 5.1)."""
         self = cls(spec)
+        if timing is not None:
+            self.timing_set = StepSet(timing, RECORDER_STEPS)
         self._shared_progress, self._alive = progress, alive
         self._progress()
         self._clock = clock or time.perf_counter_ns
@@ -287,7 +293,13 @@ class CameraTakeWriter:
                 logger.warning("camera %s: row %d has another JPEG layout than the placeholder",
                                self.spec.camera_id, self._k)
         block = self._placeholder if missing else payload
+        steps = self.timing_set
+        on = steps.control.on
+        if on:
+            t0 = steps.control.clock()
         self._mkv.mux(block, self._k)
+        if on:
+            self._sample("mkv_mux", steps.control.clock() - t0)
         self._blocks += 1
         if self._pending is not None:
             self._write_row(self._mkv.tell())
@@ -299,7 +311,13 @@ class CameraTakeWriter:
     def _write_row(self, block_end: int) -> None:
         row, block = self._pending
         self._pending = None
+        steps = self.timing_set
+        on = steps.control.on
+        if on:
+            t0 = steps.control.clock()
         self._write_line(sidecar.row_line(row._replace(byte_offset=block_end - len(block))))
+        if on:
+            self._sample("csv_row", steps.control.clock() - t0)
         self._rows += 1
         self._gaps += bool(row.flags & sidecar.GAP)
         if row.flags & sidecar.MISSING:
@@ -311,7 +329,20 @@ class CameraTakeWriter:
             self._fsync_both()
             self._last_fsync_ns = now
 
+    def _sample(self, step_id: str, duration_ns: int) -> None:
+        self.timing_set.add(step_id, duration_ns)
+        self._inner_ns += duration_ns
+
     def _fsync_both(self) -> None:
+        steps = self.timing_set
+        if steps.control.on:
+            t0 = steps.control.clock()
+            self._fsync_files()
+            self._sample("fsync", steps.control.clock() - t0)
+        else:
+            self._fsync_files()
+
+    def _fsync_files(self) -> None:
         self._mkv.fsync()
         self._progress()
         os.fsync(self._csv.fileno())
@@ -323,7 +354,17 @@ class CameraTakeWriter:
         self._progress()
 
     def _finish(self, frame_count: int | None) -> None:
-        """With `frame_count` None (`abandon`): no padding and no `# end` line."""
+        """With `frame_count` None (`abandon`): no padding and no `# end` line. Its time, minus the samples of the
+        steps inside it, is `mkv_close` (capture-timings.md 3.1)."""
+        steps = self.timing_set
+        if steps.control.on:
+            t0, inner = steps.control.clock(), self._inner_ns
+            self._finish_files(frame_count)
+            steps.add("mkv_close", steps.control.clock() - t0 - (self._inner_ns - inner))
+        else:
+            self._finish_files(frame_count)
+
+    def _finish_files(self, frame_count: int | None) -> None:
         if self._placeholder is None and (self._held or (frame_count is not None and self._k < frame_count)):
             self._fallback()
             held, self._held = self._held, []

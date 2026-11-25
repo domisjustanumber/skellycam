@@ -16,6 +16,7 @@ import numpy as np
 from pydantic import BaseModel, ConfigDict, TypeAdapter
 
 from skellycam import __version__
+from skellycam.core import capture_timings
 from skellycam.core.camera.camera_manager import CameraManager
 from skellycam.core.camera.camera_worker import CameraState
 from skellycam.core.camera.capture.failure_codes import WEDGE_CODES
@@ -139,6 +140,9 @@ class CameraGroup:
     ended_take_summary: dict | None = None  # the live state of that take (recorder.md 8.4)
     take_error: tuple | None = None  # (text, camera_id) of the first stall or write error of the take (5.3, 5.4)
     camera_diagnostics: dict = field(default_factory=dict)  # the newest diagnostics of each camera (unix 4.2 item 2)
+    # capture-timings.md 6.2: camera_id: (newest summary, main-process clock at its receipt). The watch thread replaces
+    # the whole dict at each change; a reader reads the attribute one time.
+    camera_timings: dict = field(default_factory=dict)
     _passes: dict = field(default_factory=dict)  # camera_id: (alive_count, time.monotonic() of its last change)
     _adopted: dict = field(default_factory=dict)  # camera_id: the search count whose held value is in `configs`
     # (configs at 30 fps, search counts before the request, request count) after an apply request at 60 fps
@@ -516,6 +520,11 @@ class CameraGroup:
             except queue.Empty:
                 return
             self.camera_diagnostics[message.camera_id] = message.diagnostics
+            summary, kept = getattr(message, "timings", None), self.camera_timings
+            if summary is not None:
+                self.camera_timings = {**kept, message.camera_id: (summary, capture_timings.main_clock_ns())}
+            elif message.camera_id in kept:
+                self.camera_timings = {key: value for key, value in kept.items() if key != message.camera_id}
             status = statuses.get(message.camera_id)
             if status is not None:
                 status.diagnostics = {key: message.diagnostics.get(key) for key in COUNTER_KEYS}
@@ -566,29 +575,40 @@ class CameraGroup:
     def camera_ids(self) -> list[CameraIdString]:
         return list(self.configs.keys())
 
-    def read_latest_ring_frames(self) -> dict[CameraIdString, FrameRead] | None:
-        """The newest frame of each camera that has one to show (interim relay of 5.8, U13)."""
+    def read_latest_ring_frames(self, step_set=None) -> dict[CameraIdString, FrameRead] | None:
+        """The newest frame of each camera that has one to show (interim relay of 5.8, U13). `step_set`: the
+        preview steps of a connection (capture-timings.md 6.5); None measures nothing."""
         statuses = self.cameras.orchestrator.camera_statuses
+        on = step_set is not None and step_set.control.on
         with self._ring_lock:
             reads = {}
             for camera_id, reader in self.ring_readers.items():
                 status = statuses.get(camera_id)
                 if status is None or not status.in_gate:  # agent 54: no frame to show, for example `starting`
                     continue
+                if on:
+                    t0 = step_set.control.clock()
                 read = reader.read_newest()
+                if on:
+                    step_set.add((self.id, camera_id, "preview_ring_read"), step_set.control.clock() - t0)
                 if read.result is ReadResult.OK:
                     reads[camera_id] = read
             return reads or None
 
-    def get_latest_ring_payload(self) -> tuple[FrameNumberInt, MultiframeTimestampFloat, memoryview] | None:
+    def get_latest_ring_payload(self, step_set=None) -> tuple[FrameNumberInt, MultiframeTimestampFloat, memoryview] | None:
         """A websocket message in the wire format of today, with the ring JPEG of each camera,
         untouched: no resize, no re-encode and no rotation (spec 2.3) [A4]. Interim (5.8): the
-        newest frame of each camera on its own; the message header has the largest frame number."""
+        newest frame of each camera on its own; the message header has the largest frame number.
+        `step_set`: the preview steps of a connection; the build of the message is `preview_pack`, and the
+        `published_ns` of each camera waits in `pending` for the send (capture-timings.md 6.5)."""
         with self._ring_lock:
-            reads = self.read_latest_ring_frames()
+            reads = self.read_latest_ring_frames(step_set)
             if reads is None:
                 return None
             infos = {camera_id: self.ring_infos[camera_id] for camera_id in reads}
+        on = step_set is not None and step_set.control.on
+        if on:
+            t0 = step_set.control.clock()
         frame_number = max(read.frame_number for read in reads.values())
         header = np.zeros(1, dtype=FRONTEND_PAYLOAD_HEADER_FOOTER_DTYPE)
         header["message_type"] = MessageType.PAYLOAD_HEADER
@@ -611,7 +631,11 @@ class CameraGroup:
         header["message_type"] = MessageType.PAYLOAD_FOOTER
         payload += header.tobytes()
         timestamp = float(np.mean([read.arrival_ns for read in reads.values()]))
-        return frame_number, timestamp, memoryview(payload).toreadonly()
+        message = memoryview(payload).toreadonly()
+        if on:
+            step_set.add((self.id, None, "preview_pack"), step_set.control.clock() - t0)
+            step_set.pending[self.id] = [(camera_id, read.published_ns) for camera_id, read in reads.items()]
+        return frame_number, timestamp, message
 
     async def start_recording(self, recording_info: RecordingInfo, devices: dict | None = None) -> list:
         """Start a take (recorder.md section 10 items 3 to 5, 13). Return the warnings of 11.3. One start, stop or

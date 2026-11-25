@@ -10,6 +10,7 @@ import pytest
 
 from skellycam.core.camera_group import camera_status
 from skellycam.core.camera_group.camera_status import CameraStatus
+from skellycam.core.capture_timings import PreviewTimings, TimingControl
 from skellycam.tests.capture import status_children
 from skellycam.tests.frame_ring import ring_children
 
@@ -99,10 +100,12 @@ async def test_the_app_state_sender_does_not_set_the_kill_flag_on_torn_json(monk
         sent.append(message)
 
     server.global_kill_flag = multiprocessing.Value("b", False)
-    server._cgm = Mock(to_state_dict=to_state_dict)
+    server._cgm = Mock(to_state_dict=to_state_dict, camera_groups={}, capture_timings=capture_timings_off)
+    server._preview_timings = PreviewTimings()  # the capture timings message after each state check
     server._websocket_should_continue, server.ws_tasks = True, []
     server.websocket = Mock(client_state=WebSocketState.CONNECTED)
     monkeypatch.setattr(server, "_send_msgspec_json", send)
+    monkeypatch.setattr(server, "_send_text", send)  # the capture timings message (capture-timings.md 6.4)
     await server._app_state_sender()
     assert not server.global_kill_flag.value
     assert sent and sent[0]["state"]["camera_groups"]["g"]["cameras"]["c"]["status"]["mode"] == {"width": 640}
@@ -326,13 +329,19 @@ async def test_a_state_read_that_raises_once_does_not_end_the_app_state_sender(m
 
     monkeypatch.setattr(server_module, "logger", Mock())
     server.global_kill_flag = multiprocessing.Value("b", False)
-    server._cgm = Mock(to_state_dict=to_state_dict)
+    server._cgm = Mock(to_state_dict=to_state_dict, camera_groups={}, capture_timings=capture_timings_off)
+    server._preview_timings = PreviewTimings()  # the capture timings message after each state check
     server._websocket_should_continue, server.ws_tasks = True, []
     server.websocket = Mock(client_state=WebSocketState.CONNECTED)
     monkeypatch.setattr(server, "_send_msgspec_json", send)
+    monkeypatch.setattr(server, "_send_text", send)  # the capture timings message (capture-timings.md 6.4)
     await asyncio.wait_for(server._app_state_sender(), timeout=10)
     assert not server.global_kill_flag.value
     assert len(calls) == 2 and sent and sent[0]["state"] == {"camera_groups": {}}
+
+
+def capture_timings_off():
+    return {"version": 1, "log_capture_times": False, "summaries": []}
 
 
 def test_the_camera_end_with_no_take_level_waits_at_most_its_bound_for_the_last_frame_lock():
@@ -354,7 +363,8 @@ def test_the_camera_end_with_no_take_level_waits_at_most_its_bound_for_the_last_
     topics = {TopicTypes.RECORDING_FINISHED: topic}
     loop = SimpleNamespace(take_writer=writer, orchestrator=orchestrator, camera_id="c1", gate_count=10,
                            ipc=SimpleNamespace(should_continue=False, pubsub=SimpleNamespace(topics=topics)),
-                           status=SimpleNamespace(recording_in_progress=SimpleNamespace(value=True)))
+                           status=SimpleNamespace(recording_in_progress=SimpleNamespace(value=True)),
+                           timing=TimingControl(time.perf_counter_ns), _retire=lambda role: None)
     held, release = threading.Event(), threading.Event()
 
     def hold():
