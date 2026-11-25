@@ -69,6 +69,9 @@ These entries are `accepted`.
 | [MX8V](entries/MX8V-decisions-of-the-user-on-capture-timings.md) | Q565 to Q571, Q576 to Q578, Q580 to Q583, Q586: capture timings, step list, wait apart from work, summary each second, one shape, switch, tile (not built) | accepted |
 | [8Z0Q](entries/8Z0Q-choices-of-the-capture-timings-spec.md) | Spec `specs/capture-timings.md` draft 2, tests T-TIM-01 to 26: diagnostics field, message, switch details, kinds, brackets, threads, budget, tile | accepted |
 | [8B85](entries/8B85-acceptance-of-the-capture-timings-spec.md) | Q587: the user accepts `specs/capture-timings.md` with the ADR-8Z0Q choices; build after fix lane 3 merges, capture side first, tile with 4b (not built) | accepted |
+| [4CAF](entries/4CAF-choices-of-the-close-of-the-queues-of-a-group.md) | Choices of fix lane 8: a closed group closes its queues and leaves the pubsub registry (windows-capture.md 5.9, T-CAP-114) | accepted |
+| [JC4X](entries/JC4X-choices-of-the-gate-probe-of-a-second-app-on-the-test-clock.md) | Choices of fix lane 8: a second app of one test wraps the product gate probe, so `shut` never calls the test clock (T-UNX-98 stuck thread) | accepted |
+| [ZT5F](entries/ZT5F-acceptance-of-the-choices-of-fix-lane-8.md) | "Yes to all": ADR-4CAF and ADR-JC4X accepted; merge and push of lane 8; the `pace` question of the status-locks test is not decided | accepted |
 
 ### Proposed
 

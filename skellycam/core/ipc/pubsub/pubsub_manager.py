@@ -84,3 +84,11 @@ def create_camera_group_pubsub_manager(group_id: CameraGroupIdString) -> PubSubT
     return CAMERA_GROUP_PUB_SUB_MANAGERS[group_id]
 
 
+def close_camera_group_pubsub_manager(group_id: CameraGroupIdString) -> None:
+    """Remove the manager of a closed group and close its subscriptions (windows-capture.md 5.9). A second call does
+    nothing."""
+    manager = CAMERA_GROUP_PUB_SUB_MANAGERS.pop(group_id, None)
+    if manager is not None:
+        manager.close()
+
+
