@@ -1100,6 +1100,7 @@ def bare_loop(config, state="ready"):
 
     from skellycam.core.camera.capture.camera_loop import RECENT_FRAMES, CameraLoop
     from skellycam.core.camera_group.camera_status import CameraStatus
+    from skellycam.core.capture_timings import WindowReader
 
     loop = CameraLoop.__new__(CameraLoop)
     loop.status, loop.config, loop.camera_id = CameraStatus(), config, "a1b2"
@@ -1108,6 +1109,7 @@ def bare_loop(config, state="ready"):
     loop.search = loop.search_before = loop.search_final = loop.take_writer = loop.check = loop.exposure_range = None
     loop.no_exposure, loop.reference_rate = False, 30.0
     loop.recent_frames = deque(maxlen=RECENT_FRAMES)  # the taken frames that a new check gets (ADR-0R76)
+    loop.timing_sets, loop.timing_reader = {}, WindowReader()  # no capture timings (capture-timings.md 5.1)
     return loop
 
 

@@ -13,6 +13,7 @@ from dataclasses import dataclass
 from typing import TYPE_CHECKING, no_type_check
 
 from skellycam.api.websocket.websocket_message_types import WebsocketMessageType
+from skellycam.core.capture_timings import OFF_SET
 from skellycam.core.ipc.frame_ring import FrameRead, ReadResult
 from skellycam.core.recorders.framerate_tracker import ServerFramerateCalculator
 
@@ -70,7 +71,9 @@ class PreviewRelay:
     @no_type_check  # beartype: the tests give a fake manager with the same attributes (ADR-24FZ)
     def __init__(self, camera_group_manager: "CameraGroupManager",
                  send_bytes: Callable[[bytes], Awaitable[None]],
-                 send_json: Callable[[object], Awaitable[None]]) -> None:
+                 send_json: Callable[[object], Awaitable[None]], step_set=None) -> None:
+        # `step_set`: the preview steps of the connection (capture-timings.md 6.5); None measures nothing
+        self._steps = OFF_SET if step_set is None else step_set
         self._manager = camera_group_manager
         self._send_bytes = send_bytes
         self._send_json = send_json
@@ -140,10 +143,21 @@ class PreviewRelay:
                         logger.error(f"Preview: camera id {camera_id} is not ASCII or is longer than 16 bytes; "
                                      f"no camera message for it")
                     continue
+                steps = self._steps
+                control = steps.control
+                on = control.on
+                if on:
+                    t0 = control.clock()
                 read = self._newest_unsent(state, reader)
                 if read is None:
                     continue
+                if on:
+                    t1 = control.clock()
+                    steps.add((group.id, camera_id, "preview_ring_read"), t1 - t0)
                 message = pack_camera_frame(camera_id, read)
+                if on:
+                    t2 = control.clock()
+                    steps.add((group.id, camera_id, "preview_pack"), t2 - t1)
                 skipped = reader.skipped_count
                 if state.last_sent >= 0:
                     state.not_shown += (read.frame_number - state.last_sent - 1) - (skipped - state.skipped_at_send)
@@ -152,7 +166,12 @@ class PreviewRelay:
                 state.ready = False
                 state.sent_at = time.monotonic()
                 _feed(state.rate, read)
+                if on:
+                    t3 = control.clock()
+                    steps.add((group.id, camera_id, "published_to_send"), t3 - read.published_ns)
                 await self._send_bytes(message)
+                if on:
+                    steps.add((group.id, camera_id, "preview_send"), control.clock() - t3)
         present = {camera_id for group in self._manager.camera_groups.values() for camera_id in group.ring_readers}
         for camera_id in self._cameras.keys() - present:
             del self._cameras[camera_id]

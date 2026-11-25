@@ -196,6 +196,7 @@ def test_t_tim_16_the_publishes_of_the_open_a_failure_and_the_close(monkeypatch)
         frames(loop, 3)
         loop._fail(CaptureFailure("streaming", "a test failure"))
         failed = loop.diagnostics[-1].timings
+        clock.advance(1 * MS)
         loop._end(False)
         closed = loop.diagnostics[-1].timings
     finally:

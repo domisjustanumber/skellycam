@@ -171,13 +171,14 @@ task. Delete an item when its work is done. The PR that closes an item records t
   ([ADR-TFD7](entries/TFD7-search-limit-stop-rate-median-role-flag-and-restore-after-a-failed-loop.md)):
   a role flag in place of the `parent_process()`
   guards.
-- **Capture timings, decided 2026-11-23, not built**
-  ([ADR-MX8V](entries/MX8V-decisions-of-the-user-on-capture-timings.md)). The spec
-  [`specs/capture-timings.md`](../specs/capture-timings.md) and its test list T-TIM-01 to T-TIM-26 are
-  accepted, with the agent choices of [ADR-8Z0Q](entries/8Z0Q-choices-of-the-capture-timings-spec.md)
-  ([ADR-8B85](entries/8B85-acceptance-of-the-capture-timings-spec.md), Q587). Fix lane 3 is merged.
-  The capture side comes first; the tile part
-  comes with step 4b. The FreeMoCap display comes after FreeMoCap moves to the frame-ring API.
+- **Capture timings: the capture side is built on `dom/capture-timings-build`, not merged**
+  ([ADR-MX8V](entries/MX8V-decisions-of-the-user-on-capture-timings.md),
+  [ADR-8B85](entries/8B85-acceptance-of-the-capture-timings-spec.md)). Steps 1 to 6 of section 11 of
+  [`specs/capture-timings.md`](../specs/capture-timings.md), with the agent choices of
+  [ADR-JFG4](entries/JFG4-choices-of-the-capture-timings-build.md) (the user decides them). Open: the timed test
+  `test_process_workers.py` (an OK of the user first); M-TIM-1 on the hardware of the user (step 7); the tile with
+  step 4b (step 8: T-TIM-24 in TypeScript, T-TIM-25, T-TIM-26). The FreeMoCap display comes after FreeMoCap moves
+  to the frame-ring API.
 - **Deferred by the user (2026-11-23).** At 60 fps the exposure search never tries a value longer
   than the frame period. The product switches low light compensation off after each open.
 - **Fix lane 4 follow-ups** ([ADR-HQE5](entries/HQE5-choices-of-fix-lane-4.md)).

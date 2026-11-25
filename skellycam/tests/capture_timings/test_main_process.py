@@ -26,8 +26,12 @@ def camera_summary(camera_id, seq=0, group_id="g1"):
 
 
 def real_manager():
+    import multiprocessing
+
     from skellycam.core.camera_group.camera_group_manager import CameraGroupManager
-    return CameraGroupManager(global_kill_flag=MagicMock(), worker_registry=MagicMock())
+    from skellycam.core.ipc.process_management.worker_registry import WorkerRegistry
+    return CameraGroupManager(global_kill_flag=multiprocessing.Value("b", False),
+                              worker_registry=MagicMock(spec=WorkerRegistry))
 
 
 def stub_group(group_id, timings_by_camera, closing=False):

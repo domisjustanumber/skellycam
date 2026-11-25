@@ -147,8 +147,14 @@ class ScriptSource:
         self.closed = True
 
 
-class FakeRing:
-    """A JPEG or BGR ring writer: each write moves the clock by `write_ns`."""
+def _writer_class():
+    from skellycam.core.ipc.frame_ring import FrameRingWriter
+    return FrameRingWriter
+
+
+class FakeRing(_writer_class()):
+    """A JPEG or BGR ring writer: each write moves the clock by `write_ns`. A `FrameRingWriter` with no shared
+    memory, so that the annotations of the product accept it."""
 
     def __init__(self, clock, write_ns=0, name="ring", shape=(48, 64, 3)):
         self.clock, self.write_ns, self.name, self.shape = clock, write_ns, name, shape

@@ -2,7 +2,7 @@ import logging
 from pathlib import Path
 
 from fastapi import APIRouter, Body, HTTPException, Request
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, StrictBool
 
 from skellycam.core.camera.config.camera_config import CameraConfig, DEFAULT_CAMERA_ID, CameraConfigs
 from skellycam.core.camera_group.camera_group import RequestRefused
@@ -175,6 +175,19 @@ async def camera_group_exposure_auto(request: Request, request_body: ExposureSea
 async def camera_group_state(request: Request) -> dict:
     """The state that the `app_state` message of the websocket sends (camera-requests.md 1.5) [B15]."""
     return get_or_create_camera_group_manager(app=request.app).to_state_dict()
+
+
+class CaptureTimingsSwitch(BaseModel):
+    log_capture_times: StrictBool  # capture-timings.md 2 item 3: a body with no boolean gets HTTP 422
+
+
+@camera_router.post("/timings", summary="Switch the capture timings on or off")
+async def capture_timings_switch(request: Request, request_body: CaptureTimingsSwitch) -> CaptureTimingsSwitch:
+    """One switch for each group and camera (capture-timings.md 2). A change takes effect at the next summary of each
+    camera, normally within 1 s."""
+    manager = get_or_create_camera_group_manager(app=request.app)
+    manager.set_log_capture_times(request_body.log_capture_times)
+    return CaptureTimingsSwitch(log_capture_times=manager.log_capture_times)
 
 
 @camera_router.post("/group/all/record/start", summary="Start recording")
