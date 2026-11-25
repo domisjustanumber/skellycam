@@ -1,8 +1,9 @@
 # 4CAF — Choices of fix lane 8: the close of the queues of a camera group
 
-**Status:** proposed, 2026-11-25 (agent; builds item 2 of
+**Status:** accepted, 2026-11-25 (user: [ADR-ZT5F](ZT5F-acceptance-of-the-choices-of-fix-lane-8.md), "yes to all"; commit to dom/fix-lane-8; was proposed,
+2026-11-25 (agent; builds item 2 of
 [ADR-2SX2](2SX2-acceptance-of-the-choices-of-fix-lane-7-and-its-follow-ups.md) and item 4 of
-[ADR-R394](R394-choices-of-fix-lane-7.md)).
+[ADR-R394](R394-choices-of-fix-lane-7.md))).
 
 ## Decision
 

@@ -194,10 +194,11 @@ task. Delete an item when its work is done. The PR that closes an item records t
 - **Fix lane 7 follow-ups** ([ADR-R394](entries/R394-choices-of-fix-lane-7.md),
   [ADR-2SX2](entries/2SX2-acceptance-of-the-choices-of-fix-lane-7-and-its-follow-ups.md)).
   - The pubsub leak (item 2 of ADR-2SX2) is fixed by [ADR-4CAF](entries/4CAF-choices-of-the-close-of-the-queues-of-a-group.md)
-    (`windows-capture.md` 5.9, T-CAP-114); the user decides its choices.
+    (`windows-capture.md` 5.9, T-CAP-114).
   - The T-UNX-98 thread (item 3 of ADR-2SX2) is fixed in the test helpers by
-    [ADR-JC4X](entries/JC4X-choices-of-the-gate-probe-of-a-second-app-on-the-test-clock.md); the user decides it.
-  - `test_status_locks.py::test_a_live_but_slow_holder_and_torn_json_never_raise[writes with no lock]` fails 1 in 20
-    on 2 cores (real time; JC4X item 3). The user decides if it changes.
+    [ADR-JC4X](entries/JC4X-choices-of-the-gate-probe-of-a-second-app-on-the-test-clock.md).
+  - Question for the user (not decided by [ADR-ZT5F](entries/ZT5F-acceptance-of-the-choices-of-fix-lane-8.md) item 3):
+    does `test_status_locks.py::test_a_live_but_slow_holder_and_torn_json_never_raise[writes with no lock]` move to
+    `pace`, or stay as it is? It fails 1 in 20 on 2 cores (real time; JC4X item 3).
   - macOS [NV]: the runner's open-file limit, and that its errors came from this leak. A run of the macOS jobs by
     hand gives the result.

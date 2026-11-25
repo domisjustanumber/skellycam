@@ -1,7 +1,8 @@
 # JC4X — Choices of fix lane 8: the gate probe of a second app on the test clock (T-UNX-98)
 
-**Status:** proposed, 2026-11-25 (agent; builds item 3 of
-[ADR-2SX2](2SX2-acceptance-of-the-choices-of-fix-lane-7-and-its-follow-ups.md)).
+**Status:** accepted, 2026-11-25 (user: [ADR-ZT5F](ZT5F-acceptance-of-the-choices-of-fix-lane-8.md), "yes to all"; commit to dom/fix-lane-8; was proposed,
+2026-11-25 (agent; builds item 3 of
+[ADR-2SX2](2SX2-acceptance-of-the-choices-of-fix-lane-7-and-its-follow-ups.md))).
 
 ## Decision
 
