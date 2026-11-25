@@ -18,3 +18,15 @@ test('T-PLAY-37 the overlay text: frame digits, seconds, timecode, no time', asy
     assert.equal(formatTime(null, 'seconds', 30), null, 'no time part for null');
     assert.equal(formatTime(null, 'timecode', 30), null);
 });
+
+test('T-PLAY-37 a label with frame null has no frame part; the camera part stays [Q1 of ADR-VYS7]', async () => {
+    const {Tile} = await product<typeof import('../../index.ts')>('index.ts');
+    const {fakeCanvas} = await import('./helpers.ts');
+    const tile = new Tile(fakeCanvas().canvas);
+    const label = {frame: null as unknown as number, frameDigits: 6, camera: 'Camera 2 · USB Camera', timeNs: null, nominalFps: 0};
+    assert.equal(await tile.update({jpeg: null, rotationCwDeg: 0, label, rateText: null, cameraState: 'starting', mark: null}), 'drawn');
+    assert.equal(tile.overlay.frame, null, 'no frame part');
+    assert.equal(tile.overlay.camera, 'Camera 2 · USB Camera');
+    assert.equal(tile.overlay.state, 'starting');
+    tile.close();
+});

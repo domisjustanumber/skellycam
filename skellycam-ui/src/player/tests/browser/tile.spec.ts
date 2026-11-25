@@ -84,6 +84,10 @@ test('T-PLAY-44 the label on and off, seconds and timecode, the canvas title', a
     await h.page.evaluate(u => window.harness.updateTile('l', u), wire({jpeg: null, label: {...label, timeNs: null}}));
     await expect.poll(overlay).toMatchObject({overlay: {frame: 'F007', time: null}});
     expect((await overlay()).title).not.toBe('timestamp from recording');
+    // specs/preview-4b.md 7.6 [Q1]: the label on and `frame` null (an overlay before the first frame): the kept
+    // overlay has no frame text and has the camera text
+    await h.page.evaluate(u => window.harness.updateTile('l', u), wire({jpeg: null, label: {...label, frame: null as unknown as number, timeNs: null}}));
+    await expect.poll(overlay, {message: 'frame null: no frame text, the camera text stays'}).toMatchObject({overlay: {frame: null, camera: 'a1b2c3', time: null}});
 });
 
 test('T-PLAY-45 Tile alone: no new image, the eight states, a rate text, flagged, newest wins', async ({harness: h}) => {

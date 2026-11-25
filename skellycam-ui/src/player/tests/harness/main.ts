@@ -2,6 +2,9 @@
 // handler with a temporary recordings folder and picked-folders file, and gives the tests two hooks
 // through `globalThis.__harness` (Playwright `electronApp.evaluate`): a dialog pick and a read fault.
 // A missing product module is recorded, and the window still opens, so each test fails on its own.
+// The page `preview` is the harness page of the step 4b preview (specs/preview-4b.md 7.2). With
+// PLAYER_HARNESS_PRODUCT_THROTTLING=1 (T-PRV-49) the app has no switch against backgrounding, as the product
+// app, and `openWindow(name, {productThrottling: true})` opens a window with the default `backgroundThrottling`.
 import {app, BrowserWindow, ipcMain, protocol} from 'electron';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
@@ -14,8 +17,11 @@ const here = path.dirname(fileURLToPath(import.meta.url));
 const recordingsFolder = process.env.PLAYER_HARNESS_RECORDINGS ?? '';
 const pickedFoldersFile = process.env.PLAYER_HARNESS_PICKED ?? '';
 const firstPage = process.env.PLAYER_HARNESS_PAGE ?? 'harness';
+const productThrottling = process.env.PLAYER_HARNESS_PRODUCT_THROTTLING === '1';
 
-for (const s of ['disable-renderer-backgrounding', 'disable-background-timer-throttling', 'disable-backgrounding-occluded-windows']) app.commandLine.appendSwitch(s);
+if (!productThrottling) {
+    for (const s of ['disable-renderer-backgrounding', 'disable-background-timer-throttling', 'disable-backgrounding-occluded-windows']) app.commandLine.appendSwitch(s);
+}
 
 let productError: string | null = null;
 let scheme: SchemeModule | null = null;
@@ -31,13 +37,19 @@ try {
 const pages: Record<string, string> = {
     harness: path.join(here, '..', 'renderer', 'player', 'tests', 'harness', 'index.html'),
     host: path.join(here, '..', 'renderer', 'components', 'playback', 'tests', 'host', 'index.html'),
+    preview: path.join(here, '..', 'renderer', 'components', 'camera-views', 'tests', 'harness', 'preview', 'index.html'),
 };
 
-function openWindow(name = firstPage): number {
+interface WindowOptions {
+    productThrottling?: boolean;   // the default `backgroundThrottling` of the product window (T-PRV-49)
+}
+
+function openWindow(name = firstPage, options: WindowOptions = {}): number {
+    // a hidden window must run requestAnimationFrame and timers as a shown one (CI runs hidden)
+    const throttling = options.productThrottling ? {} : {backgroundThrottling: false};
     const win = new BrowserWindow({
         width: 1400, height: 1000, show: process.env.PLAYER_HARNESS_SHOW === '1',
-        // a hidden window must run requestAnimationFrame and timers as a shown one (CI runs hidden)
-        webPreferences: {preload: path.join(here, '..', 'preload', 'preload.mjs'), contextIsolation: true, sandbox: true, backgroundThrottling: false},
+        webPreferences: {preload: path.join(here, '..', 'preload', 'preload.mjs'), contextIsolation: true, sandbox: true, ...throttling},
     });
     // a never-shown window paints about once a second once a canvas draws: show it transparent, inactive
     // and click-through instead, so hidden runs behave as shown runs
@@ -79,7 +91,7 @@ const need = (): Handler => {
     productError: () => productError,
     recordPick: (folder: string) => need().recordPick(folder),
     setReadFault: (relativePath: string | null) => need().setReadFault(relativePath),
-    openWindow: (name?: string) => openWindow(name),
+    openWindow: (name?: string, options?: WindowOptions) => openWindow(name, options),
     installVariant,
     channels: async () => (await import('../../main/bridge.ts')).TAKE_CHANNELS,
 };

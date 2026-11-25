@@ -26,10 +26,11 @@ export interface Harness {
     requireProduct(): Promise<void>;
 }
 
-export async function launch(recordings: string, picked: string, pageName: 'harness' | 'host'): Promise<{app: ElectronApplication; page: Page}> {
+export async function launch(recordings: string, picked: string, pageName: 'harness' | 'host' | 'preview',
+                             extraEnv: Record<string, string> = {}): Promise<{app: ElectronApplication; page: Page}> {
     const env: Record<string, string> = {};
     for (const [k, v] of Object.entries(process.env)) if (v !== undefined && k !== 'ELECTRON_RUN_AS_NODE') env[k] = v;
-    Object.assign(env, {PLAYER_HARNESS_RECORDINGS: recordings, PLAYER_HARNESS_PICKED: picked, PLAYER_HARNESS_PAGE: pageName});
+    Object.assign(env, {PLAYER_HARNESS_RECORDINGS: recordings, PLAYER_HARNESS_PICKED: picked, PLAYER_HARNESS_PAGE: pageName}, extraEnv);
     const app = await _electron.launch({args: [HARNESS_MAIN, '--no-sandbox'], env});
     const page = await app.firstWindow();
     await page.waitForFunction(name => name in window, pageName);

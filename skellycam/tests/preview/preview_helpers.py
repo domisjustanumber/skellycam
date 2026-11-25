@@ -118,7 +118,7 @@ class FakeRing:
     the frame number and of `tag`, so a test can tell the frames of two rings apart."""
 
     def __init__(self, cleanup, camera_id, camera_index=CAMERA_INDEX_BASE, *, fps=30, history_s=1.0, tag=0,
-                 arrival_base=1_000_000_000, period_ns=PERIOD_NS):
+                 arrival_base=1_000_000_000, period_ns=PERIOD_NS, width=WIDTH, height=HEIGHT):
         fr = ring()
         self.cleanup = cleanup
         self.camera_id = camera_id
@@ -126,8 +126,8 @@ class FakeRing:
         self.arrival_base = arrival_base + tag * 10 ** 12
         self.period_ns = period_ns
         self.creator = cleanup.own(fr.FrameRingCreator.create(
-            camera_id=camera_id, camera_index=camera_index, pixel_format=fr.PixelFormat.JPEG, width=WIDTH,
-            height=HEIGHT, fps_num=fps, fps_den=1, history_s=history_s, generation=next(_GENERATIONS)))
+            camera_id=camera_id, camera_index=camera_index, pixel_format=fr.PixelFormat.JPEG, width=width,
+            height=height, fps_num=fps, fps_den=1, history_s=history_s, generation=next(_GENERATIONS)))
         self.writer = cleanup.handle(fr.FrameRingWriter.attach(self.creator.name))
         self.written = {}  # frame number -> time.monotonic() after its commit
         self.skipped = {}  # frame number written with newer_frame_waiting=True -> time.monotonic()
@@ -543,6 +543,7 @@ class WsClient:
         self.answer = answer
         self.camera = defaultdict(list)  # camera id -> [(time, message)]
         self.json = []  # [(time, object)]
+        self.texts = []  # [(time, text)]: each text that is not JSON, for example `pong`
         self.order = []  # [(time, camera id)] in arrival order
 
     def receive(self, timeout):
@@ -568,7 +569,11 @@ class WsClient:
             if self.answer is True or parsed.camera_id in self.answer:
                 self.session.send_text(ready_text(parsed.camera_id))
             return parsed
-        self.json.append((now, json.loads(message["text"])))
+        try:
+            self.json.append((now, json.loads(message["text"])))
+        except json.JSONDecodeError:
+            self.texts.append((now, message["text"]))
+            return message["text"]
         return self.json[-1][1]
 
     def send_ready(self, camera_id):

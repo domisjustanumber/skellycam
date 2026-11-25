@@ -1,5 +1,6 @@
 // The test Vite config of the player harness (specs/player.md section 12.1): it builds the harness main
-// process, its preload script, the bare harness page and the host-view page into dist-player-harness/.
+// process, its preload script, the bare harness page, the host-view page and the page `preview` of the step 4b
+// preview (specs/preview-4b.md 7.2) into dist-player-harness/.
 // A product module that does not exist yet becomes a module that throws "product module missing" when
 // it loads, so the harness builds and launches, and each test fails on its own.
 import {existsSync} from 'node:fs';
@@ -61,6 +62,7 @@ export default defineConfig({
             input: {
                 harness: path.join(HARNESS, 'index.html'),
                 host: path.join(SRC, 'components', 'playback', 'tests', 'host', 'index.html'),
+                preview: path.join(SRC, 'components', 'camera-views', 'tests', 'harness', 'preview', 'index.html'),
             },
         },
     },
