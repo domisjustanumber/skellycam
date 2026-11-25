@@ -208,7 +208,7 @@ def test_t_cert_91_a_check_with_no_code_has_no_row(monkeypatch, tmp_path, level)
     if level == "quick":
         assert not_built == {"camera": [], "run": ["group:open", "self:hang-100ms:gap", "self:hang-100ms:hard-end"]}
     else:
-        assert {"cycles", "exposure:base", "auto-exposure:searched:base", "timings"} <= set(not_built["camera"])
+        assert {"cycles", "exposure:base", "auto-exposure:searched:base"} <= set(not_built["camera"])  # Q624: no `timings`
         assert {"group:contention", "group:take-30:finished", "self:idle-cpu"} <= set(not_built["run"])
         last = labels(devices)[-1]
         assert (by_name(report)[f"{last}:time-gaps"]["result"], by_name(report)[f"{last}:time-gaps"]["reason"]) \

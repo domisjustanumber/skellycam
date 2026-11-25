@@ -1,5 +1,5 @@
 """The rules of a module report of `report-format.md` format 1.7.0 (repository `skellycertify`) that code can
-check (specs/certify.md T-CERT-03, T-CERT-04, T-CERT-67, T-CERT-70). Test code only.
+check (specs/certify.md T-CERT-03, T-CERT-04, T-CERT-30, T-CERT-67, T-CERT-70). Test code only.
 
 `problems(report)` gives one text for each broken rule; an empty list means that the report obeys each rule
 below. The rules: the fields of C 3.1 and their forms (C 3.2, C 3.3), the check form of C 3.4 (name pattern,
@@ -14,8 +14,10 @@ apply to the report file, which the app writes; `markdown_problems(text)` checks
 the Markdown part shows.
 """
 
+import functools
 import json
 import re
+from pathlib import Path
 
 SCHEMA = "skellycertify.report/1.7.0"
 NAME = re.compile(r"^[A-Za-z0-9][A-Za-z0-9_.:@-]{0,127}$")
@@ -37,6 +39,19 @@ MEDIA = (".jpg", ".jpeg", ".png", ".bmp", ".tif", ".tiff", ".webp", ".mp4", ".av
 KEYS = {"hostname", "host_name", "node", "user", "username", "user_name", "email", "serial", "serial_number", "uuid",
         "mac", "mac_address", "bus_id", "pci_bus_id", "luid", "ip", "ip_address"}
 IPV4 = re.compile(r"\b(?:(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)\.){3}(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)\b")
+EXCEPTION_CLASS = re.compile(r"^[A-Z][A-Za-z0-9]*$")  # certify.md 15 `<ExceptionClass>`
+
+
+@functools.cache
+def known_codes() -> frozenset:
+    """The codes of the tables of `skellycam/REASON_CODES.md` (T-CERT-30, C 5.4)."""
+    import skellycam
+    text = (Path(skellycam.__file__).parent / "REASON_CODES.md").read_text(encoding="utf-8")
+    return frozenset(re.findall(r"^\| `([^`<]+)` \|", text, flags=re.MULTILINE))
+
+
+def _known(code) -> bool:
+    return not isinstance(code, str) or code in known_codes() or bool(EXCEPTION_CLASS.match(code))
 
 
 def _strings(value, keys):
@@ -207,6 +222,12 @@ def problems(report) -> list[str]:
         for reason, due in needed.items():
             if due and reason not in reasons:
                 out.append(f"evidence.reasons lacks {reason}")
+    # T-CERT-30: each reason, notice code and evidence reason of skellycam is in skellycam/REASON_CODES.md
+    codes = [c.get("reason") for c in [*checks, *(report.get("cleanup") or [])] if isinstance(c, dict)]
+    codes += [n.get("code") for n in notices if isinstance(n, dict)]
+    codes += reasons if isinstance(reasons, list) else []
+    for code in sorted({c for c in codes if not _known(c)}):
+        out.append(f"the code {code!r} is not in skellycam/REASON_CODES.md")
     keys = []
     # 1.7.0: the name of a test media file is exempt from rule 7; the same string elsewhere is not
     media_names = set()

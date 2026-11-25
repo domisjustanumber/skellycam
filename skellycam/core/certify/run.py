@@ -261,14 +261,21 @@ def _watch_caller(parent, kill, manager, loop_box) -> None:
     os._exit(3)
 
 
+def _native_capture(source_factory) -> None:
+    """2.1: certify always uses the native source. With no source factory, the product factory then creates
+    `MediaFoundationSource` on Windows, whatever `SKELLYCAM_WINDOWS_CAPTURE` says (T-CERT-32). Linux and macOS have
+    no native source before phase 7."""
+    if source_factory is None:
+        os.environ["SKELLYCAM_WINDOWS_CAPTURE"] = "media_foundation"
+
+
 def _session_child(events, acks, units, work, level, unix, source_factory) -> None:
     """The session child: one `CameraGroupManager` with real camera processes and the native source (2.1)."""
     from skellycam.core.camera_group.camera_group_manager import CameraGroupManager
     from skellycam.core.ipc.process_management.managed_worker import WorkerMode
     from skellycam.core.ipc.process_management.worker_registry import WorkerRegistry
 
-    if source_factory is None:  # 2.1: certify always uses the native source
-        os.environ["SKELLYCAM_WINDOWS_CAPTURE"] = "media_foundation"
+    _native_capture(source_factory)
     # 9.5: the log file of each camera process goes into the work folder (a log folder that the caller set stays)
     os.environ.setdefault("SKELLYLOGS_LOG_DIR", str(Path(work) / "logs"))
     # The product makes a camera group only in a main process (`parent_process() is None`, the pubsub guards). The
@@ -391,6 +398,7 @@ class _ThreadSession:
 
     def __init__(self, manager, units, work, level, unix, sleep):
         self.events, self.acks, self.stopped = queue.Queue(), queue.Queue(), threading.Event()
+        _native_capture(manager.source_factory)
 
         def begin(name):
             if self.stopped.is_set():
@@ -461,6 +469,15 @@ class _Driven:
     clean: bool = False  # the session closed its group itself and ended: the close restored each camera
 
 
+KINDS = {"begin": lambda v: isinstance(v, str), "done": lambda v: isinstance(v, dict) and isinstance(v.get("name"), str),
+         "fact": lambda v: isinstance(v, tuple) and len(v) == 2, "end": lambda v: v is None or isinstance(v, str)}
+
+
+def _well_formed(event) -> bool:
+    """C 2.5 `bad-output`: each event of the session is a pair of a known kind and a value of its form."""
+    return isinstance(event, tuple) and len(event) == 2 and event[0] in KINDS and KINDS[event[0]](event[1])
+
+
 def _drive(session, rows, reporter, stops, deadline, over, close_limit_s=CLOSE_BASE_S) -> _Driven:
     """Serve the session until its end, a stop of the caller or the end of the time (9.3)."""
     out = _Driven(None, None, None, dict(touched=[], before={}, release={}, prior={}), [])
@@ -507,18 +524,18 @@ def _drive(session, rows, reporter, stops, deadline, over, close_limit_s=CLOSE_B
             stopped = True
             while True:  # the events that came before the stop
                 try:
-                    kind, value = session.events.get_nowait()
-                except (queue.Empty, EOFError, OSError):
+                    event = session.events.get_nowait()
+                except Exception:  # empty, closed, or bytes that do not unpickle
                     break
-                if kind == "end":
+                if not _well_formed(event) or event[0] == "end":
                     break
-                handle(kind, value, before_stop=True)
+                handle(*event, before_stop=True)
             session.stop("grace" if out.stop == "timed-out" else "kill")
         if time.monotonic() - last_seen > 1.0:
             session.remember()
             last_seen = time.monotonic()
         try:
-            kind, value = session.events.get(timeout=0.2)
+            event = session.events.get(timeout=0.2)
         except queue.Empty:
             if not session.alive():
                 out.stop = out.stop or "crashed"
@@ -527,6 +544,13 @@ def _drive(session, rows, reporter, stops, deadline, over, close_limit_s=CLOSE_B
         except (EOFError, OSError):
             out.stop = out.stop or "crashed"
             break
+        except Exception:  # bytes that do not unpickle
+            event = None
+        if not _well_formed(event):  # C 2.5: output that is not a result
+            out.stop = out.stop or "bad-output"
+            session.stop("grace")
+            break
+        kind, value = event
         if kind == "end":
             if value is not None and out.stop is None:
                 out.stop, out.error = "crashed", value
@@ -822,7 +846,7 @@ def _run(out, level, reporter, stops, cameras, devices, manager, source_factory,
         driven = None
     # N4: before `_blame`, so that a camera in the middle of its open does not count as judged
     judged = {unit.label for unit in units if rows.get(f"{unit.label}:opens") is not None}
-    if driven is not None and stop in ("crashed", "timed-out"):
+    if driven is not None and stop in ("crashed", "timed-out", "bad-output"):
         _blame(rows, modules, driven, units, session.exit_code())
     # N2: a camera with a step running at the stop can be in a hang that the product has not yet declared
     running = set() if driven is None or driven.clean else {
@@ -843,7 +867,7 @@ def _run(out, level, reporter, stops, cameras, devices, manager, source_factory,
     out["stop"] = stop
     if stop in ("cancelled", "abandoned") and "cancelled" not in out["reasons"]:
         out["reasons"].append("cancelled")
-    if stop in ("crashed", "timed-out", "abandoned"):  # C 1.6.0 2.4; a fault of the run blames no model
+    if stop in ("crashed", "timed-out", "bad-output", "abandoned"):  # C 1.6.0 2.4; a fault of the run blames no model
         return
     try:
         _write_record(rows, context, level, out["summary"], checks_path)
@@ -853,9 +877,10 @@ def _run(out, level, reporter, stops, cameras, devices, manager, source_factory,
 
 
 def _blame(rows, modules, driven, units, exit_code):
-    """A crash or a time-out in the session. A crash is a fault of the session, never of a camera: each running check
-    is `not-run` `crashed`. At a time-out the running check is `fail` only when the checks that ran belong to one
-    camera (or to the group) and are not the open (the one apply for all cameras); else none is blamed."""
+    """A crash, a time-out or output that is not a result (`bad-output`) in the session. A crash is a fault of the
+    session, never of a camera: each running check is `not-run` `crashed`, with `exit_code`. At a time-out or a
+    `bad-output` the running check is `fail` only when the checks that ran belong to one camera (or to the group) and
+    are not the open (the one apply for all cameras); else none is blamed."""
     pending = [name for name in driven.pending if rows.get(name) is None]
     if not pending and driven.current is not None and rows.get(driven.current) is None:
         pending = [driven.current]
@@ -863,12 +888,14 @@ def _blame(rows, modules, driven, units, exit_code):
     open_names = {name for unit in units if unit.base is not None
                   for name in catalog.camera_names(unit.label, unit.base, "quick", False)["open"]}
     opening = any(name in open_names for name in pending)
-    if driven.stop == "timed-out" and not opening and len({_unit_of(name, units) for name in pending}) == 1:
-        numbers = {"exit_code": exit_code} if exit_code is not None and driven.error is None else {}
-        rows[pending[0]] = _row(pending[0], "fail", cause, modules.get(pending[0]), **numbers)
-    for name in pending:
+    numbers = {"exit_code": exit_code} if exit_code is not None and driven.error is None else {}
+    if driven.stop in ("timed-out", "bad-output") and not opening and len(
+            {_unit_of(name, units) for name in pending}) == 1:
+        rows[pending[0]] = _row(pending[0], "fail", cause, modules.get(pending[0]),
+                                **(numbers if driven.stop == "timed-out" else {}))
+    for name in pending:  # T-CERT-78 (3.6): `exit_code` on each `crashed` row
         if rows.get(name) is None:
-            rows[name] = _row(name, "not-run", cause, modules.get(name))
+            rows[name] = _row(name, "not-run", cause, modules.get(name), **(numbers if cause == "crashed" else {}))
 
 
 def _row(name, result, reason=None, module=None, **numbers) -> dict:
@@ -996,7 +1023,7 @@ def _phase_g(context, units, facts, stop, judged, clean, source_factory, manager
     states = {label: "replug" if code == "camera-wedged" else "not-restored"
               for label, code in facts["release"].items()}
     if stop is not None and not clean:
-        limit = RECHECK_CRASH_LIMIT_S if stop in ("crashed", "timed-out") else RECHECK_LIMIT_S
+        limit = RECHECK_CRASH_LIMIT_S if stop in ("crashed", "timed-out", "bad-output") else RECHECK_LIMIT_S
         for unit in units:
             if unit.label not in facts["touched"] or unit.label in states or unit.base is None:
                 continue

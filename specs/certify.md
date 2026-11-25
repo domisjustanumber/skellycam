@@ -439,7 +439,7 @@ checks names the camera [C 4.2 part 7].
 - With no camera detected, the summary has no `camera` item [C 3.7]. The Markdown then shows
   `Cameras: not checked on this system.` [C 4.2 part 6]. This is the "not checked" of the user [U].
 
-A virtual camera gets no check and no summary item [A]. `system:virtual-cameras` records the count.
+A virtual camera gets no check and no summary item [A]. `detect` records the count (`virtual`, Q624b).
 The app shows it but cannot select it [U].
 
 ### 3.5 Report fields that say why a check failed [U]
@@ -1498,9 +1498,9 @@ each model and `pipeline:gate`. Only the new parts are shown.
    "near_arrival_p5_ms": -50},
   "gates": [{"gate": "cam.media-foundation.4c4a-4a55:gate", "failed": "cam.media-foundation.4c4a-4a55.0:rate", "reason": "rate-low"}],
   "not_built": {"camera": ["auto-exposure:holds-rate:base", "auto-exposure:searched:base", "auto-off:ae", "...": "...",
-                           "cycles", "exposure:base", "in-use", "settings-stick:each-open", "timestamps", "timings"],
+                           "cycles", "exposure:base", "in-use", "settings-stick:each-open", "timestamps"],
                 "run": ["group:contention", "group:open", "group:take-30:finished", "group:take-30:rate", "...": "...",
-                        "system:usb", "system:virtual-cameras"]}},
+                        "system:usb"]}},
  "evidence": {"valid": true, "reasons": []}}
 ```
 
@@ -3236,30 +3236,33 @@ This section is for the freemocap session, which coordinates the checks of the m
 
 ## 13. What the product is missing
 
+The "Today" column states the code of 2026-11-25 (Q772). Rows 2 to 4, 12, 15 and 16 hold for
+Media Foundation only: the OpenCV source gives `null` for each diagnostics key except `backend`.
+
 | Need | Today | Step that delivers it |
 |---|---|---|
-| A fixed failure code (`camera-in-use`, `usb-bandwidth`, `hung`, ...) in the failure object of cap 12 | Free text only (`errors.py`) | Step 7s: `CaptureFailure.code` with the codes of [ux 4.6.3], also for Media Foundation [ux 4.2 item 1]. The user decided the code [U]. |
-| The controls before the first set, in the diagnostics (`c_before`, `c_before_auto`) | `set_controls` reads before each set, but does not report it | Step 7s [ux 4.6.2, 4.7]; the Media Foundation source in the same step |
-| A restore of the "before" values at each close, on by default, on the three systems, with its result in the diagnostics (`restore_ok`, `restore_failed`) | None | Step 7s [ux 4.7]. The user decided that the product restores at its own close [U]; [ux 4.7] has it on by default, with the keys `restore_ok` and `restore_failed`. |
-| The state `adjusting`, `exposure_search` in the status, and a new search when the frame rate changes | No `adjusting` state; the search runs at an apply with `RECOMMEND` | Step 7s and the Media Foundation change of [ux 4.5]; the rule is a decision of the user [U] (5.3) |
-| A count of frames that skellycam encoded and decoded (`encoded_by_skellycam`, `decoded_by_skellycam`) | None | Step 7s, the shared loop [ux 4.2 item 3]; 3b for the encoder |
-| The diagnostics dict of [ux 4.6.2], sent to the main process (`CameraGroupManager.diagnostics()`) | None | Step 7s [ux 4.2 item 2] |
-| The local record `camera_checks.json` in the skellycam base folder, with the gate and the routes of each model (2.5, 11.3) | None | The certify step |
-| A public enumeration with no activation, bounded, for the plan | `MediaFoundationBackend.devices()` in the detection child only | The certify step |
+| A fixed failure code (`camera-in-use`, `usb-bandwidth`, `hung`, ...) in the failure object of cap 12 | Built: `CaptureFailure.code` with the codes of `failure_codes.py`. Media Foundation maps its HRESULTs (`errors.py` `hresult_code`). | Step 7s: `CaptureFailure.code` with the codes of [ux 4.6.3], also for Media Foundation [ux 4.2 item 1]. The user decided the code [U]. |
+| The controls before the first set, in the diagnostics (`c_before`, `c_before_auto`) | Built for Media Foundation: `ControlRestore.fill` writes `<control>_before` and `<control>_before_auto`. | Step 7s [ux 4.6.2, 4.7]; the Media Foundation source in the same step |
+| A restore of the "before" values at each close, on by default, on the three systems, with its result in the diagnostics (`restore_ok`, `restore_failed`) | Built on Windows (Media Foundation, `ControlRestore.restore`), with the record on disk (`restore_store.py`). No restore on Linux and macOS: the OpenCV source has none. | Step 7s for Windows (done). Linux and macOS: the native sources of phase 7. The user decided that the product restores at its own close [U]; [ux 4.7] has it on by default, with the keys `restore_ok` and `restore_failed`. |
+| The state `adjusting`, `exposure_search` in the status, and a new search when the frame rate changes | Built: `camera_loop.py` `_start_search`; a reopen for a rate change searches again. The OpenCV source does not search. | Step 7s and the Media Foundation change of [ux 4.5]; the rule is a decision of the user [U] (5.3) |
+| A count of frames that skellycam encoded and decoded (`encoded_by_skellycam`, `decoded_by_skellycam`) | Built: the loop counts `encoded_by_skellycam` (`_process`), and the decode stage counts `decoded_by_skellycam` (`decode.py`). | Step 7s, the shared loop [ux 4.2 item 3]; 3b for the encoder |
+| The diagnostics dict of [ux 4.6.2], sent to the main process (`CameraGroupManager.diagnostics()`) | Built: `CameraGroupManager.diagnostics()`; a closed group keeps its last dicts (`closed_diagnostics`). The dict of a hung camera can still be lost (last row, P3). | Step 7s [ux 4.2 item 2] |
+| The local record `camera_checks.json` in the skellycam base folder, with the gate and the routes of each model (2.5, 11.3) | Built: the reader `camera_checks.py`, the writer `catalog.write_record`. | The certify step |
+| A public enumeration with no activation, bounded, for the plan | Built on Windows: `detect_media_foundation_cameras(modes=False)` in the detection child. Linux and macOS: no list for the plan (`run.py` `_enumerate`). | The certify step (done for Windows); Linux and macOS: the native detection of phase 7 |
 | The full mode list with formats (`capture_modes`) | MJPG only | 3c |
-| Uncompressed modes | Not built | 3b |
-| Gain and focus through the config; white balance and power line read | Exposure only | 3c |
-| Control ranges (min, max, step, default: `GetRange`) | Not read | Not in the 3c spec. Add to 3c. |
-| USB link per camera | Built: `usb_connection.py` is ported from upstream `sfn26`, and `_add_usb_links` of `detect_cameras_devices.py` fills `usb_link` after detection, with no time limit | Step 5: the bounded lookup in the detection child and the UI label [req 3.4, 3.5] |
+| Uncompressed modes | Partly: the ring and the decode take YUY2 and NV12. No source captures them, and the mode list is MJPG only. | 3b |
+| Gain and focus through the config; white balance and power line read | The config sets exposure only. Media Foundation reads gain and focus. White balance and power line are not read. | 3c |
+| Control ranges (min, max, step, default: `GetRange`) | Media Foundation reads the ranges of exposure, gain and focus into the diagnostics. Detection does not carry them. | Not in the 3c spec: add the ranges in detection, and of white balance and power line, to 3c. |
+| USB link per camera | Built: `usb_connection.py` is ported from upstream `sfn26`, and `_add_usb_links` of `detect_cameras_devices.py` fills `usb_link` after detection. The UI label is built. The lookup runs in the main process with no time limit. | Step 5: the bounded lookup in the detection child [req 3.4, 3.5] |
 | The model name (USB product string) | Friendly name only | 5d (`device.model`, rec 6.7) |
-| Stage times (open, first frame, ready, close) in the status | Log only | The certify step |
-| A discontinuity count in the status or `CameraTakeResult` | Not counted | The certify step |
-| `measured_fps` after `too_slow` | Keeps the old value (3a fault) | A fix before 5.2 |
+| Stage times (open, first frame, ready, close) in the status | Media Foundation: the open, first-frame and close times are in the diagnostics dict (D-6), not in the status. No ready time. | The certify step |
+| A discontinuity count in the status or `CameraTakeResult` | In the status: `diagnostics.discontinuity_flags`. Not in `CameraTakeResult`. | The certify step |
+| `measured_fps` after `too_slow` | Fixed: `_too_slow` sets `measured_fps`. | Done |
 | The fake source and a synthetic frame source in the package | In `skellycam/tests/` | The certify step |
-| A SemVer version and the build commit with no git (C 2.5) | `2.0.0a6`; no commit metadata | The certify step |
-| The evidence file, its checker, the `evidence` field of detection | None | The file and its checker: the certify step (section 11). The `evidence` field of `CameraDeviceInfo`: step 7s [ux 4.2 item 8] |
+| A SemVer version and the build commit with no git (C 2.5) | Built: `2.0.0-alpha.6` (`_version`), and the commit from `build_info.json` (`tools/build_info.py`, `read_build_info`). An editable install has no commit. | The certify step (done) |
+| The evidence file, its checker, the `evidence` field of detection | The `evidence` field and its reader are built (`camera_checks.py`). No evidence file and no checker. | The file and its checker: the certify step (section 11). The `evidence` field of `CameraDeviceInfo`: step 7s (done) |
 | The native V4L2 and AVFoundation sources, with the diagnostics D-1 to D-11 of 10.3 | Research code only | Phase 7, moved up [U]; spec [ux] |
-| The facts of 3.5: the call names of the close, `first_fail_code`, `exit_code`, the rate window keys, the dict of a hung camera in the main process, `usb_facts`, the build file | `CALLS` lacks two close calls; the first code is lost; the dict of a hung camera can be lost at the hard end | 3.5.15, P1 to P7 |
+| The facts of 3.5: the call names of the close, `first_fail_code`, `exit_code`, the rate window keys, the dict of a hung camera in the main process, `usb_facts`, the build file | P7 (the build file) is built. P1 to P6 are not: `CALLS` lacks the release names, the first code is lost, the dict of a hung camera is not sent at the hard end, and there is no `exit_code`, no rate window keys and no `usb_facts`. | 3.5.15, P1 to P7 |
 
 ## 14. Questions for the user
 

@@ -32,18 +32,17 @@ QUICK_NOT_BUILT = ("group:open",)  # with the retry alone of 4.2
 SELF_QUICK = ("self:hang-100ms:gap", "self:hang-100ms:hard-end")  # 7: not built in this step
 # The camera block of `full` (5, 8.2, 10.2) that is not built, without the checks of a mode above `<base>`.
 FULL_CAMERA_NOT_BUILT = (
-    "identity:stable", "identity:unique", "controls", "controls:exposure-scale", "timings",
+    "identity:stable", "identity:unique", "controls", "controls:exposure-scale",
     "exposure:{base}", "exposure:{base}:readback", "settings-stick:each-open", "auto-exposure:searched:{base}",
-    "auto-exposure:holds-rate:{base}", "control:gain", "control:focus", "control:focus:sharpness", "control:autofocus",
-    "control:white-balance", "control:power-line", "auto-off:ae", "auto-off:af", "auto-off:ae-stays", "group-open",
-    "timestamps", "in-use", "cycles")
+    "auto-exposure:holds-rate:{base}", "control:gain", "control:focus", "auto-off:ae", "auto-off:af",
+    "auto-off:ae-stays", "group-open", "timestamps", "in-use", "cycles")  # Q624 dropped `timings` and four controls
 FULL_NOT_BUILT = (
     *(f"group:take-30:{c}" for c in ("finished", "csv-rows", "no-missing", "frame-count", "rate")), "group:contention",
-    "system:backend", "system:usb", "system:disk", "system:disk-benchmark", "system:virtual-cameras",
+    "system:usb", "system:disk", "system:disk-benchmark",  # Q624a, b: no `system:backend`, `system:virtual-cameras`
     "self:crash-take:finishes", "self:crash-take:equal-rows", "self:crash-take:others-record",
     "self:server-gone:ends", "self:server-gone:files-finished", "self:server-gone:source-closed",
     "self:stall:take-error", "self:stall:others-finished", "self:stall:stalled-failed", "self:stall:no-healthy-dead",
-    "self:idle-cpu", "self:ring:torn", "self:ring:lapped", "self:scale-4", "self:scale-8",
+    "self:idle-cpu", "self:ring:torn", "self:ring:lapped", "self:scale-3", "self:scale-12",  # Q624f
     *(f"group:take-60:{c}" for c in ("finished", "csv-rows", "no-missing", "frame-count", "rate")))
 SYSTEM_NOT_BUILT = {"media-foundation": ("system:camera-apps",), "v4l2": ("system:kernel", "system:camera-access"),
                     "avfoundation": ("system:camera-access", "system:video-effects")}
@@ -57,6 +56,9 @@ ITEM = FATAL + SETTINGS + ("native-jpeg:format", "native-jpeg:not-reencoded", "n
                            "native-jpeg:size", "native-jpeg:ring-equals-mkv", "native-jpeg:source-equals-ring")
 
 NOTICE_CODES = ("camera-wedged", "camera-not-restored")
+DARK_LUMA, BRIGHT_LUMA = 24, 230  # 4.6, 4.3; not calibrated
+TIME_UNIT_RATIO, UNITLESS_RATIO = 0.85, 0.97  # 4.3; not calibrated
+UNITLESS = ("ev", "native", "native-data")  # 10.2: the exposure routes with no time unit
 # Each reason code that this code can give (T-CERT-30); each one is in skellycam/REASON_CODES.md.
 REASON_CODES = (
     "timed-out", "crashed", "bad-output", "hung-at-exit", "cancelled", "not-built", "no-version", "no-commit",
@@ -67,7 +69,7 @@ REASON_CODES = (
     "too-few-frames", "frame-not-decodable", "fat-disk", "disk-stall", "write-error", "clock-base-differs",
     "clock-unknown", "sample-after-arrival", "sample-too-early", "sequence-unreliable", "no-sequence", "has-sequence", "frame-gaps",
     "gate-check-failed", "gate-check-not-run", "no-manual-exposure", "prior-failure", "prior-check-failed",
-    "camera-wedged", "camera-not-restored", "not-deleted",
+    "camera-wedged", "camera-not-restored", "not-deleted", "no-frame",
     # the product failure codes of unix-capture.md 4.6.3 that a failed open gives as its reason
     "not-found", "no-access", "no-permission", "usb-bandwidth", "no-mode", "below-floor", "open-failed",
     "first-frame-timeout", "not-ready", "control-failed", "device-removed", "stalled",
@@ -185,6 +187,27 @@ def not_built(level: str, units: list, backend: str) -> dict:
         for _, base, _ in units:
             camera.update(c.format(base="base") for c in FULL_CAMERA_NOT_BUILT if base or "{base}" not in c)
     return {"camera": sorted(camera), "run": sorted(run)}
+
+
+def in_the_dark(result: tuple, luma) -> tuple:
+    """4.6 [Q773]: a light-dependent check that fails while the mean grey value is below DARK_LUMA is `not-run`
+    `too-dark`. A pass stays `pass`. With no brightness (no frame) the result stays."""
+    if result[0] == "fail" and luma is not None and luma < DARK_LUMA:
+        return ("not-run", "too-dark")
+    return result
+
+
+def image_effect(luma_m7, luma_m8, exposure_unit) -> tuple:
+    """4.3, 4.6 [Q773]: (result, reason) of `settings-stick:image-effect`. No frame at -7 or -8 is `no-frame`; above
+    BRIGHT_LUMA at -7 is `too-bright`; the image gets darker by the limit of the route, else the dark rule."""
+    if luma_m7 is None or luma_m8 is None:
+        return ("not-run", "no-frame")
+    if luma_m7 > BRIGHT_LUMA:
+        return ("not-run", "too-bright")
+    limit = UNITLESS_RATIO if exposure_unit in UNITLESS else TIME_UNIT_RATIO
+    if luma_m7 > 0 and luma_m8 / luma_m7 < limit:
+        return ("pass", None)
+    return in_the_dark(("fail", "no-image-effect"), luma_m7)
 
 
 def seconds_estimate(level: str, cameras: int, models: int) -> int:
