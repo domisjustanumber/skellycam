@@ -6,9 +6,9 @@ edits of a second review. An agent wrote it. The user decided Q565 to Q571, Q576
 Q583 and Q586 on 2026-11-23
 ([ADR-MX8V](../decisions/entries/MX8V-decisions-of-the-user-on-capture-timings.md)). Section 14 gives
 each one. The user accepted the choices of the agent as a set (Q587); section 13 and
-[ADR-8Z0Q](../decisions/entries/8Z0Q-choices-of-the-capture-timings-spec.md) list them. Nothing in
-this spec is built. The build starts after branch `dom/fix-lane-3` merges into `dom/integration`
-[U Q571, Q587]: the capture side first, the tile part with step 4b.
+[ADR-8Z0Q](../decisions/entries/8Z0Q-choices-of-the-capture-timings-spec.md) list them. Steps 1 to 6
+of section 11 are built; the user decided the open choices of that build in Q837 to Q840 ([ADR-GZS7](../decisions/entries/GZS7-decisions-of-the-user-on-the-capture-timings-build-and-the-merge-order.md)).
+The tile part (step 8) comes with step 4b [U Q571, Q587].
 
 ## 0. How to read this spec
 
@@ -119,9 +119,8 @@ The rules of skellycam:
    None`, and the read-only property `CameraGroupManager.log_capture_times`. HTTP: `POST /timings` on
    `camera_router`, body `{"log_capture_times": true}`, answer `{"log_capture_times": true}`. The path
    is `/skellycam/camera/timings` in skellycam alone and in FreeMoCap: both mount `camera_router` with
-   the prefix `/skellycam` (proposed correction,
-   [ADR-JFG4](../decisions/entries/JFG4-choices-of-the-capture-timings-build.md) item 13). A body with no
-   boolean gets HTTP 422 [U Q587 2].
+   the prefix `/skellycam` (Q838, [ADR-GZS7](../decisions/entries/GZS7-decisions-of-the-user-on-the-capture-timings-build-and-the-merge-order.md)). A body with no boolean
+   gets HTTP 422 [U Q587 2].
 4. **When a change takes effect** [U Q587 2]. The camera loop reads its shared scalar at each publish of
    its diagnostics, on its own thread. A change takes effect at the next such publish:
    - normally within 1 s;
@@ -136,7 +135,10 @@ The rules of skellycam:
    per second. Thus a display can show "timing off".
 6. **Cost when off.** One branch on a plain attribute at each step: under 0.05 µs p50, 0.1 µs p99 in
    Python [M ADR-3TYP]. No clock read and no store.
-7. **First window after a change to on.** It holds only the samples since the change. `window_s`
+7. **First window after a change to on.** The publish that applies a change to on starts the first window
+   and sends `timings = None`; the next publish sends the first summary, up to about 2 s after the change. The
+   publish that applies a change to off sends None (Q837). The window holds only the samples since the change.
+   `window_s`
    gives the real length of the window.
 
 Three differences from the pattern of skellytracker and FreeMoCap. Each one is deliberate [U Q587 2]:
@@ -294,16 +296,19 @@ Rules and limits:
 - When `n` is 0: `p50_ms`, `p95_ms` and `max_ms` are `null`. The step stays in the summary.
 - When `n` is more than 512: `n` is the full count; `p50_ms`, `p95_ms` and `max_ms` use the newest
   512 samples. At 120 frames per second a step of cadence `frame` gives 120 samples in a window.
-- Each `_ms` value is a float in milliseconds, rounded to 0.001 ms [U Q587 13].
+- Each `_ms` value is a float in milliseconds, rounded to 0.001 ms [U Q587 13], half up in integers:
+  `((ns + 500) // 1000) / 1000`; `window_s` the same way to 0.001 s. The tile gives the same JSON (Q840).
 - The statistics are computed once per window, by the reader. No sample is sent.
 
 ### 5.3 Cost budget of the measurement [U Q587 9]
 
 - When off: one branch for each step (section 2 item 6). No clock read.
 - When on, the camera loop thread reads the clock at most 10 times for each frame, plus one read for
-  each refused pass of the gate, plus three reads for each granted pass that gives no frame (proposed
-  correction, [ADR-JFG4](../decisions/entries/JFG4-choices-of-the-capture-timings-build.md) items 3
-  and 13). Adjacent brackets share one read where nothing runs between them.
+  each refused pass of the gate, plus three reads for each granted pass that gives no frame. The limit
+  counts the steps of cadence `frame`; a step of cadence `event` (`take_start`, `take_end`,
+  `exposure_search_brightness`) adds its own 2 reads on its frame (Q838). Adjacent brackets share one read,
+  so a few short lines between two brackets fall into the next one; `should_record_frame_number` stays outside
+  each bracket, and the OpenCV `camera_wait` ends at `pre_ns`.
   The gate uses the read that exists at `camera_loop.py:231`. The OpenCV source uses its `pre_ns` and
   `post_ns`.
 - When on, each other thread reads the clock at most 2 times for each step.
@@ -407,7 +412,9 @@ has `where`, `n`, `p50_ms`, `p95_ms` and `max_ms`; its `where` is the place of i
 - The preview sender that is wired measures `preview_ring_read`, `preview_pack`, `preview_send` and
   `published_to_send`: the per-camera `PreviewRelay` after step 4b, or the interim
   `_frontend_image_relay` before it.
-- With `PreviewRelay`, each step is for one camera: one `"preview"` summary for each camera.
+- With `PreviewRelay`, each step is for one camera: one `"preview"` summary for each camera. Its
+  `preview_send` bracket starts after the send lock, as for the interim relay: the server's locked send takes
+  the bracket (Q839, step 4b).
 - With the interim relay: `preview_ring_read` is for one camera, in a `"preview"` summary for each
   camera. `preview_pack` and `preview_send` are for the group: one more `"preview"` summary with
   `camera_id` `null`. `published_to_send` uses the `published_ns` of each camera of the group

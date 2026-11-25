@@ -71,6 +71,7 @@ These entries are `accepted`.
 | [8B85](entries/8B85-acceptance-of-the-capture-timings-spec.md) | Q587: the user accepts `specs/capture-timings.md` with the ADR-8Z0Q choices; build after fix lane 3 merges, capture side first, tile with 4b (not built) | accepted |
 | [4CAF](entries/4CAF-choices-of-the-close-of-the-queues-of-a-group.md) | Choices of fix lane 8: a closed group closes its queues and leaves the pubsub registry (windows-capture.md 5.9, T-CAP-114) | accepted |
 | [JC4X](entries/JC4X-choices-of-the-gate-probe-of-a-second-app-on-the-test-clock.md) | Choices of fix lane 8: a second app of one test wraps the product gate probe, so `shut` never calls the test clock (T-UNX-98 stuck thread) | accepted |
+| [GZS7](entries/GZS7-decisions-of-the-user-on-the-capture-timings-build-and-the-merge-order.md) | Q837 to Q841, Q814 to Q816: capture timings choices (first summary, read budget, rounding, send lock); merge order; clean-up lane; test branches | accepted |
 | [ZT5F](entries/ZT5F-acceptance-of-the-choices-of-fix-lane-8.md) | "Yes to all": ADR-4CAF and ADR-JC4X accepted; merge and push of lane 8; the `pace` question of the status-locks test is not decided | accepted |
 
 ### Proposed
@@ -100,7 +101,7 @@ These entries wait for a decision of the user. Section is the section or area of
 | [0R76](entries/0R76-choices-of-the-exact-skip-after-a-live-change.md) | Choices of the exact skip after a live change and a search: anchors, the time-out anchor, replay of 1024 taken frames, limits | `skellycam.core.camera.capture` | proposed |
 | [B7YV](entries/B7YV-choices-of-fix-lane-6.md) | Choices of fix lane 6: one run for the two halves, nominal values and loose checks, T-PRV-54, loop threads on the test clock, T-CAP-86 diagnostics | none | proposed |
 | [7GC1](entries/7GC1-choices-of-the-gate-on-the-test-clock-and-the-end-of-t-cap-05.md) | Choices of fix lane 6: a loop at an open gate holds the test clock until its next probe, forced steps still move it; T-CAP-05 checks the last ring frames | none | proposed |
-| [JFG4](entries/JFG4-choices-of-the-capture-timings-build.md) | Choices of the capture timings build (steps 1 to 6): publish of a change, read budget, source sets, rounding, preview summaries, route | none | proposed |
+| [JFG4](entries/JFG4-choices-of-the-capture-timings-build.md) | Choices of the capture timings build that the user did not decide: source sets, sets, main process, message loop, route, test seams, faults | none | proposed |
 
 The entries that are `rejected`, `superseded by XXXX`, `absorbed into <path>#<anchor>`,
 `evidence; used by XXXX`, `evidence; replaced by XXXX` or `done` are in [historical.md](historical.md).
