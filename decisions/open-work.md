@@ -199,12 +199,12 @@ task. Delete an item when its work is done. The PR that closes an item records t
   - `stop_after_frame=200` tests that wait for `ready` have the risk of T-UNX-95.
 - **Fix lane 7 follow-ups** ([ADR-R394](entries/R394-choices-of-fix-lane-7.md),
   [ADR-2SX2](entries/2SX2-acceptance-of-the-choices-of-fix-lane-7-and-its-follow-ups.md)).
-  - The pubsub leak (approved, item 2 of ADR-2SX2): each camera group keeps its `PubSubTopicManager` and its queues
-    in `CAMERA_GROUP_PUB_SUB_MANAGERS` of `skellycam/core/ipc/pubsub/pubsub_manager.py` after its close. First a spec
-    item and a test (open and close a group a number of times, count the open files), then the code. Item 4 of
-    ADR-R394 is the start of the design.
-  - The T-UNX-98 thread (item 3 of ADR-2SX2): find why
-    `test_t_unx_98_two_cameras_of_one_model_keep_their_own_entries[other usb ids]` sometimes leaves a camera loop
-    thread that does not end (Linux and macOS). That non-daemon thread holds the end of the pytest process.
-  - macOS [NV]: the runner's open-file limit, and that its errors come from this leak. A run by hand after the fix
-    gives the result.
+  - The pubsub leak (item 2 of ADR-2SX2) is fixed by [ADR-4CAF](entries/4CAF-choices-of-the-close-of-the-queues-of-a-group.md)
+    (`windows-capture.md` 5.9, T-CAP-114).
+  - The T-UNX-98 thread (item 3 of ADR-2SX2) is fixed in the test helpers by
+    [ADR-JC4X](entries/JC4X-choices-of-the-gate-probe-of-a-second-app-on-the-test-clock.md).
+  - Question for the user (not decided by [ADR-ZT5F](entries/ZT5F-acceptance-of-the-choices-of-fix-lane-8.md) item 3):
+    does `test_status_locks.py::test_a_live_but_slow_holder_and_torn_json_never_raise[writes with no lock]` move to
+    `pace`, or stay as it is? It fails 1 in 20 on 2 cores (real time; JC4X item 3).
+  - macOS [NV]: the runner's open-file limit, and that its errors came from this leak. A run of the macOS jobs by
+    hand gives the result.

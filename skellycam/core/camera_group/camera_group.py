@@ -25,7 +25,7 @@ from skellycam.core.camera.config.camera_config import CameraConfigs, CameraConf
 from skellycam.core.camera_group.camera_group_ipc import CameraGroupIPC
 from skellycam.core.camera_group.camera_orchestrator import FRAME_LOCK_WAIT_S
 from skellycam.core.camera_group.camera_status import SETTLED_STATES
-from skellycam.core.ipc.pubsub.pubsub_manager import TopicTypes
+from skellycam.core.ipc.pubsub.pubsub_manager import TopicTypes, close_camera_group_pubsub_manager
 from skellycam.core.ipc.pubsub.pubsub_topics import (
     DeviceExtractedConfigMessage,
     UpdateCamerasSettingsMessage,
@@ -154,6 +154,7 @@ class CameraGroup:
     _life_lock: Any = field(default_factory=threading.Lock)  # a spawn and a close of camera processes, one at a time
     _cameras_closed: bool = False
     _stop_watch: Any = field(default_factory=threading.Event)
+    _watch_thread: Any = None  # the watch reads the queues; the close of the queues waits for its end (5.9)
     _loop: Any = None  # the event loop of `start`: a ring reader is closed only on it (ADR-BM73)
 
     @property
@@ -225,7 +226,9 @@ class CameraGroup:
             logger.warning(f"The main-process stall watch is off ({STALL_WATCH_SETTING}=0)")
         logger.info(f"Starting camera group ID: {self.id} with cameras: {list(self.configs.keys())}")
         await asyncio.to_thread(self._spawn, self.cameras.start)  # seconds: not on the loop (sfn26 a4d610f62)
-        threading.Thread(target=self._watch_workers, name=f"camera group {self.id} watch", daemon=True).start()
+        self._watch_thread = threading.Thread(target=self._watch_workers, name=f"camera group {self.id} watch",
+                                              daemon=True)
+        self._watch_thread.start()
         configs, _ = await self._await_results(list(self.configs))
         if not self.ipc.running:
             raise CameraSetupFailedException("Camera group startup aborted")
@@ -934,6 +937,15 @@ class CameraGroup:
             logger.error(f"Error closing the frame rings: {type(e).__name__} - {e}")
         logger.success("Frame rings closed and unlinked.")
 
+        # windows-capture.md 5.9: the queues close last, when no camera writes and the watch reads no more
+        watch = self._watch_thread
+        if watch is not None:
+            await asyncio.to_thread(watch.join, 2.0)
+        if watch is None or not watch.is_alive():
+            close_camera_group_pubsub_manager(self.id)
+            self.ipc.setup_failures.close()
+        else:
+            logger.error(f"Camera group {self.id}: the watch did not end in 2 s; its queues stay open")
         logger.success("Camera group closed successfully.")
 
     def add_group_warning(self, item: dict) -> None:
