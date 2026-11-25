@@ -55,10 +55,11 @@ task. Delete an item when its work is done. The PR that closes an item records t
     hardware tests run only with `SKELLYCAM_HARDWARE=1`. The macOS job of `.github/workflows/capture.yml`
     also runs the portable ring tests. It runs only by hand
     ([ADR-N14T](entries/N14T-decisions-of-the-user-on-the-ci-review-of-2026-11-25.md)).
-  - Step 3b (Q689): the failing fake tests are in `test_uncompressed.py` (spec section 21). The user
+  - Step 3b (Q689): the failing fake tests are in `test_uncompressed.py` (spec section 22). The user
     decides [ADR-3WCA](entries/3WCA-python-api-of-capture-as-the-3b-and-3c-tests-assume-it.md) and
     [ADR-0Z2F](entries/0Z2F-choices-of-the-port-of-the-3b-tests-to-dom-integration.md) before the code.
-    The tests of 21.5 run later. The 3c tests of ADR-8MTY are only on `dom/3bc-tests`.
+    The 3c tests of ADR-8MTY are only on `dom/3bc-tests`; its T-CAP-105, 106, 109, 110 are T-CAP-150
+    to 153 here.
   - Phase 7: the parity table of section 16.7 of the spec is the to-do list for Linux and macOS
     (14 tests with no counterpart yet).
 - **Support virtual cameras.** Detection shows a virtual camera with `virtual=True`, and a request

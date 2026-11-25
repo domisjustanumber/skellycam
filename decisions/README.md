@@ -55,14 +55,9 @@ These entries are `accepted`.
 | [81RE](entries/81RE-decisions-of-the-user-on-the-restore-file-the-take-rate-and-pace-tests.md) | Q608, Q609, Q619 of 2026-11-23: restore record on disk; take rate is frames over time; pace tests reported, not blocking, on CI | accepted |
 | [T34M](entries/T34M-decision-of-the-user-on-the-start-method-of-camera-processes.md) | Q651 of 2026-11-23: no start method at import; the app sets spawn; a fork start is refused; nothing decided for FreeMoCap | accepted |
 | [0AMX](entries/0AMX-propose-from-skellycam-and-review-in-the-kit.md) | Q657: a skellycam agent runs `propose`; the kit session reviews and commits the result in its own repository | accepted |
-| [TC9B](entries/TC9B-ci-runner-with-no-device.md) | Q660: the CI exception of the other-systems rule says "a CI runner with no device", so it fits each repository | accepted |
-| [53VB](entries/53VB-decision-of-the-user-on-the-exact-skip-after-a-live-change.md) | Q663 option B: the skip after a live change is exact, counted from the change; T-CAP-31 is strict | accepted |
-| [JWZ1](entries/JWZ1-decision-of-the-user-on-the-exact-skip-after-a-search.md) | Q666: the check after an exposure search uses the same exact skip rule; spec and test first | accepted |
 | [F4N7](entries/F4N7-decisions-of-the-user-on-the-pace-tests-of-fix-lane-6.md) | Q669 to Q673, Q675: real-time tests split in blocking and `pace` halves; CI share level 40 %; conditions in T-CAP-110 and gate test; loop threads on the clock | accepted |
 | [B1DE](entries/B1DE-decisions-of-the-user-on-the-share-level-and-the-test-clock.md) | Q690, Q692: the CI level of a share of frames is a fixed 40 %; an agent proposes a fix of the test clock for T-CAP-86, and the test stays blocking | accepted |
-| [8ACV](entries/8ACV-decision-of-the-user-on-the-end-check-of-t-cap-05.md) | Q696: T-CAP-05 ends with ring counts at most one apart and last frames within 1 ms; it lands with the clock fix, with an independent review | accepted |
 | [WWR1](entries/WWR1-decision-of-the-user-on-frames-with-the-same-number.md) | Q719, for now: 5.3 says that frames with the same number can be about one frame period apart; the gate pairs by count | accepted |
-| [2AQT](entries/2AQT-decision-of-the-user-on-the-gap-of-the-stall-test-with-process-workers.md) | Q721: the 1 s gap limit of the stall test under load with PROCESS workers moves to the `pace` test, as for THREAD workers | accepted |
 | [N14T](entries/N14T-decisions-of-the-user-on-the-ci-review-of-2026-11-25.md) | CI review of 2026-11-25: the macOS jobs run only by hand; find if "Too many open files" is a leak, no higher limit; find the cause of T-CAP-91 on Linux | accepted |
 | [R394](entries/R394-choices-of-fix-lane-7.md) | Choices of fix lane 7: macOS jobs by hand; the open files leak in the pubsub registry (product, proposal only); a group start holds the test clock | accepted |
 | [2SX2](entries/2SX2-acceptance-of-the-choices-of-fix-lane-7-and-its-follow-ups.md) | "Yes to all": ADR-R394 accepted (its clock rule changes B7YV item 8); fix the pubsub leak, spec and test first; look at the T-UNX-98 thread; merge lane 7 | accepted |
@@ -70,6 +65,7 @@ These entries are `accepted`.
 | [JC4X](entries/JC4X-choices-of-the-gate-probe-of-a-second-app-on-the-test-clock.md) | Choices of fix lane 8: a second app of one test wraps the product gate probe, so `shut` never calls the test clock (T-UNX-98 stuck thread) | accepted |
 | [ZT5F](entries/ZT5F-acceptance-of-the-choices-of-fix-lane-8.md) | "Yes to all": ADR-4CAF and ADR-JC4X accepted; merge and push of lane 8; the `pace` question of the status-locks test is not decided | accepted |
 | [8MTY](entries/8MTY-answers-v1-to-v7-of-the-user-to-the-3b-and-3c-tests.md) | Answers V1 to V7: `capture_modes` in 3b, auto rate of a raw format, `jpeg_encoder`, OpenCV parity, range tests | accepted |
+| [CD2C](entries/CD2C-decision-of-the-user-on-the-jpeg-encode-at-capture.md) | Q689: build the JPEG encode at capture for uncompressed cameras (step 3b), tests first | accepted |
 
 ### Proposed
 

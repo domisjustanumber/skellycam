@@ -9,8 +9,12 @@
 [ADR-8MTY](8MTY-answers-v1-to-v7-of-the-user-to-the-3b-and-3c-tests.md) (V1 to V7) corrects steps 3b
 and 3c. The spec, [ADR-HP7D](HP7D-python-api-of-capture-as-the-3a-tests-assume-it.md) and V1 to V7 do
 not give each name and shape that the failing tests of steps 3b and 3c in `skellycam/tests/capture/`
-use. An agent chose the items below. Items 79 to 90 of section 18 of the spec list them. `capture` is
-`skellycam.core.camera.capture`.
+use. An agent chose the items below. `capture` is `skellycam.core.camera.capture`.
+
+On `dom/integration` (2026-11-25, [ADR-0Z2F](0Z2F-choices-of-the-port-of-the-3b-tests-to-dom-integration.md)):
+section 22 of the spec marks each 3b item as [3WCA n]. Items 5, 11, 13 and 14 belong to the tests
+that stay on `dom/3bc-tests` (3c and hardware). They do not apply on `dom/integration` until those
+tests move.
 
 What a consumer sees:
 
@@ -26,7 +30,7 @@ What a consumer sees:
    count.
 4. A request to set a control that the status of a running camera shows as absent gets 422 with the
    text of 11.5.
-5. OpenCV source (V5): "no white balance value" means that `CAP_PROP_WB_TEMPERATURE` reads 0 or less.
+5. (3c, kept on `dom/3bc-tests`.) OpenCV source (V5): "no white balance value" means that `CAP_PROP_WB_TEMPERATURE` reads 0 or less.
    The power line frequency is null, because OpenCV has no property for it.
 
 The Python names and the test rules:
@@ -45,14 +49,15 @@ The Python names and the test rules:
    its length.
 10. `capture.modes.capture_modes(native) -> list[CaptureModeEntry]`. `choose_mode` uses
     `request.capture_fourcc`, the auto rate of V2, and never takes a synthesized NV12 type.
-11. The control names `white_balance` and `power_line_frequency` in `ControlState`. `set_controls({})`
+11. (3c, kept on `dom/3bc-tests`.) The control names `white_balance` and `power_line_frequency` in `ControlState`. `set_controls({})`
     reads them (11.4).
-12. T-CAP-109 and T-CAP-110 (V6) accept a mean absolute difference of 3 levels.
-13. Hardware switch `SKELLYCAM_HARDWARE_PROTOTYPE_MODES` (T-CAP-79): a JSON file outside the
+12. T-CAP-152 and T-CAP-153 (V6; T-CAP-109 and T-CAP-110 on `dom/3bc-tests`) accept a mean absolute difference of 3 levels.
+13. (Hardware, kept on `dom/3bc-tests`.) Hardware switch `SKELLYCAM_HARDWARE_PROTOTYPE_MODES` (T-CAP-79): a JSON file outside the
     repository, with the native types of the prototype for each camera label, in the form of
     `flag_types` of its `parse.py` (`subtype`, `width`, `height`, `fps_num`, `fps_den`, `flags`).
-14. T-CAP-76: the "history documents" are the files under `decisions/` and `specs/`. The test is in
-    the tree now with a skip mark. The last commit of phase 3 removes the mark.
+14. (3c, kept on `dom/3bc-tests`.) T-CAP-76: the "history documents" are the files under
+    `decisions/` and `specs/`. On `dom/3bc-tests` the test is in the tree with a skip mark, and the
+    last commit of phase 3 removes the mark. On `dom/integration` the test is not in the tree.
 
 ## Reason
 

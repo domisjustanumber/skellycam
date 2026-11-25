@@ -136,16 +136,48 @@ def test_quick_sync_fake_without_the_product_module(monkeypatch):
     import importlib
 
     real = importlib.import_module
+    missing = {"name": un.ENCODER_MODULE}
 
     def no_encoder(name, *args):
         if name == un.ENCODER_MODULE:
-            raise ModuleNotFoundError(name)
+            raise ModuleNotFoundError(f"No module named {missing['name']!r}", name=missing["name"])
         return real(name, *args)
 
     monkeypatch.setattr(un.importlib, "import_module", no_encoder)
     assert un.QuickSyncFake(monkeypatch, available=False).module is None
     with pytest.raises(pytest.fail.Exception, match="capture.encoder"):
         un.QuickSyncFake(monkeypatch, available=True)
+    missing["name"] = "av"  # the product module exists, but a module that it imports is missing
+    with pytest.raises(ModuleNotFoundError, match="'av'"):
+        un.QuickSyncFake(monkeypatch, available=False)
+
+
+@pytest.mark.parametrize(("fmt", "chroma"), [("YUY2", "4:2:2"), ("NV12", "4:2:0")])
+def test_quick_sync_fake_keeps_the_chroma_of_the_source(monkeypatch, fmt, chroma):
+    module = stand_in_module()
+    un.QuickSyncFake(monkeypatch, available=True, module=module)
+    encoder = module.open_quick_sync_encoder(fmt, 64, 48, quality=90)
+    encoder.encode(un.synthetic_raw(fmt, 64, 48))
+    (jpeg,) = encoder.flush()
+    assert un.jpeg_chroma(jpeg) == chroma
+    assert un.jpeg_quant_tables(jpeg) == un.Q90_TABLES
+
+
+def test_bgr_images_keeps_only_arrays_by_source_frame_number(monkeypatch):
+    """`BgrImages` wraps `FrameRingWriter.write`: an array is copied by its source frame number, a
+    JPEG (bytes) is not kept, and each call reaches the wrapped write."""
+    from skellycam.core.ipc.frame_ring import FrameRingWriter
+
+    calls = []
+    monkeypatch.setattr(FrameRingWriter, "write", lambda writer, payload, **kwargs: calls.append(payload))
+    images = un.BgrImages(monkeypatch)
+    image = np.full((4, 6, 3), 7, np.uint8)
+    FrameRingWriter.write(None, image, source_frame_number=5)
+    FrameRingWriter.write(None, b"\xff\xd8 not kept", source_frame_number=6)
+    image[...] = 0
+    assert list(images.images) == [5]
+    assert images.images[5].shape == (4, 6, 3) and np.all(images.images[5] == 7), "not a copy"
+    assert len(calls) == 2
 
 
 # ---------------------------------------------------------------------------

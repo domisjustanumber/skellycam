@@ -1,7 +1,7 @@
 """Step 3b: JPEG encode at capture for uncompressed modes (specs/windows-capture.md, sections 13 and
-21; specs/frame-ring.md, section 8.7).
+22; specs/frame-ring.md, section 8.7).
 
-T-CAP-61 to T-CAP-67, T-CAP-70, T-CAP-71, T-CAP-89 and T-CAP-150 to T-CAP-153 (section 21.3). They run
+T-CAP-61 to T-CAP-67, T-CAP-70, T-CAP-71, T-CAP-89 and T-CAP-150 to T-CAP-153 (section 22.3). They run
 on Windows, Linux and macOS, except T-CAP-151, which runs on Linux and macOS only. The tests come from
 `dom/3bc-tests` (ADR-3WCA), ported to `dom/integration` with the choices of ADR-0Z2F.
 
@@ -15,6 +15,7 @@ Thus no test needs an Intel GPU. No test measures time.
 
 import json
 import logging
+import re
 import sys
 
 import cv2
@@ -79,9 +80,14 @@ def record_frames(app, spies, directory, name, camera_id, frames):
     assert response.status_code == 200, response.text
 
 
-def range_lines(logs, camera_id):
-    """The log lines of the range decision of a camera (13.3; recorder.md 6.7: the log only)."""
-    return [m for m in logs.messages() if camera_id in m and "input range" in m.lower()]
+RANGE_LINE = re.compile(r"input range\W+(limited|full)\b", re.IGNORECASE)
+
+
+def range_values(logs, camera_id):
+    """The range decisions that the log lines of a camera give (13.3; recorder.md 6.7: the log only):
+    "input range", then "limited" or "full" (ADR-0Z2F item 4)."""
+    return [match.group(1).lower() for m in logs.messages()
+            if camera_id in m and (match := RANGE_LINE.search(m))]
 
 
 # ---------------------------------------------------------------------------
@@ -267,9 +273,8 @@ def test_t_cap_65_range_rule(monkeypatch, tmp_path, share, later, expected):
     change later in the session; the log holds it (note of 2026-11-20, recorder.md 6.7).
 
     "Later": from source frame 400 the share changes (0.5 % to 2 %, 2 % to 0 %). The second take
-    starts after that frame. "The log holds it" (ADR-0Z2F item 4): at least one line of the camera with
-    the words "input range" and the decision, and no such line with the other value."""
-    other = "full" if expected == "limited" else "limited"
+    starts after that frame. "The log holds it" (ADR-0Z2F item 4): at least one line of the camera
+    gives a range decision, and each one gives the expected value."""
     script = raw_camera(os_range="limited", y_outside=((0, share), (CHANGE_AT, later)))
     with capture_logs() as logs, capture_app(monkeypatch, [script], full_modes=True) as app:
         QuickSyncFake(monkeypatch, available=False)
@@ -279,10 +284,9 @@ def test_t_cap_65_range_rule(monkeypatch, tmp_path, share, later, expected):
         record_frames(app, spies, tmp_path, "take1", camera_id, 30)
         app.wait(lambda: app.factory.logs[camera_id].taken[-1] > CHANGE_AT + 30, "the change of the share")
         record_frames(app, spies, tmp_path, "take2", camera_id, 30)
-    lines = range_lines(logs, camera_id)
-    assert lines, f"no log line with the input range of camera {camera_id}"
-    assert all(expected in line.lower() for line in lines), lines
-    assert not any(other in line.lower() for line in lines), lines
+    values = range_values(logs, camera_id)
+    assert values, f"no log line with the input range of camera {camera_id}"
+    assert all(value == expected for value in values), values
 
 
 # ---------------------------------------------------------------------------
@@ -482,7 +486,7 @@ def test_t_cap_150_opencv_source_with_a_raw_request(monkeypatch, tmp_path, fmt):
             "a ring JPEG is not the q90 JPEG of an OpenCV image"
         if quick_sync is not None:
             assert quick_sync.checks == 0 and not quick_sync.encoders, "a Quick Sync check ran for the OpenCV source"
-        assert not range_lines(logs, camera_id), "an input range for a camera of the OpenCV source"
+        assert not range_values(logs, camera_id), "an input range for a camera of the OpenCV source"
     finally:
         app.close()
 
@@ -569,7 +573,7 @@ def test_t_cap_153_bgr_ring_matches_the_jpeg(monkeypatch, fmt, available, case):
     a mean absolute difference of 3 levels.
 
     With T-CAP-152, this test decides the conversion of the BGR ring: the decided range (ring 8.7) or
-    the default conversion (ADR-467Z item 4); see section 21.4 of the spec."""
+    the default conversion (ADR-467Z item 4); see section 22.4 of the spec."""
     spies, images, camera_id, _ = _range_session(monkeypatch, fmt, available, case, bgr_ring=True)
     jpegs = {event["sfn"]: event["payload"] for event in spies.of("jpeg", camera_id)}
     pairs = [(sfn, image) for sfn, image in images.images.items() if sfn in jpegs][:10]

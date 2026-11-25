@@ -1,5 +1,5 @@
 """Uncompressed frames, JPEG parsing and a fake Quick Sync encoder for the step 3b tests
-(specs/windows-capture.md, sections 13 and 21; specs/frame-ring.md, section 8.7).
+(specs/windows-capture.md, sections 13 and 22; specs/frame-ring.md, section 8.7).
 
 Ported from `dom/3bc-tests` (ADR-3WCA) to `dom/integration` (ADR-0Z2F port choices).
 
@@ -179,7 +179,8 @@ def is_quick_sync_jpeg(payload):
 class FakeQuickSyncEncoder:
     """A stand-in for the Quick Sync encoder of 13.2 (ADR-3WCA). It holds one frame, as Quick Sync at
     `async_depth` 2 [notes: Encoder settings]: `encode(raw)` gives the JPEG of the frame before it,
-    and `flush()` gives the JPEG of the held frame. Each JPEG is a q90 `cv2.imencode` JPEG of the
+    and `flush()` gives the JPEG of the held frame. Each JPEG is a q90 `cv2.imencode` JPEG, with the
+    chroma of the source (4:2:2 from YUY2, 4:2:0 from NV12), of the
     frame with a comment segment that holds `QUICK_SYNC_MARK` and the input number. As Quick Sync,
     it takes its input as full range (`full_range_to_bgr`): a limited-range frame must get the
     range-expanding table first [notes: Input range].
@@ -218,7 +219,10 @@ class FakeQuickSyncEncoder:
         number, raw = self._held
         self._held = None
         bgr = full_range_to_bgr(raw, self.format)
-        jpeg = cv2.imencode(".jpg", bgr, [int(cv2.IMWRITE_JPEG_QUALITY), 90])[1].tobytes()
+        sampling = (cv2.IMWRITE_JPEG_SAMPLING_FACTOR_422 if self.format == "YUY2"
+                    else cv2.IMWRITE_JPEG_SAMPLING_FACTOR_420)  # the chroma of the source (13.2)
+        params = [int(cv2.IMWRITE_JPEG_QUALITY), 90, int(cv2.IMWRITE_JPEG_SAMPLING_FACTOR), int(sampling)]
+        jpeg = cv2.imencode(".jpg", bgr, params)[1].tobytes()
         self.outputs += 1
         return [with_mark(jpeg, QUICK_SYNC_MARK + b" %d" % number)]
 
@@ -250,7 +254,9 @@ class QuickSyncFake:
         if module is None:
             try:
                 module = importlib.import_module(ENCODER_MODULE)
-            except ModuleNotFoundError:
+            except ModuleNotFoundError as error:
+                if error.name != ENCODER_MODULE:
+                    raise  # a missing module inside the product module is a product error
                 module = None
             if module is None:
                 if available:
