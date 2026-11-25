@@ -46,6 +46,8 @@ These entries are `accepted`.
 | [2GS1](entries/2GS1-step-3a-choices-of-the-capture-code-and-its-fixes.md) | Supersedes S6HT, MA22, 6EKB, 037V, BM73, R60B, FTC3: step 3a choices; virtual by link; macOS timing step; loop, source, review and CI fixes | accepted |
 | [68JT](entries/68JT-step-4a-choices-of-the-preview-sender.md) | Supersedes 162X, 24FZ, MZ02: step 4a choices of the preview sender; spec section 13 items, Python API of the 4a tests, code choices | accepted |
 | [RA16](entries/RA16-step-4b-choices-of-the-preview-ui.md) | Supersedes EE0E, R1TD, W674: step 4b choices of the preview UI; Q14 yes (list number, order only); Displayed rate leaves out gaps over 1 s | accepted |
+| [NA1N](entries/NA1N-answers-of-the-user-to-the-questions-of-the-step-4b-tests.md) | Q824 to Q836 of 2026-11-25: 70WD accepted; `cameraLabel` and `labelText`; Displayed over the last 1 s; T-PRV-25 in the capture jobs | accepted |
+| [70WD](entries/70WD-failing-tests-of-step-4b-and-the-names-they-assume.md) | The failing tests of step 4b (T-PRV-25 to 53, T-PLAY-37, T-PLAY-44): the TypeScript names they assume, the split of T-PRV-26, the helpers | accepted |
 | [P98T](entries/P98T-step-5a-choices-of-the-recorder-and-its-connection.md) | Supersedes Q03C, QEQ8, T24F, YNM2, P5VE: step 5a recorder and connection choices; F-1 to F-10 as one request; 15 s writer limit | accepted |
 | [4D94](entries/4D94-step-6a-choices-of-the-canvas-player.md) | Supersedes 4K7V, 4MJ4, 1ACK, 5FBS: step 6a player choices; picked folders only for the app run, no list file; test names; review fixes | accepted |
 | [XT31](entries/XT31-kit-adoption-choices-camera-media-check-and-fills.md) | Supersedes NMM1, 4A7H: kit adoption choices; the media check refuses PNG, GIF, WebP, SVG with an allow by path; index limit 24,000 | accepted |
@@ -97,7 +99,6 @@ These entries wait for a decision of the user. Section is the section or area of
 | [0R76](entries/0R76-choices-of-the-exact-skip-after-a-live-change.md) | Choices of the exact skip after a live change and a search: anchors, the time-out anchor, replay of 1024 taken frames, limits | `skellycam.core.camera.capture` | proposed |
 | [B7YV](entries/B7YV-choices-of-fix-lane-6.md) | Choices of fix lane 6: one run for the two halves, nominal values and loose checks, T-PRV-54, loop threads on the test clock, T-CAP-86 diagnostics | none | proposed |
 | [7GC1](entries/7GC1-choices-of-the-gate-on-the-test-clock-and-the-end-of-t-cap-05.md) | Choices of fix lane 6: a loop at an open gate holds the test clock until its next probe, forced steps still move it; T-CAP-05 checks the last ring frames | none | proposed |
-| [70WD](entries/70WD-failing-tests-of-step-4b-and-the-names-they-assume.md) | The failing tests of step 4b (T-PRV-25 to 53, T-PLAY-37, T-PLAY-44): the TypeScript names they assume, the split of T-PRV-26, the helpers | `preview` | proposed |
 
 The entries that are `rejected`, `superseded by XXXX`, `absorbed into <path>#<anchor>`,
 `evidence; used by XXXX`, `evidence; replaced by XXXX` or `done` are in [historical.md](historical.md).

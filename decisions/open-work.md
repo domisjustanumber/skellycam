@@ -114,14 +114,16 @@ task. Delete an item when its work is done. The PR that closes an item records t
     ([ADR-VYS7](entries/VYS7-answers-of-the-user-to-the-step-4b-spec-and-go-ahead-for-its-tests.md)).
     Revision 3 has the full test list (section 7.4). The user accepted Q14 and the agent choices
     ([ADR-RA16](entries/RA16-step-4b-choices-of-the-preview-ui.md)). The failing 4b tests are written on
-    `dom/preview-4b-tests` ([ADR-70WD](entries/70WD-failing-tests-of-step-4b-and-the-names-they-assume.md),
-    proposed): the names that they assume wait for the user. Run the quick ones with
+    `dom/preview-4b-tests` ([ADR-70WD](entries/70WD-failing-tests-of-step-4b-and-the-names-they-assume.md)). The
+    user accepted their names and answered Q824 to Q836
+    ([ADR-NA1N](entries/NA1N-answers-of-the-user-to-the-questions-of-the-step-4b-tests.md)); revision 4 of the
+    spec holds the answers. Run the quick ones with
     `npm run test:player:unit` in `skellycam-ui/` and
     `uv run pytest skellycam/tests/preview tools/tests/test_camera_message_fixture.py -m "not pace"`. Not run yet:
     T-PRV-28 and T-PRV-29 (heavy real-time runs), the component tests T-PRV-43, 44, 47 to 50 and T-PLAY-44
     (`npm run test:player:browser`), the benchmarks T-PRV-51 and T-PRV-52 (by hand). Not done: the CI changes of
-    7.8, in their own PR; that PR must run T-PRV-25 in a job that syncs the project, not in `doc-checks.yml`
-    (ADR-70WD item 14). The 4b code must also change `skellycam/tests/capture/test_group_watch.py`, which uses
+    7.8, in their own PR; T-PRV-25 runs only in the capture jobs (Q836). After the first run of T-PRV-49, look at
+    it again (Q835). The 4b code must also change `skellycam/tests/capture/test_group_watch.py`, which uses
     `get_latest_ring_payload` (item 5). Next: the product code of 4b, after a go-ahead of the user.
 - **The `sfn26` integration on `dom/integration`.** The user decided the base on 2026-11-20
   ([ADR-EQY4](entries/EQY4-base-the-work-on-upstream-sfn26-without-rust.md)), and accepted the

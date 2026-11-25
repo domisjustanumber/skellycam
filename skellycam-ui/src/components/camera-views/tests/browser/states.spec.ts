@@ -69,7 +69,7 @@ test('T-PRV-44 the states of the cameras, with no filter on alive', async ({prev
     const held = await states(server);
     expect(held.states[A.id], 'A still holds in starting').toBe('starting');
     // Since ADR-NYT6 the group is alive while one selected camera lives (spec 4.5): the value is recorded, not checked.
-    // The words "although the group is not alive" of T-PRV-44 wait for the user (ADR-70WD item 13).
+    // T-PRV-44 says "three tiles, with no filter on alive" (Q830 of ADR-NA1N).
     test.info().annotations.push({type: 'group alive while A is starting', description: JSON.stringify(held.alive)});
 
     const ids = [A.id, B.id, C.id];

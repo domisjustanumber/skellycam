@@ -1,12 +1,12 @@
 # 70WD — The failing tests of step 4b, and the names and choices that they assume
 
-**Status:** proposed, 2026-11-25 (agent; the tests of the go-ahead of
+**Status:** accepted, 2026-11-25 (user: Q824 of [ADR-NA1N](NA1N-answers-of-the-user-to-the-questions-of-the-step-4b-tests.md); agent choices for the tests of the go-ahead of
 [ADR-VYS7](VYS7-answers-of-the-user-to-the-step-4b-spec-and-go-ahead-for-its-tests.md)).
 
 ## Decision
 
 The tests of 7.4 of [`specs/preview-4b.md`](../../specs/preview-4b.md) are written, with the helpers of 7.2. There
-is no product code of 4b. Each test name starts with its spec ID. The user did not decide these choices.
+is no product code of 4b. Each test name starts with its spec ID. The user accepted these choices (Q824).
 
 1. **Files.** `tools/write_camera_message_fixture.py`, its test and the fixture `camera-messages.json`; in
    `skellycam/tests/preview/`: `test_endpoint.py`, `test_ring_close_on_loop.py`, `test_old_format_deleted.py`,
@@ -52,11 +52,10 @@ is no product code of 4b. Each test name starts with its spec ID. The user did n
     `src/services/server/preview/tests`, as the player tests; `npx tsc --noEmit` has 0 errors. The npm script and
     the Playwright configs change as 7.8 says.
 12. **Player tests of 7.6.** A `frame: null` check in `format.test.ts` (T-PLAY-37) and a last step of T-PLAY-44.
-13. **T-PRV-44 and `alive`.** Since ADR-NYT6 the group is alive while one selected camera lives (4.5). The words
-    "although the group is not alive" of T-PRV-44 do not hold.
+13. **T-PRV-44 and `alive`.** Since ADR-NYT6 the group is alive while one selected camera lives (4.5). T-PRV-44
+    now reads "three tiles, with no filter on `alive`" (Q830).
 14. **T-PRV-25 and CI.** `doc-checks.yml` syncs only the dev group, and T-PRV-25 imports `skellycam`. The test
-    stays where 7.4 puts it. The CI PR runs it in a job that syncs the project, or moves it under
-    `skellycam/tests/`.
+    stays in `tools/tests/` and runs only in the capture jobs (Q836, 7.8).
 
 ## Reason
 
