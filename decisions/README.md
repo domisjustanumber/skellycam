@@ -56,7 +56,11 @@ These entries are `accepted`.
 | [T34M](entries/T34M-decision-of-the-user-on-the-start-method-of-camera-processes.md) | Q651 of 2026-11-23: no start method at import; the app sets spawn; a fork start is refused; nothing decided for FreeMoCap | accepted |
 | [0AMX](entries/0AMX-propose-from-skellycam-and-review-in-the-kit.md) | Q657: a skellycam agent runs `propose`; the kit session reviews and commits the result in its own repository | accepted |
 | [TC9B](entries/TC9B-ci-runner-with-no-device.md) | Q660: the CI exception of the other-systems rule says "a CI runner with no device", so it fits each repository | accepted |
+| [53VB](entries/53VB-decision-of-the-user-on-the-exact-skip-after-a-live-change.md) | Q663 option B: the skip after a live change is exact, counted from the change; T-CAP-31 is strict | accepted |
+| [JWZ1](entries/JWZ1-decision-of-the-user-on-the-exact-skip-after-a-search.md) | Q666: the check after an exposure search uses the same exact skip rule; spec and test first | accepted |
 | [F4N7](entries/F4N7-decisions-of-the-user-on-the-pace-tests-of-fix-lane-6.md) | Q669 to Q673, Q675: real-time tests split in blocking and `pace` halves; CI share level 40 %; conditions in T-CAP-110 and gate test; loop threads on the clock | accepted |
+| [8ACV](entries/8ACV-decision-of-the-user-on-the-end-check-of-t-cap-05.md) | Q696: T-CAP-05 ends with ring counts at most one apart and last frames within 1 ms; it lands with the clock fix, with an independent review | accepted |
+| [2AQT](entries/2AQT-decision-of-the-user-on-the-gap-of-the-stall-test-with-process-workers.md) | Q721: the 1 s gap limit of the stall test under load with PROCESS workers moves to the `pace` test, as for THREAD workers | accepted |
 | [N14T](entries/N14T-decisions-of-the-user-on-the-ci-review-of-2026-11-25.md) | CI review of 2026-11-25: the macOS jobs run only by hand; find if "Too many open files" is a leak, no higher limit; find the cause of T-CAP-91 on Linux | accepted |
 | [R394](entries/R394-choices-of-fix-lane-7.md) | Choices of fix lane 7: macOS jobs by hand; the open files leak in the pubsub registry (product, proposal only); a group start holds the test clock | accepted |
 | [2SX2](entries/2SX2-acceptance-of-the-choices-of-fix-lane-7-and-its-follow-ups.md) | "Yes to all": ADR-R394 accepted (its clock rule changes B7YV item 8); fix the pubsub leak, spec and test first; look at the T-UNX-98 thread; merge lane 7 | accepted |
@@ -66,6 +70,9 @@ These entries are `accepted`.
 | [ZEX9](entries/ZEX9-decisions-of-the-user-on-the-housekeeping-of-2026-11-25.md) | Q729 to Q732, Q751: untrack 65 media files of `dom/research`, trim plan section 15, push two branches, delete the H.264 temp files | accepted |
 | [N6X6](entries/N6X6-decisions-of-the-user-on-the-build-lanes-of-2026-11-25.md) | Q750, Q772, Q775, Q776, Q780: three build lanes, two certify lanes, quick tests only around fix lane 7; ask before performance tests | accepted |
 | [6YGH](entries/6YGH-acceptance-of-the-as-built-choices-of-fix-lanes-4-and-5-and-of-certify.md) | Q752 to Q757, Q759 to Q762, Q770: HQE5 Q-A to Q-C, DC43 1 to 4, KY81 rest, items of 8CP7 and FC1C accepted as built | accepted |
+| [AA4X](entries/AA4X-decisions-of-the-user-on-exclusive-access-of-a-camera.md) | Exclusive access is a product rule: strongest lock of each OS, only a streaming other process is in use, keep and mark a take, certify rules | accepted |
+| [13BB](entries/13BB-decisions-of-the-user-on-the-dark-rule-the-light-data-and-the-phase-7-items.md) | Q773, Q774, Q777: a pass in the dark stays `pass`; each report keeps `luma_mean` and the light answer; Linux and macOS certify items wait for phase 7 | accepted |
+| [CQ2X](entries/CQ2X-decisions-of-the-user-on-the-overlaps-with-freemocap.md) | Q778, Q779, Q789 to Q795: the five overlaps with freemocap, a public model call, full progress state, a group with no cameras, host facts, privacy list | accepted |
 
 ### Proposed
 

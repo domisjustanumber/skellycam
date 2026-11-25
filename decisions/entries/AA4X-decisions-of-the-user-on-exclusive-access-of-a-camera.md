@@ -1,11 +1,8 @@
 # AA4X — Decisions of the user on exclusive access of a camera
 
-**Status:** absorbed into [`specs/windows-capture.md#21-exclusive-access-of-a-camera`](../../specs/windows-capture.md#21-exclusive-access-of-a-camera),
-[`specs/unix-capture.md#413-exclusive-access-of-a-camera-lands-with-phase-7`](../../specs/unix-capture.md#413-exclusive-access-of-a-camera-lands-with-phase-7),
-[`specs/certify.md#97-cameras-busy-u-a-c-25`](../../specs/certify.md#97-cameras-busy-u-a-c-25),
-[`specs/certify.md#20-exclusive-access-the-public-calls-for-freemocap-and-the-light-data-2026-11-25`](../../specs/certify.md#20-exclusive-access-the-public-calls-for-freemocap-and-the-light-data-2026-11-25),
-2026-11-25 (commit to dom/exclusive-access-spec; was accepted, 2026-11-25 (user; the supervisor asked Q758, Q768,
-Q769, Q771, Q781 to Q788, Q796, Q797 and Q799 in a grilling session)).
+**Status:** accepted, 2026-11-25 (user; the supervisor asked Q758, Q768,
+Q769, Q771, Q781 to Q788, Q796, Q797 and Q799 in a grilling session; commit to dom/exclusive-access-spec). The drafts
+that state its rules wait for the acceptance of the user; the entry is absorbed in that commit.
 
 ## Decision
 

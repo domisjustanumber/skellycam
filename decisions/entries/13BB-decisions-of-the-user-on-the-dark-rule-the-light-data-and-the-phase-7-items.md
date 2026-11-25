@@ -1,10 +1,8 @@
 # 13BB — Decisions of the user on the dark rule, the light data and the certify items of phase 7
 
-**Status:** absorbed into [`specs/certify.md#46-light-too-dark-to-judge-a`](../../specs/certify.md#46-light-too-dark-to-judge-a),
-[`specs/certify.md#101-the-decision-and-the-state`](../../specs/certify.md#101-the-decision-and-the-state),
-[`specs/certify.md#20-exclusive-access-the-public-calls-for-freemocap-and-the-light-data-2026-11-25`](../../specs/certify.md#20-exclusive-access-the-public-calls-for-freemocap-and-the-light-data-2026-11-25),
-2026-11-25 (commit to dom/exclusive-access-spec; was accepted, 2026-11-25 (user; the supervisor asked Q773, Q774
-and Q777 in a grilling session; the answer was "agree to all")).
+**Status:** accepted, 2026-11-25 (user; the supervisor asked Q773, Q774
+and Q777 in a grilling session; the answer was "agree to all"; commit to dom/exclusive-access-spec). The drafts
+that state its rules wait for the acceptance of the user; the entry is absorbed in that commit.
 
 ## Decision
 

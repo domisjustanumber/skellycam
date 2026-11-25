@@ -1,7 +1,6 @@
 # JWZ1 — Decision of the user on the exact skip after an exposure search (Q666)
 
-**Status:** absorbed into [`specs/windows-capture.md#102-after-a-live-control-change-d32`](../../specs/windows-capture.md#102-after-a-live-control-change-d32), [`specs/camera-requests.md#111-tests`](../../specs/camera-requests.md#111-tests),
-2026-11-25 (commit to dom/exclusive-access-spec; was accepted, 2026-11-24 (user; the coordinator asked the question and relayed the answer)).
+**Status:** accepted, 2026-11-24 (user; the coordinator asked the question and relayed the answer).
 
 ## Decision
 

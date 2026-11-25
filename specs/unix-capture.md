@@ -911,7 +911,9 @@ Each step is bounded:
 
 1. Variant `empty`: `videoSettings = {}` [K15]. The first sample decides `delivered`.
 2. When it is decoded: `stopRunning`, set variant `dmb1` (`kCVPixelBufferPixelFormatTypeKey` =
-   `'dmb1'` [K18]), take the device lock again, `startRunning`, unlock (M-6).
+   `'dmb1'` [K18]), take the device lock again, `startRunning`, unlock (M-6). From phase 7 the source holds the lock
+   from the first `startRunning` to the close (4.13.2 item 2): it keeps the lock through this restart and does not
+   unlock here.
 3. When the second variant is decoded too, or the output refuses it: failure `no-native-jpeg`, stage
    `start stream` [A]. Outside certify, the camera process then opens the OpenCV source for this
    camera [U]. Inside certify it does not [U].
@@ -1623,13 +1625,22 @@ before a take are those of [W 21.8].
    another handle holds RECORD: code `camera-in-use`, stage `open`, `busy_call` `s-priority`. The priority goes
    with the `close()` of the file.
 3. **Control events.** After `STREAMON`, the source subscribes to `V4L2_EVENT_CTRL` for each control that
-   `QUERY_EXT_CTRL` lists (one `VIDIOC_SUBSCRIBE_EVENT` for each control id) (Q786). uvcvideo sends the event to
-   each subscriber except the handle that made the change [S14]. The source does not set
-   `V4L2_EVENT_SUB_FL_ALLOW_FEEDBACK`, so its own changes give no event [S15, NV: the meaning of the flag is cited
-   from memory]. The capture thread also waits for `POLLPRI` in its `poll` (4.3.3 step 1) and reads each event with
-   `VIDIOC_DQEVENT`. An event of a change of the value or of the flags is a control change by another process:
-   the warning `control_changed_by_other` and, during a take, a take mark `camera_control_changed` at the row of
-   the next frame [W 21.6, 21.7].
+   `QUERY_EXT_CTRL` lists, one `VIDIOC_SUBSCRIBE_EVENT` for each control id (Q786) [X 32]. The capture thread also
+   waits for `POLLPRI` in its `poll` (4.3.3 step 1) and reads each event with `VIDIOC_DQEVENT`. uvcvideo sends more
+   events than the changes of other handles [S14, `uvc_ctrl.c`]: an event that only changes the flags also reaches
+   the handle that made the change; a change of a master control (for example `V4L2_CID_EXPOSURE_AUTO`) sends events
+   with the flags and the value of its dependent controls (it sets the flag `inactive` of
+   `V4L2_CID_EXPOSURE_ABSOLUTE`); and a change that the device makes itself (auto update, an asynchronous status
+   event) reaches each subscriber. Thus the source counts an event as a change by another process only when:
+   - its `changes` field has `V4L2_EVENT_CTRL_CH_VALUE` (an event with only the flags change is ignored);
+   - the control is not in auto (a value event of a control in auto is the camera at work);
+   - it is not a dependent control within 1 s of an own set of its master [X 31].
+
+   Such an event gives the warning `control_changed_by_other` and, during a take, a take mark
+   `camera_control_changed` at the row of the next frame [W 21.6, 21.7]. Under the RECORD priority each other handle
+   gets `EBUSY` at `S_CTRL` and `S_EXT_CTRLS` [S12], so such events are expected to be zero. The ones that remain come
+   from the gap of item 5, or from a fact that is not verified [NV]. The source does not set
+   `V4L2_EVENT_SUB_FL_ALLOW_FEEDBACK` [S15, NV: the meaning of the flag is cited from memory].
 4. **Names.** At an in-use failure, the source names the holder (Q786, Q768): it reads the links of
    `/proc/*/fd` that point to the node of the camera, and `/proc/<pid>/comm` of each such process. This works only
    for the processes of the same user: the links of other users need a `PTRACE_MODE_READ_FSCREDS` check [S13].
@@ -1651,10 +1662,10 @@ M-11 allowed sharing: "the source never fails for sharing alone". Q787 reverses 
    device [S17]. True: code `camera-in-use`, stage `open`, reason "in use by another program". macOS does not name
    the other program [S17, S18].
 2. **Hold the configuration lock.** The source takes `lockForConfiguration` before `startRunning` (4.4.2 step 5)
-   and holds it to the close (Q787) [X 16]. Apple's docs advise to hold it only when needed [S16]. skellycam needs
+   and holds it to the close (Q787) [X 16], also through the variant restart of 4.4.3 item 2. Apple's docs advise to hold it only when needed [S16]. skellycam needs
    settings that do not change. Another process then gets
    `AVErrorDeviceLockedForConfigurationByAnotherProcess` (-11817) [S20]. When the source itself cannot take the
-   lock for that reason, the code is `camera-in-use`, stage `open`, `busy_call` `lock-config`. The close
+   lock for that reason, the code is `camera-in-use`, stage `open`, `busy_call` `lock-config` [X 33]. The close
    (4.4.7) unlocks after the restore of 4.7.
 3. **Watch the flag.** The source observes `isInUseByAnotherApplication` with key-value observing from the first
    frame to the close [S17]. A change to true gives the warning `camera_shared` (with no name) and, during a take,
@@ -1966,7 +1977,7 @@ tests; it does not repeat the certify spec.
 | A-9, M-9 | `<label>:clock:*` | T-CAP-59 |
 | A-10, M-10 | `<label>:sequence`, `<label>:time-gaps` | none (new) |
 | A-13, M-8 | `self:hang-100ms` | T-CAP-82 |
-| A-14, M-11, M-12, 4.13 | `<label>:in-use`, `<label>:in-use:other-program`, `<label>:in-use-mid-take`, `probe:camera-holders`, `probe:<model>:hog-mode` (macOS) [cert 20] | T-CAP-56, T-CAP-130 to T-CAP-140 |
+| A-14, M-11, M-12, 4.13 | `<label>:in-use`, `<label>:in-use:other-program`, `<label>:in-use-mid-take`, `probe:camera-holders`, `probe:<model>:hog-mode` (macOS) [cert 20] | T-CAP-56, T-CAP-130 to T-CAP-145 |
 | A-15, A-22, M-13 | `group:open`, `group:contention` | none (new) |
 | A-16, M-14 | `system:camera-access` | none (new) |
 | A-17, A-18, M-15 | `<label>:controls`, `<label>:controls:exposure-scale`, `<label>:auto-off:*`, `<label>:settings-stick:*`, `<label>:exposure:<base>`, `<label>:auto-exposure:*`, `<label>:control:*`, and on macOS the probes `probe:<model>:a1-cmio-native:<control>` to `a10-avf-custom:exposure` [cert 10.7] | T-CAP-57, T-CAP-78 |
@@ -1995,7 +2006,7 @@ Draft of 2026-11-25, with 4.13. The counts of 6.8 do not hold these tests yet.
 | ID | Kind | What it does | Pass criterion |
 |---|---|---|---|
 | T-UNX-102 | fake | Linux: `S_PRIORITY` RECORD succeeds; then a fake where it returns `EBUSY`. | The source calls `S_PRIORITY` with RECORD right after `open()` and before `REQBUFS(0)`; `priority_record` true. With `EBUSY`: `camera-in-use`, stage `open`, `busy_call` `s-priority`; no `S_FMT` was sent. |
-| T-UNX-103 | fake | Linux: a take of 10 s; at 4 s the fake gives a `V4L2_EVENT_CTRL` change of `V4L2_CID_EXPOSURE_ABSOLUTE` from another handle. Also an own set of gain. | One subscription for each listed control, with no `ALLOW_FEEDBACK` flag; one `control_changed_by_other` warning and one `camera_control_changed` mark at the row after 4 s; the own set gives no mark; `ctrl_events_other` is 1. |
+| T-UNX-103 | fake | Linux: a take of 10 s. At 4 s the fake gives a value event of `V4L2_CID_EXPOSURE_ABSOLUTE` (manual) as from another handle. Also: a flags-only event of gain after an own set of gain; an own set of `V4L2_CID_EXPOSURE_AUTO`, with the value and flags event on `V4L2_CID_EXPOSURE_ABSOLUTE` 50 ms later; a value event of focus while focus is in auto (a device auto update). | One subscription for each listed control, after `STREAMON`, with no `ALLOW_FEEDBACK` flag; one `control_changed_by_other` warning and one `camera_control_changed` mark at the row after 4 s; the other three events give no warning and no mark; `ctrl_events_other` is 1. |
 | T-UNX-104 | fake | Linux: `EBUSY` at `REQBUFS(0)`, with a fake `/proc`: (1) one process of the same user holds the node, `comm` `obs`; (2) the link cannot be read (another user). | (1) the reason "in use by obs. Quit it and try again"; (2) "in use by another program". In both cases `/proc` is read only after the failure, never before the open. |
 | T-UNX-105 | fake | macOS: `isInUseByAnotherApplication` is true before the open. | `camera-in-use`, stage `open`; no `deviceInputWithDevice_error_` call. |
 | T-UNX-106 | fake | macOS: the configuration lock: (1) the source opens, streams 5 s and closes; (2) `lockForConfiguration` fails with -11817. | (1) one `lockForConfiguration` before `startRunning`, no `unlockForConfiguration` until the close, then the unlock after the restore; `config_locked` true while open. (2) `camera-in-use`, `busy_call` `lock-config`. |

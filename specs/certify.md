@@ -1127,6 +1127,15 @@ not built (3.6.3), never `numbers` and never a key `reason` [C 3.4, C 6 rule 9].
 `session:exit`. The group, system and self checks of
 sections 6 and 7 are not built: their names are in `details.not_built`.
 
+**Full, phase F of each camera: the in-use checks of section 20 (draft of 2026-11-25, not built).**
+
+| Check | Numbers | Fail and not-run reasons |
+|---|---|---|
+| `<label>:in-use` | `outcome`, `stage`, `seconds` | `not-refused`, `hung`, `wrong-reason` (20.2) |
+| `<label>:in-use:other-program` | `outcome`, `fail_code`, `holder_seen`, `first_report_ms` | `not-refused`, `hung`, `wrong-reason`; `not-run` `holder-failed` (20.3, QX-2) |
+| `<label>:in-use-mid-take` | `warned_s`, `marked`, `control_marked`, `control_blocked`, `frames_lost` | `not-warned`, `not-marked`; `not-run` `no-shared-mode` (20.3) |
+| `probe:<model>:hog-mode` (macOS) | `hog_set`, `second_refused`, `hog_released` | `hog-not-settable`, `hog-not-exclusive` (20.4) |
+
 **The take: five rows become two [U Q598].** The contract keeps one check for each test that can fail [C 3.4].
 Each test of the five old rows keeps a check that carries its failure:
 
@@ -3536,7 +3545,7 @@ tests only the self-check.
 | T-CERT-28 | Cleanup after a pass, a crash, a time-out and a cancel; a locked file in the work folder; an old work folder with and without the marker; a file of the person in `recording_folder`. | The work folder is gone, or `not-deleted`; the marked old folder is gone; the rest stays. |
 | T-CERT-29 | Search the report, and the files that the run wrote outside the work folder. | No media file, no string that ends with a media extension, no frame bytes, no path. |
 | T-CERT-30 | 3 OS. Each reason code, each notice code and each `limits` code that the code can emit, against `skellycam/REASON_CODES.md`. | Each is in the file with one sentence; each notice code also has its text for the person [C 5.4]. |
-| T-CERT-31 | 3 OS. Each check name that the code can emit, with the longest backend, `nousb-nousb`, index 9, rate 29.97, the longest group and condition, and the longest probe and control. | Each matches the pattern; the longest has 75 characters. |
+| T-CERT-31 | 3 OS. Each check name that the code can emit, with the longest backend, `nousb-nousb`, index 9, rate 29.97, the longest group and condition, and the longest probe and control; also the names of section 20 (`<label>:in-use:other-program`, `<label>:in-use-mid-take`, `probe:<model>:hog-mode`). | Each matches the pattern; the longest has 75 characters. |
 | T-CERT-32 | 3 OS. Patch the rate limit of `rate_check.py` and the stall limit of the take; spy on `CameraGroupManager`, `start_take` and the source factory; set `SKELLYCAM_WINDOWS_CAPTURE`, `SKELLYCAM_LINUX_CAPTURE` and `SKELLYCAM_MACOS_CAPTURE` to `opencv`. | The result follows the patched product limits; each open goes through the calls of 2.2; the native source is used; the OpenCV source is never created. |
 | T-CERT-33 | Quick and full with fakes; list the sockets of the process tree. | No listening socket. |
 | T-CERT-34 | 3 OS. Phase G with fake sources that keep the "before" values and restore them at each close: a fake whose controls were manual -6 and auto focus before the run; a fake whose restore at the close reports `restore_ok` false; a fake whose second open reports other "before" values than the first; a fake that fails the plain open of `full`; each case at `quick` and at `full`. | Quick: `healthy`, `camera-not-restored`, `camera-not-restored`, and no extra open in phase G. Full: `healthy`; `camera-not-restored`, or `restored` when the plain open sets the value back with a good read-back; `restored`; `camera-wedged`. |
@@ -3640,12 +3649,12 @@ tests only the self-check.
 | T-CERT-132 | macOS and Linux fakes. The rows of the trial with each method answering, and with each method failing (no write access to usbfs, `kIOReturnNotOpen`, a missing `system_profiler`). | Each row is `record-only` with the `module` of its model and the keys of 3.6.13; each failure gives its class name in `<method>_error`; no row holds free text, a serial, a location id, a path or the product text; `usb3_capable` of `details.cameras` is the value of detection. |
 | T-CERT-133 | 3 OS, session child [U Q646; the row: [ADR-0Z6Q](../decisions/entries/0Z6Q-choices-of-the-certify-report-shape-build.md) item 15]. Fakes that leave after their take checks: a process exit and a stall; a hang at the close; a process exit at the close. | Each gets `<label>:live-at-close` `fail` with the product code (`crashed` with `exit_code` 3, `stalled`, `hung`, `crashed`) and the failure facts that have a value; no written result changes; the model item, `<model>:gate:no-hang` and `<model>:gate` are not `pass`; a good camera has `live-at-close` `pass`. |
 | T-CERT-134 | The build file of 3.5.2 [U Q647]: a wheel from a checkout; the sdist and a wheel from the sdist; a source tree inside another git repository; a git that fails or gives text that does not decode; the `datas` of `skellycam.spec`; the CI step of the installer. | The commit and the tree state in the wheel, in the sdist and in the wheel from the sdist; no commit for the tree inside another repository; no commit and no failed build for a git error; `skellycam.spec` takes the file into `datas`; the CI step writes the file before a step changes the tree. |
-| T-CERT-135 | 3 OS. `<label>:in-use` (20.2) with a fake holder in a second session child: the product refuses with `camera-in-use`; the product opens the camera (shared); the apply hangs. | `pass`; `fail` `not-refused` with `outcome` `shared`; `fail` `hung`. |
-| T-CERT-136 | 3 OS. `<label>:in-use:other-program` (20.3) with a fake holder child of the backend of the OS: a refusal; a shared open; a holder that gets no frame. On Windows, a fake activity report with and without the holder. | `pass`; `fail` `not-refused`; `not-run` `holder-failed`; `holder_seen` true and false on Windows, `null` on Linux and macOS. |
-| T-CERT-137 | 3 OS. `<label>:in-use-mid-take` (20.3) with fakes: Windows build 26100 where the product warns 1 s after the join and marks the rows; the same with no mark; build 22000; macOS with the in-use flag; Linux where the holder gets `EBUSY` at `VIDIOC_S_CTRL`. | `pass` with `warned_s` 1 and `marked` true; `fail` `not-marked`; `not-run` `no-shared-mode`; `pass`; `pass` with `control_blocked` true; `frames_lost` 0 in each case. |
-| T-CERT-138 | 3 OS. The run start (20.1): one fake camera with a streaming other process, one with an attached other process named `LogiTuneAgent.exe`, one free. | The first: `opens` `not-run` `camera-in-use` and each later check `not-run` `camera-in-use`; the second runs, with `others_attached` 1; no row, `details` or log line of the report holds `LogiTuneAgent`; `details.before_run` of the plan holds the line of 20.1. |
+| T-CERT-135 | 3 OS; the Linux and macOS cases land with phase 7. `<label>:in-use` (20.2) with a fake holder in a second session child: the product refuses with `camera-in-use`; the product opens the camera (shared); the apply hangs. | `pass`; `fail` `not-refused` with `outcome` `shared`; `fail` `hung`. |
+| T-CERT-136 | 3 OS; the Linux and macOS cases land with phase 7; the holder follows the answer to QX-2. `<label>:in-use:other-program` (20.3) with a fake holder child of the backend of the OS: a refusal; a shared open; a holder that gets no frame. On Windows, a fake activity report with and without the holder. | `pass`; `fail` `not-refused`; `not-run` `holder-failed`; `holder_seen` true and false on Windows, `null` on Linux and macOS. |
+| T-CERT-137 | 3 OS; the macOS and Linux cases land with phase 7. `<label>:in-use-mid-take` (20.3) with fakes: Windows build 26100 where the product warns 1 s after the join and marks the rows; the same with no mark; build 22000; macOS with the in-use flag; Linux where the holder gets `EBUSY` at `VIDIOC_S_CTRL`. | `pass` with `warned_s` 1 and `marked` true; `fail` `not-marked`; `not-run` `no-shared-mode`; `pass`; `pass` with `control_blocked` true; `frames_lost` 0 in each case. |
+| T-CERT-138 | 3 OS; the Linux and macOS cases land with phase 7, and the attached case is Windows only (the activity monitor). The run start (20.1): one fake camera with a streaming other process, one with an attached other process named `LogiTuneAgent.exe`, one free. | The first: `opens` `not-run` `camera-in-use` and each later check `not-run` `camera-in-use`; the second runs, with `others_attached` 1; no row, `details` or log line of the report holds `LogiTuneAgent`; `details.before_run` of the plan holds the line of 20.1. |
 | T-CERT-139 | 3 OS. `probe:<model>:hog-mode` (20.4) with the fake AVFoundation layer: hog mode settable and the second session refused; not settable; settable and not exclusive; the set back to -1 fails. | `pass`; `fail` `hog-not-settable`; `fail` `hog-not-exclusive`; the camera state `replug`. On Windows and Linux no such row. |
-| T-CERT-140 | 3 OS. Own processes (20.5): a camera that a skellycam group of another process holds; an open group in the calling process; a group of `CameraGroup.create_without_cameras` in the calling process. | The first: `not-run` `camera-in-use` for that camera, the run is not refused; the second: `cameras-busy`; the third: the run is not refused. |
+| T-CERT-140 | 3 OS; the Linux and macOS cases of the held camera land with phase 7. Own processes (20.5): a camera that a skellycam group of another process holds; an open group in the calling process; a group of `CameraGroup.create_without_cameras` in the calling process. | The first: `not-run` `camera-in-use` for that camera, the run is not refused; the second: `cameras-busy`; the third: the run is not refused. |
 | T-CERT-141 | 3 OS. `is_model_checked` (20.6 item 1): a record with a row of the model; a row of another OS key; a reviewed pass in the known-systems file; a damaged record; no file. A spy on the capture libraries and on process starts. | True, false, true, false, false; no exception; no camera, child or capture library is touched. |
 | T-CERT-142 | 3 OS. The complete state (20.6 item 2): a quick run of 2 fakes whose process ends during `group:take:finished`; a rebuild of the report from the last progress message by the rule of 9.8. | Each message holds each ended check with its full row; its `step` is the running check; the rebuilt report equals the report of a run that ends at that step, with `group:take:finished` `fail` `crashed` and the other planned checks `not-run` `interrupted`. |
 | T-CERT-143 | 3 OS. `CameraGroup.create_without_cameras` (20.6 item 3) with two configs. | A group with no `CameraManager`; no process starts; no device is enumerated or activated; the attributes that freemocap names exist. |
@@ -3848,7 +3857,7 @@ progress message for the computed checks (9.6, decided, not built); (4) the rest
 loop failed, in phase G of quick (8.3, decided, not built); (5) the role flag (19.1 item 10, decided,
 not built); (6) item 14. Not built: the check for a camera group that another process holds (9.7).
 
-## 20. Exclusive access, the public calls for freemocap, and the light data (2026-11-25)
+## 20. Exclusive access, the public calls for freemocap, and the light data
 
 Status: draft of 2026-11-25 for the review and for the acceptance of the user. The rules come from the decisions
 of the user of 2026-11-25: exclusive access
@@ -3891,12 +3900,28 @@ session child applies the camera. The result changes (Q788):
 
 | Check | How | Numbers | Result |
 |---|---|---|---|
-| `<label>:in-use:other-program` (phase F) | A holder child that is not the product source holds the camera [X 19]: OpenCV with `CAP_DSHOW` on Windows, `CAP_V4L2` on Linux, `CAP_AVFOUNDATION` on macOS. Then the first session child applies the camera (Q785). | `outcome` (`refused`, `shared`, `hung`), `fail_code`, `holder_seen` (Windows: the activity monitor showed the holder; else `null`) | `pass` when the product refuses with `camera-in-use`; `fail` with `not-refused`, `hung` or `wrong-reason`; `not-run` with `holder-failed` when the holder child gets no frame |
-| `<label>:in-use-mid-take` (phase F) | A take of 10 s in the first session child. At 3 s a holder child joins [X 20]. Windows: a Media Foundation source with the share-mode attribute of [S1] (build 26100 or later) streams, and at 5 s it sets exposure through `IAMCameraControl`; it leaves at 7 s. macOS: a second capture session starts on the camera, and it leaves at 7 s. Linux: the holder opens the node and at 5 s calls `VIDIOC_S_CTRL` for exposure. | `warned_s` (the seconds from the join to the warning), `marked` (the manifest has the mark of [cap 21.7]), `control_marked`, `control_blocked` (Linux: the holder got `EBUSY`), `frames_lost` | `pass` when the product warns within 2 s and marks the interval [X 20]; on Windows 11 22621 or later also the control mark; on Linux when the holder got `EBUSY` or the change is marked; `fail` with `not-marked` or `not-warned`; `not-run` with `no-shared-mode` on Windows before build 26100 |
+| `<label>:in-use:other-program` (phase F) | A holder child that does not use the product source holds the camera (Q785); QX-2 below decides what the holder is. Then the first session child applies the camera. | `outcome` (`refused`, `shared`, `hung`), `fail_code`, `holder_seen` (Windows: the activity monitor showed the holder; else `null`), `first_report_ms` (Windows: the time to the first report of the monitor, [cap 21.4]) | `pass` when the product refuses with `camera-in-use`; `fail` with `not-refused`, `hung` or `wrong-reason`; `not-run` with `holder-failed` when the holder child gets no frame |
+| `<label>:in-use-mid-take` (phase F) | A take of 10 s in the first session child. At 3 s a holder child joins [X 20]. Windows: a Media Foundation source with the share-mode attribute of [S1] (build 26100 or later) streams, and at 5 s it sets exposure through `IAMCameraControl`; it leaves at 7 s. macOS: a second capture session starts on the camera, and it leaves at 7 s. Linux: the holder opens the node and at 5 s calls `VIDIOC_S_CTRL` for exposure. | `warned_s` (the seconds from the join to the warning), `marked` (the manifest has the mark of [cap 21.7]), `control_marked`, `control_blocked` (Linux: the holder got `EBUSY`), `frames_lost` | `pass` when the product warns within 2 s and marks the interval [X 20]; on Windows 11 22621 or later also the control mark [X 34]; on Linux, where no second stream can start, when the holder got `EBUSY` at `VIDIOC_S_CTRL` or the change is marked [X 35]; `fail` with `not-marked` or `not-warned`; `not-run` with `no-shared-mode` on Windows before build 26100 |
 
 These two checks verify the facts that the research did not verify: that the activity monitor sees a reader that
 joins later, that a shared reader can change exposure, that a DirectShow client goes through Frame Server, and the
-RECORD priority on a real Linux kernel ([cap 21.9]). They run after `<label>:in-use` and before the 60 fps checks.
+RECORD priority on a real Linux kernel ([cap 21.9]). They run after `<label>:in-use` and before the 60 fps checks
+[X 36].
+
+**Open question QX-2 for the user: the holder of `<label>:in-use:other-program`.** The user ruled "no OpenCV
+checks" (10.1; ADR-KG00 item 8: "Certify tests native capture only. OpenCV needs no test"). The holder must be a
+program that is not the product source. The options:
+
+- **(a)** The holder child opens the camera with OpenCV (`CAP_DSHOW` on Windows, `CAP_V4L2` on Linux,
+  `CAP_AVFOUNDATION` on macOS). OpenCV is a dependency already. The check judges only the product, never OpenCV,
+  and on Windows the DirectShow path also shows whether the activity monitor sees a DirectShow client [cap 21.9].
+- **(b)** The holder child uses a small stand-alone open of the OS (Windows: a Media Foundation source of its own
+  with no product code; Linux: `open` and `REQBUFS` through the `ctypes` layer of certify; macOS: a plain
+  `AVCaptureSession`). No OpenCV, but more certify code, and on Windows it does not test the DirectShow path.
+- **(c)** No such check: only the skellycam holder of `<label>:in-use`.
+
+The recommendation is (a): the rule is about what certify judges, and here OpenCV is only the other program, not a
+thing under test. This section is written for (a) after a yes; until then the check is `not-built`.
 
 ### 20.4 macOS: hog mode [Q787]
 

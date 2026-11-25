@@ -1,9 +1,8 @@
 # CQ2X — Decisions of the user on the overlaps of certify with freemocap
 
-**Status:** absorbed into [`specs/certify.md#12-what-skellycam-tests-and-what-it-leaves-to-others`](../../specs/certify.md#12-what-skellycam-tests-and-what-it-leaves-to-others),
-[`specs/certify.md#20-exclusive-access-the-public-calls-for-freemocap-and-the-light-data-2026-11-25`](../../specs/certify.md#20-exclusive-access-the-public-calls-for-freemocap-and-the-light-data-2026-11-25),
-2026-11-25 (commit to dom/exclusive-access-spec; was accepted, 2026-11-25 (user; the supervisor asked Q778, Q779 and
-Q789 to Q795 in a grilling session; the answer was "agree to all", after freemocap-e7 answered the five overlaps)).
+**Status:** accepted, 2026-11-25 (user; the supervisor asked Q778, Q779 and
+Q789 to Q795 in a grilling session; the answer was "agree to all", after freemocap-e7 answered the five overlaps; commit to dom/exclusive-access-spec). The drafts
+that state its rules wait for the acceptance of the user; the entry is absorbed in that commit.
 
 ## Decision
 

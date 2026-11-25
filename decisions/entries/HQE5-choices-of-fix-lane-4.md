@@ -2,6 +2,7 @@
 
 **Status:** proposed, 2026-11-23 (agent; the supervisor gave the items after CI run 45214740615, a real-camera run
 and a review).
+Accepted in part by [ADR-6YGH](6YGH-acceptance-of-the-as-built-choices-of-fix-lanes-4-and-5-and-of-certify.md) on 2026-11-25: items 4 to 6, Q-A to Q-C (Q752 to Q754).
 
 ## Decision
 
