@@ -261,12 +261,21 @@ def _watch_caller(parent, kill, manager, loop_box) -> None:
     os._exit(3)
 
 
-def _native_capture(source_factory) -> None:
+def _native_capture(source_factory):
     """2.1: certify always uses the native source. With no source factory, the product factory then creates
     `MediaFoundationSource` on Windows, whatever `SKELLYCAM_WINDOWS_CAPTURE` says (T-CERT-32). Linux and macOS have
-    no native source before phase 7."""
-    if source_factory is None:
-        os.environ["SKELLYCAM_WINDOWS_CAPTURE"] = "media_foundation"
+    no native source before phase 7. Returns a callable that puts the old value back."""
+    if source_factory is not None:
+        return lambda: None
+    old = os.environ.get("SKELLYCAM_WINDOWS_CAPTURE")
+    os.environ["SKELLYCAM_WINDOWS_CAPTURE"] = "media_foundation"
+
+    def restore():
+        if old is None:
+            os.environ.pop("SKELLYCAM_WINDOWS_CAPTURE", None)
+        else:
+            os.environ["SKELLYCAM_WINDOWS_CAPTURE"] = old
+    return restore
 
 
 def _session_child(events, acks, units, work, level, unix, source_factory) -> None:
@@ -398,7 +407,7 @@ class _ThreadSession:
 
     def __init__(self, manager, units, work, level, unix, sleep):
         self.events, self.acks, self.stopped = queue.Queue(), queue.Queue(), threading.Event()
-        _native_capture(manager.source_factory)
+        self.restore_capture = _native_capture(manager.source_factory)  # put back at `stop` and `finish`
 
         def begin(name):
             if self.stopped.is_set():
@@ -435,12 +444,14 @@ class _ThreadSession:
     def stop(self, mode="kill"):
         self.stopped.set()
         self.acks.put(False)
+        self.restore_capture()
 
     def exit_code(self):
         return None
 
     def finish(self) -> bool:
         self.thread.join(120)
+        self.restore_capture()
         return False
 
 
@@ -469,13 +480,26 @@ class _Driven:
     clean: bool = False  # the session closed its group itself and ended: the close restored each camera
 
 
-KINDS = {"begin": lambda v: isinstance(v, str), "done": lambda v: isinstance(v, dict) and isinstance(v.get("name"), str),
-         "fact": lambda v: isinstance(v, tuple) and len(v) == 2, "end": lambda v: v is None or isinstance(v, str)}
+RESULTS = ("pass", "fail", "not-run", "record-only")  # C 3.4
+_PAIR = lambda item: isinstance(item, tuple) and len(item) == 2 and isinstance(item[0], str)  # noqa: E731
+FACTS = {"closing": lambda item: item is None, "touched": lambda item: isinstance(item, list),
+         "before": _PAIR, "release": _PAIR, "prior": _PAIR}
 
 
-def _well_formed(event) -> bool:
-    """C 2.5 `bad-output`: each event of the session is a pair of a known kind and a value of its form."""
-    return isinstance(event, tuple) and len(event) == 2 and event[0] in KINDS and KINDS[event[0]](event[1])
+def _well_formed(event, rows) -> bool:
+    """C 2.5 `bad-output`: each event of the session is a pair of a known kind and a value of its form: a `begin`
+    names a check; a `done` is a row of a planned check with a result of C 3.4; a `fact` is a known fact with an item
+    of its form; an `end` has no value or the class name of an error."""
+    if not (isinstance(event, tuple) and len(event) == 2):
+        return False
+    kind, value = event
+    if kind == "begin":
+        return isinstance(value, str)
+    if kind == "done":
+        return isinstance(value, dict) and value.get("name") in rows and value.get("result") in RESULTS
+    if kind == "fact":
+        return isinstance(value, tuple) and len(value) == 2 and value[0] in FACTS and FACTS[value[0]](value[1])
+    return kind == "end" and (value is None or isinstance(value, str))
 
 
 def _drive(session, rows, reporter, stops, deadline, over, close_limit_s=CLOSE_BASE_S) -> _Driven:
@@ -527,7 +551,7 @@ def _drive(session, rows, reporter, stops, deadline, over, close_limit_s=CLOSE_B
                     event = session.events.get_nowait()
                 except Exception:  # empty, closed, or bytes that do not unpickle
                     break
-                if not _well_formed(event) or event[0] == "end":
+                if not _well_formed(event, rows) or event[0] == "end":
                     break
                 handle(*event, before_stop=True)
             session.stop("grace" if out.stop == "timed-out" else "kill")
@@ -546,7 +570,7 @@ def _drive(session, rows, reporter, stops, deadline, over, close_limit_s=CLOSE_B
             break
         except Exception:  # bytes that do not unpickle
             event = None
-        if not _well_formed(event):  # C 2.5: output that is not a result
+        if not _well_formed(event, rows):  # C 2.5: output that is not a result
             out.stop = out.stop or "bad-output"
             session.stop("grace")
             break
@@ -888,11 +912,11 @@ def _blame(rows, modules, driven, units, exit_code):
     open_names = {name for unit in units if unit.base is not None
                   for name in catalog.camera_names(unit.label, unit.base, "quick", False)["open"]}
     opening = any(name in open_names for name in pending)
-    numbers = {"exit_code": exit_code} if exit_code is not None and driven.error is None else {}
+    numbers = {"exit_code": exit_code}  # 3.5.3: on each `crashed` row, also `null`
     if driven.stop in ("timed-out", "bad-output") and not opening and len(
             {_unit_of(name, units) for name in pending}) == 1:
         rows[pending[0]] = _row(pending[0], "fail", cause, modules.get(pending[0]),
-                                **(numbers if driven.stop == "timed-out" else {}))
+                                **(numbers if driven.stop == "timed-out" and exit_code is not None else {}))
     for name in pending:  # T-CERT-78 (3.6): `exit_code` on each `crashed` row
         if rows.get(name) is None:
             rows[name] = _row(name, "not-run", cause, modules.get(name), **(numbers if cause == "crashed" else {}))

@@ -50,8 +50,9 @@ def known_codes() -> frozenset:
     return frozenset(re.findall(r"^\| `([^`<]+)` \|", text, flags=re.MULTILINE))
 
 
-def _known(code) -> bool:
-    return not isinstance(code, str) or code in known_codes() or bool(EXCEPTION_CLASS.match(code))
+def _known(code, exception_class=False) -> bool:
+    """A code of the file; for a reason (not a notice code, C 3.8) also the class name of an exception (15: "any")."""
+    return not isinstance(code, str) or code in known_codes() or (exception_class and bool(EXCEPTION_CLASS.match(code)))
 
 
 def _strings(value, keys):
@@ -223,10 +224,11 @@ def problems(report) -> list[str]:
             if due and reason not in reasons:
                 out.append(f"evidence.reasons lacks {reason}")
     # T-CERT-30: each reason, notice code and evidence reason of skellycam is in skellycam/REASON_CODES.md
-    codes = [c.get("reason") for c in [*checks, *(report.get("cleanup") or [])] if isinstance(c, dict)]
-    codes += [n.get("code") for n in notices if isinstance(n, dict)]
-    codes += reasons if isinstance(reasons, list) else []
-    for code in sorted({c for c in codes if not _known(c)}):
+    rows = [c.get("reason") for c in [*checks, *(report.get("cleanup") or [])] if isinstance(c, dict)]
+    rows += reasons if isinstance(reasons, list) else []  # a refused run gives the class name of a lock error
+    codes = [n.get("code") for n in notices if isinstance(n, dict)]
+    unknown = {c for c in rows if not _known(c, exception_class=True)} | {c for c in codes if not _known(c)}
+    for code in sorted(unknown, key=str):
         out.append(f"the code {code!r} is not in skellycam/REASON_CODES.md")
     keys = []
     # 1.7.0: the name of a test media file is exempt from rule 7; the same string elsewhere is not

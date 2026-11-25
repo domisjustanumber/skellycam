@@ -205,7 +205,7 @@ def image_effect(luma_m7, luma_m8, exposure_unit) -> tuple:
     if luma_m7 > BRIGHT_LUMA:
         return ("not-run", "too-bright")
     limit = UNITLESS_RATIO if exposure_unit in UNITLESS else TIME_UNIT_RATIO
-    if luma_m7 > 0 and luma_m8 / luma_m7 < limit:
+    if luma_m7 > 0 and round(luma_m8 / luma_m7, 3) < limit:  # the rounded `luma_ratio` of the report
         return ("pass", None)
     return in_the_dark(("fail", "no-image-effect"), luma_m7)
 

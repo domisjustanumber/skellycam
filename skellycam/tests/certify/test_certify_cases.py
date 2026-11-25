@@ -8,6 +8,8 @@ kill, with no hook in the product.
 import json
 import multiprocessing
 import os
+import pickle
+import queue
 import shutil
 import sys
 import threading
@@ -40,7 +42,8 @@ def test_t_cert_30_the_product_codes_and_each_reason_of_a_report_are_in_the_list
     """T-CERT-30, 15, C 5.4: each failure code of the product (unix-capture.md 4.6.3) is a reason of the list, except
     `process-ended`, which certify gives as `crashed` (10.5); each reason that the code can give is in
     `skellycam/REASON_CODES.md`. The validator refuses a reason, a notice code or an evidence reason that is not in
-    the file, and takes the class name of an exception (15 `<ExceptionClass>`), so each run test checks the rule."""
+    the file, and takes the class name of an exception (15 `<ExceptionClass>`) except as a notice code, so each run
+    test checks the rule."""
     catalog = product(CATALOG)
     failure_codes = product("skellycam.core.camera.capture.failure_codes")
     codes = known_codes()
@@ -57,7 +60,8 @@ def test_t_cert_30_the_product_codes_and_each_reason_of_a_report_are_in_the_list
     unknown = [dict(checks=[{"name": "detect", "result": "fail", "reason": "made-up"}]),
                dict(cleanup=[{"name": "release:x", "result": "fail", "reason": "made-up"}]),
                dict(notices=[{"code": "made-up", "values": {"camera": "C"}}]),
-               dict(evidence={"valid": False, "reasons": ["no-commit", "modified-tree", "made-up"]})]
+               dict(evidence={"valid": False, "reasons": ["no-commit", "modified-tree", "made-up"]}),
+               dict(notices=[{"code": "KeyboardInterrupt", "values": {"camera": "C"}}])]
     for change in unknown:
         assert any("REASON_CODES.md" in p for p in problems({**base, **change})), change
 
@@ -148,6 +152,8 @@ def test_t_cert_28_a_locked_file_and_the_files_of_the_person(monkeypatch, tmp_pa
     """T-CERT-28, 9.5: a file in the work folder that cannot be deleted gives the cleanup row `delete-work-folder`
     `not-deleted`; a file of the person in `recording_folder` and an old folder with no marker stay; an old folder
     with the marker goes."""
+    if sys.platform != "win32" and os.geteuid() == 0:
+        pytest.skip("root deletes a file in a folder with no write access, so POSIX has no locked file for root")
     recordings = tmp_path / "recordings"
     recordings.mkdir()
     mine = recordings / "my notes.txt"
@@ -249,7 +255,8 @@ def _std_caller(out_path: str) -> None:
         finally:
             sys.frozen = frozen
 
-    findings = dict(comtypes=[], listening=[], reports={}, plan_comtypes=None, error=None)
+    findings = dict(comtypes=[], listening=[], scanned=0, reports={}, plan_comtypes=None, error=None)
+    kind = "inet" if sys.platform == "win32" else "all"  # POSIX: also the Unix sockets
     try:
         spawn.get_command_line = plain_command_line
         sys.stdout = sys.stderr = None
@@ -272,7 +279,9 @@ def _std_caller(out_path: str) -> None:
             tree = [psutil.Process()] + psutil.Process().children(recursive=True)
             for process in tree:
                 try:
-                    for conn in process.net_connections(kind="inet"):
+                    connections = process.net_connections(kind=kind)
+                    findings["scanned"] += 1
+                    for conn in connections:
                         if conn.status == psutil.CONN_LISTEN or (conn.type == 2 and conn.laddr):  # 2: SOCK_DGRAM
                             findings["listening"].append([process.name(), str(conn.laddr)])
                 except psutil.Error:
@@ -289,7 +298,9 @@ def _std_caller(out_path: str) -> None:
 def test_t_cert_01_18_33_a_caller_with_no_streams_no_comtypes_and_no_socket(tmp_path):
     """T-CERT-01, 18, 33, 2.1, C 2.5: the caller is a spawn child with `sys.stdout` and `sys.stderr` `None` and
     `sys.frozen` true. The plan and quick and full runs with fakes give complete reports; the caller never loads
-    comtypes and never reads stdin; no process of the tree listens on a socket."""
+    comtypes and never reads stdin; no process of the tree listens on a socket. Not proven: the frozen case. The
+    product never reads `sys.frozen`, multiprocessing fixes its executable at import, and the test patches the spawn
+    command line; a real frozen build is T-CERT-90 (hardware)."""
     out = tmp_path / "findings.json"
     before = descendants()
     caller = multiprocessing.get_context("spawn").Process(target=_std_caller, args=(str(out),),
@@ -301,7 +312,7 @@ def test_t_cert_01_18_33_a_caller_with_no_streams_no_comtypes_and_no_socket(tmp_
     assert findings["error"] is None, findings["error"]
     assert findings["stdin_reads"] == []
     assert findings["plan_comtypes"] is False and findings["comtypes"] and not any(findings["comtypes"])
-    assert findings["listening"] == []
+    assert findings["listening"] == [] and findings["scanned"] > 0
     for level, report in findings["reports"].items():
         assert_valid(report)
         assert report["kind"] == level
@@ -321,14 +332,14 @@ def test_t_cert_121_the_not_built_list_after_q624():
     """T-CERT-121 in part, 3.6.12 (Q624): the plan and `details.not_built` name no check that Q624 dropped
     (`system:backend`, `system:virtual-cameras`, `control:focus:sharpness`, `control:autofocus`,
     `control:white-balance`, `control:power-line`, `timings`); they name `self:scale-3` and `self:scale-12`, and keep
-    `self:idle-cpu`, the two ring self-checks, `identity:stable` and `identity:unique`. (`details.cameras` is not
-    built; its part of the test waits for it.)"""
+    `self:idle-cpu`, the two ring self-checks, `identity:stable` and `identity:unique`. Not covered: the x86-64
+    and the ARM fake systems (the lists do not depend on the CPU today), and `details.cameras`, which is not built."""
     catalog = product(CATALOG)
     units = [("cam.x.0001-0002.0", (640, 480, 30.0), "C")]
     for backend in ("media-foundation", "v4l2", "avfoundation"):
         not_built = catalog.not_built("full", units, backend)
         planned = [name for name, _ in catalog.planned_checks("full", units, backend)]
-        names = set(not_built["camera"]) | set(not_built["run"]) | {n.split(":", 1)[-1] for n in planned}
+        names = set(not_built["camera"]) | set(not_built["run"]) | set(planned) | {n.split(":", 1)[-1] for n in planned}
         dropped = {"system:backend", "system:virtual-cameras", "control:focus:sharpness", "control:autofocus",
                    "control:white-balance", "control:power-line", "timings", "self:scale-4", "self:scale-8"}
         assert not names & dropped, names & dropped
@@ -341,7 +352,7 @@ def test_t_cert_121_the_not_built_list_after_q624():
 # Q773 (Q45): the dark rule of 4.6
 # ---------------------------------------------------------------------------
 
-@pytest.mark.xfail(strict=True, reason="needs the D-3 key `rate_luma_mean` of the product (3.5.15 P5): a camera that "
+@pytest.mark.xfail(strict=True, raises=AssertionError, reason="needs the D-3 key `rate_luma_mean` of the product (3.5.15 P5): a camera that "
                                        "fails its start-up rate check writes no ring frame (19.1 item 7), and today "
                                        "certify gets no diagnostics dict of that camera at the judge of the open")
 def test_t_cert_09_a_slow_camera_in_the_dark(monkeypatch, tmp_path):
@@ -397,6 +408,7 @@ def test_t_cert_13_the_image_rule_with_a_missing_frame():
     assert rule(120.0, 110.0, "ev") == ("pass", None)  # unitless: only the direction counts (ratio < 0.97)
     assert rule(20.0, 8.0, "log2-s") == ("pass", None)
     assert rule(20.0, 20.0, "log2-s") == ("not-run", "too-dark")
+    assert rule(100.0, 84.96, "log2-s") == ("fail", "no-image-effect")  # the report shows `luma_ratio` 0.85
     assert "no-frame" in product(CATALOG).REASON_CODES and "no-frame" in known_codes()
 
 
@@ -478,14 +490,64 @@ def test_t_cert_15_drive_refuses_a_value_that_is_not_a_result():
     drive loop with `bad-output` and stops the session; the checks that had ended keep their results."""
     from skellycam.tests.certify.test_certify_review import FakeSession
     run = product(RUN)
-    for bad in (b"\x00\xff", ("done", b"\x00\xff"), ("what", 1), ("begin", 3), ("done", {"result": "pass"})):
+    for bad in (b"\x00\xff", ("done", b"\x00\xff"), ("what", 1), ("begin", 3), ("done", {"result": "pass"}),
+                ("done", {"name": "zzz", "result": "pass", "reason": None}), ("done", {"name": "b", "result": "maybe"}),
+                ("fact", ("before", 5)), ("fact", ("what", ("a", 1))), ("end", 3), "unpickle"):
         rows = {"a": None, "b": None}
-        session = FakeSession([("begin", "a"), ("done", {"name": "a", "result": "pass", "reason": None}), bad,
-                               ("begin", "b")])
+        session = FakeSession([("begin", "a"), ("done", {"name": "a", "result": "pass", "reason": None})])
+        if bad == "unpickle":  # the queue of a session child raises when the bytes do not unpickle
+            session.events = Unpickles(session.events)
+        else:
+            session.events.put(bad)
+        session.events.put(("begin", "b"))
         out = run._drive(session, rows, run._Progress(None, "quick"), run._Stops(None, None), time.monotonic() + 60,
                          "over-budget")
         assert out.stop == "bad-output" and session.stopped is not None, bad
-        assert rows == {"a": {"name": "a", "result": "pass", "reason": None}, "b": None}
+        assert rows == {"a": {"name": "a", "result": "pass", "reason": None}, "b": None}, bad
+
+
+class Unpickles(queue.Queue):
+    """Gives the events of `events`, then raises as `multiprocessing.Queue.get` does for bytes that do not unpickle."""
+
+    def __init__(self, events):
+        super().__init__()
+        while not events.empty():
+            self.put(events.get_nowait())
+        self.put(None)  # the place of the broken bytes
+
+    def get(self, *args, **kwargs):
+        item = super().get(*args, **kwargs)
+        if item is None:
+            raise pickle.UnpicklingError("invalid load key")
+        return item
+
+
+def test_the_session_child_sets_the_native_source(monkeypatch, tmp_path):
+    """2.1, T-CERT-32: the session child calls `_native_capture` with its source factory before it builds anything;
+    `_native_capture` sets the native source with no factory, leaves the setting with a factory, and its callable
+    puts the old value back."""
+    run = product(RUN)
+
+    class Called(Exception):
+        pass
+
+    def stop_here(source_factory):
+        raise Called(source_factory)
+    with monkeypatch.context() as patch:
+        patch.setattr(run, "_native_capture", stop_here)
+        with pytest.raises(Called) as called:
+            run._session_child(queue.Queue(), queue.Queue(), [], str(tmp_path), "quick", False, None)
+    assert called.value.args == (None,)
+    monkeypatch.setenv("SKELLYCAM_WINDOWS_CAPTURE", "opencv")
+    run._native_capture(FakeSourceFactory([good()]))()
+    assert os.environ["SKELLYCAM_WINDOWS_CAPTURE"] == "opencv"
+    restore = run._native_capture(None)
+    assert os.environ["SKELLYCAM_WINDOWS_CAPTURE"] == "media_foundation"
+    restore()
+    assert os.environ["SKELLYCAM_WINDOWS_CAPTURE"] == "opencv"
+    monkeypatch.delenv("SKELLYCAM_WINDOWS_CAPTURE")
+    run._native_capture(None)()
+    assert "SKELLYCAM_WINDOWS_CAPTURE" not in os.environ
 
 
 def test_t_cert_32_certify_uses_the_native_source_of_the_product_factory(monkeypatch, tmp_path):
@@ -517,5 +579,6 @@ def test_t_cert_32_certify_uses_the_native_source_of_the_product_factory(monkeyp
         report = run_with(app, tmp_path)
     assert_valid(report)
     assert created and set(created) == {"native"}, created
+    assert os.environ["SKELLYCAM_WINDOWS_CAPTURE"] == "opencv", "the thread session did not put the setting back"
     first, _ = labels(factory.device_infos())
     assert by_name(report)[f"{first}:opens"]["result"] == "pass"

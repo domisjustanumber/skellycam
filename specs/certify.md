@@ -3236,7 +3236,7 @@ This section is for the freemocap session, which coordinates the checks of the m
 
 ## 13. What the product is missing
 
-The "Today" column states the code of 2026-11-25 (Q772). Rows 2 to 4, 12, 15 and 16 hold for
+The "Today" column states the code of 2026-11-25 (Q772). Rows 2, 3, 12, 15 and 16 hold for
 Media Foundation only: the OpenCV source gives `null` for each diagnostics key except `backend`.
 
 | Need | Today | Step that delivers it |
@@ -3244,7 +3244,7 @@ Media Foundation only: the OpenCV source gives `null` for each diagnostics key e
 | A fixed failure code (`camera-in-use`, `usb-bandwidth`, `hung`, ...) in the failure object of cap 12 | Built: `CaptureFailure.code` with the codes of `failure_codes.py`. Media Foundation maps its HRESULTs (`errors.py` `hresult_code`). | Step 7s: `CaptureFailure.code` with the codes of [ux 4.6.3], also for Media Foundation [ux 4.2 item 1]. The user decided the code [U]. |
 | The controls before the first set, in the diagnostics (`c_before`, `c_before_auto`) | Built for Media Foundation: `ControlRestore.fill` writes `<control>_before` and `<control>_before_auto`. | Step 7s [ux 4.6.2, 4.7]; the Media Foundation source in the same step |
 | A restore of the "before" values at each close, on by default, on the three systems, with its result in the diagnostics (`restore_ok`, `restore_failed`) | Built on Windows (Media Foundation, `ControlRestore.restore`), with the record on disk (`restore_store.py`). No restore on Linux and macOS: the OpenCV source has none. | Step 7s for Windows (done). Linux and macOS: the native sources of phase 7. The user decided that the product restores at its own close [U]; [ux 4.7] has it on by default, with the keys `restore_ok` and `restore_failed`. |
-| The state `adjusting`, `exposure_search` in the status, and a new search when the frame rate changes | Built: `camera_loop.py` `_start_search`; a reopen for a rate change searches again. The OpenCV source does not search. | Step 7s and the Media Foundation change of [ux 4.5]; the rule is a decision of the user [U] (5.3) |
+| The state `adjusting`, `exposure_search` in the status, and a new search when the frame rate changes | Built: `camera_loop.py` `_start_search`; a reopen for a rate change searches again. The OpenCV source searches on Windows only (`searches`). | Step 7s and the Media Foundation change of [ux 4.5]; the rule is a decision of the user [U] (5.3) |
 | A count of frames that skellycam encoded and decoded (`encoded_by_skellycam`, `decoded_by_skellycam`) | Built: the loop counts `encoded_by_skellycam` (`_process`), and the decode stage counts `decoded_by_skellycam` (`decode.py`). | Step 7s, the shared loop [ux 4.2 item 3]; 3b for the encoder |
 | The diagnostics dict of [ux 4.6.2], sent to the main process (`CameraGroupManager.diagnostics()`) | Built: `CameraGroupManager.diagnostics()`; a closed group keeps its last dicts (`closed_diagnostics`). The dict of a hung camera can still be lost (last row, P3). | Step 7s [ux 4.2 item 2] |
 | The local record `camera_checks.json` in the skellycam base folder, with the gate and the routes of each model (2.5, 11.3) | Built: the reader `camera_checks.py`, the writer `catalog.write_record`. | The certify step |
@@ -3252,7 +3252,7 @@ Media Foundation only: the OpenCV source gives `null` for each diagnostics key e
 | The full mode list with formats (`capture_modes`) | MJPG only | 3c |
 | Uncompressed modes | Partly: the ring and the decode take YUY2 and NV12. No source captures them, and the mode list is MJPG only. | 3b |
 | Gain and focus through the config; white balance and power line read | The config sets exposure only. Media Foundation reads gain and focus. White balance and power line are not read. | 3c |
-| Control ranges (min, max, step, default: `GetRange`) | Media Foundation reads the ranges of exposure, gain and focus into the diagnostics. Detection does not carry them. | Not in the 3c spec: add the ranges in detection, and of white balance and power line, to 3c. |
+| Control ranges (min, max, step, default: `GetRange`) | Media Foundation reads the ranges of exposure, gain and focus into the diagnostics. Detection does not carry them. | Not in the 3c spec. Add to 3c. |
 | USB link per camera | Built: `usb_connection.py` is ported from upstream `sfn26`, and `_add_usb_links` of `detect_cameras_devices.py` fills `usb_link` after detection. The UI label is built. The lookup runs in the main process with no time limit. | Step 5: the bounded lookup in the detection child [req 3.4, 3.5] |
 | The model name (USB product string) | Friendly name only | 5d (`device.model`, rec 6.7) |
 | Stage times (open, first frame, ready, close) in the status | Media Foundation: the open, first-frame and close times are in the diagnostics dict (D-6), not in the status. No ready time. | The certify step |

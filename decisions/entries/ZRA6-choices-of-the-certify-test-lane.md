@@ -16,21 +16,23 @@ those decisions. This entry holds only the choices of the agent where the spec i
 4. `too-bright` does not change: a frame above 230 at -7 is `not-run` `too-bright`, also when the image check
    would pass. Q773 changed the dark side only.
 5. The dark rule is two pure functions of `skellycam/core/certify/catalog.py`: `in_the_dark` and `image_effect`.
-   The limits of 4.3 and 4.6 move there from `session.py`.
+   The limits of 4.3 and 4.6 move there from `session.py`. `image_effect` judges the ratio rounded to 3 places,
+   as the report shows `luma_ratio`.
 6. The `rate` row reads its brightness from the D-3 key `rate_luma_mean` (3.5.15 P5), because a failed
    start-up rate check writes no ring frame (19.1 item 7). P5 is not built, so T-CERT-09 is a strict `xfail`.
 7. `bad-output` is an event of the session child that is not a pair of a known kind and a value of its form, or
-   an event that does not unpickle. The drive loop then stops, and the session gets the grace stop of a time-out.
+   an event that does not unpickle. A `done` must name a planned check and have a result of C 3.4. A `fact` must
+   be a known fact with an item of its form. The drive loop then stops, and the session gets the grace stop of a time-out.
    The running check is `fail` `bad-output` by the rule of a time-out (19.2 item 8). Phase G gets the limit of a
    crash. The run writes no record row.
-8. A crash of the session child gives `exit_code` on each `not-run` `crashed` row (T-CERT-78 in 3.6). The row
-   stays `not-run`, by 19.2 items 8 and 13.
+8. A crash of the session child gives `exit_code` on each `not-run` `crashed` row, `null` when it is not known
+   (T-CERT-78 in 3.6, 3.5.3). The row stays `not-run`, by 19.2 items 8 and 13.
 9. `_native_capture` of `run.py` sets the native source. The thread session of the tests calls it too. Thus
-   T-CERT-32 runs the product factory and shows that the OpenCV source is never created. On Linux and macOS the
-   test is skipped until phase 7 (Q777).
+   T-CERT-32 runs the product factory and shows that the OpenCV source is never created. The thread session puts
+   the old value back at its stop and its end. On Linux and macOS the test is skipped until phase 7 (Q777).
 10. T-CERT-30: the test validator `report_rules.py` refuses a reason, a notice code or an evidence reason that is
-    not in `REASON_CODES.md`. The class name of an exception passes (section 15). Thus each run test checks the
-    rule.
+    not in `REASON_CODES.md`. The class name of an exception passes as a reason (section 15: "any"), also in
+    `evidence.reasons`, where a refused run puts the class of a lock error. It never passes as a notice code. Thus each run test checks the rule.
 11. The not-built lists of `catalog.py` drop the checks of Q624: `timings`, `control:focus:sharpness`,
     `control:autofocus`, `control:white-balance`, `control:power-line`, `system:backend` and
     `system:virtual-cameras`. They have `self:scale-3` and `self:scale-12` in place of `self:scale-4` and
@@ -39,6 +41,11 @@ those decisions. This entry holds only the choices of the agent where the spec i
     the child when the child unpickles it (`ChildFault` of `test_certify_cases.py`). The product has no hook.
 13. In the spec, the example of 3.6.9 and the virtual-camera line of 3.4 lose the names of Q624, and the "Today"
     column of section 13 states the code of 2026-11-25.
+14. T-CERT-01, 18 and 33 do not prove the frozen case. The product never reads `sys.frozen`, multiprocessing fixes
+    its executable at import, and the test patches the spawn command line. The frozen case is not proven until
+    T-CERT-90 (hardware) runs on a real build.
+15. A proposal for the 3c spec (section 13, the row of the control ranges): add the ranges in detection, and the
+    ranges of white balance and power line.
 
 ## Reason
 

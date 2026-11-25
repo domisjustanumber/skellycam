@@ -179,6 +179,9 @@ task. Delete an item when its work is done. The PR that closes an item records t
     (Q598) and `system:disk-benchmark` (Q612), and they lack the new checks of 3.6.11 and 3.6.12.
   - The run parts of T-CERT-23 (the Auto checks of `full`) and of T-CERT-121 (`details.cameras`) wait for that
     code. T-CERT-32 runs on Windows only until phase 7 (Q777).
+  - The frozen case of T-CERT-18 is not proven until T-CERT-90 runs on a real build (item 14 of ADR-ZRA6).
+  - Q790 (Q62) and Q792 (Q64) are not in this lane on purpose: their spec text is on `dom/exclusive-access-spec`
+    and waits for the acceptance of the user.
 - **Decided 2026-11-21, not built**
   ([ADR-TFD7](entries/TFD7-search-limit-stop-rate-median-role-flag-and-restore-after-a-failed-loop.md)):
   a role flag in place of the `parent_process()`
