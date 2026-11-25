@@ -28,6 +28,7 @@ def group(monkeypatch):
     ipc.should_continue = True
     ipc.extracted_config_subscription = Mock(empty=Mock(return_value=True))
     ipc.diagnostics_subscription = queue.Queue()  # the close reads it (unix-capture.md 4.2 item 2)
+    ipc.setup_failures = Mock()  # the close closes it (windows-capture.md 5.9)
     cameras = Mock(spec=CameraManager)
     cameras.camera_workers = {}
     cameras.orchestrator = SimpleNamespace(camera_statuses={})
