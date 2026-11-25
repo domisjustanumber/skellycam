@@ -1189,6 +1189,9 @@ The test writer checks each name and path on `dom/integration` first [S].
   `specs/preview-4b.md`, `tools/write_camera_message_fixture.py` and its test to its paths, and
   `tools/tests/test_camera_message_fixture.py` to the selection of its three jobs, so that T-PRV-25
   runs on the three systems.
+- T-PRV-25 imports `skellycam`, and `doc-checks.yml` syncs only the dev group. The CI PR runs T-PRV-25 only
+  in a job that syncs the project, or moves the test under `skellycam/tests/` (proposed,
+  [ADR-70WD](../decisions/entries/70WD-failing-tests-of-step-4b-and-the-names-they-assume.md) item 14).
 
 ## 8. The interface note for the FreeMoCap session [P5]
 

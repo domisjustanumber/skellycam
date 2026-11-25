@@ -188,12 +188,19 @@ const preview = {
             .map(tr => [...tr.querySelectorAll('td')].map(td => text(td.querySelector('.stats-cell-primary') ?? td)))
             .filter(cells => cells.length > 1) : [];
         const svgTexts = full ? [...full.querySelectorAll('svg text')].map(t => text(t)).filter(Boolean) : [];
+        // an HTML legend: the text of the full view outside the table and the SVG
+        const rest = full?.cloneNode(true) as Element | undefined;
+        rest?.querySelectorAll('table, svg').forEach(e => e.remove());
+        const legendText = rest ? text(rest) : '';
+        const painted = (v: string) => !!v && v !== 'none' && v !== 'rgba(0, 0, 0, 0)';
         const series = full ? [...full.querySelectorAll('svg [data-series]')].map(e => {
             const style = getComputedStyle(e);
+            // a bar (rect) shows its fill; a line shows its stroke
+            const order = e.tagName.toLowerCase() === 'rect' ? [style.fill, style.stroke] : [style.stroke, style.fill];
             return {camera: e.getAttribute('data-camera-id'), series: e.getAttribute('data-series'),
-                colour: style.stroke && style.stroke !== 'none' ? style.stroke : style.fill, dash: style.strokeDasharray};
+                colour: order.find(painted) ?? '', dash: style.strokeDasharray};
         }) : [];
-        return {full: !!full, collapsed: collapsed ? text(collapsed) : null, headers, rows, svgTexts, series};
+        return {full: !!full, collapsed: collapsed ? text(collapsed) : null, headers, rows, svgTexts, legendText, series};
     },
 };
 

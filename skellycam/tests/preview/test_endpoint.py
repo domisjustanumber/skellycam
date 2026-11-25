@@ -173,13 +173,16 @@ def test_t_prv_28_the_tasks_end_after_a_close(app, mock_camera_group_manager, cl
                 writers.append(PacedWriter(fake_ring, fps=60,
                                            script=lambda k, r=fake_ring: {"payload": big_payload(r, k)}).start_thread())
             pump(ws, duration=2.0)
-        closed_at = time.monotonic()
-        assert len(servers) == 1, f"{len(servers)} websocket servers"
-        tasks = servers[0].ws_tasks
-        assert len(tasks) == 4, [t.get_name() for t in tasks]
-        while time.monotonic() < closed_at + 1.0 and not all(t.done() for t in tasks):
-            time.sleep(0.01)
-        assert [t.get_name() for t in tasks if not t.done()] == [], "tasks still running 1 s after the close"
+            assert len(servers) == 1, f"{len(servers)} websocket servers"
+            tasks = servers[0].ws_tasks
+            assert len(tasks) == 4, [t.get_name() for t in tasks]
+            # the close of the client only: the exit of the TestClient context would cancel each task itself
+            session.close(1000)
+            closed_at = time.monotonic()
+            while time.monotonic() < closed_at + 1.0 and not all(t.done() for t in tasks):
+                time.sleep(0.01)
+            still_running = [t.get_name() for t in tasks if not t.done()]
+        assert still_running == [], "tasks still running 1 s after the close"
     assert any(ws.camera[cid] for cid in rings), "no camera message in 2 s"
     assert not app.state.global_kill_flag.value, "the global kill flag is set"
     assert errors_of(caplog) == []

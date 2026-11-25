@@ -120,7 +120,9 @@ task. Delete an item when its work is done. The PR that closes an item records t
     `uv run pytest skellycam/tests/preview tools/tests/test_camera_message_fixture.py -m "not pace"`. Not run yet:
     T-PRV-28 and T-PRV-29 (heavy real-time runs), the component tests T-PRV-43, 44, 47 to 50 and T-PLAY-44
     (`npm run test:player:browser`), the benchmarks T-PRV-51 and T-PRV-52 (by hand). Not done: the CI changes of
-    7.8, in their own PR. Next: the product code of 4b, after a go-ahead of the user.
+    7.8, in their own PR; that PR must run T-PRV-25 in a job that syncs the project, not in `doc-checks.yml`
+    (ADR-70WD item 14). The 4b code must also change `skellycam/tests/capture/test_group_watch.py`, which uses
+    `get_latest_ring_payload` (item 5). Next: the product code of 4b, after a go-ahead of the user.
 - **The `sfn26` integration on `dom/integration`.** The user decided the base on 2026-11-20
   ([ADR-EQY4](entries/EQY4-base-the-work-on-upstream-sfn26-without-rust.md)), and accepted the
   agent choices ([ADR-6T78](entries/6T78-choices-of-the-sfn26-integration.md)). Open:

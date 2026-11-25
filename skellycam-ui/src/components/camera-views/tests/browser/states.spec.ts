@@ -68,11 +68,13 @@ test('T-PRV-44 the states of the cameras, with no filter on alive', async ({prev
     await stateTimes(server, page, A.id, 'starting');
     const held = await states(server);
     expect(held.states[A.id], 'A still holds in starting').toBe('starting');
-    expect(Object.values(held.alive), 'the group is not alive').toEqual([false]);
+    // Since ADR-NYT6 the group is alive while one selected camera lives (spec 4.5): the value is recorded, not checked.
+    // The words "although the group is not alive" of T-PRV-44 wait for the user (ADR-70WD item 13).
+    test.info().annotations.push({type: 'group alive while A is starting', description: JSON.stringify(held.alive)});
 
     const ids = [A.id, B.id, C.id];
     await expect.poll(async () => (await page.evaluate(() => window.preview.tileIds()))?.slice().sort(),
-        {message: 'three tiles, although the group is not alive'}).toEqual([...ids].sort());
+        {message: 'three tiles, with no filter on alive'}).toEqual([...ids].sort());
     await expect.poll(async () => (await page.evaluate(() => window.preview.cells())).map(c => c.id).sort(),
         {message: 'three grid cells'}).toEqual([...ids].sort());
     const overlays = await page.evaluate(i => i.map(id => window.preview.overlay(id)), ids);

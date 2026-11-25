@@ -320,7 +320,8 @@ def scripted_manager(width, height, fps):
             cameras = {camera_id: {"pid": os.getpid(), "name": f"fake ring {camera_id}", "alive": True, "status": {
                 "state": s["state"], "replaced_count": s["replaced_count"], "failure": None, "warnings": [],
                 "measured_fps": None, "mode": None, "exposure_search": None}} for camera_id, s in self.scripted.items()}
-            alive = all(s["state"] in ("ready", "recording", "checking", "too_slow") for s in self.scripted.values())
+            # ADR-NYT6 (camera-requests.md 1.5): alive while at least one camera lives (not `failed` or `dead`)
+            alive = any(s["state"] not in ("failed", "dead") for s in self.scripted.values())
             return {"camera_groups": {"g1": {"id": "g1", "configs": configs, "cameras": cameras, "alive": alive,
                                              "recording_in_progress": False, "take_state": "none",
                                              "ended_take_summary": None}}}

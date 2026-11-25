@@ -6,7 +6,7 @@ import {expect} from '@playwright/test';
 import {observe, readings} from '../../../../player/tests/harness/observer.ts';
 import {
     connectionNumbers, counts, describe, geometry, requirePreviewTiles, sameReading, SIZE_640, sleep, test, toCaptures,
-    waitDrawn, watch,
+    waitDrawn, watch, written,
 } from './preview-kit.ts';
 
 const HIDDEN_MS = 5000;
@@ -36,6 +36,7 @@ test('T-PRV-49 a hidden window gets only the safety net', async ({preview}) => {
     const before = await watch(win2, ids, 500);
     expect(before.length, 'the observer reads window 2 before the hide').toBeGreaterThan(0);
     const last = before[before.length - 1];
+    const writtenAtHide = await written(server);
     const hidden = Date.now();
     await win1.app.evaluate(({BrowserWindow}, id) => BrowserWindow.fromId(id)!.hide(), win2.windowId);
     const visibility: string[] = [];
@@ -44,6 +45,7 @@ test('T-PRV-49 a hidden window gets only the safety net', async ({preview}) => {
         await sleep(500);
     }
     const shown = Date.now();
+    const writtenAtShow = await written(server);
     await observe(win1.app, geo2, win2.windowId);
     await win1.app.evaluate(({BrowserWindow}, id) => BrowserWindow.fromId(id)!.showInactive(), win2.windowId);
     await sleep(1500);
@@ -52,12 +54,14 @@ test('T-PRV-49 a hidden window gets only the safety net', async ({preview}) => {
     expect(visibility.slice(1).every(v => v === 'hidden'), `document.visibilityState in window 2 while hidden: ${visibility.join(', ')}`).toBe(true);
     const n = await counts(server, hidden + SETTLE_MS, shown);
     const seconds = (shown - hidden - SETTLE_MS) / 1000;
+    const n1 = await counts(server, hidden, shown);   // window 1: the whole hidden time, against the frames written
     for (const id of ids) {
         const perSecond = (n.connections[conn2]?.cameras[id]?.sent.length ?? 0) / seconds;
         expect(perSecond, `window 2, camera ${id}: camera messages each second while hidden (the safety net)`).toBeGreaterThanOrEqual(0.5);
         expect(perSecond, `window 2, camera ${id}: camera messages each second while hidden (the safety net)`).toBeLessThanOrEqual(1.6);
-        const ready1 = n.connections[conn1]?.cameras[id]?.ready.length ?? 0;
-        expect(ready1, `window 1, camera ${id}: at least 80 % of the frames while window 2 is hidden`).toBeGreaterThanOrEqual(0.8 * 30 * seconds);
+        const ready1 = n1.connections[conn1]?.cameras[id]?.ready.length ?? 0;
+        const frames = writtenAtShow[id] - writtenAtHide[id];
+        expect(ready1, `window 1, camera ${id}: at least 80 % of the ${frames} frames written while window 2 is hidden`).toBeGreaterThanOrEqual(0.8 * frames);
     }
     for (const id of ids) {
         const fresh = after.find(k => k.at <= shown + 1000 && typeof k.tiles[id] !== 'string' && !sameReading(k.tiles[id], last.tiles[id]));

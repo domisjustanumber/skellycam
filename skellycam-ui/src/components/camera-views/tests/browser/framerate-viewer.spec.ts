@@ -12,7 +12,7 @@ type Viewer = Awaited<ReturnType<typeof viewer>>;
 
 /** The cell of a row in the column that has the header text `name`. */
 function cell(v: Viewer, row: string[], name: string): string | undefined {
-    const column = v.headers.findIndex(h => h === name);
+    const column = v.headers.findIndex(h => h.startsWith(name));
     expect(column, `a column "${name}" in the statistics table (headers: ${v.headers.join(' | ')})`).toBeGreaterThanOrEqual(0);
     return row[column];
 }
@@ -40,11 +40,11 @@ test('T-PRV-50 the frame rate viewer: Captured and Displayed for each camera, an
     // the full view
     let v = await viewer(win);
     expect(v.full, 'the full view of the frame rate viewer').toBe(true);
-    const svg = v.svgTexts.join(' | ');
+    const svg = [...v.svgTexts, v.legendText].join(' | ');   // the SVG texts, or an HTML legend outside the table
     for (const c of cams) {
         for (const series of ['Captured', 'Displayed'] as const) {
             expect(svg.includes(label(c)) && svg.includes(series),
-                `the series "${series}" of ${label(c)} in the timeline and the histogram (SVG texts: ${svg})`).toBe(true);
+                `the series "${series}" of ${label(c)} in the timeline and the histogram (SVG texts and legend: ${svg})`).toBe(true);
             row(v, label(c), series);
         }
     }

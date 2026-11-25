@@ -5,63 +5,58 @@
 
 ## Decision
 
-The tests of section 7.4 of [`specs/preview-4b.md`](../../specs/preview-4b.md) are written, with the helpers of
-7.2. There is no product code of step 4b. Each test name starts with its spec ID. The choices below are of the
-agents. The user did not decide them.
+The tests of 7.4 of [`specs/preview-4b.md`](../../specs/preview-4b.md) are written, with the helpers of 7.2. There
+is no product code of 4b. Each test name starts with its spec ID. The user did not decide these choices.
 
-1. **Files.** Python: `tools/write_camera_message_fixture.py` with its test, the fixture
-   `skellycam-ui/src/services/server/preview/tests/camera-messages.json`, and these files in `skellycam/tests/preview/`:
-   `test_endpoint.py`, `test_ring_close_on_loop.py`, `test_old_format_deleted.py`, `test_interface_note.py`,
-   `barcode_jpegs.py` and `ui_server.py`. UI: the unit tests in `src/services/server/preview/tests/unit/`, the
-   component tests, the harness page and the benchmark in `src/components/camera-views/tests/`, and
-   `src/player/tests/harness/observer.ts` (the observer of the player bench, moved with no change of method).
-2. **TypeScript names that the tests assume.** `camera-message.ts` and `PreviewTiles` are as 5.2 and 5.3 give them.
-   The spec gives no other names, so the tests use these:
+1. **Files.** `tools/write_camera_message_fixture.py`, its test and the fixture `camera-messages.json`; in
+   `skellycam/tests/preview/`: `test_endpoint.py`, `test_ring_close_on_loop.py`, `test_old_format_deleted.py`,
+   `test_interface_note.py`, `barcode_jpegs.py`, `ui_server.py`. UI: `src/services/server/preview/tests/unit/`,
+   `src/components/camera-views/tests/` and `src/player/tests/harness/observer.ts` (the bench observer, moved).
+2. **Names that the tests assume.** `camera-message.ts` and `PreviewTiles` are as 5.2 and 5.3 give them. Also:
    - `server-messages.ts`: `appStateValues(message, cameraList)` gives `{overlays, gridCameraIds,
-     connectedCameraIds}`, where `overlays[id]` is `{label, cameraState}`. `rateTexts(message)` gives a rate text
-     or `null` for each camera id. `isFramerateUpdate(data)` is the guard of 5.5.
-   - `FramerateStore`: `recordFramerateUpdate(message)`, `recordAppState(message)`, `recordDrawn(cameraId, atMs)`,
-     `cameraIds()`, `clear()`, and `getCamera(id)`. `getCamera` gives `null` for an unknown camera. Else it gives
-     `{captured, displayed, notShown, ringSkipped, oversize, replaced}`, where `captured` and `displayed` are each
-     `{current, aggregate}` of the type `DetailedFramerate`.
-   - The label functions are `cameraLabel` and `labelText` of `camera-labels.ts`. `camera-requests.md` 1.8
-     replaced `cameraListLabel` and `withCameraLabels` with these names, and T-REQ-28 fails when any file names
-     `withCameraLabels`.
-   - `useServer()` gets `getPreviewTiles()` and `gridCameraIds`. The canvas of each tile has
-     `data-camera-id="<id>"`. The frame rate viewer keeps `.framerate-viewer` and `.framerate-collapsed-summary`.
-     Its series are `svg [data-camera-id][data-series]`, its count columns are under the header texts of 5.8,
-     and its collapsed text is `<label>: Captured <x> fps, Displayed <y> fps`.
-3. **The Displayed value of T-PRV-53 is the recent value** (`displayed.current`). It is not the mean of the window:
-   after the two parts, the mean of the window is 40 fps, not 60 fps. A value over the last 1 s of drawn frames
-   passes, and so does the last interval. The window (`displayed.aggregate`) shows that the gap of 2 s, the
-   flagged message and the overlay update add no value.
-4. **T-PRV-26 is split** into a blocking test and a `pace` test on one run, as
-   [ADR-F4N7](F4N7-decisions-of-the-user-on-the-pace-tests-of-fix-lane-6.md) (Q670) splits the 4a ws tests. That
-   decision came after the spec. The blocking test checks for more camera messages than the safety net gives.
-5. **T-PRV-30 matches a whole word.** Else `FRAME_HEADER_SIZE` matches `CAMERA_FRAME_HEADER_SIZE` of the new
-   parser (5.2), and the test can never pass.
-6. **T-PRV-33**: the second give of a bad message writes no `console.error`. The seven bad messages write 4 to 7
-   errors, because the spec does not say whether version 0 and version 2 are one reason.
-7. **T-PRV-29** uses PROCESS workers. Camera B ends with `os._exit(3)` at the next frame after `FakeLog.arm()`
-   (`on_arm="exit"`). The restart is an apply with `retry_camera_ids` of B. The relay runs on the loop of the test
-   client, where the group starts. T-PRV-28 uses 1920 x 1080 rings, so that a payload of 607,032 bytes fits.
-8. **Helpers that changed.** `FakeRing` takes `width` and `height`. `WsClient` keeps each text that is not JSON
-   (`pong`) in `texts`.
-9. **`ui_server.py`.** It reads one JSON command for each line of stdin, and writes each reply line with the prefix
-   `@ui_server `. The first event names the port. It counts the ready messages through a subclass of
-   `PreviewRelay` that uses only the 4a constructor and `handle_text`. The fake manager is also a
-   `CameraGroupManager`, for the beartype check of `WebsocketServer`. The capture mode runs the group on the event
-   loop of uvicorn, so that the rule of 4.3 holds.
-10. **The component tests.** T-PRV-44 holds A in `starting` on its second open (a failed first open, then an apply
-    with a retry), because a camera cannot join a running group. T-PRV-47 accepts `DISCONNECTED` or `FAILED`
-    after the give-up. It allows only the connection errors in the console. T-PRV-48 checks D, B, C, A after the
-    add. T-PRV-50 reads "3, 1 and 7" as Oversize 3, Ring skipped 1 and Replaced 7.
-11. **Harness.** With `PLAYER_HARNESS_PRODUCT_THROTTLING=1`, the harness app has no switch against backgrounding,
-    and `openWindow(name, {productThrottling: true})` opens a window with the default `backgroundThrottling`
-    (T-PRV-49). `tsconfig.json` excludes `src/components/camera-views/tests`, as it excludes the other UI tests.
-12. **Player tests of 7.6.** T-PLAY-37 gets a unit check of `frame: null` in `format.test.ts`. T-PLAY-44 gets a
-    last step. `npm run test:player:unit` adds the two globs of 7.8. `playwright.player.config.ts` and
-    `playwright.player-bench.config.ts` change as 7.8 says.
+     connectedCameraIds}`, with `overlays[id]` = `{label, cameraState}`; `rateTexts(message)`;
+     `isFramerateUpdate(data)`.
+   - `FramerateStore`: `recordFramerateUpdate`, `recordAppState`, `recordDrawn(cameraId, atMs)`, `cameraIds()`,
+     `clear()`, `getCamera(id)`: `null`, or `{captured, displayed, notShown, ringSkipped, oversize, replaced}`, where
+     `captured` and `displayed` are `{current, aggregate}` of `DetailedFramerate`.
+   - `cameraLabel` and `labelText` of `camera-labels.ts`. `camera-requests.md` 1.8 replaced `withCameraLabels`
+     with `labelText`. `cameraLabel` is the code name of `cameraListLabel` of 5.4; no document renamed it.
+   - `useServer()` gets `getPreviewTiles()` and `gridCameraIds`; each tile canvas has `data-camera-id`. The viewer
+     keeps `.framerate-viewer` and `.framerate-collapsed-summary`; its series are `svg [data-camera-id][data-series]`
+     (colour: the fill of a `rect`, else the stroke); the labels are in the SVG texts or an HTML legend; each count
+     header starts with its text of 5.8; the collapsed text is `<label>: Captured <x> fps, Displayed <y> fps`.
+3. **Displayed in T-PRV-53 is the recent value** (`displayed.current`). The window mean after both parts is 40 fps,
+   not 60. A value over the last 1 s of drawn frames passes. `displayed.aggregate` shows that the gap, the flagged
+   message and the overlay update add no value.
+4. **T-PRV-26 is split** into a blocking and a `pace` test on one run, as Q670 of
+   [ADR-F4N7](F4N7-decisions-of-the-user-on-the-pace-tests-of-fix-lane-6.md) splits the 4a tests.
+5. **T-PRV-30 matches whole words**, else `FRAME_HEADER_SIZE` matches `CAMERA_FRAME_HEADER_SIZE` (5.2). A 4b test
+   file builds an old key at run time (`['backend', 'framerate'].join('_')`). `test_group_watch.py` of the capture
+   tests uses `get_latest_ring_payload`: 3.2 does not list it, but the 4b code must change it.
+6. **T-PRV-33**: a second give of a bad message writes no `console.error`; the seven messages write 4 to 7.
+7. **T-PRV-29** uses PROCESS workers; B ends with `on_arm="exit"`; the restart is an apply with a retry of B.
+   **T-PRV-28** uses 1920 x 1080 rings, and closes the client inside the test client context, whose exit cancels
+   each task itself.
+8. **Helpers.** `FakeRing` takes `width` and `height`. `WsClient.texts` keeps each text that is not JSON.
+9. **`ui_server.py`** reads one JSON command for each stdin line and replies on lines that start with
+   `@ui_server `. It counts the ready messages with a subclass of `PreviewRelay` (4a API only). Its fake manager is
+   also a `CameraGroupManager` (beartype). Its scripted `alive` follows
+   [ADR-NYT6](NYT6-choices-of-fix-lane-2.md). The capture mode runs the group on the uvicorn loop (4.3).
+10. **Component tests.** T-PRV-44 holds A on its second open (a retry), because a camera cannot join a running
+    group; it records `alive` and does not check it (item 13). T-PRV-47 accepts `DISCONNECTED` or `FAILED` and
+    allows only connection errors in the console. T-PRV-48 checks D, B, C, A, in the DOM and on the screen.
+    T-PRV-50 reads "3, 1 and 7" as Oversize, Ring skipped, Replaced. T-PRV-49 checks window 1 against the frames
+    written.
+11. **Harness and configs.** `PLAYER_HARNESS_PRODUCT_THROTTLING=1` and `openWindow(name, {productThrottling})` give
+    the product throttling (T-PRV-49). `tsconfig.json` excludes `src/components/camera-views/tests` and
+    `src/services/server/preview/tests`, as the player tests; `npx tsc --noEmit` has 0 errors. The npm script and
+    the Playwright configs change as 7.8 says.
+12. **Player tests of 7.6.** A `frame: null` check in `format.test.ts` (T-PLAY-37) and a last step of T-PLAY-44.
+13. **T-PRV-44 and `alive`.** Since ADR-NYT6 the group is alive while one selected camera lives (4.5). The words
+    "although the group is not alive" of T-PRV-44 do not hold.
+14. **T-PRV-25 and CI.** `doc-checks.yml` syncs only the dev group, and T-PRV-25 imports `skellycam`. The test
+    stays where 7.4 puts it. The CI PR runs it in a job that syncs the project, or moves it under
+    `skellycam/tests/`.
 
 ## Reason
 
@@ -69,7 +64,7 @@ The rule "a spec and a test list before code". The names fill gaps of the spec, 
 
 ## Consequences
 
-- The product code of 4b must use the names of item 2, or this entry changes first.
+- The 4b code must use the names of item 2, or this entry changes first.
 - The component tests and the benchmarks did not run (real time). Their first run can show faults in the tests.
 
 ## Open work

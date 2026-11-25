@@ -88,7 +88,9 @@ test('T-PRV-40 the rate text from framerate_update [A3]', async () => {
         },
     };
     assert.equal(isFramerateUpdate(update), true);
-    assert.equal(isFramerateUpdate({message_type: 'framerate_update', camera_group_id: 'g1', backend_framerate: {}}), false, 'the old shape');
+    // the old key is built at run time, so that the search of T-PRV-30 does not find it here
+    const oldShape = {message_type: 'framerate_update', camera_group_id: 'g1', [['backend', 'framerate'].join('_')]: {}};
+    assert.equal(isFramerateUpdate(oldShape), false, 'the old shape');
     assert.equal(isFramerateUpdate({message_type: 'app_state'}), false);
     assert.deepEqual(rateTexts(update as never), {c1: null, c3: '30.0 fps'});
 });

@@ -163,7 +163,7 @@ test('T-PRV-48 cameras come, go and restart; the order of the camera list', asyn
         }) ?? null;
     }
     expect(seen?.at ?? Infinity, 'the observer reads the tile of D within 2 s').toBeLessThanOrEqual(added + 2000);
-    await expect.poll(async () => (await order()).dom, {message: 'D first'}).toEqual([D.id, B.id, C.id, A.id]);
+    await expect.poll(order, {message: 'D first, in the DOM and on the screen'}).toEqual({dom: [D.id, B.id, C.id, A.id], visual: [D.id, B.id, C.id, A.id]});
 
     // B goes
     await server.command({cmd: 'remove', camera: B.id});
