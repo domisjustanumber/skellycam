@@ -18,25 +18,23 @@ The answers:
 
 1. **Q733 (session Q5), spec Q699, patents: yes.** The build holds the MPEG-4 Part 2 and H.264
    decoders. Their patent position is a separate decision of the owner. The work does not wait.
-2. **Q734 (Q6), spec Q707, CSP: yes.** Add `'wasm-unsafe-eval'` and `worker-src 'self' blob:` to the
-   content security policy of the UI.
+2. **Q734 (Q6), spec Q707, CSP: yes.** Add `'wasm-unsafe-eval'` and `worker-src 'self' blob:`.
 3. **Q735 (Q7), spec Q708, timing on other systems: yes.** A certify check `player-legacy-decode`
    reports the route, the decoder information and the seek, step and play times of each camera.
 4. **Q736 (Q8), spec Q709, the macOS replace path: "explain this further".** Q764 gave the
    explanation, and the owner accepted Q764 (item 18).
 5. **Q737 (Q9), spec Q710, required checks: yes.** No `paths:` filter; the jobs skip by the changed
    paths.
-6. **Q738 (Q10), spec Q711, the time map: yes.** The mean of the time files of the cameras from the
-   base, made non-decreasing; with no usable time file, the median header rate and `~`; a gap in the
-   capture plays as a gap in real time.
+6. **Q738 (Q10), spec Q711, the time map: yes.** The mean of the time files from the base, made
+   non-decreasing; else the median header rate and `~`; a gap plays as a gap in real time.
 7. **Q739 (Q11), spec Q712, synthetic test media: yes.** Made at test time with PyAV 19.0.2; the
    reference from the x86-64 Linux CI job; no media committed.
 8. **Q740 (Q12), spec Q713, other eras: yes.** A v2 alpha folder is refused with a clear text. A
    v0.1.0 folder is not refused, and it gets no test and no support.
 9. **Q741 (Q13), spec Q714, the demuxer: yes.** FFmpeg's demuxer in the worker; the TypeScript MP4
    reader for the frame table and the route, with a cross-check at open.
-10. **Q742 (Q14), spec Q715, the tile text: yes.** After the acceptance, 6a 8.3 gets the text of
-    spec 11.3.
+10. **Q742 (Q14), spec Q715, the tile text: yes.** After the acceptance, 6a 8.3 gets the sentence
+    of spec 11.3, the fields `timeEstimated` and `detail`, and the mark `decoder_failed`.
 11. **Q743 (Q15), spec Q716, the place of the spec: "in skellyspecs, and yes".** With Q765 (item 19).
 12. **Q744 (Q16), spec Q723, the `Origin: null` hole: yes.** A secret header: at each start the
     Electron main process makes a 128-bit secret for the server and the page; a request without it
@@ -47,7 +45,8 @@ The answers:
     With Q766 (item 20).
 14. **Q746 (Q18), spec Q725, the token of the upstream watch: "draft this for now, keep
     implementation for later".** The draft uses the default token and one approval click on each
-    bump PR. With Q767 (item 21).
+    bump PR. With Q767 (item 21). This changes item 4 of ADR-0C4Y (Q704);
+    [ADR-HN92](HN92-answers-of-the-owner-q701-to-q706-with-the-default-token.md) supersedes 0C4Y.
 15. **Q747 (Q19), spec Q726, where the watch and Dependabot run: as Q746.** On the fork of the owner
     now, on the upstream repository later. With Q767.
 16. **Q748 (Q20), spec Q727, the WebSocket and the other routes: yes.** `/connect` and the other
@@ -67,7 +66,8 @@ The answers:
 20. **Q766 (Q38), the certify test of the switch: yes.** `player-legacy-decode` also reports, for
     each tile, its late share, its route, and whether and when a switch fired.
 21. **Q767 (Q39), "draft for now": yes.** The watch, token and Dependabot sections and their tests
-    stay, marked "later, not built in step 6c part 1". Nothing is set up on GitHub now.
+    stay, marked "later, not built in step 6c part 1". Nothing is set up on GitHub now. This defers
+    a part of Q693 of ADR-X5MZ: "suitable dependabot scripts to monitor upstream repos".
 
 ## Reason
 
@@ -75,12 +75,9 @@ The answers of the owner.
 
 ## Consequences
 
-- Revision 6 of [`player-legacy.md`](../../specs/player-legacy.md) applies these answers. The spec
-  stays a draft until the owner accepts it. No test and no code comes before that.
-- The spec cites skellyspecs at the commit `SKELLYSPECS-PIN`. The supervisor puts in the commit when
-  the skellyspecs branch has it.
-- The choices that the agent made to apply these answers are in
-  [ADR-S4TJ](S4TJ-choices-of-revision-6-of-the-v1-playback-spec.md) (proposed).
+- Revision 6 of [`player-legacy.md`](../../specs/player-legacy.md) applies these answers. It stays a
+  draft until the owner accepts it. It cites skellyspecs at commit `fd41818e4`.
+- The choices of the agent are in [ADR-S4TJ](S4TJ-choices-of-revision-6-of-the-v1-playback-spec.md).
 
 ## Open work
 

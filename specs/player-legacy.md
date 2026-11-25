@@ -5,7 +5,8 @@ code comes before the owner accepts this spec. The rules of the owner are in
 [ADR-X5MZ](../decisions/entries/X5MZ-rules-of-the-owner-for-the-playback-of-freemocap-v1-recordings.md)
 (accepted). His answers Q685, Q688, Q697, Q698 and Q700 are in
 [ADR-8EBK](../decisions/entries/8EBK-answers-of-the-owner-q685-q688-q697-q698-q700.md), his answers
-Q701 to Q706 are in [ADR-0C4Y](../decisions/entries/0C4Y-answers-of-the-owner-q701-to-q706.md),
+Q701 to Q706 are in [ADR-HN92](../decisions/entries/HN92-answers-of-the-owner-q701-to-q706-with-the-default-token.md)
+(which supersedes ADR-0C4Y),
 his answers Q694, Q717 and Q718 are in
 [ADR-VHD3](../decisions/entries/VHD3-answers-of-the-owner-q694-q717-q718.md), and his answers to the
 questions Q699, Q707 to Q716 and Q723 to Q728 of revision 5 are in
@@ -13,7 +14,7 @@ questions Q699, Q707 to Q716 and Q723 to Q728 of revision 5 are in
 (each accepted). The choices of the agent are in
 [ADR-A56K](../decisions/entries/A56K-choices-of-the-v1-playback-spec.md) (revision 5) and
 [ADR-S4TJ](../decisions/entries/S4TJ-choices-of-revision-6-of-the-v1-playback-spec.md) (revision 6),
-both proposed. No question is open (section 16).
+both proposed. One question is open: QNEW-1 (section 16).
 
 Revision 2 applied an independent review of revision 1 (39 findings) and the answers of 8EBK.
 Revision 3 applied the answers of 0C4Y. Revision 4 applied the answers of VHD3 (a new section 3).
@@ -21,8 +22,9 @@ Revision 5 applied a second independent review of revision 4; it recorded no new
 owner. Revision 6 applies the answers of EM6A:
 
 - The v1 file rules leave this spec: the folder and the refused eras, the time file and the time
-  map, the sample list, the frame table and the edit list. They are in skellyspecs, module
-  `recording-files/`, at commit `SKELLYSPECS-PIN` (section 2) [Q716 yes] [Q765 B].
+  map, the sample list, the frame table, the edit list, K and the gap rule. They are in skellyspecs,
+  module
+  `recording-files/`, at commit `fd41818e472f93325f833eed15184bb4c51d879b` (section 2) [Q716 yes] [Q765 B].
 - `Origin: null` is closed with a secret header (4.4) [Q723 yes].
 - A new fallback condition F6, "too slow" (3.4) [Q724 yes], and its certify report (10.5)
   [Q766 yes].
@@ -30,7 +32,11 @@ owner. Revision 6 applies the answers of EM6A:
   [Q725 yes].
 - Section 10.1 to 10.3 and 10.6, and their tests, are marked **later**: not built in step 6c part 1
   [Q767 yes].
-- Each other answer turns its open mark into a "yes" mark. Section 16 is empty.
+- Each other answer turns its open mark into a "yes" mark.
+- The fixes of an independent review of revision 6 (same day): the three old playback routes
+  (QNEW-1, 4.4), the form of the secret and the `playback.key` file (4.4 item 4), F6 at speed 1 and
+  the certify windows (3.4, 10.5), the macOS duties on Apple Silicon (9.5), the links to the
+  skellyspecs rules SFF-896 to SFF-903 (2.1, 6), and more tests.
 
 This spec extends [`player.md`](player.md) (step 6a, accepted). The rules of `player.md` apply to a v1
 recording, unless this spec gives a different rule. Section 14 lists each difference.
@@ -45,18 +51,16 @@ Marks:
 - **[X5MZ item 7]**: a standing rule of the owner, as the coordinator listed it (not his exact words).
 - **[Qnnn yes]**: a question that the owner answered "yes" on 2026-11-24
   ([ADR-8EBK](../decisions/entries/8EBK-answers-of-the-owner-q685-q688-q697-q698-q700.md),
-  [ADR-0C4Y](../decisions/entries/0C4Y-answers-of-the-owner-q701-to-q706.md),
+  [ADR-0C4Y](../decisions/entries/0C4Y-answers-of-the-owner-q701-to-q706.md), now
+  [ADR-HN92](../decisions/entries/HN92-answers-of-the-owner-q701-to-q706-with-the-default-token.md),
   [ADR-VHD3](../decisions/entries/VHD3-answers-of-the-owner-q694-q717-q718.md)), or on 2026-11-25
   ([ADR-EM6A](../decisions/entries/EM6A-answers-of-the-owner-to-the-v1-playback-questions-of-revision-5.md)).
   The text under the mark applies that answer.
 - **[Q764 yes] to [Q767 yes], [Q765 B]**: the follow-up questions of 2026-11-25 (EM6A). They have
   the global numbers of that session; the spec questions Q699 to Q728 keep their own numbers.
-- **[SPECS]**: the v1 file rules in skellyspecs, module `recording-files/`, at commit
-  `SKELLYSPECS-PIN`: the normative
-  [`SPEC.md` section 21](https://github.com/domisjustanumber/skellyspecs/blob/SKELLYSPECS-PIN/recording-files/SPEC.md#21-legacy-folders)
-  and the informative
-  [`legacy-annex.md`](https://github.com/domisjustanumber/skellyspecs/blob/SKELLYSPECS-PIN/recording-files/legacy-annex.md)
-  (section 2).
+- **[SPECS]**, **[SFF-nnn]**: the v1 file rules in skellyspecs, module `recording-files/`, at commit
+  `fd41818e472f93325f833eed15184bb4c51d879b` (section 2.1). [SFF-nnn] cites one draft rule of
+  [`SPEC.md` section 21, continued](https://github.com/domisjustanumber/skellyspecs/blob/fd41818e472f93325f833eed15184bb4c51d879b/recording-files/SPEC.md#section-21-continued-the-camera-files-of-a-v1-folder).
 - **later**: a part that is specified, but not built in step 6c part 1 [Q767 yes].
 - **[S n]**: the H.264 study, part A, `research/h264_study/part_a/NOTES.md`, section n, on branch
   `dom/h264-scrub-study` at commit 71caa2d0b. `[S RT]` is its `RESULTS_TABLE.md`. The study files
@@ -150,27 +154,34 @@ The owner: "in skellyspecs, and yes" [O]. He chose option B: the v1 file rules g
 of the player stays in this spec [Q765 B]. This spec cites those rules at one commit. It does not
 repeat them:
 
-- skellyspecs `recording-files/SPEC.md` section 21 (normative):
-  <https://github.com/domisjustanumber/skellyspecs/blob/SKELLYSPECS-PIN/recording-files/SPEC.md#21-legacy-folders>
+- skellyspecs `recording-files/SPEC.md`, section 21 (normative):
+  [21. Legacy folders](https://github.com/domisjustanumber/skellyspecs/blob/fd41818e472f93325f833eed15184bb4c51d879b/recording-files/SPEC.md#21-legacy-folders) and
+  [Section 21, continued: the camera files of a v1 folder](https://github.com/domisjustanumber/skellyspecs/blob/fd41818e472f93325f833eed15184bb4c51d879b/recording-files/SPEC.md#section-21-continued-the-camera-files-of-a-v1-folder),
+  the draft rules SFF-896 to SFF-903. A rule ID has no anchor of its own.
 - skellyspecs `recording-files/legacy-annex.md` (informative):
-  <https://github.com/domisjustanumber/skellyspecs/blob/SKELLYSPECS-PIN/recording-files/legacy-annex.md>
-- The commit: `SKELLYSPECS-PIN`.
+  [9. The camera files and the time files of v1](https://github.com/domisjustanumber/skellyspecs/blob/fd41818e472f93325f833eed15184bb4c51d879b/recording-files/legacy-annex.md#9-the-camera-files-and-the-time-files-of-v1).
+- skellyspecs `recording-files/conformance.md`:
+  [Legacy v1 camera files (section 21, continued)](https://github.com/domisjustanumber/skellyspecs/blob/fd41818e472f93325f833eed15184bb4c51d879b/recording-files/conformance.md#legacy-v1-camera-files-section-21-continued).
+- The commit: `fd41818e472f93325f833eed15184bb4c51d879b`. These links resolve only after the
+  owner approves the push of the skellyspecs branch `dom/v1-player-rules`.
 
-These rules left this spec in revision 6. Revision 5 had them in its sections 2.1 to 2.4, 6.1, 6.4
-and the edit-list row of 3.7:
+These rules left this spec in revision 6. Revision 5 had them in its sections 2.1 to 2.4, 6.1, 6.3,
+6.4, the edit-list row of 3.7 and rows of 8.1:
 
-| Rule | Was in revision 5 | Owner's answer |
-|---|---|---|
-| The v1 folder and its files; which files a reader reads | 2.1 | |
-| The recognition of a v1 folder, of a new take and of the refused eras (v2 alpha), and v0.1.0 | 2.2 | [Q713 yes] |
-| The time file: its name, the NPY parse, "usable", NaN as no time, the rounding to integer nanoseconds, one clock, duplicates | 2.3 | |
-| The case with no time file | 2.4 | [Q711 yes] |
-| The sample list, the frame table, CTS, the edit list values M, D and E, the frame time stamp, the frame count inside the snapshot size, the accepted edit lists | 6.1, 3.7 | |
-| The time map: v_c(k), the base B, the mean U_k over the cameras, T_k made non-decreasing, the header rate r_c and the median r | 6.4 | [Q711 yes] |
+| Rule | Was in revision 5 | [SPECS] | Owner's answer |
+|---|---|---|---|
+| The folders and files that a reader reads, refuses (v2 alpha) or does not read; v0.1.0; the folder with no camera file | 2.1, 2.2 | SFF-896 | [Q713 yes] |
+| The time file: its name, the NPY parse, "usable", the reasons of `time_file_unusable`, the values with no time, the rounding, duplicates | 2.3 | SFF-897 | |
+| The sample list, the frame table, CTS, M, D and E, the frame time stamp, the frame count, the accepted edit lists, and the codes `no_index`, `index_damaged`, `no_video_track`, `extra_tracks`, `edit_list_not_supported` | 6.1, 3.7, 8.1 | SFF-898 | |
+| The cross-check with the index of FFmpeg's demuxer, by index entries; `index_mismatch` | 6.1 | SFF-899 | [Q714 yes] |
+| The frame index is the truth; K; `frame_count_differs`; `no_frames` | 6.3, 6.4 | SFF-900 | [Q700 yes] |
+| The time map: v_c(k), the base B, the mean U_k, T_k made non-decreasing, the camera times; the header rate r_c, the median r, the times with no usable time file | 2.4, 6.4 | SFF-901, SFF-902 | [Q711 yes] |
+| A gap in T_k plays as a gap of the same length | 6.4 | SFF-903 | [Q711 yes] |
 
-- **Which text wins.** Where this spec and [SPECS] differ on a file rule, [SPECS] wins. A change of a
+- **Which text wins.** Where this spec and [SPECS] differ on a file rule, [SPECS] wins. skellyspecs
+  states the same: where the spec of a program states the same rule, its requirements win. A change of a
   file rule is a change in skellyspecs, with its own decision entry there. This spec then takes the
-  new commit in place of `SKELLYSPECS-PIN`, with an entry of this repository [agent 42].
+  new commit in place of `fd41818e472f93325f833eed15184bb4c51d879b`, with an entry of this repository [agent 42].
 - **What stays here.** What the player does with the result of the file rules: the texts that the
   host shows (2.2), the warnings that the host shows (11.4), the labels and the play (6.4), and each
   rule of the decode, the routes and the server.
@@ -186,14 +197,15 @@ The player reads only the snapshot of the folder (section 4.2). It applies the r
 3. A v1 recording: it opens in the canvas player (11.4).
 4. A v0.1.0 folder with the v1 form: the player does not refuse it. No test covers it, and it has no
    support [Q713 yes].
-5. Each other folder: the text "not a FreeMoCap v1 recording: no synchronized_videos/*.mp4".
+5. A folder with no camera file: the text "no camera files: no synchronized_videos/*.mp4"
+   [SFF-896].
 
 - A camera whose time file is not usable gets the warning `time_file_unusable` with the reason that
   [SPECS] gives. The host shows it (11.4).
 - A repeated value of a time file is a duplicate frame of the v1 synchronizer [SPECS]. The player
   shows it as a frame (6.4).
 - When no time file is usable, the tiles show the time with a `~` in front, as the player of today
-  does (feature F6, 6a 3.1) [agent 5].
+  does (6a feature F6, 6a 3.1) [agent 5]. This differs from 6a (section 14).
 
 ## 3. Route by codec, not by file extension [Q694 yes] [Q717 yes]
 
@@ -310,19 +322,22 @@ these conditions:
 | F3 | For **3 s**, no output frame and no error comes, while the route has sent chunks whose frames have not come out yet, or while a `flush()` has not resolved. This holds at each point: after a key chunk, in the middle of a GOP, in a continue, and in play (also when the back-pressure of 3.3 holds the next chunk back). | [agent 39] |
 | F4 | A seek that the newest-request rule (6a 7.5) did not cancel sends its chunks, flushes, the flush resolves, and frame k did not come out. | [agent 39] |
 | F5 | At open, the microsecond `timestamp` values of the kept frames are not unique. | [agent 39] |
-| F6 | **Too slow.** In play, the tile is a late tile on more than **20 %** of the refreshes of a window of **10 s** of play, counted from 2 s after each start of play. Only when `navigator.hardwareConcurrency` is at least 4 and at least the number of H.264 tiles. | [Q724 yes]; the details below [agent 43] |
+| F6 | **Too slow.** In play at speed 1, the tile is a late tile on more than **20 %** of the refreshes of a window of **10 s** of play, counted from 2 s after each start of play. Only when `navigator.hardwareConcurrency` is at least 4 and at least the number of H.264 tiles. | [Q724 yes]; the details below [agent 43] |
 
 **The details of F6** [Q724 yes] [agent 43]:
 
 - **A late tile.** On a refresh behind the clock (k* below k_t, 6.5), each live tile whose newest
   ready frame is k* is a late tile of that refresh. Two or more tiles can be late on one refresh.
-- **The window.** The count starts 2 s after each start of play. A seek, a pause, a speed change and
-  the end of the file stop the count; the next start of play starts a new count. The rule checks the
-  last 10 s of play, and only after 10 s of counted play. The share is (the refreshes of the window on
-  which the tile is late) / (the refreshes of the window).
-- **The tiles that F6 applies to.** Only a tile on the WebCodecs route. "The number of H.264 tiles" is
-  the number of the tiles of the take whose codec is H.264, on either route. Each tile has its own
-  count.
+- **The window.** The count runs only in play at speed 1 [agent 43]. It starts 2 s after each start
+  of play at speed 1. A seek, a pause, the end of the file, a loop and a change of the speed stop the
+  count. After a change back to speed 1 during play, a new count starts 2 s later; at any other speed
+  there is no count. The rule checks the last 10 s of counted play, and only after 10 s of counted
+  play. The share is (the refreshes of the window on which the tile is late) / (the refreshes of the
+  window).
+- **The share for each tile.** Each tile has its own count, on either route, also when the core
+  rule stops a switch and after a switch. The camera state gives it as `lateShare` (11.2).
+- **The tiles that F6 switches.** Only a tile on the WebCodecs route. "The number of H.264 tiles" is
+  the number of the tiles of the take whose codec is H.264, on either route.
 - **The values are guesses.** 20 % and 10 s are the agent's values, not measurements. The certify
   check of 10.5 reports the late share of each tile, so that certify reports can tune them
   [Q724 yes] [Q766 yes].
@@ -564,32 +579,58 @@ The token and the allowed roots of Q688 do not close this exposure. These requir
      (`skellycam-ui/electron/main/services/python-server.ts` [C]). At each start it makes 128 random
      bits from a cryptographic source, as 32 lower-case hexadecimal characters, and gives them to the
      server in the environment variable `SKELLYCAM_PLAYBACK_KEY`.
-   - **A server that a person starts by hand** gets no variable. It makes its own secret at start and
-     writes it into the file `playback.key` in the app data folder of skellycam, which only the user
-     can read (mode 0600 on Linux and macOS; on Windows, the access rules of the user's app data
-     folder). It makes a new secret at each start and replaces the file. The main process reads that
-     file when it uses a server that it did not start [NV: whether the app uses such a server today].
-   - **To the page.** The main process gives the secret to the page through the preload bridge. The
-     page sends it in the header `X-Skellycam-Key` on each request to these routes:
-     `http-take-files.ts` and the call of `list_recordings`.
+   - **The form of the secret.** The server accepts the variable only as exactly 32 lower-case
+     hexadecimal characters. Each other value (also an empty one) stops the start with the text
+     "SKELLYCAM_PLAYBACK_KEY must be 32 lower-case hexadecimal characters". With no variable, the
+     server makes its own secret. The server removes the variable from `os.environ` after it reads
+     it, so that the camera processes that it starts do not get it.
+   - **The file `playback.key`.** The server always writes the secret, also the value of the variable,
+     into the file `playback.key` in the app data folder of skellycam. It writes a temporary file that
+     it creates with mode 0600 from the start (`os.open` with `O_CREAT | O_EXCL` and the mode), and
+     then moves it in place with `os.replace`. On Windows the file has the access rules of the user's
+     app data folder. A new start writes a new value. Thus a UI that restarts while the server runs,
+     and a UI that uses a server that a person started by hand, can read the current secret
+     [NV: whether the app uses such a server today].
+   - **To the page.** The main process gives the secret to the page through the preload bridge. It
+     reads `playback.key` again for each call, so that the bridge gives the current value after a
+     restart of the server. The page asks the bridge at each open of a take, and once more after a
+     403 "key missing or wrong"; it then repeats the request once. The page sends the secret in the
+     header `X-Skellycam-Key` on each request to these routes: `http-take-files.ts` and the call of
+     `list_recordings`.
    - **The check.** The server checks each request to these routes in this order: the Host (item 2),
-     the secret, the origin (item 1), then the token (4.2). A request with no secret or a wrong
+     the secret, the origin (item 1), then the token (4.2). An empty header counts as no header. A
+     header that is not exactly 32 lower-case hexadecimal characters (also a value with other than
+     ASCII characters) is a wrong secret, before any compare. The server then compares the ASCII
+     bytes with `hmac.compare_digest`, so that the compare takes the same time for each value and a
+     `str` with other characters cannot raise `TypeError` (a 500). A request with no secret or a wrong
      secret gets 403 "key missing or wrong" and no byte of a file; the server reads no folder and no
-     token for it. The compare takes the same time for each value (`hmac.compare_digest`).
+     token for it.
+   - **CORS headers on a 403.** A 403 to a request from an origin of the allow-list carries
+     `Access-Control-Allow-Origin` with that origin (never `*`, never credentials), so that the page
+     can read the 403 and ask the bridge again. A 403 to each other origin carries no CORS header.
    - **The preflight.** A CORS preflight (`OPTIONS`) carries no custom header. For an allowed origin,
      the server answers it with `Access-Control-Allow-Headers: Content-Type, Range, X-Skellycam-Key`
      and no body. It reads no file for a preflight.
    - **Where the secret never goes:** into a URL, a log line, a report, or a file other than
      `playback.key`.
    - **What it stops, and what not.** A custom header makes the browser send a preflight, and a page
-     of another program cannot know the secret. Thus no web page on the machine gets a byte, also with
-     the origin `null`. Another local program of the same user is not stopped; it can read the files
-     on the disk directly anyway [Q723 yes].
+     of another program cannot know the secret. Thus no web page on the machine gets a byte **from
+     these routes**, also with the origin `null`. Another local program of the same user is not
+     stopped; it can read the files on the disk directly anyway [Q723 yes].
+   - **The old playback routes are still open.** `list_videos`, `stream_video` and
+     `get_all_timestamps` of `skellycam/api/http/playback/playback_router.py` keep the rule
+     `allow_origins=["*"]` of `cors.py`, with no Host check and no secret [C]. `stream_video` serves
+     each camera file of a recording that the request names by a query path
+     (`recording_parent_directory`), and a plain `<video src>` of any web page needs no CORS to load
+     it. Thus, until those routes go, any web page on the machine can still load v1 camera files.
+     Section 5.2 removes them in a later PR; question QNEW-1 asks whether they go in step 6c part 1,
+     or get the Host and secret checks until they go.
    - **The options that the owner did not take** [Q723 yes]: serve the whole UI from a custom scheme
      (a large change of the UI shell), or fetch through the main process (its throughput is not
      measured).
 
-T-LEG-17 to T-LEG-19 test items 1 to 3. T-LEG-17, T-LEG-73 and T-LEG-74 test item 4.
+T-LEG-17 to T-LEG-19 test items 1 to 3. T-LEG-17, T-LEG-73, T-LEG-74 and T-LEG-80 test item 4.
+T-LEG-77 or T-LEG-78 tests the answer to QNEW-1.
 
 **The other routes and the WebSocket** [Q727 yes]. The same Origin and Host checks also cover the
 camera WebSocket `/connect` (`skellycam/api/websocket/websocket_connect.py`) and the other routes of
@@ -655,9 +696,9 @@ restructuring of today's player") of 6a 18. Section 14 lists it.
   each test file.
 - **The WebCodecs route** (3.3) uses the sample list and the frame table as its only index.
 - **The WASM route** [Q714 yes]: the tile worker opens the same file with FFmpeg's own MP4 demuxer, as
-  the study measured [S 12.3]. At open, the worker reports the frame count and the time stamps of
-  the kept frames of the demuxer index. A difference from the table refuses the camera: "camera file
-  index mismatch" (`index_mismatch`).
+  the study measured [S 12.3]. At open, the worker reports the entries of the demuxer index, and the
+  page compares them with the frame table by the rule of [SFF-899]. A failed check refuses the
+  camera: "camera file index mismatch" (`index_mismatch`).
 
 ### 6.2 Exact seek and step on the WASM route [agent 14]
 
@@ -701,28 +742,21 @@ The player asks the tile worker for frame k. The worker:
 
 ### 6.3 Cameras with different frame counts [Q700 yes]
 
-- K is the smallest frame count of the cameras that play, as the player of today (F21) and 6a K
-  [Q700 yes: "playback length is the smallest frame count of the cameras, with a warning"]. The
-  frames from K on are not shown.
-- When the counts differ, the take gets the warning `frame_count_differs` with each count. The host
-  shows it.
-- All v1 samples of one session have equal frame counts [S 11.1]. The v1 synchronizer clips the
-  cameras to their overlap [INV quirks]. A difference can come from an import or from a damaged file.
-- A refused camera does not count for K (as 6a T-PLAY-05).
+- K, the cameras that count for it, `frame_count_differs` and `no_frames` are the rules of
+  [SFF-900] [Q700 yes: "playback length is the smallest frame count of the cameras, with a warning"].
+- The player shows no frame from K on. The host shows `frame_count_differs` with each count (11.4).
+  With `no_frames`, the host shows that text and no grid (8.1).
 
 ### 6.4 The frame-to-time map [agent 16] [Q711 yes]
 
-The frame index is the truth. Tile c shows frame k* of camera c. It never chooses a frame by time.
-This differs from 6a 7.3, which chooses by time for the new format. The reason: the v1 synchronizer
-already matched the frames of the cameras; frame k of each camera is one moment, and the FreeMoCap
-processing uses the frames by index [INV quirks, dropped frames].
+The frame index is the truth [SFF-900]: tile c shows frame k* of camera c, and the player never
+chooses a frame by time. This differs from 6a 7.3, which chooses by time for the new format.
 
 The times serve the clock, the labels and the pace only:
 
-- **The time map.** T_k, the per-camera values v_c(k), the base B and the header rate r are the
-  values of the time map of [SPECS] [Q711 yes]: the mean of the usable time files from the base,
-  made non-decreasing; with no usable time file, the median header rate. This spec does not repeat
-  them.
+- **The time map.** T_k, the camera times and the header rate r are the values of [SFF-901] and
+  [SFF-902] [Q711 yes]: the mean of the usable time files from the base, made non-decreasing; with
+  no usable time file, the median header rate. This spec does not repeat them.
 - **Tile label.** A camera with a usable time file shows v_c(k*) − B, or no time part for a frame with
   no time. A camera with no usable time file shows T_k* with a `~` in front.
 - **"Rec: fps"** (F15) shows r, rounded to 3 decimals. With time files, r comes from the header
@@ -730,15 +764,15 @@ The times serve the clock, the labels and the pace only:
 - **Play.** At open, k* = 0 (or the `initialFrame` of the host, F19) and t = T_k*. Play starts at t
   and advances t by the speed × the elapsed time, as 6a 7.4. During play, k* is the frame of 6.5.
   Pause sets t = T_k*. The end and the loop follow 6a 7.4.
-- **A gap in the time file** (a stalled capture) plays as a gap of the same length in real time: the
-  tiles hold their frame until t reaches the next T_k. This is the recorded time [agent 16]
+- **A gap in the time file** plays as a gap of the same length in real time [SFF-903] [agent 16]
   [Q711 yes].
 
 ### 6.5 Synchronised play: the locked rule [agent 17]
 
 - Each tile streams decoded frames ahead of the clock, at most 8 frames ahead: a tile worker with one
   credit for each frame [S 12.3], or a `VideoDecoder` by the back-pressure of 3.3.
-- At each display refresh, t advances (6.4) and gives the target k_t: the largest k with T_k ≤ t.
+- At each display refresh, t advances (6.4) and gives the target k_t: the largest k with T_k ≤ t
+  [SFF-903].
 - A **live tile** is a tile that has no mark `not_readable`, `read_error` or "decoder failed", and
   that is not in a restart (8.2). A frame that the decoder reported as damaged counts as ready: the
   tile shows its last image with the mark "damaged at frame k".
@@ -820,12 +854,13 @@ route has no worker: it has one `VideoDecoder` for each tile on the page main th
 
 | Case | Result |
 |---|---|
-| A camera file with no `moov` (the writer did not finish, or the file is cut) | Refused: "camera file not playable: no index (moov); the recording did not finish". The player offers no repair (6a Y5). |
+| A camera file with no `moov` (the writer did not finish, or the file is cut) | `no_index` [SFF-898]. Refused: "camera file not playable: no index (moov); the recording did not finish". The player offers no repair (6a Y5). |
 | `moov` at the end of the file | Normal for v1 [S 11.1]. The reader finds it with 1 to 3 range reads; the study read 0.26 to 0.75 MB in 6 to 41 ms for each tile [S 12.4]. |
 | A frame whose bytes lie past the snapshot size | Not in the frame count [SPECS]. |
 | An index box that is cut, or a box size that points past its parent | Refused: "camera file index damaged". |
 | A refused camera | The mark `not_readable` with the text; the other cameras play (6a L3). |
-| No camera plays | The host shows the text of the first refusal and no grid. |
+| A camera file with no video track | `no_video_track` [SFF-898]. Refused: "camera file not playable: no video track". |
+| No camera plays, or K = 0 (`no_frames`, [SFF-900]) | The host shows the text of the first refusal, or "no frames", and no grid. |
 
 ### 8.2 During play and seek [agent 21]
 
@@ -989,6 +1024,14 @@ Therefore, if you distribute this library, you must provide sources." The duties
      is LGPL 2.1 or later, so the app takes the terms of 2.1 [Q764 yes]. This is the reading of the
      licence by the agent and the coordinator, not legal advice [NV: the steps on a real macOS
      system].
+   - **More duties of the `README.md` on macOS** [the review] [NV: each one, until a macOS system
+     shows it]:
+     - Code for arm64 (Apple Silicon) must have at least an ad-hoc signature, or it does not run.
+       Thus "run the app unsigned" does not work on Apple Silicon; the `README.md` gives the ad-hoc
+       signature as the way there.
+     - Gatekeeper blocks an ad-hoc signed app that has the quarantine attribute, until the user
+       clears the attribute or allows the app in System Settings, Privacy & Security.
+     - macOS asks for the camera permission again, because the app has a new signature.
    - **The alternative that the owner did not take** [Q764 yes]: the app also loads a replacement
      decoder from a folder in the app data of the user, so that the bundle never changes. Its cost:
      each program that runs as the user could then plant a decoder that decides what the player
@@ -1202,9 +1245,14 @@ play at speed 1 on each set. The report gives, for each tile [Q708 yes] [Q766 ye
 - the route that it used: `wasm`, `webcodecs`, or `wasm_fallback` with its reason (3.4);
 - the `decoderInfo` of 11.2;
 - the seek, step and play times of its route;
-- its share of late refreshes in play (`lateShare` of 11.2), for each window of 10 s of F6;
+- its share of late refreshes (`lateShare` of 11.2), read at the play times 12 s and 22 s of each
+  30 s play at speed 1, that is for the two windows from 2 s to 12 s and from 12 s to 22 s of F6
+  [agent 44];
 - whether a switch fired, with its reason, and when: the frame k* and the play time from the start of
   play (`switchAt` of 11.2).
+
+The check reports `lateShare` for each tile, on either route, also when the core rule of F6 stops
+a switch. T-LEG-79 tests the shape of the report in CI, with no certify run.
 
 The values are recorded, not judged, until the owner sets a target. The late shares and the
 switches of certify reports from many systems tune the 20 % and the 10 s of F6 [Q766 yes]. The check
@@ -1277,8 +1325,8 @@ httpTakeFiles(serverUrl: string, folderPath: string): Promise<TakeFiles>
 // PlayerState.take gets one field:
 kind: 'take' | 'freemocap_v1';
 // CameraState.reason gets the codes of sections 3 and 8:
-// 'codec_not_supported' | 'pixel_format_not_supported' | 'edit_list_not_supported' | 'no_moov'
-// | 'index_damaged' | 'index_mismatch'
+// 'codec_not_supported' | 'pixel_format_not_supported' | 'edit_list_not_supported' | 'no_index'
+// | 'index_damaged' | 'no_video_track' | 'index_mismatch'  (the codes of [SFF-898], [SFF-899])
 // CameraState gets the route (3.4):
 route: 'wasm' | 'webcodecs' | 'wasm_fallback';
 routeReason: 'not_supported' | 'error' | 'no_output' | 'frame_missing' | 'time_stamps'
@@ -1286,7 +1334,8 @@ routeReason: 'not_supported' | 'error' | 'no_output' | 'frame_missing' | 'time_s
 decoderInfo: { hardwareAcceleration: string; supported: boolean | null;
                preferHardwareSupported: boolean | null; firstFrameFormat: string | null } | null;
 // CameraState gets the count of F6 and the time of a switch (3.4, 10.5) [agent 44]:
-lateShare: number | null;  // share of late refreshes in the last full window of F6; null before one
+lateShare: number | null;  // each tile, either route: share of late refreshes in the last full
+                           // window of F6 (speed 1 only); null before a full window
 switchAt: { frame: number; playMs: number | null } | null;
                            // k* and the play time since the start of play at the switch;
                            // playMs null for a switch outside play; null with no switch
@@ -1421,9 +1470,9 @@ bytes that the test builds with no codec data (box structures, NPY headers, file
 | T-LEG-03 | unit | W, L, M | none | Time map with time files: 3 cameras with offsets, a NaN in one camera, a row with NaN in all cameras, a duplicate value, a gap of 2 s, a value above 2^53 ns. | T_k as the time map of [SPECS] against an independent `BigInt` reference; T_k never goes down; the row with no value gives T_(k-1); the gap gives a step of 2 s in T_k; tile labels as 6.4. |
 | T-LEG-04 | unit | W, L, M | none | Time map with no time file: header rates 30, 29.97 and 30.5 in 3 cameras; then 4 cameras (30, 29.97, 30.5, 31); then a camera whose `stts` has two entries. | r = 30 for 3 cameras; r = (30 + 30.5) / 2 for 4 cameras; r_c of the two-entry camera as [SPECS]; T_k = round(k × 10^9 / r); `timeEstimated` true; "Rec: fps" as 6.4. |
 | T-LEG-05 | unit | W, L, M | none | One camera with a time file of the wrong length; one with none; one usable. | The usable one gives T_k; the others get `time_file_unusable` (`length`, `missing`) and labels with `~`. |
-| T-LEG-06 | unit | W, L, M | none | MP4 index reader on built box trees: `moov` at the end and at the start; `co64`; `stsc` runs; `stss` absent and present; `ctts`; a 64-bit box size; a last box of size 0; `elst` with one edit at media time 0 and at media time 1024, with a leading empty edit, with two non-empty edits; a file with no `moov`; a `moov` past the snapshot; frames past the snapshot; `tkhd` matrices 0, 90, 180, 270 and a shear. | The frame table and the frame time stamps of [SPECS] (CTS − M + E, for the frames with M ≤ CTS < M + D) equal a reference that the test computes by hand; `no_moov`, `index_damaged`, `edit_list_not_supported` where 3.7 and 8.1 say; the frame count leaves out the frames past the snapshot; rotations as 3.7; `matrix_ignored` for the shear. |
+| T-LEG-06 | unit | W, L, M | none | MP4 index reader on built box trees: `moov` at the end and at the start; `co64`; `stsc` runs; `stss` absent and present; `ctts`; a 64-bit box size; a last box of size 0; `elst` with one edit at media time 0 and at media time 1024, with a leading empty edit, with two non-empty edits; a file with no `moov`; a file with no video track; a `moov` past the snapshot; frames past the snapshot; `tkhd` matrices 0, 90, 180, 270 and a shear. | The frame table and the frame time stamps of [SPECS] (CTS − M + E, for the frames with M ≤ CTS < M + D) equal a reference that the test computes by hand; `no_index`, `index_damaged`, `no_video_track`, `edit_list_not_supported` as [SFF-898]; the frame count leaves out the frames past the snapshot; rotations as 3.7; `matrix_ignored` for the shear. |
 | T-LEG-07 | unit | W, L, M | none | Codec route on sample entries: `mp4v` 0x20, `mp4v` 0x61, `avc1`, `avc3`, `hvc1`, `hev1`, `av01`, `vp09`, `jpeg`, an unknown entry; and a file named `.avi` with `mp4v` content. | `mp4v` 0x20: the WASM route; `avc1` and `avc3`: the WebCodecs route; each other entry refused; the route depends only on the content, also for the `.avi` name; each refusal text names the entry. |
-| T-LEG-08 | unit | W, L, M | none | Frame counts 120, 118, 120, and one refused camera. | K = 118; `frame_count_differs` with the three counts; the refused camera is not in K. |
+| T-LEG-08 | unit | W, L, M | none | Frame counts 120, 118, 120, and one refused camera; then a take whose only camera has 0 frames. | K = 118; `frame_count_differs` with the three counts; the refused camera is not in K; the second take gives `no_frames` [SFF-900]. |
 | T-LEG-09 | unit | W, L, M | none | Camera order and labels: `Camera_000`..`Camera_011`; `..._synced_Cam1`..`Cam10`. | Natural order (`Cam2` before `Cam10`); the label is the file stem. |
 | T-LEG-10 | unit | W, L, M | none | Seek planner on frame tables with GOP 12, GOP 30, all key frames, and B-frames where a key frame has a decode time before and a presentation time after a target: frames in the kept frames, forward targets inside and across a key frame, backward targets, the first and the last frame. | Rule 1 for a kept frame (no seek); continue only when no key frame is in (j, k]; else a seek on the time stamp of G, the last key frame at or before frame k in decode order; the asked time stamp is the exact table value; a first packet that is not G gives one seek to the key frame before G. |
 | T-LEG-11 | unit | W, L, M | none | Worker faults with a fake worker: one fatal fault; a `RuntimeError` that does not end the worker; 3 fatal faults in 60 s at different frames; 2 fatal faults at the same frame; no answer for 10 s; a fault during a seek drag. | A new worker and frame k* after one fault; the worker with the `RuntimeError` is terminated; "decoder failed" at the third fault in 60 s; 2 faults at one frame give "damaged at frame k" up to the next key frame and no third restart; the hung worker ends; the other tiles get each frame; no older target is drawn after a newer one. |
@@ -1432,7 +1481,7 @@ bytes that the test builds with no codec data (box structures, NPY headers, file
 | T-LEG-14 | unit | W, L, M | none | The shared `TakeFiles` check suite of 6a 5.1 on `http-take-files.ts` against a Node test server; the answers 200 with the whole file and 206 with a wrong start; a 404 for an expired token, then a re-open with the same snapshot and with a changed snapshot; two 404 in a row. | The results of T-PLAY-39; the two wrong answers are read errors; the first re-open repeats the read and passes; the changed snapshot gives "recording changed on disk"; two 404 give a read error; each request carries `X-Skellycam-Key` with the secret of the bridge, and the secret is in no URL and no log line (4.4 item 4). |
 | T-LEG-15 | server | W, L, M | none | The route of 4.2: open, the range table of 6a 5.6, the snapshot, a deleted token, an expired token (a test clock), an unknown path, `..` forms, a link to an outside file, a folder outside the roots, a root whose name is a string prefix of an outside folder, a root in another case (Windows and macOS), a file replaced after the open, a `recording_parent_directory` parameter, a CORS preflight for the `POST` and for `Range`. | Status, bytes and headers as 6a 5.6 and 4.2; 403 "folder not allowed" outside the roots and for the prefix case; the other case is inside on Windows and macOS; the replaced file gets 404; the parameter adds no root; the preflight allows the method and the header; the expose header is on each range answer. |
 | T-LEG-16 | server | W, L, M | none | Read 6 files by range for 20 s through the route while a spy counts the bytes that the server reads and sends, and a log capture counts the log lines. | Each response body is a byte range of an original file; no route writes a file; no log line for a range request. |
-| T-LEG-17 | server | W, L, M | none | Origin rule of 4.4 item 1 and the secret of item 4 on each route of 4.2 and on `list_recordings`: requests and preflights with `Origin` `https://example.org`, `http://localhost:1234`, `null`, the dev server origin in a development build and in a packaged build, and no `Origin`; each with the right secret, a wrong secret, a secret of another length, and no secret. | `https://example.org` and `http://localhost:1234`: 403 "origin not allowed", no `Access-Control-Allow-Origin`; each request with no secret or a wrong one: 403 "key missing or wrong" and no byte of a file, also from `null` and from the dev origin; `null` with the right secret: served [Q723 yes]; the dev origin with the right secret: served only in a development build; a preflight from an allowed origin: answered with no secret, `Access-Control-Allow-Headers` names `X-Skellycam-Key` and `Range`, no file read; no answer has `Access-Control-Allow-Credentials`; other routes of the app keep their CORS rule of today. |
+| T-LEG-17 | server | W, L, M | none | Origin rule of 4.4 item 1 and the secret of item 4 on each route of 4.2 and on `list_recordings`: requests and preflights with `Origin` `https://example.org`, `http://localhost:1234`, `null`, the dev server origin in a development build and in a packaged build, and no `Origin`; each with the right secret, a wrong secret, a secret of another length, an empty header, a header with characters that are not ASCII, and no secret. | Each request with no secret, an empty header or a wrong one (also the non-ASCII one: 403, not 500): 403 "key missing or wrong" and no byte of a file, from each origin; with the right secret, `https://example.org` and `http://localhost:1234`: 403 "origin not allowed"; `null` with the right secret: served [Q723 yes]; the dev origin with the right secret: served only in a development build; a 403 to `null` or the dev origin carries `Access-Control-Allow-Origin` with that origin, a 403 to each other origin carries no CORS header; a preflight from an allowed origin: answered with no secret, `Access-Control-Allow-Headers` names `X-Skellycam-Key` and `Range`, no file read; no answer has `Access-Control-Allow-Credentials` or `Access-Control-Allow-Origin: *`; other routes of the app keep their CORS rule of today. |
 | T-LEG-18 | server | W, L, M | none | Host rule of 4.4 item 2: `Host` `localhost:<port>`, `127.0.0.1:<port>`, `[::1]:<port>`, `localhost:<other port>`, `attacker.example`, `attacker.example:<port>`, a name of the bind settings, and no `Host`. | The first three and the name of the settings: served; each other: 403 "host not allowed", with no byte of a file. |
 | T-LEG-19 | server | W, L, M | none | Start the server with a bind setting beyond `localhost` and no login or pairing configured; and with only `localhost`. | The first start refuses the bind with the text of 4.4 item 3 and listens on no address other than the loopback addresses; the second starts normally. |
 | T-LEG-20 | build | L | none | The checks of 9.3, steps 4, 5 and 7, on the built outputs. | `CONFIG_GPL 0`, `CONFIG_NONFREE 0`, `CONFIG_VERSION3 0`; the decoder, demuxer, parser, bit-stream filter and protocol sets equal `parts.json` with the additions of 9.2; `--disable-network`; no `--enable-lib`; WASM at most 4 MiB; a licence section for each linked source. |
@@ -1441,7 +1490,7 @@ bytes that the test builds with no codec data (box structures, NPY headers, file
 | T-LEG-23 | build | L | none | The licence files in the outputs and in an app package. | `license.js`, the recipe reference and the source tarball reference are present; the decoder files are outside the `asar`. |
 | T-LEG-24 | unit (real decoder) | W, L, M | gen | Decode each frame of the generated `mp4v` files (720x1280, 640x480, 1228x574) in Node with the built decoder. | Each frame hash equals the x86-64 PyAV reference; the frame count equals the table. |
 | T-LEG-25 | unit (real decoder) | W, L, M | gen | The WASM `h264` decoder (the fallback of 3.4): as T-LEG-24 for the H.264 files, the edit-list files (also the file whose edit cuts frames) and the `yuvj420p` file. | Each frame hash equals the reference; the cut file gives exactly the 100 frames 40 to 139 and no other frame; the other edit-list files give the frames with M ≤ CTS < M + D only. |
-| T-LEG-26 | unit (real decoder) | W, L, M | gen | The frame table of `legacy/mp4.ts` against the index of FFmpeg's demuxer in the worker, on each generated file, the edit-list files included. | Equal frame counts and equal frame time stamps; `index_mismatch` for a test file whose `stts` the test changed. |
+| T-LEG-26 | unit (real decoder) | W, L, M | gen | The frame table of `legacy/mp4.ts` against the index of FFmpeg's demuxer in the worker, on each generated file, the edit-list files included. | The checks of [SFF-899] pass on each file; `index_mismatch` for a test file whose `stts` the test changed. |
 | T-LEG-27 | component | L (CI, sample data); W (owner machine, treadmill session) | real | Full decode and 100 random seeks + 48 steps per set. | Each frame hash equals a PyAV reference made at test time on that system (x86-64); each seek and step lands on the asked frame. |
 | T-LEG-30 | component | W, L, M | gen | 6 tiles of 720x1280 `mp4v`: 100 random seeks (seed 1), the first and the last frame, each key frame and its neighbours, and repeated seeks to a kept frame. | Each tile gives the plane hash of frame k (checked in the decoder client before the draw) and draws its barcode; a seek to a kept frame makes no demuxer seek. |
 | T-LEG-31 | component | W, L, M | gen | Steps +1, −1, +10, −10 across key frames and at both ends. | Each step lands on the exact frame on each tile; steps clamp to 0 and K − 1. |
@@ -1477,10 +1526,14 @@ bytes that the test builds with no codec data (box structures, NPY headers, file
 | T-LEG-70 | component | W, L, M | gen | 6 tiles of 1080p H.264 on the WebCodecs route: play 30 s, 200 seeks, close. | Open `VideoFrame`s ≤ 10 for each tile at each time; kept frames after a seek ≤ 4; `decodeQueueSize` never above 4 in play when the route sends; 0 open frames after `close()` [NV: the frame pool of other GPUs]. |
 | T-LEG-71 | component | W, L, M | gen | A test hook makes the reads of H.264 tile 1 fail during play, then work again. | Tile 1 shows "read error" with its last image and stays on WebCodecs (no switch); the other tiles keep playing; after the reads work again, the next seek shows the exact frame on tile 1. |
 | T-LEG-72 | component | W, L, M | gen | `showLabel` off, on an `mp4v` tile, a WebCodecs tile and a switched tile. | The detail text shows on each: "decoder: WASM", "decoder: WebCodecs", "decoder: WASM (WebCodecs ...)"; the frame, camera and time parts do not show. |
-| T-LEG-73 | server | W, L, M | none | The secret of 4.4 item 4 on the server: a start with `SKELLYCAM_PLAYBACK_KEY`; a start with no variable; two starts in a row with no variable; a log capture during each start and request. | With the variable: the server uses it and writes no `playback.key`; with no variable: the server writes `playback.key` in its app data folder (mode 0600 on Linux and macOS), with 32 lower-case hexadecimal characters, and a new value at each start; the check order of 4.4 item 4 (a wrong Host gets "host not allowed" before the secret is checked); no log line holds the secret. |
-| T-LEG-74 | unit | W, L, M | none | The Electron main process with a fake server start and a fake preload bridge: two starts; a server that it did not start, with a `playback.key` file. | Each start makes a new 32-character lower-case hexadecimal secret and passes it in `SKELLYCAM_PLAYBACK_KEY`; the bridge gives the page the same value; with the server it did not start, the bridge gives the value of the file; no log line holds the secret. |
-| T-LEG-75 | unit | W, L, M | none | F6 with a fake refresh loop and a test clock: a WebCodecs tile late on 19 % and on 21 % of the refreshes of 10 s; late refreshes only in the first 2 s; a seek and a pause inside the window; two tiles late on the same refreshes; a WASM tile late on 50 %; `hardwareConcurrency` 2, and 4 with 3 and with 5 H.264 tiles; a later run where the tile keeps up. | 21 % switches once, with `routeReason` `too_slow`, the detail text "decoder: WASM (WebCodecs too slow)", one log line with the share, and `switchAt` with k* and the play time; 19 % does not; the first 2 s do not count; a seek or a pause starts a new count; both late tiles count; the WASM tile never switches; no switch with 2 cores or with 5 H.264 tiles on 4 cores, a switch with 3; `lateShare` is null before a full window and then equals the share; no switch back. |
+| T-LEG-73 | server | W, L, M | none | The secret of 4.4 item 4 on the server: a start with a good `SKELLYCAM_PLAYBACK_KEY`; starts with the values empty, 31 characters, upper-case hexadecimal and not ASCII; a start with no variable; two starts in a row; a camera process that the server starts; a request from `https://example.org` with no secret and with the right secret; a log capture during each start and request. | A good variable: the server uses it, removes it from `os.environ`, and the camera process does not get it; each bad value: no start, with the text of 4.4 item 4; with no variable: its own secret; in each start, `playback.key` holds the value in use, 32 lower-case hexadecimal characters, mode 0600 on Linux and macOS from its creation (no moment with a wider mode), and a new value at each start; the check order of 4.4 item 4: a wrong Host gets "host not allowed" before the secret is checked, and the foreign origin gets "key missing or wrong" with no secret and "origin not allowed" only with the right secret; no log line holds the secret. |
+| T-LEG-74 | unit | W, L, M | none | The Electron main process with a fake server start, a fake `playback.key` and a fake preload bridge: two starts; a server that it did not start; a server restart while the page is open; a fake server that answers 403 "key missing or wrong" once, and one that answers it twice. | Each start makes a new 32-character lower-case hexadecimal secret and passes it in `SKELLYCAM_PLAYBACK_KEY`; the bridge gives the value of `playback.key` at each call; after the restart, the next open of a take sends the new value; after one 403 the page asks the bridge again and repeats the request once, and it succeeds; after a second 403 the read is a read error (6a 5.7); no log line holds the secret. |
+| T-LEG-75 | unit | W, L, M | none | F6 with a fake refresh loop and a test clock: a WebCodecs tile late on 19 % and on 21 % of the refreshes of 10 s; late refreshes only in the first 2 s; a seek and a pause inside the window; a speed change to 2 and back to 1 during play; play at speed 2 only; the end of the file and a loop inside the window; two tiles late on the same refreshes; a WASM tile late on 50 %; `hardwareConcurrency` 2, and 4 with 3 and with 5 H.264 tiles; a later run where the tile keeps up. | 21 % switches once, with `routeReason` `too_slow`, the detail text "decoder: WASM (WebCodecs too slow)", one log line with the share, and `switchAt` with k* and the play time; 19 % does not; the first 2 s do not count; a seek, a pause, a speed change, the end and a loop stop the count, and a new count starts 2 s after play goes on at speed 1; no count at speed 2; both late tiles count; the WASM tile never switches but has its `lateShare`; no switch with 2 cores or with 5 H.264 tiles on 4 cores, a switch with 3, and the blocked tile still has its `lateShare`; `lateShare` is null before a full window and then equals the share; no switch back. |
 | T-LEG-76 | component | W, L, M | gen | 4 tiles of H.264 on the WebCodecs route, play 30 s at speed 1: a test hook lets tile 2 give at most 20 outputs per second of a 30 fps take, so that tile 2 is late. | Tile 2 switches to WASM with `too_slow` after its first full window, and plays on with the exact frames (hash and barcode); the frame number of each tile never goes down; the other tiles stay on WebCodecs with 0 different frame numbers among them; `lateShare` and `switchAt` of tile 2 are in the camera state. |
+| T-LEG-77 | server (only if QNEW-1 is A) | W, L, M | none | `GET` on the old routes `list_videos`, `stream_video` and `get_all_timestamps`, with each origin and with a good `Host` and secret; a search of `skellycam-ui/src/` for their URLs. | Each request gets 404 (no such route) and no byte of a file; no UI file names their URLs (`server-urls.ts`). |
+| T-LEG-78 | server (only if QNEW-1 is B) | W, L, M | none | The three old routes with the checks of 4.4 items 2 and 4: a wrong `Host`; no secret, an empty and a wrong secret; the right secret and `Host`; `Origin` `https://example.org`; a `<video src>`-style request with no custom header. | A wrong `Host`: 403 "host not allowed"; each request without the right secret, also the `<video src>`-style one: 403 "key missing or wrong" and no byte; the right secret and `Host`: served as today; no answer has `Access-Control-Allow-Origin: *`. |
+| T-LEG-79 | unit | W, L, M | none | The report of the certify check `player-legacy-decode` (10.5), built from fake tile states: an `mp4v` tile, a WebCodecs tile, a tile switched by F6, a tile that the core rule stopped, a tile with no full window. | The report has, for each tile, the route and its reason, the `decoderInfo`, the seek, step and play times, the `lateShare` at 12 s and 22 s (null where no full window), and the switch with its reason and `switchAt` (or none); the blocked tile has its `lateShare`; a report with a field missing fails the format check. Runs in CI, with no certify run [Q766 yes]. |
+| T-LEG-80 | unit | W, L, M | none | The call of `list_recordings` by the recording browser, with a fake fetch and a fake bridge. | The request carries `X-Skellycam-Key` with the value of the bridge; the URL holds no secret. |
 | T-LEG-50 | benchmark | W (test machine) | gen and real | 200 seeks, 48 steps and 60 s of play at 1, 3 and 6 tiles of 720x1280 `mp4v`; and the treadmill session. | The targets of 12.2; p50, p95 and maximum recorded. |
 | T-LEG-51 | benchmark | W (test machine) | gen | 16 tiles of 720x1280 `mp4v`, 60 s of play; CPU and working set. | The target of 12.2; results recorded. |
 | T-LEG-52 | benchmark | W (test machine) | gen and real | T-LEG-50 through the HTTP route with the link limited to 100 Mbit/s. | Results recorded for the owner. |
@@ -1490,9 +1543,10 @@ bytes that the test builds with no codec data (box structures, NPY headers, file
 | T-LEG-62 | tool (later) | W, L, M | none | The logic of `decoder-upstream.yml` on stored text samples (a tag list with 9.0.3 and 9.1.0, a part of the security page, a libav.js tag list), a fake tarball and a fake GitHub API; and a run where the fake API refuses to create a PR. | For 9.0.3: one branch and one bump PR with a new `ffmpeg.json` (version and the SHA-256 of the fake tarball), made with `GITHUB_TOKEN` and the permissions of 10.3 only, and no other changed file (no file in `.github/workflows/`); a second run updates the same PR; for 9.1.0 and for the CVE: one issue, updated on a second run; the job uses no secret; when the API refuses the PR: the job fails with the text of 10.3 [Q725 yes]. |
 | T-LEG-63 | rehearsal (once, later) | CI | none | A PR that changes only the libav.js pin (a real bump or a rehearsal on a branch). It needs the approval of the owner, because a PR is visible outside the machine. | Each job of 10.4 runs; the PR is mergeable with no other commit. |
 
-Counts: 26 unit, 29 component, 6 server, 4 build, 3 tool, 3 benchmark, 1 certify, 1 rehearsal:
-73 tests. Three of them are later (T-LEG-60, T-LEG-62, T-LEG-63): step 6c part 1 does not write them
-[Q767 yes].
+Counts: 28 unit, 29 component, 8 server, 4 build, 3 tool, 3 benchmark, 1 certify, 1 rehearsal:
+77 tests. Three of them are later (T-LEG-60, T-LEG-62, T-LEG-63): step 6c part 1 does not write them
+[Q767 yes]. T-LEG-77 and T-LEG-78 are alternatives: the answer to QNEW-1 keeps one and drops the
+other.
 
 ### 13.4 Rules to tests
 
@@ -1520,21 +1574,23 @@ Counts: 26 unit, 29 component, 6 server, 4 build, 3 tool, 3 benchmark, 1 certify
 | Q705 yes, Q706 yes | No test: a cancelled step and a scope rule. |
 | Q699 yes, Q709 yes, Q764 yes | No test: a decision outside the spec, and the text of the decoder `README.md` (9.5). |
 | Q707 yes | T-LEG-43 |
-| Q708 yes, Q766 yes | T-LEG-53 |
+| Q708 yes | T-LEG-53, T-LEG-79 |
 | Q710 yes | T-LEG-61 |
 | Q711 yes | T-LEG-03, T-LEG-04, T-LEG-34 |
 | Q712 yes | T-LEG-24 to T-LEG-26, T-LEG-30 to T-LEG-46, T-LEG-54 to T-LEG-58 (the generated media) |
 | Q713 yes | T-LEG-01, T-LEG-40 |
 | Q714 yes | T-LEG-26 |
 | Q715 yes, Q716 yes, Q765 B | No test: a text change of 6a after the acceptance, the place of the spec, the place of the file rules. |
-| Q723 yes | T-LEG-14, T-LEG-17, T-LEG-73, T-LEG-74 |
-| Q724 yes | T-LEG-75, T-LEG-76, T-LEG-53 |
-| Q725 yes, Q726 yes, Q767 yes | later: T-LEG-62 |
+| Q723 yes | T-LEG-14, T-LEG-17, T-LEG-73, T-LEG-74, T-LEG-80 |
+| Q724 yes | T-LEG-75, T-LEG-76, T-LEG-53, T-LEG-79 |
+| Q766 yes | T-LEG-53, T-LEG-79 |
+| Q725 yes, Q726 yes, Q767 yes | later: T-LEG-60, T-LEG-62, T-LEG-63 |
+| QNEW-1 | T-LEG-77 (answer A) or T-LEG-78 (answer B) |
 | Q727 yes | No test here: a separate spec change (4.4). |
 | Q728 yes | T-LEG-69 |
 | 2 and [SPECS] | T-LEG-01 to T-LEG-06 |
-| 3 | T-LEG-07, T-LEG-13, T-LEG-41, T-LEG-44, T-LEG-45, T-LEG-54 to T-LEG-59, T-LEG-64 to T-LEG-72, T-LEG-75, T-LEG-76 |
-| 4 | T-LEG-14 to T-LEG-19, T-LEG-38, T-LEG-73, T-LEG-74 |
+| 3 | T-LEG-07, T-LEG-13, T-LEG-41, T-LEG-44, T-LEG-45, T-LEG-54 to T-LEG-59, T-LEG-64 to T-LEG-72, T-LEG-75, T-LEG-76, T-LEG-79 |
+| 4 | T-LEG-14 to T-LEG-19, T-LEG-38, T-LEG-73, T-LEG-74, T-LEG-77 or T-LEG-78, T-LEG-80 |
 | 6 | T-LEG-03 to T-LEG-06, T-LEG-08 to T-LEG-10, T-LEG-26, T-LEG-30 to T-LEG-35, T-LEG-46 |
 | 7, 8 | T-LEG-11, T-LEG-12, T-LEG-35 to T-LEG-37, T-LEG-42, T-LEG-43, T-LEG-68, T-LEG-70, T-LEG-71 |
 | 9, 10 | T-LEG-20 to T-LEG-26, T-LEG-47, T-LEG-48, T-LEG-53, T-LEG-60 to T-LEG-63 |
@@ -1575,6 +1631,11 @@ Counts: 26 unit, 29 component, 6 server, 4 build, 3 tool, 3 benchmark, 1 certify
 10. **The format spec of a v1 recording.** 6a cites the format spec for the new takes. For a v1
     recording, this spec cites the v1 file rules of skellyspecs at its own commit (2.1)
     [Q765 B].
+11. **6a 3.2, feature F6: "The `~` estimate goes away."** For a v1 recording with no usable time
+    file, the `~` stays (2.2) [Q711 yes].
+12. **6a 5.6, the answers of the take route** (`Access-Control-Allow-Origin: *`, and 405 for each
+    method other than GET). The v1 HTTP route has no `*` (4.4 item 1), and it answers `POST`,
+    `DELETE` and `OPTIONS` (4.2).
 
 ## 15. Choices of the agent
 
@@ -1639,7 +1700,7 @@ marks each one [agent n].
     release, the token type, scope, permissions, secret name and the failure text (9.1, 10.3).
 39. The fallback conditions F1 to F5, the limit of 3 s of F3, the switch steps, the detail text and
     its reasons, the log line, the decoder report and the information call with `prefer-hardware`,
-    the limit of 16 waiting chunks (3.4, 7.3).
+    the limit of 4 waiting chunks in play (3.4, 7.3).
 40. The MKV path and the fallback in later phases (section 19).
 41. The revision 5 corrections: the sample list and the frame table, one G rule, the rejoin rule,
     the reset, the waits and the end of the extra chunks, no `delta` chunk after a flush, the output
@@ -1668,20 +1729,47 @@ The choices of revision 6
     not in revision 6 (10.5).
 49. The new tests T-LEG-73 to T-LEG-76, the changes of T-LEG-14, T-LEG-17, T-LEG-53 and T-LEG-62,
     and the kind "later" (13).
+50. The review fixes of revision 6: a bad `SKELLYCAM_PLAYBACK_KEY` stops the start; the variable
+    leaves `os.environ`; `playback.key` is always written, mode 0600 from its creation, with
+    `os.replace`; the bridge reads the file at each call; the page asks again and repeats once after
+    a 403; the form check before the byte compare; an empty header is no header; CORS headers on a
+    403 only for an allowed origin (4.4 item 4).
+51. F6 counts only at speed 1; a speed change stops the count; `lateShare` for each tile on either
+    route; the certify windows 2 s to 12 s and 12 s to 22 s (3.4, 10.5, 11.2).
+52. QNEW-1 and its alternative tests T-LEG-77 and T-LEG-78; the tests T-LEG-79 and T-LEG-80 (13).
 
 ## 16. Open questions for the owner
 
-No question is open. The owner decided Q685, Q688, Q697, Q698 and Q700
+The owner decided Q685, Q688, Q697, Q698 and Q700
 ([ADR-8EBK](../decisions/entries/8EBK-answers-of-the-owner-q685-q688-q697-q698-q700.md)), Q701 to
-Q706 ([ADR-0C4Y](../decisions/entries/0C4Y-answers-of-the-owner-q701-to-q706.md)), and Q694, Q717
-and Q718 ([ADR-VHD3](../decisions/entries/VHD3-answers-of-the-owner-q694-q717-q718.md)) on
-2026-11-24. He decided Q699, Q707 to Q716 and Q723 to Q728, and the follow-ups Q764 to Q767, on
+Q706 ([ADR-HN92](../decisions/entries/HN92-answers-of-the-owner-q701-to-q706-with-the-default-token.md)),
+and Q694, Q717 and Q718 ([ADR-VHD3](../decisions/entries/VHD3-answers-of-the-owner-q694-q717-q718.md))
+on 2026-11-24. He decided Q699, Q707 to Q716 and Q723 to Q728, and the follow-ups Q764 to Q767, on
 2026-11-25
 ([ADR-EM6A](../decisions/entries/EM6A-answers-of-the-owner-to-the-v1-playback-questions-of-revision-5.md)).
 The choices of the agents (section 15) wait for the owner in
 [ADR-A56K](../decisions/entries/A56K-choices-of-the-v1-playback-spec.md) and
 [ADR-S4TJ](../decisions/entries/S4TJ-choices-of-revision-6-of-the-v1-playback-spec.md), with the
-acceptance of this spec.
+acceptance of this spec. The supervisor gives QNEW-1 its global number.
+
+- **QNEW-1. The three old playback routes in step 6c part 1.** `list_videos`, `stream_video` and
+  `get_all_timestamps` (`skellycam/api/http/playback/playback_router.py`) answer any origin
+  (`allow_origins=["*"]`), check no Host and no secret, and take the folder from the request
+  (`recording_parent_directory`) [C]. `stream_video` serves each camera file of such a folder, and a
+  plain `<video src>` of any web page loads it with no CORS. So the secret header of 4.4 item 4 does
+  not stop a web page from loading v1 camera files while these routes exist. Q685 yes removes them in
+  a later PR (5.2). The options:
+  - **A. Remove the three routes, their URLs in `server-urls.ts` and the `<video>` player branch in
+    step 6c part 1** (the items of 5.2 that touch them), in the same PR that lands the v1 player.
+    Cost: the old `<video>` player goes at once. It plays no file that v1 writes (`mp4v`, 5.1);
+    H.264 imports play in the canvas player from that PR on. Test: T-LEG-77.
+  - **B. Keep the routes until the removal PR, with the Host check (4.4 item 2) and the secret check
+    (4.4 item 4).** Cost: a `<video src>` cannot send a custom header, so the old player cannot load
+    a file through these routes either, unless the secret goes into the URL, which 4.4 item 4
+    forbids. Thus B also stops the old player, with more code to write and remove later. Test:
+    T-LEG-78.
+
+  Recommendation: **A.** It closes the hole with less code, and B stops the old player too. Yes?
 
 ## 17. Not verified
 
@@ -1730,9 +1818,10 @@ acceptance of this spec.
   (13.1).
 - The steps to sign the macOS app again after a replacement (9.5).
 - The values 20 % and 10 s of F6 (3.4): guesses until certify reports tune them (M-LEG-6).
+- The macOS duties of 9.5: the ad-hoc signature on Apple Silicon, the quarantine, and the second
+  camera permission prompt.
 - Whether the app uses a server that it did not start (4.4 item 4).
-- That [SPECS] at commit `SKELLYSPECS-PIN` states each rule that left this spec (the table of 2.1).
-  The supervisor checks it when it fills in the commit.
+- The links to skellyspecs at commit `fd41818e4` until the owner approves the push of its branch.
 
 Resolved in revision 2 (code or source read on 2026-11-24): the bind address (4.4), the CORS rule
 (4.4), the CSP (7.2), the FFmpeg version in the tarball (10.3), the documented FFmpeg override
@@ -1778,7 +1867,9 @@ The answers of the owner of 2026-11-24
   Dependabot npm folder?"
 
 The answers of the owner of 2026-11-24
-([ADR-0C4Y](../decisions/entries/0C4Y-answers-of-the-owner-q701-to-q706.md)). His words: "Q701 - Q706
+([ADR-0C4Y](../decisions/entries/0C4Y-answers-of-the-owner-q701-to-q706.md), superseded by
+[ADR-HN92](../decisions/entries/HN92-answers-of-the-owner-q701-to-q706-with-the-default-token.md)).
+His words: "Q701 - Q706
 agree". The questions, each with the recommendation that he agreed to:
 
 - Q701: "When the UI runs on another machine, is it the installed skellycam app, or a page that the
@@ -1791,7 +1882,10 @@ agree". The questions, each with the recommendation that he agreed to:
 - Q704: "When FFmpeg publishes a new point release, the weekly job opens a bump PR that runs the full
   build and tests? This needs a token stored as a repository secret, because GitHub does not run
   workflows on a PR opened with the default token." Recommendation: yes; the owner creates the token,
-  with the exact minimum permissions stated for him.
+  with the exact minimum permissions stated for him. On 2026-11-25 the answer to Q746 (spec Q725)
+  replaced the token by the default token with one approval click, as a draft for later (10.3,
+  [ADR-HN92](../decisions/entries/HN92-answers-of-the-owner-q701-to-q706-with-the-default-token.md),
+  which supersedes 0C4Y).
 - Q705: "Does 'old recordings must not be converted' cancel that step?" Recommendation: yes, cancel it.
   Context added by the coordinator when he relayed the question, not in the quote: "that step" is
   the "upgrade recording" converter, step 6d of player.md 1.3.

@@ -1,6 +1,6 @@
 # 0C4Y — Answers of the owner to Q701 to Q706 on the playback of FreeMoCap v1 recordings
 
-**Status:** accepted, 2026-11-24 (user; the coordinator asked the questions and relayed the answers).
+**Status:** superseded by [HN92](HN92-answers-of-the-owner-q701-to-q706-with-the-default-token.md), 2026-11-25 (commit to dom/legacy-player; was accepted, 2026-11-24 (user; the coordinator asked the questions and relayed the answers)).
 
 ## Decision
 
