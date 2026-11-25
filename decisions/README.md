@@ -63,6 +63,9 @@ These entries are `accepted`.
 | [8ACV](entries/8ACV-decision-of-the-user-on-the-end-check-of-t-cap-05.md) | Q696: T-CAP-05 ends with ring counts at most one apart and last frames within 1 ms; it lands with the clock fix, with an independent review | accepted |
 | [WWR1](entries/WWR1-decision-of-the-user-on-frames-with-the-same-number.md) | Q719, for now: 5.3 says that frames with the same number can be about one frame period apart; the gate pairs by count | accepted |
 | [2AQT](entries/2AQT-decision-of-the-user-on-the-gap-of-the-stall-test-with-process-workers.md) | Q721: the 1 s gap limit of the stall test under load with PROCESS workers moves to the `pace` test, as for THREAD workers | accepted |
+| [N14T](entries/N14T-decisions-of-the-user-on-the-ci-review-of-2026-11-25.md) | CI review of 2026-11-25: the macOS jobs run only by hand; find if "Too many open files" is a leak, no higher limit; find the cause of T-CAP-91 on Linux | accepted |
+| [R394](entries/R394-choices-of-fix-lane-7.md) | Choices of fix lane 7: macOS jobs by hand; the open files leak in the pubsub registry (product, proposal only); a group start holds the test clock | accepted |
+| [2SX2](entries/2SX2-acceptance-of-the-choices-of-fix-lane-7-and-its-follow-ups.md) | "Yes to all": ADR-R394 accepted (its clock rule changes B7YV item 8); fix the pubsub leak, spec and test first; look at the T-UNX-98 thread; merge lane 7 | accepted |
 
 ### Proposed
 

@@ -44,26 +44,17 @@ task. Delete an item when its work is done. The PR that closes an item records t
   - The measurements M4 and M8 of section 11.3 are not done. Phase 2 makes them before it fixes a
     performance number.
   - Section 13 of the spec holds the open questions.
-- **Phase 3 (Windows native capture).** The user decided D1 to D49 on 2026-11-19
-  ([ADR-EN7A](entries/EN7A-phase-3-windows-capture-decisions.md)). D23 and D38 replace two statements
-  of the plan. The spec [`specs/windows-capture.md`](../specs/windows-capture.md) and its test list
-  T-CAP-01 to T-CAP-91 are accepted
-  ([ADR-4CQC](entries/4CQC-phase-3-windows-capture-spec-and-test-list.md)). The user answered the
-  questions of three drafts on 2026-11-19 (fifteen answers)
-  ([ADR-QKX1](entries/QKX1-answers-of-the-user-to-the-phase-3-spec-questions.md)). The user accepted
-  the revised spec on 2026-11-19, with its 64 agent choices (section 18). Section 17.2 of the spec
-  lists seven differences from the ring spec.
-  - The user accepted the choices of the 3a code and its fixes
-    ([ADR-2GS1](entries/2GS1-step-3a-choices-of-the-capture-code-and-its-fixes.md)). Open: section 15
-    must name the macOS timing step (BM73 7); item 90 of section 18 is stale.
+- **Phase 3 (Windows native capture).** The spec [`specs/windows-capture.md`](../specs/windows-capture.md) and
+  its test list are accepted ([ADR-4CQC](entries/4CQC-phase-3-windows-capture-spec-and-test-list.md),
+  [ADR-2GS1](entries/2GS1-step-3a-choices-of-the-capture-code-and-its-fixes.md)).
+  - Open: section 15 must name the macOS timing step (BM73 7); item 90 of section 18 is stale.
   - The `README.md` of `skellycam/tests/reference_recordings/` still names the deleted tests of the
     phase 2 loop (W8); it changes after the redaction decision of that file.
   - Run the fake-source tests with
     `uv run pytest skellycam/tests/capture -m "not camera_hardware and not capture_local"`. The
-    hardware tests run only with `SKELLYCAM_HARDWARE=1`. The workflow
-    `.github/workflows/capture.yml` (section 15: Windows, Linux and macOS) ran one time, on
-    d8989972d, and again on 6d496aa24. The next run must show T-CAP-86 and T-CAP-108 pass. The
-    macOS job also runs the portable ring tests.
+    hardware tests run only with `SKELLYCAM_HARDWARE=1`. The macOS job of `.github/workflows/capture.yml`
+    also runs the portable ring tests. It runs only by hand
+    ([ADR-N14T](entries/N14T-decisions-of-the-user-on-the-ci-review-of-2026-11-25.md)).
   - Phase 7: the parity table of section 16.7 of the spec is the to-do list for Linux and macOS
     (14 tests with no counterpart yet).
 - **Support virtual cameras.** Detection shows a virtual camera with `virtual=True`, and a request
@@ -71,17 +62,10 @@ task. Delete an item when its work is done. The PR that closes an item records t
   ([ADR-PDD3](entries/PDD3-decisions-of-the-user-on-items-65-to-78-and-the-3a-review.md) W5,
   [ADR-MA22](entries/MA22-choices-of-the-media-foundation-source-of-step-3a.md) item 9). A later task
   makes a virtual camera selectable.
-- **Phase 5 step 5a (the new recorder).** The user decided R1 to R12 on 2026-11-19
-  ([ADR-VPF8](entries/VPF8-phase-5-recorder-decisions.md)), and M1 to M10 and C1 to C7 the same
-  day ([ADR-J3QP](entries/J3QP-missing-frames-as-black-placeholders-and-the-end-of-a-take.md)).
-  R1 to R4 and M1 to M5 replace U4, U5 and U12 from the connection of step 5a. The user accepted
-  the spec [`specs/recorder.md`](../specs/recorder.md) and its test list on 2026-11-20
-  ([ADR-Z3Y7](entries/Z3Y7-acceptance-of-the-step-5a-recorder-spec-and-test-list.md),
-  [ADR-Q03C](entries/Q03C-phase-5-step-5a-recorder-spec-and-test-list.md)). The failing tests are
-  in `skellycam/tests/take_recorder/`. The product code of step 5a is in
-  `skellycam/core/take_recorder/`. The user accepted the choices of step 5a, its test API and its
-  connection
-  ([ADR-P98T](entries/P98T-step-5a-choices-of-the-recorder-and-its-connection.md)). The measurements of
+- **Phase 5 step 5a (the new recorder).** The spec [`specs/recorder.md`](../specs/recorder.md) and its test list
+  are accepted ([ADR-Z3Y7](entries/Z3Y7-acceptance-of-the-step-5a-recorder-spec-and-test-list.md),
+  [ADR-P98T](entries/P98T-step-5a-choices-of-the-recorder-and-its-connection.md)). The tests are in
+  `skellycam/tests/take_recorder/`, the code in `skellycam/core/take_recorder/`. The measurements of
   R11 on Windows are in [ADR-8RES](entries/8RES-r11-measurements-of-the-5a-recorder.md). The user
   keeps 3 s and 10 s as starting values
   ([ADR-C6DE](entries/C6DE-stall-as-no-progress-limits-and-no-fat-disk.md) D2). Open: T-REC-STALL on
@@ -89,11 +73,9 @@ task. Delete an item when its work is done. The PR that closes an item records t
   Run the benchmarks with `SKELLYCAM_BENCH=1` and
   `SKELLYCAM_BENCH_OUT` set to a folder outside the repository.
   Next: the take in the new player and in Blender.
-- **Phase 6a (the canvas player for new takes).** The user decided Y1 to Y7 on 2026-11-19
-  ([ADR-J2BQ](entries/J2BQ-phase-6-player-decisions-y1-to-y7.md)). The user accepted the spec
-  [`specs/player.md`](../specs/player.md) (revision 2) and its test list T-PLAY-01 to T-PLAY-72 on
-  2026-11-20 ([ADR-YV3V](entries/YV3V-acceptance-of-the-phase-6a-player-spec-and-test-list.md)), and
-  the 6a choices ([ADR-4D94](entries/4D94-step-6a-choices-of-the-canvas-player.md)).
+- **Phase 6a (the canvas player for new takes).** The spec [`specs/player.md`](../specs/player.md) (revision 2)
+  and its test list are accepted ([ADR-YV3V](entries/YV3V-acceptance-of-the-phase-6a-player-spec-and-test-list.md),
+  [ADR-4D94](entries/4D94-step-6a-choices-of-the-canvas-player.md)).
   - The failing tests of 6a are in `skellycam-ui/src/player/tests/` and
     `skellycam-ui/src/components/playback/tests/`. Run `npm run test:player:unit` and
     `npm run test:player:browser` in `skellycam-ui/`. The benchmarks T-PLAY-65 to T-PLAY-70 run by
@@ -114,11 +96,9 @@ task. Delete an item when its work is done. The PR that closes an item records t
   expose header (user, Y2 of [ADR-J2BQ](entries/J2BQ-phase-6-player-decisions-y1-to-y7.md); section
   14.4 of [`specs/player.md`](../specs/player.md)). The measured gap at 16 cameras × 60 fps × 150 kB:
   the bare FastAPI route was 4 % short and 25 % short behind the logging middleware.
-- **Phase 4 (live preview).** The user decided P1 to P7 and answered A1 to A8 on 2026-11-19
-  ([ADR-G651](entries/G651-phase-4-live-preview-decisions-p1-to-p7.md)). The user accepted the step 4a
-  spec [`specs/preview.md`](../specs/preview.md) and its test list T-PRV-01 to T-PRV-24 on 2026-11-19
-  ([ADR-WB08](entries/WB08-acceptance-of-the-step-4a-preview-spec-and-its-test-list.md)), and the
-  4a choices ([ADR-68JT](entries/68JT-step-4a-choices-of-the-preview-sender.md)).
+- **Phase 4 (live preview).** The step 4a spec [`specs/preview.md`](../specs/preview.md) and its test list are
+  accepted ([ADR-WB08](entries/WB08-acceptance-of-the-step-4a-preview-spec-and-its-test-list.md),
+  [ADR-68JT](entries/68JT-step-4a-choices-of-the-preview-sender.md)).
   - The tests of step 4a (T-PRV-01 to T-PRV-24) are in `skellycam/tests/preview/`, with the
     helpers of spec section 9.1 in `preview_helpers.py`. Run them with
     `uv run pytest skellycam/tests/preview`. The measurements
@@ -198,7 +178,8 @@ task. Delete an item when its work is done. The PR that closes an item records t
   - Certify: `group:restore-after-kill` (Q615) can use the restore file with a folder of its own run.
   - FreeMoCap reads `framerate_stats.median` from the old `*_stats.json`, not from the stop response; a reader of
     new takes must use `mean_framerate` (Q609).
-  - The first CI run with `spawn` on Linux and macOS, the skip guard and the pace steps is not done yet.
+  - The CI runs with `spawn`, the skip guard and the pace steps have run on Linux and Windows. macOS is not done: its
+    jobs run only by hand ([ADR-N14T](entries/N14T-decisions-of-the-user-on-the-ci-review-of-2026-11-25.md)).
   - FreeMoCap on Linux ([ADR-T34M](entries/T34M-decision-of-the-user-on-the-start-method-of-camera-processes.md)):
     nothing is decided. The user: "I think this needs to be part of a wider review of how the whole of freemocap
     works on linux"; the freemocap session does that review. A candidate for it: a call of
@@ -210,3 +191,14 @@ task. Delete an item when its work is done. The PR that closes an item records t
 - **Fix lane 5 follow-ups** ([ADR-DC43](entries/DC43-choices-of-fix-lane-5.md)).
   - The user decides items 1 to 4. Windows Server `os.label`: `Windows 2025Server 24H2` [NV].
   - `stop_after_frame=200` tests that wait for `ready` have the risk of T-UNX-95.
+- **Fix lane 7 follow-ups** ([ADR-R394](entries/R394-choices-of-fix-lane-7.md),
+  [ADR-2SX2](entries/2SX2-acceptance-of-the-choices-of-fix-lane-7-and-its-follow-ups.md)).
+  - The pubsub leak (approved, item 2 of ADR-2SX2): each camera group keeps its `PubSubTopicManager` and its queues
+    in `CAMERA_GROUP_PUB_SUB_MANAGERS` of `skellycam/core/ipc/pubsub/pubsub_manager.py` after its close. First a spec
+    item and a test (open and close a group a number of times, count the open files), then the code. Item 4 of
+    ADR-R394 is the start of the design.
+  - The T-UNX-98 thread (item 3 of ADR-2SX2): find why
+    `test_t_unx_98_two_cameras_of_one_model_keep_their_own_entries[other usb ids]` sometimes leaves a camera loop
+    thread that does not end (Linux and macOS). That non-daemon thread holds the end of the pytest process.
+  - macOS [NV]: the runner's open-file limit, and that its errors come from this leak. A run by hand after the fix
+    gives the result.

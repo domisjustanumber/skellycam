@@ -309,6 +309,55 @@ def test_virtual_clock_drops_an_expected_thread_that_ends_leaves_or_does_not_sta
         assert clock.describe()["expected"] == [], case
 
 
+def test_virtual_clock_two_expects_of_one_thread_need_one_wait():
+    """T-CAP-91 [ADR-R394]: the start of a group and the start of its worker both expect the same loop thread. Its
+    first wait drops it, so the time then moves."""
+    clock = VirtualClock(fallback_s=10.0)
+    thread = threading.Thread(target=lambda: clock.wait_until(clock.now_ns() + 10**9), daemon=True)
+    clock.expect(thread)
+    clock.expect(thread)
+    thread.start()
+    thread.join(5)
+    assert not thread.is_alive() and clock.now_ns() == VirtualClock.START_NS + 10**9
+    assert clock.describe()["expected"] == []
+
+
+def test_virtual_clock_takes_no_forced_step_while_an_expected_thread_is_not_started():
+    """T-CAP-91 [ADR-R394]: with the default `fallback_s` (50 ms), a participant that waits does not move the time by
+    forced steps while an expected thread is not started. When that thread starts and waits, the time moves."""
+    clock = VirtualClock()
+    late = threading.Thread(target=lambda: clock.wait_until(clock.now_ns() + 10**8), daemon=True)
+    clock.expect(late)
+    waiter = _wait_on_the_clock(clock, 1.0)
+    time.sleep(0.3)
+    assert clock.now_ns() == VirtualClock.START_NS, "a forced step moved the time before the expected thread started"
+    late.start()
+    late.join(5)
+    waiter.join(5)
+    assert not waiter.is_alive() and clock.now_ns() == VirtualClock.START_NS + 10**9
+
+
+def test_the_cameras_of_a_group_open_at_one_virtual_time_with_a_slow_main_thread(monkeypatch):
+    """T-CAP-91 [ADR-R394]: the start of a group expects each camera loop thread before the first starts, and no
+    forced step moves the time while one of them is not started. A main thread that sleeps 0.2 s of real time after
+    each worker start does not let the first loop run the time alone: the two fakes open at one virtual time. With
+    neither rule the second opened about 3 s later; with only the first, 30 ms later (three forced steps)."""
+    from skellycam.core.camera.camera_worker import CameraWorker
+
+    start = CameraWorker.start
+
+    def slow_start(worker):
+        start(worker)
+        time.sleep(0.2)
+
+    monkeypatch.setattr(CameraWorker, "start", slow_start)
+    with cs.capture_app(monkeypatch, [FakeScript(), FakeScript()]) as app:
+        cs.ready_app_steps(app)
+        opens = [next(t for name, t, _ in app.factory.logs[camera_id].events if name == "open")
+                 for camera_id in app.factory.camera_ids]
+    assert opens[0] == opens[1], [(t - VirtualClock.START_NS) / 1e9 for t in opens]
+
+
 def _gate_loop(clock, opened, probed, go):
     """A camera loop at the gate: one probe with the gate shut, then the real work of its pass until `go`, then the
     next probe (the gate is open), then it leaves the clock."""

@@ -1,7 +1,8 @@
 name: Recorder
 
 # specs/recorder.md section 12.1 [C4, agent 34]: the unit and process tests of step 5a, the short pass
-# parts of T-REC-STALL and T-REC-KILL, and T-REC-37 on Windows, Linux and macOS. The benchmarks
+# parts of T-REC-STALL and T-REC-KILL, and T-REC-37 on Windows, Linux and macOS (macOS only by hand,
+# ADR-N14T). The benchmarks
 # (marker recorder_bench) run only on the machines of the user. A skipped connection test fails the run
 # (SKELLYCAM_NO_SKIP, unix-capture.md 4.11). The tests with the marker `pace` run in their own step (Q619).
 on:
@@ -137,8 +138,10 @@ jobs:
 
   # Apple Silicon. opencv-contrib-python 5.1.0.95 has macOS wheels for macOS 15 and later only. The
   # sounddevice wheel for macOS holds PortAudio, so no install step is necessary.
+  # It runs only by hand (ADR-N14T): on a push, often no hosted macos-15 runner took the job.
   recorder-macos:
     name: Recorder tests (Python 3.13.18, macos-15 arm64)
+    if: github.event_name == 'workflow_dispatch'
     runs-on: macos-15
     timeout-minutes: 40
     steps:

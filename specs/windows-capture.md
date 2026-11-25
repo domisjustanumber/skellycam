@@ -1230,7 +1230,9 @@ section adds only what capture adds.
   wheel for macOS holds PortAudio, so the job has no install step for it. The job also runs the
   portable ring tests (`-m ring_portable`, with `SKELLYCAM_RING_FULL=1`, as `ring-arm64.yml`). Few such
   runners exist: no other job waits for this job, it has its own concurrency group with
-  `cancel-in-progress`, and a time limit of 40 minutes [agent 74].
+  `cancel-in-progress`, and a time limit of 40 minutes [agent 74]. The job runs only by hand
+  (`if: github.event_name == 'workflow_dispatch'`), not on a push
+  [ADR-N14T](../decisions/entries/N14T-decisions-of-the-user-on-the-ci-review-of-2026-11-25.md).
 - The hosted runners do not run the tests with the marker `capture_local` (T-CAP-49, T-CAP-50).
   They need the Windows development machine [D48] [agent 2].
 - The arm64 job stays as it is (ring tests only) [D47].
@@ -1296,6 +1298,9 @@ section adds only what capture adds.
   clock, as the control thread does for a request
   [ADR-DC43](../decisions/entries/DC43-choices-of-fix-lane-5.md)
   ([ADR-F4N7](../decisions/entries/F4N7-decisions-of-the-user-on-the-pace-tests-of-fix-lane-6.md), Q673).
+  At the start of a group, each camera loop thread of the group holds the clock before the first thread starts.
+  While such a thread is not started, the forced steps do not move the clock. The start of the group starts the
+  thread or drops it [ADR-R394](../decisions/entries/R394-choices-of-fix-lane-7.md).
   A camera loop at the lockstep gate does not hold the virtual clock while its gate stays shut. When its gate
   opens, the loop holds the clock until its next gate probe. The forced steps still move the clock, so a loop that
   does not come back cannot stop it
