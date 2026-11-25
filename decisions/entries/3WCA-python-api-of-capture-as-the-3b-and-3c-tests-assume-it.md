@@ -1,6 +1,9 @@
 # 3WCA — Python API of capture, as the 3b and 3c tests assume it
 
-**Status:** proposed, 2026-11-19 (agent).
+**Status:** absorbed into
+[`specs/windows-capture.md#222-rules-of-step-3b`](../../specs/windows-capture.md#222-rules-of-step-3b),
+[`specs/windows-capture.md#226-python-api-and-rules-of-the-port`](../../specs/windows-capture.md#226-python-api-and-rules-of-the-port),
+2026-11-25 (commit to dom/jpeg-encode-tests; was accepted, 2026-11-25 (user: [ADR-B95N](B95N-decisions-of-the-user-on-the-raw-mode-open-the-yuyv-format-and-the-3b-choices.md), Q810); was proposed, 2026-11-19 (agent)).
 
 ## Decision
 

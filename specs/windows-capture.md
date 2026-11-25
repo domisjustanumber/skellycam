@@ -2292,17 +2292,19 @@ and D38 replace the two older plan statements of 1.4.
   corrected step 3b with the answers V1 to V7 on 2026-11-19
   ([ADR-8MTY](../decisions/entries/8MTY-answers-v1-to-v7-of-the-user-to-the-3b-and-3c-tests.md)).
   Those answers and their failing tests were on branch `dom/3bc-tests`, which did not merge.
+- On 2026-11-25 the user answered Q807 to Q810
+  ([ADR-B95N](../decisions/entries/B95N-decisions-of-the-user-on-the-raw-mode-open-the-yuyv-format-and-the-3b-choices.md)):
+  a camera with no MJPG mode at the floor opens its raw mode (Q807); a YUY2 take records `YUYV`
+  (Q808); the 3c tests move in a later lane (Q809); the items of 22.6 are accepted (Q810).
 - This section states the 3b part of V1 to V4 and V6 on this branch. Other lanes edit 16.2, 16.6 and
   16.7 at this time. When the lanes merge, the rows of 22.3 move to 16.2, and the counts of 16.6 and
-  16.7 change with them (ADR-0Z2F item 3).
-- The names that the tests use are in
-  [ADR-3WCA](../decisions/entries/3WCA-python-api-of-capture-as-the-3b-and-3c-tests-assume-it.md)
-  (proposed). The choices of the port are in
-  [ADR-0Z2F](../decisions/entries/0Z2F-choices-of-the-port-of-the-3b-tests-to-dom-integration.md)
-  (proposed). A mark [3WCA n] is item n of ADR-3WCA, a choice of an agent that waits for the user.
-  V5 (OpenCV controls, except the empty mode list) and V7 (3c hardware) are not part of this section.
+  16.7 change with them (22.6 item 17).
+- A mark [3WCA n] is item n of 22.6, the Python API that the tests use (Q810). A mark [N72V n] is item
+  n of [ADR-N72V](../decisions/entries/N72V-choices-of-the-raw-mode-open-and-the-yuyv-format.md), a
+  choice of an agent that waits for the user. V5 (OpenCV controls, except the empty mode list) and V7
+  (3c hardware) are not part of this section.
 
-### 22.2 Rules added by V1 to V4 and V6
+### 22.2 Rules of step 3b
 
 - **Full mode list in 3b.** `CameraDeviceInfo` gets `capture_modes` (7.4) in step 3b [V1]. Its item is
   `CaptureModeEntry` [3WCA 1]. An exact duplicate is listed one time [3WCA 2]. For one size, the
@@ -2315,6 +2317,17 @@ and D38 replace the two older plan statements of 1.4.
 - **Auto rate for YUY2 and NV12 [V2].** An auto rate (-1 or 0) looks at the modes of the requested
   format at the requested size: 30 if that format has 30, else 29.97, else its highest rate at the
   floor or above. With none, the camera fails at `set mode` with "no mode at 30 fps or more".
+- **A camera with no MJPG mode [Q807].** An MJPG request (the default) for a camera with no MJPG mode
+  at 30 fps or more at the requested size, but with a YUY2 or NV12 mode at that size, opens the raw
+  mode. The camera logs one line, and its frames are encoded to JPEG at capture. YUY2 comes before
+  NV12 [N72V 1]. The rate follows 7.5 for the raw format, and the auto rate of V2 [N72V 1]. The line
+  holds the camera ID, the words "no MJPG mode" and the opened format [N72V 2]. The whole-request
+  check of 7.5 applies the same rule with `capture_modes` [N72V 3]. A camera with an MJPG mode at the
+  floor at that size opens MJPG and logs no such line.
+- **The format of a raw take [Q808].** A take of a camera in YUY2 records `requested.capture_format`
+  `"YUYV"` (SFF-800; [`recorder.md`](recorder.md) 6.7). This also applies to a camera that opened its
+  raw mode by Q807: the take records the opened format, not the requested format [N72V 4]. NV12 waits
+  for the SFF-800 change of `dom/nv12-capture-format` in skellyspecs.
 - **Encoder in the status [V3].** The status has `jpeg_encoder`: `"quick_sync"` or `"cv2"` for a
   camera whose JPEG is encoded at capture (YUY2, NV12, and each camera of the OpenCV source), `null`
   for a camera that gives its own JPEG (MJPG). After a fallback during a take, it is `"cv2"`.
@@ -2326,7 +2339,7 @@ and D38 replace the two older plan statements of 1.4.
 - **OpenCV source [V4].** A YUY2 or NV12 request gives a `cv2.imencode` JPEG at quality 90 of the
   image that OpenCV delivers. No Quick Sync check runs. `jpeg_encoder` is `"cv2"`. There is no input
   range: no range line in the log, because [`recorder.md`](recorder.md) 6.7 gives the range to the
-  log only (ADR-0Z2F item 4).
+  log only (22.6 item 18).
 - **Full-range JPEG [V6].** The JPEG is always full range. A limited-range frame gets the
   range-expanding table before Quick Sync, and `cv2` converts it with its default conversion. A
   full-range frame goes to Quick Sync unchanged, and `cv2` converts it with a full-range conversion.
@@ -2334,14 +2347,14 @@ and D38 replace the two older plan statements of 1.4.
   matches its decoded JPEG (T-CAP-153), within a mean absolute difference of 3 levels [3WCA 12].
 - **The recorder (note of 2026-11-20).** The camera writer of the take gets the encoded JPEG, with
   the same bytes as the ring frame of the same source frame [ring 5.3]. Each block of the camera file
-  is that JPEG (ADR-0Z2F item 5).
+  is that JPEG (22.6 item 19).
 
 ### 22.3 Test list of the encode at capture
 
 The tests are in `skellycam/tests/capture/test_uncompressed.py`. The self-tests of their helpers are
 in `test_helpers_uncompressed.py`. Each test runs on fake sources with THREAD workers and the virtual
 clock. No test measures time. Before the product code, each test fails on an assertion or on a named
-missing module, not with an error at collection (ADR-0Z2F item 6).
+missing module, not with an error at collection (22.6 item 20).
 
 | ID | Step | Kind | What | Pass when |
 |---|---|---|---|---|
@@ -2349,22 +2362,24 @@ missing module, not with an error at collection (ADR-0Z2F item 6).
 | T-CAP-62 | 3b | fake | As 16.2. | As 16.2. |
 | T-CAP-63 | 3b | fake | As 16.2. | As 16.2; "gets the result" is the status `jpeg_encoder` [V3]. |
 | T-CAP-64 | 3b | fake | As 16.2. | As 16.2; the three reports of the fallback of 22.2 [V3, 3WCA 3]. |
-| T-CAP-65 | 3b | fake | As 16.2. | As 16.2; "the log holds it": at least one log line of the camera gives "input range", then "limited" or "full", and each one gives the decision (ADR-0Z2F item 4). |
-| T-CAP-66 | 3b | fake | As 16.2, with `cv2.imencode` and with the fake Quick Sync encoder. | As 16.2; the frames after the short frame are JPEGs with no flag (ADR-0Z2F item 9). |
-| T-CAP-67 | 3b | fake | As 16.2. | The recorder rule of 22.2 (ADR-0Z2F item 5). |
-| T-CAP-70 | 3b | fake | As 16.2. | As 16.2; the 422 names the one-rate rule (ADR-0Z2F item 6). |
+| T-CAP-65 | 3b | fake | As 16.2. | As 16.2; "the log holds it": at least one log line of the camera gives "input range", then "limited" or "full", and each one gives the decision (22.6 item 18). |
+| T-CAP-66 | 3b | fake | As 16.2, with `cv2.imencode` and with the fake Quick Sync encoder. | As 16.2; the frames after the short frame are JPEGs with no flag (22.6 item 23). |
+| T-CAP-67 | 3b | fake | As 16.2. | The recorder rule of 22.2 (22.6 item 19). |
+| T-CAP-70 | 3b | fake | As 16.2. | As 16.2; the 422 names the one-rate rule (22.6 item 20). |
 | T-CAP-71 | 3b | fake | Build `capture_modes` from the native types of T-CAP-25, with a native NV12 type and a RAW type added [V1]. | The JSON of 7.4 and 22.2. |
 | T-CAP-89 | 3b | fake | As 16.2. | As 16.2, through `capture_modes` [V1]. |
 | T-CAP-150 | 3b | fake | The OpenCV fake with `capture_fourcc` YUY2 and NV12; record [V4]. | No Quick Sync check runs; `jpeg_encoder` is "cv2"; each ring JPEG is byte-equal to the q90 `cv2.imencode` JPEG of an OpenCV image; no log line of the camera gives an input range. |
 | T-CAP-151 | 3b | fake | OpenCV detection with a fake `cv2_enumerate_cameras`; Linux and macOS [V5]. | `capture_modes` is `[]` and `supported_modes` is `[]` for each camera. |
 | T-CAP-152 | 3b | fake | YUY2 and NV12 fakes, with the fake Quick Sync encoder and with `cv2.imencode`: (1) limited-range frames; (2) full-range frames (2 % of Y outside 16 to 235) [V6]. | The decoded ring JPEG equals the full-range BGR of the source within a mean absolute difference of 3 levels: (1) the default OpenCV conversion (limited range in); (2) the full-range BT.601 conversion. |
 | T-CAP-153 | 3b | fake | As T-CAP-152, with the BGR ring on [V6]. | The BGR ring image of each frame equals the decoded ring JPEG of the same frame within 3 levels. |
+| T-CAP-154 | 3b | fake | An MJPG request at 320x240 at 30 fps for four fakes: MJPG at 15 and YUY2 at 30 there; NV12 only there; NV12 and YUY2 there; MJPG at 30 and YUY2 there (each fake also has MJPG at 30 at 640x480); record [Q807, Q808]. | The first three open YUY2, NV12 and YUY2, reach `ready`, log one line of 22.2 each, give ring JPEGs with the chroma of the source, show `jpeg_encoder` "cv2" and record `YUYV` for YUY2; the fourth opens MJPG, logs no such line and records `MJPG`. |
+| T-CAP-155 | 3b | fake | A YUY2 request (`capture_fourcc`) records a take [Q808]. | `requested.capture_format` of the capture info is `"YUYV"`; each block of the camera file is a 4:2:2 JPEG. |
 
 T-CAP-150 to T-CAP-153 are T-CAP-105, T-CAP-106, T-CAP-109 and T-CAP-110 of `dom/3bc-tests` and of
-ADR-8MTY. On this branch T-CAP-105 to T-CAP-114 are other tests (ADR-0Z2F item 2). T-CAP-151 runs
-on Linux and macOS only: on Windows, detection is Media Foundation (D11). Each other test runs on
-the three systems. The fake Quick Sync encoder takes its input as full range, as Quick Sync does
-[notes: Input range], and it keeps the chroma of the source.
+ADR-8MTY. On this branch T-CAP-105 to T-CAP-114 are other tests (22.6 item 16). T-CAP-151 runs on
+Linux and macOS only: on Windows, detection is Media Foundation (D11). Each other test runs on the
+three systems. The fake Quick Sync encoder takes its input as full range, as Quick Sync does
+[notes: Input range], and it keeps the chroma of the source (22.6 item 25).
 
 ### 22.4 Open point
 
@@ -2378,7 +2393,7 @@ the three systems. The fake Quick Sync encoder takes its input as full range, as
 ### 22.5 Tests that run later
 
 These tests are not written or not run in this step. They are timed or CPU-heavy, or they need
-cameras. The brief of the lane leaves them out (ADR-0Z2F item 10).
+cameras. The brief of the lane leaves them out (22.6 item 24).
 
 - T-CAP-68 and T-CAP-69 (3b hardware, 16.2), and T-CAP-79 (`capture_modes` against the list of the
   prototype on the four cameras, step 3b by V1).
@@ -2388,3 +2403,83 @@ cameras. The brief of the lane leaves them out (ADR-0Z2F item 10).
   and without the BGR ring.
 - T-CAP-49 (idle CPU under 2 % of one core) with a camera in an uncompressed mode.
 - The 3b recording of 2.2 item 3.
+
+### 22.6 Python API and rules of the port
+
+The user accepted these items on 2026-11-25 (Q810). Items 1 to 14 were ADR-3WCA, and items 15 to 26
+were ADR-0Z2F, items 1 to 12. `capture` is `skellycam.core.camera.capture`. Items 4, 5, 11, 13 and 14
+are for the 3c and hardware tests that stay on `dom/3bc-tests` (Q809).
+
+What a consumer sees:
+
+1. `CaptureModeEntry` (pydantic, in `detect_cameras_devices.py`) is the item of `capture_modes` (V1),
+   with the fields of 7.4 in the order of its JSON.
+2. `capture_modes` (7.4): an exact duplicate (size, `fps_num`, `fps_den`, format) is listed one time.
+   For one size, the rounded rates ascend. For one size and rounded rate, MJPG comes first, then the
+   other formats in the order of the native list. H.264 and RAW have the reason "never opened" at
+   each rate.
+3. An encoder fallback (V3): the `warnings` item has the kind `encoder_fallback`. It is in the status
+   `warnings` while the take runs. The WARNING line holds the camera ID and `cv2.imencode`. At stop,
+   each camera with an encoder logs a line with the camera ID, then `encoder fallbacks`, then the
+   count.
+4. A request to set a control that the status of a running camera shows as absent gets 422 with the
+   text of 11.5.
+5. OpenCV source (V5): "no white balance value" means that `CAP_PROP_WB_TEMPERATURE` reads 0 or less.
+   The power line frequency is null, because OpenCV has no property for it.
+
+The Python names and the test rules:
+
+6. `capture.encoder.quick_sync_works() -> bool` is the central check (13.2). The
+   `CameraGroupManager` keeps its result for its lifetime: one app run. It calls the check at most
+   one time, and only for a request with a YUY2 or NV12 camera of the Media Foundation source.
+7. `capture.encoder.open_quick_sync_encoder(format, width, height, *, quality)` gives an encoder with
+   `encode(raw) -> list[bytes]` (the JPEGs that came out, in input order), `flush() -> list[bytes]`
+   and `close()`. An exception from `encode` or `flush` is an encoder failure. After a failure, the
+   loop does not use that encoder again. It encodes the held frames again from their raw frames. "The
+   first frame after the event" is the first ring frame written after it.
+8. `OpenedMode.os_range: str | None = None`: the range flag of the OS for the opened type
+   (`"limited"`, `"full"`, or `None` when not set).
+9. A raw frame of the wrong length is a 1-D uint8 array of the delivered bytes. `delivered_len` is
+   its length.
+10. `capture.modes.capture_modes(native) -> list[CaptureModeEntry]`. `choose_mode` uses
+    `request.capture_fourcc`, the auto rate of V2, and never takes a synthesized NV12 type.
+11. The control names `white_balance` and `power_line_frequency` in `ControlState`. `set_controls({})`
+    reads them (11.4).
+12. T-CAP-152 and T-CAP-153 (V6) accept a mean absolute difference of 3 levels.
+13. Hardware switch `SKELLYCAM_HARDWARE_PROTOTYPE_MODES` (T-CAP-79): a JSON file outside the
+    repository, with the native types of the prototype for each camera label, in the form of
+    `flag_types` of its `parse.py` (`subtype`, `width`, `height`, `fps_num`, `fps_den`, `flags`).
+14. T-CAP-76: the "history documents" are the files under `decisions/` and `specs/`. It comes with the
+    3c tests, with a skip mark that the last commit of phase 3 removes.
+
+The port of the 3b tests from `dom/3bc-tests`:
+
+15. Scope: only the fake tests of step 3b moved: T-CAP-61 to T-CAP-67, T-CAP-70, T-CAP-71, T-CAP-89
+    and T-CAP-150 to T-CAP-153, with the helpers in `uncompressed.py`, their self-tests and the raw
+    path of `fake_source.py`. The 3c tests, the hardware tests and the 3c spec edits of V5 and V7 stay
+    on `dom/3bc-tests`.
+16. T-CAP-105, T-CAP-106, T-CAP-109 and T-CAP-110 of `dom/3bc-tests` and of ADR-8MTY are T-CAP-150 to
+    T-CAP-153 here. The exclusive-access lane uses T-CAP-130 to T-CAP-140.
+17. The text of step 3b is this section, not edits in 7.4, 8.4, 13, 14 and 16. When the lanes merge,
+    the rows of 22.3 move to 16.2, and sections 7.4, 8.4 and 14 get the rules of 22.2.
+18. The range of a camera is in the log only: a log line of the camera gives "input range", then
+    "limited" or "full". A camera of the OpenCV source has no such line.
+19. T-CAP-67 checks the take recorder: each frame that the camera writer gets is the Quick Sync JPEG,
+    with the same bytes as the ring frame of the same source frame, with no gap in the frame numbers,
+    and each block of the camera file is one of these JPEGs.
+20. Before the product code, a test fails on an assertion or on a named missing module. The fake gives
+    `os_range` only when the product `OpenedMode` has the field, and `capture_modes` only when
+    `modes.capture_modes` exists. `QuickSyncFake(available=False)` replaces nothing when
+    `capture.encoder` does not exist; `available=True` then fails the test with the module name; any
+    other missing module is raised. The tests assert that the status has `jpeg_encoder` before they
+    read it. T-CAP-70 checks that the 422 names the one-rate rule.
+21. The helpers that `capture_session.py` does not have are in `uncompressed.py`: `BgrImages` keeps a
+    copy of each BGR ring image, and `stop_line_count(messages, camera_id, word)` reads a stop line.
+22. T-CAP-150 runs on the virtual clock of `OpenCVFakeFactory`. It checks "no Quick Sync check" only
+    when `capture.encoder` exists.
+23. In T-CAP-66 the frames after the short frame must also be JPEGs that decode.
+24. The tests of 22.5 are left out of this step: they are timed or CPU-heavy, or they need cameras.
+25. The fake Quick Sync encoder keeps the chroma of the source (4:2:2 from YUY2, 4:2:0 from NV12). A
+    self-test checks it.
+26. The read path of the decision log was at 92 % after the merge of fix lane 8. ADR-TC9B, ADR-53VB,
+    ADR-JWZ1, ADR-2AQT and ADR-8ACV are absorbed (the user accepted this with Q810).

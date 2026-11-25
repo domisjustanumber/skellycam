@@ -1,7 +1,7 @@
 """Step 3b: JPEG encode at capture for uncompressed modes (specs/windows-capture.md, sections 13 and
 22; specs/frame-ring.md, section 8.7).
 
-T-CAP-61 to T-CAP-67, T-CAP-70, T-CAP-71, T-CAP-89 and T-CAP-150 to T-CAP-153 (section 22.3). They run
+T-CAP-61 to T-CAP-67, T-CAP-70, T-CAP-71, T-CAP-89 and T-CAP-150 to T-CAP-155 (section 22.3). They run
 on Windows, Linux and macOS, except T-CAP-151, which runs on Linux and macOS only. The tests come from
 `dom/3bc-tests` (ADR-3WCA), ported to `dom/integration` with the choices of ADR-0Z2F.
 
@@ -17,14 +17,15 @@ import json
 import logging
 import re
 import sys
+from pathlib import Path
 
 import cv2
 import numpy as np
 import pytest
 
 from skellycam.tests.capture.capture_session import (
-    SOURCE_MODULE, CaptureApp, OpenCVFakeFactory, Spies, block_payloads, capture_app, capture_logs, product,
-    ready_app_steps)
+    SOURCE_MODULE, CaptureApp, OpenCVFakeFactory, Spies, block_payloads, camera_key_of, capture_app, capture_logs,
+    product, ready_app_steps)
 from skellycam.tests.capture.fake_source import FakeScript, FakeSource, VirtualClock
 from skellycam.tests.capture.test_detection_and_modes import NATIVE_25
 from skellycam.tests.capture.uncompressed import (
@@ -582,3 +583,78 @@ def test_t_cap_153_bgr_ring_matches_the_jpeg(monkeypatch, fmt, available, case):
         assert image.shape == (H, W, 3)
         difference = mean_difference(image, decode(jpegs[sfn]))
         assert difference <= LIMIT_LEVELS, f"frame {sfn}: {difference:.2f} levels from its JPEG"
+
+
+# ---------------------------------------------------------------------------
+# T-CAP-154, T-CAP-155: a camera with no MJPG mode, and the format of a raw take (22.2, Q807, Q808)
+# ---------------------------------------------------------------------------
+
+FALLBACK_LINE = re.compile(r"no MJPG mode\b.*?\b(YUY2|NV12)\b", re.IGNORECASE)
+
+
+def fallback_formats(logs, camera_id):
+    """The formats that the log lines of the raw-mode open of a camera give (22.2, Q807): "no MJPG
+    mode", then the opened format (ADR-N72V item 2)."""
+    return [match.group(1).upper() for m in logs.messages()
+            if camera_id in m and (match := FALLBACK_LINE.search(m))]
+
+
+def take_capture_format(directory, camera_id, name="take"):
+    """`requested.capture_format` of the camera in the capture info of a take (recorder.md 6.7)."""
+    (info,) = (Path(directory) / name).glob("*_info.json")
+    configs = json.loads(info.read_text(encoding="utf-8"))["camera_configs"]
+    return configs[camera_key_of(directory, camera_id, name)]["requested"]["capture_format"]
+
+
+# Each case: the native types at W x H (each script also has MJPG at 30 at 640x480), the format that
+# opens, and the capture format of the take; None: not checked (NV12 waits for SFF-800, Q808).
+CASES_154 = {
+    "MJPG below 30 and YUY2": (((W, H, 15, 1, "MJPG"), (W, H, 30, 1, "YUY2")), "YUY2", "YUYV"),
+    "NV12 only": (((W, H, 30, 1, "NV12"),), "NV12", None),
+    "YUY2 and NV12": (((W, H, 30, 1, "NV12"), (W, H, 30, 1, "YUY2")), "YUY2", "YUYV"),
+    "MJPG at 30 kept": (((W, H, 30, 1, "MJPG"), (W, H, 30, 1, "YUY2")), "MJPG", "MJPG"),
+}
+
+
+@pytest.mark.parametrize("case", list(CASES_154))
+def test_t_cap_154_a_camera_with_no_mjpg_mode_opens_its_raw_mode(monkeypatch, tmp_path, case):
+    """T-CAP-154, section 22.2 [Q807, ADR-B95N, ADR-N72V]: an MJPG request (the default) at W x H at
+    30 fps for a fake with no MJPG mode at 30 fps or more at that size, but a YUY2 or NV12 mode there. The camera
+    opens the raw mode (YUY2 before NV12, ADR-N72V item 1) and reaches `ready`; one log line of the
+    camera gives "no MJPG mode" and the format; each ring frame is a JPEG with the chroma of the
+    source; `jpeg_encoder` is "cv2"; the take records the format of 22.2 (Q808). A camera with MJPG at
+    30 there opens MJPG and logs no such line."""
+    native, opened, recorded = CASES_154[case]
+    script = FakeScript(modes=native + ((640, 480, 30, 1, "MJPG"),))
+    with capture_logs() as logs, capture_app(monkeypatch, [script], full_modes=True) as app:
+        QuickSyncFake(monkeypatch, available=False)
+        spies = Spies(monkeypatch, app, keep_payloads=True)
+        camera_id = app.factory.camera_ids[0]
+        ready_app_steps(app, [app.config(camera_id, width=W, height=H, framerate=30.0, capture_fourcc="MJPG")])
+        assert app.status(camera_id)["mode"]["format"] == opened
+        assert jpeg_encoder(app, camera_id) == (None if opened == "MJPG" else "cv2")
+        record_frames(app, spies, tmp_path, "take", camera_id, 30)
+        app.client.delete(CLOSE)
+    assert fallback_formats(logs, camera_id) == ([] if opened == "MJPG" else [opened])
+    writes = spies.of("jpeg", camera_id)[:30]
+    assert writes and all(decode(event["payload"]).shape == (H, W, 3) for event in writes)
+    if opened != "MJPG":
+        assert all(jpeg_chroma(event["payload"]) == CHROMA[opened] for event in writes)
+    if recorded is not None:
+        assert take_capture_format(tmp_path, camera_id) == recorded
+
+
+def test_t_cap_155_a_yuy2_take_records_yuyv(monkeypatch, tmp_path):
+    """T-CAP-155, section 22.2 [Q808]: a YUY2 request (`capture_fourcc`) records a take. Its capture
+    info has `requested.capture_format` "YUYV" (SFF-800), and each block of its camera file is a
+    4:2:2 JPEG."""
+    with capture_app(monkeypatch, [raw_camera("YUY2")], full_modes=True) as app:
+        QuickSyncFake(monkeypatch, available=False)
+        spies = Spies(monkeypatch, app)
+        camera_id = app.factory.camera_ids[0]
+        ready_app_steps(app, [app.config(camera_id, capture_fourcc="YUY2")])
+        record_frames(app, spies, tmp_path, "take", camera_id, 30)
+        app.client.delete(CLOSE)
+    assert take_capture_format(tmp_path, camera_id) == "YUYV"
+    blocks = block_payloads(tmp_path, camera_id)
+    assert blocks and all(jpeg_chroma(block) == "4:2:2" for block in blocks)
