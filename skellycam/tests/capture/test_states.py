@@ -895,18 +895,42 @@ def test_t_cap_113_a_frame_that_waits_at_the_gate_is_not_too_slow(monkeypatch):
     between the arrival of frame s_a + 59 and the early deadline, so a decision at the deadline would
     be false. A live exposure change of
     the first: its frames arrive at 30 fps, so frame s_a + 59 arrives in time, also when the loop
-    takes it after the early deadline. The check ends `ready`, not `too_slow`."""
+    takes it after the early deadline. The check ends `ready`, not `too_slow`.
+
+    The slow period starts at the live set of the first camera, not before the request: only the camera loops are
+    on the virtual clock, so the time runs on while the request goes through HTTP, and a slow period that started
+    before it could end before the check. The test checks that the slow period lasts until the end of the check,
+    and it waits for the end of the check that comes after the set [ADR-7GC1]."""
     with capture_app(monkeypatch, [FakeScript(), FakeScript()], track=True) as app:
         ready_app_steps(app)
         changed, slow = app.factory.camera_ids
-        app.factory.sources[slow].slow_period(rate=1.6, seconds=12.0)
-        app.wait_clock(1.0, "the slow period starts")
+        slow_source, changed_source = app.factory.sources[slow], app.factory.sources[changed]
+        set_at = []
+        set_controls = changed_source.set_controls
+
+        def set_and_start_the_slow_period(changes):
+            if "exposure" in changes and not set_at:
+                set_at.append(app.clock.now_ns())
+                slow_source.slow_period(rate=1.6, seconds=12.0)
+            return set_controls(changes)
+
+        monkeypatch.setattr(changed_source, "set_controls", set_and_start_the_slow_period)
         response = app.apply([app.config(changed, exposure=-6), app.config(slow)])
         assert response.status_code == 200, response.text
-        app.wait(lambda: app.state(changed) in ("ready", "too_slow")
-                 and app.tracker.first(changed, "checking") is not None, "the end of the check")
+        assert set_at, "the apply did not set the exposure of the first camera"
+
+        def end_of_check():
+            start = app.tracker.first(changed, "checking", after_ns=set_at[0])
+            ends = [app.tracker.first(changed, state, after_ns=start) for state in ("ready", "too_slow")] if start else []
+            return min((t for t in ends if t is not None), default=None)
+
+        app.wait(lambda: end_of_check() is not None, "the end of the check after the set")
         assert app.state(changed) == "ready", app.status(changed)
         assert abs(app.status(changed)["measured_fps"] - 30.0) <= 0.9
+        finished = slow_source.slow_finished_ns
+        assert finished is None or finished > end_of_check(), (
+            f"the slow period ended before the end of the check: the case was not exercised "
+            f"({finished} ns, check end {end_of_check()} ns)")
 
 
 GAP_OF_A_S = 0.5  # the gap of camera A after its source frame 299 (10 s after each open)
