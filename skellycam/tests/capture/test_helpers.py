@@ -381,6 +381,49 @@ def _wait_on_the_clock(clock, seconds):
     return waiter
 
 
+def test_two_gate_probes_of_one_test_leave_the_wait_of_another_thread(monkeypatch):
+    """T-UNX-98 [ADR-JC4X]: two apps of one test install the gate probe two times. A loop waits at a shut gate, a
+    second thread holds the time (it runs), and a third thread waits on the clock. When the second thread leaves, the
+    time moves to the wake time of the third. Before the fix, the `shut` of the gate called the wrapper of the first
+    app, in the thread that moved the time: the waiting thread got the state of the gate in place of its wait, and
+    the time never moved."""
+    from skellycam.core.camera_group.camera_orchestrator import CameraOrchestrator
+
+    monkeypatch.setattr(CameraOrchestrator, "should_grab_by_id", lambda self, camera_id: False)  # a shut gate
+    clock = VirtualClock(fallback_s=10.0)
+    cs.install_gate_probe(monkeypatch, clock)
+    cs.install_gate_probe(monkeypatch, clock)
+    joined, release, done = threading.Event(), threading.Event(), threading.Event()
+
+    def loop_at_the_gate():
+        CameraOrchestrator.should_grab_by_id(None, "a")
+        joined.set()
+        done.wait(10)
+        clock.leave()
+
+    def runner():
+        clock.gate(False)  # a participant in "run"
+        release.wait(10)
+        clock.leave()
+
+    gated = threading.Thread(target=loop_at_the_gate, daemon=True)
+    clock.expect(gated)
+    gated.start()
+    joined.wait(5)
+    running = threading.Thread(target=runner, daemon=True)
+    clock.expect(running)
+    running.start()
+    waiter = _wait_on_the_clock(clock, 1.0)
+    time.sleep(0.2)
+    release.set()
+    running.join(5)
+    waiter.join(5)
+    done.set()
+    gated.join(5)
+    assert not waiter.is_alive(), clock.describe()
+    assert clock.now_ns() == VirtualClock.START_NS + 10**9
+
+
 def test_virtual_clock_holds_the_time_for_a_loop_whose_gate_opened():
     """T-CAP-86 on 2 cores [ADR-7GC1]: a loop at a shut gate does not hold the time. When its gate opens, it holds
     the time until its next gate probe, as a loop in "run" (`fallback_s` is 60 s, so no forced step). Without the

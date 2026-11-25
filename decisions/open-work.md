@@ -195,8 +195,9 @@ task. Delete an item when its work is done. The PR that closes an item records t
   [ADR-2SX2](entries/2SX2-acceptance-of-the-choices-of-fix-lane-7-and-its-follow-ups.md)).
   - The pubsub leak (item 2 of ADR-2SX2) is fixed by [ADR-4CAF](entries/4CAF-choices-of-the-close-of-the-queues-of-a-group.md)
     (`windows-capture.md` 5.9, T-CAP-114); the user decides its choices.
-  - The T-UNX-98 thread (item 3 of ADR-2SX2): find why
-    `test_t_unx_98_two_cameras_of_one_model_keep_their_own_entries[other usb ids]` sometimes leaves a camera loop
-    thread that does not end (Linux and macOS). That non-daemon thread holds the end of the pytest process.
+  - The T-UNX-98 thread (item 3 of ADR-2SX2) is fixed in the test helpers by
+    [ADR-JC4X](entries/JC4X-choices-of-the-gate-probe-of-a-second-app-on-the-test-clock.md); the user decides it.
+  - `test_status_locks.py::test_a_live_but_slow_holder_and_torn_json_never_raise[writes with no lock]` fails 1 in 20
+    on 2 cores (real time; JC4X item 3). The user decides if it changes.
   - macOS [NV]: the runner's open-file limit, and that its errors came from this leak. A run of the macOS jobs by
     hand gives the result.
