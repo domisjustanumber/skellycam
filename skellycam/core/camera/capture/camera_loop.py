@@ -180,6 +180,7 @@ class CameraLoop:
         self.timing_last: dict | None = None  # the last summary: a publish of another thread sends it again
         self.timing_start_ns = self.timing.clock() if self.timing.on else 0
         self.wait_ns = self.gate_ns = 0  # the waits of the passes since the last frame (3.1)
+        self.timings_logged = False  # one log line for a fault of the timings
         for subscription in getattr(self.ipc.pubsub.topics.get(TopicTypes.DIAGNOSTICS), "subscriptions", ()):
             # The main process stops reading at the group close: an exit must not wait to flush a full pipe of
             # diagnostics (multiprocessing joins the feeder thread of each queue at the exit). A lost dict is no loss.
@@ -1068,9 +1069,7 @@ class CameraLoop:
             data.update(self._loop_diagnostics())
             if data.get("fail_code") is None and self.failure_code is not None:
                 data.update(fail_code=self.failure_code, fail_stage=self.failure_stage)
-            # 5.1: only the loop thread reads the buffers; another thread sends the last summary again
-            message = DiagnosticsMessage(camera_id=self.camera_id, diagnostics=data,
-                                         timings=self._take_timings() if on_loop else self.timing_last)
+            message = DiagnosticsMessage(camera_id=self.camera_id, diagnostics=data, timings=self._timings(on_loop))
             size = len(pickle.dumps(message))
             if size > DIAGNOSTICS_LIMIT_BYTES:
                 raise ValueError(f"the diagnostics have {size} bytes, over the limit of {DIAGNOSTICS_LIMIT_BYTES}")
@@ -1081,6 +1080,20 @@ class CameraLoop:
                 logger.warning(f"Camera {self.camera_id}: diagnostics not sent: {type(error).__name__}: {error}")
         if measured:  # 3.1: its sample goes into the next window
             self.loop_steps.add("diagnostics_publish", timing.clock() - t0)
+
+    def _timings(self, on_loop: bool) -> dict | None:
+        """5.1: only the loop thread reads the buffers; another thread sends the last summary again. A fault of the
+        timings sends None and is logged one time: the diagnostics dict still goes."""
+        if not on_loop:
+            return self.timing_last
+        try:
+            return self._take_timings()
+        except Exception as error:
+            self.timing_last = None
+            if not self.timings_logged:
+                self.timings_logged = True
+                logger.warning(f"Camera {self.camera_id}: capture timings not sent: {type(error).__name__}: {error}")
+            return None
 
     def _take_timings(self) -> dict | None:
         """Close the window on the loop thread (5.1, 5.2). The switch applies here (2 item 4): the window that ends

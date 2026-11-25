@@ -6,23 +6,23 @@
 
 ## Decision
 
-What is built (branch `dom/capture-timings-build`): `skellycam/core/capture_timings.py` (`STEPS`, `DELAYS`,
-`TimingControl`, `StepSamples`, `StepSet`, `WindowReader`, `stats`, `build_summary`, `PreviewTimings`); the
-switch (`CameraStatus.log_capture_times`, `CameraGroupManager.set_log_capture_times`, `.log_capture_times`,
-`POST /camera/timings`); the brackets of table 3.1 in the camera loop, the Media Foundation and OpenCV sources,
-`DecodeStage`, `CameraTakeWriter`, the interim relay and `PreviewRelay`; `DiagnosticsMessage.timings`;
-`CameraGroup.camera_timings`; `CameraGroupManager.capture_timings()`; the `capture_timings` websocket message; the
-removal of `performance_data`; the message in `websocket-protocol.mdx`. Tests: `skellycam/tests/capture_timings/`.
+What is built: steps 1 to 6 of section 11 (the module `skellycam/core/capture_timings.py`, the switch and its route,
+the brackets of table 3.1, the field `DiagnosticsMessage.timings`, `capture_timings()`, the websocket message, the
+removal of `performance_data`), with the tests in `skellycam/tests/capture_timings/`.
 
 The choices that the spec left open:
 
 1. **The publish of a change.** The publish that reads a change to on starts the first window and sends
    `timings = None`; the next publish sends the first summary. The publish that reads a change to off sends None.
-   A summary covers only a window with the switch on at its start and its end.
+   A summary covers only a window with the switch on at its start and its end. Thus the first summary
+   comes up to about 2 s after the change (the next publish, then one window), where spec 8.2 says
+   "normally within 1 s". The other choice: a summary with n 0 at
+   the first publish (within 1 s, but of an empty window).
 2. **A loop made with the switch on** (a group made after a change to on, a restart) measures from its creation.
    Its publish at the end of the open sends the first summary, with the callback samples of the warm-up.
 3. **The read budget (5.3).** At most 10 reads for each frame for the steps of cadence `frame`, plus one for each
-   refused pass. A step of cadence `event` (`take_start`, `take_end`, `exposure_search_brightness`) adds its own
+   refused pass, plus 3 for each granted pass that gives no frame (the two gate reads and the end of the
+   wait). A step of cadence `event` (`take_start`, `take_end`, `exposure_search_brightness`) adds its own
    2 reads on its frame. To stay in 10 on the OpenCV source with a take and a hash: brackets that follow one
    another share one read, so a few short lines (the flag counts, the dict of the ring fields) fall into the next
    bracket; and the OpenCV `camera_wait` ends at the read before the retrieve (`pre_ns`), with no read of its own.
@@ -52,6 +52,13 @@ The choices that the spec left open:
     move it (`loop_harness.py`). The fixture of T-TIM-24 is `skellycam/tests/capture_timings/summary_fixture.json`;
     the TypeScript test of step 8 reads the same file. The real Media Foundation bracket runs on the stand-ins of
     `mf_standins.py` (case `timings`, Windows only).
+12. **Faults.** A fault while the loop builds its timings sends `timings = None` with the diagnostics dict (one log
+    line). A fault while the server builds or encodes the `capture_timings` message sends no message that second
+    (one log line); it never sets the kill flag. `PreviewTimings` drops the keys and the `seq` of a group that is
+    no longer open.
+13. **Proposed corrections of the spec** (marked in the spec text): 2 item 3, the path is
+    `/skellycam/camera/timings` also in skellycam alone (`skellycam/app.py` mounts each router with the prefix
+    `/skellycam`); 5.3, a granted pass with no frame reads the clock 3 times.
 
 ## Reason
 
@@ -65,9 +72,8 @@ The choices that the spec left open:
 
 ## Alternatives rejected
 
-1. A summary with n 0 at the publish of a change to on: it says "on" one second sooner, but its window is empty.
-2. The sets of the sources in a list that grows at each reopen: it grows for each reopen.
-3. One read for the end of each bracket and one for the start of the next: 11 to 13 reads on the OpenCV source with
+1. The sets of the sources in a list that grows at each reopen: it grows for each reopen.
+2. One read for the end of each bracket and one for the start of the next: 11 to 13 reads on the OpenCV source with
    a take and a hash, over the budget.
 
 ## Open work

@@ -217,7 +217,16 @@ async def test_t_tim_19_the_per_camera_preview_sender():
     assert_known_ids(summaries[0])
 
 
-@pytest.mark.timeout(20)
+def receive_json_within(ws, timeout_s=10.0):
+    """`ws.receive_json` with a bound: the client of the test has no timeout of its own."""
+    result = []
+    thread = threading.Thread(target=lambda: result.append(ws.receive_json(mode="text")), daemon=True)
+    thread.start()
+    thread.join(timeout_s)
+    assert result, f"no message in {timeout_s} s"
+    return result[0]
+
+
 def test_t_tim_19_the_websocket_message(client, mock_camera_group_manager, monkeypatch):
     """T-TIM-19 (message): `capture_timings` messages with the fields of 6.1 at the patched interval; when off, the
     message of 6.4."""
@@ -229,7 +238,7 @@ def test_t_tim_19_the_websocket_message(client, mock_camera_group_manager, monke
 
     def next_timings(ws):
         for _ in range(50):
-            data = ws.receive_json(mode="text")
+            data = receive_json_within(ws)
             if data.get("message_type") == "capture_timings":
                 return data
         pytest.fail("no capture_timings message")
@@ -265,3 +274,55 @@ def test_t_tim_21_performance_data_goes():
     internals = importlib.import_module("skellycam.tests.test_websocket_internals")
     assert hasattr(internals, "TestServerFramerateCalculator")
     assert not hasattr(internals, "TestPerformanceDataHelpers") and not hasattr(internals, "TestExtractPerformanceData")
+
+
+async def test_t_tim_19_a_timings_message_that_cannot_be_built_does_not_end_the_app(monkeypatch, caplog):
+    """6.4: a `capture_timings()` that raises is logged one time; the state sender goes on and sends each state; the
+    kill flag stays clear (a fault of the timings never ends the app, also during a take)."""
+    import multiprocessing
+    from unittest.mock import Mock
+
+    from starlette.websockets import WebSocketState
+
+    server_module = importlib.import_module(SERVER_MODULE)
+    monkeypatch.setattr(server_module, "CAPTURE_TIMINGS_INTERVAL_S", 0.0)
+    server = object.__new__(server_module.WebsocketServer)
+    sent, calls = [], []
+
+    def to_state_dict():
+        calls.append(1)
+        server._websocket_should_continue = len(calls) < 3
+        return {"camera_groups": {"n": len(calls)}}
+
+    def capture_timings():
+        raise RuntimeError("test: a timings fault")
+
+    async def send(message):
+        sent.append(message)
+
+    server.global_kill_flag = multiprocessing.Value("b", False)
+    server._cgm = Mock(to_state_dict=to_state_dict, camera_groups={}, capture_timings=capture_timings)
+    server._preview_timings = timings().PreviewTimings()
+    server._websocket_should_continue, server.ws_tasks = True, []
+    server.websocket = Mock(client_state=WebSocketState.CONNECTED)
+    monkeypatch.setattr(server, "_send_msgspec_json", send)
+    monkeypatch.setattr(server, "_send_text", send)
+    await asyncio.wait_for(server._app_state_sender(), timeout=10)
+    assert not server.global_kill_flag.value
+    assert len(calls) == 3 and [m["state"]["camera_groups"]["n"] for m in sent] == [1, 2, 3]
+    assert len([r for r in caplog.records if "capture timings message could not be built" in r.getMessage()]) == 1
+
+
+def test_t_tim_19_the_keys_of_a_group_that_is_gone_go():
+    """6.5: the preview keys and the `seq` of a group that is no longer open go at the next window."""
+    module = timings()
+    clock = VClock()
+    preview = module.PreviewTimings(clock.now)
+    preview.summaries(True, ["g1", "g2"])
+    for group_id in ("g1", "g2"):
+        preview.steps.add((group_id, None, "preview_send"), 1000)
+    assert {s["camera_group_id"] for s in preview.summaries(True, ["g1", "g2"])} == {"g1", "g2"}
+    preview.steps.add(("g2", None, "preview_send"), 1000)
+    assert [s["camera_group_id"] for s in preview.summaries(True, ["g1"])] == ["g1"]
+    assert {key[0] for key in preview.steps.samples} == {"g1"}
+    assert {key[0] for key in preview._seq} == {"g1"}

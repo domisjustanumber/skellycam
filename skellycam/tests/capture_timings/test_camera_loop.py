@@ -300,3 +300,27 @@ def test_t_tim_23_the_clock_reads_of_each_frame(monkeypatch, tmp_path):
     loop.search = None
     window = summary(loop)
     assert window["steps"]["exposure_search_brightness"]["n"] == 10
+
+
+def test_t_tim_16_a_fault_of_the_timings_still_sends_the_diagnostics(monkeypatch, caplog):
+    """6.2: a fault while the loop builds its timings sends `timings` None with the full diagnostics dict, and is
+    logged one time; the next publish sends a summary again."""
+    clock = VClock()
+    loop = make_loop(monkeypatch, clock, ScriptSource(clock))
+    switch_on(loop)
+    frames(loop, 2)
+    take = loop._take_timings
+
+    def failing():
+        raise RuntimeError("test: a timings fault")
+
+    monkeypatch.setattr(loop, "_take_timings", failing)
+    loop._publish_diagnostics()
+    loop._publish_diagnostics()
+    message = loop.diagnostics[-1]
+    assert message.timings is None and message.diagnostics["backend"] == "fake"
+    assert len(loop.diagnostics) == 3
+    assert len([r for r in caplog.records if "capture timings not sent" in r.getMessage()]) == 1
+    monkeypatch.setattr(loop, "_take_timings", take)
+    frames(loop, 1)
+    assert summary(loop) is not None

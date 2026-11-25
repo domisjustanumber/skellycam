@@ -177,7 +177,9 @@ task. Delete an item when its work is done. The PR that closes an item records t
   [`specs/capture-timings.md`](../specs/capture-timings.md), with the agent choices of
   [ADR-JFG4](entries/JFG4-choices-of-the-capture-timings-build.md) (the user decides them). Open: the timed test
   `test_process_workers.py` (an OK of the user first); M-TIM-1 on the hardware of the user (step 7); the tile with
-  step 4b (step 8: T-TIM-24 in TypeScript, T-TIM-25, T-TIM-26). The FreeMoCap display comes after FreeMoCap moves
+  step 4b (step 8: T-TIM-24 in TypeScript, T-TIM-25, T-TIM-26). Step 4b: the `preview_send` bracket of
+  `PreviewRelay` must start after the send lock (3.1, T-TIM-19); give the bracket to the locked send of the server,
+  as the interim relay does. The FreeMoCap display comes after FreeMoCap moves
   to the frame-ring API.
 - **Deferred by the user (2026-11-23).** At 60 fps the exposure search never tries a value longer
   than the frame period. The product switches low light compensation off after each open.

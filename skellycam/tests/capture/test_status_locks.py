@@ -105,6 +105,7 @@ async def test_the_app_state_sender_does_not_set_the_kill_flag_on_torn_json(monk
     server._websocket_should_continue, server.ws_tasks = True, []
     server.websocket = Mock(client_state=WebSocketState.CONNECTED)
     monkeypatch.setattr(server, "_send_msgspec_json", send)
+    monkeypatch.setattr(server, "_send_text", send)  # the capture timings message (capture-timings.md 6.4)
     await server._app_state_sender()
     assert not server.global_kill_flag.value
     assert sent and sent[0]["state"]["camera_groups"]["g"]["cameras"]["c"]["status"]["mode"] == {"width": 640}
@@ -333,6 +334,7 @@ async def test_a_state_read_that_raises_once_does_not_end_the_app_state_sender(m
     server._websocket_should_continue, server.ws_tasks = True, []
     server.websocket = Mock(client_state=WebSocketState.CONNECTED)
     monkeypatch.setattr(server, "_send_msgspec_json", send)
+    monkeypatch.setattr(server, "_send_text", send)  # the capture timings message (capture-timings.md 6.4)
     await asyncio.wait_for(server._app_state_sender(), timeout=10)
     assert not server.global_kill_flag.value
     assert len(calls) == 2 and sent and sent[0]["state"] == {"camera_groups": {}}

@@ -280,6 +280,7 @@ class WebsocketServer:
         """
         logger.info("Starting state sender task...")
         previous_state: dict | None = None
+        timings_failed = False  # one log line for a timings message that cannot be built
         try:
             while self.should_continue:
                 try:
@@ -295,7 +296,15 @@ class WebsocketServer:
                         "state": state_dict
                     }
                     await self._send_msgspec_json(state_message)
-                await self._send_msgspec_json(self._capture_timings_message())
+                try:  # capture-timings.md 6.4: a fault of the timings never ends the app, also not during a take
+                    timings_text = _ws_json_encoder.encode(self._capture_timings_message()).decode("utf-8")
+                except Exception as error:
+                    timings_text = None
+                    if not timings_failed:
+                        timings_failed = True
+                        logger.exception(f"The capture timings message could not be built; no message: {error!r}")
+                if timings_text is not None:
+                    await self._send_text(timings_text)
                 await asyncio.sleep(CAPTURE_TIMINGS_INTERVAL_S)
                 previous_state = state_dict
         except asyncio.CancelledError:

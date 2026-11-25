@@ -118,8 +118,10 @@ The rules of skellycam:
 3. **How a host sets it** [U Q582]. Python: `CameraGroupManager.set_log_capture_times(on: bool) ->
    None`, and the read-only property `CameraGroupManager.log_capture_times`. HTTP: `POST /timings` on
    `camera_router`, body `{"log_capture_times": true}`, answer `{"log_capture_times": true}`. The path
-   is `/camera/timings` in skellycam alone, and `/skellycam/camera/timings` in FreeMoCap (FreeMoCap
-   mounts `camera_router` with the prefix `/skellycam`). A body with no boolean gets HTTP 422 [U Q587 2].
+   is `/skellycam/camera/timings` in skellycam alone and in FreeMoCap: both mount `camera_router` with
+   the prefix `/skellycam` (proposed correction,
+   [ADR-JFG4](../decisions/entries/JFG4-choices-of-the-capture-timings-build.md) item 13). A body with no
+   boolean gets HTTP 422 [U Q587 2].
 4. **When a change takes effect** [U Q587 2]. The camera loop reads its shared scalar at each publish of
    its diagnostics, on its own thread. A change takes effect at the next such publish:
    - normally within 1 s;
@@ -299,7 +301,9 @@ Rules and limits:
 
 - When off: one branch for each step (section 2 item 6). No clock read.
 - When on, the camera loop thread reads the clock at most 10 times for each frame, plus one read for
-  each refused pass of the gate. Adjacent brackets share one read where nothing runs between them.
+  each refused pass of the gate, plus three reads for each granted pass that gives no frame (proposed
+  correction, [ADR-JFG4](../decisions/entries/JFG4-choices-of-the-capture-timings-build.md) items 3
+  and 13). Adjacent brackets share one read where nothing runs between them.
   The gate uses the read that exists at `camera_loop.py:231`. The OpenCV source uses its `pre_ns` and
   `post_ns`.
 - When on, each other thread reads the clock at most 2 times for each step.

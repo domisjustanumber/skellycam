@@ -184,6 +184,10 @@ class PreviewTimings:
         was_on, self.control.on = self.control.on, on
         windows = self._reader.read([self.steps])
         self.steps.pending.clear()
+        for key in [key for key in self.steps.samples if key[0] not in group_ids]:  # a group that is gone
+            del self.steps.samples[key]
+        for key in [key for key in self._seq if key[0] not in group_ids]:
+            del self._seq[key]
         if not on:
             return []
         now = self.control.clock()
