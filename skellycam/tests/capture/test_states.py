@@ -1011,3 +1011,37 @@ def test_a_row_of_the_two_cameras_is_one_moment(tmp_path):
     apart = [(ra.frame, round((rb.arrival_ns - ra.arrival_ns) / 1e6)) for ra, rb in zip(rows[a], rows[b])
              if not (ra.flags | rb.flags) & MISSING and abs(ra.arrival_ns - rb.arrival_ns) > limit_ns]
     assert len(apart) <= 1, f"{len(apart)} rows of the two cameras differ by more than {limit_ns / 1e6:.0f} ms: {apart[:5]}"
+
+
+# ---------------------------------------------------------------------------
+# T-CAP-114: the queues of a closed group (section 5.9, ADR-2SX2)
+# ---------------------------------------------------------------------------
+
+def test_t_cap_114_a_closed_group_leaves_no_pubsub_manager_and_no_open_queue(monkeypatch):
+    """T-CAP-114, section 5.9 [ADR-2SX2]: two fakes are `ready`; then the close of all groups. The registry
+    `CAMERA_GROUP_PUB_SUB_MANAGERS` has no entry for the group; each subscription queue of the group refuses a `put`,
+    and the read end of each subscription queue and of the queue of the setup failures is closed (a read raises
+    `OSError`). The feeder thread of a queue closes its pipe ends after the close, so the test waits for them."""
+    from skellycam.core.ipc.pubsub import pubsub_manager
+
+    with capture_app(monkeypatch, [FakeScript(), FakeScript()]) as app:
+        ready_app_steps(app)
+        (group,) = app.manager.camera_groups.values()
+        subscriptions = [queue for topic in group.ipc.pubsub.topics.values() for queue in topic.subscriptions]
+        assert len(subscriptions) >= 3 + 3 * 2, len(subscriptions)  # the group's 3, and 3 for each camera
+        response = app.client.delete("/skellycam/camera/group/close/all")
+        assert response.status_code == 200, response.text
+        assert group.id not in pubsub_manager.CAMERA_GROUP_PUB_SUB_MANAGERS
+        for queue in subscriptions:
+            with pytest.raises(ValueError):
+                queue.put_nowait(None)
+
+        def read_end_closed(queue):
+            try:
+                queue.empty()
+            except OSError:
+                return True
+            return False
+
+        queues = subscriptions + [group.ipc.setup_failures]
+        app.wait(lambda: all(read_end_closed(queue) for queue in queues), "the read ends of the queues closed")
