@@ -104,9 +104,7 @@ task. Delete an item when its work is done. The PR that closes an item records t
     `uv run pytest skellycam/tests/preview`. The measurements
     M-PRV-1 to M-PRV-5 are done on Windows
     ([ADR-HDC9](entries/HDC9-measurements-m-prv-1-to-m-prv-5-of-the-preview-sender.md)). Open: M-PRV-4
-    on Linux. The user must confirm the target of A10 of
-    [ADR-G651](entries/G651-phase-4-live-preview-decisions-p1-to-p7.md): 19 %, not the 12 % of the
-    first run.
+    on Linux.
   - Step 4b: the user answered the questions Q1 to Q13 of the spec
     [`specs/preview-4b.md`](../specs/preview-4b.md), decided the PR target (upstream
     `development`), accepted the spec in principle and gave the go-ahead for its tests, not its
@@ -123,11 +121,10 @@ task. Delete an item when its work is done. The PR that closes an item records t
   - Not verified: real cameras, Linux, macOS and the installer build.
 - **The certify run of skellycam.** The spec [`specs/certify.md`](../specs/certify.md) is draft 3. The first code is in `skellycam/core/certify/` (section 19 of the
   spec), and a first real quick run was done on 2026-11-21. Open: the checks that are `not-run`
-  `not-built` (the status line of the spec). The choices of the agents
-  wait for the user: [ADR-KY81](entries/KY81-certify-spec-choices-of-the-agent.md) (the items that the
-  later entries do not rule), [ADR-8CP7](entries/8CP7-certify-spec-draft-3-choices-of-the-agent.md)
-  and [ADR-FC1C](entries/FC1C-choices-of-the-spec-integration.md),
-  with the open questions of section 14 of the spec.
+  `not-built` (the status line of the spec). The user accepted items of KY81, 8CP7, FC1C, HQE5 and DC43 as
+  built ([ADR-6YGH](entries/6YGH-acceptance-of-the-as-built-choices-of-fix-lanes-4-and-5-and-of-certify.md)); their
+  move from Proposed waits for the read-path clean-up below. FC1C items 4 and 13 and HQE5 items 2 and 3 are not
+  decided.
 - **Certify report fields, decided 2026-11-23, not built**
   ([ADR-F6C3](entries/F6C3-decisions-of-the-user-on-the-certify-report-fields.md)). The fields, the
   kept logs are in section 3.5 of the spec, in the slim form of Q594, with the build order of 3.6.7 (Q626) and
@@ -174,7 +171,6 @@ task. Delete an item when its work is done. The PR that closes an item records t
 - **Deferred by the user (2026-11-23).** At 60 fps the exposure search never tries a value longer
   than the frame period. The product switches low light compensation off after each open.
 - **Fix lane 4 follow-ups** ([ADR-HQE5](entries/HQE5-choices-of-fix-lane-4.md)).
-  - The user decides Q-A (the restore file), Q-B (the take rate as a sum over a sum) and Q-C (the pace step).
   - Certify: `group:restore-after-kill` (Q615) can use the restore file with a folder of its own run.
   - FreeMoCap reads `framerate_stats.median` from the old `*_stats.json`, not from the stop response; a reader of
     new takes must use `mean_framerate` (Q609).
@@ -189,7 +185,7 @@ task. Delete an item when its work is done. The PR that closes an item records t
     refuses each camera process with `start-method-fork` (`unix-capture.md` 4.12). This is the decision of the
     user; the fix of FreeMoCap belongs to the wider Linux review. Not verified on Linux.
 - **Fix lane 5 follow-ups** ([ADR-DC43](entries/DC43-choices-of-fix-lane-5.md)).
-  - The user decides items 1 to 4. Windows Server `os.label`: `Windows 2025Server 24H2` [NV].
+  - Windows Server `os.label`: `Windows 2025Server 24H2` [NV].
   - `stop_after_frame=200` tests that wait for `ready` have the risk of T-UNX-95.
 - **Fix lane 7 follow-ups** ([ADR-R394](entries/R394-choices-of-fix-lane-7.md),
   [ADR-2SX2](entries/2SX2-acceptance-of-the-choices-of-fix-lane-7-and-its-follow-ups.md)).
@@ -202,3 +198,17 @@ task. Delete an item when its work is done. The PR that closes an item records t
     `pace`, or stay as it is? It fails 1 in 20 on 2 cores (real time; JC4X item 3).
   - macOS [NV]: the runner's open-file limit, and that its errors came from this leak. A run of the macOS jobs by
     hand gives the result.
+- **The read path is over 90 % of its limit** (2026-11-25). Absorb each Active entry whose rules the specs state,
+  then move the five entries of ADR-6YGH from Proposed. ZEX9 becomes `done` after the CI result of its item 4.
+- **Exclusive access** ([ADR-AA4X](entries/AA4X-decisions-of-the-user-on-exclusive-access-of-a-camera.md),
+  [ADR-FR2J](entries/FR2J-choices-of-the-exclusive-access-and-overlap-specs.md)). `windows-capture.md` 21,
+  `unix-capture.md` 4.13 and `certify.md` 20 are drafts: an independent review, then the user accepts them. Then the
+  Windows lane writes the tests and the code; Linux and macOS land with phase 7. Owed: the codes `camera_shared` and
+  `camera_control_changed` in `recorder.md` 6.6 and the format of skellyspecs; the three warnings in
+  `camera-requests.md` 1.5; the line before a take in `preview-4b.md`; a contract field for `details.before_run`.
+- **Certify for freemocap** ([ADR-CQ2X](entries/CQ2X-decisions-of-the-user-on-the-overlaps-with-freemocap.md),
+  [ADR-13BB](entries/13BB-decisions-of-the-user-on-the-dark-rule-the-light-data-and-the-phase-7-items.md)). The lane
+  of Q772 takes `is_model_checked`, the progress state, `CameraGroup.create_without_cameras` (freemocap names the
+  attributes it reads; it waits for the close path of `CameraGroup`), the dark rule (T-CERT-09, 13, 23) and the light
+  data. The privacy list moves into the contract (its owner). The `fork` of freemocap's certify child stays in the
+  Linux review of ADR-T34M.

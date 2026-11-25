@@ -56,19 +56,16 @@ These entries are `accepted`.
 | [T34M](entries/T34M-decision-of-the-user-on-the-start-method-of-camera-processes.md) | Q651 of 2026-11-23: no start method at import; the app sets spawn; a fork start is refused; nothing decided for FreeMoCap | accepted |
 | [0AMX](entries/0AMX-propose-from-skellycam-and-review-in-the-kit.md) | Q657: a skellycam agent runs `propose`; the kit session reviews and commits the result in its own repository | accepted |
 | [TC9B](entries/TC9B-ci-runner-with-no-device.md) | Q660: the CI exception of the other-systems rule says "a CI runner with no device", so it fits each repository | accepted |
-| [53VB](entries/53VB-decision-of-the-user-on-the-exact-skip-after-a-live-change.md) | Q663 option B: the skip after a live change is exact, counted from the change; T-CAP-31 is strict | accepted |
-| [JWZ1](entries/JWZ1-decision-of-the-user-on-the-exact-skip-after-a-search.md) | Q666: the check after an exposure search uses the same exact skip rule; spec and test first | accepted |
 | [F4N7](entries/F4N7-decisions-of-the-user-on-the-pace-tests-of-fix-lane-6.md) | Q669 to Q673, Q675: real-time tests split in blocking and `pace` halves; CI share level 40 %; conditions in T-CAP-110 and gate test; loop threads on the clock | accepted |
-| [B1DE](entries/B1DE-decisions-of-the-user-on-the-share-level-and-the-test-clock.md) | Q690, Q692: the CI level of a share of frames is a fixed 40 %; an agent proposes a fix of the test clock for T-CAP-86, and the test stays blocking | accepted |
-| [8ACV](entries/8ACV-decision-of-the-user-on-the-end-check-of-t-cap-05.md) | Q696: T-CAP-05 ends with ring counts at most one apart and last frames within 1 ms; it lands with the clock fix, with an independent review | accepted |
-| [WWR1](entries/WWR1-decision-of-the-user-on-frames-with-the-same-number.md) | Q719, for now: 5.3 says that frames with the same number can be about one frame period apart; the gate pairs by count | accepted |
-| [2AQT](entries/2AQT-decision-of-the-user-on-the-gap-of-the-stall-test-with-process-workers.md) | Q721: the 1 s gap limit of the stall test under load with PROCESS workers moves to the `pace` test, as for THREAD workers | accepted |
 | [N14T](entries/N14T-decisions-of-the-user-on-the-ci-review-of-2026-11-25.md) | CI review of 2026-11-25: the macOS jobs run only by hand; find if "Too many open files" is a leak, no higher limit; find the cause of T-CAP-91 on Linux | accepted |
 | [R394](entries/R394-choices-of-fix-lane-7.md) | Choices of fix lane 7: macOS jobs by hand; the open files leak in the pubsub registry (product, proposal only); a group start holds the test clock | accepted |
 | [2SX2](entries/2SX2-acceptance-of-the-choices-of-fix-lane-7-and-its-follow-ups.md) | "Yes to all": ADR-R394 accepted (its clock rule changes B7YV item 8); fix the pubsub leak, spec and test first; look at the T-UNX-98 thread; merge lane 7 | accepted |
 | [4CAF](entries/4CAF-choices-of-the-close-of-the-queues-of-a-group.md) | Choices of fix lane 8: a closed group closes its queues and leaves the pubsub registry (windows-capture.md 5.9, T-CAP-114) | accepted |
 | [JC4X](entries/JC4X-choices-of-the-gate-probe-of-a-second-app-on-the-test-clock.md) | Choices of fix lane 8: a second app of one test wraps the product gate probe, so `shut` never calls the test clock (T-UNX-98 stuck thread) | accepted |
 | [ZT5F](entries/ZT5F-acceptance-of-the-choices-of-fix-lane-8.md) | "Yes to all": ADR-4CAF and ADR-JC4X accepted; merge and push of lane 8; the `pace` question of the status-locks test is not decided | accepted |
+| [ZEX9](entries/ZEX9-decisions-of-the-user-on-the-housekeeping-of-2026-11-25.md) | Q729 to Q732, Q751: untrack 65 media files of `dom/research`, trim plan section 15, push two branches, delete the H.264 temp files | accepted |
+| [N6X6](entries/N6X6-decisions-of-the-user-on-the-build-lanes-of-2026-11-25.md) | Q750, Q772, Q775, Q776, Q780: three build lanes, two certify lanes, quick tests only around fix lane 7; ask before performance tests | accepted |
+| [6YGH](entries/6YGH-acceptance-of-the-as-built-choices-of-fix-lanes-4-and-5-and-of-certify.md) | Q752 to Q757, Q759 to Q762, Q770: HQE5 Q-A to Q-C, DC43 1 to 4, KY81 rest, items of 8CP7 and FC1C accepted as built | accepted |
 
 ### Proposed
 
@@ -97,6 +94,7 @@ These entries wait for a decision of the user. Section is the section or area of
 | [0R76](entries/0R76-choices-of-the-exact-skip-after-a-live-change.md) | Choices of the exact skip after a live change and a search: anchors, the time-out anchor, replay of 1024 taken frames, limits | `skellycam.core.camera.capture` | proposed |
 | [B7YV](entries/B7YV-choices-of-fix-lane-6.md) | Choices of fix lane 6: one run for the two halves, nominal values and loose checks, T-PRV-54, loop threads on the test clock, T-CAP-86 diagnostics | none | proposed |
 | [7GC1](entries/7GC1-choices-of-the-gate-on-the-test-clock-and-the-end-of-t-cap-05.md) | Choices of fix lane 6: a loop at an open gate holds the test clock until its next probe, forced steps still move it; T-CAP-05 checks the last ring frames | none | proposed |
+| [FR2J](entries/FR2J-choices-of-the-exclusive-access-and-overlap-specs.md) | Choices of the exclusive access specs: own pid, process names, 409 at a record start, take marks, checks and calls for freemocap, test IDs | none | proposed |
 
 The entries that are `rejected`, `superseded by XXXX`, `absorbed into <path>#<anchor>`,
 `evidence; used by XXXX`, `evidence; replaced by XXXX` or `done` are in [historical.md](historical.md).

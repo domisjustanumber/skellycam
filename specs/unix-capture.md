@@ -15,6 +15,11 @@ search, the 60 fps fall back and the USB link lookup, and the certify spec the o
 and of the record of checked models; this spec now points to them and keeps only what is specific to
 V4L2 and AVFoundation. The macOS controls follow the widest working route (4.4.6) [U].
 
+Note of 2026-11-25: section 4.13 and its tests in 6.9 (exclusive access of a camera, the RECORD priority, control
+events, the macOS configuration lock and in-use flag) are a draft for the review and the acceptance of the user,
+[ADR-AA4X](../decisions/entries/AA4X-decisions-of-the-user-on-exclusive-access-of-a-camera.md). They land with
+phase 7. Section 4.13.2 reverses M-11.
+
 The user moved this work up on 2026-11-20: "certify runs to validate assumptions about linux and mac
 code. Ideally as much real code is implemented as possible now so a single test run provides as much
 information as possible and can be used there and then if the tests pass." [U] Thus the native
@@ -296,7 +301,8 @@ queue [K25]. `S_FMT` sends a PROBE request to the camera (`uvc_v4l2_try_format`)
 after it [K26]. Thus the source calls `VIDIOC_REQBUFS` with `count = 0` first [A]: it sends no USB
 request and catches a holder that has buffers. A holder that set a format but has no buffers is not
 caught there; `S_FMT` then returns `EBUSY` after its PROBE. `EBUSY` at any open step gives the code
-`camera-in-use` and the reason "in use by another program" [W D13].
+`camera-in-use` and the reason "in use by another program" [W D13]. From phase 7 the source also holds the
+RECORD priority and watches control events (4.13.1, draft of 2026-11-25).
 - Confidence: high.
 - Diagnostics: `busy_call` (`reqbufs`, `s-fmt`, `s-parm`, `streamon`, or null).
 - Certify: `<label>:in-use` (`outcome`, `call`); `probe:camera-holders`. The summary item of a model
@@ -544,8 +550,10 @@ gives a sequence number for each sample [R mac_avf] [NV]. A drop or a sequence g
   the sequence check does not block the gate: `<label>:time-gaps` judges the gaps from the arrival
   times [cert 10.2, 11.3] [ADR-H0BQ](../decisions/entries/H0BQ-user-rulings-of-the-spec-integration.md).
 
-**M-11. Another app can use the camera at the same time.** macOS lets two processes stream one camera
-[NV]. The other app can change the active format [NV]. The source never fails for sharing alone. It
+**M-11. Another app can use the camera at the same time.** Reversed on 2026-11-25 (Q787 of
+[ADR-AA4X](../decisions/entries/AA4X-decisions-of-the-user-on-exclusive-access-of-a-camera.md)): 4.13.2 replaces
+the rule "the source never fails for sharing alone" below. The text of the draft stays for the record. macOS lets
+two processes stream one camera [NV]. The other app can change the active format [NV]. The source never fails for sharing alone. It
 checks the dimensions of the format description of each sample against the opened mode; a change
 gives the failure code `format-changed`, stage `streaming` [A]. `AVErrorDeviceInUseByAnotherApplication`
 gives `camera-in-use` [NV that macOS returns it].
@@ -650,7 +658,7 @@ imports [NV]. T-UNX-88 finds a gap; then `skellycam.spec` adds hidden imports on
 | A-11 | 4 mmap buffers; push source with the newest frame | high | `<label>:opens` |
 | A-12 | `O_NONBLOCK` and `poll`: no unbounded wait for a frame | high | `<label>:cycles` |
 | A-13 | Blocking ioctls bounded (11 s for probe and commit, else 5 s); GIL released | high / med | `self:hang-100ms` |
-| A-14 | In use is `EBUSY` at `REQBUFS(0)` or after the PROBE of `S_FMT` | high | `<label>:in-use` |
+| A-14 | In use is `EBUSY` at `REQBUFS(0)` or after the PROBE of `S_FMT`; the RECORD priority and control events (4.13.1) | high | `<label>:in-use`, `<label>:in-use-mid-take` |
 | A-15 | Bandwidth refusal is `EIO` (or `ENOSPC`, `ENOMEM`, `EFBIG`) at `STREAMON` | med | `group:open` |
 | A-16 | No access is `EACCES`; seat ACL, `video` group or root | high / med | `system:camera-access` |
 | A-17 | Control ids; MANUAL in the same call; no absolute value in auto | high | `<label>:controls`, `<label>:auto-off:*` |
@@ -671,7 +679,7 @@ imports [NV]. T-UNX-88 finds a gap; then `skellycam.spec` adds hidden imports on
 | M-8 | PyObjC releases the GIL | med | T-UNX-84, `self:hang-100ms` |
 | M-9 | PTS converted to the host clock and the `perf_counter_ns` base | med / low | `<label>:clock:*` |
 | M-10 | Drops and sequence numbers are visible | low–med | `<label>:sequence`, `<label>:time-gaps` |
-| M-11 | Sharing allowed; a format change is detected | low | `<label>:in-use` |
+| M-11 | Reversed (4.13.2): a camera in use is refused, the configuration lock is held, the in-use flag is watched | low | `<label>:in-use`, `<label>:in-use-mid-take`, `probe:<model>:hog-mode` |
 | M-12 | Runtime errors and removal by notification | med | `<label>:in-use` |
 | M-13 | No bandwidth error; first-frame timeout or low rate | low | `group:open` |
 | M-14 | Permission status read; no permission gives zero frames | med | `system:camera-access` |
@@ -1588,6 +1596,89 @@ The signal and the watch [ADR-AC5B](../decisions/entries/AC5B-choices-of-the-thi
   `kill_tree` reaps the child with psutil, and on POSIX `is_alive()` of a child that another call
   reaped stays true, so the run never ended after a cancel.
 
+### 4.13 Exclusive access of a camera (lands with phase 7)
+
+Status: draft of 2026-11-25 for the review and for the acceptance of the user. It lands with phase 7. The rules
+come from the decisions of the user of 2026-11-25
+([ADR-AA4X](../decisions/entries/AA4X-decisions-of-the-user-on-exclusive-access-of-a-camera.md)). The details
+that the user did not decide are choices of the agent
+([ADR-FR2J](../decisions/entries/FR2J-choices-of-the-exclusive-access-and-overlap-specs.md), proposed). Marks:
+**[Qn]** is decision Qn of ADR-AA4X; **[X n]** is item n of ADR-FR2J; **[S n]** is a source of the research in
+[the evidence of ADR-AA4X](../decisions/evidence/AA4X-exclusive-access-research.md).
+
+The rule is [W 21.1] and [W 21.2]: skellycam needs exclusive control of each camera (Q771); it holds the strongest
+lock of the OS (Q781); only the processes of the same camera group are own processes (Q796); a camera that it
+does not hold so is `camera-in-use` and is not used for a take; a loss during a take keeps the take, warns, and
+marks the interval and the control changes (Q783) with the take marks of [W 21.7]; the warnings and the line
+before a take are those of [W 21.8].
+
+#### 4.13.1 Linux [Q786]
+
+1. **Buffer ownership.** It stays as A-14: the first file handle that allocates buffers owns the stream, and each
+   other handle gets `EBUSY` at `REQBUFS`, `CREATE_BUFS`, `STREAMON`, `S_FMT` or `S_PARM` [S9, S10].
+2. **The RECORD priority.** Right after `open()` (step 2 of 4.3.2), the source calls `VIDIOC_S_PRIORITY` with
+   `V4L2_PRIORITY_RECORD` (Q786). "Only one file descriptor can have this priority, it blocks any other fd from
+   changing device properties" [S11]. The V4L2 core then returns `EBUSY` to each other handle for `S_CTRL`,
+   `S_EXT_CTRLS`, `S_FMT`, `S_PARM`, `REQBUFS` and `STREAMON` [S12]. An `EBUSY` from `S_PRIORITY` means that
+   another handle holds RECORD: code `camera-in-use`, stage `open`, `busy_call` `s-priority`. The priority goes
+   with the `close()` of the file.
+3. **Control events.** After `STREAMON`, the source subscribes to `V4L2_EVENT_CTRL` for each control that
+   `QUERY_EXT_CTRL` lists (one `VIDIOC_SUBSCRIBE_EVENT` for each control id) (Q786). uvcvideo sends the event to
+   each subscriber except the handle that made the change [S14]. The source does not set
+   `V4L2_EVENT_SUB_FL_ALLOW_FEEDBACK`, so its own changes give no event [S15, NV: the meaning of the flag is cited
+   from memory]. The capture thread also waits for `POLLPRI` in its `poll` (4.3.3 step 1) and reads each event with
+   `VIDIOC_DQEVENT`. An event of a change of the value or of the flags is a control change by another process:
+   the warning `control_changed_by_other` and, during a take, a take mark `camera_control_changed` at the row of
+   the next frame [W 21.6, 21.7].
+4. **Names.** At an in-use failure, the source names the holder (Q786, Q768): it reads the links of
+   `/proc/*/fd` that point to the node of the camera, and `/proc/<pid>/comm` of each such process. This works only
+   for the processes of the same user: the links of other users need a `PTRACE_MODE_READ_FSCREDS` check [S13].
+   With no name, the reason is "in use by another program". The source reads `/proc` only after an in-use failure,
+   never before an open (Q768) [X 14].
+5. **The gap** (Q786). The raw extension-unit call `UVCIOC_CTRL_QUERY` gets no priority check [S10], and it gives no
+   `V4L2_EVENT_CTRL` event [NV: inferred]. Thus a vendor tool can change an extension-unit control during a take,
+   and skellycam does not see it.
+6. **Mid-take.** No other handle can start a second stream while the source owns the queue [S9]. Thus on Linux only
+   a control change can happen during a take.
+7. Diagnostics keys [X 15]: `priority_record` (true when `S_PRIORITY` RECORD succeeded), `ctrl_events_other` (the
+   count of control events from other handles), `holder_names` (the count of named holders; never the names).
+
+#### 4.13.2 macOS [Q787] (this reverses M-11)
+
+M-11 allowed sharing: "the source never fails for sharing alone". Q787 reverses it:
+
+1. **Refuse a camera in use.** Before step 3 of 4.4.2, the source reads `isInUseByAnotherApplication` of the
+   device [S17]. True: code `camera-in-use`, stage `open`, reason "in use by another program". macOS does not name
+   the other program [S17, S18].
+2. **Hold the configuration lock.** The source takes `lockForConfiguration` before `startRunning` (4.4.2 step 5)
+   and holds it to the close (Q787) [X 16]. Apple's docs advise to hold it only when needed [S16]. skellycam needs
+   settings that do not change. Another process then gets
+   `AVErrorDeviceLockedForConfigurationByAnotherProcess` (-11817) [S20]. When the source itself cannot take the
+   lock for that reason, the code is `camera-in-use`, stage `open`, `busy_call` `lock-config`. The close
+   (4.4.7) unlocks after the restore of 4.7.
+3. **Watch the flag.** The source observes `isInUseByAnotherApplication` with key-value observing from the first
+   frame to the close [S17]. A change to true gives the warning `camera_shared` (with no name) and, during a take,
+   starts the take mark `camera_shared` [W 21.5, 21.7] (Q783). A change to false ends the interval. `by=` is
+   `another program`.
+4. `format-changed` stays: another app can change the active format [NV]. It is a failure, stage `streaming`, as
+   in 4.4.8.
+5. **Hog mode** (Q787). CoreMediaIO has `kCMIODevicePropertyHogMode`: "the process that currently owns exclusive
+   access" [S18]. [NV] whether a UVC camera lets a client set it. The certify probe `probe:<model>:hog-mode`
+   ([cert 20.4]) checks it. If the probe passes on the models of the shipped file, phase 7 sets hog mode at the
+   open, and an open whose hog mode another process holds is `camera-in-use`. Until then the source does not set
+   it.
+6. **The gap.** Neither lock covers raw UVC requests on endpoint 0 through IOKit [NV: inferred]. Vendor tools and the
+   probes A5 and A6 of [cert 10.7] use them.
+7. Diagnostics keys [X 15]: `config_locked` (true while the source holds the lock), `in_use_flag_changes` (a
+   count).
+
+#### 4.13.3 What changes in the sections above
+
+- A-14 and 4.3.2: the `S_PRIORITY` call is a new step 2a; `s-priority` is a new call name of 4.6.3 [X 15].
+- M-11 is replaced by 4.13.2. Its certify line becomes `<label>:in-use` with `refused` as the only pass [cert 20.2].
+- 4.4.2 step 5 and 4.4.7: the configuration lock is held from the start to the close.
+- Table 4.4.8: `AVErrorDeviceLockedForConfigurationByAnotherProcess` at the open gives `camera-in-use`.
+
 ## 5. Parity with the Windows spec
 
 States: **same**; **differs** (how); **n/a** (why); **unknown** (certify must show it).
@@ -1875,7 +1966,7 @@ tests; it does not repeat the certify spec.
 | A-9, M-9 | `<label>:clock:*` | T-CAP-59 |
 | A-10, M-10 | `<label>:sequence`, `<label>:time-gaps` | none (new) |
 | A-13, M-8 | `self:hang-100ms` | T-CAP-82 |
-| A-14, M-11, M-12 | `<label>:in-use`, `probe:camera-holders` | T-CAP-56 |
+| A-14, M-11, M-12, 4.13 | `<label>:in-use`, `<label>:in-use:other-program`, `<label>:in-use-mid-take`, `probe:camera-holders`, `probe:<model>:hog-mode` (macOS) [cert 20] | T-CAP-56, T-CAP-130 to T-CAP-140 |
 | A-15, A-22, M-13 | `group:open`, `group:contention` | none (new) |
 | A-16, M-14 | `system:camera-access` | none (new) |
 | A-17, A-18, M-15 | `<label>:controls`, `<label>:controls:exposure-scale`, `<label>:auto-off:*`, `<label>:settings-stick:*`, `<label>:exposure:<base>`, `<label>:auto-exposure:*`, `<label>:control:*`, and on macOS the probes `probe:<model>:a1-cmio-native:<control>` to `a10-avf-custom:exposure` [cert 10.7] | T-CAP-57, T-CAP-78 |
@@ -1896,6 +1987,22 @@ tests; it does not repeat the certify spec.
 | runner, vivid | 4 (80 to 83) | 4 (84 to 87) | — |
 | build | — | 1 (88) | — |
 | certify | 6.7 | 6.7 | — |
+
+### 6.9 Tests of exclusive access (4.13, lands with phase 7)
+
+Draft of 2026-11-25, with 4.13. The counts of 6.8 do not hold these tests yet.
+
+| ID | Kind | What it does | Pass criterion |
+|---|---|---|---|
+| T-UNX-102 | fake | Linux: `S_PRIORITY` RECORD succeeds; then a fake where it returns `EBUSY`. | The source calls `S_PRIORITY` with RECORD right after `open()` and before `REQBUFS(0)`; `priority_record` true. With `EBUSY`: `camera-in-use`, stage `open`, `busy_call` `s-priority`; no `S_FMT` was sent. |
+| T-UNX-103 | fake | Linux: a take of 10 s; at 4 s the fake gives a `V4L2_EVENT_CTRL` change of `V4L2_CID_EXPOSURE_ABSOLUTE` from another handle. Also an own set of gain. | One subscription for each listed control, with no `ALLOW_FEEDBACK` flag; one `control_changed_by_other` warning and one `camera_control_changed` mark at the row after 4 s; the own set gives no mark; `ctrl_events_other` is 1. |
+| T-UNX-104 | fake | Linux: `EBUSY` at `REQBUFS(0)`, with a fake `/proc`: (1) one process of the same user holds the node, `comm` `obs`; (2) the link cannot be read (another user). | (1) the reason "in use by obs. Quit it and try again"; (2) "in use by another program". In both cases `/proc` is read only after the failure, never before the open. |
+| T-UNX-105 | fake | macOS: `isInUseByAnotherApplication` is true before the open. | `camera-in-use`, stage `open`; no `deviceInputWithDevice_error_` call. |
+| T-UNX-106 | fake | macOS: the configuration lock: (1) the source opens, streams 5 s and closes; (2) `lockForConfiguration` fails with -11817. | (1) one `lockForConfiguration` before `startRunning`, no `unlockForConfiguration` until the close, then the unlock after the restore; `config_locked` true while open. (2) `camera-in-use`, `busy_call` `lock-config`. |
+| T-UNX-107 | fake | macOS: a take of 10 s; the in-use flag goes true at 3 s and false at 6 s. | The take records to the stop; one `camera_shared` warning; one `camera_shared` mark with the rows of 3 s to 6 s and `by=another program`; `in_use_flag_changes` is 2. |
+| T-UNX-108 | fake | macOS: the source with no hog-mode evidence, and with a shipped row that says hog mode works for the model. | With no evidence: no set of `kCMIODevicePropertyHogMode`. With the row: the set at the open; a hog mode that another process id holds gives `camera-in-use`. |
+
+The certify checks of [cert 20] are the hardware tests of these rules.
 
 ## 7. Dependencies, risks
 

@@ -1,6 +1,7 @@
 # 53VB — Decision of the user on the exact skip after a live change (Q663)
 
-**Status:** accepted, 2026-11-23 (user; the coordinator asked the question and relayed the answer).
+**Status:** absorbed into [`specs/windows-capture.md#102-after-a-live-control-change-d32`](../../specs/windows-capture.md#102-after-a-live-control-change-d32), [`specs/windows-capture.md#162-test-list`](../../specs/windows-capture.md#162-test-list),
+2026-11-25 (commit to dom/exclusive-access-spec; was accepted, 2026-11-23 (user; the coordinator asked the question and relayed the answer)).
 
 ## Decision
 
