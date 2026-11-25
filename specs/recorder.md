@@ -1139,13 +1139,15 @@ plan test T-REC-MF-DEFER needs a camera. It is not in R11 and waits for the conn
   `specs/recorder.md`, `pyproject.toml`, `uv.lock` or the workflow file; and by hand. Three blocking
   jobs: `recorder-windows` (`windows-2025`), `recorder-linux` (`ubuntu-24.04`, with PortAudio as the
   arm64 job installs it) and `recorder-macos` (`macos-15`). Each runs
-  `uv run pytest skellycam/tests/take_recorder -m "not recorder_bench"`.
+  `uv run pytest skellycam/tests/take_recorder -m "not recorder_bench"`. The job `recorder-macos` runs
+  only by hand (`if: github.event_name == 'workflow_dispatch'`), not on a push
+  [ADR-N14T](../decisions/entries/N14T-decisions-of-the-user-on-the-ci-review-of-2026-11-25.md).
 - **Where each test runs**:
 
   | Tests | Windows | Linux | macOS |
   |---|---|---|---|
-  | unit and process tests, the short pass parts of T-REC-STALL and T-REC-KILL, T-REC-37 | `recorder.yml` | `recorder.yml` | `recorder.yml` |
-  | connection tests (after 3a) | `recorder.yml` | `recorder.yml` | `recorder.yml` |
+  | unit and process tests, the short pass parts of T-REC-STALL and T-REC-KILL, T-REC-37 | `recorder.yml` | `recorder.yml` | `recorder.yml` (by hand) |
+  | connection tests (after 3a) | `recorder.yml` | `recorder.yml` | `recorder.yml` (by hand) |
   | benchmarks | the user's machine | the user's machine, when available | the user's machine, when available |
 
   The capture spec runs its fake-source tests on Windows and Linux only [D47, cap 15]. The connection

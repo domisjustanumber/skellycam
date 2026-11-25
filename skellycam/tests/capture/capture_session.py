@@ -106,10 +106,31 @@ def install_control_clock(monkeypatch, clock, loop_module):
 def install_loop_clock(monkeypatch, clock):
     """Q673 [ADR-F4N7]: each camera loop thread (a THREAD worker) is a participant of the virtual clock from its
     start (`VirtualClock.expect`), as the control thread is for a request (`ClockQueue`) [ADR-DC43]. Else the time
-    moves on before the new loop waits on the clock for the first time."""
+    moves on before the new loop waits on the clock for the first time.
+
+    The start of a group (`CameraManager.start`) expects each loop thread of the group before it starts the first.
+    Else the first loop runs the time alone, through its open and warm-up, until the main thread starts the next
+    worker: a main thread that lost the CPU for 2 ms or more between two starts gave a second camera that opened 3 s
+    of virtual time after the first (T-CAP-91 on CI, "1 frames replaced in 100 s") [ADR-R394]."""
+    from skellycam.core.camera.camera_manager import CameraManager
     from skellycam.core.camera.camera_worker import CameraWorker
     from skellycam.core.ipc.process_management.managed_worker import ManagedThread
 
+    start_group = CameraManager.start
+
+    def start_group_on_the_clock(manager):
+        threads = [worker.worker._thread for worker in manager.camera_workers.values()
+                   if isinstance(worker.worker, ManagedThread)]
+        for thread in threads:
+            clock.expect(thread)
+        try:
+            start_group(manager)
+        finally:
+            for thread in threads:
+                if thread.ident is None:
+                    clock.forget(thread)  # not started: a close stopped the loop of starts, or a start raised
+
+    monkeypatch.setattr(CameraManager, "start", start_group_on_the_clock)
     start = CameraWorker.start
 
     def start_on_the_clock(worker):

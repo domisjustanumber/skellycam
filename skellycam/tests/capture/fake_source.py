@@ -185,11 +185,15 @@ class VirtualClock:
     def expect(self, thread):
         """`thread`, not started yet, is a participant from its start: a camera loop thread
         (`capture_session.install_loop_clock`). Until it waits on the clock, ends or leaves the clock, the time
-        moves only by the forced steps, as for a participant in "run". Else the other participants run the time
+        moves only by the forced steps, as for a participant in "run". While it is not started, the forced steps do not
+        move the time either: the thread that starts it must start it or call `forget` (T-CAP-91 [ADR-R394]). Else
+        the other participants run the time
         on before the new loop opens its camera: T-CAP-13 on macOS and on 2 cores, where the first camera opened
-        3 s or more of virtual time after the second (Q673) [ADR-F4N7]."""
+        3 s or more of virtual time after the second (Q673) [ADR-F4N7]. A second `expect` of the same thread does
+        nothing: its first wait drops it once (T-CAP-91 [ADR-R394])."""
         with self._condition:
-            self._expected.append(thread)
+            if thread not in self._expected:
+                self._expected.append(thread)
 
     def forget(self, thread):
         """`thread` of `expect` does not start (its start raised)."""
@@ -282,6 +286,8 @@ class VirtualClock:
             return
         if not force and (self._expected or any(self._holds(i, s) for i, s in self._states.items())):
             return
+        if force and any(t.ident is None for t in self._expected):
+            return  # a thread that is not started yet (`expect`): its starter starts it soon or calls `forget`
         target = min(waits)
         if force:
             target = min(target, self._now + self.forced_step_ns)
