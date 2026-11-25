@@ -1,20 +1,36 @@
 # Phase 6 player specification: step 6c, part 1, playback of FreeMoCap v1 recordings (draft)
 
-Status: **draft for the review of the owner, revision 5, 2026-11-24. Not accepted.** No test and no
+Status: **draft for the review of the owner, revision 6, 2026-11-25. Not accepted.** No test and no
 code comes before the owner accepts this spec. The rules of the owner are in
 [ADR-X5MZ](../decisions/entries/X5MZ-rules-of-the-owner-for-the-playback-of-freemocap-v1-recordings.md)
 (accepted). His answers Q685, Q688, Q697, Q698 and Q700 are in
 [ADR-8EBK](../decisions/entries/8EBK-answers-of-the-owner-q685-q688-q697-q698-q700.md), his answers
-Q701 to Q706 are in [ADR-0C4Y](../decisions/entries/0C4Y-answers-of-the-owner-q701-to-q706.md), and
+Q701 to Q706 are in [ADR-0C4Y](../decisions/entries/0C4Y-answers-of-the-owner-q701-to-q706.md),
 his answers Q694, Q717 and Q718 are in
-[ADR-VHD3](../decisions/entries/VHD3-answers-of-the-owner-q694-q717-q718.md) (each accepted).
-Each choice of the agent is in [ADR-A56K](../decisions/entries/A56K-choices-of-the-v1-playback-spec.md)
-(proposed). Section 16 gives the open questions. A "yes" to a question accepts its recommendation.
+[ADR-VHD3](../decisions/entries/VHD3-answers-of-the-owner-q694-q717-q718.md), and his answers to the
+questions Q699, Q707 to Q716 and Q723 to Q728 of revision 5 are in
+[ADR-EM6A](../decisions/entries/EM6A-answers-of-the-owner-to-the-v1-playback-questions-of-revision-5.md)
+(each accepted). The choices of the agent are in
+[ADR-A56K](../decisions/entries/A56K-choices-of-the-v1-playback-spec.md) (revision 5) and
+[ADR-S4TJ](../decisions/entries/S4TJ-choices-of-revision-6-of-the-v1-playback-spec.md) (revision 6),
+both proposed. No question is open (section 16).
 
 Revision 2 applied an independent review of revision 1 (39 findings) and the answers of 8EBK.
 Revision 3 applied the answers of 0C4Y. Revision 4 applied the answers of VHD3 (a new section 3).
-Revision 5 applies a second independent review of revision 4; it records no new decision of the
-owner.
+Revision 5 applied a second independent review of revision 4; it recorded no new decision of the
+owner. Revision 6 applies the answers of EM6A:
+
+- The v1 file rules leave this spec: the folder and the refused eras, the time file and the time
+  map, the sample list, the frame table and the edit list. They are in skellyspecs, module
+  `recording-files/`, at commit `SKELLYSPECS-PIN` (section 2) [Q716 yes] [Q765 B].
+- `Origin: null` is closed with a secret header (4.4) [Q723 yes].
+- A new fallback condition F6, "too slow" (3.4) [Q724 yes], and its certify report (10.5)
+  [Q766 yes].
+- The macOS replace path (9.5) [Q709 yes] [Q764 yes]; the default token for the bump PR (10.3)
+  [Q725 yes].
+- Section 10.1 to 10.3 and 10.6, and their tests, are marked **later**: not built in step 6c part 1
+  [Q767 yes].
+- Each other answer turns its open mark into a "yes" mark. Section 16 is empty.
 
 This spec extends [`player.md`](player.md) (step 6a, accepted). The rules of `player.md` apply to a v1
 recording, unless this spec gives a different rule. Section 14 lists each difference.
@@ -23,15 +39,25 @@ recording, unless this spec gives a different rule. Section 14 lists each differ
 
 Marks:
 
-- **[O]**: the words of the owner, 2026-11-24 (section 18,
+- **[O]**: the words of the owner, 2026-11-24 or 2026-11-25 (section 18,
   [ADR-X5MZ](../decisions/entries/X5MZ-rules-of-the-owner-for-the-playback-of-freemocap-v1-recordings.md)).
   Only his own words have this mark.
 - **[X5MZ item 7]**: a standing rule of the owner, as the coordinator listed it (not his exact words).
 - **[Qnnn yes]**: a question that the owner answered "yes" on 2026-11-24
   ([ADR-8EBK](../decisions/entries/8EBK-answers-of-the-owner-q685-q688-q697-q698-q700.md),
   [ADR-0C4Y](../decisions/entries/0C4Y-answers-of-the-owner-q701-to-q706.md),
-  [ADR-VHD3](../decisions/entries/VHD3-answers-of-the-owner-q694-q717-q718.md)). The text under the
-  mark applies that answer.
+  [ADR-VHD3](../decisions/entries/VHD3-answers-of-the-owner-q694-q717-q718.md)), or on 2026-11-25
+  ([ADR-EM6A](../decisions/entries/EM6A-answers-of-the-owner-to-the-v1-playback-questions-of-revision-5.md)).
+  The text under the mark applies that answer.
+- **[Q764 yes] to [Q767 yes], [Q765 B]**: the follow-up questions of 2026-11-25 (EM6A). They have
+  the global numbers of that session; the spec questions Q699 to Q728 keep their own numbers.
+- **[SPECS]**: the v1 file rules in skellyspecs, module `recording-files/`, at commit
+  `SKELLYSPECS-PIN`: the normative
+  [`SPEC.md` section 21](https://github.com/domisjustanumber/skellyspecs/blob/SKELLYSPECS-PIN/recording-files/SPEC.md#21-legacy-folders)
+  and the informative
+  [`legacy-annex.md`](https://github.com/domisjustanumber/skellyspecs/blob/SKELLYSPECS-PIN/recording-files/legacy-annex.md)
+  (section 2).
+- **later**: a part that is specified, but not built in step 6c part 1 [Q767 yes].
 - **[S n]**: the H.264 study, part A, `research/h264_study/part_a/NOTES.md`, section n, on branch
   `dom/h264-scrub-study` at commit 71caa2d0b. `[S RT]` is its `RESULTS_TABLE.md`. The study files
   `wasm_build.sh`, `app/mp4.mjs`, `app/wasm.mjs` and `app/wasm_worker.mjs` are in the same folder.
@@ -48,7 +74,6 @@ Marks:
   check again.
 - **[NV]**: not verified. No evidence proves it.
 - **[agent n]**: an agent filled a gap. Section 15, item n, lists each one.
-- **[Qnnn]** with no "yes": an open question of section 16.
 - **6a n.m**: section n.m of [`player.md`](player.md).
 
 This spec uses British spelling.
@@ -82,9 +107,10 @@ compressed bytes on the HTTP link, and the page decodes them [agent 10] [Q688 ye
   Windows Media Foundation H.264 writer, the Linux PyAV x264 writer, the macOS `avc1` writer, the
   `mp4v`, XVID and MJPG fallbacks in MP4 and AVI, the `.web.mp4` sidecars, and the Rust backend of
   `upstream/sfn26`. These words replace his earlier words "The goal is to support all v1 onwards
-  versions" [O]. Section 2.2 tells how the player refuses a v2 alpha folder [agent 3].
+  versions" [O]. Section 2.2 tells how the player refuses a v2 alpha folder [agent 3] [Q713 yes].
 - **FreeMoCap v0.0.x and v0.1.0.** They are older than v1. The player does not refuse a v0.1.0
-  folder, because it has the v1 form (section 2.2). No test covers it [agent 3] [Q713].
+  folder, because it has the v1 form. No test covers it, and it has no support [agent 3]
+  [Q713 yes].
 - **The release candidates v1.0.0-rc to v1.0.23-rc.** Out of scope [Q706 yes]. The inventory also
   leaves them out [INV].
 - **The annotated videos** (`annotated_videos/*.mp4`). They are a result of the processing, not a
@@ -100,15 +126,14 @@ compressed bytes on the HTTP link, and the page decodes them [agent 10] [Q688 ye
 
 | Term | Meaning |
 |---|---|
-| v1 recording | A folder of section 2.2, rule 3. |
-| camera file | One `.mp4` file in `synchronized_videos/` of a v1 recording. |
-| time file | `synchronized_videos/timestamps/<stem>_binary.npy` of a camera file with the stem `<stem>` (section 2.3). |
-| frame table | The list of the frames of one camera file, in presentation order, from its MP4 index (section 6.1). |
+| v1 recording | A folder that [SPECS] recognises as v1, and that 2.2 does not refuse. |
+| camera file | One `.mp4` file in `synchronized_videos/` of a v1 recording [SPECS]. |
+| time file | The `.npy` time file of a camera file [SPECS]. |
+| sample list, frame table, CTS, M, D, E, frame time stamp, frame count | As [SPECS] defines them. The frame table lists the kept frames of one camera file in presentation order (section 6.1). |
 | frame k | Entry k of the frame table, from 0. The frame index is the truth (section 6). |
-| frame time stamp | The presentation time of a frame in track units, after the edit list (6.1). |
 | K | The number of multi-camera frames: the smallest frame count of the cameras that play (section 6.3). |
 | k* | The frame number that the controls show (as 6a 7.2). |
-| T_k | The take time of multi-camera frame k (section 6.4). |
+| T_k, r | The take time of multi-camera frame k and the header rate, from the time map of [SPECS] (section 6.4). |
 | the decoder | The custom libav.js variant of section 9: FFmpeg's demuxer and decoders, compiled to WebAssembly (WASM). |
 | WASM route | The decoder in a tile worker (3.2, 7): for `mp4v`, and for an H.264 tile after the fallback of 3.4. |
 | WebCodecs route | A WebCodecs `VideoDecoder` for an H.264 tile, fed by the TypeScript MP4 reader (3.3). |
@@ -116,65 +141,59 @@ compressed bytes on the HTTP link, and the page decodes them [agent 10] [Q688 ye
 | live tile | A tile that takes part in the locked rule of 6.5. |
 | the recipe | The build files of the decoder (section 9.1). |
 
-## 2. The v1 recording
+## 2. The v1 recording [Q716 yes] [Q765 B]
 
-### 2.1 Folder and files
+### 2.1 The v1 file rules are in skellyspecs
 
-A v1 recording is a folder with these items [INV] [S 12.1]:
+The owner: "in skellyspecs, and yes" [O]. He chose option B: the v1 file rules go into the module
+`recording-files/` of skellyspecs, because freemocap and skellysync read v1 files too; the behaviour
+of the player stays in this spec [Q765 B]. This spec cites those rules at one commit. It does not
+repeat them:
 
-| Path | Role | Read by the player |
+- skellyspecs `recording-files/SPEC.md` section 21 (normative):
+  <https://github.com/domisjustanumber/skellyspecs/blob/SKELLYSPECS-PIN/recording-files/SPEC.md#21-legacy-folders>
+- skellyspecs `recording-files/legacy-annex.md` (informative):
+  <https://github.com/domisjustanumber/skellyspecs/blob/SKELLYSPECS-PIN/recording-files/legacy-annex.md>
+- The commit: `SKELLYSPECS-PIN`.
+
+These rules left this spec in revision 6. Revision 5 had them in its sections 2.1 to 2.4, 6.1, 6.4
+and the edit-list row of 3.7:
+
+| Rule | Was in revision 5 | Owner's answer |
 |---|---|---|
-| `synchronized_videos/*.mp4` (also `*.MP4`) | the camera files | yes |
-| `synchronized_videos/timestamps/<stem>_binary.npy` | the time file of the camera file `<stem>.mp4`: 1-D float64, one value per written frame, `time.perf_counter_ns()` of the capture | yes, when present |
-| `synchronized_videos/timestamps/<stem>_timestamps_human_readable.csv` | the same times as text | no [agent 2] |
-| `synchronized_videos/*.png` | diagnostic plots (Windows only) | no |
-| `annotated_videos/`, `output_data/`, `*.toml`, `*.json`, `*.csv`, `*.npy` in the root, `*.blend`, `*.ipynb` | results of the processing | no |
+| The v1 folder and its files; which files a reader reads | 2.1 | |
+| The recognition of a v1 folder, of a new take and of the refused eras (v2 alpha), and v0.1.0 | 2.2 | [Q713 yes] |
+| The time file: its name, the NPY parse, "usable", NaN as no time, the rounding to integer nanoseconds, one clock, duplicates | 2.3 | |
+| The case with no time file | 2.4 | [Q711 yes] |
+| The sample list, the frame table, CTS, the edit list values M, D and E, the frame time stamp, the frame count inside the snapshot size, the accepted edit lists | 6.1, 3.7 | |
+| The time map: v_c(k), the base B, the mean U_k over the cameras, T_k made non-decreasing, the header rate r_c and the median r | 6.4 | [Q711 yes] |
 
-The v1 writer gives the names `Camera_{i:03d}_synchronized.mp4` and
-`Camera_{i:03d}_synchronized_binary.npy` [INV]. The sample data and the import folders have other
-names [S 12.1 rows 3, 4].
+- **Which text wins.** Where this spec and [SPECS] differ on a file rule, [SPECS] wins. A change of a
+  file rule is a change in skellyspecs, with its own decision entry there. This spec then takes the
+  new commit in place of `SKELLYSPECS-PIN`, with an entry of this repository [agent 42].
+- **What stays here.** What the player does with the result of the file rules: the texts that the
+  host shows (2.2), the warnings that the host shows (11.4), the labels and the play (6.4), and each
+  rule of the decode, the routes and the server.
 
-### 2.2 How the player recognises a v1 recording [agent 3]
+### 2.2 What the player does with the folder [agent 3]
 
-The player reads only the snapshot of the folder (section 4.2). It applies these rules in this order:
+The player reads only the snapshot of the folder (section 4.2). It applies the recognition of
+[SPECS]:
 
-1. A folder with a `recording_manifest.json` or with a device pair of the new format is a take of
-   the new format. 6a plays it (6a 10). The rules below do not apply.
-2. A folder whose `synchronized_videos/` holds a file name with the form `<rec>.id-<n>.idx-<n>.mp4`
-   is a v2 alpha recording [S 12.1 rows 6 to 11]. The player refuses it with the text "FreeMoCap v2
-   alpha recordings are not supported".
-3. A folder whose `synchronized_videos/` holds one or more files with the extension `.mp4` (any case)
-   is a v1 recording. FreeMoCap v1 itself finds its videos with `*.mp4` and `*.MP4` in that folder
-   [INV quirks, camera order].
-4. Each other folder: the text "not a FreeMoCap v1 recording: no synchronized_videos/*.mp4".
+1. A take of the new format: 6a plays it (6a 10).
+2. A v2 alpha recording: the player refuses it with the text "FreeMoCap v2 alpha recordings are not
+   supported" [Q713 yes].
+3. A v1 recording: it opens in the canvas player (11.4).
+4. A v0.1.0 folder with the v1 form: the player does not refuse it. No test covers it, and it has no
+   support [Q713 yes].
+5. Each other folder: the text "not a FreeMoCap v1 recording: no synchronized_videos/*.mp4".
 
-The player does not find the era (V1a to V1i) of the recording. It does not need it [INV section 3].
-Releases never write their version number into the recording [INV].
-
-### 2.3 The time file [agent 4]
-
-- The player looks for `synchronized_videos/timestamps/<stem>_binary.npy` for each camera file
-  `<stem>.mp4`. It uses no other name rule.
-- The player parses the NPY format itself: the magic `\x93NUMPY`, the versions 1.0, 2.0 and 3.0, and
-  the header dictionary. It accepts only `descr` `'<f8'`, `fortran_order` `False` and a shape `(n,)`.
-- A time file is **usable** when the parse passes and n equals the frame count of its camera file
-  (section 6.1). Each other time file is not usable. The camera then gets the warning
-  `time_file_unusable` with the reason (`missing`, `bad_header`, `dtype`, `shape`, `length`).
-- A value that is not finite (NaN, infinity) is a frame with no time.
-- The values are nanoseconds of `perf_counter_ns`, a monotonic clock of the recording machine, not
-  Unix time; they are not comparable across machines or reboots [INV quirks, timestamps]. All
-  cameras of one v1 recording are captured on one machine. The agent assumes that the values of the
-  cameras are on one clock [NV: the skellycam v1 code was not read for this point]. A float64 holds
-  each integer nanosecond up to 2^53 ns (about 104 days of clock time) with no loss. The player rounds
-  each value to an integer nanosecond.
-- A repeated value means a duplicate frame: the v1 synchronizer writes a copy of a frame for a
-  dropped frame [INV quirks, dropped frames]. The player shows it as a frame (section 6.4).
-
-### 2.4 No time file
-
-The official sample data has no time file [S 12.1 row 3]. An import folder has none [S 12.1 row 4].
-Then the player uses the header rate (section 6.4). The tiles show the time with a `~` in front, as
-the player of today does (feature F6, 6a 3.1) [agent 5].
+- A camera whose time file is not usable gets the warning `time_file_unusable` with the reason that
+  [SPECS] gives. The host shows it (11.4).
+- A repeated value of a time file is a duplicate frame of the v1 synchronizer [SPECS]. The player
+  shows it as a frame (6.4).
+- When no time file is usable, the tiles show the time with a `~` in front, as the player of today
+  does (feature F6, 6a 3.1) [agent 5].
 
 ## 3. Route by codec, not by file extension [Q694 yes] [Q717 yes]
 
@@ -273,13 +292,13 @@ seeks and 288 of 288 steps for each set, also with B-frames [S 9.2, S 10.2, S 10
   529 ms with a flush after each seek; forward step p50 0.2 ms against 63 ms [S 10.2].
 - **A read error** of `readRange` is not a fallback condition. It gives the mark "read error" of 8.2
   on both routes.
-- **A reclaimed codec** [Q728] [agent 39]. Chromium can reclaim the codec of a page that is hidden or
-  not active for some time; the `error` callback then gets a `QuotaExceededError` and the state
-  becomes `closed` [the review] [NV in Electron 45.3.4]. The proposal of Q728: the route then makes a
-  new `VideoDecoder` with the same configuration and resets at the next request. It is not F2, and the
+- **A reclaimed codec** [Q728 yes] [agent 39]. Chromium can reclaim the codec of a page that is
+  hidden or not active for some time; the `error` callback then gets a `QuotaExceededError` and the
+  state becomes `closed` [the review] [NV in Electron 45.3.4]. The route then makes a new
+  `VideoDecoder` with the same configuration and resets at the next request. It is not F2, and the
   tile does not switch.
 
-### 3.4 The fallback to the WASM `h264` decoder [Q717 yes] [agent 39]
+### 3.4 The fallback to the WASM `h264` decoder [Q717 yes] [Q724 yes] [agent 39]
 
 A tile switches from the WebCodecs route to the WASM route with the `h264` decoder on the first of
 these conditions:
@@ -287,11 +306,26 @@ these conditions:
 | ID | Condition | Source |
 |---|---|---|
 | F1 | `VideoDecoder` does not exist in the page, or `isConfigSupported(config)` rejects, or resolves with `supported` not true. | the agent's reading of "WebCodecs refuses the file" [Q717 yes] |
-| F2 | `configure(config)` throws, or the `error` callback of the `VideoDecoder` runs, or the decoder state becomes `closed` while the player did not close it, or `decode()` or `flush()` throws or rejects. A reclaimed codec is not F2 (3.3, Q728). | the agent's reading of "fails" [Q717 yes] |
+| F2 | `configure(config)` throws, or the `error` callback of the `VideoDecoder` runs, or the decoder state becomes `closed` while the player did not close it, or `decode()` or `flush()` throws or rejects. A reclaimed codec is not F2 (3.3) [Q728 yes]. | the agent's reading of "fails" [Q717 yes] |
 | F3 | For **3 s**, no output frame and no error comes, while the route has sent chunks whose frames have not come out yet, or while a `flush()` has not resolved. This holds at each point: after a key chunk, in the middle of a GOP, in a continue, and in play (also when the back-pressure of 3.3 holds the next chunk back). | [agent 39] |
 | F4 | A seek that the newest-request rule (6a 7.5) did not cancel sends its chunks, flushes, the flush resolves, and frame k did not come out. | [agent 39] |
 | F5 | At open, the microsecond `timestamp` values of the kept frames are not unique. | [agent 39] |
-| F6 | Proposed in Q724 only (not part of this rule until the owner decides): play behind the clock. | [Q724] |
+| F6 | **Too slow.** In play, the tile is a late tile on more than **20 %** of the refreshes of a window of **10 s** of play, counted from 2 s after each start of play. Only when `navigator.hardwareConcurrency` is at least 4 and at least the number of H.264 tiles. | [Q724 yes]; the details below [agent 43] |
+
+**The details of F6** [Q724 yes] [agent 43]:
+
+- **A late tile.** On a refresh behind the clock (k* below k_t, 6.5), each live tile whose newest
+  ready frame is k* is a late tile of that refresh. Two or more tiles can be late on one refresh.
+- **The window.** The count starts 2 s after each start of play. A seek, a pause, a speed change and
+  the end of the file stop the count; the next start of play starts a new count. The rule checks the
+  last 10 s of play, and only after 10 s of counted play. The share is (the refreshes of the window on
+  which the tile is late) / (the refreshes of the window).
+- **The tiles that F6 applies to.** Only a tile on the WebCodecs route. "The number of H.264 tiles" is
+  the number of the tiles of the take whose codec is H.264, on either route. Each tile has its own
+  count.
+- **The values are guesses.** 20 % and 10 s are the agent's values, not measurements. The certify
+  check of 10.5 reports the late share of each tile, so that certify reports can tune them
+  [Q724 yes] [Q766 yes].
 
 How each condition can err:
 
@@ -301,6 +335,10 @@ How each condition can err:
 - F4 cannot fire falsely, because it counts only a seek that was not cancelled. F4 does not cover a
   frame that is missing in play: in play, the locked rule holds the tile, and F3 fires when no output
   comes.
+- F6 can fire on a machine that another program loads, or for a tile that is late for a reason other
+  than its decoder (a slow link). That does no harm to the frames, because both routes are exact
+  [Q724 yes]. On a machine with few cores, WASM can be late too, and a switch does not help; the core
+  rule of F6 stops the switch there. F6 does not fire on a WASM tile, so it cannot repeat.
 - **Wrong pixels with the right time stamp cannot be detected in the product**, on either route. The
   tests find them (3.5); the product does not.
 
@@ -313,29 +351,32 @@ The switch:
   sections 6.2, 7 and 8.2 apply to that tile. When the WASM route also fails at frame k, the mark
   "damaged at frame k" of 8.2 applies; the player does not try WebCodecs again.
 - **No switch back.** A tile that switched stays on the WASM route until the player closes the take.
-  A new open of the take starts again with the WebCodecs route.
+  A new open of the take starts again with the WebCodecs route. This holds for F6 too [Q724 yes].
 - **Shown to the user.** The tile shows a detail text, in small type under the camera part of the
   overlay (6a 8.4): "decoder: WebCodecs" or "decoder: WASM (WebCodecs <reason>)", with `<reason>`
-  one of "not supported", "error", "no output", "frame missing", "time stamps". A camera of `mp4v`
-  shows "decoder: WASM". The detail text shows also when `showLabel` is off, as the rate text does
-  (6a 8.4) [agent 39].
+  one of "not supported", "error", "no output", "frame missing", "time stamps", "too slow". A camera
+  of `mp4v` shows "decoder: WASM". The detail text shows also when `showLabel` is off, as the rate
+  text does (6a 8.4) [agent 39].
 - **Logged once.** At the switch the page logs one line for the tile:
   `legacy-player: camera <label> switched to the WASM h264 decoder: <reason> (<detail of the error>)`.
-  It logs no more line for that tile while the take is open.
-- **The camera state** gives the route (11.2), so that the host and the tests can read it.
+  For F6 the detail is the late share and the window, for example `(late on 34 % of 600 refreshes in
+  10 s)`. It logs no more line for that tile while the take is open.
+- **The camera state** gives the route, the late share and the time of the switch (11.2), so that
+  the host, the tests and the certify check can read them.
 
 A CPU decoder inside WebCodecs:
 
 - The browser can decode H.264 in software inside WebCodecs, for example with no GPU decoder, for
   4:2:2, or after a GPU fault. Chromium on Linux often has hardware video decode turned off by
   default, so in Electron on Linux this can be the usual case [the review] [NV].
-- `VideoDecoder` does not report which decoder it uses. The spec does not guess, and such a decode is
-  not a fallback condition (unless Q724 adds one).
-- **What the user then sees:** the tile shows "decoder: WebCodecs". With six 1080p CRF 18 tiles, play
-  was behind the clock on 99 to 100 % of refreshes [S 13.2]; with 1080p GOP 250 files in software, a
-  seek took 2.6 s (p50 2655 ms) and a backward step 3.8 s (p50 3803 ms) for six tiles [S 10.2]. The
-  locked rule keeps the tiles together, so play is slow, not out of sync. Nothing in the tile tells the
-  user why.
+- `VideoDecoder` does not report which decoder it uses. The spec does not guess. A software decode
+  is not by itself a fallback condition. When it makes play late, F6 applies.
+- **What the user then sees:** the tile first shows "decoder: WebCodecs". With six 1080p CRF 18
+  tiles, play was behind the clock on 99 to 100 % of refreshes [S 13.2]; with 1080p GOP 250 files in
+  software, a seek took 2.6 s (p50 2655 ms) and a backward step 3.8 s (p50 3803 ms) for six tiles
+  [S 10.2]. The locked rule keeps the tiles together, so play is slow, not out of sync. In play, F6
+  then switches each late tile, and its detail text shows "decoder: WASM (WebCodecs too slow)". F6
+  does not cover a slow seek or a slow step when the tile does not play.
 - The route reports only what the API exposes: the `hardwareAcceleration` value that it asked for,
   the result of `isConfigSupported`, the `format` of the first output `VideoFrame` (for example `NV12`
   or `I420`; `null` for a frame with no readable format), and the `outOfOrder` count. In the study
@@ -343,8 +384,8 @@ A CPU decoder inside WebCodecs:
   spec does not use the format to conclude GPU or CPU: that mapping is [NV] on other systems and other
   GPUs. For information only, the route also calls `isConfigSupported` with `prefer-hardware` once at
   open and reports the answer; it never configures the decoder with it [agent 39].
-- The certify check of 10.5 would report these values on the systems where certify runs [Q708, open].
-  Certify does not run on the machines of the users.
+- The certify check of 10.5 reports these values, the late share and the switches on the systems
+  where certify runs [Q708 yes] [Q766 yes]. Certify does not run on the machines of the users.
 
 ### 3.5 Frame exactness of both routes
 
@@ -397,9 +438,10 @@ Short-GOP H.264, 6 tiles, 20 s of play (renderer CPU seconds per 20 s: GPU / CPU
     used about 0.85 of a core and seemed not to use more cores; WASM, one worker per tile, kept up
     with 2.1 to 2.3 cores [S 13.2];
   - six 1080p GOP 250 tiles: seek p50 2655 ms, backward step p50 3803 ms [S 10.2];
-  - the tile shows "decoder: WebCodecs", so the user gets no hint (3.4);
-  - the fallback of 3.4 does not catch this case. The locked rule of 6.5 keeps the tiles together,
-    and the refreshes behind the clock go up. Q724 asks about a switch for it.
+  - until a switch, the tile shows "decoder: WebCodecs" (3.4);
+  - F1 to F5 of 3.4 do not catch this case. The locked rule of 6.5 keeps the tiles together, and the
+    refreshes behind the clock go up. In play, F6 then switches each late tile to WASM [Q724 yes].
+    A slow seek or step with no play does not switch.
 - **The import case.** An import that the v1 wizard "synchronised" can be an FFmpeg re-encode with
   the x264 defaults (GOP 250 with B-frames) [INV section 5] [NV]. The study measured such files
   (x264, GOP 250, B-frames, 6 tiles): with the GPU decoder, seek p50 529 ms at 720p and 1054 ms at
@@ -414,7 +456,7 @@ Short-GOP H.264, 6 tiles, 20 s of play (renderer CPU seconds per 20 s: GPU / CPU
 | Pixel format | 8-bit `yuv420p`, `yuv422p`, `yuv444p`, and the `yuvj` forms. Each other format (for example a 10-bit format) is refused: "pixel format <name> is not supported" [agent 7]. For H.264 the route reads the chroma format and the bit depth from the `avcC` box (its extension for the High profiles), or from the SPS when the box has no extension. |
 | Colour | The WASM route uses the colour values of the stream when the stream sets them; for a `yuvj` format the `VideoFrame` gets full range; else BT.601 with limited range, the default of FFmpeg for MPEG-4 Part 2 [agent 7]. The WebCodecs route uses the colour space that the decoder gives [NV: the colours that Chromium draws]. The identity checks of section 13 are on the decoded planes, not on the drawn colours. |
 | Rotation | v1 writes the rotation into the pixels [S 11.1 row 3]. The player applies a `tkhd` matrix of 0, 90, 180 or 270 degrees as `rotationCwDeg`, on both routes. It ignores each other matrix, with the warning `matrix_ignored` [agent 8]. |
-| Edit list | Accepted: no `elst`; or zero or more empty edits (media time −1) followed by one edit with media rate 1 and a media time at or above 0. Each other edit list is refused: "edit list not supported" [agent 9]. Section 6.1 gives the frames that an edit keeps, for both routes. The v1 files have media time 0 [S 11.1]. |
+| Edit list | [SPECS] gives the accepted edit lists and the frames that an edit keeps, for both routes. Each other edit list is refused: "edit list not supported" (`edit_list_not_supported`) [agent 9]. |
 | More than one video track | The first video track plays. Warning `extra_tracks`. |
 
 ## 4. Data path [Q688 yes]
@@ -438,7 +480,7 @@ Short-GOP H.264, 6 tiles, 20 s of play (renderer CPU seconds per 20 s: GPU / CPU
 | `POST /skellycam/playback/open` with `{ "path": <folder> }` | The server takes the real path (`resolve()`). It refuses a folder outside the allowed roots with 403 and "folder not allowed". It makes the snapshot of 6a 5.4: the regular files of the root, of `synchronized_videos/` and of `synchronized_videos/timestamps/`, with their size and file ID; no links, no junctions, no file with more than one hard link. It answers `{ token, folderName, entries }`, with relative paths and sizes only. |
 | `GET /skellycam/playback/files/<token>/<path>` | The bytes of 6a 5.6: no `Range` gives 200; `bytes=a-b` gives 206; each other form gives 416; only bytes below the snapshot size. Before each read, the identity check of 6a 5.5 (device and file ID equal to the snapshot; one hard link). Each response has `Content-Type: application/octet-stream`, `Cache-Control: no-store`, `Accept-Ranges: bytes` and `Access-Control-Expose-Headers: Content-Range, Content-Length, Accept-Ranges`. |
 | `DELETE /skellycam/playback/open/<token>` | Closes the token. A later request with it gets 404. |
-| `OPTIONS` on each route | The CORS preflight answer for the JSON `POST` and for the `Range` header. |
+| `OPTIONS` on each route | The CORS preflight answer for the JSON `POST`, the `Range` header and the secret header of 4.4 item 4. |
 
 - **Allowed roots** [Q688 yes: "allowed folders only, no folder from a request"]: the skellycam
   recordings folder (6a 5.3), the FreeMoCap v1 data folder `<home>/freemocap_data` (the v1 default
@@ -503,9 +545,9 @@ The token and the allowed roots of Q688 do not close this exposure. These requir
      review] [NV: MDN not read by the agent]. Thus an allow-list with `null` does not close the "any
      origin" rule that Q702 removes. The Host check of item 2 does not help, because such a page sends
      `Host: localhost`.
-   - **Until Q723 is decided** the allow-list holds the dev origin only in a development build, and
-     `null` only together with the secret header of Q723. Question Q723 proposes how to close the hole
-     now.
+   - **The secret header closes the hole** (item 4) [Q723 yes]. The allow-list holds `null`, and the
+     dev origin only in a development build. A request from an allowed origin without the secret
+     still gets 403.
 2. **Host allow-list.** These routes accept a request only when its `Host` header is in the
    allow-list: `localhost`, `127.0.0.1` and `[::1]`, each with the port of the server, and, for a
    bind beyond `localhost`, the host names and addresses that the settings of the server name. Each
@@ -515,16 +557,45 @@ The token and the allowed roots of Q688 do not close this exposure. These requir
    other than `localhost` (and the loopback addresses) until a login or a pairing protects these
    routes. With no such protection configured, the server refuses a bind setting beyond `localhost`
    at start, with the text "a remote UI needs login or pairing; the server listens on localhost
-   only". **The design of the login or the pairing is owed** (a separate spec and decision). That
-   design must also cover the origin `null`: each sandboxed page and each `file://` page sends
-   `null`, so the origin check of item 1 cannot tell the app from such a page. On `localhost`, item 1
-   then still lets a sandboxed page with the origin `null` read these routes [agent 37] [NV: not
-   tested].
+   only". **The design of the login or the pairing is owed** (a separate spec and decision). A
+   pairing gives the secret of item 4 to a remote app [Q723 yes] [agent 37].
+4. **The secret header** [Q723 yes] [agent 45]. It closes the `null` hole of item 1:
+   - **Made at each start.** The Electron main process starts the server
+     (`skellycam-ui/electron/main/services/python-server.ts` [C]). At each start it makes 128 random
+     bits from a cryptographic source, as 32 lower-case hexadecimal characters, and gives them to the
+     server in the environment variable `SKELLYCAM_PLAYBACK_KEY`.
+   - **A server that a person starts by hand** gets no variable. It makes its own secret at start and
+     writes it into the file `playback.key` in the app data folder of skellycam, which only the user
+     can read (mode 0600 on Linux and macOS; on Windows, the access rules of the user's app data
+     folder). It makes a new secret at each start and replaces the file. The main process reads that
+     file when it uses a server that it did not start [NV: whether the app uses such a server today].
+   - **To the page.** The main process gives the secret to the page through the preload bridge. The
+     page sends it in the header `X-Skellycam-Key` on each request to these routes:
+     `http-take-files.ts` and the call of `list_recordings`.
+   - **The check.** The server checks each request to these routes in this order: the Host (item 2),
+     the secret, the origin (item 1), then the token (4.2). A request with no secret or a wrong
+     secret gets 403 "key missing or wrong" and no byte of a file; the server reads no folder and no
+     token for it. The compare takes the same time for each value (`hmac.compare_digest`).
+   - **The preflight.** A CORS preflight (`OPTIONS`) carries no custom header. For an allowed origin,
+     the server answers it with `Access-Control-Allow-Headers: Content-Type, Range, X-Skellycam-Key`
+     and no body. It reads no file for a preflight.
+   - **Where the secret never goes:** into a URL, a log line, a report, or a file other than
+     `playback.key`.
+   - **What it stops, and what not.** A custom header makes the browser send a preflight, and a page
+     of another program cannot know the secret. Thus no web page on the machine gets a byte, also with
+     the origin `null`. Another local program of the same user is not stopped; it can read the files
+     on the disk directly anyway [Q723 yes].
+   - **The options that the owner did not take** [Q723 yes]: serve the whole UI from a custom scheme
+     (a large change of the UI shell), or fetch through the main process (its throughput is not
+     measured).
 
-T-LEG-17 to T-LEG-19 test items 1 to 3. Question Q727 asks if the same Origin and Host checks also
-cover the camera WebSocket `/connect` (`skellycam/api/websocket/websocket_connect.py`) and the other
-routes of the app: CORS does not apply to a WebSocket, so any web page can open `/connect` unless the
-server checks the `Origin` of the upgrade request [the review].
+T-LEG-17 to T-LEG-19 test items 1 to 3. T-LEG-17, T-LEG-73 and T-LEG-74 test item 4.
+
+**The other routes and the WebSocket** [Q727 yes]. The same Origin and Host checks also cover the
+camera WebSocket `/connect` (`skellycam/api/websocket/websocket_connect.py`) and the other routes of
+the app. CORS does not apply to a WebSocket, so today any web page can open `/connect` unless the
+server checks the `Origin` of the upgrade request [the review]. This is a separate small spec change
+outside the v1 player. It is owed ([open-work.md](../decisions/open-work.md)).
 
 ## 5. One player [Q685 yes]
 
@@ -563,44 +634,30 @@ restructuring of today's player") of 6a 18. Section 14 lists it.
 
 ## 6. Frame accuracy and sync
 
-### 6.1 The frame table and the edit list [agent 13]
+### 6.1 The frame table in the player [agent 13]
 
-- The module reads the MP4 index itself, in TypeScript (`legacy/mp4.ts`): the top-level boxes by
-  range reads, then `moov`. It reads `mvhd`, `tkhd`, `mdhd`, `hdlr`, `stsd` (with `esds`, `avcC`),
-  `stts`, `ctts`, `stss`, `stsz`, `stsc`, `stco`, `co64` and `elst`, and 64-bit box sizes.
-- For each sample, CTS = DTS (from `stts`) + the composition offset (from `ctts`, 0 when absent).
-- **The edit list.** Let M be the media time of the one non-empty edit (in track units), D its
-  segment duration converted from the movie time scale (`mvhd`) to track units, and E the sum of the
-  leading empty edits in track units. With no `elst`, M = 0, E = 0 and the edit covers all samples.
-  - **The sample list** holds each sample of the track, in decode order: DTS, CTS, the key flag,
-    the byte offset and the size. The routes feed from it and choose G from it (6.2). A sample
-    outside the edit stays in it, because a kept frame can need it as a reference.
-  - **The frame table** (the kept frames) holds each sample with M ≤ CTS < M + D, in the order of CTS
-    (equal CTS: the decode order). Frame k is entry k of this table, and K counts these frames.
-  - The frame time stamp of frame k is CTS − M + E.
-  - The exclusion of the samples outside [M, M + D) was never measured on either route: the study's
-    index kept each sample and only shifted the time stamps [C study `app/mp4.mjs` `buildIndex`].
-    T-LEG-25, T-LEG-26 and T-LEG-56 test it with a file whose edit cuts frames at the start and at the
-    end, in the middle of a GOP (13.1).
-  - FFmpeg's demuxer does the same [FF `libavformat/mov.c` `mov_fix_index`]: it keeps the key frame
-    before the edit start and the frames up to the next key frame after the edit end in its index,
-    and it marks each frame with a CTS outside [M, M + D) with `AV_PKT_FLAG_DISCARD`, so that it is
-    dropped after decoding. It then offsets the time stamps so that the first kept frame of a video
-    track has the time stamp 0, and it sets the start time to E. The study reader uses the same
-    time shift: "cts - first edit media time + leading empty edits" [C study `app/mp4.mjs`
-    `buildIndex`]. T-LEG-26 compares the two tables on each test file.
-- For `mp4v` from v1 there are no B-frames, so the decode order is the presentation order, and
-  M = 0 [S 11.1].
-- For each frame the frame table holds: the frame time stamp, the decode position in the sample
-  list, the key flag (from `stss`; all frames are key frames when `stss` is absent), the byte offset
-  and the size.
-- The frame count of a camera is the number of frames of its table whose bytes lie inside the
-  snapshot size of the file. It is not `duration × fps` (as 6a F21 did).
+- **The rules.** The sample list, CTS, the edit list values M, D and E, the frame table (the kept
+  frames, M ≤ CTS < M + D), the frame time stamp CTS − M + E, the decode position, the key flag and the
+  frame count inside the snapshot size are the rules of [SPECS]. This spec does not repeat them.
+- **The reader.** The module reads the MP4 index itself, in TypeScript (`legacy/mp4.ts`), by those
+  rules: the top-level boxes by range reads, then `moov`. A sample outside the edit stays in the
+  sample list, because a kept frame can need it as a reference. The routes feed from the sample list
+  and choose G from it (6.2).
+- The exclusion of the samples outside [M, M + D) was never measured on either route: the study's
+  index kept each sample and only shifted the time stamps [C study `app/mp4.mjs` `buildIndex`].
+  T-LEG-25, T-LEG-26 and T-LEG-56 test it with a file whose edit cuts frames at the start and at the
+  end, in the middle of a GOP (13.1).
+- FFmpeg's demuxer keeps the same frames [FF `libavformat/mov.c` `mov_fix_index`]: it keeps the key
+  frame before the edit start and the frames up to the next key frame after the edit end in its
+  index, and it marks each frame with a CTS outside [M, M + D) with `AV_PKT_FLAG_DISCARD`, so that it
+  is dropped after decoding. It then offsets the time stamps so that the first kept frame of a video
+  track has the time stamp 0, and it sets the start time to E. T-LEG-26 compares the two tables on
+  each test file.
 - **The WebCodecs route** (3.3) uses the sample list and the frame table as its only index.
-- **The WASM route:** the tile worker opens the same file with FFmpeg's own MP4 demuxer, as the study
-  measured [S 12.3]. At open, the worker reports the frame count and the time stamps of the kept frames of the
-  demuxer index. A difference from the table refuses the camera: "camera file index mismatch"
-  [Q714].
+- **The WASM route** [Q714 yes]: the tile worker opens the same file with FFmpeg's own MP4 demuxer, as
+  the study measured [S 12.3]. At open, the worker reports the frame count and the time stamps of
+  the kept frames of the demuxer index. A difference from the table refuses the camera: "camera file
+  index mismatch" (`index_mismatch`).
 
 ### 6.2 Exact seek and step on the WASM route [agent 14]
 
@@ -653,7 +710,7 @@ The player asks the tile worker for frame k. The worker:
   cameras to their overlap [INV quirks]. A difference can come from an import or from a damaged file.
 - A refused camera does not count for K (as 6a T-PLAY-05).
 
-### 6.4 The frame-to-time map [agent 16] [Q711]
+### 6.4 The frame-to-time map [agent 16] [Q711 yes]
 
 The frame index is the truth. Tile c shows frame k* of camera c. It never chooses a frame by time.
 This differs from 6a 7.3, which chooses by time for the new format. The reason: the v1 synchronizer
@@ -662,17 +719,10 @@ processing uses the frames by index [INV quirks, dropped frames].
 
 The times serve the clock, the labels and the pace only:
 
-- **With one or more usable time files:** v_c(k) is the value of camera c at frame k, in integer
-  nanoseconds. The base B is the smallest finite v_c(0) of the cameras. U_k is the mean of the finite
-  v_c(k) over the cameras with a usable time file (FreeMoCap v1 takes the mean over the cameras
-  [INV `data_loader.py`]). T_k = max(T_(k-1), U_k − B). When no camera has a finite value at row k,
-  T_k = T_(k-1). T_0 = U_0 − B, or 0 when U_0 has no value.
-- **With no usable time file:** the header rate r_c of camera c is (n_c − 1) × the `mdhd` time scale
-  / (the frame time stamp of the last frame − that of the first frame), with n_c its frame count, as
-  a rational number. This holds also when `stts` has more than one entry. r is the median of the r_c
-  of the cameras; for an even count, the mean of the two middle values. T_k = round(k × 10^9 / r). The
-  v1 header rate is a per-camera median of the capture rate, so the cameras can differ [S 12.1
-  row 1].
+- **The time map.** T_k, the per-camera values v_c(k), the base B and the header rate r are the
+  values of the time map of [SPECS] [Q711 yes]: the mean of the usable time files from the base,
+  made non-decreasing; with no usable time file, the median header rate. This spec does not repeat
+  them.
 - **Tile label.** A camera with a usable time file shows v_c(k*) − B, or no time part for a frame with
   no time. A camera with no usable time file shows T_k* with a `~` in front.
 - **"Rec: fps"** (F15) shows r, rounded to 3 decimals. With time files, r comes from the header
@@ -681,7 +731,8 @@ The times serve the clock, the labels and the pace only:
   and advances t by the speed × the elapsed time, as 6a 7.4. During play, k* is the frame of 6.5.
   Pause sets t = T_k*. The end and the loop follow 6a 7.4.
 - **A gap in the time file** (a stalled capture) plays as a gap of the same length in real time: the
-  tiles hold their frame until t reaches the next T_k. This is the recorded time [agent 16].
+  tiles hold their frame until t reaches the next T_k. This is the recorded time [agent 16]
+  [Q711 yes].
 
 ### 6.5 Synchronised play: the locked rule [agent 17]
 
@@ -720,13 +771,13 @@ route has no worker: it has one `VideoDecoder` for each tile on the page main th
 - **Bytes.** The worker reads blocks of 256 KiB through `TakeFiles.readRange`, keeps the last 16
   blocks (4 MiB), and reads one block ahead when the reads are sequential [S 12.3]. These values are
   not tuned [S 12.6]. Exact packet ranges from the frame table are a later change after a measurement
-  [S 12.5 product notes] [Q714].
+  [S 12.5 product notes] [Q714 yes].
 - **Out of the worker.** The worker sends the decoded planes, packed, in the format of the decoder
   (I420, I422 or I444), as a transferable buffer [S 12.3]. The page makes a `VideoFrame` and gives it
   to the tile as `TileUpdate.image`. The decoded frames stay inside the browser process. They do not
   go on the HTTP link.
 
-### 7.2 Load of the module and the CSP [agent 18] [Q707]
+### 7.2 Load of the module and the CSP [agent 18] [Q707 yes]
 
 - The decoder files come with the UI bundle of the Electron app (section 9.4), not from the server
   of the recording [Q697 yes] [Q701 yes].
@@ -740,7 +791,7 @@ route has no worker: it has one `VideoDecoder` for each tile on the page main th
   Chromium refuses to compile WASM. `worker-src blob:` refuses a module worker from a `'self'` URL,
   and a `blob:` worker takes the CSP of the page [the review] [NV: not tested in Electron 45.3.4].
   The change: `script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval'; worker-src 'self' blob:;`
-  [Q707]. T-LEG-43 checks it.
+  [Q707 yes]. T-LEG-43 checks it.
 
 ### 7.3 Queues and memory [agent 19]
 
@@ -771,7 +822,7 @@ route has no worker: it has one `VideoDecoder` for each tile on the page main th
 |---|---|
 | A camera file with no `moov` (the writer did not finish, or the file is cut) | Refused: "camera file not playable: no index (moov); the recording did not finish". The player offers no repair (6a Y5). |
 | `moov` at the end of the file | Normal for v1 [S 11.1]. The reader finds it with 1 to 3 range reads; the study read 0.26 to 0.75 MB in 6 to 41 ms for each tile [S 12.4]. |
-| A frame whose bytes lie past the snapshot size | Not in the frame count (6.1). |
+| A frame whose bytes lie past the snapshot size | Not in the frame count [SPECS]. |
 | An index box that is cut, or a box size that points past its parent | Refused: "camera file index damaged". |
 | A refused camera | The mark `not_readable` with the text; the other cameras play (6a L3). |
 | No camera plays | The host shows the text of the first refusal and no grid. |
@@ -927,10 +978,21 @@ Therefore, if you distribute this library, you must provide sources." The duties
    `README.md` of 9.1 tells a user how to build a changed library with the recipe and where to put it
    in the installed app. The app checks the SHA-256 of the decoder at load and logs a warning for an
    unknown file. It does not refuse it, because a refusal would stop the replacement.
-   - On macOS the app has the hardened runtime and is notarised (`"hardenedRuntime": true`,
-     `"notarize": true` in `skellycam-ui/electron-builder.json`) [C]. A file changed in
-     `Contents/Resources` breaks the signature. The `README.md` must tell the user how to sign the
-     app again with their own identity, or how to run it unsigned [Q709] [NV: the steps].
+   - **On macOS** [Q709 yes] [Q764 yes]. The app has the hardened runtime and is notarised
+     (`"hardenedRuntime": true`, `"notarize": true` in `skellycam-ui/electron-builder.json`) [C].
+     A file changed inside the `.app` (for example in `Contents/Resources`) breaks the signature, and
+     Gatekeeper then refuses to start the app. The replace path: the user replaces the decoder file,
+     then signs the app again with their own identity, or with an ad-hoc signature
+     (`codesign --force --deep -s -`), or runs the app unsigned. The `README.md` of 9.1 tells how.
+     This meets LGPL 2.1: it asks for the source, a decoder that the user can replace, and no ban on
+     a change; it has no "installation information" clause (that clause is only in LGPL v3). FFmpeg
+     is LGPL 2.1 or later, so the app takes the terms of 2.1 [Q764 yes]. This is the reading of the
+     licence by the agent and the coordinator, not legal advice [NV: the steps on a real macOS
+     system].
+   - **The alternative that the owner did not take** [Q764 yes]: the app also loads a replacement
+     decoder from a folder in the app data of the user, so that the bundle never changes. Its cost:
+     each program that runs as the user could then plant a decoder that decides what the player
+     shows.
 4. **Modification and reverse engineering.** The app is AGPL-3.0-or-later (`LICENSE`,
    `skellycam-ui/package.json` `"license"`) [C]. Thus its terms permit the modification and reverse
    engineering that LGPL 2.1 section 6 asks for.
@@ -938,7 +1000,9 @@ Therefore, if you distribute this library, you must provide sources." The duties
    replacement path go with the app and its release.
 6. **No GPL part, no non-free part** in the decoder (the checks of 9.3).
 
-This is not legal advice. Question Q699 asks the owner about the patent position.
+This is not legal advice. The build holds the MPEG-4 Part 2 and H.264 decoders. Their patent
+position is a decision of the owner, made separately; the technical work does not wait for it
+[Q699 yes].
 
 ## 10. Dependabot and upstream monitoring
 
@@ -946,7 +1010,14 @@ The owner's condition: "This work must also include suitable dependabot scripts 
 repos and trigger build and pr tests so it is minimal work to keep our custom build up to date." [O,
 Q693].
 
-### 10.1 The pinned inputs and who watches each one [agent 27]
+**What step 6c part 1 builds** [Q767 yes]. The owner on Q725 and Q726: "Q18 & Q19 draft this for
+now, keep implementation for later" [O]. Thus sections 10.1, 10.2, 10.3 and 10.6 are **later**: they
+are specified, but not built in step 6c part 1, and nothing is set up on GitHub now. Their tests
+(T-LEG-60, T-LEG-62, T-LEG-63) are marked later too. Section 10.4 is built in part 1 for the
+decoder and player jobs; only its runs on a bump PR wait for 10.2 and 10.3. Section 10.5 is built in
+part 1.
+
+### 10.1 The pinned inputs and who watches each one (later) [agent 27]
 
 | Input | Pin | Watched by |
 |---|---|---|
@@ -958,7 +1029,7 @@ Q693].
 | PyAV (makes the test media and the reference, section 13.1) | `pyproject.toml` `av==19.0.2` | not by this work: the Python pins have their own review [NV: no `pip`/`uv` entry in `dependabot.yml` today] |
 | Electron (its Chromium draws the tiles) | `skellycam-ui/package.json` | the `npm` entry after its repair (10.6) |
 
-### 10.2 The `dependabot.yml` entries (to write in the CI PR) [agent 28]
+### 10.2 The `dependabot.yml` entries (later) [agent 28]
 
 ```yaml
   - package-ecosystem: "npm"
@@ -998,7 +1069,7 @@ Facts from the documentation [D ecosystems] [D options] [D registries]:
 - The pages do not say if Dependabot updates the digest of a `FROM` line with a tag and a digest [NV].
   Check 1 of 9.3 fails a PR whose digest does not belong to its tag.
 
-### 10.3 What Dependabot cannot see, and how the gap is covered [agent 29] [Q703 yes] [Q704 yes]
+### 10.3 What Dependabot cannot see, and how the gap is covered (later) [agent 29] [Q703 yes] [Q704 yes] [Q725 yes]
 
 | Gap | Why | Cover |
 |---|---|---|
@@ -1028,7 +1099,8 @@ of that release may drop the override; that is a review point of that PR.
 5. **A newer FFmpeg point release** of the same major and minor version (for example 9.0.3): the job
    downloads its tarball, computes the SHA-256, writes the new `ffmpeg.json` on the branch
    `decoder/ffmpeg-<version>`, and opens a bump PR, or updates its open PR [Q704 yes]. It pushes and
-   opens the PR with the token of the item "The token" below. The PR then starts the pipeline of 10.4.
+   opens the PR with the default token of the item "The token" below [Q725 yes]. The PR then waits
+   for one approval click and starts the pipeline of 10.4.
    A new major or minor FFmpeg version gives an issue, not a PR: libav.js patches FFmpeg by its major
    version [LJ], so that change needs a person.
 6. **Each other finding** (a newer libav.js release that Dependabot has not opened yet, a CVE of step
@@ -1036,57 +1108,39 @@ of that release may drop the override; that is a review point of that PR.
    <summary>". The job writes issues with `GITHUB_TOKEN` and `permissions: issues: write`. An issue
    needs no new workflow run.
 
-**Why a token secret, and the fact behind Q704.** GitHub: "events triggered by the `GITHUB_TOKEN`
-will not create a new workflow run", except some events. A `pull_request` event (types `opened`,
-`synchronize`, `reopened`) of a PR that a workflow opens or updates with `GITHUB_TOKEN` "creates
-workflow runs in an approval-required state": "a user with write access to the repository can start
-the runs by selecting **Approve workflows to run**". A GitHub App installation token or a personal
-access token "also lets `pull_request` workflows run automatically", without that prompt [D trigger].
-Thus the question text of Q704 ("GitHub does not run workflows on a PR opened with the default
-token") is not exact: with the default token, each bump PR waits for one approval click. Question
-Q725 asks the owner to confirm the token or to take the click. Until then the text below applies
-[Q704 yes].
+**The fact behind Q725.** GitHub: "events triggered by the `GITHUB_TOKEN` will not create a new
+workflow run", except some events. A `pull_request` event (types `opened`, `synchronize`,
+`reopened`) of a PR that a workflow opens or updates with `GITHUB_TOKEN` "creates workflow runs in an
+approval-required state": "a user with write access to the repository can start the runs by
+selecting **Approve workflows to run**" [D trigger]. Thus the question text of Q704 ("GitHub does not
+run workflows on a PR opened with the default token") was not exact.
 
-**The token** that the owner must create [Q704 yes] [D fine-grained] [D PAT]:
+**The token** [Q725 yes] [agent 46]. The job uses the default token `GITHUB_TOKEN`, and the owner
+accepts one "Approve workflows to run" click on each bump PR, a PR that he reviews anyway. No
+long-lived secret exists:
 
-- **Type:** a fine-grained personal access token.
-- **Resource owner:** the owner of the repository where the workflow runs. Today that is the fork of
-  the owner, under his own account. Only if that repository is in an organisation: when the
-  organisation requires approval of fine-grained tokens, the token stays `pending` until an
-  organisation administrator approves it, and until then it "will only be able to read public
-  resources" [D PAT].
-- **Repository access:** "Only select repositories", with this one repository only.
-- **Repository permissions, and no other:**
-  - **Contents: Read and write**, to push the branch `decoder/ffmpeg-<version>` (git push, and the
-    git refs and contents endpoints need "Contents" write) [D fine-grained].
-  - **Pull requests: Read and write**, to open the PR (`POST /repos/{owner}/{repo}/pulls`) and to
-    update it (`PATCH /repos/{owner}/{repo}/pulls/{pull_number}`) [D fine-grained].
-  - **Metadata: Read-only.** GitHub lists Metadata as a read-only repository permission [D PAT]
-    [NV: that GitHub adds it by itself to each fine-grained token].
-  - **Not Workflows.** The job never changes a file in `.github/workflows/`, so it needs no
-    "Workflows" permission. A test checks that the job writes only `skellycam-ui/decoder/ffmpeg.json`
-    (T-LEG-62).
-  - **Not Issues.** The issues of step 6 use `GITHUB_TOKEN`.
-- **Expiry:** the owner chooses. The default is "30 days, or less if the target has a token lifetime
-  policy set"; "Infinite lifetimes are allowed but may be blocked by a maximum lifetime policy set by
-  your organization or enterprise owner" [D PAT]. A repository under a personal account has no such
-  policy, so the owner can choose no expiry or a renewal date in his calendar. The workflow fails with the text "decoder bump
-  token missing or expired" when the token does not work, so that the expiry is visible.
-- **Secret:** a repository secret for GitHub Actions with the name `DECODER_BUMP_TOKEN`. The
-  scheduled workflow is not started by Dependabot, so it can read Actions secrets [D troubleshoot].
-- **An alternative of the same scope:** a GitHub App with the same two permissions (Contents and Pull
-  requests, read and write), installed on this repository only, with its app ID and private key as
-  secrets [D trigger]. GitHub advises an app "for long-lived integrations" [D PAT]. The owner chose a
-  token [Q704 yes]; the app stays an option for later.
-- **Notes on the token.** The token makes the owner the author of each bump PR; when a branch rule
-  requires an approving review, he cannot approve his own PR (a GitHub App avoids that) [the review]
-  [NV]. Contents write also allows a push to the default branch, unless a branch rule blocks it.
-- **The commit identity.** The job commits with a noreply address of GitHub, never a private address:
-  the noreply address of the owner's account (the form that the reference gives, with the account ID
-  and the user name at `users.noreply.github.com`) [D email], or the noreply address of the
-  `github-actions[bot]` account with the default token [NV: its exact form was not read in the docs].
+- **The repository setting.** "Allow GitHub Actions to create and approve pull requests" must be on.
+  For a new repository in a personal account, "workflows are not allowed to create or approve pull
+  requests" by default [D actions-settings].
+- **The permissions of the job, and no other:** `contents: write` (to push the branch
+  `decoder/ffmpeg-<version>`), `pull-requests: write` (to open and update the PR) and
+  `issues: write` (step 6). `GITHUB_TOKEN` "only has read access" for `contents` by default
+  [D actions-settings].
+- **Not Workflows.** The job never changes a file in `.github/workflows/`. A test checks that the job
+  writes only `skellycam-ui/decoder/ffmpeg.json` (T-LEG-62).
+- **A refusal is visible.** When GitHub refuses to create the PR (the setting is off), the job fails
+  with the text "decoder bump: GitHub Actions may not create pull requests in this repository; turn on
+  the repository setting" [agent 46].
+- **The commit identity.** The job commits as the `github-actions[bot]` account, with its noreply
+  address of GitHub, never a private address [D email] [NV: its exact form was not read in the docs].
+- **The options that the owner did not take** [Q725 yes]: a fine-grained personal access token with
+  Contents and Pull requests write, as the secret `DECODER_BUMP_TOKEN` (no click, but a long-lived
+  secret with a renewal or no expiry, and the owner is then the author of each PR, so that a branch
+  rule can stop him from approving it [the review] [NV]); and a GitHub App with the same two
+  permissions (no click, but an app ID and a private key as secrets) [D trigger] [D PAT].
 
-**Where the watch and Dependabot run** [Q726]:
+**Where the watch and Dependabot run** [Q726 yes]. On the fork of the owner now, on the upstream
+repository later. The facts:
 
 - Scheduled workflows "will only run on the default branch". "In a public repository, scheduled
   workflows are automatically disabled when no repository activity has occurred in 60 days" [D events].
@@ -1095,12 +1149,9 @@ Q725 asks the owner to confirm the token or to take the click. Until then the te
 - "Version updates are not automatically enabled on forks when a `dependabot.yml` configuration file
   is present"; on the fork, the owner must enable them under Settings, Advanced Security,
   "Dependabot version updates" [D dependabot-config].
-- The default-token way of Q725 also needs the repository setting "Allow GitHub Actions to create and
-  approve pull requests". For a new repository in a personal account, "workflows are not allowed to
-  create or approve pull requests" by default, and `GITHUB_TOKEN` "only has read access" for the
-  `contents` and `packages` scopes by default; the workflow then asks for `contents: write` and
-  `pull-requests: write` with its `permissions` key [D actions-settings]. The agent found no
-  documented reason why a scheduled workflow cannot open a PR this way.
+- The default token of Q725 needs the repository setting of "The token" above, on each repository
+  where the watch runs [D actions-settings]. The agent found no documented reason why a scheduled
+  workflow cannot open a PR this way.
 
 Limits, said plainly:
 
@@ -1109,7 +1160,7 @@ Limits, said plainly:
 - When the format of a page changes, the workflow fails. GitHub sends the notice of a scheduled run
   to the user who last changed its cron line [D events].
 
-### 10.4 The pipeline of a bump PR [agent 30] [Q710]
+### 10.4 The pipeline of a bump PR [agent 30] [Q710 yes]
 
 A Dependabot PR (or a bump PR of 10.3 [Q704 yes]) that changes a file of `skellycam-ui/decoder/` or a workflow starts
 these jobs:
@@ -1125,7 +1176,8 @@ these jobs:
 workflows that can be skipped". A job skipped by a conditional "reports "Success"" [D required].
 Thus the workflow that holds these jobs has no `paths:` filter. It always runs. A first job finds the
 changed paths, and each other job has an `if:` on its result. Then a PR that does not touch the
-decoder, for example a `github-actions` bump, is not blocked [Q710].
+decoder, for example a `github-actions` bump, is not blocked [Q710 yes]. This holds in step 6c part 1
+for each PR: the workflow and its changed-paths job are built now.
 
 No step of the pipeline needs a secret. A workflow that Dependabot starts gets a read-only
 `GITHUB_TOKEN` by default and only the Dependabot secrets. Its `pull_request` runs are "treated as if
@@ -1134,21 +1186,37 @@ is anonymous [NV: the Docker Hub limits for anonymous pulls on GitHub runners]. 
 download use the token of the run. When all checks pass, the bump is "review and merge". When a check
 fails, the PR shows which part of the bump broke.
 
-### 10.5 Decoder timing on Linux and macOS [Q708]
+### 10.5 Decoder timing on Linux and macOS: the certify check [Q708 yes] [Q766 yes]
 
 The conformance tests prove the pixels on the three systems in CI. They do not prove the timing. The
 timing on Linux and macOS is a fact of another system. By the rule of `AGENTS.md` section 4, it comes
-only from the self-test: a certify check, with a name in `specs/certify.md` [X5MZ item 7]. The agent
-proposes the check name `player-legacy-decode` (decode a generated `mp4v` set in the worker route,
-report the seek and play times) [Q708] [NV: not in `specs/certify.md` yet]. Until a report gives the
-result, the timing on those systems is [NV].
+only from the self-test: a certify check, with a name in `specs/certify.md` [X5MZ item 7]. The check
+is `player-legacy-decode` [Q708 yes]. Its name goes into `specs/certify.md` when the owner accepts
+this spec [agent 48] [NV: not in `specs/certify.md` yet]. Until a report gives the result, the timing
+on those systems is [NV].
 
-### 10.6 The `dependabot.yml` of today [Q700 yes]
+The check decodes a generated `mp4v` set and a generated H.264 set (Baseline GOP 30, and High with
+B-frames GOP 250) in the app page, with the routes of the product. It runs seeks, steps and 30 s of
+play at speed 1 on each set. The report gives, for each tile [Q708 yes] [Q766 yes]:
+
+- the route that it used: `wasm`, `webcodecs`, or `wasm_fallback` with its reason (3.4);
+- the `decoderInfo` of 11.2;
+- the seek, step and play times of its route;
+- its share of late refreshes in play (`lateShare` of 11.2), for each window of 10 s of F6;
+- whether a switch fired, with its reason, and when: the frame k* and the play time from the start of
+  play (`switchAt` of 11.2).
+
+The values are recorded, not judged, until the owner sets a target. The late shares and the
+switches of certify reports from many systems tune the 20 % and the 10 s of F6 [Q766 yes]. The check
+sets no test hook: it reports what the product does on that system.
+
+### 10.6 The `dependabot.yml` of today (later) [Q700 yes] [agent 47]
 
 The present file has one entry: `npm` with directory `/` and a monthly schedule
 [C `.github/dependabot.yml`]. The repository root has no `package.json` [C]. The npm manifests of the
 UI are in `skellycam-ui/`. The owner accepted the repair [Q700 yes: "repair the Dependabot npm
-folder"]: the directory becomes `/skellycam-ui`, in the CI PR of this work.
+folder"]: the directory becomes `/skellycam-ui`. The repair lands with the later Dependabot work of
+10.2, not in step 6c part 1 [agent 47].
 
 ### 10.7 Documentation read
 
@@ -1186,14 +1254,15 @@ New files in `skellycam-ui/src/player/`:
 
 | Path | Content |
 |---|---|
-| `legacy/detect.ts` | The rules of 2.2: `isLegacyFolder(files)` gives `'v1'`, `'v2_alpha'` or `null`. |
-| `legacy/mp4.ts` | The MP4 index reader of 6.1 and the codec route of 3.1. |
-| `legacy/npy.ts` | The time file parser of 2.3. |
-| `legacy/take.ts` | `openLegacyTake(files, options)`: the cameras, K, T_k and the warnings. It gives the `TakePlayer` of 6a 4.4. |
-| `legacy/webcodecs-decoder.ts` | The WebCodecs route of 3.3 and the fallback conditions of 3.4. |
+| `legacy/detect.ts` | The recognition of [SPECS] and the texts of 2.2: `isLegacyFolder(files)` gives `'v1'`, `'v2_alpha'` or `null`. |
+| `legacy/mp4.ts` | The MP4 index reader of 6.1 ([SPECS]) and the codec route of 3.1. |
+| `legacy/npy.ts` | The time file parser of [SPECS]. |
+| `legacy/take.ts` | `openLegacyTake(files, options)`: the cameras, K, T_k (the time map of [SPECS]) and the warnings. It gives the `TakePlayer` of 6a 4.4. |
+| `legacy/webcodecs-decoder.ts` | The WebCodecs route of 3.3 and the fallback conditions F1 to F5 of 3.4. |
+| `legacy/late-switch.ts` | The count of F6 (3.4): the late refreshes of each tile in its window, and the core rule [agent 43]. |
 | `legacy/decoder-client.ts` | The page side of a tile worker, with the restarts of 8.2. |
 | `legacy/decoder-worker.ts` | The tile worker. It is the only file that imports the decoder. |
-| `files/http-take-files.ts` | The HTTP implementation of `TakeFiles` (4.1), with the re-open of 4.2. |
+| `files/http-take-files.ts` | The HTTP implementation of `TakeFiles` (4.1), with the re-open of 4.2 and the secret header of 4.4 item 4. |
 
 The boundary rule of 6a 4.2 gets one more allowed import: the decoder files, only from
 `legacy/decoder-worker.ts`. T-PLAY-35 checks it.
@@ -1212,25 +1281,32 @@ kind: 'take' | 'freemocap_v1';
 // | 'index_damaged' | 'index_mismatch'
 // CameraState gets the route (3.4):
 route: 'wasm' | 'webcodecs' | 'wasm_fallback';
-routeReason: 'not_supported' | 'error' | 'no_output' | 'frame_missing' | 'time_stamps' | null;
+routeReason: 'not_supported' | 'error' | 'no_output' | 'frame_missing' | 'time_stamps'
+           | 'too_slow' | null;
 decoderInfo: { hardwareAcceleration: string; supported: boolean | null;
                preferHardwareSupported: boolean | null; firstFrameFormat: string | null } | null;
+// CameraState gets the count of F6 and the time of a switch (3.4, 10.5) [agent 44]:
+lateShare: number | null;  // share of late refreshes in the last full window of F6; null before one
+switchAt: { frame: number; playMs: number | null } | null;
+                           // k* and the play time since the start of play at the switch;
+                           // playMs null for a switch outside play; null with no switch
 // TileUpdate gets one optional field:
 detail?: string | null;    // the detail text of 3.4, drawn under the camera part
 // TileLabel gets one optional field:
-timeEstimated?: boolean;   // true: the tile shows `~` before the time (2.4)
+timeEstimated?: boolean;   // true: the tile shows `~` before the time (2.2)
 // TileMark gets one kind:
 | { kind: 'decoder_failed' }   // text "decoder failed" (8.2)
 ```
 
-### 11.3 A text change of 6a 8.3 [agent 33] [Q715]
+### 11.3 A text change of 6a 8.3 [agent 33] [Q715 yes]
 
 6a 8.3 says that `jpeg` holds the bytes of the frame of `image`. The tile code of today already draws
 `image` when `jpeg` is null [C `tile/tile.ts` `update`]. The legacy player gives `image` with `jpeg`
 null, because it has no JPEG. 6a 8.3 then needs one sentence: "An update with `image` and `jpeg` null
 is a new image." The tile also needs the optional field `detail` of 11.2 (the detail text of 3.4), drawn in small type
-under the camera part, also with `showLabel` off. This spec does not change `player.md` before the
-owner accepts it.
+under the camera part, also with `showLabel` off. After the owner accepts this spec, 6a 8.3 gets
+this sentence, the fields `timeEstimated` and `detail`, and the mark `decoder_failed` of 11.2
+[Q715 yes]. This spec does not change `player.md` before the owner accepts it.
 
 ### 11.4 Host [agent 34]
 
@@ -1264,12 +1340,12 @@ clock (single refreshes at the start); start of play 14 to 50 ms unlimited, 70 t
 
 ## 13. Tests
 
-### 13.1 Test media [Q698 yes] [Q712] [agent 36]
+### 13.1 Test media [Q698 yes] [Q712 yes] [agent 36]
 
 No camera recording and no camera frame goes into the repository (`AGENTS.md` section 8). The owner
 accepted for the real files: "CI downloads the official FreeMoCap sample data, checked by checksum
-and never committed. The treadmill take is used only on your machine" [Q698 yes]. The synthetic
-media is a proposal [Q712]:
+and never committed. The treadmill take is used only on your machine" [Q698 yes]. He accepted the
+synthetic media plan below [Q712 yes]:
 
 - **Synthetic media at test time.** A new tool `tools/make_legacy_media.py` writes the media into a
   temporary folder at the start of a test run, with PyAV `av==19.0.2` (pinned in `pyproject.toml`,
@@ -1324,7 +1400,9 @@ the time map and the faults.
 - **build**: the `decoder-build` job (Linux, Docker).
 - **tool**: `uv run pytest tools/tests` (the doc checks), for the CI and Dependabot files.
 - **benchmark**: the Windows test machine, by hand, as 6a 12.1. Not in CI.
-- **certify**: the check of 10.5 on the other systems [Q708].
+- **certify**: the check of 10.5 on the other systems [Q708 yes] [Q766 yes].
+- **later**: a test of a later part (section 10). It is written with that part, not in step 6c part 1
+  [Q767 yes].
 
 Each unit, component and server test runs on Windows, Linux and macOS in CI (6a Y7). One exception:
 T-LEG-27 uses real files, so it runs on the Linux CI job (the sample data) and on the owner's machine
@@ -1338,12 +1416,12 @@ bytes that the test builds with no codec data (box structures, NPY headers, file
 
 | ID | Kind | Systems | Media | What it does | Pass criterion |
 |---|---|---|---|---|---|
-| T-LEG-01 | unit | W, L, M | none | `isLegacyFolder` on file lists: v1 names; sample-data names; import names; `.MP4`; a new take with a manifest; v2 alpha names `<rec>.id-0.idx-0.mp4`; no `synchronized_videos/`; only `annotated_videos/`. | `'v1'`, `'v1'`, `'v1'`, `'v1'`, `null` (6a route), `'v2_alpha'`, `null`, `null`; the texts of 2.2. |
-| T-LEG-02 | unit | W, L, M | none | NPY headers: versions 1.0, 2.0, 3.0; `<f8` 1-D; `>f8`; `<f4`; `fortran_order` True; shape `(n, 2)`; a header that is cut; data shorter than the shape. | Only the first three with `<f8` 1-D parse; each other gives `time_file_unusable` with its reason; no exception escapes. |
-| T-LEG-03 | unit | W, L, M | none | Time map with time files: 3 cameras with offsets, a NaN in one camera, a row with NaN in all cameras, a duplicate value, a gap of 2 s, a value above 2^53 ns. | T_k as 6.4 against an independent `BigInt` reference; T_k never goes down; the row with no value gives T_(k-1); the gap gives a step of 2 s in T_k; tile labels as 6.4. |
-| T-LEG-04 | unit | W, L, M | none | Time map with no time file: header rates 30, 29.97 and 30.5 in 3 cameras; then 4 cameras (30, 29.97, 30.5, 31); then a camera whose `stts` has two entries. | r = 30 for 3 cameras; r = (30 + 30.5) / 2 for 4 cameras; r_c of the two-entry camera as 6.4; T_k = round(k × 10^9 / r); `timeEstimated` true; "Rec: fps" as 6.4. |
+| T-LEG-01 | unit | W, L, M | none | `isLegacyFolder` on file lists: v1 names; sample-data names; import names; `.MP4`; a new take with a manifest; v2 alpha names `<rec>.id-0.idx-0.mp4`; no `synchronized_videos/`; only `annotated_videos/`. | `'v1'`, `'v1'`, `'v1'`, `'v1'`, `null` (6a route), `'v2_alpha'`, `null`, `null`, as the recognition of [SPECS]; the texts of 2.2. |
+| T-LEG-02 | unit | W, L, M | none | NPY headers: versions 1.0, 2.0, 3.0; `<f8` 1-D; `>f8`; `<f4`; `fortran_order` True; shape `(n, 2)`; a header that is cut; data shorter than the shape. | Only the first three with `<f8` 1-D parse; each other gives `time_file_unusable` with its reason of [SPECS]; no exception escapes. |
+| T-LEG-03 | unit | W, L, M | none | Time map with time files: 3 cameras with offsets, a NaN in one camera, a row with NaN in all cameras, a duplicate value, a gap of 2 s, a value above 2^53 ns. | T_k as the time map of [SPECS] against an independent `BigInt` reference; T_k never goes down; the row with no value gives T_(k-1); the gap gives a step of 2 s in T_k; tile labels as 6.4. |
+| T-LEG-04 | unit | W, L, M | none | Time map with no time file: header rates 30, 29.97 and 30.5 in 3 cameras; then 4 cameras (30, 29.97, 30.5, 31); then a camera whose `stts` has two entries. | r = 30 for 3 cameras; r = (30 + 30.5) / 2 for 4 cameras; r_c of the two-entry camera as [SPECS]; T_k = round(k × 10^9 / r); `timeEstimated` true; "Rec: fps" as 6.4. |
 | T-LEG-05 | unit | W, L, M | none | One camera with a time file of the wrong length; one with none; one usable. | The usable one gives T_k; the others get `time_file_unusable` (`length`, `missing`) and labels with `~`. |
-| T-LEG-06 | unit | W, L, M | none | MP4 index reader on built box trees: `moov` at the end and at the start; `co64`; `stsc` runs; `stss` absent and present; `ctts`; a 64-bit box size; a last box of size 0; `elst` with one edit at media time 0 and at media time 1024, with a leading empty edit, with two non-empty edits; a file with no `moov`; a `moov` past the snapshot; frames past the snapshot; `tkhd` matrices 0, 90, 180, 270 and a shear. | The frame table and the frame time stamps (CTS − M + E, for the frames with M ≤ CTS < M + D) equal a reference that the test computes by hand; `no_moov`, `index_damaged`, `edit_list_not_supported` where 3.7 and 8.1 say; the frame count leaves out the frames past the snapshot; rotations as 3.7; `matrix_ignored` for the shear. |
+| T-LEG-06 | unit | W, L, M | none | MP4 index reader on built box trees: `moov` at the end and at the start; `co64`; `stsc` runs; `stss` absent and present; `ctts`; a 64-bit box size; a last box of size 0; `elst` with one edit at media time 0 and at media time 1024, with a leading empty edit, with two non-empty edits; a file with no `moov`; a `moov` past the snapshot; frames past the snapshot; `tkhd` matrices 0, 90, 180, 270 and a shear. | The frame table and the frame time stamps of [SPECS] (CTS − M + E, for the frames with M ≤ CTS < M + D) equal a reference that the test computes by hand; `no_moov`, `index_damaged`, `edit_list_not_supported` where 3.7 and 8.1 say; the frame count leaves out the frames past the snapshot; rotations as 3.7; `matrix_ignored` for the shear. |
 | T-LEG-07 | unit | W, L, M | none | Codec route on sample entries: `mp4v` 0x20, `mp4v` 0x61, `avc1`, `avc3`, `hvc1`, `hev1`, `av01`, `vp09`, `jpeg`, an unknown entry; and a file named `.avi` with `mp4v` content. | `mp4v` 0x20: the WASM route; `avc1` and `avc3`: the WebCodecs route; each other entry refused; the route depends only on the content, also for the `.avi` name; each refusal text names the entry. |
 | T-LEG-08 | unit | W, L, M | none | Frame counts 120, 118, 120, and one refused camera. | K = 118; `frame_count_differs` with the three counts; the refused camera is not in K. |
 | T-LEG-09 | unit | W, L, M | none | Camera order and labels: `Camera_000`..`Camera_011`; `..._synced_Cam1`..`Cam10`. | Natural order (`Cam2` before `Cam10`); the label is the file stem. |
@@ -1351,10 +1429,10 @@ bytes that the test builds with no codec data (box structures, NPY headers, file
 | T-LEG-11 | unit | W, L, M | none | Worker faults with a fake worker: one fatal fault; a `RuntimeError` that does not end the worker; 3 fatal faults in 60 s at different frames; 2 fatal faults at the same frame; no answer for 10 s; a fault during a seek drag. | A new worker and frame k* after one fault; the worker with the `RuntimeError` is terminated; "decoder failed" at the third fault in 60 s; 2 faults at one frame give "damaged at frame k" up to the next key frame and no third restart; the hung worker ends; the other tiles get each frame; no older target is drawn after a newer one. |
 | T-LEG-12 | unit | W, L, M | none | A fake decoder that fails on frame 30, and one that skips the time stamp of frame 30. | "damaged at frame 30" at frame 30 only, with the image of frame 29; frame 31 has no mark; the camera is not refused. |
 | T-LEG-13 | unit | W, L, M | none | Each refusal and warning text of sections 2, 3 and 8. | Each text and reason code as the spec gives it. |
-| T-LEG-14 | unit | W, L, M | none | The shared `TakeFiles` check suite of 6a 5.1 on `http-take-files.ts` against a Node test server; the answers 200 with the whole file and 206 with a wrong start; a 404 for an expired token, then a re-open with the same snapshot and with a changed snapshot; two 404 in a row. | The results of T-PLAY-39; the two wrong answers are read errors; the first re-open repeats the read and passes; the changed snapshot gives "recording changed on disk"; two 404 give a read error. |
+| T-LEG-14 | unit | W, L, M | none | The shared `TakeFiles` check suite of 6a 5.1 on `http-take-files.ts` against a Node test server; the answers 200 with the whole file and 206 with a wrong start; a 404 for an expired token, then a re-open with the same snapshot and with a changed snapshot; two 404 in a row. | The results of T-PLAY-39; the two wrong answers are read errors; the first re-open repeats the read and passes; the changed snapshot gives "recording changed on disk"; two 404 give a read error; each request carries `X-Skellycam-Key` with the secret of the bridge, and the secret is in no URL and no log line (4.4 item 4). |
 | T-LEG-15 | server | W, L, M | none | The route of 4.2: open, the range table of 6a 5.6, the snapshot, a deleted token, an expired token (a test clock), an unknown path, `..` forms, a link to an outside file, a folder outside the roots, a root whose name is a string prefix of an outside folder, a root in another case (Windows and macOS), a file replaced after the open, a `recording_parent_directory` parameter, a CORS preflight for the `POST` and for `Range`. | Status, bytes and headers as 6a 5.6 and 4.2; 403 "folder not allowed" outside the roots and for the prefix case; the other case is inside on Windows and macOS; the replaced file gets 404; the parameter adds no root; the preflight allows the method and the header; the expose header is on each range answer. |
 | T-LEG-16 | server | W, L, M | none | Read 6 files by range for 20 s through the route while a spy counts the bytes that the server reads and sends, and a log capture counts the log lines. | Each response body is a byte range of an original file; no route writes a file; no log line for a range request. |
-| T-LEG-17 | server | W, L, M | none | Origin rule of 4.4 item 1 on each route of 4.2 and on `list_recordings`: requests and preflights with `Origin` `https://example.org`, `http://localhost:1234`, `null`, the dev server origin in a development build and in a packaged build, and no `Origin`. | `https://example.org` and `http://localhost:1234`: 403 "origin not allowed", no `Access-Control-Allow-Origin`; `null` with no secret header: 403 and no byte of a file; `null` with the secret header of Q723: served [Q723]; the dev origin: allowed only in a development build; no `Origin` and no secret header: 403 [Q723]; no answer has `Access-Control-Allow-Credentials`; other routes of the app keep their CORS rule of today. |
+| T-LEG-17 | server | W, L, M | none | Origin rule of 4.4 item 1 and the secret of item 4 on each route of 4.2 and on `list_recordings`: requests and preflights with `Origin` `https://example.org`, `http://localhost:1234`, `null`, the dev server origin in a development build and in a packaged build, and no `Origin`; each with the right secret, a wrong secret, a secret of another length, and no secret. | `https://example.org` and `http://localhost:1234`: 403 "origin not allowed", no `Access-Control-Allow-Origin`; each request with no secret or a wrong one: 403 "key missing or wrong" and no byte of a file, also from `null` and from the dev origin; `null` with the right secret: served [Q723 yes]; the dev origin with the right secret: served only in a development build; a preflight from an allowed origin: answered with no secret, `Access-Control-Allow-Headers` names `X-Skellycam-Key` and `Range`, no file read; no answer has `Access-Control-Allow-Credentials`; other routes of the app keep their CORS rule of today. |
 | T-LEG-18 | server | W, L, M | none | Host rule of 4.4 item 2: `Host` `localhost:<port>`, `127.0.0.1:<port>`, `[::1]:<port>`, `localhost:<other port>`, `attacker.example`, `attacker.example:<port>`, a name of the bind settings, and no `Host`. | The first three and the name of the settings: served; each other: 403 "host not allowed", with no byte of a file. |
 | T-LEG-19 | server | W, L, M | none | Start the server with a bind setting beyond `localhost` and no login or pairing configured; and with only `localhost`. | The first start refuses the bind with the text of 4.4 item 3 and listens on no address other than the loopback addresses; the second starts normally. |
 | T-LEG-20 | build | L | none | The checks of 9.3, steps 4, 5 and 7, on the built outputs. | `CONFIG_GPL 0`, `CONFIG_NONFREE 0`, `CONFIG_VERSION3 0`; the decoder, demuxer, parser, bit-stream filter and protocol sets equal `parts.json` with the additions of 9.2; `--disable-network`; no `--enable-lib`; WASM at most 4 MiB; a licence section for each linked source. |
@@ -1395,21 +1473,26 @@ bytes that the test builds with no codec data (box structures, NPY headers, file
 | T-LEG-66 | unit | W, L, M | none | The feed rules of 3.3 with a fake decoder that gives outputs 2 ms after each chunk: a seek that continues and one that does not; a target that comes out only after 3 extra chunks; d + 24 past the last sample; a forward step after a flush; a time scale whose values need rounding. | A seek that does not continue calls `reset` and `configure` and shows no output of the earlier request; the target comes out with no flush (the waits let outputs back); the extra chunks stop at the last sample, then one flush; after a flush the next request starts at a key chunk and sends no `delta` chunk first (no F2); the continue condition and at most 4 kept frames as 3.3; chunk time stamps by `Math.round`. |
 | T-LEG-67 | unit | W, L, M | none | A fake decoder that gives the outputs of a B-frame GOP out of order. | The play queue is sorted by k; the shown frame number never goes down; `outOfOrder` counts each such output. |
 | T-LEG-68 | component | W, L, M | gen | Play 20 s with 4 tiles: a test hook forces a switch of H.264 tile 2 (an injected decoder error) and a restart of the worker of an `mp4v` tile during play. | The frame number of each tile never goes down; each of the two tiles becomes live again only with a frame at or above the k* shown; the other tiles keep 0 different frame numbers among them. |
-| T-LEG-69 | component | W, L, M | gen | A test hook closes the `VideoDecoder` of tile 1 with a `QuotaExceededError` (a reclaimed codec), while paused; also a run with the window hidden for 5 minutes [NV: whether Electron 45.3.4 reclaims then]. | With the proposal of Q728: a new `VideoDecoder`, the next seek shows the exact frame, the detail text stays "decoder: WebCodecs", no switch and no log line of a switch. |
+| T-LEG-69 | component | W, L, M | gen | A test hook closes the `VideoDecoder` of tile 1 with a `QuotaExceededError` (a reclaimed codec), while paused; also a run with the window hidden for 5 minutes [NV: whether Electron 45.3.4 reclaims then]. | A new `VideoDecoder` [Q728 yes], the next seek shows the exact frame, the detail text stays "decoder: WebCodecs", no switch and no log line of a switch. |
 | T-LEG-70 | component | W, L, M | gen | 6 tiles of 1080p H.264 on the WebCodecs route: play 30 s, 200 seeks, close. | Open `VideoFrame`s ≤ 10 for each tile at each time; kept frames after a seek ≤ 4; `decodeQueueSize` never above 4 in play when the route sends; 0 open frames after `close()` [NV: the frame pool of other GPUs]. |
 | T-LEG-71 | component | W, L, M | gen | A test hook makes the reads of H.264 tile 1 fail during play, then work again. | Tile 1 shows "read error" with its last image and stays on WebCodecs (no switch); the other tiles keep playing; after the reads work again, the next seek shows the exact frame on tile 1. |
 | T-LEG-72 | component | W, L, M | gen | `showLabel` off, on an `mp4v` tile, a WebCodecs tile and a switched tile. | The detail text shows on each: "decoder: WASM", "decoder: WebCodecs", "decoder: WASM (WebCodecs ...)"; the frame, camera and time parts do not show. |
+| T-LEG-73 | server | W, L, M | none | The secret of 4.4 item 4 on the server: a start with `SKELLYCAM_PLAYBACK_KEY`; a start with no variable; two starts in a row with no variable; a log capture during each start and request. | With the variable: the server uses it and writes no `playback.key`; with no variable: the server writes `playback.key` in its app data folder (mode 0600 on Linux and macOS), with 32 lower-case hexadecimal characters, and a new value at each start; the check order of 4.4 item 4 (a wrong Host gets "host not allowed" before the secret is checked); no log line holds the secret. |
+| T-LEG-74 | unit | W, L, M | none | The Electron main process with a fake server start and a fake preload bridge: two starts; a server that it did not start, with a `playback.key` file. | Each start makes a new 32-character lower-case hexadecimal secret and passes it in `SKELLYCAM_PLAYBACK_KEY`; the bridge gives the page the same value; with the server it did not start, the bridge gives the value of the file; no log line holds the secret. |
+| T-LEG-75 | unit | W, L, M | none | F6 with a fake refresh loop and a test clock: a WebCodecs tile late on 19 % and on 21 % of the refreshes of 10 s; late refreshes only in the first 2 s; a seek and a pause inside the window; two tiles late on the same refreshes; a WASM tile late on 50 %; `hardwareConcurrency` 2, and 4 with 3 and with 5 H.264 tiles; a later run where the tile keeps up. | 21 % switches once, with `routeReason` `too_slow`, the detail text "decoder: WASM (WebCodecs too slow)", one log line with the share, and `switchAt` with k* and the play time; 19 % does not; the first 2 s do not count; a seek or a pause starts a new count; both late tiles count; the WASM tile never switches; no switch with 2 cores or with 5 H.264 tiles on 4 cores, a switch with 3; `lateShare` is null before a full window and then equals the share; no switch back. |
+| T-LEG-76 | component | W, L, M | gen | 4 tiles of H.264 on the WebCodecs route, play 30 s at speed 1: a test hook lets tile 2 give at most 20 outputs per second of a 30 fps take, so that tile 2 is late. | Tile 2 switches to WASM with `too_slow` after its first full window, and plays on with the exact frames (hash and barcode); the frame number of each tile never goes down; the other tiles stay on WebCodecs with 0 different frame numbers among them; `lateShare` and `switchAt` of tile 2 are in the camera state. |
 | T-LEG-50 | benchmark | W (test machine) | gen and real | 200 seeks, 48 steps and 60 s of play at 1, 3 and 6 tiles of 720x1280 `mp4v`; and the treadmill session. | The targets of 12.2; p50, p95 and maximum recorded. |
 | T-LEG-51 | benchmark | W (test machine) | gen | 16 tiles of 720x1280 `mp4v`, 60 s of play; CPU and working set. | The target of 12.2; results recorded. |
 | T-LEG-52 | benchmark | W (test machine) | gen and real | T-LEG-50 through the HTTP route with the link limited to 100 Mbit/s. | Results recorded for the owner. |
-| T-LEG-53 | certify | L, M (certify report) | gen | The check `player-legacy-decode` of 10.5 [Q708]: a generated `mp4v` set and a generated H.264 set (Baseline GOP 30, High with B-frames GOP 250). | The report gives, for each camera, the route that it used (`wasm`, `webcodecs`, `wasm_fallback` with its reason) and the `decoderInfo` of 11.2, and the seek, step and play times of each route; no target until the owner sets one. |
-| T-LEG-60 | tool | W, L, M | none | A test of `tools/tests/` reads `.github/dependabot.yml`. | The three entries of 10.2 exist with their directories; the `npm` entry of the UI has `/skellycam-ui`; each directory holds the manifest that its ecosystem reads; the `Dockerfile` has one `FROM` and no `ARG` before it. |
+| T-LEG-53 | certify | L, M (certify report) | gen | The check `player-legacy-decode` of 10.5 [Q708 yes] [Q766 yes]: a generated `mp4v` set and a generated H.264 set (Baseline GOP 30, High with B-frames GOP 250); seeks, steps and 30 s of play at speed 1 on each set. | The report gives, for each tile: the route that it used (`wasm`, `webcodecs`, `wasm_fallback` with its reason), the `decoderInfo` of 11.2, the seek, step and play times of its route, its `lateShare` for each window of 10 s, and whether a switch fired, with its reason and its `switchAt`; a check of the report format fails when one of these fields is missing; no target for the values until the owner sets one. |
+| T-LEG-60 | tool (later) | W, L, M | none | A test of `tools/tests/` reads `.github/dependabot.yml`. | The three entries of 10.2 exist with their directories; the `npm` entry of the UI has `/skellycam-ui`; each directory holds the manifest that its ecosystem reads; the `Dockerfile` has one `FROM` and no `ARG` before it. |
 | T-LEG-61 | tool | W, L, M | none | A test of `tools/tests/` reads the workflows. | The workflow of 10.4 has no `paths:` filter and has a changed-paths job; each test job needs `decoder-build`; each action is pinned to a full SHA with a same-line version comment; no job of the bump path uses a secret. |
-| T-LEG-62 | tool | W, L, M | none | The logic of `decoder-upstream.yml` on stored text samples (a tag list with 9.0.3 and 9.1.0, a part of the security page, a libav.js tag list), a fake tarball and a fake GitHub API; and a run with no token. | For 9.0.3: one branch and one bump PR with a new `ffmpeg.json` (version and the SHA-256 of the fake tarball), made with the token, and no other changed file (no file in `.github/workflows/`); a second run updates the same PR; for 9.1.0 and for the CVE: one issue with `GITHUB_TOKEN`, updated on a second run; with no token: the job fails with "decoder bump token missing or expired". |
-| T-LEG-63 | rehearsal (once) | CI | none | A PR that changes only the libav.js pin (a real bump or a rehearsal on a branch). It needs the approval of the owner, because a PR is visible outside the machine. | Each job of 10.4 runs; the PR is mergeable with no other commit. |
+| T-LEG-62 | tool (later) | W, L, M | none | The logic of `decoder-upstream.yml` on stored text samples (a tag list with 9.0.3 and 9.1.0, a part of the security page, a libav.js tag list), a fake tarball and a fake GitHub API; and a run where the fake API refuses to create a PR. | For 9.0.3: one branch and one bump PR with a new `ffmpeg.json` (version and the SHA-256 of the fake tarball), made with `GITHUB_TOKEN` and the permissions of 10.3 only, and no other changed file (no file in `.github/workflows/`); a second run updates the same PR; for 9.1.0 and for the CVE: one issue, updated on a second run; the job uses no secret; when the API refuses the PR: the job fails with the text of 10.3 [Q725 yes]. |
+| T-LEG-63 | rehearsal (once, later) | CI | none | A PR that changes only the libav.js pin (a real bump or a rehearsal on a branch). It needs the approval of the owner, because a PR is visible outside the machine. | Each job of 10.4 runs; the PR is mergeable with no other commit. |
 
-Counts: 24 unit, 28 component, 5 server, 4 build, 3 tool, 3 benchmark, 1 certify, 1 rehearsal:
-69 tests.
+Counts: 26 unit, 29 component, 6 server, 4 build, 3 tool, 3 benchmark, 1 certify, 1 rehearsal:
+73 tests. Three of them are later (T-LEG-60, T-LEG-62, T-LEG-63): step 6c part 1 does not write them
+[Q767 yes].
 
 ### 13.4 Rules to tests
 
@@ -1420,7 +1503,7 @@ Counts: 24 unit, 28 component, 5 server, 4 build, 3 tool, 3 benchmark, 1 certify
 | [O] not converted | T-LEG-39 |
 | [O] UI on another machine; [O] no server decode | T-LEG-16, T-LEG-38 |
 | [O] only v1 | T-LEG-01, T-LEG-40 |
-| [O] custom libav.js, Dependabot (Q693) | T-LEG-20 to T-LEG-23, T-LEG-60 to T-LEG-63 |
+| [O] custom libav.js, Dependabot (Q693) | T-LEG-20 to T-LEG-23, T-LEG-61; later: T-LEG-60, T-LEG-62, T-LEG-63 |
 | [X5MZ item 7] exact pins | T-LEG-22, T-LEG-61 |
 | [X5MZ item 7] other systems through certify or CI | T-LEG-53 |
 | Q688 yes | T-LEG-14, T-LEG-15 |
@@ -1433,11 +1516,25 @@ Counts: 24 unit, 28 component, 5 server, 4 build, 3 tool, 3 benchmark, 1 certify
 | Q718 yes | No test here: a constraint on a later phase (section 19). |
 | Q701 yes, Q702 yes | T-LEG-17, T-LEG-18, T-LEG-19 |
 | Q703 yes | T-LEG-22, T-LEG-24 to T-LEG-26 |
-| Q704 yes | T-LEG-62, T-LEG-63 |
+| Q704 yes | later: T-LEG-62, T-LEG-63 |
 | Q705 yes, Q706 yes | No test: a cancelled step and a scope rule. |
-| 2.2, 2.3, 2.4 | T-LEG-01 to T-LEG-05 |
-| 3 | T-LEG-07, T-LEG-13, T-LEG-41, T-LEG-44, T-LEG-45, T-LEG-54 to T-LEG-59, T-LEG-64 to T-LEG-72 |
-| 4 | T-LEG-14 to T-LEG-19, T-LEG-38 |
+| Q699 yes, Q709 yes, Q764 yes | No test: a decision outside the spec, and the text of the decoder `README.md` (9.5). |
+| Q707 yes | T-LEG-43 |
+| Q708 yes, Q766 yes | T-LEG-53 |
+| Q710 yes | T-LEG-61 |
+| Q711 yes | T-LEG-03, T-LEG-04, T-LEG-34 |
+| Q712 yes | T-LEG-24 to T-LEG-26, T-LEG-30 to T-LEG-46, T-LEG-54 to T-LEG-58 (the generated media) |
+| Q713 yes | T-LEG-01, T-LEG-40 |
+| Q714 yes | T-LEG-26 |
+| Q715 yes, Q716 yes, Q765 B | No test: a text change of 6a after the acceptance, the place of the spec, the place of the file rules. |
+| Q723 yes | T-LEG-14, T-LEG-17, T-LEG-73, T-LEG-74 |
+| Q724 yes | T-LEG-75, T-LEG-76, T-LEG-53 |
+| Q725 yes, Q726 yes, Q767 yes | later: T-LEG-62 |
+| Q727 yes | No test here: a separate spec change (4.4). |
+| Q728 yes | T-LEG-69 |
+| 2 and [SPECS] | T-LEG-01 to T-LEG-06 |
+| 3 | T-LEG-07, T-LEG-13, T-LEG-41, T-LEG-44, T-LEG-45, T-LEG-54 to T-LEG-59, T-LEG-64 to T-LEG-72, T-LEG-75, T-LEG-76 |
+| 4 | T-LEG-14 to T-LEG-19, T-LEG-38, T-LEG-73, T-LEG-74 |
 | 6 | T-LEG-03 to T-LEG-06, T-LEG-08 to T-LEG-10, T-LEG-26, T-LEG-30 to T-LEG-35, T-LEG-46 |
 | 7, 8 | T-LEG-11, T-LEG-12, T-LEG-35 to T-LEG-37, T-LEG-42, T-LEG-43, T-LEG-68, T-LEG-70, T-LEG-71 |
 | 9, 10 | T-LEG-20 to T-LEG-26, T-LEG-47, T-LEG-48, T-LEG-53, T-LEG-60 to T-LEG-63 |
@@ -1448,9 +1545,10 @@ Counts: 24 unit, 28 component, 5 server, 4 build, 3 tool, 3 benchmark, 1 certify
 |---|---|---|
 | M-LEG-1 | The targets of 12.2 on the reduced build of 9.2 | T-LEG-50, T-LEG-51 |
 | M-LEG-2 | The real v1 files through the HTTP route | T-LEG-52 |
-| M-LEG-3 | The decoder timing on Linux and macOS | T-LEG-53 (certify) [Q708] |
+| M-LEG-3 | The decoder timing on Linux and macOS | T-LEG-53 (certify) [Q708 yes] |
 | M-LEG-4 | Reproducibility of the emscripten build | T-LEG-21 |
 | M-LEG-5 | The working set of 16 tiles of 720x1280 | T-LEG-37, T-LEG-51 |
+| M-LEG-6 | The values 20 % and 10 s of F6, from the late shares of certify reports | T-LEG-53 (certify) [Q724 yes] [Q766 yes] |
 
 ## 14. Differences from `player.md` and accepted text
 
@@ -1474,6 +1572,9 @@ Counts: 24 unit, 28 component, 5 server, 4 build, 3 tool, 3 benchmark, 1 certify
 9. **6a 8.1, `ImageDecoder` only.** For H.264 the WebCodecs `VideoDecoder` decodes (3.3); the
    study advice "WebCodecs, the decoder as the fallback" [S 12.5] is now the rule [Q694 yes]
    [Q717 yes].
+10. **The format spec of a v1 recording.** 6a cites the format spec for the new takes. For a v1
+    recording, this spec cites the v1 file rules of skellyspecs at its own commit (2.1)
+    [Q765 B].
 
 ## 15. Choices of the agent
 
@@ -1481,27 +1582,30 @@ Each item fills a gap that the rules and answers of the owner and the evidence d
 marks each one [agent n].
 
 1. (Decided by Q700 yes: no annotated videos.)
-2. The time file `.npy` is the one time source; the CSV copy is not read (2.1).
-3. The recognition order of 2.2, the v2 alpha refusal, no refusal of v0.1.0.
-4. The NPY rules, "usable" by length, NaN as no time, rounding to integer nanoseconds (2.3).
-5. `~` for a time from the header rate (2.4).
+2. The time file `.npy` is the one time source; the CSV copy is not read. Moved to [SPECS] in
+   revision 6.
+3. The recognition order, the v2 alpha refusal, no refusal of v0.1.0 (Q713 yes). The recognition
+   moved to [SPECS] in revision 6; the texts stay in 2.2.
+4. The NPY rules, "usable" by length, NaN as no time, rounding to integer nanoseconds. Moved to
+   [SPECS] in revision 6.
+5. `~` for a time from the header rate (2.2).
 6. The WebCodecs route details: the page main thread, the configuration from `avcC`, `no-preference`,
    the chunk time stamps, the feed mode with one flush after d + 24, the queue limits (3.3, 7.3).
 7. The pixel formats, full range for `yuvj`, the colour default (3.7).
 8. The `tkhd` rotation for each codec and route (3.7).
-9. The accepted edit lists (3.7).
+9. The accepted edit lists. Moved to [SPECS] in revision 6; the refusal text stays in 3.7.
 10. The server route details beyond Q688: the snapshot folders, the root list, the root check by path
     components, the identity check, the preflight, the token life of 30 minutes, no log line per
     range, no copy (4.2).
 11. The re-open of an expired token in the client (4.2).
 12. The removal list (5.2).
-13. The TypeScript MP4 reader, the frame table, the edit list rule, the frame count from the index,
-    the cross-check with FFmpeg's demuxer (6.1).
+13. The TypeScript MP4 reader and the cross-check with FFmpeg's demuxer (6.1, Q714 yes). The frame
+    table, the edit list rule and the frame count moved to [SPECS] in revision 6.
 14. The seek rules: cache, continue only up to the next key frame, a seek on the key frame G, exact
     time stamps (6.2).
 15. (Decided by Q700 yes: K is the smallest frame count, with a warning.)
-16. The time map, the base B, the mean over cameras, the header rate and the median, "Rec: fps", a
-    gap plays in real time (6.4).
+16. "Rec: fps", the labels, a gap plays in real time (6.4, Q711 yes). The time map, the base B, the
+    mean over cameras, the header rate and the median moved to [SPECS] in revision 6.
 17. The locked rule, the live tiles, t does not stop (6.5).
 18. The WASM load, the module hand-over, the CSP change (7.2).
 19. The queue limits, 8 decoded frames inside the worker, no heap limit in the build (7.3).
@@ -1529,8 +1633,7 @@ marks each one [agent n].
     criteria (13).
 37. The concrete form of Q702: the routes it covers, the origin allow-list (`null` and the dev
     origin), 403 texts, no credentials header, the Host allow-list, the refusal of a bind beyond
-    `localhost` at start, and the `null`-origin limit that the login or pairing design must cover
-    (4.4).
+    `localhost` at start (4.4). Revision 6: the secret header of Q723 closes the `null` hole.
 38. The concrete form of Q703 and Q704: `ffmpeg.json`, the download outside the container, the
     `make` variables, the branch name, PR for a point release and issue for a major or minor
     release, the token type, scope, permissions, secret name and the failure text (9.1, 10.3).
@@ -1543,100 +1646,42 @@ marks each one [agent n].
     order, the wider F3, F4 only for a seek that was not cancelled, the queue values of the study (4),
     the test file whose edit cuts frames (3.3, 3.4, 6.1, 6.2, 6.5, 7.3, 13).
 
+The choices of revision 6
+([ADR-S4TJ](../decisions/entries/S4TJ-choices-of-revision-6-of-the-v1-playback-spec.md)):
+
+42. [SPECS] wins on a difference; a new skellyspecs commit needs a new pin and an entry here; the
+    texts and warnings that the host shows stay here; the table of the moved rules (2.1).
+43. The details of F6: the late tile of a refresh, the count from 2 s after each start of play, a
+    seek, a pause, a speed change and the end stop the count, a check only after a full window,
+    "the number of H.264 tiles" on either route, F6 only on a WebCodecs tile, the log detail, the
+    module `legacy/late-switch.ts` (3.4, 11.1).
+44. The state fields `lateShare` and `switchAt`, and the report fields of the certify check: 30 s of
+    play, the share for each window, a format check of the report (10.5, 11.2, T-LEG-53).
+45. The details of the secret header: the variable `SKELLYCAM_PLAYBACK_KEY`, the file `playback.key`
+    and its mode for a server started by hand, the check order, the 403 text "key missing or wrong",
+    the compare in constant time, the preflight with no secret, where the secret never goes, the
+    header on the `list_recordings` call (4.4 item 4).
+46. The details of the default token: the three job permissions, the refusal text, the
+    `github-actions[bot]` identity (10.3).
+47. The repair of the `dependabot.yml` folder (10.6) is later too, with the other Dependabot work.
+48. The name `player-legacy-decode` goes into `specs/certify.md` when the owner accepts this spec,
+    not in revision 6 (10.5).
+49. The new tests T-LEG-73 to T-LEG-76, the changes of T-LEG-14, T-LEG-17, T-LEG-53 and T-LEG-62,
+    and the kind "later" (13).
+
 ## 16. Open questions for the owner
 
-Each question is worded so that "yes" accepts the recommendation. The owner decided Q685, Q688,
-Q697, Q698 and Q700
-([ADR-8EBK](../decisions/entries/8EBK-answers-of-the-owner-q685-q688-q697-q698-q700.md)) and Q701 to
-Q706 ([ADR-0C4Y](../decisions/entries/0C4Y-answers-of-the-owner-q701-to-q706.md)), and Q694, Q717 and
-Q718 ([ADR-VHD3](../decisions/entries/VHD3-answers-of-the-owner-q694-q717-q718.md)) on 2026-11-24; they
-are not in this list. Q723 to Q728 come from the second review of revision 4.
-
-- **Q699. Patents.** Accept that the build holds the MPEG-4 Part 2 and H.264 decoders, and that their
-  patent position is a decision of the owner outside this spec; the technical work does not wait for
-  it. Yes? (The libav.js README warns that builds with MPEG-controlled codecs are not made by
-  default.)
-- **Q707. CSP.** Change the CSP of `skellycam-ui/index.html` to
-  `script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval'; worker-src 'self' blob:;`, so that the
-  decoder compiles and the module workers start. Yes?
-- **Q708. Timing on other systems.** Add a certify check `player-legacy-decode` to
-  `specs/certify.md` (decode a generated `mp4v` set and a generated H.264 set; report the route of each
-  camera, the `decoderInfo` of 11.2, and the seek, step and play times of each route), so that the
-  decoder timing on Linux and macOS comes from certify reports. Yes?
-- **Q709. macOS replace path.** On the signed and notarised macOS app, the LGPL replace path is: the
-  user replaces the decoder file and signs the app again with their own identity (or runs it
-  unsigned), as the decoder `README.md` tells. Yes?
-- **Q710. Required checks.** The workflow with the decoder and player jobs has no `paths:` filter and
-  always runs; its jobs skip by `if:` on a changed-paths job, so that required checks never stay
-  "Pending". Yes?
-- **Q711. Time map.** The times of 6.4: the mean of the time files over the cameras from the base B,
-  made non-decreasing; the median header rate with `~` when no time file is usable; a gap in the
-  capture plays as a gap in real time. Yes?
-- **Q712. Synthetic test media.** Make the synthetic test media at test time with
-  `tools/make_legacy_media.py` and PyAV `av==19.0.2`, in a temporary folder, with the reference from
-  the x86-64 Linux CI job only; commit no media. Yes?
-- **Q713. Other eras.** Refuse a v2 alpha folder with the text of 2.2; do not refuse a v0.1.0 folder,
-  but give it no test and no support. Yes?
-- **Q714. Demuxer.** Use FFmpeg's own demuxer in the worker, as measured, and the TypeScript MP4
-  reader for the frame table and the route, with a cross-check at open; feed exact packets without
-  FFmpeg's demuxer only after a measurement. Yes?
-- **Q715. Tile text.** After acceptance, add to 6a 8.3 the sentence of 11.3, the fields
-  `timeEstimated` and `detail` and the mark `decoder_failed` of 11.2. Yes?
-- **Q716. Spec place.** Keep this spec as the new file `specs/player-legacy.md`, linked from 6a 1.3,
-  as the v1 part of step 6c. Yes?
-- **Q723. Close the `Origin: null` hole now.** Gate these routes with a secret header, in place of an
-  allow-list entry for `null` alone (4.4 item 1). Yes? The three options:
-  - **A secret header (recommended).** At each start, the Electron main process (which starts the
-    server, `skellycam-ui/electron/main/services/python-server.ts` [C]) makes 128 random bits and
-    gives them to the server in an environment variable; a server that a person starts by hand writes
-    its own secret into a file that only the user can read. The main process gives the secret to the
-    page through the preload bridge. The page sends it in a header `X-Skellycam-Key` on each request
-    to these routes; the server refuses each request without the right value with 403 and no byte.
-    A custom header makes the browser send a preflight, and a foreign page cannot know the secret, so
-    a page with the origin `null` gets nothing. Cost: small; one secret in the page memory. It is
-    also the seed of the pairing of 4.4 item 3: a pairing gives this secret to a remote app.
-  - **A custom-scheme origin.** Serve the app page from a privileged scheme of the app (the app
-    already registers `skellycam-take` with `registerSchemesAsPrivileged`, 6a 5.2), so the page has a
-    real origin that no web page can claim. Cost: the whole app shell loads differently (each asset,
-    the CSP, the dev server path); a change of the UI far outside the player.
-  - **A fetch in the main process.** The page asks the main process, which reads from the server
-    with no browser `Origin`; the server then refuses each request that has a browser `Origin`. Cost:
-    each byte goes through the main process; that throughput is not measured for this path.
-  - None of the three stops another local program of the same user; that program can read the files
-    on the disk directly anyway. With Q723 yes, T-LEG-17 refuses `null` without the secret.
-- **Q724. A switch for play that is behind.** A WebCodecs tile that is the late tile (the tile whose
-  newest ready frame holds k* below k_t, 6.5) on more than 20 % of the refreshes in a window of 10 s
-  of play (counted from 2 s after each start of play) switches to the WASM decoder, with the reason
-  "too slow", once and with no switch back, as 3.4. The switch happens only when
-  `navigator.hardwareConcurrency` is at least 4 and at least the number of H.264 tiles. Yes? Reasons
-  and limits: with a GPU, the study had 0 % behind; with the software decoder inside WebCodecs, 99 to
-  100 % behind at six 1080p CRF 18 tiles; WASM kept up there with 2.1 to 2.3 cores for six tiles, on a
-  machine with many cores [S 13.2]. On a machine with few cores, WASM can be behind too, and the
-  switch then does not help; it does no harm to the frames, because both routes are exact. The values
-  20 % and 10 s are the agent's, not measured.
-- **Q725. The token of the upstream watch.** The owner's earlier yes to Q704 rested on the words
-  "GitHub does not run workflows on a PR opened with the default token". The documentation says that
-  such a PR "creates workflow runs in an approval-required state", which one click by a user with write
-  access starts [D trigger]. Use the default token and accept one "Approve workflows to run" click for
-  each bump PR, in place of the personal token. Yes? Costs: the default token needs the repository
-  setting "Allow GitHub Actions to create and approve pull requests" (off by default for a repository
-  in a personal account) and `contents: write` and `pull-requests: write` in the `permissions` of the
-  job [D actions-settings]; one click for each bump PR, on a PR that the owner reviews anyway. The
-  personal token needs no click, but it is a long-lived secret with a renewal or no expiry, and it
-  makes the owner the author of the PR (10.3). The agent found no documented reason why a scheduled
-  workflow cannot open a PR with the default token.
-- **Q726. Where the watch and Dependabot run.** They run on the owner's fork now, and on the upstream
-  repository later. Yes? On the fork this needs: Dependabot version updates turned on in the settings
-  (they are not on by default on a fork); the workflows on the default branch (scheduled workflows run
-  only there); activity in the repository within 60 days (else GitHub turns the scheduled workflow off
-  in a public repository) [D dependabot-config] [D events].
-- **Q727. The other routes and the WebSocket.** The Origin and Host checks of 4.4 also cover the camera
-  WebSocket `/connect` and the other routes of the app, as a separate small spec change outside the v1
-  player, listed as owed. Yes? (CORS does not apply to a WebSocket; any web page can open `/connect`
-  unless the server checks the `Origin` of the upgrade request.)
-- **Q728. A reclaimed codec.** When Chromium reclaims the codec of a hidden page (a
-  `QuotaExceededError` in the `error` callback), the route makes a new WebCodecs decoder and does not
-  switch to WASM (3.3). Yes?
+No question is open. The owner decided Q685, Q688, Q697, Q698 and Q700
+([ADR-8EBK](../decisions/entries/8EBK-answers-of-the-owner-q685-q688-q697-q698-q700.md)), Q701 to
+Q706 ([ADR-0C4Y](../decisions/entries/0C4Y-answers-of-the-owner-q701-to-q706.md)), and Q694, Q717
+and Q718 ([ADR-VHD3](../decisions/entries/VHD3-answers-of-the-owner-q694-q717-q718.md)) on
+2026-11-24. He decided Q699, Q707 to Q716 and Q723 to Q728, and the follow-ups Q764 to Q767, on
+2026-11-25
+([ADR-EM6A](../decisions/entries/EM6A-answers-of-the-owner-to-the-v1-playback-questions-of-revision-5.md)).
+The choices of the agents (section 15) wait for the owner in
+[ADR-A56K](../decisions/entries/A56K-choices-of-the-v1-playback-spec.md) and
+[ADR-S4TJ](../decisions/entries/S4TJ-choices-of-revision-6-of-the-v1-playback-spec.md), with the
+acceptance of this spec.
 
 ## 17. Not verified
 
@@ -1653,7 +1698,7 @@ are not in this list. Q723 to Q728 come from the second review of revision 4.
   does in this build (9.2).
 - The decoder timing on Linux and macOS, and on a weak CPU; hours-long files; many plays in a row
   [S 12.6]; 16 tiles of playback and their working set.
-- That all cameras of a v1 recording share one clock (2.3).
+- That all cameras of a v1 recording share one clock ([SPECS], revision 5 section 2.3).
 - The colours that Chromium draws for a `VideoFrame` (3.7).
 - The WebCodecs route on Linux and macOS, and with GPUs other than the NVIDIA RTX 3070 of the study:
   its exactness, its output formats, and whether it gives frames with `format` `null` (3.5).
@@ -1684,13 +1729,17 @@ are not in this list. Q723 to Q728 come from the second review of revision 4.
 - That the PyAV 19.0.2 wheels for Linux and macOS have the `mpeg4`, `libx264` and `libx265` encoders
   (13.1).
 - The steps to sign the macOS app again after a replacement (9.5).
+- The values 20 % and 10 s of F6 (3.4): guesses until certify reports tune them (M-LEG-6).
+- Whether the app uses a server that it did not start (4.4 item 4).
+- That [SPECS] at commit `SKELLYSPECS-PIN` states each rule that left this spec (the table of 2.1).
+  The supervisor checks it when it fills in the commit.
 
 Resolved in revision 2 (code or source read on 2026-11-24): the bind address (4.4), the CORS rule
 (4.4), the CSP (7.2), the FFmpeg version in the tarball (10.3), the documented FFmpeg override
 (10.3), the licence of the libav.js wrapper (9.5), the edit list and seek behaviour of FFmpeg's mov
 demuxer (6.1, 6.2), the components that `configure` adds (9.2), the required-check behaviour (10.4).
 
-## 18. The rules and answers of the owner (2026-11-24)
+## 18. The rules and answers of the owner (2026-11-24 and 2026-11-25)
 
 These are the words of the owner, as relayed by the coordinator
 ([ADR-X5MZ](../decisions/entries/X5MZ-rules-of-the-owner-for-the-playback-of-freemocap-v1-recordings.md)):
@@ -1759,6 +1808,38 @@ future phases. WebCodecs seems to be the way to go". The questions:
 - Q718: "Fix this now as the format of the later compression stage, so that GPU decode always
   applies?" Context added by the coordinator when he relayed the question, not in the quote:
   "this" is "Phase 2 writes 8-bit 4:2:0 H.264".
+
+The answers of the owner of 2026-11-25
+([ADR-EM6A](../decisions/entries/EM6A-answers-of-the-owner-to-the-v1-playback-questions-of-revision-5.md)).
+The supervisor put the questions of section 16 of revision 5 to him in a grilling session, with the
+recommendation of each, and "yes" accepted the recommendation. His words: "Q8 explain this further",
+"Q15 - in skellyspecs, and yes", "Q17 yes and ensure that certify test is written", "Q18 & Q19 draft
+this for now, keep implementation for later", "Otherwise agree to all". On the follow-ups he said
+"otherwise agree to all". The session numbers, their global numbers and the spec questions:
+
+| Session | Global | Spec question | Answer |
+|---|---|---|---|
+| Q5 | Q733 | Q699 patents | yes |
+| Q6 | Q734 | Q707 CSP | yes |
+| Q7 | Q735 | Q708 timing on other systems | yes |
+| Q8 | Q736 | Q709 macOS replace path | "explain this further"; Q764 explained it, and he accepted Q764 |
+| Q9 | Q737 | Q710 required checks | yes |
+| Q10 | Q738 | Q711 time map | yes |
+| Q11 | Q739 | Q712 synthetic test media | yes |
+| Q12 | Q740 | Q713 other eras | yes |
+| Q13 | Q741 | Q714 demuxer | yes |
+| Q14 | Q742 | Q715 tile text | yes |
+| Q15 | Q743 | Q716 spec place | "in skellyspecs, and yes"; Q765 B gives the split |
+| Q16 | Q744 | Q723 the `Origin: null` hole | yes: the secret header |
+| Q17 | Q745 | Q724 a switch for play that is behind | "yes and ensure that certify test is written"; Q766 |
+| Q18 | Q746 | Q725 the token of the upstream watch | yes, as a draft; Q767 |
+| Q19 | Q747 | Q726 where the watch and Dependabot run | yes, as a draft; Q767 |
+| Q20 | Q748 | Q727 the other routes and the WebSocket | yes |
+| Q21 | Q749 | Q728 a reclaimed codec | yes |
+| Q36 | Q764 | Q709 explained: re-sign with an own or ad-hoc signature, or run unsigned | yes |
+| Q37 | Q765 | Q716: B, the v1 file rules to skellyspecs `recording-files/`, the player here | B |
+| Q38 | Q766 | Q724: the certify check reports the late share, the route and the switch of each tile | yes |
+| Q39 | Q767 | Q725, Q726: keep the sections and their tests, marked later | yes |
 
 ## 19. Constraints on later phases
 

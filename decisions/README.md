@@ -63,6 +63,7 @@ These entries are `accepted`.
 | [8EBK](entries/8EBK-answers-of-the-owner-q685-q688-q697-q698-q700.md) | v1 playback answers Q685, Q688, Q697, Q698, Q700: server route, one player, decoder built in CI, sample data in CI, HEVC refused, K, warnings | accepted |
 | [0C4Y](entries/0C4Y-answers-of-the-owner-q701-to-q706.md) | v1 playback answers Q701 to Q706: Electron remote UI, CORS and Host rules and login before a remote bind, FFmpeg 9.0.2, bump PR token, 6d cancelled, no RCs | accepted |
 | [VHD3](entries/VHD3-answers-of-the-owner-q694-q717-q718.md) | v1 playback answers Q694, Q717, Q718: WebCodecs for H.264 in each phase, WASM for `mp4v`, WASM `h264` fallback per tile, 8-bit 4:2:0 H.264 later | accepted |
+| [EM6A](entries/EM6A-answers-of-the-owner-to-the-v1-playback-questions-of-revision-5.md) | v1 playback answers Q733 to Q749, Q764 to Q767: file rules to skellyspecs, secret header, F6 too slow, macOS re-sign, default token, watch later | accepted |
 
 ### Proposed
 
@@ -91,6 +92,7 @@ These entries wait for a decision of the user. Section is the section or area of
 | [0R76](entries/0R76-choices-of-the-exact-skip-after-a-live-change.md) | Choices of the exact skip after a live change and a search: anchors, the time-out anchor, replay of 1024 taken frames, limits | `skellycam.core.camera.capture` | proposed |
 | [B7YV](entries/B7YV-choices-of-fix-lane-6.md) | Choices of fix lane 6: one run for the two halves, nominal values and loose checks, T-PRV-54, loop threads on the test clock, T-CAP-86 diagnostics | none | proposed |
 | [A56K](entries/A56K-choices-of-the-v1-playback-spec.md) | Draft `specs/player-legacy.md` rev. 5, T-LEG-01 to 72: WebCodecs route and WASM fallback, frame table and seek rules, locked play, decoder build, Dependabot | `player` | proposed |
+| [S4TJ](entries/S4TJ-choices-of-revision-6-of-the-v1-playback-spec.md) | Rev. 6 of `specs/player-legacy.md`, T-LEG-01 to 76: skellyspecs pin, F6 details and fields, secret header details, default token, Dependabot repair later | `player` | proposed |
 
 The entries that are `rejected`, `superseded by XXXX`, `absorbed into <path>#<anchor>`,
 `evidence; used by XXXX`, `evidence; replaced by XXXX` or `done` are in [historical.md](historical.md).
