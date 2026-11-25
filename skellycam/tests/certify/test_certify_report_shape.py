@@ -205,11 +205,18 @@ def test_t_cert_91_a_check_with_no_code_has_no_row(monkeypatch, tmp_path, level)
     assert not [c for c in report["checks"] if c["reason"] == "same-model"]
     assert not [name for name in plan["details"]["checks"] if name in no_code]
     assert plan["total"] == len(plan["details"]["checks"]) + 1 == len(report["checks"]) + 1  # with `session:exit`
-    if level == "quick":
-        assert not_built == {"camera": [], "run": ["group:open", "self:hang-100ms:gap", "self:hang-100ms:hard-end"]}
+    if level == "quick":  # Q822: with the quick checks of 3.6.11 and 3.6.12
+        assert not_built == {"camera": ["records:mkv-opens"], "run": [
+            "group:in-step", "group:open", "report:rules", "self:hang-100ms:gap", "self:hang-100ms:hard-end",
+            "system:camera-access", "system:memory", "system:recording-space"]}
     else:
-        assert {"cycles", "exposure:base", "auto-exposure:searched:base"} <= set(not_built["camera"])  # Q624: no `timings`
-        assert {"group:contention", "group:take-30:finished", "self:idle-cpu"} <= set(not_built["run"])
+        assert {"cycles", "exposure:base", "auto-exposure:searched:base", "records:mkv-opens", "bursts"} <= set(
+            not_built["camera"])  # Q624: no `timings`
+        assert {"group:contention", "group:take-30:finished", "group:take-30:rate", "group:take-60:rate",
+                "group:cycles", "group:restore-after-kill", "group:take-again", "group:preview-during-take",
+                "system:power", "system:timer", "self:idle-cpu"} <= set(not_built["run"])
+        assert not {"group:take-30:csv-rows", "group:take-30:no-missing", "group:take-30:frame-count",
+                    "system:disk-benchmark"} & set(not_built["run"])  # Q598, Q612
         last = labels(devices)[-1]
         assert (by_name(report)[f"{last}:time-gaps"]["result"], by_name(report)[f"{last}:time-gaps"]["reason"]) \
             == ("not-run", "not-built")

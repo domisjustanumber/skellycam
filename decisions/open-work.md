@@ -167,16 +167,11 @@ task. Delete an item when its work is done. The PR that closes an item records t
   - Named only, not specified: codec checks from the H.264 study (which encoders exist and work, the stream limits
     of each hardware encoder per GPU model with the sustained number and the crossover to the CPU, and what the
     Electron UI can decode). The user wants them in certify if the study finds answers.
-- **Certify test lane** ([ADR-ZRA6](entries/ZRA6-choices-of-the-certify-test-lane.md); Q772, Q773 and Q775 of the
-  user). The tests of Q772 are written, and the dark rule, `bad-output` and the native choice are built. Open:
-  - The user decides the choices of ADR-ZRA6, with the name `no-frame` (then section 15 of the spec names it).
-  - T-CERT-09 is a strict `xfail`. It needs the product key `rate_luma_mean` (3.5.15 P5). Also, the session gets
-    no diagnostics dict of a camera that failed its start-up rate check when it judges the open: find why.
-  - 19.1 item 7 of the spec still says that `too-dark` of `rate` is not built. The certify side is built now.
-  - T-CERT-15 asks `fail` `crashed` for a session exit with code 5; 19.2 items 8 and 13 give `not-run`. The user
-    decides; the code follows 19.2.
-  - The not-built lists of `catalog.py` still name the five take rows of `group:take-30` and `group:take-60`
-    (Q598) and `system:disk-benchmark` (Q612), and they lack the new checks of 3.6.11 and 3.6.12.
+- **Certify test lane** ([ADR-ZRA6](entries/ZRA6-choices-of-the-certify-test-lane.md),
+  [ADR-CR85](entries/CR85-decisions-of-the-user-on-the-certify-test-lane.md)). Open:
+  - Q821, for the self-check lane (Q48), test first: the product key `rate_luma_mean` (3.5.15 P5), and why certify
+    gets no diagnostics dict of a camera that fails its start-up rate check. Then T-CERT-09 (a strict `xfail`)
+    passes.
   - The run parts of T-CERT-23 (the Auto checks of `full`) and of T-CERT-121 (`details.cameras`) wait for that
     code. T-CERT-32 runs on Windows only until phase 7 (Q777).
   - The frozen case of T-CERT-18 is not proven until T-CERT-90 runs on a real build (item 14 of ADR-ZRA6).

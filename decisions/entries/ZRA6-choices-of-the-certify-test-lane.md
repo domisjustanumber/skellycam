@@ -1,6 +1,6 @@
 # ZRA6 — Choices of the certify test lane
 
-**Status:** proposed, 2026-11-25 (agent of the certify test lane).
+**Status:** accepted, 2026-11-25 (user, Q817 to Q823 of [ADR-CR85](CR85-decisions-of-the-user-on-the-certify-test-lane.md)); written by the agent of the certify test lane.
 
 ## Decision
 
@@ -13,8 +13,8 @@ those decisions. This entry holds only the choices of the agent where the spec i
 2. A rate check with no measured brightness keeps its `fail` (`rate-low`). `too-dark` needs a mean below
    `DARK_LUMA`.
 3. A black frame (mean 0 at -7) that does not change is `too-dark`, not `no-frame`.
-4. `too-bright` does not change: a frame above 230 at -7 is `not-run` `too-bright`, also when the image check
-   would pass. Q773 changed the dark side only.
+4. `too-bright` follows the dark rule (Q819 of ADR-CR85): a pass stays `pass`, and `too-bright` replaces only a
+   fail. (The first form of this item kept `too-bright` for each frame above 230.)
 5. The dark rule is two pure functions of `skellycam/core/certify/catalog.py`: `in_the_dark` and `image_effect`.
    The limits of 4.3 and 4.6 move there from `session.py`. `image_effect` judges the ratio rounded to 3 places,
    as the report shows `luma_ratio`.

@@ -28,24 +28,30 @@ AFTER_TAKE = ("native-jpeg:valid", "native-jpeg:size", "native-jpeg:ring-equals-
 CLOCK = ("clock:base", "clock:before-arrival", "clock:near-arrival", "sequence", "time-gaps")  # 10.2, 10.6
 LIVE = "live-at-close"  # 3.6.2 [U Q646]: the last check of each camera [ADR-0Z6Q item 15]
 TAKE = tuple(f"group:take:{c}" for c in ("finished", "csv-rows", "no-missing", "frame-count", "rate"))
-QUICK_NOT_BUILT = ("group:open",)  # with the retry alone of 4.2
+# with the retry alone of 4.2; the quick checks of 3.6.11 and 3.6.12 (Q822)
+QUICK_NOT_BUILT = ("group:open", "system:recording-space", "system:memory", "system:camera-access", "group:in-step",
+                   "report:rules")
+QUICK_CAMERA_NOT_BUILT = ("records:mkv-opens",)  # 3.6.12 (i), both levels
 SELF_QUICK = ("self:hang-100ms:gap", "self:hang-100ms:hard-end")  # 7: not built in this step
 # The camera block of `full` (5, 8.2, 10.2) that is not built, without the checks of a mode above `<base>`.
 FULL_CAMERA_NOT_BUILT = (
     "identity:stable", "identity:unique", "controls", "controls:exposure-scale",
     "exposure:{base}", "exposure:{base}:readback", "settings-stick:each-open", "auto-exposure:searched:{base}",
     "auto-exposure:holds-rate:{base}", "control:gain", "control:focus", "auto-off:ae", "auto-off:af",
-    "auto-off:ae-stays", "group-open", "timestamps", "in-use", "cycles")  # Q624 dropped `timings` and four controls
+    "auto-off:ae-stays", "group-open", "timestamps", "in-use", "cycles", "bursts")  # Q624: no `timings`, four controls
+CAMERA_NOT_BUILT = {"v4l2": ("usb3-trial",), "avfoundation": ("usb3-trial",)}  # 3.6.13: full, Linux and macOS
 FULL_NOT_BUILT = (
-    *(f"group:take-30:{c}" for c in ("finished", "csv-rows", "no-missing", "frame-count", "rate")), "group:contention",
-    "system:usb", "system:disk", "system:disk-benchmark",  # Q624a, b: no `system:backend`, `system:virtual-cameras`
+    "group:take-30:finished", "group:take-30:rate", "group:contention",  # Q598: two take rows
+    "system:usb", "system:disk",  # Q612: the benchmark is part of `system:disk`; Q624a, b
+    "group:cycles", "group:restore-after-kill", "group:take-again", "group:preview-during-take", "system:power",
+    "system:timer",  # 3.6.11, 3.6.12
     "self:crash-take:finishes", "self:crash-take:equal-rows", "self:crash-take:others-record",
     "self:server-gone:ends", "self:server-gone:files-finished", "self:server-gone:source-closed",
     "self:stall:take-error", "self:stall:others-finished", "self:stall:stalled-failed", "self:stall:no-healthy-dead",
     "self:idle-cpu", "self:ring:torn", "self:ring:lapped", "self:scale-3", "self:scale-12",  # Q624f
-    *(f"group:take-60:{c}" for c in ("finished", "csv-rows", "no-missing", "frame-count", "rate")))
-SYSTEM_NOT_BUILT = {"media-foundation": ("system:camera-apps",), "v4l2": ("system:kernel", "system:camera-access"),
-                    "avfoundation": ("system:camera-access", "system:video-effects")}
+    "group:take-60:finished", "group:take-60:rate")
+SYSTEM_NOT_BUILT = {"media-foundation": ("system:camera-apps",), "v4l2": ("system:kernel",),
+                    "avfoundation": ("system:video-effects",)}  # `system:camera-access` is in quick (Q624m)
 GATE_STEPS = ("opens", "mode", "rate", "native-jpeg", "timestamps", "sequence", "records", "no-hang")
 HANG_REASONS = ("hung", "crashed", "stalled")  # the reasons that fail `<model>:gate:no-hang` (3.6.1 B1)
 
@@ -181,11 +187,12 @@ def not_built(level: str, units: list, backend: str) -> dict:
     """3.6.3 `details.not_built`: the names of the checks with no code, `camera` without `<label>:` and with `base`
     for the mode of `<base>`, `run` the group, system and self checks; each name one time, sorted."""
     run = set(QUICK_NOT_BUILT + SELF_QUICK) if units else set()
-    camera = set()
+    camera = set(QUICK_CAMERA_NOT_BUILT) if units else set()
     if level == "full":
         run.update(FULL_NOT_BUILT + SYSTEM_NOT_BUILT.get(backend, ()))
         for _, base, _ in units:
-            camera.update(c.format(base="base") for c in FULL_CAMERA_NOT_BUILT if base or "{base}" not in c)
+            camera.update(c.format(base="base") for c in FULL_CAMERA_NOT_BUILT + CAMERA_NOT_BUILT.get(backend, ())
+                          if base or "{base}" not in c)
     return {"camera": sorted(camera), "run": sorted(run)}
 
 
@@ -198,15 +205,16 @@ def in_the_dark(result: tuple, luma) -> tuple:
 
 
 def image_effect(luma_m7, luma_m8, exposure_unit) -> tuple:
-    """4.3, 4.6 [Q773]: (result, reason) of `settings-stick:image-effect`. No frame at -7 or -8 is `no-frame`; above
-    BRIGHT_LUMA at -7 is `too-bright`; the image gets darker by the limit of the route, else the dark rule."""
+    """4.3, 4.6 [Q773, Q819]: (result, reason) of `settings-stick:image-effect`. No frame at -7 or -8 is `no-frame`;
+    the image gets darker by the limit of the route, else a fail that `too-bright` (above BRIGHT_LUMA at -7) or
+    `too-dark` (below DARK_LUMA) replaces."""
     if luma_m7 is None or luma_m8 is None:
         return ("not-run", "no-frame")
-    if luma_m7 > BRIGHT_LUMA:
-        return ("not-run", "too-bright")
     limit = UNITLESS_RATIO if exposure_unit in UNITLESS else TIME_UNIT_RATIO
     if luma_m7 > 0 and round(luma_m8 / luma_m7, 3) < limit:  # the rounded `luma_ratio` of the report
         return ("pass", None)
+    if luma_m7 > BRIGHT_LUMA:  # Q819: as the dark rule, `too-bright` replaces only a fail
+        return ("not-run", "too-bright")
     return in_the_dark(("fail", "no-image-effect"), luma_m7)
 
 

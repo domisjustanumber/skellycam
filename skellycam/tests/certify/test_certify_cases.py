@@ -348,6 +348,31 @@ def test_t_cert_121_the_not_built_list_after_q624():
         assert {"identity:stable", "identity:unique"} <= set(not_built["camera"])
 
 
+def test_t_cert_121_and_122_the_not_built_lists_after_q598_to_q624():
+    """T-CERT-121, T-CERT-122, 3.6.2, 3.6.11 to 3.6.13 (Q822): the take of 30 s and of 60 s has two rows each
+    (Q598); the disk benchmark is part of `system:disk` (Q612); no 60 fps exposure or Auto check (Q617); the new
+    checks of 3.6.11 and 3.6.12 stand in `details.not_built` at their levels; `<label>:usb3-trial` only in full on
+    Linux and macOS (3.6.13); `group:preview-during-take` is not in the plan (T-CERT-122)."""
+    catalog = product(CATALOG)
+    units = [("cam.x.0001-0002.0", (640, 480, 30.0), "C")]
+    quick_run = {"system:recording-space", "system:memory", "system:camera-access", "group:in-step", "report:rules"}
+    for backend in ("media-foundation", "v4l2", "avfoundation"):
+        quick, full = catalog.not_built("quick", units, backend), catalog.not_built("full", units, backend)
+        assert quick_run <= set(quick["run"]) and quick["camera"] == ["records:mkv-opens"]
+        assert quick_run <= set(full["run"]) and set(quick["camera"]) <= set(full["camera"])
+        assert {"group:take-30:finished", "group:take-30:rate", "group:take-60:finished", "group:take-60:rate",
+                "group:cycles", "group:restore-after-kill", "group:take-again", "group:preview-during-take",
+                "system:power", "system:timer", "system:disk", "system:usb"} <= set(full["run"])
+        assert not [n for n in full["run"] if n.startswith(("group:take-30:", "group:take-60:"))
+                    and not n.endswith((":finished", ":rate"))]
+        assert "system:disk-benchmark" not in full["run"]
+        assert "bursts" in full["camera"]
+        assert ("usb3-trial" in full["camera"]) is (backend != "media-foundation")
+        assert not [n for n in full["camera"] if "@60" in n]
+        planned = [name for name, _ in catalog.planned_checks("full", units, backend)]
+        assert "group:preview-during-take" not in planned
+
+
 # ---------------------------------------------------------------------------
 # Q773 (Q45): the dark rule of 4.6
 # ---------------------------------------------------------------------------
@@ -378,14 +403,15 @@ def assert_slow_in_the_dark(monkeypatch, tmp_path, scripts):
 def test_t_cert_13_the_image_check_in_the_dark(monkeypatch, tmp_path):
     """T-CERT-13 dark case, 4.3, 4.6 (full): a dark image that gets darker at -8 passes (a pass in the dark stays
     `pass`); a dark image that does not change is `not-run` `too-dark` (it replaces only a fail); a bright image
-    that does not change stays `fail` `no-image-effect`."""
-    scripts = [good(brightness=((-7, 20), (-8, 8))), good(brightness=((-7, 12), (-8, 12))), good(brightness=())]
+    that does not change stays `fail` `no-image-effect`; a bright image that gets darker passes (Q819)."""
+    scripts = [good(brightness=((-7, 20), (-8, 8))), good(brightness=((-7, 12), (-8, 12))), good(brightness=()),
+               good(brightness=((-7, 240), (-8, 120)))]
     with capture_app(monkeypatch, scripts) as app:
         devices = app.factory.device_infos()
         report = run_with(app, tmp_path, level="full")
     assert_valid(report)
     checks = by_name(report)
-    dark_pass, dark_flat, flat = labels(devices)
+    dark_pass, dark_flat, flat, bright_pass = labels(devices)
 
     def image(label):
         check = checks[f"{label}:settings-stick:image-effect"]
@@ -393,6 +419,7 @@ def test_t_cert_13_the_image_check_in_the_dark(monkeypatch, tmp_path):
     assert image(dark_pass) == ("pass", None)
     assert image(dark_flat) == ("not-run", "too-dark")
     assert image(flat) == ("fail", "no-image-effect")
+    assert image(bright_pass) == ("pass", None)  # Q819: the bright side follows the same rule
 
 
 def test_t_cert_13_the_image_rule_with_a_missing_frame():
@@ -402,7 +429,8 @@ def test_t_cert_13_the_image_rule_with_a_missing_frame():
     assert rule(None, 60.0, "log2-s") == ("not-run", "no-frame")
     assert rule(120.0, None, "log2-s") == ("not-run", "no-frame")
     assert rule(0.0, 0.0, "log2-s") == ("not-run", "too-dark")
-    assert rule(240.0, 120.0, "log2-s") == ("not-run", "too-bright")
+    assert rule(240.0, 120.0, "log2-s") == ("pass", None)  # Q819: a pass in the bright stays `pass`
+    assert rule(240.0, 235.0, "log2-s") == ("not-run", "too-bright")  # Q819: `too-bright` replaces only a fail
     assert rule(120.0, 60.0, "log2-s") == ("pass", None)
     assert rule(120.0, 110.0, "log2-s") == ("fail", "no-image-effect")
     assert rule(120.0, 110.0, "ev") == ("pass", None)  # unitless: only the direction counts (ratio < 0.97)

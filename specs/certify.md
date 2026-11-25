@@ -1063,7 +1063,7 @@ On Linux and macOS, quick also has `clock:base`, `clock:before-arrival`, `clock:
 | `<label>:native-jpeg:size` | `frames_wrong_size` | `jpeg-size-differs` |
 | `<label>:native-jpeg:source-equals-ring` | `frames_compared`, `frames_differ` | `jpeg-damaged`; `not-run` `ring-lapped` |
 | `<label>:native-jpeg:ring-equals-mkv` | the count of blocks compared and the count that differ | `jpeg-damaged`; `not-run` `ring-lapped` |
-| `<label>:settings-stick:image-effect` | `luma_at_m8`, `luma_ratio`, the gain keys of 3.5.9 (the value at -7 is `luma_mean` of the `rate` row) | `no-image-effect`; `not-run` `too-dark`, `too-bright`, `no-manual-exposure`, `prior-check-failed` |
+| `<label>:settings-stick:image-effect` | `luma_at_m8`, `luma_ratio`, the gain keys of 3.5.9 (the value at -7 is `luma_mean` of the `rate` row) | `no-image-effect`; `not-run` `too-dark`, `too-bright`, `no-frame`, `no-manual-exposure`, `prior-check-failed` |
 | `<label>:records:gaps-explained` | `gaps`, `replaced`, `end_gaps` | `gaps-unexplained` |
 | `<label>:clock:base` (not on Media Foundation) | `clock`, `tstamp_src`, `ts_conversion` | `clock-base-differs`; `not-run` `clock-unknown` |
 | `<label>:clock:before-arrival` | `later_than_arrival` | `sample-after-arrival` |
@@ -1949,7 +1949,7 @@ back (cap 9.1). The steps:
 |---|---|---|
 | `<label>:settings-stick:readback` | The read-back at the open equals -7, and the read-back after the change equals -8. | `pass`; `fail` with `readback-differs`; `not-run` with `no-manual-exposure` for a camera with no manual exposure: it opens with the warning `no_manual_exposure`, and the product ignores the value [ux 4.5 item 3]; never `fail` for a feature that the camera does not have (section 1) |
 | `<label>:settings-stick:holds` | The read 1 s later equals -8. | `pass`; `fail` with `setting-reverted`; `not-run` with `no-manual-exposure`; `not-run` with `prior-check-failed` when `readback` did not pass |
-| `<label>:settings-stick:image-effect` (full only, Q593) | The image gets darker. With a time-unit exposure route (`exposure_unit` `log2-s`, `100us` or `seconds`), one step halves the exposure time, so `luma_ratio < 0.85` [A, not calibrated]. With a unitless route (`ev`, `native`, `native-data`, 10.2), only the direction counts: `luma_ratio < 0.97` [A, not calibrated] [U: macOS route ruling]. | `pass`; `fail` with `no-image-effect`; `not-run` with `too-dark` or `too-bright` when `luma_at_m7` is below 24 or above 230; `not-run` with `no-manual-exposure`; `not-run` with `prior-check-failed` |
+| `<label>:settings-stick:image-effect` (full only, Q593) | The image gets darker. With a time-unit exposure route (`exposure_unit` `log2-s`, `100us` or `seconds`), one step halves the exposure time, so `luma_ratio < 0.85` [A, not calibrated]. With a unitless route (`ev`, `native`, `native-data`, 10.2), only the direction counts: `luma_ratio < 0.97` [A, not calibrated] [U: macOS route ruling]. | `pass`; `fail` with `no-image-effect`; `not-run` with `too-dark` or `too-bright` in place of a `fail` when `luma_at_m7` is below 24 or above 230 (4.6) [U Q773, Q819]; `not-run` with `no-frame` when it has no frame at -7 or at -8 [U Q818]; `not-run` with `no-manual-exposure`; `not-run` with `prior-check-failed` |
 
 Numbers of the three checks: `exposure_set`, `exposure_readback_open`, `exposure_readback`,
 `exposure_later`, `luma_at_m7`, `luma_at_m8`, `luma_ratio`, `exposure_unit`, `control_path`, and the
@@ -2036,7 +2036,10 @@ low light also in manual mode [NV], SkellyCam Auto (5.3), the settings check (4.
   memory. No frame is kept.
 - `DARK_LUMA = 24` [A, not calibrated]. A light-dependent check that fails while the mean is below it
   is `not-run` with `too-dark` [U: one test, one row]. The same check with a brighter frame is
-  `fail`. A check that passes in the dark stays `pass`.
+  `fail`. A check that passes in the dark stays `pass` [U Q773].
+- `BRIGHT_LUMA = 230` [A, not calibrated] follows the same rule: a check that fails while the mean is above it is
+  `not-run` with `too-bright`, and a check that passes stays `pass` [U Q819].
+- A check with no frame to measure is `not-run` with `no-frame`, never `too-dark` [U Q818].
 - A covered lens gives the same result as a dark room. The report does not need to tell them apart.
 - The plan asks after the run: "Was the room lit as it is when you record?" (9.1).
 
@@ -3372,6 +3375,7 @@ of a product failure gives the product code as its reason, with one exception: t
 | `rate-low`, `rate-high` | rate checks | More than 3 % below or above the mode rate. The sentence of `rate-low` is the product text: "Camera is slow. Try adding more light" [U]. |
 | `rate-under-contention` | group | The camera passes alone and fails in the group. |
 | `too-dark`, `too-bright` | light-dependent checks | The frame is too dark or too bright to judge (4.6). |
+| `no-frame` | light-dependent checks | The check got no frame to measure its brightness, so it cannot judge (4.6) [U Q818]. |
 | `readback-differs`, `setting-reverted`, `no-image-effect`, `control-failed`, `exposure-not-applied` | settings and control checks | A set value reads back different; it changed back later; the image did not change; the set call failed; a set exposure did not apply. |
 | `control-absent` | control checks | The camera has no such control. |
 | `no-native-jpeg`, `jpeg-damaged`, `jpeg-size-differs` | `native-jpeg` | skellycam encoded the frames; a frame is damaged; its size is not the size of the mode. |
@@ -3482,7 +3486,7 @@ tests only the self-check.
 | T-CERT-12 | 3 OS. A fake that hangs at the open. | `opens` `fail` `hung`; later checks `not-run` `prior-failure`; never opened again (phase G included); cleanup `release:<label>` `camera-wedged`; one notice `camera-wedged` with the cleaned name [C 3.8]; `<model>:gate:no-hang` `fail` in `full`; the others complete. |
 | T-CERT-13 | 3 OS. Settings: a fake whose exposure reads back -5 for a set -7; one that reverts after 0.5 s; one whose image does not change; one with a mean of 240; one macOS fake with no manual exposure. | `settings-stick:readback` `fail` `readback-differs`; `:holds` `fail` `setting-reverted`; `:image-effect` `fail` `no-image-effect`; `:image-effect` `not-run` `too-bright`; `:readback` `not-run` `no-manual-exposure` with the warning `no_manual_exposure`, `:holds` and `:image-effect` `not-run` `no-manual-exposure`, no `fail`; each summary item `partial`. |
 | T-CERT-14 | 3 OS. Native JPEG: a fake that gives YUY2 encoded by skellycam (after 3b); a fake with a cut JPEG; a fake with a SOF of another size; a fake with no DHT. | `native-jpeg:format` or `:not-reencoded` `fail` `no-native-jpeg`; `:valid` `fail` `jpeg-damaged`; `:size` `fail` `jpeg-size-differs`; each check of the last fake `pass` with `dht_inserted` > 0; each other check of each fake keeps its own result. |
-| T-CERT-15 | The session child ends with `os._exit(5)`; sleeps past its limit with a grandchild; gives its result and does not end; gives bytes that are not a result. | `fail` `crashed` with `exit_code` 5; `fail` `timed-out` and no process left; `<name>:exit` `record-only` `hung-at-exit`; `fail` `bad-output`. |
+| T-CERT-15 | The session child ends with `os._exit(5)`; sleeps past its limit with a grandchild; gives its result and does not end; gives bytes that are not a result. | the running check `not-run` `crashed` with `exit_code` 5 (a crash blames no check, 19.2 items 8 and 13) [U Q817]; `fail` `timed-out` and no process left; `<name>:exit` `record-only` `hung-at-exit`; `fail` `bad-output`. |
 | T-CERT-16 | 3 OS. Cancel during the quick apply, during the quick take and during phase F of a full run with three fakes, one not yet opened. | The checks that ended keep their results; the running and later checks `not-run` `cancelled`; the child of the running check is killed with its process tree within 1 s of the cancel; no new check starts; phase G re-checks only the touched fakes, at most 5 s each, sets a changed control back, and gives only cleanup rows; the fake that was not opened gets no open; no process left; the work folder is gone; `cancelled` in `evidence.reasons`; the record of checked models gets rows only by the rule of 2.5. |
 | T-CERT-17 | 3 OS. A progress spy that logs each message and each fake source call in one ordered list; checks that last 10 ms; a progress callable that raises. | `starting` first, `done` last; before each check, also each computed check and each roll-up check, a message whose `step` is `{"section": null, "name": <that check>}` comes before the first source call of that check; each item of `checks` has `section` `null`; at most 10 messages each second, and no step message dropped; each is JSON; after the raise, no more calls and the run completes [C 2.3]. |
 | T-CERT-18 | `sys.stdout` and `sys.stderr` `None`, `sys.frozen` true, in a spawn child. | The report is complete; no read of stdin [C 2.5]. |
@@ -3711,8 +3715,8 @@ sections above state some of them. This section states each one.
 6. `<label>:clock:near-arrival` passes when the absolute p95 of sample minus arrival is 200 ms or
    less.
 7. A failure of the product rate check at the open gives `opens` `pass` and `rate` `fail` with the
-   product code. `too-dark` for `rate` is not built: a camera that fails its rate check gives no ring
-   frame.
+   product code. A camera that fails its rate check gives no ring frame, so `too-dark` for `rate` reads the
+   D-3 key `rate_luma_mean` (3.5.15 P5). P5 is not built, so today `rate` stays `fail` [U Q773, Q821].
 8. In the summary item, `sequence` `not-run` with `no-sequence` counts as passed when `time-gaps`
    passed, and the reverse.
 9. A camera that is not `ready` before the take leaves the group, because a record start needs each
