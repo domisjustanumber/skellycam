@@ -85,3 +85,24 @@ load changed during the runs.
    passed. With a real sleep of 0.05 s or 0.5 s before `app.apply`, the probe failed: the slow period had ended
    before the check, so the test then passes but does not test its case. The armed slow period does not fit:
    the live set goes to the other camera. No change was made there.
+9. **The slow period of T-CAP-113** (item 5 of [ADR-7GC1](../entries/7GC1-choices-of-the-gate-on-the-test-clock-and-the-end-of-t-cap-05.md)).
+   Before the change, a temporary probe of the test: the case is exercised when a check starts after the apply,
+   ends `ready` after that, and the slow period does not end before that end.
+   - Windows (the machine of item 5), 30 runs: 30 passed; 29 exercised the case, 1 did not. In that run, the check
+     after the apply started at 5.9 s of the clock and had no end yet: the test read the `ready` state from
+     before the check, because its wait took the `checking` of the start-up.
+   - WSL (the set-up above, a new copy of the worktree), 30 runs: 30 passed and 30 exercised the case.
+   - With a real sleep of 0.05 s before the apply (evidence item 8), the slow period ended before the check.
+
+   After the change (the slow period starts at the set of the first camera):
+   - A trace of one run: the set at 3.333 s, the check from 3.333 s to 7.117 s, and the slow period did not end
+     before the end of the test.
+   - A temporary slow period of 1 s: the test failed, "the slow period ended before the end of the check".
+   - A temporary mutation of `_pass` of `camera_loop.py`: at the gate, the check ends `too_slow` when the clock
+     is at or after the early deadline. The test failed: the state was not `ready`. Two other temporary
+     mutations did not make the test fail: the early deadline compared with the time of the take, not the
+     arrival, in `_feed_check`; and the measured rate from the time of the take. In this run the loop takes the
+     newest frame after each wait, so these times are near the arrival. Each mutation was undone; the diff of
+     `skellycam/core` and `skellycam/api` was empty.
+   - Windows, 30 runs: 0 failures. WSL on 2 cores, 30 runs: 0 failures. `test_states.py` with `-m "not pace"`:
+     38 passed.

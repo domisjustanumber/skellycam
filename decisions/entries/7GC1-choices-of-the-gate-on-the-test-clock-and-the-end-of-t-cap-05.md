@@ -34,6 +34,11 @@
    frame). T-REQ-17 arms its slow period of 5 fps for 60 s so, for the search that must time out. A self-test of
    the fake in `test_helpers.py`. T-CAP-113 has a similar race, but its slow camera gets no live set: no change
    there (evidence item 8).
+5. **The slow period of T-CAP-113** (Q729 of the user: fix T-CAP-113). The test wraps `set_controls` of the fake
+   of the first camera (`monkeypatch` of the instance). At the first set with `exposure`, the wrapper starts the
+   slow period of the second camera, 1.6 fps for 12 s. The test waits for the end (`ready` or `too_slow`) of the
+   first check that starts after that set, not for the first `checking` of the run. It then asserts that the
+   slow period did not end before the end of the check. No change of the fake.
 
 ## Reason
 
@@ -44,6 +49,9 @@
 3. Item 4: only the camera loop is on the virtual clock, so the time runs on while a request goes through HTTP.
    A slow period that starts before the request can end before the search, and then the search ends `done`. The
    spec row of T-REQ-17 says that each value of the search is slow.
+4. Item 5: `at_next_set` of item 4 does not fit, because the live set goes to the other camera. The wait for the
+   first `checking` of the run took the check of the start-up, so the test could read the `ready` state from
+   before the new check (evidence item 9).
 
 ## Evidence
 
