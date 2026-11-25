@@ -372,6 +372,25 @@ placeholders [M1]. (Changed on 2026-11-20: the interim rule U4 is removed.)
   of them [agent 54].
 - Phase 4 replaces this relay [U13]. Section 17.2 lists the difference from [ring 2.3].
 
+### 5.9 The queues of a closed group
+
+A closed camera group leaves no pubsub manager in `CAMERA_GROUP_PUB_SUB_MANAGERS`
+(`skellycam/core/ipc/pubsub/pubsub_manager.py`), and no open queue or pipe of that group
+([ADR-2SX2](../decisions/entries/2SX2-acceptance-of-the-choices-of-fix-lane-7-and-its-follow-ups.md) item 2).
+Without this rule, each group kept its queues, their pipes and their feeder threads for the life of the process
+([ADR-R394](../decisions/entries/R394-choices-of-fix-lane-7.md) item 2).
+
+- `CameraGroup.close` closes the queues of the group as its last step, after these steps: the stop of the take,
+  the end of each camera process or thread of the group, the end of the watch thread of the group, and the last
+  read of the diagnostics. Thus no camera writes to a queue after its close, and no message that the main process
+  reads is lost.
+- The close removes the manager of the group from `CAMERA_GROUP_PUB_SUB_MANAGERS` and closes each subscription
+  of each topic, and the queue of the setup failures (`CameraGroupIPC.setup_failures`). A queue that never had a `put` has no feeder thread, so its close also closes its two pipe ends.
+  The end of the process does not wait for a feeder thread of a closed queue.
+- A close that raises, for example for a camera that cannot be killed, keeps the queues. A later close closes
+  them.
+- The shared log queue (`LogsTopic.publication`) is not a queue of a group. It stays open.
+
 ## 6. The Media Foundation source
 
 Each call and interface below is in the prototype [proto mf.py, com.py, bounded.py], unless marked
@@ -1465,6 +1484,7 @@ T-CAP-36) are [agent 41]. They can be changed when the tests are written.
 | T-CAP-111 | 3a | fake | `OpenCVSource` with a stand-in capture: the loop thread reads 300 frames while a second thread reads the controls. | No two calls on the capture overlap [agent 85]. |
 | T-CAP-112 | 3a | fake | Frames 2 to 95 arrive together, 94 ms after frame 1. | `ready`, with `measured_fps` within 3 % of 30; no failure of an empty window [agent 26]. |
 | T-CAP-113 | 3a | fake | Two fakes are `ready`; the second delivers 1.6 fps for 12 s, so the first waits at the gate. A live exposure change of the first. | The check ends `ready`, with `measured_fps` within 3 % of 30, not `too_slow` [agent 88]. |
+| T-CAP-114 | 3a | fake | Two fakes are `ready`; then the close of all groups. | `CAMERA_GROUP_PUB_SUB_MANAGERS` has no entry for the group; each subscription queue of the group refuses a `put` (it is closed), and the read end of each subscription queue and of the queue of the setup failures is closed (5.9) [ADR-2SX2]. |
 
 T-CAP-92 to T-CAP-104 come from the answers U21 and U23 of the user; their step is 3a. T-CAP-92 to
 T-CAP-98 are retired on 2026-11-20 (item 10 of ADR-22EJ); their rows stay for the record.
@@ -1473,7 +1493,7 @@ Changed on 2026-11-20 ([`camera-requests.md`](camera-requests.md) 1.10): each te
 so that the new default `AUTO` does not change its result. `SLOW_REASON` of
 `skellycam/tests/capture/capture_hardware.py` takes the form of 10.4. The tests of the public pause
 route in `skellycam/tests/test_camera_control_contract.py` and `skellycam/tests/test_camera_router.py`
-check the 404 of T-REQ-48 in place of the pause. T-CAP-105 to
+check the 404 of T-REQ-48 in place of the pause. T-CAP-114 comes with 5.9 (ADR-2SX2); its step is 3a. T-CAP-105 to
 T-CAP-113 come with the fixes of the review of the 3a code (W4 to W6, [ADR-6EKB](../decisions/entries/6EKB-choices-of-the-3a-review-fixes.md)); their step is 3a.
 
 ### 16.3 Hardware tests of D49
@@ -1588,12 +1608,12 @@ By step and kind. A cell gives the tests on Windows / Linux / macOS (16.1, 16.7)
 
 | Step | fake | hardware | CI | local | Total |
 |---|---|---|---|---|---|
-| 3a | 71 (71 / 66 / 66) | 18 (11 / 7 / 7) | 2 (2 / 1 / 1) | 2 (2 / 0 / 0) | 93 (86 / 74 / 74) |
+| 3a | 72 (72 / 67 / 67) | 18 (11 / 7 / 7) | 2 (2 / 1 / 1) | 2 (2 / 0 / 0) | 94 (87 / 75 / 75) |
 | 3b | 9 (9 / 9 / 9) | 2 (2 / 0 / 0) | 0 | 0 | 11 (11 / 9 / 9) |
 | 3c | 6 (6 / 5 / 5) | 3 (3 / 0 / 0) | 0 | 0 | 9 (9 / 5 / 5) |
-| All | 86 (86 / 80 / 80) | 23 (16 / 7 / 7) | 2 (2 / 1 / 1) | 2 (2 / 0 / 0) | 113 (106 / 88 / 88) |
+| All | 87 (87 / 81 / 81) | 23 (16 / 7 / 7) | 2 (2 / 1 / 1) | 2 (2 / 0 / 0) | 114 (107 / 89 / 89) |
 
-T-CAP-80 to T-CAP-113 are at the end of the table; their step is in the table. T-CAP-106 runs on each
+T-CAP-80 to T-CAP-114 are at the end of the table; their step is in the table. T-CAP-106 runs on each
 system; its case for `MediaFoundationDeviceInfo` runs on Windows only. 25 tests run on
 Windows only: T-CAP-22, 23, 24, 43, 46, 48, 49, 50, the 11 Windows hardware tests of 3a, and T-CAP-68,
 69, 76, 77, 78 and 79. 7 tests run on Linux and macOS only: T-CAP-92 to T-CAP-98. These 7 are
@@ -1739,8 +1759,9 @@ Reasons:
 | T-CAP-111 | runs | runs | runs |
 | T-CAP-112 | runs | runs | runs |
 | T-CAP-113 | runs | runs | runs |
+| T-CAP-114 | runs | runs | runs |
 
-Short form: Windows runs 106 tests, Linux 88 and macOS 88. 7 Windows hardware tests have a counterpart
+Short form: Windows runs 107 tests, Linux 89 and macOS 89. 7 Windows hardware tests have a counterpart
 on Linux and macOS. 14 tests have no counterpart there until phase 7 (reasons a, b, d, e), and 4 tests
 are not applicable there (reasons c, f, g).
 

@@ -58,16 +58,22 @@ def quiet_logging(monkeypatch):
 
 def install_gate_probe(monkeypatch, clock):
     """Tell the virtual clock when a camera loop waits at the lockstep gate (5.2), and how the clock can see that the
-    gate is still shut: the same probe again, with no clock call [ADR-7GC1]."""
+    gate is still shut: the same probe again, with no clock call [ADR-7GC1].
+
+    A second app in one test (two servers of T-UNX-96 to T-UNX-101) wraps the product probe, not the wrapper of the
+    first app. Else `shut` calls the clock under its lock, in the thread that moves the time, and a loop in
+    `wait_until` gets the state of the gate in place of its wait: the time then never moves (T-UNX-98) [ADR-JC4X]."""
     from skellycam.core.camera_group.camera_orchestrator import CameraOrchestrator
 
     original = CameraOrchestrator.should_grab_by_id
+    original = getattr(original, "product_probe", original)
 
     def should_grab_by_id(self, camera_id):
         result = original(self, camera_id)
         clock.gate(not result, shut=lambda: not original(self, camera_id))
         return result
 
+    should_grab_by_id.product_probe = original
     monkeypatch.setattr(CameraOrchestrator, "should_grab_by_id", should_grab_by_id)
 
 

@@ -1,12 +1,12 @@
 import logging
 import multiprocessing
+import queue
 from abc import ABC
 from dataclasses import dataclass, field
 from multiprocessing.process import parent_process
 from typing import Type
 
 from skellycam.core.types.type_overloads import TopicSubscriptionQueue
-from skellycam.utilities.wait_functions import wait_100ms
 
 logger = logging.getLogger(__name__)
 
@@ -49,11 +49,20 @@ class PubSubTopicABC(ABC):
             sub.put(message)
     def close(self):
         """
-        Close all subscriptions for this topic.
+        Close all subscriptions for this topic, when no other process or thread uses them (windows-capture.md 5.9).
         """
         logger.debug(f"Closing PubSubTopicABC {self.__class__.__name__} with {len(self.subscriptions)} subscriptions")
         for sub in self.subscriptions:
-            sub.close()
-        wait_100ms()
+            sub.cancel_join_thread()  # the end of the process does not wait for the feeder thread of a closed queue
+            for _ in range(10_000):  # no reader is left: a feeder thread that waits on a full pipe can then end
+                try:
+                    sub.get_nowait()
+                except (queue.Empty, OSError, EOFError):
+                    break
+            sub.close()  # a feeder thread closes the two pipe ends after the messages that it holds
+            if getattr(sub, "_thread", None) is None:
+                # shortcut: private names of multiprocessing.Queue; a queue with no put has no feeder thread to close them
+                sub._reader.close()
+                sub._writer.close()
         self.subscriptions.clear()
         logger.debug(f"Closed PubSubTopicABC {self.__class__.__name__}")
