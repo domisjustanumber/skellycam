@@ -453,3 +453,24 @@ records only the decisions that change the plan.
     writes 1 GiB; the application asks for the macOS camera permission.
   - Linux and macOS without evidence keep OpenCV and prompt for a certify run, for now. The goal: with
     enough passes of native capture, remove OpenCV and put new OS versions behind the certify test.
+
+## 15. Decision of the user of 2026-11-25: how the player opens H.264
+
+The user chose the route of the H.264 study, part A, section 12.5 (`research/h264_study/part_a/NOTES.md`
+on branch `dom/h264-scrub-study`). The choice was between a WASM demuxer in the browser and a server-side
+unwrap (the server demuxes with PyAV, the browser fetches packet ranges). This is a decision, not a
+go-ahead to build: the spec and the test list come first.
+
+- **H.264 in MP4:** the browser reads the original file by HTTP range with its own MP4 reader (the moov
+  gives offset, size, key flag and pts per sample) and decodes with WebCodecs `VideoDecoder`,
+  `hardwareAcceleration: "no-preference"`. Never `prefer-hardware`: it decoded only 102 of 306 seeks
+  exactly on the 4:2:2 sets (NOTES §9.2).
+- **Fallback:** the WASM route (FFmpeg 9.0 demuxers and decoders, the custom LGPL libav.js 6.10.9 build,
+  one worker per tile, the original file by range) when `isConfigSupported` says no or a decode errors.
+  Measured exact on every format tested. It costs 2.6 to 3 times the WebCodecs GPU seek time on H.264.
+- **The player picks the route by codec** (the sample entry, `avc1` or `mp4v`), not by file extension.
+- **Not adopted:** the server-side unwrap. The server only serves byte ranges; nothing is decoded or
+  demuxed there.
+- **Open, not decided:** H.264 in MKV or AVI (the own MP4 reader does not read them; WASM would); fetching
+  exact packet ranges instead of 256 KiB blocks (1 to 4 MB per seek today, not measured); serving the WASM
+  module once with an HTTP cache instead of once per worker.
