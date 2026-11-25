@@ -1,7 +1,13 @@
 # TFD7 — Search limit, median stop rate, role flag, no restart at a live change, restore after a failed loop
 
-**Status:** accepted, 2026-11-21 (user; the items B1, B2, B7, B8 and B9 of a sheet of open choices, to which
-the user answered "agree to all"; commit to dom/accept-choices).
+**Status:** absorbed into
+[`specs/camera-requests.md#13-the-search`](../../specs/camera-requests.md#13-the-search),
+[`specs/recorder.md#82-the-stop-response-r5`](../../specs/recorder.md#82-the-stop-response-r5),
+[`specs/certify.md#191-the-first-code-u`](../../specs/certify.md#191-the-first-code-u),
+[`specs/windows-capture.md#83-what-each-state-allows`](../../specs/windows-capture.md#83-what-each-state-allows),
+[`specs/unix-capture.md#47-restore-of-the-controls-at-the-close-u`](../../specs/unix-capture.md#47-restore-of-the-controls-at-the-close-u),
+2026-11-25 (commit to dom/log-cleanup; was accepted, 2026-11-21 (user; the items B1, B2, B7, B8 and B9 of a sheet of open choices, to which
+the user answered "agree to all"; commit to dom/accept-choices)).
 
 ## Decision
 

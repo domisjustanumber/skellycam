@@ -1,6 +1,9 @@
 # JK79 — Exposure search at each open, one slow-camera text, camera number, `usb_link`, virtual links
 
-**Status:** accepted, 2026-11-20 (user, relayed by the supervisor; commit to dom/requests-spec).
+**Status:** absorbed into
+[`specs/camera-requests.md#camera-requests-of-2026-11-20-exposure-one-frame-rate-usb-link-label`](../../specs/camera-requests.md#camera-requests-of-2026-11-20-exposure-one-frame-rate-usb-link-label),
+[`specs/windows-capture.md#71-detection-on-windows-d11`](../../specs/windows-capture.md#71-detection-on-windows-d11),
+2026-11-25 (commit to dom/log-cleanup; was accepted, 2026-11-20 (user, relayed by the supervisor; commit to dom/requests-spec)).
 
 ## Decision
 

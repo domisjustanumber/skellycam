@@ -1,7 +1,9 @@
 # MX8V — Decisions of the user on capture timings
 
-**Status:** accepted, 2026-11-23 (user; Q565 to Q571, to which the user answered "agree to all"; Q576 and
-Q577, agreed; Q578, the user refused "always on"; Q580 to Q583, "Q580-Q583 agree"; Q586, agreed).
+**Status:** absorbed into
+[`specs/capture-timings.md#capture-timings-specification-the-time-of-each-slow-step-of-the-frame-path-once-per-second`](../../specs/capture-timings.md#capture-timings-specification-the-time-of-each-slow-step-of-the-frame-path-once-per-second),
+2026-11-25 (commit to dom/log-cleanup; was accepted, 2026-11-23 (user; Q565 to Q571, to which the user answered "agree to all"; Q576 and
+Q577, agreed; Q578, the user refused "always on"; Q580 to Q583, "Q580-Q583 agree"; Q586, agreed)).
 
 ## Decision
 

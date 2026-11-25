@@ -1,7 +1,9 @@
 # 8Z0Q — Choices of the capture timings spec
 
-**Status:** accepted, 2026-11-23 (user; Q587 of ADR-8B85; commit to dom/timings-spec; was proposed,
-2026-11-23 (agent; draft 2 of [`specs/capture-timings.md`](../../specs/capture-timings.md))).
+**Status:** absorbed into
+[`specs/capture-timings.md#capture-timings-specification-the-time-of-each-slow-step-of-the-frame-path-once-per-second`](../../specs/capture-timings.md#capture-timings-specification-the-time-of-each-slow-step-of-the-frame-path-once-per-second),
+2026-11-25 (commit to dom/log-cleanup; was accepted, 2026-11-23 (user; Q587 of ADR-8B85; commit to dom/timings-spec; was proposed,
+2026-11-23 (agent; draft 2 of [`specs/capture-timings.md`](../../specs/capture-timings.md)))).
 
 ## Decision
 

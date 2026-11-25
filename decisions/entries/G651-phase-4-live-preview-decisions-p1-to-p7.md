@@ -1,6 +1,10 @@
 # G651 — Phase 4 decisions: live preview (P1 to P7)
 
-**Status:** accepted, 2026-11-19 (user; questions Q233 to Q239 of 2026-11-19).
+**Status:** absorbed into
+[`specs/preview.md#15-decisions-and-answers-of-the-user`](../../specs/preview.md#15-decisions-and-answers-of-the-user),
+[`specs/preview.md#84-targets-of-4a-each-one-to-measure-in-4a`](../../specs/preview.md#84-targets-of-4a-each-one-to-measure-in-4a),
+[`specs/preview-4b.md#2-the-base-branch-q2-s`](../../specs/preview-4b.md#2-the-base-branch-q2-s),
+2026-11-25 (commit to dom/log-cleanup; was accepted, 2026-11-19 (user; questions Q233 to Q239 of 2026-11-19)).
 
 ## Decision
 

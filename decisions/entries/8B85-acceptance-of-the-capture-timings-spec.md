@@ -1,7 +1,10 @@
 # 8B85 — The user accepts the capture timings spec and its build order
 
-**Status:** accepted, 2026-11-23 (user; question Q587, to which the user answered "Q587 agree"; commit to
-dom/timings-spec).
+**Status:** absorbed into
+[`specs/capture-timings.md#11-build-order`](../../specs/capture-timings.md#11-build-order),
+[`specs/capture-timings.md#14-decisions-of-the-user`](../../specs/capture-timings.md#14-decisions-of-the-user),
+2026-11-25 (commit to dom/log-cleanup; was accepted, 2026-11-23 (user; question Q587, to which the user answered "Q587 agree"; commit to
+dom/timings-spec)).
 
 ## Decision
 

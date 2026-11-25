@@ -13,20 +13,13 @@ task. Delete an item when its work is done. The PR that closes an item records t
   takes the code spans of `specs/certify.md` with the form of a check name (item 6 of
   [ADR-K9B7](entries/K9B7-design-of-the-other-systems-rule-skill-and-check.md)). The supervisor puts
   the options to the user. A later entry changes the lookup source.
-- **The index after the clean-up.**
-  [ADR-N2NH](entries/N2NH-index-limit-24000-no-shortened-rows-and-binding-specs.md) raised
-  `INDEX_LIMIT` from 14,000 to 24,000 characters until the clean-up. On 2026-11-20 the user ruled
-  that the limit is 24,000 (ADR-XT31), and the small choice entries of this branch were merged into
-  one entry for each step. The merge of `dom/recorder-connection` brought F8C0 (proposed; it does not
-  fit in ADR-P98T) and 82AA (accepted). 3WCA (`dom/3bc-tests`) joins the step entries when its
-  branch merges. If the index fills again, give
-  the user the bigger restructurings of decision 4 of ADR-N2NH.
+- **The index limit.** The limit is 24,000 characters (ADR-XT31). If the index fills again, give the
+  user the bigger restructurings of decision 4 of
+  [ADR-N2NH](entries/N2NH-index-limit-24000-no-shortened-rows-and-binding-specs.md).
 - **Phase 2 of the frame ring.** [ADR-50G8](entries/50G8-phase-2-frame-ring-spec.md) accepts
   [`specs/frame-ring.md`](../specs/frame-ring.md). The tests of step 2a (T-RING-01 to 33) are in
   `skellycam/tests/frame_ring/`. They use the API of
-  [ADR-9G2W](entries/9G2W-python-api-of-the-frame-ring-as-the-2a-tests-assume-it.md), which the
-  user accepted with clarifications, corrections and decisions on the 2a code (items 52 to 67) on
-  2026-11-18 and 2026-11-19. Run the T-RING-34 and T-RING-35 set with
+  [ADR-9G2W](entries/9G2W-python-api-of-the-frame-ring-as-the-2a-tests-assume-it.md). Run the T-RING-34 and T-RING-35 set with
   `uv run pytest -m ring_portable skellycam/tests/frame_ring`.
   Run the timed and kill tests with `-m ring_slow`. `SKELLYCAM_RING_FULL=1` gives the durations of
   the spec, for example 60 s for each slot count of T-RING-08. T-RING-49 needs cameras and is not
@@ -50,11 +43,6 @@ task. Delete an item when its work is done. The PR that closes an item records t
   - Open: section 15 must name the macOS timing step (BM73 7); item 90 of section 18 is stale.
   - The `README.md` of `skellycam/tests/reference_recordings/` still names the deleted tests of the
     phase 2 loop (W8); it changes after the redaction decision of that file.
-  - Run the fake-source tests with
-    `uv run pytest skellycam/tests/capture -m "not camera_hardware and not capture_local"`. The
-    hardware tests run only with `SKELLYCAM_HARDWARE=1`. The macOS job of `.github/workflows/capture.yml`
-    also runs the portable ring tests. It runs only by hand
-    ([ADR-N14T](entries/N14T-decisions-of-the-user-on-the-ci-review-of-2026-11-25.md)).
   - Phase 7: the parity table of section 16.7 of the spec is the to-do list for Linux and macOS
     (14 tests with no counterpart yet).
 - **Support virtual cameras.** Detection shows a virtual camera with `virtual=True`, and a request
@@ -66,9 +54,7 @@ task. Delete an item when its work is done. The PR that closes an item records t
   are accepted ([ADR-Z3Y7](entries/Z3Y7-acceptance-of-the-step-5a-recorder-spec-and-test-list.md),
   [ADR-P98T](entries/P98T-step-5a-choices-of-the-recorder-and-its-connection.md)). The tests are in
   `skellycam/tests/take_recorder/`, the code in `skellycam/core/take_recorder/`. The measurements of
-  R11 on Windows are in [ADR-8RES](entries/8RES-r11-measurements-of-the-5a-recorder.md). The user
-  keeps 3 s and 10 s as starting values
-  ([ADR-C6DE](entries/C6DE-stall-as-no-progress-limits-and-no-fat-disk.md) D2). Open: T-REC-STALL on
+  R11 on Windows are in [ADR-8RES](entries/8RES-r11-measurements-of-the-5a-recorder.md). Open: T-REC-STALL on
   a slow disk (USB, spinning) on the hardware of the user, and the D3 detection on Linux and macOS.
   Run the benchmarks with `SKELLYCAM_BENCH=1` and
   `SKELLYCAM_BENCH_OUT` set to a folder outside the repository.
@@ -100,24 +86,20 @@ task. Delete an item when its work is done. The PR that closes an item records t
   accepted ([ADR-WB08](entries/WB08-acceptance-of-the-step-4a-preview-spec-and-its-test-list.md),
   [ADR-68JT](entries/68JT-step-4a-choices-of-the-preview-sender.md)).
   - The tests of step 4a (T-PRV-01 to T-PRV-24) are in `skellycam/tests/preview/`, with the
-    helpers of spec section 9.1 in `preview_helpers.py`. Run them with
-    `uv run pytest skellycam/tests/preview`. The measurements
+    helpers of spec section 9.1 in `preview_helpers.py`. The measurements
     M-PRV-1 to M-PRV-5 are done on Windows
     ([ADR-HDC9](entries/HDC9-measurements-m-prv-1-to-m-prv-5-of-the-preview-sender.md)). Open: M-PRV-4
     on Linux. The user must confirm the target of A10 of
     [ADR-G651](entries/G651-phase-4-live-preview-decisions-p1-to-p7.md): 19 %, not the 12 % of the
     first run.
-  - Step 4b: the user answered the questions Q1 to Q13 of the spec
-    [`specs/preview-4b.md`](../specs/preview-4b.md), decided the PR target (upstream
-    `development`), accepted the spec in principle and gave the go-ahead for its tests, not its
-    code, on 2026-11-20
+  - Step 4b: the spec [`specs/preview-4b.md`](../specs/preview-4b.md) is accepted in principle,
+    with a go-ahead for its tests, not its code
     ([ADR-VYS7](entries/VYS7-answers-of-the-user-to-the-step-4b-spec-and-go-ahead-for-its-tests.md)).
-    Revision 3 has the full test list (section 7.4). Next: the failing 4b tests, on top of
-    `dom/integration` when it exists (section 2). The user accepted Q14 and the agent choices
-    ([ADR-RA16](entries/RA16-step-4b-choices-of-the-preview-ui.md)).
-- **The `sfn26` integration on `dom/integration`.** The user decided the base on 2026-11-20
-  ([ADR-EQY4](entries/EQY4-base-the-work-on-upstream-sfn26-without-rust.md)), and accepted the
-  agent choices ([ADR-6T78](entries/6T78-choices-of-the-sfn26-integration.md)). Open:
+    The failing 4b tests are on `dom/preview-4b-tests`. They stay unmerged until their code passes
+    (Q815).
+- **The `sfn26` integration on `dom/integration`**
+  ([ADR-EQY4](entries/EQY4-base-the-work-on-upstream-sfn26-without-rust.md),
+  [ADR-6T78](entries/6T78-choices-of-the-sfn26-integration.md)). Open:
   - The DirectShow open order of `sfn26` (item 1 of ADR-6T78) waits for a check on the cameras.
   - The UI does not show the `start_failure` warning item.
   - Not verified: real cameras, Linux, macOS and the installer build.
@@ -131,19 +113,12 @@ task. Delete an item when its work is done. The PR that closes an item records t
 - **Certify report fields, decided 2026-11-23, not built**
   ([ADR-F6C3](entries/F6C3-decisions-of-the-user-on-the-certify-report-fields.md)). The fields, the
   kept logs are in section 3.5 of the spec, in the slim form of Q594, with the build order of 3.6.7 (Q626) and
-  the tests T-CERT-77 to T-CERT-90. The unit id is removed (Q595). The user accepted the choices of the agent
-  ([ADR-NQ77](entries/NQ77-choices-of-the-certify-report-fields.md)) and the build order on 2026-11-23
-  ([ADR-10HT](entries/10HT-acceptance-of-the-certify-report-field-choices-and-the-build-order.md)).
+  the tests T-CERT-77 to T-CERT-90.
 - **Certify report shape, decided 2026-11-23, not built**
   ([ADR-H2A0](entries/H2A0-decisions-of-the-user-on-the-certify-report-shape.md),
   [ADR-BW5M](entries/BW5M-decisions-of-the-user-on-the-two-verdicts-and-the-certify-test-set.md)). Section 3.6 of the spec holds
   the shape of quick and full, the two verdicts, the fixes B1 and the commit (first in the build order of 3.6.7),
-  and the tests T-CERT-91 to T-CERT-132. Each question of this shape is decided (Q591 to Q629): the user
-  accepted the choices of the agent ([ADR-MEE1](entries/MEE1-choices-of-the-certify-report-shape.md),
-  [ADR-DBF8](entries/DBF8-choices-of-the-certify-names-verdicts-and-checks.md) by Q627 of
-  [ADR-63D9](entries/63D9-decisions-of-the-user-on-the-processors-the-build-order-and-the-certify-choices.md);
-  [ADR-M7JC](entries/M7JC-choices-of-the-any-language-camera-name-and-the-usb-capability.md) by Q628;
-  [ADR-H7PX](entries/H7PX-choices-of-the-usb-3-capability-on-macos-and-the-three-state-fact.md) by Q629).
+  and the tests T-CERT-91 to T-CERT-132. Each question of this shape is decided (Q591 to Q629).
   - The name rule of Q596 depends on a change of the wording of rule 16 of section 6 of the contract, for the
     name of the list of known cameras, the fixed class texts and a name in any script. The contract owner decides
     it; it is pending. The relay already keeps a name in any script (the answer of the contract owner).
@@ -171,7 +146,7 @@ task. Delete an item when its work is done. The PR that closes an item records t
   ([ADR-TFD7](entries/TFD7-search-limit-stop-rate-median-role-flag-and-restore-after-a-failed-loop.md)):
   a role flag in place of the `parent_process()`
   guards.
-- **Capture timings: the capture side is built on `dom/capture-timings-build`, not merged**
+- **Capture timings: the capture side is merged into `dom/integration` (211130fd5)**
   ([ADR-MX8V](entries/MX8V-decisions-of-the-user-on-capture-timings.md),
   [ADR-8B85](entries/8B85-acceptance-of-the-capture-timings-spec.md)). Steps 1 to 6 of section 11 of
   [`specs/capture-timings.md`](../specs/capture-timings.md); the user decided its open choices in
@@ -179,10 +154,10 @@ task. Delete an item when its work is done. The PR that closes an item records t
   of [ADR-JFG4](entries/JFG4-choices-of-the-capture-timings-build.md) is proposed. Open: the timed test
   `test_process_workers.py` (an OK of the user first); M-TIM-1 on the hardware of the user (step 7); the tile with
   step 4b (step 8: T-TIM-24 in TypeScript, T-TIM-25, T-TIM-26, and the `preview_send` bracket of 6.5, Q839).
-- **Merge order and clean-up (2026-11-25, ADR-GZS7).** After this branch, a decision-log clean-up lane (Q814:
-  absorb the Active entries that the specs state; DC43, KY81, 8CP7 to accepted; resolve the overlapping absorbs);
-  then the other branches (Q841). The branches of failing tests stay unmerged until their code passes (Q815). The FreeMoCap display comes after FreeMoCap moves
-  to the frame-ring API.
+- **Merge order (2026-11-25, ADR-GZS7).** The clean-up lane of Q814 is on `dom/log-cleanup`; the other branches
+  merge after it (Q841). Each merge runs the tests that no CI job runs on a push (Q841). The branches of failing
+  tests stay unmerged; each code lane builds on its test branch, and tests and code merge together when they pass
+  (Q815). The FreeMoCap display comes after FreeMoCap moves to the frame-ring API.
 - **Deferred by the user (2026-11-23).** At 60 fps the exposure search never tries a value longer
   than the frame period. The product switches low light compensation off after each open.
 - **Fix lane 4 follow-ups** ([ADR-HQE5](entries/HQE5-choices-of-fix-lane-4.md)).
@@ -193,22 +168,15 @@ task. Delete an item when its work is done. The PR that closes an item records t
   - The CI runs with `spawn`, the skip guard and the pace steps have run on Linux and Windows. macOS is not done: its
     jobs run only by hand ([ADR-N14T](entries/N14T-decisions-of-the-user-on-the-ci-review-of-2026-11-25.md)).
   - FreeMoCap on Linux ([ADR-T34M](entries/T34M-decision-of-the-user-on-the-start-method-of-camera-processes.md)):
-    nothing is decided. The user: "I think this needs to be part of a wider review of how the whole of freemocap
-    works on linux"; the freemocap session does that review. A candidate for it: a call of
+    nothing is decided; the freemocap session does the wider Linux review. A candidate for it:
     `multiprocessing.set_start_method("spawn")` at the top of `freemocap/__main__.py`, before
-    `create_websocket_log_queue()`, so that its own workers also spawn on Linux, as on Windows. After this change of
-    skellycam, FreeMoCap on Linux opens no camera until it sets the start method: its method is `fork`, and skellycam
-    refuses each camera process with `start-method-fork` (`unix-capture.md` 4.12). This is the decision of the
-    user; the fix of FreeMoCap belongs to the wider Linux review. Not verified on Linux.
+    `create_websocket_log_queue()`. Until then FreeMoCap on Linux opens no camera: its method is `fork`, and skellycam
+    refuses it with `start-method-fork` (`unix-capture.md` 4.12). Not verified on Linux.
 - **Fix lane 5 follow-ups** ([ADR-DC43](entries/DC43-choices-of-fix-lane-5.md)).
   - The user decides items 1 to 4. Windows Server `os.label`: `Windows 2025Server 24H2` [NV].
   - `stop_after_frame=200` tests that wait for `ready` have the risk of T-UNX-95.
 - **Fix lane 7 follow-ups** ([ADR-R394](entries/R394-choices-of-fix-lane-7.md),
   [ADR-2SX2](entries/2SX2-acceptance-of-the-choices-of-fix-lane-7-and-its-follow-ups.md)).
-  - The pubsub leak (item 2 of ADR-2SX2) is fixed by [ADR-4CAF](entries/4CAF-choices-of-the-close-of-the-queues-of-a-group.md)
-    (`windows-capture.md` 5.9, T-CAP-114).
-  - The T-UNX-98 thread (item 3 of ADR-2SX2) is fixed in the test helpers by
-    [ADR-JC4X](entries/JC4X-choices-of-the-gate-probe-of-a-second-app-on-the-test-clock.md).
   - Question for the user (not decided by [ADR-ZT5F](entries/ZT5F-acceptance-of-the-choices-of-fix-lane-8.md) item 3):
     does `test_status_locks.py::test_a_live_but_slow_holder_and_torn_json_never_raise[writes with no lock]` move to
     `pace`, or stay as it is? It fails 1 in 20 on 2 cores (real time; JC4X item 3).
