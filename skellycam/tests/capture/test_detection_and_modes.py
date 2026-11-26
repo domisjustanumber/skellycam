@@ -216,8 +216,10 @@ def _refused(native, width, height, framerate):
     return failure.value
 
 
+# The NV12 type is at 15 fps (Q876): below the floor, so the raw-mode open of 22.2 (Q807) does not take it, and
+# 1920x1080 has no mode that an MJPG request opens, as in the spec row.
 NATIVE_26 = ((1280, 720, 30000, 1001, "MJPG"), (1280, 720, 30, 1, "MJPG"), (640, 480, 30, 1, "MJPG"),
-             (1920, 1080, 30, 1, "H264"), (1920, 1080, 30, 1, "NV12"))
+             (1920, 1080, 30, 1, "H264"), (1920, 1080, 15, 1, "NV12"))
 
 
 def test_t_cap_26_mode_choice():

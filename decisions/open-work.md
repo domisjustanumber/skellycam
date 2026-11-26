@@ -43,9 +43,12 @@ task. Delete an item when its work is done. The PR that closes an item records t
   - The `README.md` of `skellycam/tests/reference_recordings/` still names the deleted tests of the
     phase 2 loop (W8); it changes after the redaction decision of that file.
   - Step 3b (section 22, [ADR-ZEK6](entries/ZEK6-choices-of-the-jpeg-encode-at-capture-code.md)): it merges with
-    its tests after a review (Q815). Open: T-CAP-26 against Q807 (ZEK6 15); no test of the real `QuickSyncEncoder`
-    or the raw path of Media Foundation; 22.5 not run; the check is [NV] on other machines (certify check and
-    time limit: the user decides). Q809: the 3c tests of `dom/3bc-tests` come later.
+    its tests after a review (Q815). No test covers the real `QuickSyncEncoder` or the raw path of Media Foundation;
+    22.5 is not run. Q879 ([ADR-4TBY](entries/4TBY-decisions-of-the-user-on-the-review-of-the-3b-code.md)): a
+    follow-up lane after the merge, spec and tests first: (a) a record-only certify check (Quick Sync works or not,
+    and the time of the check); (b) the check of the product in a child process with a time limit (5 s suggested),
+    a hang or a crash gives "no Quick Sync, use OpenCV". The [NV] mark of 13.2 stays until then. Q809: the 3c
+    tests of `dom/3bc-tests` come later.
   - Phase 7: the parity table of section 16.7 of the spec is the to-do list for Linux and macOS
     (14 tests with no counterpart yet).
 - **Support virtual cameras.** Detection shows a virtual camera with `virtual=True`, and a request

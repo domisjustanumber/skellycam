@@ -1203,7 +1203,8 @@ test list of the encode at capture (2026-11-25).
 - `auto`: during the 90 discarded warm-up frames, count the Y values outside 16 to 235. If more than
   1 % are outside, the camera is full range. Else, the flag of the OS decides (limited if not set)
   [notes: Input range] [D21].
-- The decision is made one time, before the first recorded frame, and never changes in a session. The
+- The decision is made one time for each camera loop (22.2 [U Q881]), before the first recorded frame, and
+  never changes in a session. The
   camera process logs the range ([`recorder.md`](recorder.md) 6.7).
 
 ## 14. The OpenCV source
@@ -2523,7 +2524,8 @@ side of these rules is the certify checks of section 20 of [`certify.md`](certif
   n of [ADR-N72V](../decisions/entries/N72V-choices-of-the-raw-mode-open-and-the-yuyv-format.md), a
   choice of an agent that the user accepted on 2026-11-26 (Q845). A mark [U Qn] is a decision of the
   user of 2026-11-26
-  ([ADR-8WY3](../decisions/entries/8WY3-decisions-of-the-user-on-the-raw-mode-open-and-its-flag.md)). A mark
+  ([ADR-8WY3](../decisions/entries/8WY3-decisions-of-the-user-on-the-raw-mode-open-and-its-flag.md),
+  [ADR-4TBY](../decisions/entries/4TBY-decisions-of-the-user-on-the-review-of-the-3b-code.md)). A mark
   [ZEK6 n] is item n of [ADR-ZEK6](../decisions/entries/ZEK6-choices-of-the-jpeg-encode-at-capture-code.md), a proposed choice of the agent that wrote the code.
   V5 (OpenCV controls, except the empty mode list) and V7 (3c hardware) are not part of this section.
 
@@ -2541,8 +2543,8 @@ side of these rules is the certify checks of section 20 of [`certify.md`](certif
   format at the requested size: 30 if that format has 30, else 29.97, else its highest rate at the
   floor or above. With none, the camera fails at `set mode` with "no mode at 30 fps or more".
 - **A camera with no MJPG mode [Q807].** An MJPG request (the default) for a camera with no MJPG mode
-  at 30 fps or more at the requested size, but with a YUY2 or NV12 mode at that size, opens the raw
-  mode. The camera logs one line, and its frames are encoded to JPEG at capture. YUY2 comes before
+  at 30 fps or more at the requested size, but with a YUY2 or NV12 mode at 30 fps or more at that size
+  [U Q881], opens the raw mode. The camera logs one line, and its frames are encoded to JPEG at capture. YUY2 comes before
   NV12 [N72V 1, U Q845]. The rate follows 7.5 for the raw format, and the auto rate of V2 [N72V 1]. The
   line is at INFO, one for each open of the raw mode. It holds the camera ID, the words "no MJPG mode"
   and the opened format [N72V 2]. The whole-request check of 7.5 applies the same rule with
@@ -2553,7 +2555,7 @@ side of these rules is the certify checks of section 20 of [`certify.md`](certif
   `"YUYV"` (SFF-800; [`recorder.md`](recorder.md) 6.7). This also applies to a camera that opened its
   raw mode by Q807: the take records the opened format, not the requested format [N72V 4]. A take of a
   camera in NV12 records `"NV12"`: SFF-800 on skellyspecs main lists it since 2026-11-26 (Q849)
-  [ZEK6 9, proposed].
+  [U Q877]. The mode label of the ring (`CameraRingInfo.mode`) shows the requested format [U Q881].
 - **Encoder in the status [V3].** The status has `jpeg_encoder`: `"quick_sync"` or `"cv2"` for a
   camera whose JPEG is encoded at capture (YUY2, NV12, and each camera of the OpenCV source), `null`
   for a camera that gives its own JPEG (MJPG). After a fallback during a take, it is `"cv2"`.
@@ -2562,8 +2564,10 @@ side of these rules is the certify checks of section 20 of [`certify.md`](certif
   `cv2.imencode` [3WCA 3]. The stop line holds the camera ID, then `encoder fallbacks`, then the count
   [3WCA 3]. The item has the kind `encoder_fallback`, and it is in the status `warnings` while the take
   runs [3WCA 3]. "The first frame after the event" is the first ring frame written after it [3WCA 7].
-  An encoder that takes frames and gives no JPEG and no error is a failure too: when more than two
-  frames (`async_depth`) wait for their JPEG, the camera falls back to `cv2.imencode` [ZEK6 12, proposed].
+  When Quick Sync holds more frames than its depth (2) and gives none back, the camera falls back to
+  `cv2.imencode` for the rest of that open, as after a Quick Sync error [U Q878]. Frames that Quick Sync
+  still holds at a close are dropped. A Quick Sync encoder that does not open at the start of a camera
+  is not counted as a fallback: the camera uses `cv2.imencode` [U Q881].
 - **OpenCV source [V4].** A YUY2 or NV12 request gives a `cv2.imencode` JPEG at quality 90 of the
   image that OpenCV delivers. No Quick Sync check runs. `jpeg_encoder` is `"cv2"`. There is no input
   range: no range line in the log, because [`recorder.md`](recorder.md) 6.7 gives the range to the
@@ -2603,8 +2607,8 @@ missing module, not with an error at collection (22.6 item 20).
 | T-CAP-154 | 3b | fake | An MJPG request at 320x240 at 30 fps for four fakes: MJPG at 15 and YUY2 at 30 there; NV12 only there; NV12 and YUY2 there; MJPG at 30 and YUY2 there (each fake also has MJPG at 30 at 640x480); record [Q807, Q808]. | The first three open YUY2, NV12 and YUY2, reach `ready`, log one line of 22.2 each, give ring JPEGs with the chroma of the source, show `jpeg_encoder` "cv2" and record `YUYV` for YUY2; the fourth opens MJPG, logs no such line and records `MJPG`. |
 | T-CAP-155 | 3b | fake | A YUY2 request (`capture_fourcc`) records a take [Q808]. | `requested.capture_format` of the capture info is `"YUYV"`; each block of the camera file is a 4:2:2 JPEG. |
 | T-CAP-156 | 3b | fake | A request for YUY2 with a slow Quick Sync check; during the check, an exposure change that holds in its apply [ZEK6 2]. | The YUY2 request gets 409 with the reason of [`camera-requests.md`](camera-requests.md) 2.4a item 7; two changes never run at once. |
-| T-CAP-157 | 3b | fake | A fake Quick Sync encoder that takes each frame and gives no JPEG and no error [ZEK6 12]. | The camera falls back to `cv2.imencode` at the third frame; the first ring frame has `DISCONTINUITY`; no taken frame is lost; the WARNING line and the stop line come. |
-| T-CAP-158 | 3b | fake | Quick Sync holds one frame; a reopen (BGR ring on), then the close [ZEK6 6]. | Each encoder closes with one frame more in than out; each JPEG out is a ring frame of its own frame. |
+| T-CAP-157 | 3b | fake | A fake Quick Sync encoder that takes each frame and gives no JPEG and no error [U Q878]. | The camera falls back to `cv2.imencode` at the third frame; the first ring frame has `DISCONTINUITY`; no taken frame is lost; the WARNING line and the stop line come. |
+| T-CAP-158 | 3b | fake | Quick Sync holds one frame; a reopen (BGR ring on), then the close [U Q881]. | Each encoder closes with one frame more in than out; each JPEG out is a ring frame of its own frame. |
 | T-CAP-159 | 3b | fake | The encoder fails while no take runs; then a reopen [ZEK6 7]. | No `encoder_fallback` item; the WARNING line; the reopen opens no Quick Sync encoder; one fallback in the stop line. |
 | T-CAP-160 | 3b | fake | `input_range` "full" and "limited" against the share of the warm-up; "auto" with the OS flag "full" [ZEK6 4]. | The log gives the set range; the ring JPEG is the full-range BGR of the source with that range, within 3 levels. |
 
