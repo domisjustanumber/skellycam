@@ -13,8 +13,12 @@ changes.
    time does not move while the head of its ring is 8 frames or more past the frame that it asked for. It
    leaves the clock at its end. In the open step of certify, the thread that opens the rings also holds the
    time from the open of each JPEG ring until a watch reads it: the session looks for new rings only each 5 ms
-   of real time. `capture_session.install_watch_clock` does this for each `CaptureApp` on a virtual clock, with
-   the helper `hold_clock_while_behind` (a gate whose `shut` reads the ring head).
+   of real time. A ring that closes before a watch reads it holds nothing. `capture_session.install_watch_clock`
+   does this for each `CaptureApp` on a virtual clock, with the helper `hold_clock_while_behind` (a gate whose
+   `shut` reads the ring head). A second app in one test wraps the product functions, as `install_gate_probe`
+   does; the watch then follows the clock of the newest app. No certify test has two apps.
+   The hold from the ring open hides the product race of item 5 in each THREAD certify test. It is acceptable
+   only with T-CERT-151, which covers that race with PROCESS workers.
 2. **The reader of T-RING-40 holds the clock in the same way**, while it is 500 frames behind the JPEG ring
    (the ring has 1,000 slots). Each check of T-RING-40 stays.
 3. **T-REC-41 waits for 60 decoded frames.** With a BGR ring, the test records 60 frames, then also waits until
@@ -23,11 +27,21 @@ changes.
    behind the recorder.
 4. **T-RING-38 accepts `ready` or `dead` at its start.** The fake stops after frame 200, so the camera ends
    (`dead`) soon after `ready`. The start of the test waits for `ready` or `dead`, as
-   `capture_session.one_camera` does for such a camera. Each check of T-RING-38 stays.
-5. **More facts in one assert of T-CERT-92.** The check "no `not-reached` row for a camera that can go on" of
-   `assert_not_reached` gives the rows of that camera in its message. The failure of
-   `test_t_cert_92_a_hang_at_the_open` on windows-2025 did not come again on this machine, so the next failure
-   must show which check of the good camera did not run. The check does not change.
+   `capture_session.one_camera` does for such a camera. The test opens its views of the rings just after the
+   apply, before that wait: the group watch can close the rings of a camera whose loop ended. Each check of
+   T-RING-38 stays.
+5. **The failure of `test_t_cert_92_a_hang_at_the_open` on windows-2025 is a product race. The fix waits for
+   the user.** T-CERT-151 (`test_t_cert_151_a_ready_camera_with_no_ring_watch_at_the_judge`) is its regression
+   test: a strict `xfail` until the fix lands, with the marker `capture_timing` (PROCESS workers, real time).
+   The check "no `not-reached` row for a camera that can go on" of `assert_not_reached` also gives the rows of
+   that camera in its message. The race: `CameraGroup.start` opens the rings only after the hung camera fails
+   (5 s); the good camera waited in `waiting` and is `ready` about 1 ms after its ring opens; the session judges
+   the open before its next look for new rings (each 5 ms), so the camera has no `RingWatch`; `judge_open` then
+   leaves it out of `live` with no reason, and its later checks become one `not-reached` row. The file and line
+   of each step are in [the evidence file](../evidence/2HW5-ci-triage-evidence.md).
+6. **The pace failure on windows-2025 is a pace result.** `test_a_slow_stop_has_a_gap_only_on_the_last_row[0.2-60]`
+   (marker `pace`, a non-blocking step) found one `camera_gap` of one frame on row 17 of 30. This is the busy-machine
+   case of Q619 that its marker names. No change.
 
 ## Reason
 
@@ -44,12 +58,15 @@ changes.
    pace of the machine. A cap on the speed of the virtual clock would slow each test and still depend on the
    pace.
 4. Items 3 and 4 are waits that the pace of the machine no longer decides. No check is removed or loosened.
+5. Item 5: no spec rule says what certify does with a camera that is `ready` but has no ring watch. The fix is
+   a choice for the user (spec and tests before code). The regression test fails today and passes after a fix
+   that does not depend on the time of a look of `watch_rings`.
 
 ## Evidence
 
-The log of CI run 45872128301 (ubuntu-24.04) and runs of a copy of 32eb69e20 in WSL Ubuntu 24.04 (uv, Python
-3.13.18, a stand-in `sounddevice`) with `taskset -c 0-1` (2 cores), one pytest process at a time. See
-[the evidence file](../evidence/2HW5-ci-triage-evidence.md).
+The logs of CI run 45872128301, runs of copies of 32eb69e20 in WSL Ubuntu 24.04 on 1 or 2 cores, and runs on
+Windows. An independent review found the race of item 5 and its probe (the look of `watch_rings` each 0.25 s).
+See [the evidence file](../evidence/2HW5-ci-triage-evidence.md).
 
 ## Alternatives rejected
 

@@ -92,7 +92,7 @@ These entries wait for a decision of the user. Section is the section or area of
 | [J1HD](entries/J1HD-choices-of-the-control-read-check.md) | Choices of the certify check of the control read: 30 s on and off, the 100 ms rule, `control_read` in the record, a harmed model pauses on each build | none | proposed |
 | [TYH0](entries/TYH0-choices-after-the-acceptance-of-the-v1-playback-spec.md) | After the v1 spec acceptance: the code that goes with the old routes in 6c part 1; the certify row `player-legacy-decode` | `player` | proposed |
 | [QF7V](entries/QF7V-choices-of-the-test-workflow-on-dom-integration.md) | Choices of the push run of `test.yml`: no run for log-only pushes, no macOS job on a push, pinned labels, PortAudio, no `capture_local`, no fail-fast, 60 min | none | proposed |
-| [2HW5](entries/2HW5-choices-of-the-ci-triage-of-the-first-test-run-on-dom-integration.md) | CI triage of run 45872128301: ring readers hold the test clock while behind (certify watch, T-RING-40); T-REC-41 and T-RING-38 waits | none | proposed |
+| [2HW5](entries/2HW5-choices-of-the-ci-triage-of-the-first-test-run-on-dom-integration.md) | CI triage of run 45872128301: ring readers hold the test clock while behind; T-REC-41 and T-RING-38 waits; a certify watch race, T-CERT-151 | none | proposed |
 
 The entries that are `rejected`, `superseded by XXXX`, `absorbed into <path>#<anchor>`,
 `evidence; used by XXXX`, `evidence; replaced by XXXX` or `done` are in [historical.md](historical.md).
