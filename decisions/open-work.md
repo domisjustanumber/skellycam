@@ -19,8 +19,7 @@ task. Delete an item when its work is done. The PR that closes an item records t
 - **Phase 2 of the frame ring.** [ADR-50G8](entries/50G8-phase-2-frame-ring-spec.md) accepts
   [`specs/frame-ring.md`](../specs/frame-ring.md). The tests of step 2a (T-RING-01 to 33) are in
   `skellycam/tests/frame_ring/`. They use the API of
-  [ADR-9G2W](entries/9G2W-python-api-of-the-frame-ring-as-the-2a-tests-assume-it.md). Run the T-RING-34 and T-RING-35 set with
-  `uv run pytest -m ring_portable skellycam/tests/frame_ring`.
+  [ADR-9G2W](entries/9G2W-python-api-of-the-frame-ring-as-the-2a-tests-assume-it.md).
   Run the timed and kill tests with `-m ring_slow`. `SKELLYCAM_RING_FULL=1` gives the durations of
   the spec, for example 60 s for each slot count of T-RING-08. T-RING-49 needs cameras and is not
   written.
@@ -56,16 +55,13 @@ task. Delete an item when its work is done. The PR that closes an item records t
   `skellycam/tests/take_recorder/`, the code in `skellycam/core/take_recorder/`. The measurements of
   R11 on Windows are in [ADR-8RES](entries/8RES-r11-measurements-of-the-5a-recorder.md). Open: T-REC-STALL on
   a slow disk (USB, spinning) on the hardware of the user, and the D3 detection on Linux and macOS.
-  Run the benchmarks with `SKELLYCAM_BENCH=1` and
-  `SKELLYCAM_BENCH_OUT` set to a folder outside the repository.
   Next: the take in the new player and in Blender.
 - **Phase 6a (the canvas player for new takes).** The spec [`specs/player.md`](../specs/player.md) (revision 2)
   and its test list are accepted ([ADR-YV3V](entries/YV3V-acceptance-of-the-phase-6a-player-spec-and-test-list.md),
   [ADR-4D94](entries/4D94-step-6a-choices-of-the-canvas-player.md)).
   - The failing tests of 6a are in `skellycam-ui/src/player/tests/` and
-    `skellycam-ui/src/components/playback/tests/`. Run `npm run test:player:unit` and
-    `npm run test:player:browser` in `skellycam-ui/`. The benchmarks T-PLAY-65 to T-PLAY-70 run by
-    hand with `playwright.player-bench.config.ts`.
+    `skellycam-ui/src/components/playback/tests/`. The benchmarks T-PLAY-65 to T-PLAY-70 run by hand with
+    `playwright.player-bench.config.ts`.
   - The `xvfb` version of `.github/workflows/player.yml` is not verified. The unit tests ran on Node
     26.13.1 on the Windows test machine only.
   - The product code of 6a is on `dom/player` (2026-11-20). Some tests still fail; the report of the
@@ -130,8 +126,7 @@ task. Delete an item when its work is done. The PR that closes an item records t
   - Not verified: the hub flag of Windows on hardware (a Kiyo Pro on a USB 2 port), the kernel release of
     `bos_descriptors` on Linux, and each macOS method of 3.6.13. The trial `<label>:usb3-trial` at the end of a
     full run on macOS and Linux reports each method (Q629); after its reports show that the request to the camera
-    is safe or not, the user decides whether it moves to the detection or goes. There is no stand-alone probe:
-    certify is the only way that tests run on other systems (the user, Q629).
+    is safe or not, the user decides whether it moves to the detection or goes.
   - Later work, not specified: an optional question to the person, "What make and model is this?".
   - The sign-off checks `<label>:cycles`, `group:take-30`, `group:contention` and `group:open` (Q599, Q610), and
     `group:restore-after-kill` when the product keeps the "before" values on disk (Q608, Q615).
@@ -155,8 +150,6 @@ task. Delete an item when its work is done. The PR that closes an item records t
   - The run parts of T-CERT-23 (the Auto checks of `full`) and of T-CERT-121 (`details.cameras`) wait for that
     code. T-CERT-32 runs on Windows only until phase 7 (Q777).
   - The frozen case of T-CERT-18 is not proven until T-CERT-90 runs on a real build (item 14 of ADR-ZRA6).
-  - Q790 (Q62) and Q792 (Q64) are not in this lane on purpose: their spec text is on `dom/exclusive-access-spec`
-    and waits for the acceptance of the user.
 - **Decided 2026-11-21, not built**
   ([ADR-TFD7](entries/TFD7-search-limit-stop-rate-median-role-flag-and-restore-after-a-failed-loop.md)):
   a role flag in place of the `parent_process()`
@@ -169,8 +162,8 @@ task. Delete an item when its work is done. The PR that closes an item records t
   of [ADR-JFG4](entries/JFG4-choices-of-the-capture-timings-build.md) is proposed. Open: the timed test
   `test_process_workers.py` (an OK of the user first); M-TIM-1 on the hardware of the user (step 7); the tile with
   step 4b (step 8: T-TIM-24 in TypeScript, T-TIM-25, T-TIM-26, and the `preview_send` bracket of 6.5, Q839).
-- **Merge order (2026-11-25, ADR-GZS7).** The clean-up lane of Q814 is on `dom/log-cleanup`; the other branches
-  merge after it (Q841). Each merge runs the tests that no CI job runs on a push (Q841). The branches of failing
+- **Merge order (2026-11-25, ADR-GZS7).** `dom/log-cleanup` holds the clean-up of Q814 and the merges of
+  Q841; it goes into `dom/integration` after a review. Each merge runs the tests that no CI job runs on a push (Q841). The branches of failing
   tests stay unmerged; each code lane builds on its test branch, and tests and code merge together when they pass
   (Q815). The FreeMoCap display comes after FreeMoCap moves to the frame-ring API.
 - **Deferred by the user (2026-11-23).** At 60 fps the exposure search never tries a value longer
@@ -179,8 +172,8 @@ task. Delete an item when its work is done. The PR that closes an item records t
   - Certify: `group:restore-after-kill` (Q615) can use the restore file with a folder of its own run.
   - FreeMoCap reads `framerate_stats.median` from the old `*_stats.json`, not from the stop response; a reader of
     new takes must use `mean_framerate` (Q609).
-  - The CI runs with `spawn`, the skip guard and the pace steps have run on Linux and Windows. macOS is not done: its
-    jobs run only by hand ([ADR-N14T](entries/N14T-decisions-of-the-user-on-the-ci-review-of-2026-11-25.md)).
+  - macOS: `spawn`, the skip guard and the pace steps have not run in its CI jobs; they run only by hand
+    ([ADR-N14T](entries/N14T-decisions-of-the-user-on-the-ci-review-of-2026-11-25.md)).
   - FreeMoCap on Linux ([ADR-T34M](entries/T34M-decision-of-the-user-on-the-start-method-of-camera-processes.md)):
     nothing is decided; the freemocap session does the wider Linux review. A candidate for it:
     `multiprocessing.set_start_method("spawn")` at the top of `freemocap/__main__.py`, before
