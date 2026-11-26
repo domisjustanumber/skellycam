@@ -71,6 +71,7 @@ class CameraGroupManager:
     _log_capture_times: bool = False  # capture-timings.md 2: the one switch of the app
     quick_sync: bool | None = None  # windows-capture.md 13.2 [3WCA 6]: the one Quick Sync check of the app run
     encoder_failed: set = field(default_factory=set)  # 22.2 [U Q886]: cameras that fell back from Quick Sync
+    _last_statuses: dict = field(default_factory=dict)  # camera_id -> its status of the newest group (Q886)
 
     @property
     def log_capture_times(self) -> bool:
@@ -87,17 +88,16 @@ class CameraGroupManager:
     def _write_switch(self, group) -> None:
         cameras = group.cameras
         statuses = {**cameras.removed_statuses, **cameras.orchestrator.camera_statuses}
-        self._keep_encoder_failures(group)
         for camera_id, status in statuses.items():
+            # 22.2 [U Q886]: a fallback in the status of this group or of the last group (its shared value stays
+            # readable after its close) keeps the camera on cv2 for the app run
+            if any(known is not None and known.encoder_failed.value
+                   for known in (self._last_statuses.get(camera_id), status)):
+                self.encoder_failed.add(camera_id)
+            self._last_statuses[camera_id] = status
             status.log_capture_times.value = self._log_capture_times
             status.quick_sync.value = bool(self.quick_sync)  # 13.2: each camera process gets the result
-            status.encoder_failed.value = camera_id in self.encoder_failed  # [U Q886]
-
-    def _keep_encoder_failures(self, group) -> None:
-        """22.2 [U Q886]: a camera that fell back from Quick Sync uses cv2 at each later open of this app run."""
-        cameras = group.cameras
-        statuses = {**cameras.removed_statuses, **cameras.orchestrator.camera_statuses}
-        self.encoder_failed.update(camera_id for camera_id, status in statuses.items() if status.encoder_failed.value)
+            status.encoder_failed.value = camera_id in self.encoder_failed
 
     def capture_timings(self) -> dict:
         """capture-timings.md 6.3: the newest summary of each camera of each open group, at most 3 s old. It reads no
@@ -154,7 +154,6 @@ class CameraGroupManager:
                 await camera_group.close()
             except Exception as close_err:
                 logger.error(f"Error closing failed camera group {camera_group.id}: {close_err}")
-            self._keep_encoder_failures(camera_group)
             self.camera_groups.pop(camera_group.id, None)  # a close of all groups can have removed it first
             self.camera_group_framerate_subscriptions.pop(camera_group.id, None)
             raise
@@ -451,7 +450,6 @@ class CameraGroupManager:
                 if group is None:  # a second close, or the teardown of a failed start, removed it first
                     continue
                 await group.close()
-                self._keep_encoder_failures(group)
                 self.closed_diagnostics.update({camera_id: group.diagnostics(camera_id) for camera_id in group.camera_ids})
                 self.camera_groups.pop(camera_group_id, None)
                 self.camera_group_framerate_subscriptions.pop(camera_group_id, None)

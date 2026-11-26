@@ -184,7 +184,7 @@ def test_t_rec_41_no_decode_for_the_recorder(monkeypatch, tmp_path, bgr_ring):
     decode thread only when a BGR ring exists."""
     # "One decode per frame": no frame is decoded two times, and each BGR ring write with an image has one
     # decode (the decode stage can skip a frame that a newer one replaced, ring 8.3).
-    with capture_app(monkeypatch, [FakeScript(modes=((320, 240, 30, 1, "MJPG"),))]) as app:
+    with capture_app(monkeypatch, [FakeScript(modes=((640, 480, 30, 1, "MJPG"),))]) as app:  # the size floor (Q887)
         spies = Spies(monkeypatch, app)
         camera_id = app.factory.camera_ids[0]
         ready_app_steps(app, [app.config(camera_id, bgr_ring=bgr_ring)])

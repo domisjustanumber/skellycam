@@ -314,7 +314,7 @@ def test_t_tim_23_the_clock_reads_of_a_raw_camera(monkeypatch, tmp_path):
     loop = make_loop(monkeypatch, clock, source)
     QuickSyncFake(monkeypatch, available=True)
     loop.raw_format, loop.full_range = "YUY2", False
-    loop.encoder = encoder_module.FrameEncoder("YUY2", 64, 48, False, True)
+    loop.encoder = encoder_module.FrameEncoder("YUY2", 640, 480, False, True)
     switch_on(loop)
     start_take(loop, tmp_path)
     loop._arm_hashes("recording")

@@ -126,7 +126,7 @@ async def test_t_ring_37_bgr_ring_recreated_on_a_mode_change(monkeypatch, cleanu
         old_reader = cleanup.handle(fr.FrameRingReader.attach(old))
         old_raw = cleanup.handle(open_raw(old))
         await wait_until(lambda: old_reader.read_newest().result == fr.ReadResult.OK, "first BGR frame")
-        await group.update_camera_settings(fake_configs(2, 320, 240, 30.0, bgr_ids=("0",)))
+        await group.update_camera_settings(fake_configs(2, 1280, 720, 30.0, bgr_ids=("0",)))
         new = group.ring_infos["0"].bgr_ring_name
         assert new is not None and new != old
         assert int(new.rsplit("B", 1)[1]) == int(old.rsplit("B", 1)[1]) + 1
@@ -142,13 +142,13 @@ async def test_t_ring_37_bgr_ring_recreated_on_a_mode_change(monkeypatch, cleanu
         finally:
             raw.close()
         assert header["pixel_format"] == PIXEL_FORMAT_BGR24
-        assert (header["width"], header["height"]) == (320, 240)
-        assert header["slot_capacity"] == bgr_size(320, 240)
+        assert (header["width"], header["height"]) == (1280, 720)
+        assert header["slot_capacity"] == bgr_size(1280, 720)
         new_reader = cleanup.handle(fr.FrameRingReader.attach(new))
         await wait_until(lambda: new_reader.read_newest().result == fr.ReadResult.OK, "first new BGR frame")
         read = new_reader.read_newest()
         assert read.frame_number >= 0
-        assert type(read.payload) is np.ndarray and read.payload.shape == (240, 320, 3)
+        assert type(read.payload) is np.ndarray and read.payload.shape == (720, 1280, 3)
         new_reader.close()
 
 
@@ -235,13 +235,13 @@ def test_t_ring_40_both_rings_match(monkeypatch, cleanup):
     `rotation_cw_deg`; the BGR `published_ns` is not earlier than that of the JPEG. Each number
     that the BGR ring does not give is a counted BGR skip.
 
-    The fake source gives 160x120 MJPG frames at 1,000 frames/s of a virtual clock, and each ring
-    has 1,000 slots, so that the reader keeps up.
+    The fake source gives 640x360 MJPG frames (the smallest size of the floor, windows-capture.md 22.2, Q888)
+    at 1,000 frames/s of a virtual clock, and each ring has 1,000 slots, so that the reader keeps up.
     """
     fr = ring()
     both = not_in_bgr = 0
     k = 0
-    with capture_app(monkeypatch, [FakeScript(modes=((160, 120, 1000, 1, "MJPG"),))]) as app:
+    with capture_app(monkeypatch, [FakeScript(modes=((640, 360, 1000, 1, "MJPG"),))]) as app:
         camera_id, names, (jpeg_shm, bgr_shm) = _ready_fake_camera(cleanup, app)
         jpeg_reader, bgr_reader = (cleanup.handle(fr.FrameRingReader.attach(name)) for name in names)
         deadline = time.monotonic() + max(WAIT_TIMEOUT_S, 180.0)

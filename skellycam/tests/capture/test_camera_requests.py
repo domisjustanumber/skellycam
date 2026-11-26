@@ -225,7 +225,7 @@ def test_t_req_12_and_74_each_open_sets_the_held_value_then_searches(monkeypatch
     change (the requests hold `exposure` -5), "apply again" after a failed open, and an unselect and a reselect.
     Each open sets the held value -9 first, then searches; each ends with -9 found at its mode rate;
     `exposure_search.count` is 1 to 5; a new group starts at 1."""
-    modes = ((640, 480, 30, 1, "MJPG"), (320, 240, 30, 1, "MJPG"), (640, 480, 60, 1, "MJPG"))
+    modes = ((640, 480, 30, 1, "MJPG"), (1280, 720, 30, 1, "MJPG"), (640, 480, 60, 1, "MJPG"))
     script = FakeScript(modes=modes, brightness=MODEL, fail_opens=(4,))
     with capture_app(monkeypatch, [script]) as app:
         camera_id = app.factory.camera_ids[0]
@@ -241,7 +241,7 @@ def test_t_req_12_and_74_each_open_sets_the_held_value_then_searches(monkeypatch
 
         held = dict(exposure=-9, exposure_found_at_fps=30.0)
         step(auto(app, camera_id, **held), 1, 30.0)
-        step(auto(app, camera_id, width=320, height=240, exposure=-5), 2, 30.0)
+        step(auto(app, camera_id, width=1280, height=720, exposure=-5), 2, 30.0)
         step(auto(app, camera_id, framerate=60.0, exposure=-5), 3, 60.0)
         failed = app.apply([auto(app, camera_id, exposure=-5)])
         assert failed.status_code == 200 and camera_id in failed.json()["camera_failures"], failed.text
@@ -746,7 +746,7 @@ def test_t_req_10_a_switch_of_one_camera_leaves_the_others(monkeypatch, tmp_path
     searches; A gets no set call; the rings of A and B get frames during the search."""
     from skellycam.tests.capture.capture_session import Spies
 
-    modes = ((640, 480, 30, 1, "MJPG"), (320, 240, 30, 1, "MJPG"))
+    modes = ((640, 480, 30, 1, "MJPG"), (1280, 720, 30, 1, "MJPG"))
     scripts = [FakeScript(modes=modes), FakeScript(modes=modes, brightness=MODEL, hold_first_change=True)]
     with capture_app(monkeypatch, scripts) as app:
         spies = Spies(monkeypatch, app)
@@ -757,7 +757,7 @@ def test_t_req_10_a_switch_of_one_camera_leaves_the_others(monkeypatch, tmp_path
         assert app.state(b) == "adjusting"
         refused = app.record_start(tmp_path)
         assert refused.status_code == 409 and f"camera {b} is adjusting" in refused.text, refused.text
-        assert app.apply([auto(app, b, width=320, height=240)]).status_code == 409
+        assert app.apply([auto(app, b, width=1280, height=720)]).status_code == 409
         app.factory.sources[b].release()
         app.wait_state(b, "ready")
         assert not [s for s in app.factory.logs[a].settings[before:] if s]
@@ -1393,18 +1393,18 @@ def test_an_open_in_auto_sets_the_held_value_inside_the_reported_range(monkeypat
 def test_a_reopen_in_auto_sets_the_held_value_inside_the_reported_range(monkeypatch):
     """camera-requests.md 1.3a [A8, GEH0]: a camera `ready` in `AUTO` on a camera that reports -11 to -2; a reopen for
     a resolution change opens with the held value inside the range, and searches again."""
-    modes = ((640, 480, 30, 1, "MJPG"), (320, 240, 30, 1, "MJPG"))
+    modes = ((640, 480, 30, 1, "MJPG"), (1280, 720, 30, 1, "MJPG"))
     with capture_app(monkeypatch, [FakeScript(modes=modes, brightness=MODEL, exposure_range=(-11, -2, 1))]) as app:
         camera_id = app.factory.camera_ids[0]
         app.detect()
         assert app.apply([auto(app, camera_id)]).status_code == 200
         app.wait_state(camera_id, "ready", "too_slow")
-        response = app.apply([auto(app, camera_id, width=320, height=240)])
+        response = app.apply([auto(app, camera_id, width=1280, height=720)])
         assert response.status_code == 200 and not response.json()["camera_failures"], response.text
         app.wait_state(camera_id, "ready", "too_slow")
         assert open_sets(app, camera_id) == [(False, -7), (False, -9)]
         assert app.status(camera_id)["exposure_search"]["count"] == 2
-        assert app.group.configs[camera_id].resolution.width == 320
+        assert app.group.configs[camera_id].resolution.width == 1280
 
 
 def test_the_refusal_of_a_changed_config_names_the_search(monkeypatch):

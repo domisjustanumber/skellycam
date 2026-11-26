@@ -99,7 +99,7 @@ def test_t_unx_75_waiting_pause_and_a_slow_reopen_trip_nothing(monkeypatch):
     """T-UNX-75: in real camera processes, two cameras are `waiting` for 4 s while the third opens; then the
     internal pause of a record start holds each camera for 4 s; then a size change reopens one camera whose
     close takes 3 s. No camera ends; no failure."""
-    scripts = [FakeScript(modes=((640, 480, 30, 1, "MJPG"), (320, 240, 30, 1, "MJPG")), close_delay_s=3.0),
+    scripts = [FakeScript(modes=((640, 480, 30, 1, "MJPG"), (1280, 720, 30, 1, "MJPG")), close_delay_s=3.0),
                FakeScript(), FakeScript(open_delay_s=4.0)]
     with capture_app(monkeypatch, scripts, workers="process") as app:
         reopened = app.factory.camera_ids[0]
@@ -115,11 +115,11 @@ def test_t_unx_75_waiting_pause_and_a_slow_reopen_trip_nothing(monkeypatch):
         asyncio.run(orchestrator.pause(await_paused=True))
         time.sleep(4.0)
         asyncio.run(orchestrator.unpause(await_unpaused=True))
-        response = app.apply([app.config(reopened, width=320, height=240)] +
+        response = app.apply([app.config(reopened, width=1280, height=720)] +
                              [app.config(cid) for cid in app.factory.camera_ids[1:]])
         assert response.status_code == 200, response.text
         app.wait_state(reopened, "ready")
-        assert app.status(reopened)["mode"]["width"] == 320
+        assert app.status(reopened)["mode"]["width"] == 1280
         time.sleep(1.0)
         for watcher in watchers.values():
             watcher.stop()

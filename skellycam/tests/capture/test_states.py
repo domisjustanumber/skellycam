@@ -21,7 +21,7 @@ from skellycam.tests.capture.fake_source import FakeScript
 from skellycam.tests.pace import bound, one_run
 
 FRAME_NS = round(1e9 / 30)
-MODES_30_60 = ((640, 480, 30, 1, "MJPG"), (640, 480, 60, 1, "MJPG"), (320, 240, 30, 1, "MJPG"))
+MODES_30_60 = ((640, 480, 30, 1, "MJPG"), (640, 480, 60, 1, "MJPG"), (1280, 720, 30, 1, "MJPG"))
 
 
 def opens(app, camera_id):
@@ -251,7 +251,7 @@ def test_t_cap_30_live_exposure_change_and_resolution_reopen(monkeypatch):
         app.wait_state(changed, "ready")
         assert opens(app, changed) == 1 and app.ring_name(changed) == ring
         t_resize = app.clock.now_ns()
-        assert app.apply([app.config(changed, width=320, height=240), app.config(other)]).status_code == 200
+        assert app.apply([app.config(changed, width=1280, height=720), app.config(other)]).status_code == 200
         app.wait(lambda: app.ring_name(changed) != ring and app.state(changed) == "ready", "the reopen")
         t_starting = app.tracker.first(changed, "starting", t_resize)
         assert t_starting is not None
@@ -598,11 +598,11 @@ def test_t_cap_84_whole_request_check_then_each_camera_alone(monkeypatch):
         for camera_id in app.factory.camera_ids:
             assert app.state(camera_id) == "ready" and app.status(camera_id)["mode"]["fps_num"] == 30
             assert app.ring_name(camera_id) == rings[camera_id] and opens(app, camera_id) == 1
-        configs = [app.config(resized, width=320, height=240), app.config(failing, width=320, height=240),
+        configs = [app.config(resized, width=1280, height=720), app.config(failing, width=1280, height=720),
                    app.config(untouched)]
         assert app.apply(configs).status_code == 200
         app.wait_state(failing, "failed")
-        app.wait(lambda: app.state(resized) == "ready" and app.status(resized)["mode"]["width"] == 320, "new size")
+        app.wait(lambda: app.state(resized) == "ready" and app.status(resized)["mode"]["width"] == 1280, "new size")
         assert app.state(untouched) == "ready"
         assert app.ring_name(untouched) == rings[untouched] and opens(app, untouched) == 1
 
@@ -629,7 +629,7 @@ def test_t_cap_86_relay_sends_each_camera_on_its_own(monkeypatch):
             ready_app_steps(app)
             a, b, reopened = app.factory.camera_ids
             result = []
-            configs = [app.config(a), app.config(b), app.config(reopened, width=320, height=240)]
+            configs = [app.config(a), app.config(b), app.config(reopened, width=1280, height=720)]
             thread = threading.Thread(target=lambda: result.append(app.apply(configs)))
             app.clock.wait_until(app.clock.now_ns())  # join the clock: the time moves only when this thread waits on it
             source = None
