@@ -1,6 +1,7 @@
 # B1DE — Decisions of the user on the share level on CI and the test clock of T-CAP-86 (Q690, Q692)
 
-**Status:** accepted, 2026-11-24 (user; the coordinator asked the questions and relayed the answers).
+**Status:** absorbed into [`specs/preview.md#91-kinds-and-helpers`](../../specs/preview.md#91-kinds-and-helpers), [`specs/windows-capture.md#161-kinds`](../../specs/windows-capture.md#161-kinds),
+2026-11-25 (commit to dom/exclusive-access-spec; was accepted, 2026-11-24 (user; the coordinator asked the questions and relayed the answers)).
 
 ## Decision
 

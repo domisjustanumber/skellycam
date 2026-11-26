@@ -513,7 +513,7 @@ No number below is measured, except the row marked [A10].
 | Item | Target | Basis |
 |---|---|---|
 | `read` of a 1080p JPEG, p99 | at most 0.5 ms | the provisional read target of [ring 11.3]. To measure in 4a. |
-| Event-loop time of the sender, 4 cameras at 1080p30, one client that keeps up | at most 19 % of one core [A10] | Measured in 4a with compression off [A9]: 13 to 19 %, median 16 %, in six runs. The first target was 10 % (120 messages/s x about 0.6 ms). |
+| Event-loop time of the sender, 4 cameras at 1080p30, one client that keeps up | at most 20 % of one core [A10; the user, Q763 of [ADR-8MFJ](../decisions/entries/8MFJ-decision-of-the-user-on-the-preview-cpu-target.md)] | Measured in 4a with compression off [A9]: 13 to 19 %, median 16 %, in six runs. The user set 20 % on 2026-11-25, which leaves 1 point above the worst run. No test enforces the target. The first target was 10 % (120 messages/s x about 0.6 ms). |
 | HTTP response time of `GET /health` while the sender runs, 8 cameras at 1080p60, one client that keeps up, p99 | at most 50 ms | To measure in 4a. |
 | Time from `published_ns` to the start of the send, client that keeps up, p99 | at most 25 ms | 10 ms between passes plus the sleep error of 8.1. To measure in 4a. |
 | Frames sent, client that keeps up, 30 fps | each frame (T-PRV-10 allows more loss on a CI runner) | The period (33 ms) is longer than a pass. At 60 fps: to measure in 4a. |

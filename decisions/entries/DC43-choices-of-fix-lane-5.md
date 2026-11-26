@@ -1,6 +1,7 @@
 # DC43 — Choices of fix lane 5: the control thread on the test clock, two test waits, the Windows Server OS key
 
 **Status:** proposed, 2026-11-23 (agent; the supervisor gave the 8 failures of CI run 45278395951).
+Accepted in part by [ADR-6YGH](6YGH-acceptance-of-the-as-built-choices-of-fix-lanes-4-and-5-and-of-certify.md) on 2026-11-25: items 1 to 4 (Q755).
 
 ## Decision
 

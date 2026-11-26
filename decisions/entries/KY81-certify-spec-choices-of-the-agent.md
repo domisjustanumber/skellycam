@@ -1,6 +1,7 @@
 # KY81 — Certify spec draft 2, its test list and the choices of the agent
 
 **Status:** proposed, 2026-11-20 (agent).
+Accepted in part by [ADR-6YGH](6YGH-acceptance-of-the-as-built-choices-of-fix-lanes-4-and-5-and-of-certify.md) on 2026-11-25: the remaining items (Q756).
 
 ## Decision
 
