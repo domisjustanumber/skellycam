@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useId } from "react";
 import NameDropdownSelector from '@/components/ui-components/NameDropdownSelector';
 import { CameraConfig } from "@/store/slices/cameras/cameras-types";
 import { useTranslation } from 'react-i18next';
 import { sizeAtFloor, trackingLimited } from "@/store/slices/cameras/resolution-floor";
+import { TrackingNote } from "@/components/camera-config-panel/TrackingNote";
 
 interface CameraConfigResolutionProps {
     resolution: CameraConfig['resolution'];
@@ -22,6 +23,7 @@ export const CameraConfigResolution: React.FC<CameraConfigResolutionProps> = ({
     resolution, onChange,
 }) => {
     const { t } = useTranslation();
+    const noteId = useId();
     const isPreset = PRESET_RESOLUTIONS.some(p => p.width === resolution.width && p.height === resolution.height);
     const [selectedLabel, setSelectedLabel] = useState<string>(
         isPreset ? `${resolution.width} × ${resolution.height}` : t("custom")
@@ -47,6 +49,9 @@ export const CameraConfigResolution: React.FC<CameraConfigResolutionProps> = ({
         const h = parseInt(customHeight, 10);
         if (!isNaN(w) && !isNaN(h) && sizeAtFloor(w, h)) {
             onChange(w, h);
+        } else {  // 22.2 [YQN1 5]: a size below the floor is not applied; the fields show the applied size again
+            setCustomWidth(resolution.width.toString());
+            setCustomHeight(resolution.height.toString());
         }
     };
 
@@ -62,6 +67,7 @@ export const CameraConfigResolution: React.FC<CameraConfigResolutionProps> = ({
                 options={options}
                 initialValue={selectedLabel}
                 onChange={handleSelectChange}
+                describedBy={trackingLimited(resolution.width, resolution.height) ? noteId : undefined}
             />
             {selectedLabel === t("custom") && (
                 <div className="flex gap-1">
@@ -76,6 +82,7 @@ export const CameraConfigResolution: React.FC<CameraConfigResolutionProps> = ({
                             onBlur={applyCustom}
                             onKeyDown={handleKeyDown}
                             placeholder={t("width")}
+                            aria-describedby={trackingLimited(resolution.width, resolution.height) ? noteId : undefined}
                         />
                         <span className="unit-label text md">W</span>
                     </div>
@@ -90,14 +97,13 @@ export const CameraConfigResolution: React.FC<CameraConfigResolutionProps> = ({
                             onBlur={applyCustom}
                             onKeyDown={handleKeyDown}
                             placeholder={t("height")}
+                            aria-describedby={trackingLimited(resolution.width, resolution.height) ? noteId : undefined}
                         />
                         <span className="unit-label text md">H</span>
                     </div>
                 </div>
             )}
-            {trackingLimited(resolution.width, resolution.height) && (
-                <p className="text sm text-gray p-1" style={{ whiteSpace: 'normal' }}>{t('trackingLimitedByResolution')}</p>
-            )}
+            <TrackingNote id={noteId} width={resolution.width} height={resolution.height} />
         </div>
     );
 };

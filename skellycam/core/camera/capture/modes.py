@@ -15,7 +15,13 @@ from skellycam.core.camera.capture.source import CaptureFailure, CaptureRequest
 
 FLOOR_FPS = 30000 / 1001  # U11: 29.97 counts as 30
 NO_FLOOR_MODE = "no mode at 30 fps or more"
-NO_SIZE_MODE = "no mode of 640x360 or more"  # 22.2 [U Q887, Q888, YQN1 3]
+NO_SIZE_MODE = "no mode of 640x360 or more"  # 22.2 [YQN1 3]
+NO_USABLE_MODE = "has no mode of 640x360 or more at 30 fps"  # 22.2 [YQN1 9]: each mode is below a floor
+
+
+def small_request_text(width: int, height: int) -> str:
+    """22.2 [YQN1 9]: the whole-request check of a requested size below the floor."""
+    return f"the requested size {width}x{height} is below the smallest size 640x360"
 RAW_FORMATS = ("YUY2", "NV12")  # 13.1: the uncompressed formats that skellycam opens
 RAW_ORDER = ("YUY2", "NV12")  # 22.2 [N72V 1, Q845]: the raw mode that an MJPG request opens when the size has no MJPG
 UNCOMPRESSED = ("YUY2", "NV12", "RAW")  # 7.4
@@ -140,7 +146,7 @@ def choose_mode(native: list[NativeMode], request: CaptureRequest) -> NativeMode
     """The mode choice of 7.5, with the raw-mode open of 22.2 [Q807]. Never a synthesized NV12 type (13.1).
     Raises `CaptureFailure` with stage "set mode"."""
     if not size_at_floor(request.width, request.height):
-        raise CaptureFailure("set mode", NO_SIZE_MODE, code="below-floor")  # 22.2 [U Q887]
+        raise CaptureFailure("set mode", NO_SIZE_MODE, code="below-floor")  # 22.2 [YQN1 3]
     native = [m for k, m in enumerate(native) if not _synthesized(native, k)]
     if request.capture_fourcc == "MJPG":
         at_size = [m for m in native if (m.width, m.height) == (request.width, request.height) and at_floor(m.fps)]

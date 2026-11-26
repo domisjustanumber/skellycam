@@ -87,7 +87,7 @@ def quick_sync_works() -> bool:
     if sys.platform == "darwin":
         return False
     try:
-        # 22.2 [U Q887]: a test frame of 1280x720, the size that skellycam uses most (640x480 is the floor)
+        # 22.2 [YQN1 12]: a test frame of 1280x720 (the user: at least 640x480, ideally 720p)
         encoder = open_quick_sync_encoder("NV12", 1280, 720, quality=QUALITY)
         try:
             jpegs = encoder.encode(np.full(raw_shape("NV12", 1280, 720), 128, np.uint8)) + encoder.flush()

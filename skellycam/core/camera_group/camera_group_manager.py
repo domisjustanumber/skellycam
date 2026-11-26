@@ -11,7 +11,7 @@ from fastapi import FastAPI
 from skellycam.core.camera.capture.modes import (
     FLOOR_FPS,
     NO_FLOOR_MODE,
-    NO_SIZE_MODE,
+    NO_USABLE_MODE,
     RAW_FORMATS,
     choose_mode,
     group_rate_problem,
@@ -20,6 +20,7 @@ from skellycam.core.camera.capture.modes import (
     native_from_supported,
     rates_equal,
     size_at_floor,
+    small_request_text,
 )
 from skellycam.core import capture_timings
 from skellycam.core.camera.camera_worker import select_capture_source
@@ -97,7 +98,8 @@ class CameraGroupManager:
             self._last_statuses[camera_id] = status
             status.log_capture_times.value = self._log_capture_times
             status.quick_sync.value = bool(self.quick_sync)  # 13.2: each camera process gets the result
-            status.encoder_failed.value = camera_id in self.encoder_failed
+            if camera_id in self.encoder_failed:  # only True: a fallback that lands meanwhile is never reset
+                status.encoder_failed.value = True
 
     def capture_timings(self) -> dict:
         """capture-timings.md 6.3: the newest summary of each camera of each open group, at most 3 s old. It reads no
@@ -313,8 +315,10 @@ class CameraGroupManager:
             raise RequestRefused(422, "The request selects no camera")
         problems = [f"camera {camera_id}: {NO_FLOOR_MODE}" for camera_id, config in selected.items()
                     if config.framerate not in (-1, 0) and config.framerate < FLOOR_FPS - 0.5]  # agent 55
-        problems += [f"camera {camera_id}: {NO_SIZE_MODE}" for camera_id, config in selected.items()  # 22.2 [U Q887]
-                     if not size_at_floor(config.resolution.width, config.resolution.height)]
+        refused = {camera_id for camera_id, config in selected.items()  # 22.2 [YQN1 9]: the size floor
+                   if not size_at_floor(config.resolution.width, config.resolution.height)}
+        problems += [f"camera {camera_id}: {small_request_text(selected[camera_id].resolution.width, selected[camera_id].resolution.height)}"
+                     for camera_id in refused]
         by_number = {}  # camera-requests.md 8.1: camera_index stays unique in a group
         for camera_id, config in selected.items():
             by_number.setdefault(config.camera_index, []).append(camera_id)
@@ -324,15 +328,21 @@ class CameraGroupManager:
         problems += [f"camera {camera_id} is a virtual camera; virtual cameras cannot be selected"
                      for camera_id, info in infos.items() if info is not None and info.virtual]  # ADR-PDD3 W5
         # 7.5: the modes were read and none is at the floor (an unread list is also []); 22.2 [Q807]: a raw mode counts
-        problems += [f"camera {camera_id}: {NO_FLOOR_MODE}" for camera_id, info in infos.items()
-                     if info is not None and info.modes_read and not info.supported_modes
-                     and not any(mode.selectable for mode in info.capture_modes)]
+        unusable = {camera_id: info for camera_id, info in infos.items()
+                    if info is not None and info.modes_read and not info.supported_modes
+                    and not any(mode.selectable for mode in info.capture_modes)}
+        for camera_id, info in unusable.items():  # 22.2 [YQN1 9]: a camera with a mode below the size floor names it
+            small = any(not size_at_floor(mode.width, mode.height) for mode in info.capture_modes)
+            problems.append(f"camera {camera_id} {NO_USABLE_MODE}" if small else f"camera {camera_id}: {NO_FLOOR_MODE}")
+        refused |= set(unusable)
         rates_known = bool(selected) and all(info is not None and (info.capture_modes or info.supported_modes)
                                              for info in infos.values())
         warnings = []
         if rates_known:  # ADR-HP7D item 2: the mode rates that 7.5 gives from the detection data
             rates = {}
             for camera_id, config in selected.items():
+                if camera_id in refused:  # its reason is in the problems already
+                    continue
                 info = infos[camera_id]
                 # 7.5 [agent 20], 22.2 [V1, N72V 3]: the full native list where detection has it
                 native = (native_from_capture_modes(info.capture_modes) if info.capture_modes

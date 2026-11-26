@@ -935,6 +935,41 @@ def test_t_cap_161_after_a_fallback_a_new_group_uses_cv2(monkeypatch):
     assert not any(is_quick_sync_jpeg(e["payload"]) for e in spies.of("jpeg", camera_id)[before:])
 
 
+def test_t_cap_161_a_switch_write_never_clears_a_fallback(monkeypatch):
+    """T-CAP-161, section 22.2 [U Q886, YQN1 10]: the manager writes the flag `encoder_failed` only as True. A
+    fallback that a camera sets after the manager read the flags stays set at the next write of the switch."""
+    with capture_app(monkeypatch, [raw_camera()], full_modes=True) as app:
+        QuickSyncFake(monkeypatch, available=True)
+        camera_id = app.factory.camera_ids[0]
+        ready_app_steps(app, [app.config(camera_id, capture_fourcc="YUY2")])
+        status = app.group.cameras.orchestrator.camera_statuses[camera_id]
+        assert not status.encoder_failed.value
+
+        class Flag:
+            """Records each write: the manager must never write False, which could reset a fallback that lands
+            between its read and its write."""
+
+            def __init__(self, value):
+                self._value, self.writes = value, []
+
+            @property
+            def value(self):
+                return self._value
+
+            @value.setter
+            def value(self, value):
+                self.writes.append(bool(value))
+                self._value = value
+
+        flag = status.encoder_failed = Flag(False)
+        app.manager.set_log_capture_times(True)  # a write of the switch with no fallback
+        assert False not in flag.writes, flag.writes
+        flag.value = True  # as the camera loop does at a fallback
+        app.manager.set_log_capture_times(False)
+        assert flag.value and camera_id in app.manager.encoder_failed
+        assert False not in flag.writes, flag.writes
+
+
 # ---------------------------------------------------------------------------
 # T-CAP-162 to T-CAP-164: the size floor of 640x480 (22.2, Q887)
 # ---------------------------------------------------------------------------
@@ -978,23 +1013,37 @@ def test_t_cap_162_modes_below_the_size_floor_are_ignored():
             assert "read_sample" not in fake.log.names()
 
 
-def test_t_cap_163_a_request_below_640x480_gets_422(monkeypatch):
-    """T-CAP-163, section 22.2 [U Q887, Q889, YQN1 3]: a request for 320x240, to a fake with a mode there, gets HTTP 422
-    with "no mode of 640x360 or more" and opens no camera; also with the OpenCV detection data (no mode list)."""
+SMALL_REQUEST = "the requested size 320x240 is below the smallest size 640x360"
+
+
+def test_t_cap_163_a_request_below_the_size_floor_gets_422(monkeypatch):
+    """T-CAP-163, section 22.2 [U Q887, Q889, YQN1 3, YQN1 9]: a request for 320x240, to a fake with a mode there, gets
+    HTTP 422 that says the requested size is below the floor, once, and opens no camera; also with the OpenCV
+    detection data (no mode list). A camera whose modes are each below a floor (320x240 at 30 fps in MJPG and YUY2,
+    640x480 at 15 fps) is not usable: a request at 640x480 gets 422 that names the size floor, with no empty mode list."""
     script = FakeScript(modes=((640, 480, 30, 1, "MJPG"), (320, 240, 30, 1, "MJPG")))
     with capture_app(monkeypatch, [script], full_modes=True) as app:
         app.detect()
         camera_id = app.factory.camera_ids[0]
         refused = app.apply([app.config(camera_id, width=320, height=240)])
-        assert refused.status_code == 422 and NO_SIZE_MODE in detail(refused), refused.text
+        assert refused.status_code == 422 and detail(refused).count(SMALL_REQUEST) == 1, refused.text
         assert opens(app, camera_id) == 0 and not app.manager.camera_groups
+    small_only = FakeScript(modes=((320, 240, 30, 1, "MJPG"), (320, 240, 30, 1, "YUY2"), (640, 480, 15, 1, "MJPG")))
+    with capture_app(monkeypatch, [small_only], full_modes=True) as app:
+        app.detect()
+        camera_id = app.factory.camera_ids[0]
+        refused = app.apply([app.config(camera_id, width=640, height=480, framerate=30.0)])
+        assert refused.status_code == 422, refused.text
+        assert f"camera {camera_id} has no mode of 640x360 or more at 30 fps" in detail(refused), refused.text
+        assert "[]" not in detail(refused) and "no mode at 30 fps" not in detail(refused), refused.text
+        assert opens(app, camera_id) == 0
     factory = OpenCVFakeFactory(monkeypatch)
     app = CaptureApp(monkeypatch, factory)
     try:
         app.detect()
         camera_id = factory.camera_ids[0]
         refused = app.apply([app.config(camera_id, width=320, height=240)])
-        assert refused.status_code == 422 and NO_SIZE_MODE in detail(refused), refused.text
+        assert refused.status_code == 422 and SMALL_REQUEST in detail(refused), refused.text
         assert factory.opens[camera_id] == 0
     finally:
         app.close()

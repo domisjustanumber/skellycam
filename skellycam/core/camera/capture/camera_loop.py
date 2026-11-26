@@ -336,7 +336,7 @@ class CameraLoop:
         if rate and not at_floor(rate):
             raise CaptureFailure("set mode", NO_FLOOR_MODE, code="below-floor")  # 14.1: OpenCV reports a rate under the floor
         if opened.width > 0 and not size_at_floor(opened.width, opened.height):
-            raise CaptureFailure("set mode", NO_SIZE_MODE, code="below-floor")  # 14.1, 22.2 [U Q887]: a size under the floor
+            raise CaptureFailure("set mode", NO_SIZE_MODE, code="below-floor")  # 14.1, 22.2 [YQN1 4]: a size under the floor
         # D22; with no reported rate (OpenCV), the requested rate and 30 for "auto" (ADR-PDD3 W2)
         self.reference_rate = rate or (config.framerate if config.framerate > 0 else rate_check.AUTO_REFERENCE_FPS)
         opencv = getattr(self.source, "name", None) == "opencv"
@@ -409,7 +409,8 @@ class CameraLoop:
                 self.full_range = opened.os_range == "full"
                 why = f"the flag of the OS is {opened.os_range or 'not set'}"
             logger.info(f"Camera {self.camera_id}: input range {'full' if self.full_range else 'limited'} ({why})")
-        quick_sync = bool(self.status.quick_sync.value) and not self.status.encoder_failed.value  # [U Q886]
+        quick_sync = (bool(self.status.quick_sync.value) and not self.status.encoder_failed.value  # [U Q886]
+                      and not self.fallbacks)
         args = (self.raw_format, opened.width, opened.height, self.full_range)
         try:
             self.encoder = capture_encoder.FrameEncoder(*args, quick_sync)
