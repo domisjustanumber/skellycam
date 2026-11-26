@@ -16,7 +16,12 @@ test('T-CAP-165: each resolution control shows the tracking note and points at i
     }
 });
 
-test('T-CAP-165: a custom size below the floor puts the applied size back in the fields (22.2 [YQN1 5])', () => {
+test('T-CAP-165: a custom size below the floor keeps the typed numbers and shows an error line (22.2, Q899)', () => {
     const text = source('components/camera-config-panel/CameraConfigResolution.tsx');
-    assert.match(text, /sizeAtFloor\(w, h\)\)[\s\S]*?\} else \{[\s\S]*?setCustomWidth\(resolution\.width\.toString\(\)\)/);
+    const en: Record<string, string> = JSON.parse(source('i18n/locales/en-english.json'));
+    assert.equal(en.smallestSizeIs640x360, 'The smallest size is 640 × 360');
+    assert.match(text, /role="alert"[^>]*>\{t\('smallestSizeIs640x360'\)\}/, 'no error line');
+    assert.match(text, /id=\{errorId\}/, 'the error line has no id');
+    assert.match(text, /aria-describedby=\{[^}]*errorId/, 'the inputs do not point at the error line');
+    assert.doesNotMatch(text, /else \{[^}]*setCustomWidth\(resolution\.width\.toString\(\)\)/, 'a reject must keep the typed numbers');
 });

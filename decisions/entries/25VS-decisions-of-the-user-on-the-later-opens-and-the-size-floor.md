@@ -25,9 +25,10 @@ be limited by resolution. Q889 yes".
    uses; 720p is the ideal. As modes below 30 fps are ignored, modes of a size below 640x480 are ignored too (the
    supervisor reads "frame rates lower than 640x480" as "modes of a size below 640x480").
 3. **Q888.** 640x360 is allowed too. When the user picks a size below 1280x720, the user is told that
-   hand and face tracking will be limited by the resolution. The supervisor reads the floor as two
-   bounds: a mode passes when its width is 640 or more and its height is 360 or more. That these two
-   bounds are the rule is the reading of the supervisor, not words of the user.
+   hand and face tracking will be limited by the resolution. The supervisor read the floor as two
+   bounds: a mode passes when its width is 640 or more and its height is 360 or more. The user
+   confirmed this reading with Q898
+   ([ADR-Y2RN](Y2RN-decisions-of-the-user-on-the-size-floor-review-and-certify-quick-runs.md)).
 4. **Q889.** The size floor applies everywhere the 30 fps floor does: each OS, both capture paths
    (native and OpenCV), and the mode list that the UI offers.
 

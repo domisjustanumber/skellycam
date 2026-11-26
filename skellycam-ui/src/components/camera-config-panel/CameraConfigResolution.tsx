@@ -24,6 +24,8 @@ export const CameraConfigResolution: React.FC<CameraConfigResolutionProps> = ({
 }) => {
     const { t } = useTranslation();
     const noteId = useId();
+    const errorId = useId();
+    const [tooSmall, setTooSmall] = useState(false);  // 22.2 (Q899): a custom size below the floor
     const isPreset = PRESET_RESOLUTIONS.some(p => p.width === resolution.width && p.height === resolution.height);
     const [selectedLabel, setSelectedLabel] = useState<string>(
         isPreset ? `${resolution.width} × ${resolution.height}` : t("custom")
@@ -40,6 +42,7 @@ export const CameraConfigResolution: React.FC<CameraConfigResolutionProps> = ({
 
     const handleSelectChange = (label: string) => {
         setSelectedLabel(label);
+        setTooSmall(false);
         const preset = PRESET_RESOLUTIONS.find(p => p.label === label);
         if (preset) onChange(preset.width, preset.height);
     };
@@ -47,12 +50,10 @@ export const CameraConfigResolution: React.FC<CameraConfigResolutionProps> = ({
     const applyCustom = () => {
         const w = parseInt(customWidth, 10);
         const h = parseInt(customHeight, 10);
-        if (!isNaN(w) && !isNaN(h) && sizeAtFloor(w, h)) {
-            onChange(w, h);
-        } else {  // 22.2 [YQN1 5]: a size below the floor is not applied; the fields show the applied size again
-            setCustomWidth(resolution.width.toString());
-            setCustomHeight(resolution.height.toString());
-        }
+        if (isNaN(w) || isNaN(h)) return;
+        // 22.2 (Q899): a size below the floor is not applied; the typed numbers stay, with an error line
+        setTooSmall(!sizeAtFloor(w, h));
+        if (sizeAtFloor(w, h)) onChange(w, h);
     };
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -82,7 +83,7 @@ export const CameraConfigResolution: React.FC<CameraConfigResolutionProps> = ({
                             onBlur={applyCustom}
                             onKeyDown={handleKeyDown}
                             placeholder={t("width")}
-                            aria-describedby={trackingLimited(resolution.width, resolution.height) ? noteId : undefined}
+                            aria-describedby={[tooSmall ? errorId : "", trackingLimited(resolution.width, resolution.height) ? noteId : ""].join(" ").trim() || undefined}
                         />
                         <span className="unit-label text md">W</span>
                     </div>
@@ -97,11 +98,14 @@ export const CameraConfigResolution: React.FC<CameraConfigResolutionProps> = ({
                             onBlur={applyCustom}
                             onKeyDown={handleKeyDown}
                             placeholder={t("height")}
-                            aria-describedby={trackingLimited(resolution.width, resolution.height) ? noteId : undefined}
+                            aria-describedby={[tooSmall ? errorId : "", trackingLimited(resolution.width, resolution.height) ? noteId : ""].join(" ").trim() || undefined}
                         />
                         <span className="unit-label text md">H</span>
                     </div>
                 </div>
+            )}
+            {tooSmall && selectedLabel === t("custom") && (
+                <p id={errorId} role="alert" className="text sm text-error p-1" style={{ whiteSpace: 'normal' }}>{t('smallestSizeIs640x360')}</p>
             )}
             <TrackingNote id={noteId} width={resolution.width} height={resolution.height} />
         </div>

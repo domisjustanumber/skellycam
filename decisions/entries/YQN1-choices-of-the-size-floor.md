@@ -6,7 +6,9 @@
 
 The user decided the size floor and the note
 ([ADR-25VS](25VS-decisions-of-the-user-on-the-later-opens-and-the-size-floor.md)). An agent chose the
-items below. Section 22.2 of [`specs/windows-capture.md`](../../specs/windows-capture.md) marks each one
+items below. The user accepted items 1, 2, 3, 4 and 6 with Q900, and replaced item 5 with Q899
+([ADR-Y2RN](Y2RN-decisions-of-the-user-on-the-size-floor-review-and-certify-quick-runs.md)). Items 7 to
+12 wait for the user. Section 22.2 of [`specs/windows-capture.md`](../../specs/windows-capture.md) marks each one
 [YQN1 n]. T-CAP-162 to T-CAP-165 test them.
 
 1. **One predicate.** `modes.size_at_floor(width, height)` on the server: width 640 or more and height

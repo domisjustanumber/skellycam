@@ -2538,7 +2538,8 @@ side of these rules is the certify checks of section 20 of [`certify.md`](certif
   user of 2026-11-26
   ([ADR-8WY3](../decisions/entries/8WY3-decisions-of-the-user-on-the-raw-mode-open-and-its-flag.md),
   [ADR-4TBY](../decisions/entries/4TBY-decisions-of-the-user-on-the-review-of-the-3b-code.md),
-  [ADR-25VS](../decisions/entries/25VS-decisions-of-the-user-on-the-later-opens-and-the-size-floor.md)). A mark
+  [ADR-25VS](../decisions/entries/25VS-decisions-of-the-user-on-the-later-opens-and-the-size-floor.md),
+  [ADR-Y2RN](../decisions/entries/Y2RN-decisions-of-the-user-on-the-size-floor-review-and-certify-quick-runs.md)). A mark
   [YQN1 n] is item n of [ADR-YQN1](../decisions/entries/YQN1-choices-of-the-size-floor.md), a proposed choice of
   an agent. A mark [ZEK6 n] is item n of
   [ADR-ZEK6](../decisions/entries/ZEK6-choices-of-the-jpeg-encode-at-capture-code.md), a choice of the agent
@@ -2570,7 +2571,7 @@ side of these rules is the certify checks of section 20 of [`certify.md`](certif
   the raw-mode open: the log line and the `capture_format` of the take are enough for now [U Q846].
 - **Size floor [U Q887, Q888, Q889].** As with rates below 30 fps, skellycam ignores each mode of a size
   below 640x480; 640x360 is allowed too. A size is at the floor when its width is 640 or more and its
-  height is 360 or more (one function, `modes.size_at_floor`) [YQN1 1]. The floor applies everywhere
+  height is 360 or more [U Q898] (one function, `modes.size_at_floor`) [YQN1 1, U Q900]. The floor applies everywhere
   the rate floor of U11 does: each OS, the native sources and the OpenCV source, and the mode list that
   the UI offers [U Q889]. It leaves a mode out of `supported_modes` (7.3), of the choice of a mode (7.5,
   13.1, the raw-mode open of Q807) and of the auto rate. `capture_modes` (7.4) lists such a mode with
@@ -2593,11 +2594,13 @@ side of these rules is the certify checks of section 20 of [`certify.md`](certif
   720), a note under the control tells the user that hand and face tracking will be limited by the
   resolution. The note does not block the choice. Its English text is "Hand and face tracking will be
   limited at this resolution. 1280 × 720 or more gives the best tracking." (key
-  `trackingLimitedByResolution`) [YQN1 6]. The note shows when the width is below 1280 or the height is
+  `trackingLimitedByResolution`) [YQN1 6, U Q900]. The note shows when the width is below 1280 or the height is
   below 720, so 960x960 shows it too [YQN1 11]. The second resolution control, in the settings of a grid
   tile (`CameraGridSettingsModal`), shows the same note; each control points at it with
-  `aria-describedby` [YQN1 6]. A custom size below the floor is not applied, and the fields show the
-  applied size again [YQN1 5]. The default size of a camera config is 1280x720, the size that the user
+  `aria-describedby` [YQN1 6]. A custom size below the floor is not applied: the typed numbers stay, and
+  an error line under the control says "The smallest size is 640 × 360" (key `smallestSizeIs640x360`,
+  in the error style of the camera list, `role="alert"`); the inputs point at it with `aria-describedby`
+  [U Q899]. The line goes at a valid custom size and at a preset. The default size of a camera config is 1280x720, the size that the user
   calls ideal (Q888).
 - **The format of a raw take [Q808].** A take of a camera in YUY2 records `requested.capture_format`
   `"YUYV"` (SFF-800; [`recorder.md`](recorder.md) 6.7). This also applies to a camera that opened its
