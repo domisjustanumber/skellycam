@@ -19,10 +19,8 @@ task. Delete an item when its work is done. The PR that closes an item records t
 - **Phase 2 of the frame ring.** [ADR-50G8](entries/50G8-phase-2-frame-ring-spec.md) accepts
   [`specs/frame-ring.md`](../specs/frame-ring.md). The tests of step 2a (T-RING-01 to 33) are in
   `skellycam/tests/frame_ring/`. They use the API of
-  [ADR-9G2W](entries/9G2W-python-api-of-the-frame-ring-as-the-2a-tests-assume-it.md).
-  Run the timed and kill tests with `-m ring_slow`. `SKELLYCAM_RING_FULL=1` gives the durations of
-  the spec, for example 60 s for each slot count of T-RING-08. T-RING-49 needs cameras and is not
-  written.
+  [ADR-9G2W](entries/9G2W-python-api-of-the-frame-ring-as-the-2a-tests-assume-it.md) (`-m ring_slow`, see
+  `pyproject.toml`). T-RING-49 is not written.
   - Open: the BGR read at 1080p does not meet its target (p99 3.13 to 4.05 ms, target 3 ms). The
     user decided on 2026-11-19 that the reader does not change in phase 2. A read call that copies
     into a buffer of the reader waits for the first consumer that reads the BGR ring.
@@ -51,21 +49,18 @@ task. Delete an item when its work is done. The PR that closes an item records t
   makes a virtual camera selectable.
 - **Phase 5 step 5a (the new recorder).** The spec [`specs/recorder.md`](../specs/recorder.md) and its test list
   are accepted ([ADR-Z3Y7](entries/Z3Y7-acceptance-of-the-step-5a-recorder-spec-and-test-list.md),
-  [ADR-P98T](entries/P98T-step-5a-choices-of-the-recorder-and-its-connection.md)). The tests are in
-  `skellycam/tests/take_recorder/`, the code in `skellycam/core/take_recorder/`. The measurements of
-  R11 on Windows are in [ADR-8RES](entries/8RES-r11-measurements-of-the-5a-recorder.md). Open: T-REC-STALL on
+  [ADR-P98T](entries/P98T-step-5a-choices-of-the-recorder-and-its-connection.md)). Open: T-REC-STALL on
   a slow disk (USB, spinning) on the hardware of the user, and the D3 detection on Linux and macOS.
   Next: the take in the new player and in Blender.
 - **Phase 6a (the canvas player for new takes).** The spec [`specs/player.md`](../specs/player.md) (revision 2)
   and its test list are accepted ([ADR-YV3V](entries/YV3V-acceptance-of-the-phase-6a-player-spec-and-test-list.md),
   [ADR-4D94](entries/4D94-step-6a-choices-of-the-canvas-player.md)).
-  - The failing tests of 6a are in `skellycam-ui/src/player/tests/` and
-    `skellycam-ui/src/components/playback/tests/`. The benchmarks T-PLAY-65 to T-PLAY-70 run by hand with
-    `playwright.player-bench.config.ts`.
+  - The benchmarks T-PLAY-65 to T-PLAY-70 run by hand with `playwright.player-bench.config.ts`.
   - The unit tests ran on Node 26.13.1 on Windows only.
   - The recorder spec needs one sentence for a `camera_dead` detail that does not parse (item 4 of
     ADR-1ACK).
-  - Code owed to `player.md` (Q851): no `picked-take-folders.json` and T-PLAY-62 (5.3); the label (8.4); a
+  - Owed to `player.md` (Q851), test first: T-PLAY-62 of `handler.spec.ts` still checks the old list file and
+    passes; it is rewritten to 5.3, then the code writes no `picked-take-folders.json`. Also the label (8.4) and a
     `.gitignore` exception for `skellycam-ui/src/player/` that wins over the later `index.ts` lines (4.1).
   - `player.md` lacks about 30 rules of ADR-4D94 (4MJ4 names, 1ACK 7, 9 to 18, 5FBS 12); then absorb it.
 - **Step 6c part 1 (v1 playback).** [`specs/player-legacy.md`](../specs/player-legacy.md) revision 6
@@ -116,7 +111,7 @@ task. Delete an item when its work is done. The PR that closes an item records t
   ([ADR-H2A0](entries/H2A0-decisions-of-the-user-on-the-certify-report-shape.md),
   [ADR-BW5M](entries/BW5M-decisions-of-the-user-on-the-two-verdicts-and-the-certify-test-set.md)). Section 3.6 of the spec holds
   the shape of quick and full, the two verdicts, the fixes B1 and the commit (first in the build order of 3.6.7),
-  and the tests T-CERT-91 to T-CERT-132. Each question of this shape is decided (Q591 to Q629).
+  and the tests T-CERT-91 to T-CERT-132.
   - The name rule of Q596 depends on a change of the wording of rule 16 of section 6 of the contract, for the
     name of the list of known cameras, the fixed class texts and a name in any script. The contract owner decides
     it; it is pending. The relay already keeps a name in any script (the answer of the contract owner).
@@ -159,8 +154,7 @@ task. Delete an item when its work is done. The PR that closes an item records t
   of [ADR-JFG4](entries/JFG4-choices-of-the-capture-timings-build.md) is proposed. Open: the timed test
   `test_process_workers.py` (an OK of the user first); M-TIM-1 on the hardware of the user (step 7); the tile with
   step 4b (step 8: T-TIM-24 in TypeScript, T-TIM-25, T-TIM-26, and the `preview_send` bracket of 6.5, Q839).
-- **Merge order (2026-11-25, ADR-GZS7).** `dom/log-cleanup` holds the clean-up of Q814 and the merges of
-  Q841; it goes into `dom/integration` after a review. Each merge runs the tests that no CI job runs on a push (Q841). The branches of failing
+- **Merge order (2026-11-25, ADR-GZS7).** Each merge runs the tests that no CI job runs on a push (Q841). The branches of failing
   tests stay unmerged; each code lane builds on its test branch, and tests and code merge together when they pass
   (Q815). The FreeMoCap display comes after FreeMoCap moves to the frame-ring API.
 - **Deferred by the user (2026-11-23).** At 60 fps the exposure search never tries a value longer
@@ -176,9 +170,13 @@ task. Delete an item when its work is done. The PR that closes an item records t
     `multiprocessing.set_start_method("spawn")` at the top of `freemocap/__main__.py`, before
     `create_websocket_log_queue()`. Until then FreeMoCap on Linux opens no camera: its method is `fork`, and skellycam
     refuses it with `start-method-fork` (`unix-capture.md` 4.12). Not verified on Linux.
-- **Fix lane 5 follow-ups** ([ADR-DC43](entries/DC43-choices-of-fix-lane-5.md)).
-  - Windows Server `os.label`: `Windows 2025Server 24H2` [NV].
-  - `stop_after_frame=200` tests that wait for `ready` have the risk of T-UNX-95.
+- **Fix lane 5 follow-ups** ([ADR-DC43](entries/DC43-choices-of-fix-lane-5.md)): Windows Server `os.label`
+  `Windows 2025Server 24H2` [NV]; `stop_after_frame=200` tests that wait for `ready` have the risk of T-UNX-95.
+- **The stall watch at 2 s** ([ADR-88HQ](entries/88HQ-decisions-of-the-user-on-q842-to-q856.md) Q850). Not decided:
+  - F6 (`capture_timing`, blocking in `test.yml` and `capture.yml`) has a margin of tens of ms now; one race that
+    the watch wins turns CI red.
+  - The first lock waits of a frame decision (1.5 s) and of a status array (0.5 s) in one pass reach 2 s, against
+    "no step of the loop in a watched state runs longer than the limit" (`unix-capture.md` 4.10).
 - **Fix lane 7 follow-ups** ([ADR-R394](entries/R394-choices-of-fix-lane-7.md),
   [ADR-2SX2](entries/2SX2-acceptance-of-the-choices-of-fix-lane-7-and-its-follow-ups.md)).
   - Question for the user (not decided by [ADR-ZT5F](entries/ZT5F-acceptance-of-the-choices-of-fix-lane-8.md) item 3):

@@ -186,7 +186,7 @@ identical cameras with no serial [R xplat §2.6 G-ID]; this spec does not use th
 USB parent in sysfs [NV]. Detection gives it `virtual: true` [W W5]. A name with "virtual" is virtual
 too [W 7.1].
 - Confidence: medium. If false: a virtual camera is selectable.
-- Certify: `system:virtual-cameras`.
+- Certify: `detect` (its count `virtual`).
 
 **A-4. Mode list.** `VIDIOC_ENUM_FMT`, `VIDIOC_ENUM_FRAMESIZES` and `VIDIOC_ENUM_FRAMEINTERVALS` give
 the MJPG sizes and their frame intervals; for a UVC frame-based descriptor the types are discrete
@@ -293,7 +293,7 @@ less [K11]; each struct of this step is 232 bytes or less [R linuxlib]. `fcntl.i
   The wait of 10 s then a kill of ADR-6EKB item 84 stays.
 - Confidence: high for the GIL; medium for the stuck wait.
 - Diagnostics: `t_*_ms` (D-6); on a hang `fail_code` `hung` and `call`.
-- Certify: `self:hang-100ms` (the software rule); a real driver hang cannot be made [cert 7].
+- Certify: `self:hang-100ms:gap` and `self:hang-100ms:hard-end` (the software rule); a real driver hang cannot be made [cert 7].
 
 **A-14. "In use" is `EBUSY` at `REQBUFS` or `S_FMT`.** V4L2 allows more than one open, so `open()`
 succeeds while another process streams. `REQBUFS` returns `EBUSY` for a file that does not own the
@@ -390,7 +390,7 @@ reopen at once works [NV]. The Kiyo Pro needs the USB `NO_LPM` quirk of kernel 7
 kernels 6.12.81, 6.18.34 and 6.19.12 [R xplat §2.6] [NV].
 - Confidence: low.
 - Diagnostics: `t_close_ms`, `kernel` (`major.minor`).
-- Certify: `<label>:cycles`, `<label>:timings`, `system:kernel`.
+- Certify: `<label>:cycles` (it holds the open and close times), `system:kernel`.
 
 **A-22. The alternate setting.** The USB link label comes from the lookup of [req 3.4] with the
 values of [req 3.2] (`"USB 1"`, `"USB 2"`, `"USB 3"`, `"unknown"`) [U]; this spec has no second lookup.
@@ -462,7 +462,7 @@ lower-case `uniqueID` [A, U]. VID and PID come from `uniqueID`, else from `model
 
 **M-3. Virtual cameras.** A virtual camera has a `transportType` that is not USB, or a name with
 "virtual" [W 7.1] [NV for the transport value]. A built-in or Continuity camera is real.
-- Confidence: low. Certify: `system:virtual-cameras`.
+- Confidence: low. Certify: `detect` (its count `virtual`).
 
 **M-4. Mode list.** Each `AVCaptureDeviceFormat` has a media subtype, the dimensions and
 `videoSupportedFrameRateRanges`. An MJPG mode of a UVC camera has the subtype `'dmb1'`
@@ -523,7 +523,7 @@ and the 100 ms rule fail [U, W 6.6] [NV].
 - Confidence: medium.
 - If false: a hung call stops the camera process, and its camera holds the gate until the stall watch
   of the main process [U].
-- Certify: `self:hang-100ms`; T-UNX-84 checks the GIL release on the macOS runner.
+- Certify: `self:hang-100ms:gap` and `self:hang-100ms:hard-end`; T-UNX-84 checks the GIL release on the macOS runner.
 
 **M-9. The sample time is host time on the clock of `perf_counter_ns`.** Each sample time is on
 `synchronizationClock` [K14]. The host time clock uses `mach_absolute_time` [K13], and so does
@@ -647,7 +647,7 @@ imports [NV]. T-UNX-88 finds a gap; then `skellycam.spec` adds hidden imports on
 |---|---|---|---|
 | A-1 | Capture nodes by `device_caps`; metadata nodes skipped | high | `detect` |
 | A-2 | Identity: serial, else port chain from sysfs; by-id not used | med | `<label>:identity:*` |
-| A-3 | v4l2loopback: no USB parent, driver name | med | `system:virtual-cameras` |
+| A-3 | v4l2loopback: no USB parent, driver name | med | `detect` (its count `virtual`) |
 | A-4 | ENUM ioctls give discrete MJPG sizes and intervals | high | `<label>:detect`, `<label>:modes:granted:*` |
 | A-5 | `S_FMT` can grant another size; read back | high | `<label>:modes:granted:*`, `<label>:native-jpeg:*` |
 | A-6 | `S_PARM` sets the rate; read back with tolerance 0.0001 | high | `<label>:rate`, `<label>:modes:granted:*` |
@@ -657,7 +657,7 @@ imports [NV]. T-UNX-88 finds a gap; then `skellycam.spec` adds hidden imports on
 | A-10 | `sequence` gaps show lost frames | high | `<label>:sequence` |
 | A-11 | 4 mmap buffers; push source with the newest frame | high | `<label>:opens` |
 | A-12 | `O_NONBLOCK` and `poll`: no unbounded wait for a frame | high | `<label>:cycles` |
-| A-13 | Blocking ioctls bounded (11 s for probe and commit, else 5 s); GIL released | high / med | `self:hang-100ms` |
+| A-13 | Blocking ioctls bounded (11 s for probe and commit, else 5 s); GIL released | high / med | `self:hang-100ms:gap` and `self:hang-100ms:hard-end` |
 | A-14 | In use is `EBUSY` at `REQBUFS(0)` or after the PROBE of `S_FMT`; the RECORD priority and control events (4.13.1) | high | `<label>:in-use`, `<label>:in-use-mid-take` |
 | A-15 | Bandwidth refusal is `EIO` (or `ENOSPC`, `ENOMEM`, `EFBIG`) at `STREAMON` | med | `group:open` |
 | A-16 | No access is `EACCES`; seat ACL, `video` group or root | high / med | `system:camera-access` |
@@ -671,12 +671,12 @@ imports [NV]. T-UNX-88 finds a gap; then `skellycam.spec` adds hidden imports on
 | A-24 | `spawn` and `O_CLOEXEC` | high | — |
 | M-1 | Discovery session lists cameras with no permission | med | `detect` |
 | M-2 | `uniqueID` = locationID, VID, PID (holds the port) | med | `<label>:identity:*` |
-| M-3 | Virtual by transport type or name | low | `system:virtual-cameras` |
+| M-3 | Virtual by transport type or name | low | `detect` (its count `virtual`) |
 | M-4 | MJPG modes have subtype `'dmb1'`; ranges give 29.97, 30, 60 inside them | med | `<label>:detect`, `<label>:modes:granted:*` |
 | M-5 | `'dmb1'` samples hold the camera JPEG in a block buffer | low–med | `<label>:native-jpeg:*` |
 | M-6 | Session order; format and duration under the lock across `startRunning` | med | `<label>:rate`, `<label>:modes:granted:*` |
 | M-7 | Delegate queue and notifications with no run loop; CMIO run loop NULL | low–med | `<label>:opens` |
-| M-8 | PyObjC releases the GIL | med | T-UNX-84, `self:hang-100ms` |
+| M-8 | PyObjC releases the GIL | med | T-UNX-84, `self:hang-100ms:gap` and `self:hang-100ms:hard-end` |
 | M-9 | PTS converted to the host clock and the `perf_counter_ns` base | med / low | `<label>:clock:*` |
 | M-10 | Drops and sequence numbers are visible | low–med | `<label>:sequence`, `<label>:time-gaps` |
 | M-11 | Reversed (4.13.2): a camera in use is refused, the configuration lock is held, the in-use flag is watched | low | `<label>:in-use`, `<label>:in-use-mid-take`, `probe:<model>:hog-mode` |
@@ -1481,9 +1481,13 @@ The signal and the watch [ADR-AC5B](../decisions/entries/AC5B-choices-of-the-thi
   (the ready limit of [W 9.3] applies) and during the close (the bounded steps of [W 6.6, 6.9] apply).
   The limit is 2 s, the limit of the in-process rule of [W 9.5] (item 14 of
   [ADR-22EJ](../decisions/entries/22EJ-decisions-of-the-user-for-linux-and-macos-native-capture.md); Q850 of
-  [ADR-88HQ](../decisions/entries/88HQ-decisions-of-the-user-on-q842-to-q856.md) replaces the 3 s of ADR-Q2NY item 1). The in-process rule finishes the files and closes the
-  camera; the watch kills the process, with no restore (4.7) and no clean finish of the files. With equal limits
-  the in-process rule normally comes first (see the last item of this section), but no rule fixes the order. The counter has no lock: a process
+  [ADR-88HQ](../decisions/entries/88HQ-decisions-of-the-user-on-q842-to-q856.md) replaces the 3 s of ADR-Q2NY item 1). With equal limits
+  the in-process rule normally comes first (see the last item of this section), but no rule fixes the order. Both
+  give `dead` with the code `stalled`, and neither restores the controls: `stalled` is a wedge code (4.7). Only the
+  reason text differs. When the watch wins, it also ends the process: on Windows `terminate` ends it at once, so the
+  camera does not finish its take files (the take level completes them, [recorder.md](recorder.md) 7.4) and its
+  close diagnostics are lost; on POSIX the SIGTERM handler only sets the stop flag, so the loop can still fail and
+  end as usual, and the `kill` after 1 s cuts off only an end that takes longer. The counter has no lock: a process
   stopped inside its add keeps the lock. Each other scalar of `CameraStatus` has no lock too. A process
   that ends while it holds a lock keeps it for ever. Thus, for the lock of each JSON array of
   `CameraStatus`, the first call of a stretch with no lock waits at most 0.5 s and logs one line; the
@@ -1974,18 +1978,18 @@ tests; it does not repeat the certify spec.
 |---|---|---|
 | A-1, A-4, M-1, M-4 | `detect`, `<label>:detect`, `<label>:modes:granted:*` | T-CAP-51, T-CAP-79 |
 | A-2, M-2 | `<label>:identity:*` | T-CAP-24, T-CAP-106 |
-| A-3, M-3 | `system:virtual-cameras` | T-CAP-105 |
+| A-3, M-3 | `detect` (its count `virtual`) | T-CAP-105 |
 | A-5, A-6, A-11, A-12, M-6, M-7 | `<label>:opens`, `<label>:rate`, `<label>:modes:granted:*` | T-CAP-52 |
 | A-7, A-8, M-5 | `<label>:native-jpeg:*` | T-CAP-52 |
 | A-9, M-9 | `<label>:clock:*` | T-CAP-59 |
 | A-10, M-10 | `<label>:sequence`, `<label>:time-gaps` | none (new) |
-| A-13, M-8 | `self:hang-100ms` | T-CAP-82 |
+| A-13, M-8 | `self:hang-100ms:gap` and `self:hang-100ms:hard-end` | T-CAP-82 |
 | A-14, M-11, M-12, 4.13 | `<label>:in-use`, `<label>:in-use:other-program`, `<label>:in-use-mid-take`, `probe:camera-holders`, `probe:<model>:hog-mode` (macOS) [cert 20] | T-CAP-56, T-CAP-130 to T-CAP-145 |
 | A-15, A-22, M-13 | `group:open`, `group:contention` | none (new) |
 | A-16, M-14 | `system:camera-access` | none (new) |
 | A-17, A-18, M-15 | `<label>:controls`, `<label>:controls:exposure-scale`, `<label>:auto-off:*`, `<label>:settings-stick:*`, `<label>:exposure:<base>`, `<label>:auto-exposure:*`, `<label>:control:*`, and on macOS the probes `probe:<model>:a1-cmio-native:<control>` to `a10-avf-custom:exposure` [cert 10.7] | T-CAP-57, T-CAP-78 |
 | A-19, A-20 | `<label>:settings-stick:*` | T-CAP-57 |
-| A-21, M-17 | `<label>:cycles`, `<label>:timings`, `system:kernel` | T-CAP-54 |
+| A-21, M-17 | `<label>:cycles` (it holds the open and close times), `system:kernel` | T-CAP-54 |
 | A-22, M-18 | `system:usb` | none (new) |
 | A-23, M-19, M-20 | `detect` (`backend-missing`) | T-CAP-46 |
 | M-16 | `system:video-effects` | none |
@@ -2020,8 +2024,7 @@ The certify checks of [cert 20] are the hardware tests of these rules.
 
 ## 7. Dependencies, risks
 
-Each new dependency needs a written reason: what it costs and why each other option was rejected [U]. Sections
-7.1 and 7.2 give it for Linux and macOS.
+Each new dependency must be justified [U]. Sections 7.1 and 7.2 justify the dependencies of Linux and macOS.
 
 ### 7.1 Linux: no new dependency [A]
 

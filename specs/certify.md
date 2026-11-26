@@ -3092,7 +3092,10 @@ no YAML library and must not add one for this [A]. The app never downloads it.
   form is the rule of skellycam that [C 7.2] asks for (skellycertify ADR-T191).
 - `approaches`: for a macOS row, the result of each probe of 10.7 for each control (`pass`, `fail`,
   `not-run`). Only this field trims the probes (the drop rules of 10.7).
-- `os_key`: Windows: the release and the feature version from `os.label` (`11 26H2`); macOS: the major
+- `os_key`: Windows: the release of `platform.release()` (`os.release` of the report: `11` on a client,
+  `2025Server` on Windows Server 2025), a space and the feature version `DisplayVersion` of the registry
+  (`unknown` when it cannot be read): `11 26H2`, `2025Server 24H2`. A server key thus differs from the client key
+  of the same feature version ([ADR-DC43](../decisions/entries/DC43-choices-of-fix-lane-5.md) item 4); macOS: the major
   version (`26`); Linux: the kernel major and minor version (`7.0`), because `uvcvideo` changes by
   kernel.
 - `limits`: fixed codes, each with one sentence in `skellycam/REASON_CODES.md`, for example
@@ -3496,6 +3499,9 @@ of cap 10.2 about 2.5 s at 30 and 1.3 s at 60):
 | G | Plain open | 2 |
 | | Start and end of the camera block children | 6 |
 | | Sum | about 100 |
+
+The sum leaves out `<label>:control-read:gaps` (20.9): phase D, 60 s (30 s with the read on, 30 s with it off)
+for the first unit of each model [U Q844]. The run times below leave it out too.
 
 The rest of `full`: quick 31 s, `group:take-30` 45 s, `group:take-60` 25 s, `system:disk` 35 s, the
 benchmark 5 to 35 s, self-checks 110 s. About 265 s.

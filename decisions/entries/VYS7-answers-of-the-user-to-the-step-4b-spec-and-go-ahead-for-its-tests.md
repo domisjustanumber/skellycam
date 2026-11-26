@@ -4,6 +4,7 @@
 [`specs/player.md#84-the-label-and-the-overlay-e6-agent-24`](../../specs/player.md#84-the-label-and-the-overlay-e6-agent-24),
 [`specs/recorder.md#67-the-capture-info-json`](../../specs/recorder.md#67-the-capture-info-json),
 [`AGENTS.md#6-git-rules`](../../AGENTS.md#6-git-rules),
+[`specs/camera-requests.md#81-the-rule`](../../specs/camera-requests.md#81-the-rule),
 2026-11-26 (commit to dom/answers-q842; was accepted, 2026-11-20 (user)).
 
 ## Decision

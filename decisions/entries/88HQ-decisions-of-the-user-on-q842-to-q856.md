@@ -11,7 +11,7 @@ same way. Otherwise agree to Q842-855". The second message: "agree to all, Q856 
 the recommendation of its question, and Q856 takes option (b). Q857 to Q862 are questions of skellyspecs. That
 repository records them.
 
-1. **Q842.** Push `dom/integration` (e13105855) to the fork, with no PR. The supervisor did it.
+1. **Q842.** Push `dom/integration` (e13105855) to the fork, with no PR.
 2. **Q843.** Item 4 of [ADR-J1HD](J1HD-choices-of-the-control-read-check.md) is accepted: a model that the
    control-read check finds harmed pauses the 1 Hz read during a take on each build, not only on a build with no
    control monitor.
@@ -20,9 +20,9 @@ repository records them.
    60 s for each model; the local row `ok` or `harms`.
 4. **Q845.** Items 1 to 4 of entry N72V of `dom/jpeg-encode-tests` are accepted as written: YUY2 before NV12, one
    INFO log line for each open, the main process does not refuse the request, and the take records the opened
-   format. The order stays a change of one line. The JPEG lane changes the status of N72V on its branch.
+   format. The order stays a change of one line.
 5. **Q846.** The fallback to a raw mode gets no UI flag. The log line and the `capture_format` of the take are
-   enough for now. The JPEG lane writes the spec sentence on `dom/jpeg-encode-tests`.
+   enough for now.
 6. **Q847.** [ADR-TYH0](TYH0-choices-after-the-acceptance-of-the-v1-playback-spec.md) is accepted: the PR that
    removes the old routes also removes `SyncedVideoPlayer.tsx`, the video loading of `PlaybackContext.tsx` and the
    `stream_url` use of `RecordingBrowser.tsx`; `player-legacy-decode` is a `record-only` check of level `full`; it
@@ -53,21 +53,13 @@ repository records them.
 Items 2, 3 and 6 are in the specs that absorb ADR-J1HD and ADR-TYH0. Item 9 is in `unix-capture.md` 4.10 and
 `windows-capture.md` 9.5. Items 10 and 11 are in `player.md`, `windows-capture.md` and the test docstrings.
 Items 12 and 13 are in [open-work.md](../open-work.md). Items 1, 4, 5, 7, 8, 14 and 15 are actions, or rules of
-another branch or repository.
+another branch or repository. Note: the push of item 1 is done (dom/integration later moved to 32eb69e20).
 
 ## Reason
 
 The user gave no reason other than the answers. The agent gave these with the questions: Q850 follows the earlier
 decision of the user over a choice that he never accepted; Q843 holds because the harm comes from the requests,
 whatever finds the changes.
-
-## Consequences
-
-- With the two limits at 2 s, the in-process rule of `windows-capture.md` 9.5 normally ends a camera with no
-  frames first, but no rule fixes the order. When the watch wins, it kills the process with no restore and no clean
-  finish of the files. The review of ADR-Q2NY saw the in-process rule win 24 of 24 races at these values.
-- `player.md` 5.3 now differs from the code of 6a: `take-scheme.ts` still writes `picked-take-folders.json`
-  ([open-work.md](../open-work.md)).
 
 ## Open work
 

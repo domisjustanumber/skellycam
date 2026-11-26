@@ -916,8 +916,8 @@ Reason: on the C930e the gain read 6 before the stream started and 0 after it st
   alike). A camera in `waiting`, `adjusting`, `checking`, `too_slow` or `ready` (also with a
   recording) whose counter did not change for 2 s, with its process alive, no failure reported, no
   pause (`should_pause`) and no close started, is removed from the gate, marked `dead` with the code
-  `stalled`, and its process ends. The rule of this section (2 s) comes first for a `read_frame` that
-  returns; the two give the same code `stalled`. The main-process watch also catches a `read_frame` that
+  `stalled`, and its process ends. The rule of this section (2 s) normally comes first for a `read_frame` that
+  returns, but no rule fixes the order; the two give the same code `stalled` ([`unix-capture.md`](unix-capture.md) 4.10). The main-process watch also catches a `read_frame` that
   never returns; for the OpenCV source a read or a control call that blocks longer than 2 s ends the
   camera, by design. `SKELLYCAM_STALL_WATCH=0` turns the watch off ([`unix-capture.md`](unix-capture.md) 4.10).
 
@@ -1089,6 +1089,10 @@ Changed on 2026-11-20 ([ADR-JK79](../decisions/entries/JK79-exposure-search-at-e
   [D43].
 - The read goes on during a take. On a build with no control monitor it also finds a change by another program
   (21.6, Q811). It pauses during a take only for a camera model that certify shows it harms (21.6).
+- The setting `SKELLYCAM_CONTROL_READ=0` turns this read off, as `SKELLYCAM_RESTORE_CONTROLS=0` turns off the
+  restore ([`unix-capture.md`](unix-capture.md) 4.7). The off half of the certify check
+  `<label>:control-read:gaps` uses it in the session child ([`certify.md`](certify.md) 20.9, item 1 of
+  [ADR-J1HD](../decisions/entries/J1HD-choices-of-the-control-read-check.md)). Not built.
 - Whether a camera in auto mode reports its true current value is not known (section 17.3).
 
 ### 11.5 Gain, focus, white balance, power line frequency (3c) [D43, D44]
@@ -1265,8 +1269,7 @@ section adds only what capture adds.
 - The hosted runners do not run the tests with the marker `capture_local` (T-CAP-49, T-CAP-50).
   They need the Windows development machine [D48] [agent 2].
 - The arm64 job stays as it is (ring tests only) [D47].
-- No workflow raises the open-file limit of its runner: a higher limit can hide a leak, as it would have hidden
-  the leak of 5.9 (item 2 of [ADR-N14T](../decisions/entries/N14T-decisions-of-the-user-on-the-ci-review-of-2026-11-25.md)).
+- The workflow does not raise the open-file limit of its runner (item 2 of [ADR-N14T](../decisions/entries/N14T-decisions-of-the-user-on-the-ci-review-of-2026-11-25.md)).
 - The Media Foundation module loads `mfplat.dll` at the first Media Foundation call, not at import.
   Whether a hosted Windows runner has Media Foundation is [NV]. T-CAP-46 passes without it
   [agent 39].
@@ -2418,7 +2421,7 @@ of [`certify.md`](certify.md) section 20 verifies each of them (21.9).
   [ADR-88HQ](../decisions/entries/88HQ-decisions-of-the-user-on-q842-to-q856.md)). The
   status then shows the last value read. On a build with no control monitor, the read-back at the take end then finds
   a change; on a build with it, the control monitor does. With no evidence, or with `control_read` `ok`, the read
-  stays.
+  stays. The setting `SKELLYCAM_CONTROL_READ=0` turns the read off on each build (11.4).
 - **Read-back at the take start** (each build, Q768): at the record start, the control thread reads each control
   one time (one bounded `set_controls({})`). For exposure, gain and focus it compares the auto flag always, and the
   value only for a control that is in manual: a take can start with a control in auto (11.3, D37), and the value of
