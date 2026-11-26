@@ -143,7 +143,7 @@ GitHub Actions 在每次推送和拉取请求时运行（`.github/workflows/test
 - **React 19** 函数式组件与 hooks
 - **Redux Toolkit** 用于状态管理，带类型化 hooks
 - **Material UI** 用于组件样式
-- **OffscreenCanvas workers** 用于实时摄像头帧渲染
+- **The shared tile** of `src/player/` for live camera frames: `ImageDecoder` and a canvas on the main thread
 - **帧锁定回放** — 录制视频使用基于领导者的同步策略：第一个视频通过原生 `.play()` 驱动权威时间，`requestAnimationFrame` 循环读取 `leader.currentTime` 推导帧号，跟随者视频在偏差超过 2 帧时进行漂移校正。覆盖层通过直接 DOM 引用更新，避免回放期间的 React 重渲染。
 
 ## 添加新的 API 端点

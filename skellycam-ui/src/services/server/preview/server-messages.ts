@@ -72,18 +72,6 @@ export function appStateValues(message: AppStateLike, cameraList: ListedCamera[]
     return {overlays, gridCameraIds, connectedCameraIds: gridCameraIds.filter(id => STREAMING.has(states[id] ?? ''))};
 }
 
-/** `replaced_count` of the status of each camera of each group (5.8) [A2]. */
-export function replacedCounts(message: AppStateLike): Record<string, number> {
-    const out: Record<string, number> = {};
-    for (const group of Object.values(message.state?.camera_groups ?? {})) {
-        for (const [id, camera] of Object.entries(group?.cameras ?? {})) {
-            const n = camera?.status?.replaced_count;
-            if (typeof n === 'number') out[id] = n;
-        }
-    }
-    return out;
-}
-
 /** The new shape of `framerate_update` [4a 6.2]: `message_type` and an object `cameras`. */
 export function isFramerateUpdate(data: unknown): data is FramerateUpdate {
     const d = data as {message_type?: unknown; cameras?: unknown} | null;

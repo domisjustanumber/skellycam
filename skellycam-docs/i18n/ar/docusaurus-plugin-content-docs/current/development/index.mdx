@@ -143,7 +143,7 @@ uv run poe tc          # تطبيق الاستيرادات + تشغيل الاخ
 - مكونات دالية **React 19** مع hooks
 - **Redux Toolkit** لإدارة الحالة مع hooks مُنمطة
 - **Material UI** لتنسيق المكونات
-- **عمال OffscreenCanvas** لعرض إطارات الكاميرا الحية
+- **The shared tile** of `src/player/` for live camera frames: `ImageDecoder` and a canvas on the main thread
 - **تشغيل مقفل الإطارات** — تستخدم مقاطع الفيديو المسجلة استراتيجية مزامنة قائمة على القائد: الفيديو الأول يقود الوقت المرجعي عبر `.play()` الأصلي، حلقة `requestAnimationFrame` تقرأ `leader.currentTime` لاشتقاق رقم الإطار، ويتم تصحيح انحراف مقاطع الفيديو التابعة عندما تنحرف بأكثر من إطارين. يتم تحديث التراكبات عبر مراجع DOM مباشرة لتجنب إعادة عرض React أثناء التشغيل.
 
 ## إضافة نقطة نهاية API جديدة

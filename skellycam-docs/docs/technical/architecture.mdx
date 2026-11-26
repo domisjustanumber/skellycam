@@ -32,7 +32,7 @@ Learn more: [Client-server model (Wikipedia)](https://en.wikipedia.org/wiki/Clie
 graph TB
     subgraph UI ["React / Electron UI"]
         subgraph Rendering ["Rendering"]
-            Canvas["OffscreenCanvas Workers\n(per camera)"]
+            Canvas["Tile of each camera\n(ImageDecoder, main thread)"]
             Views["Camera Views\n& Playback"]
         end
 

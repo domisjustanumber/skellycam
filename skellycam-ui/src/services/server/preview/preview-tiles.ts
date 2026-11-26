@@ -128,6 +128,9 @@ export class PreviewTiles {
                     this.onDrawn(cameraId, this.now());
                 }
                 this.sendReady(cameraId);
+            }, error => {
+                e.busy = false;   // a failed update must not hold the camera; the safety net of the server sends again
+                console.error(`Preview: a tile update of camera ${cameraId} failed:`, error);
             });
         }
     }

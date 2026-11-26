@@ -82,11 +82,11 @@ src/
 ├── services/
 │   ├── server/
 │   │   ├── ServerContextProvider.tsx   # WebSocket lifecycle
+│   │   ├── preview/                    # Camera message parser, PreviewTiles (flow control for each camera)
 │   │   └── server-helpers/
 │   │       ├── server-urls.ts          # API endpoint URLs
 │   │       ├── websocket-connection.ts # WebSocket manager
-│   │       ├── canvas-manager.ts       # Canvas rendering
-│   │       └── frame-processor/        # Binary frame parsing
+│   │       └── framerate-store.ts      # Captured and Displayed rates of each camera
 │   └── electron-ipc/                   # Electron main ↔ renderer IPC
 │
 ├── store/
@@ -144,7 +144,7 @@ The UI talks to the Python server over two channels:
 - `GET /skellycam/playback/video/{video_id}` — stream a video file (supports HTTP range requests for seeking)
 - `GET /skellycam/playback/timestamps/{video_id}` — get timestamp CSV info
 
-**WebSocket** — real-time binary frame streaming at `ws://localhost:53117/skellycam/websocket/connect`. Delivers synchronized multi-frame payloads (one JPEG per camera per frame event) plus JSON log messages.
+**WebSocket** — real-time binary frame streaming at `ws://localhost:53117/skellycam/websocket/connect`. Delivers one binary camera message for each frame of each camera (the ring JPEG, untouched), and the client answers each draw with a `camera_ready` message; plus JSON log, state and frame rate messages.
 
 ---
 
