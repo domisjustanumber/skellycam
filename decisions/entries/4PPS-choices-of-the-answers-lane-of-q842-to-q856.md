@@ -16,33 +16,8 @@ The user did not decide these details.
 2. **The handler of the take scheme** (`player.md` 4.3, 12.1, 16 item 40). `installTakeHandler` takes only
    `recordingsFolder`: with no list file in 6a, `pickedFoldersFile` has no use. T-PLAY-62 checks that a picked
    folder is refused again after a restart of the harness, and that no `picked-take-folders.json` exists.
-3. **The test bounds of the watch** (`unix-capture.md` 4.10 and T-UNX-75). A suspended camera ends 2.5 to
-   3.0 s after its last loop pass, and the third camera has no gap longer than 3.0 s: the trip (2.5 s) plus the
-   margin of 0.5 s of the old test. The fake-clock test of the limit (`test_f2_the_watch_trips_after_the_head_start`)
-   trips nothing at 2.0 s, the deadline of the in-process rule, nor at 2.4 s, and trips at 2.5 s. A second
-   fake-clock test (`test_f2_the_in_process_rule_decides_in_the_head_start`) sets `dead` with the in-process
-   failure at 2.2 s: the watch then never trips and never ends the process. The trip reason is
-   "no loop pass for 2.5 s".
-4. **The order of the two stall rules** (Q863, `unix-capture.md` 4.10, `windows-capture.md` 9.5). Dom's rule is
-   "the watch counts from the later of the last loop pass and the last frame arrival". In the code the last loop
-   pass is never earlier than the last arrival (the counter goes up at the start of each pass, after the arrival
-   and the waits of the pass before), so that rule alone gives the same instant as the in-process rule, and the
-   race stays. Thus the watch also gives the in-process rule a stated head start of 0.5 s: it trips after 2.5 s
-   with no loop pass (`STALL_HEAD_START_S` beside `STALL_WATCH_S` in `camera_group.py`). In the head start the
-   camera process wakes, puts one setup failure, writes `info` and sets `dead`; this takes ms. No status field is
-   added, and no clock of the camera process is read by the main process. A hung loop is `stalled` at most 2.6 s
-   after its last pass (0.1 s round, then 2.5 s), and its process ends at most 1 s later. The cost when the watch
-   trips, from the code: both rules give `dead` `stalled`, and neither restores (`stalled` is in `WEDGE_CODES`); on
-   Windows `terminate` ends the process at once, so the camera does not finish its take files (the take level
-   completes them, `recorder.md` 7.4) and its close diagnostics are lost; on POSIX the SIGTERM handler only sets the
-   stop flag, and the `kill` after 1 s cuts off only an end that takes longer. Rejected: a published last arrival
-   time that the watch compares with its own clock (a new shared field, a clock read across processes, and the
-   virtual clock of the tests differs from the clock of the watch); a head start of 1 s (the 3 s of option (c),
-   which the user did not choose).
-9. **The lock waits against the watch** (checked again for Q863). A first lock wait of a frame decision
-   (`FRAME_READ_WAIT_S` 1.5 s) and a first status-array lock wait (`ARRAY_LOCK_WAIT_S` 0.5 s) in one pass give
-   2.0 s with no loop pass. That is not longer than the limit of 2 s of 4.10, and the watch trips only at 2.5 s, so
-   they trip nothing. The open-work item goes.
+3. Accepted by Q874 and moved to [ADR-EQ3K](EQ3K-decisions-of-the-user-on-the-head-start-of-the-stall-watch.md) item 3.
+4. Accepted by Q874 and moved to [ADR-EQ3K](EQ3K-decisions-of-the-user-on-the-head-start-of-the-stall-watch.md) item 4.
 5. **The sentences of Q852.** `windows-capture.md` 15 says that the workflow does not raise the open-file limit
    of its runner (N14T item 2). `windows-capture.md` 16.1 says that T-CAP-91 stays a blocking test with no change (R394 item 3,
    N14T item 3), that the clock rule replaces the words of item 8 of ADR-B7YV (2SX2 item 1), and that the blocking
@@ -55,21 +30,19 @@ The user did not decide these details.
    each model of `<label>:control-read:gaps`; the sums are not recomputed.
 8. **The Windows OS key** (`certify.md` 11.2) is written from the code `current_os_key`: `platform.release()`, a
    space and `DisplayVersion` of the registry, `unknown` when it cannot be read.
+9. Accepted by Q874 and moved to [ADR-EQ3K](EQ3K-decisions-of-the-user-on-the-head-start-of-the-stall-watch.md) item 5.
 
 ## Reason
 
 1. The manifest already names the take; a label is not worth an error, because `camera_label` is always there.
 2. An option that nothing reads is dead code.
-3. The bounds keep the margin of 0.5 s of the old test.
-4. Q863 asks for an order that is certain. A head start makes the in-process rule decide whenever its camera
-   process can run for 0.5 s; a process that cannot is hung for the watch too. It is one constant, with no new
-   shared state.
+3. See [ADR-EQ3K](EQ3K-decisions-of-the-user-on-the-head-start-of-the-stall-watch.md).
+4. See [ADR-EQ3K](EQ3K-decisions-of-the-user-on-the-head-start-of-the-stall-watch.md).
 5. Each sentence states a rule of an accepted entry that no spec stated, so that the entry can be absorbed.
 6. A setting that certify uses must be a setting that the product reads.
 7. The new sums would change the run times that the user accepted; that is a question for the user.
 8. The spec said `os.label`, but the code and ADR-DC43 item 4 use the release.
-9. The open-work item assumed a trip at 2 s.
-
+9. See [ADR-EQ3K](EQ3K-decisions-of-the-user-on-the-head-start-of-the-stall-watch.md).
 ## Open work
 
 [open-work.md](../open-work.md)

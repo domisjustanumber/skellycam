@@ -1488,11 +1488,14 @@ The signal and the watch [ADR-AC5B](../decisions/entries/AC5B-choices-of-the-thi
   is never the earlier one: the loop adds to the counter at the start of each pass, after the arrival and the waits
   of the pass before. Thus the watch counts from the first round (each 0.1 s) that sees the last change of the
   counter. The in-process rule ends a read 2 s after the later of the last arrival and the last wait of the loop,
-  thus at most 2 s after that change. The watch waits 0.5 s more, the head start [ADR-4PPS](../decisions/entries/4PPS-choices-of-the-answers-lane-of-q842-to-q856.md). In the head start
+  thus at most 2 s after that change. The watch waits 0.5 s more, the head start (Q874 of
+  [ADR-EQ3K](../decisions/entries/EQ3K-decisions-of-the-user-on-the-head-start-of-the-stall-watch.md)). In the head start
   the camera process wakes from its read, reports the failure (one put on the queue of the setup failures and one
   write of `info`) and sets `dead`; then the watch is off. The `info` lock waits no more than one read or one
   write of another holder, because each holder of a live camera holds it only that long. A camera process that
   cannot do this in 0.5 s is a stalled camera for the watch.
+- A first lock wait of a frame decision (1.5 s) and a first lock wait of a status array (0.5 s) in one pass give
+  2.0 s with no loop pass: not longer than the limit, and 0.5 s before the trip, so they trip nothing.
 - A loop that makes no pass (a hung call, a suspended process) is `stalled` at most 2.6 s after its last pass:
   at most 0.1 s until a round of the watch sees the change, then 2.5 s. Its process ends at most 1 s later (the
   `kill`).
@@ -1529,7 +1532,8 @@ The signal and the watch [ADR-AC5B](../decisions/entries/AC5B-choices-of-the-thi
 - The setting `SKELLYCAM_STALL_WATCH=0` turns the watch off. The group reads it when it is made, and logs
   at its start that the watch is off [ADR-Q2NY](../decisions/entries/Q2NY-choices-of-code-step-2.md).
 - When it trips, the main process removes the camera from the gate, marks it `dead` with the failure
-  `{stage: "streaming", reason: "no loop pass for 2.5 s", code: "stalled"}`, clears
+  `{stage: "streaming", reason: "no loop pass for 2.5 s", code: "stalled"}` (Q875: the text stays; the stable key
+  is the code `stalled`), clears
   `recording_in_progress` and marks the stop as intended (so the end of the process waits for no save of
   a take, and the registry logs no crash), and ends its process (`terminate`, then `kill` after 1 s) [U].
   The `camera_dead` warning of a take gives that reason ([recorder.md](recorder.md) 7.4).

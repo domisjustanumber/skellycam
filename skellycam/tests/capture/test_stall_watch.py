@@ -4,7 +4,7 @@ specs/windows-capture.md 9.5; ADR-AC5B items 1 and 11).
 The shared loop adds one to `CameraStatus.alive_count` at each pass, and a wait of the loop in the recorder
 adds one at least each 0.5 s. The watch thread of the group ends a camera whose counter did not change for
 2.5 s in a watched state: the limit of 2 s (ADR-22EJ item 14, Q850) plus a head start of 0.5 s for the
-in-process rule of W 9.5, which thus decides when frames stop (Q863 [ADR-3RJJ], ADR-4PPS item 4). These tests check that it ends a camera that cannot run a loop pass, and that it
+in-process rule of W 9.5, which thus decides when frames stop (Q863 [ADR-3RJJ]; Q874 [ADR-EQ3K]). These tests check that it ends a camera that cannot run a loop pass, and that it
 ends no healthy camera: a `waiting` camera, the internal pause of a record start, a wait in the recorder, a
 slow close of a reopen, the OpenCV fake (a pull source), and cameras under a load of the main process.
 
@@ -372,7 +372,7 @@ def step(group, worker, clock, seconds):
 
 def test_f2_the_watch_trips_after_the_head_start(monkeypatch):
     """F2 (ii), Q863 [ADR-3RJJ]: no loop pass for 2.0 s (the deadline of the in-process rule of W 9.5) trips nothing,
-    nor 2.4 s; 2.5 s (the limit of 2 s of Q850 plus the head start of 0.5 s, ADR-4PPS item 4) trips, with the
+    nor 2.4 s; 2.5 s (the limit of 2 s of Q850 plus the head start of 0.5 s, Q874 [ADR-EQ3K]) trips, with the
     reason and the code of 4.10."""
     group, status, worker, clock, ended = watch_group(monkeypatch)
     step(group, worker, clock, 0)

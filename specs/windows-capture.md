@@ -918,7 +918,7 @@ Reason: on the C930e the gain read 6 before the stream started and 0 after it st
   this section), with its process alive, no failure reported, no
   pause (`should_pause`) and no close started, is removed from the gate, marked `dead` with the code
   `stalled`, and its process ends. When frames stop, the rule of this section decides: it ends the read 2 s after
-  the last arrival, and the watch counts from a later point and waits the head start past it (Q863,
+  the last arrival, and the watch counts from a later point and waits the head start past it (Q863, Q874,
   [`unix-capture.md`](unix-capture.md) 4.10). The two give the same code `stalled`. The main-process watch also catches a `read_frame` that
   never returns; for the OpenCV source a read or a control call that blocks longer than 2.5 s ends the
   camera, by design. `SKELLYCAM_STALL_WATCH=0` turns the watch off ([`unix-capture.md`](unix-capture.md) 4.10).
