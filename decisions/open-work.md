@@ -106,7 +106,8 @@ task. Delete an item when its work is done. The PR that closes an item records t
     `npm run test:player:unit` in `skellycam-ui/` and
     `uv run pytest skellycam/tests/preview tools/tests/test_camera_message_fixture.py -m "not pace"`. Open: T-PRV-29
     (B sends only frame 0 before its end), T-PRV-47 (no capture of a still window) and T-PRV-49 (the hidden window
-    stays `visible`) fail on their test, not on the code (Q835); the benchmarks T-PRV-51 and T-PRV-52 (by hand); the
+    stays `visible`) fail on their test, not on the code (Q835); the benchmarks T-PRV-51 and T-PRV-52 (their first run, 2026-11-26: the harness page closes, the devtools link of
+    Playwright overflows at 256 MB); the
     CI changes of 7.8, in their own PR; the tile timings of step 8 of `capture-timings.md`. The tests and the code
     merge together after an independent review (Q815). The pause text of `preview-4b.md` on the integration side
     wins (no server pause, ADR-V8RS).
