@@ -40,6 +40,7 @@ The common codes of the contract keep the meaning of the contract (section 5.3):
 | `rate-high` | The frame rate is more than 3 % above the mode rate. |
 | `too-dark` | The frame is too dark to judge the check. |
 | `too-bright` | The frame is too bright to judge the check. |
+| `no-frame` | The check got no frame to measure its brightness, so it cannot judge. |
 | `readback-differs` | A set value reads back as a different value. |
 | `setting-reverted` | A set value changed back to another value later. |
 | `no-image-effect` | The image did not change as the set value requires. |

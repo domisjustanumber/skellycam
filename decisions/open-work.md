@@ -139,6 +139,16 @@ task. Delete an item when its work is done. The PR that closes an item records t
   - Named only, not specified: codec checks from the H.264 study (which encoders exist and work, the stream limits
     of each hardware encoder per GPU model with the sustained number and the crossover to the CPU, and what the
     Electron UI can decode). The user wants them in certify if the study finds answers.
+- **Certify test lane** ([ADR-ZRA6](entries/ZRA6-choices-of-the-certify-test-lane.md),
+  [ADR-CR85](entries/CR85-decisions-of-the-user-on-the-certify-test-lane.md)). Open:
+  - Q821, for the self-check lane (Q48), test first: the product key `rate_luma_mean` (3.5.15 P5), and why certify
+    gets no diagnostics dict of a camera that fails its start-up rate check. Then T-CERT-09 (a strict `xfail`)
+    passes.
+  - The run parts of T-CERT-23 (the Auto checks of `full`) and of T-CERT-121 (`details.cameras`) wait for that
+    code. T-CERT-32 runs on Windows only until phase 7 (Q777).
+  - The frozen case of T-CERT-18 is not proven until T-CERT-90 runs on a real build (item 14 of ADR-ZRA6).
+  - Q790 (Q62) and Q792 (Q64) are not in this lane on purpose: their spec text is on `dom/exclusive-access-spec`
+    and waits for the acceptance of the user.
 - **Decided 2026-11-21, not built**
   ([ADR-TFD7](entries/TFD7-search-limit-stop-rate-median-role-flag-and-restore-after-a-failed-loop.md)):
   a role flag in place of the `parent_process()`

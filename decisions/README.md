@@ -53,6 +53,8 @@ These entries are `accepted`.
 | [ZEX9](entries/ZEX9-decisions-of-the-user-on-the-housekeeping-of-2026-11-25.md) | Q729 to Q732, Q751: untrack 65 media files of `dom/research`, trim plan section 15, push two branches, delete the H.264 temp files | accepted |
 | [N6X6](entries/N6X6-decisions-of-the-user-on-the-build-lanes-of-2026-11-25.md) | Q750, Q772, Q775, Q776, Q780: three build lanes, two certify lanes, quick tests only around fix lane 7; ask before performance tests | accepted |
 | [6YGH](entries/6YGH-acceptance-of-the-as-built-choices-of-fix-lanes-4-and-5-and-of-certify.md) | Q752 to Q757, Q759 to Q762, Q770: HQE5 Q-A to Q-C, DC43 1 to 4, KY81 rest, items of 8CP7 and FC1C accepted as built | accepted |
+| [ZRA6](entries/ZRA6-choices-of-the-certify-test-lane.md) | Certify test lane (Q772, Q773, Q775): `no-frame`, the dark rule as pure functions, `bad-output`, `exit_code` of a crash, the native choice, Q624 names | accepted |
+| [CR85](entries/CR85-decisions-of-the-user-on-the-certify-test-lane.md) | Q817 to Q823: a crash blames no check; `no-frame`; `too-bright` as the dark rule; `bad-output` as a time-out; P5 in the self-check lane; the not-built lists | accepted |
 
 ### Proposed
 
