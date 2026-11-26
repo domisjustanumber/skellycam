@@ -91,13 +91,11 @@ class StepSamples:
 
 class StepSet:
     """The samples of one writer instance (5.1). A set of a thread that another thread reads gets each id at its
-    creation, so that its dict never changes size during a read. `pending` holds values that a later bracket of the
-    same thread needs: the `published_ns` of each camera of a group message of the interim relay (6.5)."""
+    creation, so that its dict never changes size during a read."""
 
     def __init__(self, control: TimingControl, ids=()):
         self.control = control
         self.samples = {key: StepSamples() for key in ids}
-        self.pending = {}
 
     def add(self, key, duration_ns: int) -> None:
         samples = self.samples.get(key)
@@ -183,7 +181,6 @@ class PreviewTimings:
         connection measured. A change of `on` applies here; the first window after a change to on gives none."""
         was_on, self.control.on = self.control.on, on
         windows = self._reader.read([self.steps])
-        self.steps.pending.clear()
         for key in [key for key in self.steps.samples if key[0] not in group_ids]:  # a group that is gone
             del self.steps.samples[key]
         for key in [key for key in self._seq if key[0] not in group_ids]:
