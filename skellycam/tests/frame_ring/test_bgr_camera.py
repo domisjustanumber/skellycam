@@ -21,7 +21,7 @@ import cv2
 import numpy as np
 import pytest
 
-from skellycam.tests.capture.capture_session import capture_app, hold_clock_while_behind, ready_app_steps
+from skellycam.tests.capture.capture_session import capture_app, hold_clock_while_behind
 from skellycam.tests.capture.fake_source import FakeScript
 from skellycam.tests.frame_ring.ring_session import (
     fake_configs,
@@ -47,11 +47,16 @@ from skellycam.tests.frame_ring.test_lifecycle import _bytes_pattern, _wait_gone
 FRAMES_T_RING_40 = 10_000
 
 
-def _ready_fake_camera(cleanup, app):
-    """Apply the one fake camera of `app` with a BGR ring and wait until it is `ready`. Give its ID,
-    and the names and raw views (open after the close of the session) of its JPEG and BGR rings."""
+def _ready_fake_camera(cleanup, app, until=("ready",)):
+    """Apply the one fake camera of `app` with a BGR ring and wait until it is in a state of `until`. Give its
+    ID, and the names and raw views (open after the close of the session) of its JPEG and BGR rings. A camera
+    that ends soon after `ready` must also accept `dead`: on the virtual clock its time in `ready` can be
+    shorter than one poll of `wait_state` (as `capture_session.one_camera`) [ADR-2HW5]."""
     camera_id = app.factory.camera_ids[0]
-    ready_app_steps(app, [app.config(camera_id, bgr_ring=True)])
+    app.detect()
+    response = app.apply([app.config(camera_id, bgr_ring=True)])
+    assert response.status_code == 200, response.text
+    app.wait_state(camera_id, *until)
     info = app.group.ring_infos[camera_id]
     names = (info.jpeg_ring_name, info.bgr_ring_name)
     return camera_id, names, [cleanup.handle(open_raw(name)) for name in names]
@@ -174,7 +179,7 @@ def test_t_ring_38_slow_bgr_stage_in_the_camera_loop(monkeypatch, cleanup):
 
     monkeypatch.setattr(fr.FrameRingWriter, "write", slow_bgr_write)
     with capture_app(monkeypatch, [FakeScript(modes=((640, 480, 60, 1, "MJPG"),), stop_after_frame=200)]) as app:
-        camera_id, _, (jpeg_shm, bgr_shm) = _ready_fake_camera(cleanup, app)
+        camera_id, _, (jpeg_shm, bgr_shm) = _ready_fake_camera(cleanup, app, until=("ready", "dead"))
         app.wait(lambda: app.status(camera_id)["closed"], "the end of the loop after the last frame")
     jpeg = parse_ring_header(jpeg_shm.buf)
     frames = jpeg["head"] + 1
