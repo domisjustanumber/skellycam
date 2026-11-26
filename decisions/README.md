@@ -91,7 +91,7 @@ These entries wait for a decision of the user. Section is the section or area of
 | [JFG4](entries/JFG4-choices-of-the-capture-timings-build.md) | Choices of the capture timings build that the user did not decide: source sets, sets, main process, message loop, route, test seams, faults | none | proposed |
 | [J1HD](entries/J1HD-choices-of-the-control-read-check.md) | Choices of the certify check of the control read: 30 s on and off, the 100 ms rule, `control_read` in the record, a harmed model pauses on each build | none | proposed |
 | [TYH0](entries/TYH0-choices-after-the-acceptance-of-the-v1-playback-spec.md) | After the v1 spec acceptance: the code that goes with the old routes in 6c part 1; the certify row `player-legacy-decode` | `player` | proposed |
-| [ZEK6](entries/ZEK6-choices-of-the-jpeg-encode-at-capture-code.md) | Open choices of the 3b code: Quick Sync check place and flag, range details, full-range table, reports, MF details, pairing test, `cv2.LUT` | `skellycam.core.camera.capture` | proposed |
+| [YQN1](entries/YQN1-choices-of-the-size-floor.md) | Choices of the size floor: one predicate, reason and refusal texts, the check after the open, the UI control and its tracking note, test sizes | `skellycam.core.camera.capture` | proposed |
 
 The entries that are `rejected`, `superseded by XXXX`, `absorbed into <path>#<anchor>`,
 `evidence; used by XXXX`, `evidence; replaced by XXXX` or `done` are in [historical.md](historical.md).

@@ -606,7 +606,8 @@ Rules [D14]:
 - Rates ascending. Duplicates merged after rounding.
 - A rate is `fps_num / fps_den`, rounded to 2 decimal places [agent 18]. Thus 30.00003 reports as 30
   and 29.97 stays 29.97. JSON writes 30 as `30.0`. It is the same number for a JSON reader.
-- Rates below 29.97 fps are left out. A size with no rate left is left out [U11].
+- Rates below 29.97 fps are left out. A size with no rate left is left out [U11]. A size below the size
+  floor is left out too (640 wide and 360 high, 22.2 [U Q887, Q888]).
 - A camera whose mode list cannot be read has `supported_modes = []`, as on `sfn26`.
 
 ### 7.4 Full mode list (3c) [D14]
@@ -634,7 +635,8 @@ fields of `CameraMode` [ring 9] plus the rounded rate:
   other than the four test cameras].
 - Order: sizes as in 7.3, rates ascending, and for one size and rate MJPG first ("JPEG preferred")
   [D14] [agent 19].
-- A mode below 29.97 fps is listed with `selectable: false` and the reason "below 30 fps" [U11]
+- A mode of a size below the size floor is listed with `selectable: false` and the reason "below 640x360"
+  (22.2 [U Q887, Q888]). A mode below 29.97 fps is listed with `selectable: false` and the reason "below 30 fps" [U11]
   [agent 53]. The field `reason` is null for a selectable mode. H.264 and RAW modes have
   the reason "never opened" [agent 53].
 - `supported_modes` stays as in 7.3.
@@ -645,6 +647,8 @@ fields of `CameraMode` [ring 9] plus the rounded rate:
   the rate nearest to the request within 0.5 fps. Of two equally near rates, the first in the native
   list wins [proto parse.py `select_native_type`]. No such mode: the camera fails, stage `set mode`,
   with a message that lists its modes in the form of 7.3.
+- **Size floor** [U Q887, Q888]: skellycam does not offer a mode below 640 wide and 360 high either.
+  The rules of the size floor are in 22.2.
 - **Floor of 30 fps** [U11]: skellycam does not offer a mode below 30 fps. A mode at 29.97 fps counts
   as 30: the floor is 30000/1001 fps.
   - The floor applies to the exact rate of the chosen mode (`fps_num / fps_den`, before rounding for
@@ -1173,7 +1177,8 @@ test list of the encode at capture (2026-11-25).
 ### 13.1 Choice
 
 - `capture_fourcc` asks for `YUY2` or `NV12`. The default is `MJPG` [D19]. The mode choice of 7.5
-  uses the requested format. The floor of 29.97 fps applies to each format [U11].
+  uses the requested format. The floor of 29.97 fps applies to each format [U11], and so does the size
+  floor of 22.2 [U Q887].
 - A synthesized NV12 type (7.4) is never chosen. A request with no native type of the format fails,
   stage `set mode` [agent 19].
 - The full mode list of 3c then gives the proper choice [D19].
@@ -1206,6 +1211,9 @@ test list of the encode at capture (2026-11-25).
 - The decision is made one time for each camera loop (22.2 [U Q881]), before the first recorded frame, and
   never changes in a session. The
   camera process logs the range ([`recorder.md`](recorder.md) 6.7).
+- The decision is made at the end of the warm-up of the first raw open of the camera loop. The share is
+  over all Y values of the warm-up frames together. The log line has the form "Camera `<id>`: input
+  range `full` or `limited` (`<why>`)". A change of `input_range` does not reopen the camera [U Q887].
 
 ## 14. The OpenCV source
 
@@ -1216,6 +1224,9 @@ test list of the encode at capture (2026-11-25).
   (section 8) and one rate per group (7.5) [D46].
 - The rate check runs on each OpenCV camera. The reference is the reported rate, or the requested
   rate (30 fps for "auto") when OpenCV reports no rate [W2].
+- The size floor of 22.2 [U Q887 to Q889] applies to the OpenCV source as the rate floor does: a request
+  for a size below the floor is refused in the whole-request check, and a camera whose open reports a
+  size below the floor fails, stage `set mode` [NV for Linux and macOS until a certify report].
 - The floor of U11: a request below the floor is refused in the whole-request check, as on each
   source. When OpenCV reports a real rate above 0 and below 29.97 after the open, the camera fails,
   stage `set mode`, reason "no mode at 30 fps or more". When OpenCV reports no rate (0 or less), the
@@ -2525,8 +2536,10 @@ side of these rules is the certify checks of section 20 of [`certify.md`](certif
   choice of an agent that the user accepted on 2026-11-26 (Q845). A mark [U Qn] is a decision of the
   user of 2026-11-26
   ([ADR-8WY3](../decisions/entries/8WY3-decisions-of-the-user-on-the-raw-mode-open-and-its-flag.md),
-  [ADR-4TBY](../decisions/entries/4TBY-decisions-of-the-user-on-the-review-of-the-3b-code.md)). A mark
-  [ZEK6 n] is item n of [ADR-ZEK6](../decisions/entries/ZEK6-choices-of-the-jpeg-encode-at-capture-code.md), a proposed choice of the agent that wrote the code.
+  [ADR-4TBY](../decisions/entries/4TBY-decisions-of-the-user-on-the-review-of-the-3b-code.md),
+  [ADR-25VS](../decisions/entries/25VS-decisions-of-the-user-on-the-later-opens-and-the-size-floor.md)). A mark
+  [YQN1 n] is item n of [ADR-YQN1](../decisions/entries/YQN1-choices-of-the-size-floor.md), a proposed choice of
+  an agent. A mark [ZEK6 n] is item n of [ADR-ZEK6](../decisions/entries/ZEK6-choices-of-the-jpeg-encode-at-capture-code.md), a proposed choice of the agent that wrote the code.
   V5 (OpenCV controls, except the empty mode list) and V7 (3c hardware) are not part of this section.
 
 ### 22.2 Rules of step 3b
@@ -2551,6 +2564,25 @@ side of these rules is the certify checks of section 20 of [`certify.md`](certif
   `capture_modes`, so the main process does not refuse a request that the raw mode serves [N72V 3]. A
   camera with an MJPG mode at the floor at that size opens MJPG and logs no such line. No UI flag shows
   the raw-mode open: the log line and the `capture_format` of the take are enough for now [U Q846].
+- **Size floor [U Q887, Q888, Q889].** As with rates below 30 fps, skellycam ignores each mode of a size
+  below 640x480; 640x360 is allowed too. A size is at the floor when its width is 640 or more and its
+  height is 360 or more (one function, `modes.size_at_floor`) [YQN1 1]. The floor applies everywhere
+  the rate floor of U11 does: each OS, the native sources and the OpenCV source, and the mode list that
+  the UI offers [U Q889]. It leaves a mode out of `supported_modes` (7.3), of the choice of a mode (7.5,
+  13.1, the raw-mode open of Q807) and of the auto rate. `capture_modes` (7.4) lists such a mode with
+  `selectable: false` and the reason "below 640x360"; a mode below both floors has this reason
+  [YQN1 2]. A request for a size below the floor is refused as a request with no mode at the floor
+  rate is: in the whole-request check (HTTP 422), else at the open, stage `set mode`, code
+  `below-floor`, with the reason "no mode of 640x360 or more" [YQN1 3]. After the open, a source that
+  reports a size below the floor (the OpenCV source) fails the same way (14.1) [YQN1 4].
+- **The size in the UI [U Q888, Q889].** The resolution control (`CameraConfigResolution`) offers only
+  sizes at the floor: its presets are 640x480, 1280x720 and 1920x1080, and a custom size below the floor
+  is not applied [YQN1 5]. When the chosen size is below 1280x720 (a width below 1280 or a height below
+  720), a note under the control tells the user that hand and face tracking will be limited by the
+  resolution. The note does not block the choice. Its English text is "Hand and face tracking will be
+  limited at this resolution. 1280 × 720 or more gives the best tracking." (key
+  `trackingLimitedByResolution`) [YQN1 6]. The default size of a camera config is 1280x720, the size
+  that the user calls ideal (Q888).
 - **The format of a raw take [Q808].** A take of a camera in YUY2 records `requested.capture_format`
   `"YUYV"` (SFF-800; [`recorder.md`](recorder.md) 6.7). This also applies to a camera that opened its
   raw mode by Q807: the take records the opened format, not the requested format [N72V 4]. A take of a
@@ -2568,7 +2600,9 @@ side of these rules is the certify checks of section 20 of [`certify.md`](certif
   `cv2.imencode` for the rest of that open, as after a Quick Sync error [U Q878]. A frame of the wrong
   length that waits behind a held frame counts as held [ZEK6 16]. Frames that Quick Sync
   still holds at a close are dropped. A Quick Sync encoder that does not open at the start of a camera
-  is not counted as a fallback: the camera uses `cv2.imencode` [U Q881].
+  is not counted as a fallback: the camera uses `cv2.imencode` [U Q881]. After one fallback, each later
+  open of that camera in the same app run uses `cv2.imencode` too, also in a new group, until the app
+  restarts [U Q886]. The Quick Sync check of 13.2 encodes one NV12 test frame of 1280x720 [U Q887].
 - **OpenCV source [V4].** A YUY2 or NV12 request gives a `cv2.imencode` JPEG at quality 90 of the
   image that OpenCV delivers. No Quick Sync check runs. `jpeg_encoder` is `"cv2"`. There is no input
   range: no range line in the log, because [`recorder.md`](recorder.md) 6.7 gives the range to the
@@ -2577,7 +2611,20 @@ side of these rules is the certify checks of section 20 of [`certify.md`](certif
   range-expanding table before Quick Sync, and `cv2` converts it with its default conversion. A
   full-range frame goes to Quick Sync unchanged, and `cv2` converts it with a full-range conversion.
   The decoded JPEG matches the full-range BGR of the source (T-CAP-152), and the BGR ring image
-  matches its decoded JPEG (T-CAP-153), within a mean absolute difference of 3 levels [3WCA 12].
+  matches its decoded JPEG (T-CAP-153), within a mean absolute difference of 3 levels [3WCA 12]. The
+  full-range conversion takes the frame to limited range by a table (BT.601), then uses the default
+  OpenCV conversion. The tables run through `cv2.LUT`. The BGR ring uses the decided range (this closes
+  22.4): with `cv2`, it gets the image that `cv2` encoded; with Quick Sync, the decode thread converts
+  the raw frame with `DecodeInput.full_range` [U Q887].
+- **The Quick Sync check in the main process [U Q887].** The manager runs the check in a worker thread,
+  after the whole-request check of a request that it accepts, at the first such request in which a
+  camera opens YUY2 or NV12 by the detection data. Then it runs the whole-request check again, so that
+  the check of `request_runs` and its set have no wait between them
+  ([`camera-requests.md`](camera-requests.md) 2.4a item 7). A camera with no `capture_modes` (the OpenCV
+  detection) never starts the check, and with no source factory and `SKELLYCAM_WINDOWS_CAPTURE=opencv`
+  the check does not run. Each camera status has the flag `quick_sync`, which the manager writes with
+  the capture-timings switch, before the camera processes start and before an apply to a group that
+  runs. A Quick Sync encoder that does not open at the start gives a WARNING line.
 - **The recorder (note of 2026-11-20).** The camera writer of the take gets the encoded JPEG, with
   the same bytes as the ring frame of the same source frame [ring 5.3]. Each block of the camera file
   is that JPEG (22.6 item 19).
@@ -2605,12 +2652,17 @@ missing module, not with an error at collection (22.6 item 20).
 | T-CAP-151 | 3b | fake | OpenCV detection with a fake `cv2_enumerate_cameras`; Linux and macOS [V5]. | `capture_modes` is `[]` and `supported_modes` is `[]` for each camera. |
 | T-CAP-152 | 3b | fake | YUY2 and NV12 fakes, with the fake Quick Sync encoder and with `cv2.imencode`: (1) limited-range frames; (2) full-range frames (2 % of Y outside 16 to 235) [V6]. | The decoded ring JPEG equals the full-range BGR of the source within a mean absolute difference of 3 levels: (1) the default OpenCV conversion (limited range in); (2) the full-range BT.601 conversion. |
 | T-CAP-153 | 3b | fake | As T-CAP-152, with the BGR ring on [V6]. | The BGR ring image of each frame equals the decoded ring JPEG of the same frame within 3 levels. |
-| T-CAP-154 | 3b | fake | An MJPG request at 320x240 at 30 fps for four fakes: MJPG at 15 and YUY2 at 30 there; NV12 only there; NV12 and YUY2 there; MJPG at 30 and YUY2 there (each fake also has MJPG at 30 at 640x480); record [Q807, Q808]. | The first three open YUY2, NV12 and YUY2, reach `ready`, log one line of 22.2 each, give ring JPEGs with the chroma of the source, show `jpeg_encoder` "cv2" and record `YUYV` for YUY2; the fourth opens MJPG, logs no such line and records `MJPG`. |
+| T-CAP-154 | 3b | fake | An MJPG request at 640x480 at 30 fps for four fakes: MJPG at 15 and YUY2 at 30 there; NV12 only there; NV12 and YUY2 there; MJPG at 30 and YUY2 there (each fake also has MJPG at 30 at 1280x720; the sizes follow the size floor of 22.2, Q887); record [Q807, Q808]. | The first three open YUY2, NV12 and YUY2, reach `ready`, log one line of 22.2 each, give ring JPEGs with the chroma of the source, show `jpeg_encoder` "cv2" and record `YUYV` for YUY2; the fourth opens MJPG, logs no such line and records `MJPG`. |
 | T-CAP-155 | 3b | fake | A YUY2 request (`capture_fourcc`) records a take [Q808]. | `requested.capture_format` of the capture info is `"YUYV"`; each block of the camera file is a 4:2:2 JPEG. |
 | T-CAP-156 | 3b | fake | A request for YUY2 with a slow Quick Sync check; during the check, an exposure change that holds in its apply [ZEK6 2]. Also a request that the one-rate rule refuses, with a YUY2 camera. | The YUY2 request gets 409 with the reason of [`camera-requests.md`](camera-requests.md) 2.4a item 7; two changes never run at once. The refused request (422) runs no Quick Sync check. |
 | T-CAP-157 | 3b | fake | A fake Quick Sync encoder that takes each frame and gives no JPEG and no error [U Q878]. | The camera falls back to `cv2.imencode` at the third frame; the first ring frame has `DISCONTINUITY`; the ring frames are exactly the frames given to the encoder; the WARNING line and the stop line come. |
 | T-CAP-158 | 3b | fake | Quick Sync holds one frame; a reopen (BGR ring on), then the close [U Q881]. | Each encoder closes with one frame more in than out; each JPEG out is a ring frame of its own frame. |
 | T-CAP-159 | 3b | fake | The encoder fails while no take runs; then a reopen [ZEK6 7]. | No `encoder_fallback` item; the WARNING line; the reopen opens no Quick Sync encoder; one fallback in the stop line. |
+| T-CAP-161 | 3b | fake | The encoder fails; then the group closes and a new group opens the camera in YUY2 again [U Q886]. | No second Quick Sync encoder opens; `jpeg_encoder` is "cv2" in the new group. |
+| T-CAP-162 | 3b | fake | `supported_modes`, `capture_modes` and the mode choice with modes of 320x240, 424x240, 480x360, 600x480, 639x480, 640x359, 640x360 and 640x480 [U Q887, Q888]. | Only 640x480 and 640x360 are in `supported_modes` and selectable; the others have the reason "below 640x360"; a request for each of them fails at `set mode` with "no mode of 640x360 or more"; the raw-mode open of Q807 never opens a size below the floor. |
+| T-CAP-163 | 3b | fake | A request for 320x240 to a fake with a mode there, with the MJPG and with the OpenCV detection data [U Q887, Q889]. | HTTP 422 with "no mode of 640x360 or more"; no camera opens. |
+| T-CAP-164 | 3b | fake | The OpenCV fake opens and reports 320x240 for a request of 640x480 [U Q887, Q889]. | The camera fails, stage `set mode`, code `below-floor`, reason "no mode of 640x360 or more". |
+| T-CAP-165 | 3b | UI unit | `resolution-floor.ts` of the UI: the size floor and the note of 22.2 [U Q888, Q889]. | 640x480, 640x360, 1280x720 are at the floor and 320x240, 424x240, 480x360, 639x480, 640x359 are not; the note shows for 640x480, 640x360, 1279x720 and 1280x719, not for 1280x720 and 1920x1080; the English text is as 22.2. |
 | T-CAP-160 | 3b | fake | `input_range` "full" and "limited" against the share of the warm-up; "auto" with the OS flag "full" [ZEK6 4]. | The log gives the set range; the ring JPEG is the full-range BGR of the source with that range, within 3 levels. |
 
 T-CAP-150 to T-CAP-153 are T-CAP-105, T-CAP-106, T-CAP-109 and T-CAP-110 of `dom/3bc-tests` and of
@@ -2689,6 +2741,10 @@ The Python names and the test rules:
     `flag_types` of its `parse.py` (`subtype`, `width`, `height`, `fps_num`, `fps_den`, `flags`).
 14. T-CAP-76: the "history documents" are the files under `decisions/` and `specs/`. It comes with the
     3c tests, with a skip mark that the last commit of phase 3 removes.
+
+Media Foundation (2026-11-26, [U Q887]): the range flag of the OS is `MF_MT_VIDEO_NOMINAL_RANGE` of
+the current type (1 is full, 2 is limited, else not set). A raw frame is a NumPy view of the copied
+bytes, with no second copy; `delivered_len` is its byte count.
 
 The port of the 3b tests from `dom/3bc-tests`:
 

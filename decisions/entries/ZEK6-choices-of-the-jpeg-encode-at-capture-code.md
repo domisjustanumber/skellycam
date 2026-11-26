@@ -1,6 +1,16 @@
 # ZEK6 — Choices of the code of the JPEG encode at capture (step 3b)
 
-**Status:** proposed, 2026-11-26 (agent).
+**Status:** absorbed into
+[`specs/windows-capture.md#133-range-rule`](../../specs/windows-capture.md#133-range-rule),
+[`specs/windows-capture.md#222-rules-of-step-3b`](../../specs/windows-capture.md#222-rules-of-step-3b),
+[`specs/windows-capture.md#226-python-api-and-rules-of-the-port`](../../specs/windows-capture.md#226-python-api-and-rules-of-the-port),
+[`specs/capture-timings.md#53-cost-budget-of-the-measurement-u-q587-9`](../../specs/capture-timings.md#53-cost-budget-of-the-measurement-u-q587-9),
+[`specs/capture-timings.md#54-steps-that-apply`](../../specs/capture-timings.md#54-steps-that-apply),
+[`specs/capture-timings.md#85-the-step-ids`](../../specs/capture-timings.md#85-the-step-ids),
+[`skellycam/core/ipc/frame_ring/decode.py`](../../skellycam/core/ipc/frame_ring/decode.py),
+[`skellycam/tests/capture/test_uncompressed.py`](../../skellycam/tests/capture/test_uncompressed.py),
+2026-11-26 (commit to dom/jpeg-encode-tests; was accepted, 2026-11-26 (user, Q886 and Q887,
+[ADR-25VS](25VS-decisions-of-the-user-on-the-later-opens-and-the-size-floor.md))).
 
 ## Decision
 
@@ -8,8 +18,9 @@ Section 22 of [`specs/windows-capture.md`](../../specs/windows-capture.md) and i
 details open. An agent chose them when it wrote the code (Q815, Q855). The code is in
 `skellycam/core/camera/capture/encoder.py`, `modes.py`, `camera_loop.py`, the Media Foundation source,
 `camera_group_manager.py` and `skellycam/core/ipc/frame_ring/decode.py`. The user accepted items 1, 6, 9 and
-12, and parts of items 4, 7 and 11, on 2026-11-26 (Q876 to Q881, [ADR-4TBY](4TBY-decisions-of-the-user-on-the-review-of-the-3b-code.md)). Each accepted item is
-in that entry. The other items wait for the user.
+12, and parts of items 4, 7 and 11, on 2026-11-26 (Q876 to Q881, [ADR-4TBY](4TBY-decisions-of-the-user-on-the-review-of-the-3b-code.md)), and the other items with
+Q886 and Q887 ([ADR-25VS](25VS-decisions-of-the-user-on-the-later-opens-and-the-size-floor.md)), except the Quick Sync test frame
+of item 2: it is 1280x720, not 320x240 (Q887).
 
 1. **The raw mode of Q807.** Accepted (Q881).
 2. **The Quick Sync check.** The manager runs the check in a worker thread, after the detection and
@@ -17,7 +28,7 @@ in that entry. The other items wait for the user.
    detection data. Thus the check of `request_runs` and its set have no wait between them
    (camera-requests.md 2.4a item 7; T-CAP-156). A camera with
    no `capture_modes` (the OpenCV detection) never starts the check. With no source factory and
-   `SKELLYCAM_WINDOWS_CAPTURE=opencv`, the check does not run. The test frame is NV12 at 320x240.
+   `SKELLYCAM_WINDOWS_CAPTURE=opencv`, the check does not run. The test frame was NV12 at 320x240; Q887 made it 1280x720.
 3. **The result in the camera processes.** Each status has a flag `quick_sync`. The manager writes it
    with the capture-timings switch, before the camera processes start and before an apply to a group
    that runs.
@@ -45,9 +56,7 @@ in that entry. The other items wait for the user.
     `should_record_frame_number`, which stays outside each bracket. The read budget of 5.3 counts the taken
     frames: at most 10 reads in a pass that gives a ring frame, 4 in a pass whose frame Quick Sync holds
     (T-TIM-23).
-12. **A stalled encoder.** Accepted (Q878): the fallback comes when a call gives no JPEG and more than 2
-    frames wait (the words of the user). Real Quick Sync gave one JPEG for each frame from the second
-    frame on, in a smoke run on the development machine.
+12. **A stalled encoder.** Accepted (Q878): a call gives no JPEG and more than 2 frames wait.
 13. **The pairing test.** T-CAP-67 and T-CAP-158 check that each Quick Sync JPEG belongs to its own
     frame: a spy keeps the source frame number of each frame given to `feed`, and the ring frame of the
     JPEG with input number k has the k-th of them. T-CAP-157 checks that the ring frames are exactly the
@@ -57,7 +66,7 @@ in that entry. The other items wait for the user.
     for NV12). At 1080p it took 2.38 ms (YUY2) and 1.33 ms (NV12), against 8.54 and 5.71 ms with NumPy
     indexing, with the same bytes (median of 200 runs, synthetic frames, one OpenCV thread, OpenCV of
     the lock file, development machine only).
-15. **T-CAP-26.** Resolved by the user (Q876): the NV12 type of its fixture is at 15 fps.
+15. **T-CAP-26.** Resolved (Q876).
 16. **Short frames behind a held frame.** A frame of the wrong length is not encoded, but it waits in the
     queue behind a frame that Quick Sync holds. Thus the limit of Q878 counts the whole queue: when a
     call gives no JPEG, the oldest frame waits for its JPEG and the queue holds more than 2 frames, the

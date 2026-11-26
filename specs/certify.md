@@ -408,7 +408,8 @@ On Linux and macOS, quick also has `<label>:clock:base`, `<label>:clock:before-a
 `<label>:sequence` stays in the report as `not-run` with `no-sequence` (10.2).
 
 `<base>` is `1280x720@30`. A camera with no 1280x720 MJPG mode at the floor uses the largest MJPG
-size below 1280x720 in area that has a rate at the floor, for example `640x480@30` [A].
+size below 1280x720 in area that has a rate at the floor, for example `640x480@30` [A]. A size below
+the size floor (640 wide and 360 high) is never a base ([`windows-capture.md`](windows-capture.md) 22.2, Q887 to Q889).
 
 **The summary item of a model** [C 3.7]. The summary has one `camera` item for each camera model on
 the system (the USB vendor id and product id), not for each unit. `name` is the cleaned name (9.4,
@@ -2161,7 +2162,7 @@ The exposure rule of the product, which the certify checks must match [U]:
 - A camera in Auto searches at every open, and when the person changes the frame rate.
 - The camera's own auto exposure is never a mode. No certify check turns it on as a mode.
 - The text for a slow camera is "Camera is slow. Try adding more light".
-- Nothing below 30 fps is offered.
+- Nothing below 30 fps is offered, and no size below the size floor of 640 wide and 360 high (Q887 to Q889).
 
 The camera requests spec owns the search [req 1.3, 1.3a, 1.3b]: the names `exposure` and
 `exposure_found_at_fps` in the config, the status object `exposure_search` with `state`
