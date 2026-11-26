@@ -3873,6 +3873,11 @@ summary item); item 16 (the commit, the tree state and the schema 1.7.0 are writ
 14. A camera with a step running at a stop is not opened again and gets `camera-not-restored`,
     because the product needs 5 s to declare a hang (8.3). Cost: no restore after a cancel during the
     take. The coordinator chose it, and the user accepted it (question 6 of ADR-X8XE).
+15. An event from the session child that is not a valid result (`bad-output`: not a pair of a known kind and a
+    value of its form, or an event that does not unpickle) is handled by the time-out rule of item 8, as built:
+    the running check is `fail` only when the checks that ran belong to one camera or to the group and are not
+    the open; else none is blamed [U Q820,
+    [ADR-CR85](../decisions/entries/CR85-decisions-of-the-user-on-the-certify-test-lane.md)].
 
 The user answered "yes" to the six questions of ADR-X8XE on 2026-11-21: (1) keep 2.4 (9.1); (2) the
 difference of one between `total` and the reported checks with no camera to check (9.1); (3) one

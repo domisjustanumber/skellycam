@@ -107,10 +107,9 @@ task. Delete an item when its work is done. The PR that closes an item records t
   - Not verified: real cameras, Linux, macOS and the installer build.
 - **The certify run of skellycam.** The spec [`specs/certify.md`](../specs/certify.md) is draft 3. The first code is in `skellycam/core/certify/` (section 19 of the
   spec), and a first real quick run was done on 2026-11-21. Open: the checks that are `not-run`
-  `not-built` (the status line of the spec). The user accepted items of KY81, 8CP7, FC1C, HQE5 and DC43 as
-  built ([ADR-6YGH](entries/6YGH-acceptance-of-the-as-built-choices-of-fix-lanes-4-and-5-and-of-certify.md)); their
-  move from Proposed waits for the read-path clean-up below. FC1C items 4 and 13 and HQE5 items 2 and 3 are not
-  decided.
+  `not-built` (the status line of the spec). [ADR-6YGH](entries/6YGH-acceptance-of-the-as-built-choices-of-fix-lanes-4-and-5-and-of-certify.md)
+  accepted KY81 and DC43 in full (now accepted) and 8CP7, FC1C and HQE5 in part (still proposed). Not decided:
+  8CP7 items 1, 2, 4, 7, 8 and 10, FC1C items 4 and 13, HQE5 items 2 and 3.
 - **Certify report fields, decided 2026-11-23, not built**
   ([ADR-F6C3](entries/F6C3-decisions-of-the-user-on-the-certify-report-fields.md)). The fields, the
   kept logs are in section 3.5 of the spec, in the slim form of Q594, with the build order of 3.6.7 (Q626) and
@@ -189,8 +188,8 @@ task. Delete an item when its work is done. The PR that closes an item records t
     `pace`, or stay as it is? It fails 1 in 20 on 2 cores (real time; JC4X item 3).
   - macOS [NV]: the runner's open-file limit, and that its errors came from this leak. A run of the macOS jobs by
     hand gives the result.
-- **The read path is over 90 % of its limit** (2026-11-25). Absorb each Active entry whose rules the specs state,
-  then move the five entries of ADR-6YGH from Proposed. ZEX9 becomes `done` after the CI result of its item 4.
+- **ZEX9** ([ADR-ZEX9](entries/ZEX9-decisions-of-the-user-on-the-housekeeping-of-2026-11-25.md)) becomes `done`
+  after the CI result of its item 4.
 - **Exclusive access** (accepted, [ADR-5PAR](entries/5PAR-decisions-of-the-user-on-the-control-read-the-holder-and-the-exclusive-access-drafts.md)).
   `windows-capture.md` 21, `unix-capture.md` 4.13 and `certify.md` 20 are accepted. Next: the Windows lane writes the
   failing tests, then the code; Linux and macOS land with phase 7. The user decides the choices of the control-read

@@ -1,6 +1,13 @@
 # CR85 — Decisions of the user on the certify test lane
 
-**Status:** accepted, 2026-11-25 (user, Q817 to Q823).
+**Status:** absorbed into
+[`specs/certify.md#46-light-too-dark-to-judge-a`](../../specs/certify.md#46-light-too-dark-to-judge-a),
+[`specs/certify.md#15-reason-codes-proposed-skellycamreason_codesmd-a`](../../specs/certify.md#15-reason-codes-proposed-skellycamreason_codesmd-a),
+[`specs/certify.md#17-test-list-of-the-certify-code`](../../specs/certify.md#17-test-list-of-the-certify-code),
+[`specs/certify.md#192-the-review-fixes-and-format-160-u`](../../specs/certify.md#192-the-review-fixes-and-format-160-u),
+[`skellycam/tests/certify/test_certify_cases.py`](../../skellycam/tests/certify/test_certify_cases.py),
+[`skellycam/tests/certify/report_rules.py`](../../skellycam/tests/certify/report_rules.py),
+2026-11-25 (commit to dom/log-cleanup; was accepted, 2026-11-25 (user, Q817 to Q823)).
 
 ## Decision
 

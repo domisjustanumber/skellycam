@@ -54,13 +54,14 @@ These entries are `accepted`.
 | [N6X6](entries/N6X6-decisions-of-the-user-on-the-build-lanes-of-2026-11-25.md) | Q750, Q772, Q775, Q776, Q780: three build lanes, two certify lanes, quick tests only around fix lane 7; ask before performance tests | accepted |
 | [6YGH](entries/6YGH-acceptance-of-the-as-built-choices-of-fix-lanes-4-and-5-and-of-certify.md) | Q752 to Q757, Q759 to Q762, Q770: HQE5 Q-A to Q-C, DC43 1 to 4, KY81 rest, items of 8CP7 and FC1C accepted as built | accepted |
 | [ZRA6](entries/ZRA6-choices-of-the-certify-test-lane.md) | Certify test lane (Q772, Q773, Q775): `no-frame`, the dark rule as pure functions, `bad-output`, `exit_code` of a crash, the native choice, Q624 names | accepted |
-| [CR85](entries/CR85-decisions-of-the-user-on-the-certify-test-lane.md) | Q817 to Q823: a crash blames no check; `no-frame`; `too-bright` as the dark rule; `bad-output` as a time-out; P5 in the self-check lane; the not-built lists | accepted |
 | [X5MZ](entries/X5MZ-rules-of-the-owner-for-the-playback-of-freemocap-v1-recordings.md) | v1 playback rules of the owner: reliable first, short seek second; play as-is; UI on another machine; no server decode; only v1; Q693 libav.js with Dependabot | accepted |
 | [8EBK](entries/8EBK-answers-of-the-owner-q685-q688-q697-q698-q700.md) | v1 playback answers Q685, Q688, Q697, Q698, Q700: server route, one player, decoder built in CI, sample data in CI, HEVC refused, K, warnings | accepted |
 | [HN92](entries/HN92-answers-of-the-owner-q701-to-q706-with-the-default-token.md) | Supersedes 0C4Y: v1 playback answers Q701 to Q706; Q704 bump PR with the default token and one approval click (Q746, draft) | accepted |
 | [VHD3](entries/VHD3-answers-of-the-owner-q694-q717-q718.md) | v1 playback answers Q694, Q717, Q718: WebCodecs for H.264 in each phase, WASM for `mp4v`, WASM `h264` fallback per tile, 8-bit 4:2:0 H.264 later | accepted |
 | [A56K](entries/A56K-choices-of-the-v1-playback-spec.md) | Draft `specs/player-legacy.md` rev. 5, T-LEG-01 to 72: WebCodecs route and WASM fallback, frame table and seek rules, locked play, decoder build, Dependabot | accepted |
 | [EM6A](entries/EM6A-answers-of-the-owner-to-the-v1-playback-questions-of-revision-5.md) | v1 playback answers Q733 to Q749, Q764 to Q767: file rules to skellyspecs, secret header, F6 too slow, macOS re-sign, default token, watch later | accepted |
+| [DC43](entries/DC43-choices-of-fix-lane-5.md) | Choices of fix lane 5: control thread on the test clock, test waits for a short `ready` and for a killed process, Windows Server OS key | accepted |
+| [KY81](entries/KY81-certify-spec-choices-of-the-agent.md) | Certify spec draft 2 `specs/certify.md`, its test list T-CERT-01 to T-CERT-40 and 15 agent choices; 9 questions in its section 14 | accepted |
 
 ### Proposed
 
@@ -72,7 +73,6 @@ These entries wait for a decision of the user. Section is the section or area of
 | [Y6F6](entries/Y6F6-camera-request-choices.md) | Choices A1 to A23 of `specs/camera-requests.md`: search limits, held value, endpoint and texts, slow-camera texts, 60 fps check, fall back, `usb_link` | none | proposed |
 | [4Z7T](entries/4Z7T-choices-after-the-search-at-each-open.md) | Choices B1 to B21 after the search at each open: order and limits of an open, held value, state route, search count, manager call | none | proposed |
 | [AT04](entries/AT04-choices-of-the-linux-and-macos-capture-spec.md) | Spec `specs/unix-capture.md`, tests T-UNX: stdlib V4L2, PyObjC 13.0, identity, exposure map, controls, JPEG fallback, failure codes, diagnostics | `skellycam.core.camera.capture` | proposed |
-| [KY81](entries/KY81-certify-spec-choices-of-the-agent.md) | Certify spec draft 2 `specs/certify.md`, its test list T-CERT-01 to T-CERT-40 and 15 agent choices; 9 questions in its section 14 | `certify` | proposed |
 | [8CP7](entries/8CP7-certify-spec-draft-3-choices-of-the-agent.md) | Certify spec draft 3 on format 1.4.0, tests T-CERT-01 to 67, 15 agent choices: split checks, model item, gate roll-ups, local record, macOS probes | `certify` | proposed |
 | [FC1C](entries/FC1C-choices-of-the-spec-integration.md) | Spec integration choices: hash set, route results, no record in certify, model turn-on, waits, steps, quick order, take error state | none | proposed |
 | [F8C0](entries/F8C0-third-review-choices.md) | Choices of the third review fixes: start and stop with no lost take, no stop pause, exit through the take level, Ctrl-C, dead-server end, summary rate | `recorder` | proposed |
@@ -85,7 +85,6 @@ These entries wait for a decision of the user. Section is the section or area of
 | [0Z6Q](entries/0Z6Q-choices-of-the-certify-report-shape-build.md) | Certify build choices: B1 rows, failure facts, `total`, `not-reached`, named checks, `live-at-close` and its reasons, the build file in each build | `certify` | proposed |
 | [HQE5](entries/HQE5-choices-of-fix-lane-4.md) | Choices of fix lane 4: spawn on Linux, skip guard, slow-stop gap, pace steps, restore file by hashed key, take rate sum over sum | none | proposed |
 | [6RVC](entries/6RVC-choices-of-the-first-propose.md) | Choices of the first propose (other-systems rule): no entry citation in the units, hook place, a test moves, `--fill` and `--literal` | none | proposed |
-| [DC43](entries/DC43-choices-of-fix-lane-5.md) | Choices of fix lane 5: control thread on the test clock, test waits for a short `ready` and for a killed process, Windows Server OS key | none | proposed |
 | [0R76](entries/0R76-choices-of-the-exact-skip-after-a-live-change.md) | Choices of the exact skip after a live change and a search: anchors, the time-out anchor, replay of 1024 taken frames, limits | `skellycam.core.camera.capture` | proposed |
 | [B7YV](entries/B7YV-choices-of-fix-lane-6.md) | Choices of fix lane 6: one run for the two halves, nominal values and loose checks, T-PRV-54, loop threads on the test clock, T-CAP-86 diagnostics | none | proposed |
 | [7GC1](entries/7GC1-choices-of-the-gate-on-the-test-clock-and-the-end-of-t-cap-05.md) | Choices of fix lane 6: a loop at an open gate holds the test clock until its next probe, forced steps still move it; T-CAP-05 checks the last ring frames | none | proposed |
