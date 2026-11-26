@@ -1,12 +1,13 @@
 // Component test T-PRV-49 of the step 4b preview (specs/preview-4b.md 7.4, 7.5): a hidden window gets only the
-// safety net. Two windows of the page `preview`, each with its own connection. The app has no switch against
+// safety net: it draws nothing (no frame of requestAnimationFrame, Q885). Two windows of the page `preview`, each
+// with its own connection. The app has no switch against
 // backgrounding (PLAYER_HARNESS_PRODUCT_THROTTLING=1), and window 2 has the default `backgroundThrottling`, the
 // product setting. Windows only.
 import {expect} from '@playwright/test';
 import {observe, readings} from '../../../../player/tests/harness/observer.ts';
 import {
     connectionNumbers, counts, describe, geometry, requirePreviewTiles, sameReading, SIZE_640, sleep, test, toCaptures,
-    waitDrawn, watch, written,
+    waitDrawn, waitLayoutSettled, watch, written,
 } from './preview-kit.ts';
 
 const HIDDEN_MS = 5000;
@@ -32,6 +33,7 @@ test('T-PRV-49 a hidden window gets only the safety net', async ({preview}) => {
     const [conn1, conn2] = connectionNumbers(await counts(server));
     expect(conn2, 'window 2 has its own connection').toBeDefined();
 
+    await waitLayoutSettled(win2.page, ids);   // the tiles still move after the first draw (open work)
     const geo2 = await geometry(win2.page, ids, SIZE_640);
     const before = await watch(win2, ids, 500);
     expect(before.length, 'the observer reads window 2 before the hide').toBeGreaterThan(0);
@@ -39,9 +41,16 @@ test('T-PRV-49 a hidden window gets only the safety net', async ({preview}) => {
     const writtenAtHide = await written(server);
     const hidden = Date.now();
     await win1.app.evaluate(({BrowserWindow}, id) => BrowserWindow.fromId(id)!.hide(), win2.windowId);
-    const visibility: string[] = [];
+    // Q885: the frames of requestAnimationFrame in 400 ms of window 2 (the window draws nothing while hidden)
+    const rafFrames: number[] = [];
     while (Date.now() - hidden < HIDDEN_MS) {
-        visibility.push(await win2.page.evaluate(() => document.visibilityState));
+        rafFrames.push(await win2.page.evaluate(() => new Promise<number>(resolve => {
+            let n = 0;
+            const t0 = performance.now();
+            const step = () => (performance.now() - t0 < 400 ? (n++, requestAnimationFrame(step)) : resolve(n));
+            requestAnimationFrame(step);
+            setTimeout(() => resolve(n), 600);
+        })));
         await sleep(500);
     }
     const shown = Date.now();
@@ -51,7 +60,7 @@ test('T-PRV-49 a hidden window gets only the safety net', async ({preview}) => {
     await sleep(1500);
     const after = toCaptures(await readings(win1.app, win2.windowId), ids);
 
-    expect(visibility.slice(1).every(v => v === 'hidden'), `document.visibilityState in window 2 while hidden: ${visibility.join(', ')}`).toBe(true);
+    expect(rafFrames.slice(1).every(n => n === 0), `requestAnimationFrame frames in 400 ms of window 2 while hidden: ${rafFrames.join(', ')}`).toBe(true);
     const n = await counts(server, hidden + SETTLE_MS, shown);
     const seconds = (shown - hidden - SETTLE_MS) / 1000;
     const n1 = await counts(server, hidden, shown);   // window 1: the whole hidden time, against the frames written

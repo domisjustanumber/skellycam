@@ -30,7 +30,7 @@ Marks:
   one ready message per draw; the old group message deleted with no period of two formats; the
   branch to `development-streaming` only after 4b (now upstream `development` [PR]); an interface
   note at the end of 4b; no read-back of a tile canvas; websocket compression off.
-- **[Q864]** to **[Q873]**: the answers of the user of 2026-11-26 on the 4b code [ADR-BPP8](../decisions/entries/BPP8-answers-of-the-user-q864-to-q873-on-the-step-4b-code.md).
+- **[Q864]** to **[Q873]**, **[Q885]**: the answers of the user of 2026-11-26 on the 4b code [ADR-BPP8](../decisions/entries/BPP8-answers-of-the-user-q864-to-q873-on-the-step-4b-code.md).
 - **[Q824]** to **[Q836]**: the answers of the user of 2026-11-25 on the 4b tests (global numbers)
   [ADR-NA1N](../decisions/entries/NA1N-answers-of-the-user-to-the-questions-of-the-step-4b-tests.md).
 - **[Q1]** to **[Q9]**: the answer of the user of 2026-11-20 to question n of revision 2
@@ -1131,13 +1131,14 @@ test falls back to a pixel read-back.
 - Set-up: fake rings; 2 cameras at 30 fps; two windows with the page, each with its own connection.
   Window 2 has the default `backgroundThrottling` (the product setting).
 - Steps: hide window 2 for 5 s, then show it.
-- Pass: while hidden, `document.visibilityState` is `hidden` in window 2, and the server counts 0.5
-  to 1.6 messages each second for each camera of window 2; window 1 keeps at least 80 % of the
+- Pass: while hidden, window 2 draws nothing: `requestAnimationFrame` gives no frame in window 2 after its first
+  check [Q885], and the server counts 0.5 to 1.6 messages each second for each camera of window 2; window 1 keeps at least 80 % of the
   frames; after the show, the observer reads new frames in window 2 within 1 s.
 - Runs: `player-windows` only. The spec file skips on other systems with
   `test.skip(process.platform !== 'win32', ...)`, with the reason of 7.5.
 - Must not: open window 2 with `backgroundThrottling: false`.
-- The test stays as it is. It is looked at again after its first run [Q835].
+- The first run (Q835) showed that a hidden or minimised harness window keeps `document.visibilityState`
+  `visible` while it draws nothing, so the test checks that drawing stops, not the visibility flag [Q885].
 
 **T-PRV-50** (component). The frame rate viewer [Q3].
 
@@ -1188,7 +1189,7 @@ the rotation of the tile, and T-PRV-36 tests that the rotation reaches the tile.
 | T-PRV-25 to T-PRV-31 | runs | runs | runs |
 | T-PRV-32 to T-PRV-42, T-PRV-53 | runs | runs | runs |
 | T-PRV-43, T-PRV-44, T-PRV-47, T-PRV-48, T-PRV-50 | runs | runs, under `xvfb-run` | runs |
-| T-PRV-49 | runs | not run: no one has verified that a hidden window under `xvfb-run` is `hidden` and stops `requestAnimationFrame` [NV] | not run: the same for the macOS runner [NV] |
+| T-PRV-49 | runs | not run: no one has verified that a hidden window under `xvfb-run` stops `requestAnimationFrame` [NV] [Q885] | not run: the same for the macOS runner [NV] |
 | T-PRV-51, T-PRV-52 | runs (test machine, by hand) | owed | owed |
 
 T-PRV-38 keeps the rule of the hidden page on each system. When someone verifies the behaviour on

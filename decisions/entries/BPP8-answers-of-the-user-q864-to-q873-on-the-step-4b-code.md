@@ -1,4 +1,4 @@
-# BPP8 — Answers of the user Q864 to Q873 on the step 4b code
+# BPP8 — Answers of the user Q864 to Q873 and Q885 on the step 4b code
 
 **Status:** absorbed into
 [`specs/preview-4b.md#32-tests`](../../specs/preview-4b.md#32-tests),
@@ -12,6 +12,7 @@
 [`specs/preview-4b.md#62-method-agent-9`](../../specs/preview-4b.md#62-method-agent-9),
 [`specs/preview-4b.md#72-helpers-agent-11-agent-27-agent-28`](../../specs/preview-4b.md#72-helpers-agent-11-agent-27-agent-28),
 [`specs/preview-4b.md#74-test-list`](../../specs/preview-4b.md#74-test-list),
+[`specs/preview-4b.md#75-parity-of-the-systems-p7`](../../specs/preview-4b.md#75-parity-of-the-systems-p7),
 [`specs/capture-timings.md#65-the-preview-sender-u-q587-11`](../../specs/capture-timings.md#65-the-preview-sender-u-q587-11),
 2026-11-26 (commit to dom/preview-4b-tests; the open work of items 5, 7, 8 and 10 is in open-work.md; was accepted, 2026-11-26 (user; the supervisor relayed the answers)).
 
@@ -45,10 +46,12 @@ other items (Q872), and Q864 replaces its item 9. Each answer accepts the recomm
    choices of the viewer (5.8); the docs copies (5.9); the keywords of the counting relay of `ui_server.py` and the
    pace-marker lists (3.2).
 10. **Q873.** A later docs lane rewrites the first section of the real-time streaming page.
+11. **Q885.** T-PRV-49 checks that drawing stops (`requestAnimationFrame` gives no frame) in place of the visibility
+    flag, and keeps its checks of the server message count and of window 1 (7.4, 7.5).
 
 ## Reason
 
-The user, 2026-11-26: "agree to all Q864-Q881".
+The user, 2026-11-26: "agree to all Q864-Q881", and the answer Q885 of the same day.
 
 ## Open work
 
