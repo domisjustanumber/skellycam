@@ -138,7 +138,28 @@ export class UiServer {
     get stopped() {
         return this.exited;
     }
+
+    /** End the process at once (the time limit of PreviewKit.close). */
+    kill(): void {
+        if (!this.exited) this.proc.kill();
+    }
 }
+
+/** One step of the clean-up with a time limit: at a time-out, `kill` ends the process and the log names the step
+ * (specs/preview-4b.md 7.2, Q896). */
+async function limited(step: string, work: Promise<unknown>, ms: number, kill: () => void): Promise<void> {
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    const timedOut = new Promise<'time-out'>(resolve => (timer = setTimeout(() => resolve('time-out'), ms)));
+    const result = await Promise.race([work.then(() => 'done', () => 'done'), timedOut]);
+    clearTimeout(timer);
+    if (result === 'time-out') {
+        console.log(`hung step: ${step} (more than ${ms} ms); the process is killed`);
+        kill();
+    }
+}
+
+const APP_CLOSE_MS = 10_000;
+const SERVER_STOP_MS = 20_000;
 
 export interface PreviewWindow {
     app: ElectronApplication;
@@ -198,8 +219,10 @@ export class PreviewKit {
     }
 
     async close(): Promise<void> {
-        for (const app of this.apps) await app.close().catch(() => undefined);
-        for (const s of this.servers) await s.stop().catch(e => console.log(`ui_server.py stop: ${e}`));
+        for (const app of this.apps) await limited('app close', app.close(), APP_CLOSE_MS, () => app.process().kill());
+        for (const s of this.servers) {
+            await limited('ui_server.py stop', s.stop().catch(e => console.log(`ui_server.py stop: ${e}`)), SERVER_STOP_MS, () => s.kill());
+        }
         rmSync(this.root, {recursive: true, force: true});
     }
 }

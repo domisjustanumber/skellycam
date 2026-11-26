@@ -30,7 +30,8 @@ Marks:
   one ready message per draw; the old group message deleted with no period of two formats; the
   branch to `development-streaming` only after 4b (now upstream `development` [PR]); an interface
   note at the end of 4b; no read-back of a tile canvas; websocket compression off.
-- **[Q864]** to **[Q873]**, **[Q885]**: the answers of the user of 2026-11-26 on the 4b code [ADR-BPP8](../decisions/entries/BPP8-answers-of-the-user-q864-to-q873-on-the-step-4b-code.md).
+- **[Q864]** to **[Q873]**, **[Q885]**, **[Q893]** to **[Q897]**: the answers of the user of 2026-11-26 on the 4b
+  code [ADR-BPP8](../decisions/entries/BPP8-answers-of-the-user-q864-to-q873-on-the-step-4b-code.md).
 - **[Q824]** to **[Q836]**: the answers of the user of 2026-11-25 on the 4b tests (global numbers)
   [ADR-NA1N](../decisions/entries/NA1N-answers-of-the-user-to-the-questions-of-the-step-4b-tests.md).
 - **[Q1]** to **[Q9]**: the answer of the user of 2026-11-20 to question n of revision 2
@@ -785,6 +786,9 @@ frames each second on each of 8 tiles during a scrub [M ADR-1ACK evidence].
   row has no light cell (a black tile). A window whose image does not change gives no capture, so a test
   that must see a still window (T-PRV-47, while `RECONNECTING`) forces one capture: `captureOnce` reads an
   image of `webContents.capturePage()` in the same way [Q867].
+- **The clean-up after each test.** `PreviewKit.close` closes each app, then stops each `ui_server.py`, each step
+  with a time limit (10 s for an app, 20 s for a server), inside the 60 s of the test. At a time-out it kills that
+  process and logs `hung step: <step>` [Q896].
 - **The kept overlay text.** A test reads the overlay of a tile from `Tile.overlay`, which the tile
   keeps "so that a test can read it" [player 8.4], through `window.__previewTiles.tiles`. This is
   product state, not a pixel read.
