@@ -9,6 +9,10 @@
 [`specs/preview-4b.md#77-what-t-prv-30-searches`](../../specs/preview-4b.md#77-what-t-prv-30-searches),
 [`specs/preview-4b.md#11-choices-of-the-agent`](../../specs/preview-4b.md#11-choices-of-the-agent),
 [`specs/preview-4b.md#121-the-answers-of-the-user`](../../specs/preview-4b.md#121-the-answers-of-the-user),
+[`specs/preview-4b.md#72-helpers-agent-11-agent-27-agent-28`](../../specs/preview-4b.md#72-helpers-agent-11-agent-27-agent-28),
+[`specs/preview-4b.md#74-test-list`](../../specs/preview-4b.md#74-test-list),
+[`specs/preview-4b.md#75-parity-of-the-systems-p7`](../../specs/preview-4b.md#75-parity-of-the-systems-p7),
+[`specs/preview-4b.md#78-counts-and-ci-agent-12`](../../specs/preview-4b.md#78-counts-and-ci-agent-12),
 2026-11-25 (commit to dom/log-cleanup; was accepted, 2026-11-20 (user: two rulings on review sheet 2 of 2026-11-20; the other items
 accepted through the review sheets of 2026-11-20; commit to dom/integration)).
 

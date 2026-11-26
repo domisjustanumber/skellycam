@@ -9,6 +9,8 @@
 [`specs/certify.md#25-checked-camera-models-and-the-local-record-u-a`](../../specs/certify.md#25-checked-camera-models-and-the-local-record-u-a),
 [`specs/certify.md#113-how-the-product-uses-it-u`](../../specs/certify.md#113-how-the-product-uses-it-u),
 [`specs/camera-requests.md#13b-the-search-at-an-open`](../../specs/camera-requests.md#13b-the-search-at-an-open),
+[`specs/unix-capture.md#22-macos-avfoundation-coremediaio`](../../specs/unix-capture.md#22-macos-avfoundation-coremediaio),
+[`specs/unix-capture.md#9-questions-for-the-user`](../../specs/unix-capture.md#9-questions-for-the-user),
 2026-11-25 (commit to dom/log-cleanup; was accepted, 2026-11-20 (user; relayed by the supervisor session on 2026-11-20)).
 
 ## Decision

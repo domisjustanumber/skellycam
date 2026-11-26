@@ -14,6 +14,7 @@
 [`specs/camera-requests.md#81-the-rule`](../../specs/camera-requests.md#81-the-rule),
 [`specs/unix-capture.md#45-exposure-the-source-parts`](../../specs/unix-capture.md#45-exposure-the-source-parts),
 [`specs/unix-capture.md#47-restore-of-the-controls-at-the-close-u`](../../specs/unix-capture.md#47-restore-of-the-controls-at-the-close-u),
+[`specs/windows-capture.md#71-detection-on-windows-d11`](../../specs/windows-capture.md#71-detection-on-windows-d11),
 2026-11-25 (commit to dom/log-cleanup; was accepted, 2026-11-20 (user, relayed by the supervisor; commit to dom/requests-spec)).
 
 ## Decision

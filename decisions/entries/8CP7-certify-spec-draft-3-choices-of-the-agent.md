@@ -1,7 +1,9 @@
 # 8CP7 — Certify spec draft 3: the choices of the agent
 
-**Status:** proposed, 2026-11-20 (agent).
+**Status:** accepted, 2026-11-25 (user, Q814: "move DC43, KY81, 8CP7 to accepted"; commit to dom/log-cleanup; was
+proposed, 2026-11-20 (agent)).
 Accepted in part by [ADR-6YGH](6YGH-acceptance-of-the-as-built-choices-of-fix-lanes-4-and-5-and-of-certify.md) on 2026-11-25: items 3a, 3b, 5, 6, 9, 11 to 14 and the codes of 15 (Q757 to Q762, Q770).
+Items 1, 2, 4, 7, 8 and 10 are accepted as built by Q814 [U Q814], not by ADR-6YGH.
 
 ## Decision
 

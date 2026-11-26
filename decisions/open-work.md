@@ -64,9 +64,8 @@ task. Delete an item when its work is done. The PR that closes an item records t
     `playwright.player-bench.config.ts`.
   - The `xvfb` version of `.github/workflows/player.yml` is not verified. The unit tests ran on Node
     26.13.1 on the Windows test machine only.
-  - The product code of 6a is on `dom/player` (2026-11-20). Some tests still fail; the report of the
-    code lists each one. The recorder spec needs one sentence for a `camera_dead` detail that does
-    not parse (item 4 of ADR-1ACK).
+  - The recorder spec needs one sentence for a `camera_dead` detail that does not parse (item 4 of
+    ADR-1ACK).
   - ADR-4D94 changes the player: no `picked-take-folders.json` in 6a (section 5.3 and item 6 of the
     spec must change); `xvfb` from the runner image (section 12.6 must change); a `.gitignore`
     exception for `skellycam-ui/src/player/`.
@@ -98,18 +97,18 @@ task. Delete an item when its work is done. The PR that closes an item records t
     with a go-ahead for its tests, not its code
     ([ADR-VYS7](entries/VYS7-answers-of-the-user-to-the-step-4b-spec-and-go-ahead-for-its-tests.md)).
     The failing 4b tests are on `dom/preview-4b-tests`. They stay unmerged until their code passes
-    (Q815).
+    (Q815). At their merge, the pause text of `preview-4b.md` on this side wins (no server pause, ADR-V8RS).
 - **The `sfn26` integration on `dom/integration`**
   ([ADR-EQY4](entries/EQY4-base-the-work-on-upstream-sfn26-without-rust.md),
   [ADR-6T78](entries/6T78-choices-of-the-sfn26-integration.md)). Open:
   - The DirectShow open order of `sfn26` (item 1 of ADR-6T78) waits for a check on the cameras.
   - The UI does not show the `start_failure` warning item.
   - Not verified: real cameras, Linux, macOS and the installer build.
-- **The certify run of skellycam.** The spec [`specs/certify.md`](../specs/certify.md) is draft 3. The first code is in `skellycam/core/certify/` (section 19 of the
-  spec), and a first real quick run was done on 2026-11-21. Open: the checks that are `not-run`
+- **The certify run of skellycam.** The spec [`specs/certify.md`](../specs/certify.md) is draft 3. The code is in `skellycam/core/certify/` (section 19 of the
+  spec). Open: the checks that are `not-run`
   `not-built` (the status line of the spec). [ADR-6YGH](entries/6YGH-acceptance-of-the-as-built-choices-of-fix-lanes-4-and-5-and-of-certify.md)
-  accepted KY81 and DC43 in full (now accepted) and 8CP7, FC1C and HQE5 in part (still proposed). Not decided:
-  8CP7 items 1, 2, 4, 7, 8 and 10, FC1C items 4 and 13, HQE5 items 2 and 3.
+  accepted KY81 and DC43 in full, and FC1C and HQE5 in part (still proposed); 8CP7 is accepted by Q814. Not
+  decided: FC1C items 4 and 13, HQE5 items 2 and 3.
 - **Certify report fields, decided 2026-11-23, not built**
   ([ADR-F6C3](entries/F6C3-decisions-of-the-user-on-the-certify-report-fields.md)). The fields, the
   kept logs are in section 3.5 of the spec, in the slim form of Q594, with the build order of 3.6.7 (Q626) and
@@ -188,6 +187,9 @@ task. Delete an item when its work is done. The PR that closes an item records t
     `pace`, or stay as it is? It fails 1 in 20 on 2 cores (real time; JC4X item 3).
   - macOS [NV]: the runner's open-file limit, and that its errors came from this leak. A run of the macOS jobs by
     hand gives the result.
+- **The later merge of `dom/jpeg-encode-tests`.** On TC9B, 53VB, JWZ1 and 8ACV, the status text of
+  `dom/log-cleanup` wins. 2AQT stays accepted, not absorbed, until `windows-capture.md` 16.1 states that both
+  cameras stay `ready` in the blocking half.
 - **ZEX9** ([ADR-ZEX9](entries/ZEX9-decisions-of-the-user-on-the-housekeeping-of-2026-11-25.md)) becomes `done`
   after the CI result of its item 4.
 - **Exclusive access** (accepted, [ADR-5PAR](entries/5PAR-decisions-of-the-user-on-the-control-read-the-holder-and-the-exclusive-access-drafts.md)).

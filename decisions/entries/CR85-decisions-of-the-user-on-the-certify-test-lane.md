@@ -7,6 +7,7 @@
 [`specs/certify.md#192-the-review-fixes-and-format-160-u`](../../specs/certify.md#192-the-review-fixes-and-format-160-u),
 [`skellycam/tests/certify/test_certify_cases.py`](../../skellycam/tests/certify/test_certify_cases.py),
 [`skellycam/tests/certify/report_rules.py`](../../skellycam/tests/certify/report_rules.py),
+[`skellycam/tests/certify/test_certify_report_shape.py`](../../skellycam/tests/certify/test_certify_report_shape.py),
 2026-11-25 (commit to dom/log-cleanup; was accepted, 2026-11-25 (user, Q817 to Q823)).
 
 ## Decision
