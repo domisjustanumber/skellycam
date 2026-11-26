@@ -26,15 +26,11 @@ from skellycam.core.camera_group.camera_group import REQUEST_RUNS, CameraGroup, 
 from skellycam.core.camera_group.camera_start_failure import describe_start_failure
 from skellycam.core.device_detection.detect_cameras_devices import CameraDeviceInfo, detect_available_cameras
 from skellycam.core.ipc.pubsub.pubsub_manager import TopicTypes
-from skellycam.core.ipc.pubsub.pubsub_topics import FramerateMessage
 from skellycam.core.ipc.process_management.worker_registry import WorkerRegistry
-from skellycam.core.recorders.framerate_tracker import CurrentFramerate
 from skellycam.core.recorders.videos.recording_info import RecordingInfo
 from skellycam.core.types.type_overloads import (
     CameraGroupIdString,
     CameraIdString,
-    FrameNumberInt,
-    MultiframeTimestampFloat,
     SharedValue,
     TopicSubscriptionQueue,
 )
@@ -427,41 +423,6 @@ class CameraGroupManager:
             results.append(await camera_group.stop_recording())
             logger.info(f"Stopped recording for camera group ID: {camera_group.id}")
         return results
-
-    def get_latest_frontend_payloads(
-        self,
-        if_newer_than: dict[CameraGroupIdString, int],
-        step_set=None,  # the preview steps of a connection (capture-timings.md 6.5)
-    ) -> dict[CameraGroupIdString, tuple[FrameNumberInt, MultiframeTimestampFloat, memoryview]]:
-        if self.closing:
-            return {}
-        fe_payloads: dict[
-            CameraGroupIdString, tuple[FrameNumberInt, MultiframeTimestampFloat, memoryview]
-        ] = {}
-        for camera_group in self.camera_groups.values():
-            fe_return = camera_group.get_latest_ring_payload(step_set)
-            if fe_return is None:
-                continue
-            frame_number, multiframe_timestamp, fe_payload = fe_return
-            if fe_payload is None:
-                continue
-            fe_payloads[camera_group.id] = (frame_number, multiframe_timestamp, fe_payload)
-        return fe_payloads
-
-    def get_backend_framerate_updates(self) -> dict[CameraGroupIdString, CurrentFramerate]:
-        """Get the latest framerate updates for all camera groups."""
-        framerate_updates: dict[CameraGroupIdString, CurrentFramerate] = {}
-        for camera_group_id, subscription in self.camera_group_framerate_subscriptions.items():
-            if not subscription.empty():
-                framerate_update = subscription.get()
-                if isinstance(framerate_update, FramerateMessage):
-                    framerate_updates[camera_group_id] = framerate_update.current_framerate
-                else:
-                    raise TypeError(
-                        f"Received unexpected data type from framerate subscription: "
-                        f"{type(framerate_update)}"
-                    )
-        return framerate_updates
 
     def find_camera_group_by_camera_ids(
         self, camera_ids: list[CameraIdString]

@@ -12,7 +12,6 @@ from dataclasses import dataclass, field
 from collections.abc import Callable
 from typing import Any
 
-import numpy as np
 from pydantic import BaseModel, ConfigDict, TypeAdapter
 
 from skellycam import __version__
@@ -46,16 +45,9 @@ from skellycam.core.ipc.frame_ring import (
 )
 from skellycam.core.ipc.process_management.worker_registry import WorkerRegistry
 from skellycam.core.recorders.videos.recording_info import RecordingInfo
-from skellycam.core.types.frontend_payload_bytearray import (
-    FRONTEND_FRAME_HEADER_DTYPE,
-    FRONTEND_PAYLOAD_HEADER_FOOTER_DTYPE,
-    MessageType,
-)
 from skellycam.core.types.type_overloads import (
     CameraIdString,
     CameraGroupIdString,
-    FrameNumberInt,
-    MultiframeTimestampFloat,
     SharedValue,
 )
 from skellycam.utilities.wait_functions import await_10ms
@@ -594,48 +586,6 @@ class CameraGroup:
                 if read.result is ReadResult.OK:
                     reads[camera_id] = read
             return reads or None
-
-    def get_latest_ring_payload(self, step_set=None) -> tuple[FrameNumberInt, MultiframeTimestampFloat, memoryview] | None:
-        """A websocket message in the wire format of today, with the ring JPEG of each camera,
-        untouched: no resize, no re-encode and no rotation (spec 2.3) [A4]. Interim (5.8): the
-        newest frame of each camera on its own; the message header has the largest frame number.
-        `step_set`: the preview steps of a connection; the build of the message is `preview_pack`, and the
-        `published_ns` of each camera waits in `pending` for the send (capture-timings.md 6.5)."""
-        with self._ring_lock:
-            reads = self.read_latest_ring_frames(step_set)
-            if reads is None:
-                return None
-            infos = {camera_id: self.ring_infos[camera_id] for camera_id in reads}
-        on = step_set is not None and step_set.control.on
-        if on:
-            t0 = step_set.control.clock()
-        frame_number = max(read.frame_number for read in reads.values())
-        header = np.zeros(1, dtype=FRONTEND_PAYLOAD_HEADER_FOOTER_DTYPE)
-        header["message_type"] = MessageType.PAYLOAD_HEADER
-        header["frame_number"] = frame_number
-        header["number_of_cameras"] = len(reads)
-        payload = bytearray(header.tobytes())
-        for camera_id, read in reads.items():
-            info = infos[camera_id]
-            frame_header = np.zeros(1, dtype=FRONTEND_FRAME_HEADER_DTYPE)
-            frame_header["message_type"] = MessageType.FRAME_HEADER
-            frame_header["frame_number"] = read.frame_number
-            frame_header["camera_id"] = camera_id.encode("ascii")
-            frame_header["camera_index"] = info.camera_index
-            frame_header["image_width"] = info.mode.width
-            frame_header["image_height"] = info.mode.height
-            frame_header["color_channels"] = 3
-            frame_header["jpeg_string_length"] = read.payload_len
-            payload += frame_header.tobytes()
-            payload += read.payload
-        header["message_type"] = MessageType.PAYLOAD_FOOTER
-        payload += header.tobytes()
-        timestamp = float(np.mean([read.arrival_ns for read in reads.values()]))
-        message = memoryview(payload).toreadonly()
-        if on:
-            step_set.add((self.id, None, "preview_pack"), step_set.control.clock() - t0)
-            step_set.pending[self.id] = [(camera_id, read.published_ns) for camera_id, read in reads.items()]
-        return frame_number, timestamp, message
 
     async def start_recording(self, recording_info: RecordingInfo, devices: dict | None = None) -> list:
         """Start a take (recorder.md section 10 items 3 to 5, 13). Return the warnings of 11.3. One start, stop or

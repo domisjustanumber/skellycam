@@ -128,7 +128,7 @@ class SlowReader:
 
 def test_a_ring_reader_is_closed_only_on_the_event_loop():
     """The relay reads a ring on the event loop while the process of that camera ends. The watch thread
-    sees the end during the read. The reader is not closed during the read; the relay message is
+    sees the end during the read. The reader is not closed during the read; the read is
     complete; then the loop closes the reader and unlinks the ring, one time."""
     reader, ring = SlowReader(), StandInRing()
     worker = SimpleNamespace(worker=SimpleNamespace(exitcode=None))
@@ -145,8 +145,8 @@ def test_a_ring_reader_is_closed_only_on_the_event_loop():
                 reader.inside.wait(WAIT_S)
                 worker.worker.exitcode = 3  # the process ends while the relay reads
             threading.Thread(target=end_during_read, daemon=True).start()
-            payload = group.get_latest_ring_payload()  # on the event loop, as the websocket relay
-            assert payload is not None and payload[0] == 7
+            reads = group.read_latest_ring_frames()  # on the event loop, as a reader of the main process
+            assert reads is not None and reads["aaaa"].frame_number == 7
             assert not reader.closed_inside, "the reader was closed during a read"
             for _ in range(200):
                 await asyncio.sleep(0.01)

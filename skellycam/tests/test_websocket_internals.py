@@ -2,7 +2,7 @@
 (specs/capture-timings.md 6.4, Q580)."""
 import pytest
 
-from skellycam.api.websocket.websocket_server import ServerFramerateCalculator
+from skellycam.core.recorders.framerate_tracker import ServerFramerateCalculator
 
 
 # ---------------------------------------------------------------------------

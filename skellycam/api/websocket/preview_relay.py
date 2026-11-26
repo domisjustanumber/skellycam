@@ -1,6 +1,6 @@
 """The per-camera preview message and its sender (specs/preview.md, step 4a).
 
-Step 4a gives the sender no route. Step 4b connects it to the websocket endpoint (spec section 10).
+Step 4b connects it to the websocket endpoint (specs/preview-4b.md 4.1).
 """
 import asyncio
 import contextlib
@@ -71,9 +71,12 @@ class PreviewRelay:
     @no_type_check  # beartype: the tests give a fake manager with the same attributes (ADR-24FZ)
     def __init__(self, camera_group_manager: "CameraGroupManager",
                  send_bytes: Callable[[bytes], Awaitable[None]],
-                 send_json: Callable[[object], Awaitable[None]], step_set=None) -> None:
-        # `step_set`: the preview steps of the connection (capture-timings.md 6.5); None measures nothing
+                 send_json: Callable[[object], Awaitable[None]], step_set=None, send_lock=None) -> None:
+        # `step_set`: the preview steps of the connection (capture-timings.md 6.5); None measures nothing.
+        # `send_lock`: the send lock of the connection; the relay holds it around `send_bytes`, so that the bracket of
+        # `preview_send` starts after the lock (Q839). None: `send_bytes` needs no lock (the 4a tests).
         self._steps = OFF_SET if step_set is None else step_set
+        self._send_lock = contextlib.nullcontext() if send_lock is None else send_lock
         self._manager = camera_group_manager
         self._send_bytes = send_bytes
         self._send_json = send_json
@@ -166,12 +169,13 @@ class PreviewRelay:
                 state.ready = False
                 state.sent_at = time.monotonic()
                 _feed(state.rate, read)
-                if on:
-                    t3 = control.clock()
-                    steps.add((group.id, camera_id, "published_to_send"), t3 - read.published_ns)
-                await self._send_bytes(message)
-                if on:
-                    steps.add((group.id, camera_id, "preview_send"), control.clock() - t3)
+                async with self._send_lock:
+                    if on:
+                        t3 = control.clock()
+                        steps.add((group.id, camera_id, "published_to_send"), t3 - read.published_ns)
+                    await self._send_bytes(message)
+                    if on:
+                        steps.add((group.id, camera_id, "preview_send"), control.clock() - t3)
         present = {camera_id for group in self._manager.camera_groups.values() for camera_id in group.ring_readers}
         for camera_id in self._cameras.keys() - present:
             del self._cameras[camera_id]

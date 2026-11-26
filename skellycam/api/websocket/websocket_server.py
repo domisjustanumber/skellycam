@@ -1,8 +1,6 @@
 import asyncio
-import json
 import logging
 import os
-import time
 
 import msgspec
 from starlette.websockets import WebSocket, WebSocketState, WebSocketDisconnect
@@ -11,27 +9,18 @@ from fastapi import FastAPI
 from skellylogs import LogRecordModel, LogLevels
 from skellylogs.handlers.websocket_log_queue_handler import get_websocket_log_queue
 
+from skellycam.api.websocket.preview_relay import PreviewRelay
 from skellycam.api.websocket.websocket_message_types import WebsocketMessageType
 from skellycam.core.camera_group.camera_group_manager import CameraGroupManager, get_or_create_camera_group_manager
 from skellycam.core.capture_timings import PreviewTimings
-from skellycam.core.recorders.framerate_tracker import FramerateTracker, CurrentFramerate, ServerFramerateCalculator
 from skellycam.utilities.wait_functions import await_10ms
-from skellycam.core.types.type_overloads import CameraGroupIdString, FrameNumberInt, MultiframeTimestampFloat  # noqa: TC001 — beartype checks annotations at runtime
 
 logger = logging.getLogger(__name__)
 
-BACKPRESSURE_WARNING_THRESHOLD: int = 1000  # Number of frames before we warn about backpressure
 CAPTURE_TIMINGS_INTERVAL_S = 1.0  # capture-timings.md 6.4: one `capture_timings` message each interval
 
 # Reusable msgspec JSON encoder for all websocket JSON messages
 _ws_json_encoder = msgspec.json.Encoder()
-
-
-class FramerateUpdateMessage(msgspec.Struct):
-    message_type: WebsocketMessageType = WebsocketMessageType.FRAMERATE_UPDATE
-    camera_group_id: str = ""
-    backend_framerate: CurrentFramerate | None = None
-    frontend_framerate: CurrentFramerate | None = None
 
 
 class WebsocketServer:
@@ -42,14 +31,6 @@ class WebsocketServer:
 
         self._websocket_should_continue = True
         self.ws_tasks: list[asyncio.Task] = []
-        self.last_received_frontend_confirmation: int = -1
-
-        self.last_sent_frame_number: int = -1
-        self._last_sent_by_group: dict[CameraGroupIdString, int] = {}
-        self._display_image_sizes: dict[CameraGroupIdString, dict[str, float]] | None = None
-        self._server_framerate_calculators: dict[CameraGroupIdString, ServerFramerateCalculator] = {}
-        self._display_framerate_trackers: dict[CameraGroupIdString, FramerateTracker] = {}
-        self._last_framerate_send_time: float = 0.0
 
         # Serialize all websocket sends — the `websockets` library does not
         # support concurrent writes on the same connection. Without this lock,
@@ -58,6 +39,10 @@ class WebsocketServer:
         # protocol drain logic.
         self._send_lock = asyncio.Lock()
         self._preview_timings = PreviewTimings()  # the preview steps of this connection (capture-timings.md 6.5)
+        # preview-4b.md 4.1: one sender for each connection; its send of the bytes holds the send lock, and its
+        # `preview_send` bracket starts after the lock (capture-timings.md 6.5, Q839)
+        self._preview = PreviewRelay(self._cgm, self._send_bytes_in_lock, self._send_msgspec_json,
+                                     step_set=self._preview_timings.steps, send_lock=self._send_lock)
 
     async def __aenter__(self):
         logger.debug("Entering WebsocketRunner context manager...")
@@ -98,20 +83,10 @@ class WebsocketServer:
             if self.websocket.client_state == WebSocketState.CONNECTED:
                 await self.websocket.send_json(data)
 
-    async def _send_bytes(self, data: bytes|bytearray|memoryview, preview_group: str | None = None) -> None:
-        """Send bytes through the websocket, serialized by the send lock. `preview_group`: the group of a preview
-        message of the interim relay; its send after the lock is `preview_send` (capture-timings.md 3.1, 6.5)."""
-        async with self._send_lock:
-            if self.websocket.client_state == WebSocketState.CONNECTED:
-                steps = self._preview_timings.steps
-                on = preview_group is not None and steps.control.on
-                if on:
-                    t0 = steps.control.clock()
-                    for camera_id, published_ns in steps.pending.pop(preview_group, ()):
-                        steps.add((preview_group, camera_id, "published_to_send"), t0 - published_ns)
-                await self.websocket.send_bytes(data)
-                if on:
-                    steps.add((preview_group, None, "preview_send"), steps.control.clock() - t0)
+    async def _send_bytes_in_lock(self, data: bytes | bytearray | memoryview) -> None:
+        """Send bytes; the caller holds the send lock."""
+        if self.websocket.client_state == WebSocketState.CONNECTED:
+            await self.websocket.send_bytes(data)
 
     async def _send_text(self, data: str) -> None:
         """Send text through the websocket, serialized by the send lock."""
@@ -132,7 +107,7 @@ class WebsocketServer:
     async def run(self):
         logger.info("Starting websocket runner...")
         self.ws_tasks = [
-            asyncio.create_task(self._frontend_image_relay(), name="WebsocketFrontendImageRelay"),
+            asyncio.create_task(self._preview_relay(), name="WebsocketPreviewRelay"),
             asyncio.create_task(self._logs_relay(), name="WebsocketLogsRelay"),
             asyncio.create_task(self._client_message_handler(), name="WebsocketClientMessageHandler"),
             asyncio.create_task(self._app_state_sender(), name="WebsocketStateSender"),
@@ -150,96 +125,23 @@ class WebsocketServer:
                 if not task.done():
                     task.cancel()
 
-    def check_frame_acknowledgment_status(self) -> bool:
-        if self.last_sent_frame_number == -1:
-            return True
-        return bool(self.last_received_frontend_confirmation >= self.last_sent_frame_number)
-
-    async def _frontend_image_relay(self):
-        """
-        Relay image payloads from the shared memory to the frontend via the websocket.
-        """
-        logger.info("Starting frontend image payload relay...")
+    async def _preview_relay(self):
+        """The camera messages of this connection (preview-4b.md 4.1 item 2): `PreviewRelay.run`, with the `except`
+        clauses of `_logs_relay`."""
+        logger.info("Starting preview relay...")
         try:
-            skipped_previous = False
-            while self.should_continue:
-                await await_10ms()
-                if self.check_frame_acknowledgment_status():
-                    if skipped_previous:  # skip an extra frame if there was backpressure from frontend
-                        skipped_previous = False
-                    else:
-                        steps = self._preview_timings.steps
-                        new_frontend_payloads: dict[
-                            CameraGroupIdString, tuple[
-                                FrameNumberInt, MultiframeTimestampFloat, memoryview]] = self._cgm.get_latest_frontend_payloads(
-                            if_newer_than=self._last_sent_by_group, step_set=steps if steps.control.on else None)
-
-                        for camera_group_id, (frame_number,
-                                              multiframe_timestamp,
-                                              payload_bytes) in new_frontend_payloads.items():
-                            await self._send_bytes(payload_bytes, preview_group=camera_group_id)
-                            self.last_sent_frame_number = int(frame_number)
-                            self._last_sent_by_group[camera_group_id] = int(frame_number)
-
-                            # Server framerate: computed from frame_number + capture timestamp.
-                            # frame_number increments by 1 per actual camera capture,
-                            # multiframe_timestamp is perf_counter_ns at the camera grab.
-                            # This gives the true capture rate even when frames are
-                            # skipped in the websocket relay due to backpressure.
-                            if camera_group_id not in self._server_framerate_calculators:
-                                self._server_framerate_calculators[camera_group_id] = ServerFramerateCalculator(
-                                    source_name="Server")
-                            self._server_framerate_calculators[camera_group_id].update(
-                                frame_number=frame_number,
-                                capture_timestamp_ns=multiframe_timestamp,
-                            )
-
-                            # Display framerate: websocket send rate (what the UI actually receives)
-                            if camera_group_id not in self._display_framerate_trackers:
-                                self._display_framerate_trackers[camera_group_id] = FramerateTracker.create(
-                                    framerate_source="Display")
-                            self._display_framerate_trackers[camera_group_id].update(time.perf_counter_ns())
-                else:
-                    skipped_previous = True
-                    backpressure = self.last_sent_frame_number - self.last_received_frontend_confirmation
-                    if backpressure > BACKPRESSURE_WARNING_THRESHOLD and backpressure % BACKPRESSURE_WARNING_THRESHOLD == 0:
-                        logger.trace(
-                            f"Backpressure detected: {backpressure} frames not acknowledged by frontend! "
-                            f"Last sent frame: {self.last_sent_frame_number}, "
-                            f"last received confirmation: {self.last_received_frontend_confirmation}")
-
-                # Send framerate updates from our local trackers (throttled to ~4Hz)
-                now = time.monotonic()
-                if now - self._last_framerate_send_time >= 0.25:
-                    for camera_group_id, server_calc in self._server_framerate_calculators.items():
-                        if camera_group_id not in self._display_framerate_trackers:
-                            continue
-                        server_framerate = server_calc.current_framerate
-                        display_tracker = self._display_framerate_trackers[camera_group_id]
-                        if server_framerate and display_tracker.has_data:
-                            framerate_message = FramerateUpdateMessage(
-                                camera_group_id=camera_group_id,
-                                backend_framerate=server_framerate,
-                                frontend_framerate=display_tracker.current_framerate,
-                            )
-                            await self._send_msgspec_json(framerate_message)
-                            # Reset both trackers so the next report reflects only
-                            # the interval since this report.
-                            server_calc.clear()
-                            display_tracker.clear()
-                    self._last_framerate_send_time = now
-
+            await self._preview.run()
+        except asyncio.CancelledError:
+            logger.debug("Preview relay task cancelled")
         except (WebSocketDisconnect, AssertionError):
-            logger.info("Client disconnected, ending frontend image relay task...")
+            logger.info("Client disconnected, ending preview relay task...")
         except RuntimeError as e:
             if "close" in str(e).lower():
-                logger.info("Websocket closed during image relay send, ending task...")
+                logger.info("Websocket closed during preview send, ending task...")
             else:
                 raise
-        except asyncio.CancelledError:
-            pass
         except Exception as e:
-            logger.exception(f"Error in image payload relay: {e.__class__}: {e}")
+            logger.exception(f"Error in preview relay: {e.__class__}: {e}")
             self.global_kill_flag.value = True
             raise
         finally:
@@ -352,21 +254,14 @@ class WebsocketServer:
 
                 if "text" in message:
                     text_content: str = message["text"]
-                    if text_content.strip().startswith('{') or text_content.strip().startswith('['):
-                        try:
-                            data = json.loads(text_content)
-                            if 'frameNumber' in data:
-                                self.last_received_frontend_confirmation = data['frameNumber']
-                                self._display_image_sizes = data.get('displayImageSizes', None)
-                        except json.JSONDecodeError as e:
-                            raise ValueError(f"Failed to decode JSON from client websocket message: {e}") from e
+                    if self._preview.handle_text(text_content):  # a ready message (preview-4b.md 4.1 item 3)
+                        continue
+                    if text_content.strip() == "ping":
+                        await self._send_text("pong")
+                    elif text_content.strip() == "pong":
+                        pass
                     else:
-                        if text_content.strip() == "ping":
-                            await self._send_text("pong")
-                        elif text_content.strip() == "pong":
-                            pass
-                        else:
-                            logger.info(f"Websocket received message: `{text_content}`")
+                        logger.info(f"Websocket received message: `{text_content}`")
                 elif "bytes" in message:
                     logger.trace(f"Received binary websocket message ({len(message['bytes'])} bytes)")
                 else:

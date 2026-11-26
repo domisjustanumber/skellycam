@@ -11,8 +11,6 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from skellycam.tests.capture.capture_session import capture_app, ready_app_steps
-from skellycam.tests.capture.fake_source import FakeScript
 from skellycam.tests.capture_timings.loop_harness import MS, VClock, slow, timings
 from skellycam.tests.capture_timings.test_statistics import assert_known_ids
 
@@ -101,86 +99,61 @@ def test_t_tim_18_the_watch_keeps_the_newest_summary(monkeypatch):
     assert set(group.camera_timings) == {"a1b2"} and kept is not group.camera_timings and "c3d4" in kept
 
 
-class FakeWebsocket:
-    """The websocket of a connection: each send takes `send_ns` of virtual time."""
+def fake_websocket(clock, send_ns):
+    """The websocket of a connection (a `WebSocket`, for the beartype check): each send takes `send_ns` of virtual
+    time."""
+    from starlette.websockets import WebSocket, WebSocketState
 
-    def __init__(self, clock, send_ns):
-        from starlette.websockets import WebSocketState
-        self.clock, self.send_ns, self.sent = clock, send_ns, []
-        self.client_state = WebSocketState.CONNECTED
+    class FakeWebsocket(WebSocket):
+        def __init__(self):
+            self.scope, self.client_state, self.sent = {"type": "websocket"}, WebSocketState.CONNECTED, []
 
-    async def send_bytes(self, data):
-        self.clock.advance(self.send_ns)
-        self.sent.append(data)
+        async def send_bytes(self, data):
+            clock.advance(send_ns)
+            self.sent.append(data)
 
-
-def bare_server(preview_timings, websocket):
-    """A `WebsocketServer` with only its send path (its `__init__` needs a FastAPI app)."""
-    server_class = importlib.import_module(SERVER_MODULE).WebsocketServer
-    server = server_class.__new__(server_class)
-    server.websocket, server._send_lock, server._preview_timings = websocket, asyncio.Lock(), preview_timings
-    return server
+    return FakeWebsocket()
 
 
-def test_t_tim_19_the_send_lock_wait_is_not_in_preview_send():
-    """T-TIM-19 (interim relay): `preview_send` is the send after the send lock; `published_to_send` ends at the
-    start of that send, for each camera of the group message."""
-    module = timings()
+async def test_t_tim_19_the_send_lock_wait_is_not_in_preview_send(monkeypatch):
+    """T-TIM-19 (`PreviewRelay` of the endpoint, Q839): the `preview_send` bracket starts after the send lock of the
+    connection, and `published_to_send` ends at the start of that send. `WebsocketServer` gives its send lock to its
+    `PreviewRelay`; a wait of 50 ms for the lock is not in `preview_send`, and it is in `published_to_send`."""
+    from fastapi import FastAPI
 
-    async def scenario():
-        clock = VClock()
-        preview = module.PreviewTimings(clock.now)
-        preview.summaries(True, [])  # on: the window starts
-        server = bare_server(preview, FakeWebsocket(clock, 130_000))
-        preview.steps.pending["g1"] = [("a1b2", clock.now() - 1 * MS), ("c3d4", clock.now() - 2 * MS)]
-        await server._send_lock.acquire()
-        task = asyncio.create_task(server._send_bytes(b"group message", preview_group="g1"))
-        await asyncio.sleep(0)
-        clock.advance(50 * MS)  # the wait for the send lock
-        server._send_lock.release()
-        await task
-        return preview.summaries(True, ["g1"])
+    from skellycam.core.camera_group.camera_group_manager import CameraGroupManager
+    from skellycam.core.ipc.frame_ring import ReadResult
+    from skellycam.tests.preview.preview_helpers import FakeGroup, FakeManager, StubReader, frame_read
 
-    summaries = {s["camera_id"]: s for s in asyncio.run(scenario())}
-    assert set(summaries) == {"a1b2", "c3d4", None}
-    group = summaries[None]
-    assert group["steps"]["preview_send"] == dict(kind="work", cadence="frame", where="main_process", n=1,
-                                                  p50_ms=0.13, p95_ms=0.13, max_ms=0.13)
-    assert summaries["a1b2"]["delays"]["published_to_send"]["max_ms"] == 51.0
-    assert summaries["c3d4"]["delays"]["published_to_send"]["max_ms"] == 52.0
-    for summary in summaries.values():
-        assert summary["source"] == "preview" and summary["camera_group_id"] == "g1"
-        assert_known_ids(summary)
+    module, server_module = timings(), importlib.import_module(SERVER_MODULE)
+    clock = VClock()
+    measured = module.PreviewTimings(clock.now)
+    measured.summaries(True, [])
+    read = frame_read(ReadResult.OK, 0, arrival_ns=clock.now() - 1 * MS - 1, payload=b"\xff\xd8\xff\xd9")
 
+    class Manager(FakeManager, CameraGroupManager):  # a `CameraGroupManager`, for the beartype check
+        def __init__(self):
+            FakeManager.__init__(self, FakeGroup("g1", {"a1b2": StubReader({0: [read]})}))
 
-def test_t_tim_19_the_interim_relay_measures_its_reads_and_its_group_message(monkeypatch):
-    """T-TIM-19 (interim relay, real group): `get_latest_frontend_payloads(step_set=...)` measures `preview_ring_read`
-    for each camera and `preview_pack` for the group; with the send, one `"preview"` summary for each camera and one
-    with `camera_id` null."""
-    module = timings()
-    with capture_app(monkeypatch, [FakeScript(), FakeScript()]) as app:
-        ready_app_steps(app)
-        app.wait(lambda: len(app.group.read_latest_ring_frames() or {}) == 2, "a frame of each camera")
-        group_id = app.group.id
-
-        async def scenario():
-            preview = module.PreviewTimings()
-            preview.summaries(True, [])
-            server = bare_server(preview, FakeWebsocket(VClock(), 0))
-            payloads = app.manager.get_latest_frontend_payloads(if_newer_than={}, step_set=preview.steps)
-            for camera_group_id, (_, _, payload) in payloads.items():
-                await server._send_bytes(payload, preview_group=camera_group_id)
-            return preview.summaries(True, [group_id])
-
-        summaries = {s["camera_id"]: s for s in asyncio.run(scenario())}
-    assert set(summaries) == set(app.factory.camera_ids) | {None}
-    for camera_id in app.factory.camera_ids:
-        camera = summaries[camera_id]
-        assert camera["steps"]["preview_ring_read"]["n"] == 1 and camera["delays"]["published_to_send"]["n"] == 1
-        assert camera["delays"]["published_to_send"]["max_ms"] >= 0
-    group = summaries[None]
-    assert set(group["steps"]) == {"preview_pack", "preview_send"}
-    assert group["steps"]["preview_pack"]["n"] == 1 and group["steps"]["preview_send"]["n"] == 1
+    monkeypatch.setattr(server_module, "get_or_create_camera_group_manager", lambda app: Manager())
+    monkeypatch.setattr(server_module, "PreviewTimings", lambda: measured)
+    app = FastAPI()
+    app.state.global_kill_flag = SimpleNamespace(value=False)
+    websocket = fake_websocket(clock, 130_000)
+    server = server_module.WebsocketServer(app, websocket)
+    await server._send_lock.acquire()
+    task = asyncio.create_task(server._preview._pass())
+    await asyncio.sleep(0)
+    clock.advance(50 * MS)  # the wait for the send lock
+    server._send_lock.release()
+    await task
+    assert len(websocket.sent) == 1
+    summaries = measured.summaries(True, ["g1"])
+    assert [s["camera_id"] for s in summaries] == ["a1b2"]
+    assert summaries[0]["steps"]["preview_send"] == dict(kind="work", cadence="frame", where="main_process", n=1,
+                                                         p50_ms=0.13, p95_ms=0.13, max_ms=0.13)
+    assert summaries[0]["delays"]["published_to_send"]["max_ms"] == 51.0
+    assert_known_ids(summaries[0])
 
 
 async def test_t_tim_19_the_per_camera_preview_sender():

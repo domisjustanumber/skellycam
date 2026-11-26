@@ -39,29 +39,3 @@ class TestWebsocketConnect:
             assert data["message_type"] == "app_state"
             assert data["state"] == {"camera_groups": {}}
             assert data["server_pid"] > 0
-
-    def test_websocket_frame_acknowledgment(self, client, mock_camera_group_manager):
-        """Sending a frame acknowledgment JSON updates the server state."""
-        with client.websocket_connect("/skellycam/websocket/connect") as ws:
-            ack_message = json.dumps({
-                "frameNumber": 42,
-                "displayImageSizes": None,
-            })
-            ws.send_text(ack_message)
-            # Send a ping to verify connection is still alive after the ack
-            ws.send_text("ping")
-            
-            # Loop to skip app_state messages
-            for _ in range(5):
-                response = ws.receive_text()
-                try:
-                    data = json.loads(response)
-                    if isinstance(data, dict) and data.get("message_type") in ("app_state", "framerate_update", "capture_timings"):
-                        continue
-                except json.JSONDecodeError:
-                    pass
-                    
-                assert response == "pong"
-                break
-            else:
-                pytest.fail("Did not receive pong response")
