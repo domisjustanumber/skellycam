@@ -29,6 +29,7 @@ export class PreviewTiles {
     private readonly cameras = new Map<string, CameraEntry>();
     private readonly loggedReasons = new Set<string>();   // one console.error for each reason and connection
     private paused = false;
+    private first = 0;   // the camera that gets its update first turns at each refresh [Q893]
     private readonly sendReady: (cameraId: string) => void;
     private readonly onDrawn: (cameraId: string, atMs: number) => void;
     private readonly now: () => number;
@@ -99,7 +100,9 @@ export class PreviewTiles {
     /** One display refresh (rules 2 to 7). */
     tick(): void {
         if (this.paused) return;
-        for (const [cameraId, tile] of this.tiles) {
+        const order = [...this.tiles];
+        this.first = order.length ? (this.first + 1) % order.length : 0;
+        for (const [cameraId, tile] of [...order.slice(this.first), ...order.slice(0, this.first)]) {
             const e = this.entry(cameraId);
             if (e.busy) continue;
             const message = e.pending;
