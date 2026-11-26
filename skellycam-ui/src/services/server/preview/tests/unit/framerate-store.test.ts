@@ -29,7 +29,7 @@ function appStateWithReplaced(replaced: Record<string, number>) {
 
 test('T-PRV-41 the frame rate store keeps each camera and each count apart', async () => {
     const {FramerateStore} = await framerateStore();
-    const store = new FramerateStore();
+    const store = new FramerateStore(() => 1080);   // the clock at the last drawn frame below
     for (const name of ['recordFramerateUpdate', 'recordAppState', 'recordDrawn', 'getCamera', 'cameraIds', 'clear'] as const) {
         assert.equal(typeof (store as unknown as Record<string, unknown>)[name], 'function', `FramerateStore.${name}`);
     }
@@ -50,7 +50,8 @@ test('T-PRV-41 the frame rate store keeps each camera and each count apart', asy
     const capturedBefore = JSON.stringify(store.getCamera('a1b2')!.captured);
     for (let i = 0; i < 5; i++) store.recordDrawn('a1b2', 1000 + i * 20);
     assert.equal(JSON.stringify(store.getCamera('a1b2')!.captured), capturedBefore, 'recordDrawn does not change Captured');
-    assert.ok(store.getCamera('a1b2')!.displayed.current, 'a Displayed value after drawn frames');
+    const displayed = store.getCamera('a1b2')!.displayed.current;
+    assert.ok(displayed && Math.abs(displayed.mean_frames_per_second - 50) < 0.1, `Displayed ${displayed?.mean_frames_per_second}, not 50 fps`);
     assert.equal(store.getCamera('c3d4')!.displayed.current, null, 'the drawn frames of a1b2 are not the frames of c3d4');
 
     store.clear();
@@ -97,8 +98,10 @@ test('T-PRV-53 the Displayed series comes from the drawn frames [Q3]', async () 
     assert.equal(store.getCamera('a1b2')!.captured.current, null, 'Captured stays empty');
     assert.equal(store.getCamera('a1b2')!.captured.aggregate, null);
 
-    // a camera that draws nothing for 1 s shows 0 [Q864]
-    f.clock.ms += 1001;
+    // a camera that draws nothing for 1 s shows 0 [Q864]; the window is 1 s, not shorter
+    f.clock.ms += 900 - 2 * 50 / 3;   // about 900 ms after the last drawn frame
+    assert.ok(store.getCamera('a1b2')!.displayed.current!.mean_frames_per_second > 0, 'Displayed is above 0 within the 1 s');
+    f.clock.ms += 101;
     assert.equal(store.getCamera('a1b2')!.displayed.current?.mean_frames_per_second, 0, 'Displayed is 0 after 1 s with no drawn frame');
     assert.equal(store.getCamera('a1b2')!.displayed.aggregate?.calculation_window_size, 60, 'the pause adds no value');
 });

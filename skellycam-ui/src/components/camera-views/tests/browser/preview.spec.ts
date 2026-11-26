@@ -6,7 +6,7 @@ import {expect} from '@playwright/test';
 import {captureOnce, observe, readings} from '../../../../player/tests/harness/observer.ts';
 import {
     connectionNumbers, counts, describe, geometry, otherErrors, overlayFrame, requirePreviewTiles, sameReading, SIZE_640,
-    sleep, test, toCaptures, waitDrawn, watch, written,
+    sleep, test, toCaptures, waitDrawn, waitLayoutSettled, watch, written,
 } from './preview-kit.ts';
 import type {Capture} from './preview-kit.ts';
 
@@ -82,7 +82,7 @@ test('T-PRV-47 reconnect, then give up', async ({preview}) => {
     const win = await preview.open(server, seed(cams));
     await requirePreviewTiles(win.page);
     await waitDrawn(win.page, ids);
-    await sleep(1000);   // the grid layout settles after the first draw, as in T-PRV-43, before the observer takes its places
+    await waitLayoutSettled(win.page, ids);   // the tiles still move after the first draw (open work)
 
     await observe(win.app, await geometry(win.page, ids, SIZE_640), win.windowId);
     await sleep(1000);

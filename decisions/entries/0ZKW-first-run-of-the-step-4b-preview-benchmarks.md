@@ -14,10 +14,11 @@ case for a worker.
 ## Evidence
 
 Tool: `npx playwright test -c playwright.player-bench.config.ts src/components/camera-views/tests/bench`,
-`preview.bench.ts` of `dom/preview-4b-tests` at 490f89cc8, Electron 45.3.4, the Windows test machine (display
+`skellycam-ui/src/components/camera-views/tests/bench/preview.bench.ts` of `dom/preview-4b-tests`, Electron 45.3.4, the Windows test machine (display
 refresh R = 59 Hz). Method of 6.2: 8 fake rings of barcode JPEGs at 1920 x 1080 (target 190 kB), a new server and a
 new harness app for each run, 3 runs of 2 s warm-up and 60 s measurement. The harness app runs with no Playwright
-attached (6.2, Q869). The values are the medians of the 3 runs.
+attached (6.2, Q869). The first try of Q869, a CDP session with `Network.disable`, failed: a new session cannot turn
+off the Network domain of the own session of Playwright, and a `page.evaluate` still waited 23 s after 25 s. The values are the medians of the 3 runs.
 
 | ID | F = 30 (T-PRV-51) | F = 60 (T-PRV-52) | Target |
 |---|---|---|---|

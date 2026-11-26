@@ -28,7 +28,7 @@ export async function runPreviewBench(openWindow: (name: string) => number, conf
     const js = <T>(code: string) => win.webContents.executeJavaScript(code) as Promise<T>;
     let result: unknown;
     try {
-        await new Promise(resolve => win.webContents.once('did-finish-load', resolve));
+        await new Promise(resolve => win.webContents.once('did-finish-load', () => resolve(undefined)));
         for (let i = 0; i < 200 && !(await js<boolean>("'preview' in window")); i++) await sleep(50);
         await js(`window.preview.start(${JSON.stringify({port: c.port, cameras: c.cameras, viewer: null})})`);
         const deadline = Date.now() + 30_000;

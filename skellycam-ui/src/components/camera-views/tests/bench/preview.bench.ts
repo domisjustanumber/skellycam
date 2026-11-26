@@ -43,22 +43,30 @@ const percentile = (values: number[], p: number) => {
 };
 
 /** One run of the harness app in bench mode, with no Playwright attached (preview-bench-run.ts, Q869). `onLine`
- * gets each line that the app prints; the app ends itself after the run. */
-function runHarness(env: Record<string, string>, onLine: (line: string) => void, timeoutMs: number): Promise<void> {
+ * gets each line that the app prints; the app ends itself after the run. Gives the last 40 lines of its output. */
+function runHarness(env: Record<string, string>, onLine: (line: string) => void, timeoutMs: number): Promise<string[]> {
     const electron = createRequire(import.meta.url)('electron') as string;
     const full: Record<string, string> = {};
     for (const [k, v] of Object.entries(process.env)) if (v !== undefined && k !== 'ELECTRON_RUN_AS_NODE') full[k] = v;
     const proc = spawn(electron, [HARNESS_MAIN, '--no-sandbox'], {env: {...full, ...env}, stdio: ['ignore', 'pipe', 'pipe']});
-    createInterface({input: proc.stdout}).on('line', onLine);
-    createInterface({input: proc.stderr}).on('line', () => undefined);
+    const tail: string[] = [];
+    const keep = (line: string) => {
+        tail.push(line);
+        if (tail.length > 40) tail.shift();
+    };
+    createInterface({input: proc.stdout}).on('line', line => {
+        keep(line);
+        onLine(line);
+    });
+    createInterface({input: proc.stderr}).on('line', keep);
     return new Promise((resolve, reject) => {
         const timer = setTimeout(() => {
             proc.kill();
-            reject(new Error(`the bench app did not end in ${timeoutMs} ms`));
+            reject(new Error(`the bench app did not end in ${timeoutMs} ms:\n${tail.join('\n')}`));
         }, timeoutMs);
         proc.on('exit', () => {
             clearTimeout(timer);
-            resolve();
+            resolve(tail);
         });
     });
 }
@@ -85,18 +93,26 @@ function outsideProof(captures: Capture[], from: number, to: number, fps: number
     }
     const seconds = Math.floor((to - from - 1000) / 1000);
     let worstDistinctRatio = Infinity;
+    // the seconds below the B-1a ratio, with what the observer saw there (a diagnosis for the user, not a target)
+    const misses: {camera: string; second: number; captures: number; distinct: number; frames: (number | string)[]}[] = [];
+    const capturesEachSecond: number[] = [];
     const perSecond: Record<string, number[]> = {};
     for (const id of ids) perSecond[id] = [];
     for (let s = 0; s < seconds; s++) {
         const bucket = late.filter(k => k.at >= from + 1000 + s * 1000 && k.at < from + 2000 + s * 1000);
+        capturesEachSecond.push(bucket.length);
         for (const id of ids) {
             const distinct = new Set(bucket.map(k => k.tiles[id]).filter(r => typeof r !== 'string').map(r => (r as {frame: number}).frame)).size;
             perSecond[id].push(distinct);
-            worstDistinctRatio = Math.min(worstDistinctRatio, distinct / Math.max(1, 0.9 * Math.min(fps, bucket.length)));
+            const ratio = distinct / Math.max(1, 0.9 * Math.min(fps, bucket.length));
+            worstDistinctRatio = Math.min(worstDistinctRatio, ratio);
+            if (ratio < 1) misses.push({camera: id, second: s, captures: bucket.length, distinct,
+                frames: bucket.map(k => (typeof k.tiles[id] === 'string' ? k.tiles[id] as string : (k.tiles[id] as {frame: number}).frame))});
         }
     }
     return {captures: late.length, capturesPerSecond: late.length / ((to - from - 1000) / 1000), wrongCamera, behindMoreThan2: behind,
-        worstDistinctRatio, distinctPerSecondMedian: Object.fromEntries(ids.map(id => [id, median(perSecond[id])]))};
+        worstDistinctRatio, distinctPerSecondMedian: Object.fromEntries(ids.map(id => [id, median(perSecond[id])])),
+        seconds, capturesEachSecond, misses};
 }
 
 async function run(preview: PreviewKit, fps: number) {
@@ -113,7 +129,7 @@ async function run(preview: PreviewKit, fps: number) {
     let loop1 = {loop_thread_cpu_s: NaN};
     let w0: Record<string, number> = {};
     let w1: Record<string, number> = {};
-    await runHarness({PREVIEW_BENCH_RUN: configFile, PLAYER_HARNESS_PAGE: 'preview', PLAYER_HARNESS_RECORDINGS: path.join(preview.root, 'recordings'),
+    const tail = await runHarness({PREVIEW_BENCH_RUN: configFile, PLAYER_HARNESS_PAGE: 'preview', PLAYER_HARNESS_RECORDINGS: path.join(preview.root, 'recordings'),
         PLAYER_HARNESS_PICKED: path.join(preview.root, 'picked.json')}, line => {
         if (line === '@bench measure-start') marks.push((async () => {
             loop0 = await server.command<{loop_thread_cpu_s: number}>({cmd: 'loop_cpu'});
@@ -125,8 +141,10 @@ async function run(preview: PreviewKit, fps: number) {
         })());
     }, WARMUP_MS + MEASURE_MS + 180_000);
     await Promise.all(marks);
+    // a lost line or a crash of the app fails here, not as NaN values
+    if (marks.length !== 2) throw new Error(`the bench app printed ${marks.length} of its 2 measurement lines:\n${tail.join('\n')}`);
     const r = JSON.parse(readFileSync(outFile, 'utf8'));
-    if (!r.ok) throw new Error(`the bench run: ${r.error}`);
+    if (!r.ok) throw new Error(`the bench run: ${r.error}\n${tail.join('\n')}`);
     const {firstDraw, refresh, from, to, end, m0, m1, p0, p1, drawn} = r as {firstDraw: number; refresh: number; from: number; to: number;
         end: number; m0: Record<string, number>; m1: Record<string, number>; p0: {pid: number; type: string; cpu: number; ws: number}[];
         p1: {pid: number; type: string; cpu: number; ws: number}[]; drawn: Record<string, number> | null};

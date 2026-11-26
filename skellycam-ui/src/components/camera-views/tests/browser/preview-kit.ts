@@ -228,6 +228,17 @@ export async function requirePreviewTiles(page: Page, timeoutMs = 5_000) {
     throw new Error(`window.__previewTiles is undefined: the provider gives no PreviewTiles (useServer().getPreviewTiles of spec 5.5); notes: ${notes.join(', ')}`);
 }
 
+/** Wait until two reads of the tile places, 200 ms apart, agree: the tiles still move and grow after the first
+ * draw (open work: the cell animation of the grid), and the observer needs their final places. */
+export async function waitLayoutSettled(page: Page, ids: string[], imageSize: [number, number] = SIZE_640) {
+    await expect.poll(async () => {
+        const read = () => page.evaluate(([i, size]) => JSON.stringify(window.preview.layout(i, size)), [ids, imageSize] as const);
+        const first = await read();
+        await sleep(200);
+        return first === await read();
+    }, {message: 'the layout of the tiles settles', timeout: 10_000}).toBe(true);
+}
+
 /** Wait until the tile of each camera drew a frame: its kept overlay has a frame text. */
 export async function waitDrawn(page: Page, ids: string[], timeoutMs = 10_000) {
     await expect.poll(async () => {
