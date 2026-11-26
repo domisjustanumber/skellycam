@@ -2070,11 +2070,11 @@ low light also in manual mode [NV], SkellyCam Auto (5.3), the settings check (4.
   `fail`. A check that passes in the dark stays `pass` [U Q773].
 - `BRIGHT_LUMA = 230` [A, not calibrated] follows the same rule: a check that fails while the mean is above it is
   `not-run` with `too-bright`, and a check that passes stays `pass` [U Q819].
-- A check with no frame to measure is `not-run` with `no-frame`, never `too-dark` [U Q818].
+- A check with no frame, or no ratio, to judge is `not-run` with `no-frame`, never `too-dark` [U Q818, 20.7].
 - A covered lens gives the same result as a dark room. The report does not need to tell them apart.
 - The plan asks after the run: "Was the room lit as it is when you record?" (9.1).
 - Each report records `luma_mean` for each camera, and `DARK_LUMA` is marked as not calibrated in the report
-  (20.7, Q774). A check with no frame or no ratio to judge is `not-run` with `no-frame`, not `too-dark` (Q773).
+  (20.7, Q774).
 
 ### 4.7 Time of `quick` [A]
 
@@ -3432,7 +3432,7 @@ of a product failure gives the product code as its reason, with one exception: t
 | `rate-low`, `rate-high` | rate checks | More than 3 % below or above the mode rate. The sentence of `rate-low` is the product text: "Camera is slow. Try adding more light" [U]. |
 | `rate-under-contention` | group | The camera passes alone and fails in the group. |
 | `too-dark`, `too-bright` | light-dependent checks | The frame is too dark or too bright to judge (4.6). |
-| `no-frame` | light-dependent checks | The check got no frame to measure its brightness, so it cannot judge (4.6) [U Q818]. |
+| `no-frame` | light-dependent checks | The check got no frame, or no ratio, to judge its brightness (4.6, 20.7) [U Q818]. |
 | `readback-differs`, `setting-reverted`, `no-image-effect`, `control-failed`, `exposure-not-applied` | settings and control checks | A set value reads back different; it changed back later; the image did not change; the set call failed; a set exposure did not apply. |
 | `control-absent` | control checks | The camera has no such control. |
 | `no-native-jpeg`, `jpeg-damaged`, `jpeg-size-differs` | `native-jpeg` | skellycam encoded the frames; a frame is damaged; its size is not the size of the mode. |
@@ -3442,7 +3442,6 @@ of a product failure gives the product code as its reason, with one exception: t
 | `not-warned`, `not-marked` | `<label>:in-use-mid-take` | No warning within 2 s of the join; no take mark of the interval (20.3). |
 | `no-shared-mode` | `<label>:in-use-mid-take` | Windows before build 26100: certify cannot start a shared reader (20.3). |
 | `hog-not-settable`, `hog-not-exclusive` | `probe:<model>:hog-mode` | Hog mode does not read back; a second session still starts (20.4). |
-| `no-frame` | light-dependent checks | No frame or no ratio to judge (20.7). |
 | `read-gap` | `<label>:control-read:gaps` | The one-second control read made a frame gap above 100 ms that the stream with no read does not have (20.9). |
 | `device-removed`, `stalled` | any camera check | Removed; no frame for 2 s (cap 6.7). |
 | `previous-process-alive`, `stream-error`, `format-changed`, `process-ended` | any camera check | Product failure codes of [ux 4.6.3]: an earlier camera process still holds the camera; the stream gave an error; the format changed during the stream; the camera process ended (certify reports `crashed`). |
@@ -3852,9 +3851,11 @@ summary item); item 16 (the commit, the tree state and the schema 1.7.0 are writ
    abandon and the end of the budget kill the tree. After a crash, the caller waits up to 12 s for the
    camera processes that it saw (9.3).
 7. At a stop, the events already in the queue keep their results.
-8. After a crash or a time-out, a running check is `fail` only when the checks that ran belong to one
-   camera; else each is `not-run` with the cause. A refused apply gives `opens` `not-run` with the
-   class name. A crash, a time-out or an abandon writes no record row.
+8. After a time-out or a `bad-output`, a running check is `fail` only when the checks that ran belong
+   to one camera or to the group and are not the open; else each is `not-run` with the cause, and
+   none is blamed. After a crash each running check is `not-run` `crashed` with `exit_code`: a crash
+   blames no check (item 13). A refused apply gives `opens` `not-run` with the class name. A crash, a
+   time-out, a `bad-output` or an abandon writes no record row.
 9. `certify.lock` beside the record holds one run at a time. A second run is refused with
    `cameras-busy` and makes no work folder. A failed record write gives the cleanup row
    `write-record` (9.5).
@@ -3874,9 +3875,7 @@ summary item); item 16 (the commit, the tree state and the schema 1.7.0 are writ
     because the product needs 5 s to declare a hang (8.3). Cost: no restore after a cancel during the
     take. The coordinator chose it, and the user accepted it (question 6 of ADR-X8XE).
 15. An event from the session child that is not a valid result (`bad-output`: not a pair of a known kind and a
-    value of its form, or an event that does not unpickle) is handled by the time-out rule of item 8, as built:
-    the running check is `fail` only when the checks that ran belong to one camera or to the group and are not
-    the open; else none is blamed [U Q820,
+    value of its form, or an event that does not unpickle) is handled by the time-out rule of item 8 [U Q820,
     [ADR-CR85](../decisions/entries/CR85-decisions-of-the-user-on-the-certify-test-lane.md)].
 
 The user answered "yes" to the six questions of ADR-X8XE on 2026-11-21: (1) keep 2.4 (9.1); (2) the

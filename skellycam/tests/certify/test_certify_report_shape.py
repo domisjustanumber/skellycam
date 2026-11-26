@@ -186,7 +186,9 @@ def test_t_cert_91_a_check_with_no_code_has_no_row(monkeypatch, tmp_path, level)
     """T-CERT-91, 3.6.1, 3.6.3: 4 fakes of 3 models, two of one model. No row has `not-built` for a check with no
     code, and no row has `same-model`; `details.not_built.camera` and `.run` hold each such name one time, sorted,
     with `base` for the mode of `<base>`; the plan `total` and `details.checks` count no such check; a check with code
-    whose diagnostics key is `null` keeps `not-run` `not-built` and counts in `total`."""
+    whose diagnostics key is `null` keeps `not-run` `not-built` and counts in `total`. The not-built lists follow the
+    spec (Q822): the old take rows are gone, two stay (Q598), and no `system:disk-benchmark` (Q612). The test of
+    T-CERT-121 and T-CERT-122 in `test_certify_cases.py` checks Q617."""
     catalog = product(CATALOG)
     unfilled = good(diagnostics={**SOURCE_FACTS, "long_intervals": None})
     with capture_app(monkeypatch, [good(), good(), good(), unfilled]) as app:

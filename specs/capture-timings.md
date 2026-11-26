@@ -761,8 +761,8 @@ the alternative that it rejects. The user accepted them as a set on 2026-11-23 [
 4. The kinds by the job of the step; disk calls and awaited calls are work; the field `cadence`
    (1.4).
 5. The step ids, the values of `where`, the steps for each source (3.1, 5.4).
-6. The brackets: no bracket contains another; the sums of `camera_wait` and `gate_wait`; the OpenCV
-   split; `mkv_close` minus its enclosed steps (1.4, 3.1).
+6. The brackets: no time is in two samples (an outer step subtracts its inner steps); the sums of
+   `camera_wait` and `gate_wait`; the OpenCV split; `mkv_close` minus its enclosed steps (1.4, 3.1).
 7. Threads: `TimingControl` with one clock; one `StepSet` for each writer instance; retire; one
    reader; the repeat from another thread; the snapshot swap; the `step_set` argument (5.1, 6.2).
 8. Nearest-rank statistics, the window, `null` for `n` 0, the 512 rule (5.2).
