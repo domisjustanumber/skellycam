@@ -372,7 +372,9 @@ Rules:
    the first frame [Q1]. When it resolves, clear `busy`. No ready message. No `onDrawn`. A frame
    update also carries the current overlay and clears `overlayChanged`.
 6. **The display drives the draws.** The provider calls `tick` in a `requestAnimationFrame` loop,
-   as today's loop does. Thus a tile draws at most one camera message for each display refresh. A
+   as today's loop does. Thus a tile draws at most one camera message for each display refresh. The
+   camera that `tick` gives its update first turns by one at each refresh, so that no camera is always last
+   [Q893]. A
    hidden page runs no `requestAnimationFrame` in the product window (default
    `backgroundThrottling`) [NV on Linux and macOS, 7.5]. It then draws nothing, sends no ready
    message, and the server sends only the safety-net messages: one each second for each camera
