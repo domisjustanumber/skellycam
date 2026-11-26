@@ -82,8 +82,11 @@ SEARCH_WAIT_LIMIT_S = 20.0 + 2 * 5.0 + 5.0
 WATCHED_STATES = ("waiting", "adjusting", "checking", "too_slow", "ready")
 # camera-requests.md 1.3b [H1, AC5B]: the apply waits for a camera in AUTO until it is in one of these states.
 AUTO_SETTLED_STATES = ("adjusting", "ready", "too_slow", "failed", "dead")
-STALL_WATCH_S = 3.0  # over the 2 s of the in-process rule (W 9.5), which closes the camera and its files cleanly
-STALL_REASON = "no loop pass for 3 s"
+STALL_WATCH_S = 2.0  # the 2 s of the in-process rule (W 9.5) too (ADR-22EJ item 14, Q850)
+# Q863, Q874 [ADR-3RJJ, ADR-EQ3K]: the last loop pass is never before the last arrival, so the in-process rule fires at
+# most STALL_WATCH_S after it; this head start lets that rule set `dead` first, and the watch decides only a hang.
+STALL_HEAD_START_S = 0.5
+STALL_REASON = f"no loop pass for {STALL_WATCH_S + STALL_HEAD_START_S:g} s"
 KILL_AFTER_S = 1.0
 STALL_WATCH_SETTING = "SKELLYCAM_STALL_WATCH"  # "0" turns the watch off; read when a group is made
 REQUEST_RUNS = "Another change of the cameras runs now. Send the request again when the cameras are ready."  # 2.4a 7
@@ -435,8 +438,9 @@ class CameraGroup:
             self._loop.call_soon_threadsafe(self._close_ended_ring, camera_id, ring)
 
     def _watch_passes(self, camera_id: CameraIdString, worker) -> None:
-        """unix-capture.md 4.10: a live camera process whose loop made no pass for 2 s in a watched state, with
-        no failure and no close, leaves the gate as `dead` with the code `stalled`, and its process ends."""
+        """unix-capture.md 4.10: a live camera process whose loop made no pass for 2.5 s (2 s and the head start of
+        the in-process rule) in a watched state, with no failure and no close, leaves the gate as `dead` with the code
+        `stalled`, and its process ends."""
         status = self.cameras.orchestrator.camera_statuses.get(camera_id)
         if status is None:
             return
@@ -449,7 +453,7 @@ class CameraGroup:
         if not watched or seen is None or seen[0] != count:
             self._passes[camera_id] = (count, now)
             return
-        if now - seen[1] < STALL_WATCH_S:
+        if now - seen[1] < STALL_WATCH_S + STALL_HEAD_START_S:
             return
         del self._passes[camera_id]
         status.should_close.value = True

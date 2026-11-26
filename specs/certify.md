@@ -1147,7 +1147,7 @@ routes of the product, and reports for each tile the values that 10.5 lists (the
 `switchAt`). The row is `record-only`: no target until the owner sets one. Its values are in
 `details.player_legacy_decode`, not in `numbers`. Its `module` is the name of the pipeline item
 (3.6.10). It needs the page of the app: a run with no app page gives `not-run` `no-ui`. Until the code
-of the v1 player exists, its name is in `details.not_built` [A].
+of the v1 player exists, its name is in `details.not_built` [U Q847].
 
 **The take: five rows become two [U Q598].** The contract keeps one check for each test that can fail [C 3.4].
 Each test of the five old rows keeps a check that carries its failure:
@@ -2021,6 +2021,11 @@ each key; `decoded_by_skellycam` is read by no check and is not written [U Q627,
   that `ready`, before the live change to -8 of 4.3 and before the ring laps them. The set of the
   record start is compared with the MKV blocks of the same frame numbers, beside `ring-equals-mkv`
   [ADR-FC1C](../decisions/entries/FC1C-choices-of-the-spec-integration.md).
+- After the wait of the open step and before the judge of the open, certify attaches a ring watch to each camera
+  whose ring exists and that has none. A camera that is `ready` goes on to the next steps also with no ring watch;
+  then `native-jpeg:source-equals-ring` is `not-run` with `ring-lapped` (Q882, T-CERT-151)
+  [ADR-2HW5](../decisions/entries/2HW5-choices-of-the-ci-triage-of-the-first-test-run-on-dom-integration.md),
+  [ADR-N2VE](../decisions/entries/N2VE-decisions-of-the-user-on-the-ci-triage-and-the-stall-watch-code.md).
 - Measured on Windows: MJPG passthrough is byte-equal on the three good test cameras
   [M `research/usb_cameras/docs/hardware_run_3a_20261120.md`, T-CAP-52].
 
@@ -3093,7 +3098,10 @@ no YAML library and must not add one for this [A]. The app never downloads it.
   form is the rule of skellycam that [C 7.2] asks for (skellycertify ADR-T191).
 - `approaches`: for a macOS row, the result of each probe of 10.7 for each control (`pass`, `fail`,
   `not-run`). Only this field trims the probes (the drop rules of 10.7).
-- `os_key`: Windows: the release and the feature version from `os.label` (`11 26H2`); macOS: the major
+- `os_key`: Windows: the release of `platform.release()` (`os.release` of the report: `11` on a client,
+  `2025Server` on Windows Server 2025), a space and the feature version `DisplayVersion` of the registry
+  (`unknown` when it cannot be read): `11 26H2`, `2025Server 24H2`. A server key thus differs from the client key
+  of the same feature version ([ADR-DC43](../decisions/entries/DC43-choices-of-fix-lane-5.md) item 4); macOS: the major
   version (`26`); Linux: the kernel major and minor version (`7.0`), because `uvcvideo` changes by
   kernel.
 - `limits`: fixed codes, each with one sentence in `skellycam/REASON_CODES.md`, for example
@@ -3419,7 +3427,7 @@ of a product failure gives the product code as its reason, with one exception: t
 | `scale-too-short`, `auto-search-failed`, `not-camera-jpeg`, `frame-gap`, `ring-lapped` | 10.2, 5.3, 10.7, 4.4 | The unitless exposure route has fewer than 8 steps; the search ended `failed`; the JPEG is not the camera's own by the proof rules; a probe made a frame gap over 2 times the baseline; the ring no longer holds the hashed frame. |
 | `auto-not-searched` | `auto-exposure` checks | SkellyCam Auto did not search at the open, or after a change of the frame rate (5.3). |
 | `one-camera` | group checks | The check needs two cameras. |
-| `no-ui` | `player-legacy-decode` | The run has no page of the app, so the decode check of the v1 player cannot run (3.6.2) [A]. |
+| `no-ui` | `player-legacy-decode` | The run has no page of the app, so the decode check of the v1 player cannot run (3.6.2) [U Q847]. |
 | `no-mode` | mode checks | The camera does not declare this mode. |
 | `no-mjpg-mode` | `<label>:detect` | No MJPG mode at 30 fps or more and 640 wide and 360 high or more (before 3b). |
 | `below-floor` | `opens` | The nearest mode is below 30 fps (cap 7.5), or the size is below 640 wide or 360 high (cap 22.2). |
@@ -3497,6 +3505,9 @@ of cap 10.2 about 2.5 s at 30 and 1.3 s at 60):
 | G | Plain open | 2 |
 | | Start and end of the camera block children | 6 |
 | | Sum | about 100 |
+
+The sum leaves out `<label>:control-read:gaps` (20.9): phase D, 60 s (30 s with the read on, 30 s with it off)
+for the first unit of each model [U Q844]. The run times below leave it out too.
 
 The rest of `full`: quick 31 s, `group:take-30` 45 s, `group:take-60` 25 s, `system:disk` 35 s, the
 benchmark 5 to 35 s, self-checks 110 s. About 265 s.
@@ -3685,7 +3696,8 @@ tests only the self-check.
 | T-CERT-147 | macOS fake, 3 OS. The permission (20.8): a quick run with the status `not-determined`. | Certify makes no request for the permission; `system:camera-access` gives the status, and each camera is `not-run` `no-permission`. |
 | T-CERT-148 | 3 OS. The reason codes of section 20 (`not-refused`, `holder-failed`, `not-marked`, `not-warned`, `no-shared-mode`, `hog-not-settable`, `hog-not-exclusive`, `no-frame`, `read-gap`). | Each is in the list of section 15, and each reason that the checks of section 20 give is in it (the rule of T-CERT-30). |
 | T-CERT-149 | 3 OS; the Linux and macOS cases land with phase 7. `<label>:control-read:gaps` (20.9) with fakes: (1) each read takes 3 ms and delays no frame; (2) each read holds the frames for 150 ms; (3) the fake has gaps of 150 ms also with the read off; (4) a read hangs. Then the local record and a product open of each model. | (1) `pass`, `reads_over_limit` 0, the row `control_read` `ok`; (2) `fail` `read-gap`, the row `control_read` `harms`, and a later take of that model has no read during the take (T-CAP-146); (3) `pass`: the gaps come from the camera; (4) `fail` `hung`, the camera state `replug`, `control_read` `harms`. `details.limits.control_read_gap_ms` is 100. |
-| T-CERT-150 | 3 OS, fakes of the app page [U Q735, Q766, Q803]. A full run with a fake page result for the check `player-legacy-decode`: an `mp4v` tile, a WebCodecs tile, a tile switched by F6 and a tile that the core rule stopped; then a run with no app page; then a run before the v1 player code exists. | The row `player-legacy-decode` is `record-only` with the `module` of the pipeline item and blocks no gate; `details.player_legacy_decode` holds for each tile the fields of `player-legacy.md` 10.5 (T-LEG-79 checks their shape); with no app page: `not-run` `no-ui`; before the code: the name is in `details.not_built`. |
+| T-CERT-150 | 3 OS, fakes of the app page [U Q735, Q766, Q803, Q847]. A full run with a fake page result for the check `player-legacy-decode`: an `mp4v` tile, a WebCodecs tile, a tile switched by F6 and a tile that the core rule stopped; then a run with no app page; then a run before the v1 player code exists. | The row `player-legacy-decode` is `record-only` with the `module` of the pipeline item and blocks no gate; `details.player_legacy_decode` holds for each tile the fields of `player-legacy.md` 10.5 (T-LEG-79 checks their shape); with no app page: `not-run` `no-ui`; before the code: the name is in `details.not_built`. |
+| T-CERT-151 | 3 OS, fakes (4.4) [ADR-2HW5]. (1) Quick, PROCESS workers: one camera hangs at the open (5 s), one good camera waits for it in `waiting`; no ring look of the session comes between the open of the rings and the judge of the open. (2) Quick: one good camera whose ring watch cannot attach. | (1) The good camera has its rows of the ready step, the settings step and the take (`native-jpeg:format`, `settings-stick:readback`, `records:rows-complete` `pass`) and no `not-reached` row. (2) The camera goes on to the settings step and the take; `native-jpeg:source-equals-ring` is `not-run` `ring-lapped`; no `not-reached` row. |
 
 **The changes of 3.6 to the tests above [U Q591 to Q599, Q610 to Q618, A].** Where a row above and this list
 differ, this list is the rule. T-CERT-91 to T-CERT-132 are new. Q624 also changes T-CERT-61 to T-CERT-64:
@@ -4023,14 +4035,15 @@ section 14.
   and the certify of skellycam never asks again. The stand-alone skellycam app asks for itself, as decided on
   2026-11-20. Certify itself never shows the dialog (10.3, `system:camera-access`).
 
-### 20.9 The control read during a take [Q811]
+### 20.9 The control read during a take [Q811, Q843, Q844]
 
 The user decided (Q811) that the read of [cap 11.4], one time each second, stays during a take and finds a change of
 exposure, gain or focus by another program on a build with no control monitor [cap 21.6]. The reason: the four Kiyo
 Pro wedges all began at a stream start or stop, "never mid-stream and never during control polling alone"
 [M `research/usb_cameras/docs/kiyo_pro_wedge_research.md` §1]. Q811 supersedes the words "no poll during a take" of
 Q784 for this read. Certify checks for each camera model that the read does no harm. The details of the check are
-choices of the agent, marked **[R n]**: item n of [ADR-J1HD](../decisions/entries/J1HD-choices-of-the-control-read-check.md) (proposed). The user decides them before the code.
+choices of the agent, marked **[R n]**: item n of [ADR-J1HD](../decisions/entries/J1HD-choices-of-the-control-read-check.md). The user accepted
+them on 2026-11-26: item 4 by Q843, the other items by Q844 ([ADR-88HQ](../decisions/entries/88HQ-decisions-of-the-user-on-q842-to-q856.md)).
 
 
 | Check | How | Numbers | Result |

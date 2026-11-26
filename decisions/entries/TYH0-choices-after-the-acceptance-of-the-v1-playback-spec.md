@@ -1,7 +1,14 @@
 # TYH0 — Choices after the acceptance of the v1 playback spec: the code that goes with the old routes, and the certify row
 
-**Status:** proposed, 2026-11-25 (agent; applies Q800 and Q803 of
-[ADR-2Z2D](2Z2D-answers-of-the-owner-q800-to-q803-and-acceptance-of-the-v1-playback-spec.md)).
+**Status:** absorbed into [`specs/player-legacy.md#52-what-goes-and-when-agent-12-q800-a-agent-53`](../../specs/player-legacy.md#52-what-goes-and-when-agent-12-q800-a-agent-53),
+[`specs/player-legacy.md#133-test-list`](../../specs/player-legacy.md#133-test-list),
+[`specs/player-legacy.md#15-choices-of-the-agent`](../../specs/player-legacy.md#15-choices-of-the-agent),
+[`specs/certify.md#31-check-names-a`](../../specs/certify.md#31-check-names-a),
+[`specs/certify.md#362-the-check-catalogue-for-each-level`](../../specs/certify.md#362-the-check-catalogue-for-each-level),
+[`specs/certify.md#15-reason-codes-proposed-skellycamreason_codesmd-a`](../../specs/certify.md#15-reason-codes-proposed-skellycamreason_codesmd-a),
+[`specs/certify.md#17-test-list-of-the-certify-code`](../../specs/certify.md#17-test-list-of-the-certify-code),
+2026-11-26 (commit to dom/answers-q842; was accepted, 2026-11-26 (user, Q847 of [ADR-88HQ](88HQ-decisions-of-the-user-on-q842-to-q856.md)); was proposed, 2026-11-25 (agent; applies Q800 and Q803 of
+[ADR-2Z2D](2Z2D-answers-of-the-owner-q800-to-q803-and-acceptance-of-the-v1-playback-spec.md))).
 
 ## Decision
 

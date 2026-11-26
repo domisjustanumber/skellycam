@@ -515,6 +515,8 @@ class CameraLoop:
                 time.sleep(0.001)  # the main process makes the rings now; no read, so no stall in this short wait
                 return
             self.last_arrival = perf_counter_ns()
+            # 4.10 [4PPS item 10]: the watch counts from after the start of the clock of the in-process rule
+            self.status.alive_count.value += 1
         self._read()
         if any(status.state == "starting" for status in list(self.orchestrator.camera_statuses.values())):
             return
@@ -1037,9 +1039,10 @@ class CameraLoop:
         if self.started:  # ADR-HP7D item 7: after the start-up, a failure is a `streaming` failure
             stage = "close" if stage == "close" else "streaming"
         report = CameraSetupFailure(camera_id=self.camera_id, stage=stage, reason=failure.reason)
-        self.ipc.report_setup_failure(report)
+        # 4.10 [4PPS item 11]: `info` first, because the watch stops there and the put can wait
         self.status.update_info(failure=dict(camera_id=report.camera_id, stage=report.stage,
                                              reason=report.reason[:2048], code=failure.code))
+        self.ipc.report_setup_failure(report)
         self.failure_code, self.failure_stage = failure.code, report.stage
         if at_end and not self.started:
             self.end_state = "failed"

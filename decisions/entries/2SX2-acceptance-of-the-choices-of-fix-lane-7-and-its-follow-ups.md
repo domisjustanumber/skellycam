@@ -1,7 +1,10 @@
 # 2SX2 — The user accepts the choices of fix lane 7, the fix of the pubsub leak and a look at the T-UNX-98 thread
 
-**Status:** accepted, 2026-11-25 (user; the supervisor asked the four questions and the coordinator relayed the
-answer; commit to dom/fix-lane-7).
+**Status:** absorbed into [`specs/windows-capture.md#59-the-queues-of-a-closed-group`](../../specs/windows-capture.md#59-the-queues-of-a-closed-group),
+[`specs/windows-capture.md#161-kinds`](../../specs/windows-capture.md#161-kinds),
+[`specs/windows-capture.md#162-test-list`](../../specs/windows-capture.md#162-test-list),
+2026-11-26 (commit to dom/answers-q842; was accepted, 2026-11-25 (user; the supervisor asked the four questions and the coordinator relayed the
+answer; commit to dom/fix-lane-7)).
 
 ## Decision
 

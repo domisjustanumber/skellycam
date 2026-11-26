@@ -60,7 +60,8 @@ Marks:
   ([ADR-EM6A](../decisions/entries/EM6A-answers-of-the-owner-to-the-v1-playback-questions-of-revision-5.md)).
   The text under the mark applies that answer.
 - **[Q764 yes] to [Q767 yes], [Q765 B], [Q800 A] to [Q803 yes]**: the follow-up questions of
-  2026-11-25 (EM6A, 2Z2D). They have
+  2026-11-25 (EM6A, 2Z2D). **[Q847 yes]**: the owner accepted items 53 and 54 of section 15 on
+  2026-11-26 ([ADR-88HQ](../decisions/entries/88HQ-decisions-of-the-user-on-q842-to-q856.md)). They have
   the global numbers of that session; the spec questions Q699 to Q728 keep their own numbers.
 - **[SPECS]**, **[SFF-nnn]**: the v1 file rules in skellyspecs, module `recording-files/`, at commit
   `fd41818e472f93325f833eed15184bb4c51d879b` (section 2.1). [SFF-nnn] cites one draft rule of
@@ -1746,7 +1747,8 @@ The choices of revision 6
 
 After the acceptance
 ([ADR-TYH0](../decisions/entries/TYH0-choices-after-the-acceptance-of-the-v1-playback-spec.md),
-proposed):
+accepted by the owner on 2026-11-26, Q847 of
+[ADR-88HQ](../decisions/entries/88HQ-decisions-of-the-user-on-q842-to-q856.md)):
 
 53. Q800 A also removes, in step 6c part 1, the code that only the removed parts use:
     `SyncedVideoPlayer.tsx`, the video loading of `PlaybackContext.tsx` and the `stream_url` use of
@@ -1940,6 +1942,9 @@ answered with its recommendation:
 - Q801: revision 6 accepted, with the proposed choices of S4TJ and A56K.
 - Q802: the repair of the Dependabot folder (10.6) is later too.
 - Q803: `player-legacy-decode` goes into `specs/certify.md` at the acceptance.
+
+The answer of the owner of 2026-11-26 ([ADR-88HQ](../decisions/entries/88HQ-decisions-of-the-user-on-q842-to-q856.md)),
+"agree to all": Q847 accepts items 53 and 54 of section 15 (ADR-TYH0).
 
 ## 19. Constraints on later phases
 

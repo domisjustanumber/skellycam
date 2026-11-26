@@ -14,13 +14,14 @@ import os
 import re
 import subprocess
 import sys
+import threading
 import time
 
 import cv2
 import numpy as np
 import pytest
 
-from skellycam.tests.capture.capture_session import capture_app, ready_app_steps
+from skellycam.tests.capture.capture_session import capture_app, hold_clock_while_behind
 from skellycam.tests.capture.fake_source import FakeScript
 from skellycam.tests.frame_ring.ring_session import (
     fake_configs,
@@ -46,14 +47,21 @@ from skellycam.tests.frame_ring.test_lifecycle import _bytes_pattern, _wait_gone
 FRAMES_T_RING_40 = 10_000
 
 
-def _ready_fake_camera(cleanup, app):
-    """Apply the one fake camera of `app` with a BGR ring and wait until it is `ready`. Give its ID,
-    and the names and raw views (open after the close of the session) of its JPEG and BGR rings."""
+def _ready_fake_camera(cleanup, app, until=("ready",)):
+    """Apply the one fake camera of `app` with a BGR ring and wait until it is in a state of `until`. Give its
+    ID, and the names and raw views (open after the close of the session) of its JPEG and BGR rings. A camera
+    that ends soon after `ready` must also accept `dead`: on the virtual clock its time in `ready` can be
+    shorter than one poll of `wait_state` (as `capture_session.one_camera`). The views open just after the apply,
+    before the wait: the group watch closes the rings of a camera whose loop ended [ADR-2HW5]."""
     camera_id = app.factory.camera_ids[0]
-    ready_app_steps(app, [app.config(camera_id, bgr_ring=True)])
-    info = app.group.ring_infos[camera_id]
+    app.detect()
+    response = app.apply([app.config(camera_id, bgr_ring=True)])
+    assert response.status_code == 200, response.text
+    info = app.group.ring_infos[camera_id]  # the apply returns after the open of the rings (CameraGroup.start)
     names = (info.jpeg_ring_name, info.bgr_ring_name)
-    return camera_id, names, [cleanup.handle(open_raw(name)) for name in names]
+    views = [cleanup.handle(open_raw(name)) for name in names]
+    app.wait_state(camera_id, *until)
+    return camera_id, names, views
 
 
 def _count_imdecode(monkeypatch):
@@ -173,7 +181,7 @@ def test_t_ring_38_slow_bgr_stage_in_the_camera_loop(monkeypatch, cleanup):
 
     monkeypatch.setattr(fr.FrameRingWriter, "write", slow_bgr_write)
     with capture_app(monkeypatch, [FakeScript(modes=((640, 480, 60, 1, "MJPG"),), stop_after_frame=200)]) as app:
-        camera_id, _, (jpeg_shm, bgr_shm) = _ready_fake_camera(cleanup, app)
+        camera_id, _, (jpeg_shm, bgr_shm) = _ready_fake_camera(cleanup, app, until=("ready", "dead"))
         app.wait(lambda: app.status(camera_id)["closed"], "the end of the loop after the last frame")
     jpeg = parse_ring_header(jpeg_shm.buf)
     frames = jpeg["head"] + 1
@@ -237,7 +245,9 @@ def test_t_ring_40_both_rings_match(monkeypatch, cleanup):
 
     The fake source gives 640x360 MJPG frames (the smallest size of the floor, windows-capture.md 22.2, Q888)
     at 100 frames/s of a virtual clock, and each ring has 100 slots (about 89 MiB for the two rings, near the
-    82 MB of the 160x120 frames at 1,000 slots before the floor); the reader keeps up.
+    82 MB of the 160x120 frames at 1,000 slots before the floor). The test thread holds the clock while it is
+    50 frames behind the JPEG ring (half of its slots), so that the reader keeps up also on a slow machine
+    (`hold_clock_while_behind`) [ADR-2HW5].
     """
     fr = ring()
     both = not_in_bgr = 0
@@ -246,26 +256,32 @@ def test_t_ring_40_both_rings_match(monkeypatch, cleanup):
         camera_id, names, (jpeg_shm, bgr_shm) = _ready_fake_camera(cleanup, app)
         jpeg_reader, bgr_reader = (cleanup.handle(fr.FrameRingReader.attach(name)) for name in names)
         deadline = time.monotonic() + max(WAIT_TIMEOUT_S, 180.0)
-        while k < FRAMES_T_RING_40:
-            assert app.state(camera_id) == "ready", app.status(camera_id)
-            assert time.monotonic() < deadline, f"timed out at frame {k}"
-            upto = min(raw_head(jpeg_shm), raw_head(bgr_shm), FRAMES_T_RING_40 - 1)
-            while k <= upto:
-                jpeg = jpeg_reader.read(k)
-                bgr = bgr_reader.read(k)
-                assert jpeg.result == fr.ReadResult.OK, (k, jpeg.result)
-                if bgr.result == fr.ReadResult.OK:
-                    both += 1
-                    assert (bgr.frame_number, bgr.arrival_ns, bgr.sample_ns) == (
-                        jpeg.frame_number, jpeg.arrival_ns, jpeg.sample_ns), k
-                    assert (bgr.source_frame_number, bgr.rotation_cw_deg) == (
-                        jpeg.source_frame_number, jpeg.rotation_cw_deg), k
-                    assert bgr.published_ns >= jpeg.published_ns, k
-                else:
-                    assert bgr.result in (fr.ReadResult.MISSING, fr.ReadResult.LAPPED), (k, bgr.result)
-                    not_in_bgr += 1
-                k += 1
-            time.sleep(0.001)
+        app.clock.expect(threading.current_thread())
+        try:
+            while k < FRAMES_T_RING_40:
+                assert app.state(camera_id) == "ready", app.status(camera_id)
+                assert time.monotonic() < deadline, f"timed out at frame {k}"
+                upto = min(raw_head(jpeg_shm), raw_head(bgr_shm), FRAMES_T_RING_40 - 1)
+                while k <= upto:
+                    jpeg = jpeg_reader.read(k)
+                    hold_clock_while_behind(app.clock, jpeg_reader, k, 50)
+                    bgr = bgr_reader.read(k)
+                    assert jpeg.result == fr.ReadResult.OK, (k, jpeg.result)
+                    if bgr.result == fr.ReadResult.OK:
+                        both += 1
+                        assert (bgr.frame_number, bgr.arrival_ns, bgr.sample_ns) == (
+                            jpeg.frame_number, jpeg.arrival_ns, jpeg.sample_ns), k
+                        assert (bgr.source_frame_number, bgr.rotation_cw_deg) == (
+                            jpeg.source_frame_number, jpeg.rotation_cw_deg), k
+                        assert bgr.published_ns >= jpeg.published_ns, k
+                    else:
+                        assert bgr.result in (fr.ReadResult.MISSING, fr.ReadResult.LAPPED), (k, bgr.result)
+                        not_in_bgr += 1
+                    k += 1
+                hold_clock_while_behind(app.clock, jpeg_reader, k, 50)
+                time.sleep(0.001)
+        finally:
+            app.clock.leave()  # before the close: the gate reads the ring
         skipped = parse_ring_header(bgr_shm.buf)["skipped_count"]
     assert both >= 1
     assert not_in_bgr <= skipped, f"{not_in_bgr} numbers not in the BGR ring, {skipped} BGR skips counted"
