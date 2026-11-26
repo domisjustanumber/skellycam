@@ -104,8 +104,9 @@ A later decision of the same day changes the base. The supervisor relays it [S]:
 
 - The work moves onto a new integration branch, `dom/integration`. It holds the native capture, the
   new recorder, the new player and the merge of upstream `sfn26`. Each Rust part is removed. The
-  camera "backend" selector of the UI is removed. The pause becomes `PUT /group/all/pause` with
-  `{paused}`. The record stop becomes `POST`.
+  camera "backend" selector of the UI is removed. The record stop becomes `POST`. The server has no
+  public pause route: `PUT /group/all/pause` is removed, and the pause is a freeze of the UI display
+  only ([ADR-V8RS](../decisions/entries/V8RS-pause-freezes-the-ui-display-only.md), [ADR-6QFG](../decisions/entries/6QFG-pause-in-the-ui-search-on-native-sources-and-restore-at-close.md) K1).
 - Pull requests go against upstream `development`. This is a decision of the user of 2026-11-20
   [PR]. It replaces `development-streaming` in the wording of A1 of ADR-G651. ADR-G651 does not
   change.
@@ -128,7 +129,7 @@ The sections that the new base changes:
 | 2 | The base is `dom/integration`, not `dom/preview` with two merges. |
 | 3.1, 3.2, 7.7 | The paths and names are from `dom/preview`. The merge of upstream `sfn26` can move or change them. The test writer checks each one on `dom/integration` before T-PRV-30 is written. The camera "backend" selector is not an item of 4b. |
 | 4.3, 4.5 | The code facts are from `dom/native-jpeg`. The test writer checks them on `dom/integration`. |
-| 5.3 rule 7, 5.4 | The group pause `PUT /group/all/pause` stops new frames at the server. The tiles keep their last image. The UI pause of rule 7 does not change. |
+| 5.3 rule 7, 5.4 | The server has no public pause route ([ADR-V8RS](../decisions/entries/V8RS-pause-freezes-the-ui-display-only.md), [ADR-6QFG](../decisions/entries/6QFG-pause-in-the-ui-search-on-native-sources-and-restore-at-close.md) K1). The UI pause of rule 7 is the only pause of the display. |
 | 5.5, 5.6, 5.7 | The demo commits move onto `dom/integration` (5.7). |
 | 7.8 | The CI triggers name `dom/integration`. The PR goes against upstream `development` [PR]. |
 | 10 | A1 names `development-streaming`; [PR] replaces it. Section 6 of `AGENTS.md` names upstream `development` (section 12.2). |
@@ -365,9 +366,8 @@ Rules:
    message, and the server sends only the safety-net messages: one each second for each camera
    [A6, 4a 4.1]. The UI has no timer of its own: the 1 s safety net is the server's.
 7. **Paused.** `setPaused(true)` (today's `setStreamPaused`, the playback tab) makes `tick` do
-   nothing. Messages stay newest-pending. The group pause of the server (`PUT /group/all/pause`
-   on `dom/integration` [S]) is a different pause: the server writes no new frames, so the tiles
-   get no new message and keep their last image. It does not call `setPaused`.
+   nothing. Messages stay newest-pending. This is the only pause of the display: the server has no
+   public pause route, and the pause works also during a recording ([ADR-V8RS](../decisions/entries/V8RS-pause-freezes-the-ui-display-only.md), [ADR-6QFG](../decisions/entries/6QFG-pause-in-the-ui-search-on-native-sources-and-restore-at-close.md) K1).
 8. **No tile yet.** A message for a camera with no tile stays in `pending` and gets no ready
    message. When `setTile` gives the tile, the next `tick` draws it.
 9. **Tile removed.** `setTile(id, null)` drops the `pending` message and the state of that camera.
@@ -422,7 +422,6 @@ What a tile shows:
 | `failed` before any frame | Black, with `failed` and the label with no frame part [Q1]. |
 | `dead`, or `failed` after frames | The last image stays, with `dead` or `failed`. The rate text goes away when `delivered_framerate` becomes `null`. |
 | A ring recreated (a mode change, "apply again", "Update Cameras" [demo]) | The frames of the new ring show. Their frame numbers start again at 0 [4a 4.4]. |
-| The group paused by the server [S] | The last image stays, with the state. |
 | The camera leaves `app_state` | The tile leaves the grid and closes. |
 | The connection drops; `WebSocketConnection` tries again (`RECONNECTING`) | Each tile keeps its last image and overlay. |
 | The connection is `DISCONNECTED` or `FAILED` | The provider clears its camera lists, as it clears today's list. The grid shows its empty state. |

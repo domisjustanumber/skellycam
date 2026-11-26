@@ -17,6 +17,7 @@ from multiprocessing import parent_process
 import cv2
 import numpy as np
 
+from skellycam.core import capture_timings
 from skellycam.core.camera.capture import rate_check
 from skellycam.core.camera.capture.failure_codes import WEDGE_CODES
 from skellycam.core.camera.capture.exposure_search import ExposureSearch, add_light_text, failed_text, search_values
@@ -100,11 +101,11 @@ def camera_loop(source_factory: Callable, config: CameraConfig, ipc: CameraGroup
                recording_info_subscription).run()
 
 
-def start_take_writer(camera_id, spec, progress=None, alive=None) -> CameraTakeWriter:
+def start_take_writer(camera_id, spec, progress=None, alive=None, timing=None) -> CameraTakeWriter:
     """Start the camera writer of a take (recorder.md 10 item 5). A spec of another camera is refused (D41)."""
     if spec.camera_id != camera_id:
         raise ValueError(f"the take spec of camera {spec.camera_id} came to camera {camera_id}")
-    return CameraTakeWriter.start(spec, progress=progress, alive=alive)
+    return CameraTakeWriter.start(spec, progress=progress, alive=alive, timing=timing)
 
 
 def needs_reopen(requested: CameraConfig, current: CameraConfig) -> bool:
@@ -167,6 +168,19 @@ class CameraLoop:
         self.hashes: list[tuple[int, str]] = []  # (source_frame_number, SHA-256) of the bytes of the ring and recorder
         self.dqt_hashes: list[str] = []
         self.dht_present: bool | None = None
+        # The capture timings (capture-timings.md 5.1): one control for each process, the set of this thread, the
+        # set of each other writer instance by role ("source", "decode", "writer"), and the one reader.
+        self.loop_thread = threading.current_thread()
+        self.timing = capture_timings.TimingControl(lambda: perf_counter_ns())  # the module name: a test clock
+        self.timing.on = bool(self.status.log_capture_times.value)  # a group made after a change to on starts on
+        self.loop_steps = capture_timings.StepSet(self.timing, capture_timings.LOOP_STEPS)
+        self.timing_sets: dict = {}
+        self.timing_reader = capture_timings.WindowReader()
+        self.timing_seq = 0
+        self.timing_last: dict | None = None  # the last summary: a publish of another thread sends it again
+        self.timing_start_ns = self.timing.clock() if self.timing.on else 0
+        self.wait_ns = self.gate_ns = 0  # the waits of the passes since the last frame (3.1)
+        self.timings_logged = False  # one log line for a fault of the timings
         for subscription in getattr(self.ipc.pubsub.topics.get(TopicTypes.DIAGNOSTICS), "subscriptions", ()):
             # The main process stops reading at the group close: an exit must not wait to flush a full pipe of
             # diagnostics (multiprocessing joins the feeder thread of each queue at the exit). A lost dict is no loss.
@@ -230,13 +244,33 @@ class CameraLoop:
             time.sleep(0.05)  # T-CAP-49: a paused camera process uses under 2 % of one core
             return
         self.status.is_paused.value = False
+        timing = self.timing
+        on = timing.on
+        if on:
+            t0 = timing.clock()
         if not self.orchestrator.should_grab_by_id(camera_id=self.camera_id):
             time.sleep(0.001)  # no spin at the gate (4.3)
             self.last_wait_end = perf_counter_ns()
+            if on:
+                self.gate_ns += self.last_wait_end - t0  # 3.1: the read that exists ends a refused pass
             return
+        if on:
+            t1 = timing.clock()
+            self.gate_ns += t1 - t0
         frame = self._read()
+        if on:
+            retrieve = getattr(self.source, "retrieve_ns", None) if frame is not None and frame.format == "BGR" else None
+            if retrieve is not None:  # 3.1: the OpenCV wait ends at the read before its retrieve (no read of its own)
+                self.wait_ns += retrieve[0] - t1
+            else:
+                self.wait_ns += timing.clock() - t1
         if frame is not None:
-            self._process(frame)
+            if on:
+                steps = self.loop_steps
+                steps.add("camera_wait", self.wait_ns)
+                steps.add("gate_wait", self.gate_ns)
+            self.wait_ns = self.gate_ns = 0
+            self._process(frame, on)
 
     def _read(self, deadline_ns: int | None = None) -> CapturedFrame | None:
         """`read_frame` with the stall watch (9.5): it waits at most until 2 s after the last arrival, or after
@@ -267,12 +301,13 @@ class CameraLoop:
         self.started = False
         self.encoded = self.decoded_closed = self.dht_inserted = 0  # the counters of D-10 and D-11 count each open
         self._arm_hashes(None)  # the hashes of an earlier open go; the first `ready` arms a new set
+        self.wait_ns = self.gate_ns = 0  # capture-timings.md 3.1: the start-up reads are not measured
         self.stage = "open"
         self.status.set_state("starting")
         self.status.update_info(failure=None, measured_fps=None)
         deadline = perf_counter_ns() + READY_LIMIT_NS
         config = self.config
-        self.source = self.source_factory(config)
+        self.source = self._new_source(config)
         # `searches`: false for the OpenCV source of Linux and macOS (camera-requests.md 1.7); the endpoint reads it
         self.status.update_info(source=getattr(self.source, "name", "fake"),
                                 searches=getattr(self.source, "searches", True))
@@ -326,6 +361,19 @@ class CameraLoop:
         self.control = _ControlThread(self)
         self._publish_diagnostics()  # at the end of the open
         self.next_diagnostics_ns = perf_counter_ns() + DIAGNOSTICS_INTERVAL_NS
+
+    def _new_source(self, config: CameraConfig):
+        """A new source of the factory. A source with steps of its own (`timing_steps`) gets its own StepSet
+        (capture-timings.md 5.1, 5.4)."""
+        source = self.source_factory(config)
+        steps = getattr(source, "timing_steps", None)
+        if steps is not None:
+            source.timing_set = self.timing_sets["source"] = capture_timings.StepSet(self.timing, steps)
+        return source
+
+    def _retire(self, role: str) -> None:
+        """5.1: the set of a closed source, a stopped decode stage or an ended writer goes into the next summary."""
+        self.timing_reader.retire(self.timing_sets.pop(role, None))
 
     def _check_deadline_of_start(self, deadline: int) -> None:
         if not self.ipc.should_continue or self.status.should_close.value:
@@ -494,6 +542,16 @@ class CameraLoop:
             image = decode_jpeg(payload)
         return float(np.mean(image)) if image is not None else None
 
+    def _measured_brightness(self, payload: bytes, image, flags: int) -> float | None:
+        """`_brightness` in the bracket of `exposure_search_brightness` (capture-timings.md 3.1)."""
+        timing = self.timing
+        if not timing.on:
+            return self._brightness(payload, image, flags)
+        t0 = timing.clock()
+        value = self._brightness(payload, image, flags)
+        self.loop_steps.add("exposure_search_brightness", timing.clock() - t0)
+        return value
+
     def _attach_rings(self) -> None:
         while not self.shm_sub.empty():
             info = self.shm_sub.get().ring_infos.get(self.camera_id)
@@ -501,28 +559,43 @@ class CameraLoop:
             if info is not None and info.jpeg_ring_name != self.old_ring_name:
                 self.ring_writer = FrameRingWriter.attach(info.jpeg_ring_name)
                 if info.bgr_ring_name:
-                    self.bgr_ring_writer = FrameRingWriter.attach(info.bgr_ring_name)
-                    self.decode_stage = DecodeStage(self.bgr_ring_writer)
-                    self.decode_stage.start()
+                    self._start_decode(FrameRingWriter.attach(info.bgr_ring_name))
                 return
+
+    def _start_decode(self, writer: FrameRingWriter) -> None:
+        self.bgr_ring_writer = writer
+        self.decode_stage = DecodeStage(writer, timing=self.timing)
+        self.timing_sets["decode"] = self.decode_stage.timing_set
+        self.decode_stage.start()
 
     # ----- each frame (5.1) -----
 
-    def _process(self, frame: CapturedFrame) -> None:
+    def _process(self, frame: CapturedFrame, on: bool = False) -> None:
+        """`on`: the capture timings measure this frame. Brackets that follow one another share one clock read (`t`),
+        so the loop reads the clock at most 10 times for each frame (capture-timings.md 5.3)."""
         if self.replaced_base is None:
             self.replaced_base = self.source.replaced_count  # the first frame in the gate (5.2, agent 49)
         self.gate_count += 1
         number = self.gate_count
         should_record, should_finish = self.orchestrator.should_record_frame_number(frame_number=number)
+        timing, steps = self.timing, self.loop_steps
+        if on:
+            t = timing.clock()
         image = None
         if frame.format == "BGR":
             image = frame.payload
             payload = cv2.imencode(".jpg", image, JPEG_Q90)[1].tobytes()
+            if on:
+                t, t0 = timing.clock(), t
+                steps.add("jpeg_encode", t - t0)
             delivered_len = len(payload)
             self.encoded += 1
         else:
             payload, delivered_len = frame.payload, frame.delivered_len
         payload, flags = check_jpeg(payload, delivered_len=delivered_len, driver_error=frame.driver_error)
+        if on:
+            t, t0 = timing.clock(), t
+            steps.add("capture_check", t - t0)
         if frame.discontinuity:
             flags |= FrameFlag.DISCONTINUITY  # D34
         if not flags & ERROR_FLAGS:
@@ -531,6 +604,9 @@ class CameraLoop:
             self.dht_inserted += 1
         if len(self.hashes) < HASH_COUNT and (self.hash_trigger == "ready" or (self.hash_trigger and should_record)):
             self._hash(payload, frame.source_frame_number, flags)
+            if on:
+                t, t0 = timing.clock(), t
+                steps.add("frame_hash", t - t0)
         fields = dict(frame_number=self.ring_count, arrival_ns=frame.arrival_ns, sample_ns=frame.sample_ns,
                       source_frame_number=frame.source_frame_number, flags=int(flags),
                       rotation_cw_deg=rotation_to_cw_deg(self.config.rotation))
@@ -539,11 +615,20 @@ class CameraLoop:
                                      sample_ns=frame.sample_ns, source_frame_number=frame.source_frame_number,
                                      flags=int(flags), delivered_len=delivered_len,
                                      rotation_cw_deg=fields["rotation_cw_deg"]))
+            if on:
+                t, t0 = timing.clock(), t
+                steps.add("recorder_give", t - t0)
         elif should_finish and self.take_writer is not None:
             self._end_take()
+            if on:
+                t = timing.clock()  # take_end has its own bracket
         self.ring_count += 1
         try:
             self.ring_writer.write(payload, **fields)
+            if on:
+                t, t0 = timing.clock(), t
+                steps.add("ring_write", t - t0)
+                steps.add("arrival_to_published", t - frame.arrival_ns)
             if self.decode_stage is not None:
                 # The one decode is in the decode stage; the recorder needs none (recorder.md 10 item 6, D9).
                 item = (DecodeInput(payload=image, source="BGR", **fields) if image is not None
@@ -557,7 +642,7 @@ class CameraLoop:
         self._feed_check(frame.source_frame_number, frame.arrival_ns)
         if self.search is not None:
             self.search.frame(frame.source_frame_number, frame.arrival_ns,
-                              lambda: self._brightness(payload, image, flags))
+                              lambda: self._measured_brightness(payload, image, flags))
         self._feed_block(frame)
 
     def _feed_check(self, sfn: int, arrival_ns: int) -> None:
@@ -689,6 +774,7 @@ class CameraLoop:
         self._close_rings()
         self._add_replaced()
         self.source.close()
+        self._retire("source")
         if self.search is not None:  # [GEH0]: as `_end`, the search ends as `camera-closed` in the status
             self.search.cancel()
             self.status.update_info(exposure_search=self.search.result)
@@ -711,10 +797,17 @@ class CameraLoop:
             logger.warning(text)
             self.status.update_info(writer_failure=text)
             return
+        timing = self.timing
+        on = timing.on
         try:
             self.status.alive_count.value += 1  # the file open can take long; the watch is off in the pause too
+            if on:
+                t0 = timing.clock()
             self.take_writer = start_take_writer(self.camera_id, spec, self.status.writer_progress_at,
-                                                 self.status.alive_count)
+                                                 self.status.alive_count, timing=timing)
+            if on:
+                self.loop_steps.add("take_start", timing.clock() - t0)
+            self.timing_sets["writer"] = self.take_writer.timing_set
             self.status.alive_count.value += 1
         except Exception as error:  # the camera runs on; the record start fails with this text (ADR-P5VE)
             text = f"camera {self.camera_id}: the take writer did not start: {error}"
@@ -753,13 +846,19 @@ class CameraLoop:
         the first camera that ends sets the last frame of the take after the latest group frame, so that each
         camera finishes its pair with the same rows (placeholders to that frame, 7.3) and its `# end` line."""
         writer, self.take_writer = self.take_writer, None
+        timing = self.timing
+        on = timing.on
         try:
             if self.orchestrator.last_frame == -1:
                 lock = self.orchestrator.last_recording_frame_number.get_lock()
                 # A bounded wait (unix-capture.md 4.10): a camera killed while it held the lock keeps it for ever.
                 locked = not self.ipc.should_continue and lock.acquire(timeout=FRAME_LOCK_WAIT_S)
                 if not locked:
+                    if on:
+                        t0 = timing.clock()
                     error = writer.abandon()
+                    if on:
+                        self.loop_steps.add("take_end", timing.clock() - t0)
                     if not self.ipc.should_continue:  # with no lock: this camera ends its part of the take alone
                         error = error or (f"camera {self.camera_id}: no lock of the last frame of the take in "
                                           f"{FRAME_LOCK_WAIT_S:g} s")
@@ -775,10 +874,16 @@ class CameraLoop:
                         self.orchestrator.last_frame = max(latest + 2, self.orchestrator.first_recording_frame_number.value)
                 finally:
                     lock.release()
-            result = writer.end(self.orchestrator.take_frame_count())
+            frame_count = self.orchestrator.take_frame_count()
+            if on:
+                t0 = timing.clock()
+            result = writer.end(frame_count)
+            if on:
+                self.loop_steps.add("take_end", timing.clock() - t0)
             self.ipc.pubsub.topics[TopicTypes.RECORDING_FINISHED].publish(
                 RecordingFinishedMessage(camera_id=self.camera_id, result=result))
         finally:
+            self._retire("writer")
             self.status.recording_in_progress.value = False
 
     def _missing_until_end(self) -> None:
@@ -872,6 +977,7 @@ class CameraLoop:
                     except CaptureFailure as failure:
                         self._fail(failure)
                         hung = failure.hung
+                    self._retire("source")
                     if not hung:
                         self._publish_diagnostics()  # at the close
                         self._flush_diagnostics()
@@ -893,6 +999,7 @@ class CameraLoop:
             self.decode_stage.stop()
             self.decoded_closed += self.decode_stage.decoded
             self.decode_stage = None
+            self._retire("decode")
         if self.bgr_ring_writer is not None:
             self.bgr_ring_writer.close()
             self.bgr_ring_writer = None
@@ -950,13 +1057,19 @@ class CameraLoop:
                 feeder.join(max(0.0, deadline - time.monotonic()))
 
     def _publish_diagnostics(self) -> None:
-        """The full dict to the main process. A dict over 32 KiB (pickled) is not sent, and is logged one time."""
+        """The full dict to the main process. A dict over 32 KiB (pickled) is not sent, and is logged one time.
+        It carries the capture timings of the window that ends (capture-timings.md 6.2)."""
+        timing = self.timing
+        on_loop = threading.current_thread() is self.loop_thread
+        measured = on_loop and timing.on
+        if measured:
+            t0 = timing.clock()
         try:
             data = self.source.diagnostics() if self.source is not None else empty_diagnostics()
             data.update(self._loop_diagnostics())
             if data.get("fail_code") is None and self.failure_code is not None:
                 data.update(fail_code=self.failure_code, fail_stage=self.failure_stage)
-            message = DiagnosticsMessage(camera_id=self.camera_id, diagnostics=data)
+            message = DiagnosticsMessage(camera_id=self.camera_id, diagnostics=data, timings=self._timings(on_loop))
             size = len(pickle.dumps(message))
             if size > DIAGNOSTICS_LIMIT_BYTES:
                 raise ValueError(f"the diagnostics have {size} bytes, over the limit of {DIAGNOSTICS_LIMIT_BYTES}")
@@ -965,6 +1078,49 @@ class CameraLoop:
             if not self.diagnostics_logged:
                 self.diagnostics_logged = True
                 logger.warning(f"Camera {self.camera_id}: diagnostics not sent: {type(error).__name__}: {error}")
+        if measured:  # 3.1: its sample goes into the next window
+            self.loop_steps.add("diagnostics_publish", timing.clock() - t0)
+
+    def _timings(self, on_loop: bool) -> dict | None:
+        """5.1: only the loop thread reads the buffers; another thread sends the last summary again. A fault of the
+        timings sends None and is logged one time: the diagnostics dict still goes."""
+        if not on_loop:
+            return self.timing_last
+        try:
+            return self._take_timings()
+        except Exception as error:
+            self.timing_last = None
+            if not self.timings_logged:
+                self.timings_logged = True
+                logger.warning(f"Camera {self.camera_id}: capture timings not sent: {type(error).__name__}: {error}")
+            return None
+
+    def _take_timings(self) -> dict | None:
+        """Close the window on the loop thread (5.1, 5.2). The switch applies here (2 item 4): the window that ends
+        gives a summary only when the switch was on for it and still is, else None. The next window starts here."""
+        timing = self.timing
+        was_on = timing.on
+        timing.on = on = bool(self.status.log_capture_times.value)
+        if on != was_on:
+            self.wait_ns = self.gate_ns = 0  # no wait of a pass that was not measured goes into a sample
+        windows = self.timing_reader.read([self.loop_steps, *self.timing_sets.values()])
+        summary = None
+        if on:
+            now = timing.clock()
+            if was_on:
+                summary = capture_timings.build_summary(
+                    source="camera", camera_group_id=getattr(self.ipc, "group_id", None), camera_id=self.camera_id,
+                    clock="perf_counter_ns", seq=self.timing_seq, window_end_ns=now,
+                    window_ns=now - self.timing_start_ns, step_ids=self._timing_steps(), windows=windows)
+                self.timing_seq += 1
+            self.timing_start_ns = now
+        self.timing_last = summary
+        return summary
+
+    def _timing_steps(self) -> tuple:
+        """5.4: the steps that apply to this camera."""
+        steps = capture_timings.CAMERA_STEPS + tuple(getattr(self.source, "timing_steps", ()))
+        return steps + capture_timings.BGR_STEPS if self.config.bgr_ring else steps
 
     # ----- publishing -----
 

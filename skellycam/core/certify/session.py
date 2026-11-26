@@ -46,9 +46,6 @@ EXPOSURE_OPEN, EXPOSURE_CHANGED = -7, -8  # 4.3
 TAKE_S = 3.0  # 4.5
 SETTLE_LIMIT_S = 20.0
 HASH_WAIT_S = 6.0
-DARK_LUMA, BRIGHT_LUMA = 24, 230  # 4.6, 4.3; not calibrated
-TIME_UNIT_RATIO, UNITLESS_RATIO = 0.85, 0.97  # 4.3; not calibrated
-TIME_UNITS = ("log2-s", "100us", "seconds")
 NEAR_ARRIVAL_MS = 200.0  # 10.2, cap 4.2
 END_ROWS = 3  # 4.5: a gap in the last three rows is in `end_gaps`
 WEDGED = {"hung": "hung", "process-ended": "crashed", "device-removed": "device-removed"}  # code: reason (10.5)
@@ -401,15 +398,17 @@ class Session:
             return
         mode = status.get("mode") or {}
         mode_fps = mode["fps_num"] / mode["fps_den"] if mode.get("fps_den") else None
+        rate_numbers = dict(mode_fps=mode_fps, measured_fps=status.get("measured_fps"), luma_mean=None,
+                            jpeg_kb_mean=None)
         if state == "ready" and unit.label in self.watches:
             self.live.append(unit)
         elif unit.label in self.watches:
             self.watches.pop(unit.label).stop()
-        rate_numbers = dict(mode_fps=mode_fps, measured_fps=status.get("measured_fps"), luma_mean=None,
-                            jpeg_kb_mean=None)
         self.facts[unit.label] = dict(rate=rate_numbers, mode=mode)
-        if rate_failed:
-            self.done(row(names[1], "fail", code, unit.module, **rate_numbers))
+        if rate_failed:  # 4.6 [Q773]: a failed start-up rate check writes no ring frame; the D-3 key (P5) gives it
+            rate_numbers["luma_mean"] = diagnostics.get("rate_luma_mean")
+            self.done(row(names[1], *catalog.in_the_dark(("fail", code), rate_numbers["luma_mean"]), unit.module,
+                          **rate_numbers))
         width, height, rate = unit.base
         granted = (mode.get("format") == "MJPG" and mode.get("width") == width and mode.get("height") == height
                    and mode_fps is not None and rates_equal(round(mode_fps, 2), round(rate, 2)))
@@ -519,16 +518,7 @@ class Session:
             holds = later[unit.label] == EXPOSURE_CHANGED
             self.done(row(names[1], "pass" if holds else "fail", None if holds else "setting-reverted", unit.module,
                           **numbers))
-            limit = UNITLESS_RATIO if unit_kind in ("ev", "native", "native-data") else TIME_UNIT_RATIO
-            if m7 is None or ratio is None:
-                image = ("not-run", "too-dark")
-            elif m7 < DARK_LUMA:
-                image = ("not-run", "too-dark")
-            elif m7 > BRIGHT_LUMA:
-                image = ("not-run", "too-bright")
-            else:
-                image = ("pass", None) if ratio < limit else ("fail", "no-image-effect")
-            self.done(row(names[2], *image, unit.module, **numbers))
+            self.done(row(names[2], *catalog.image_effect(m7, m8, unit_kind), unit.module, **numbers))
             self.facts[unit.label]["control_path"] = data.get("control_path")
 
     async def take_step(self):

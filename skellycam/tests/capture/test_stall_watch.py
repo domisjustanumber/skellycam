@@ -441,6 +441,7 @@ def test_f3_a_reopen_closes_the_source_in_starting(monkeypatch):
     loop._stop_control = lambda: loop.status.set_state("checking")  # the control thread ends a live change
     loop._close_rings = loop._add_replaced = lambda: None
     loop._start_up = lambda: None
+    loop._retire = lambda role: None  # capture-timings 5.1: no timing reader on a hand-built loop
     loop.source = SimpleNamespace(close=lambda: seen.append(loop.status.state))
     loop.search = None  # no exposure search runs (camera-requests.md 1.3)
     from skellycam.core.camera.config.camera_config import CameraConfig

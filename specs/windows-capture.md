@@ -30,6 +30,11 @@ sections 1.3, 3, 4.3, 6.6, 6.7, 6.9, 7.1, 7.5, 8.1 to 8.4, 9.1, 9.3, 9.4, 9.5, 1
 T-CAP-53, T-CAP-55, T-CAP-77, T-CAP-94, T-CAP-104 and T-CAP-105 change with them. T-CAP-92 to T-CAP-98 are
 retired: the certify checks are the hardware tests of Linux and macOS (item 10 of ADR-22EJ).
 
+Note of 2026-11-25 (exclusive access, [ADR-AA4X](../decisions/entries/AA4X-decisions-of-the-user-on-exclusive-access-of-a-camera.md)):
+section 21 is accepted by the user, with the choices of ADR-FR2J (Q813, [ADR-5PAR](../decisions/entries/5PAR-decisions-of-the-user-on-the-control-read-the-holder-and-the-exclusive-access-drafts.md)). It adds the activity monitor, the control
+monitor, the code `0x80070020`, the take marks and the tests T-CAP-130 to T-CAP-146. Where section 21 and an older
+section differ, section 21 is the rule.
+
 ## 0. How to read this spec
 
 Marks:
@@ -262,7 +267,7 @@ the cameras.
 | Media Foundation callback thread (a work-queue thread of Media Foundation) | `OnReadSample` takes `arrival_ns` first. It copies the buffer into one `bytes` object, puts the frame in the waiting place, and issues the next `ReadSample` [proto mf.py `ReaderCallback`]. It does no file I/O, no logging per frame, no decode and no wait other than the waiting-place lock. It never raises into Media Foundation. |
 | Waiting place | One place per source, at most one frame. A new frame replaces a waiting frame, and the replaced frame counts in `replaced_count` [D26]. When the replaced frame carried a discontinuity, the frame that replaces it carries it too. Thus the next taken frame has the flag [D34] [agent 46]. A source error puts an error marker in the place. The marker wakes the loop at once, and `read_frame` raises `CaptureFailure` [agent 50]. When a frame waits, the marker waits behind it: `read_frame` gives the frame, and the next call raises at once. The marker never replaces a frame [agent 66]. The source uses the rules of `WaitingPlace` of the ring package (`skellycam/core/ipc/frame_ring/decode.py`), with these two additions [agent 4]. The put never waits longer than the time to take the lock [ring 8.3]. |
 | Camera loop thread | Waits only in `read_frame`, on the condition of the waiting place, with a timeout [ring 8.10]. It never polls in a loop without a block or a sleep of at least 1 ms. After the start-up, it never calls `set_controls` [U16]. |
-| Control thread | One thread for each camera process [U16]. From the end of the start-up, it reads the controls one time per second with `set_controls({})` (11.4), and it applies each live control change (11.2). It sleeps between the reads, with no spin [ring 8.10]. It never waits on the gate. A hung control call blocks only this thread; the loop thread keeps taking frames until the camera process ends (6.6). During an exposure search, it does each set of the search, and it holds its read each second ([`camera-requests.md`](camera-requests.md) 1.3). |
+| Control thread | One thread for each camera process [U16]. From the end of the start-up, it reads the controls one time per second with `set_controls({})` (11.4), also during a take (21.6, Q811; it pauses during a take only for a camera model that certify shows it harms), and it applies each live control change (11.2). It sleeps between the reads, with no spin [ring 8.10]. It never waits on the gate. A hung control call blocks only this thread; the loop thread keeps taking frames until the camera process ends (6.6). During an exposure search, it does each set of the search, and it holds its read each second ([`camera-requests.md`](camera-requests.md) 1.3). |
 | Bounded-call workers | One short-lived thread per bounded call [proto bounded.py]. Each joins the multithreaded apartment (MTA) first [agent 43]. |
 | Decode thread (BGR ring) | As [ring 8.2, 8.3]. |
 
@@ -501,6 +506,9 @@ Each failure carries a failure code of [`unix-capture.md`](unix-capture.md) 4.6.
 `camera-in-use`, the removal HRESULTs give `device-removed`, `0x800718CF`
 (`USB_INSUFFICIENT_BANDWIDTH`) gives `usb-bandwidth`, and each other HRESULT gives `open-failed` at
 the open and `stream-error` in streaming ([`unix-capture.md`](unix-capture.md) 4.2 item 1, T-UNX-77).
+
+Section 21 (accepted on 2026-11-25) adds `0x80070020` to the in-use set, names the holder of a `0xC00D3704` when the
+activity monitor shows one, and adds the other processes that the activity monitor shows.
 
 ### 6.8 Controls
 
@@ -1079,6 +1087,8 @@ Changed on 2026-11-20 ([ADR-JK79](../decisions/entries/JK79-exposure-search-at-e
 - From 3a, the status reports exposure, gain and focus, read only. The control thread (4.3) reads them
   one time per second with `set_controls({})` [D30, U16] [agent 31]. Gain and focus are set through the config from 3c
   [D43].
+- The read goes on during a take. On a build with no control monitor it also finds a change by another program
+  (21.6, Q811). It pauses during a take only for a camera model that certify shows it harms (21.6).
 - Whether a camera in auto mode reports its true current value is not known (section 17.3).
 
 ### 11.5 Gain, focus, white balance, power line frequency (3c) [D43, D44]
@@ -1807,7 +1817,8 @@ Other open points:
     recommended value could fail the rate check after the open. Resolved on 2026-11-20: the range ends at
     -5 (H of [ADR-JMS0](../decisions/entries/JMS0-review-decisions.md)).
 11. The in-use codes at stages other than the first frame are [NV]. Only `0xC00D3704` at the first
-    frame is measured.
+    frame is measured. Section 21.9 lists the facts of exclusive access that are [NV], with the certify
+    check that verifies each one.
 13. No test checks the real time limits of the Media Foundation source: the first-frame limit of 6.4
     and the bounded-call limit of 6.6. No hardware test can make a camera hang, and the fake source
     produces these limits itself (16.1). T-CAP-52 and T-CAP-54 show only that normal opens stay under
@@ -2278,3 +2289,208 @@ and D38 replace the two older plan statements of 1.4.
   worker, before the logging is configured.
 - W8: The phase 2 camera loop is dead code. It is deleted, with the code that only it uses, together
   with T-RING-31, which tests only that loop. T-CAP-49 covers the same rule on the shared loop.
+
+## 21. Exclusive access of a camera
+
+Status: accepted by the user on 2026-11-25, with the choices of the agent (Q813, [ADR-5PAR](../decisions/entries/5PAR-decisions-of-the-user-on-the-control-read-the-holder-and-the-exclusive-access-drafts.md)). The rules come
+from the decisions of the user of 2026-11-25
+([ADR-AA4X](../decisions/entries/AA4X-decisions-of-the-user-on-exclusive-access-of-a-camera.md)). The details
+that the user did not decide are choices of the agent
+([ADR-FR2J](../decisions/entries/FR2J-choices-of-the-exclusive-access-and-overlap-specs.md)). The failing tests come
+before the code. The Windows build lane can start (Q799). Section 4.13
+of [`unix-capture.md`](unix-capture.md) holds the Linux and macOS parts. They land with phase 7.
+
+Marks: **[Qn]** is decision Qn of ADR-AA4X. **[X n]** is item n of ADR-FR2J. **[S n]** is a primary source of
+the research of 2026-11-25 ([the evidence of ADR-AA4X](../decisions/evidence/AA4X-exclusive-access-research.md)). A fact that the research only inferred is [NV]. A certify check
+of [`certify.md`](certify.md) section 20 verifies each of them (21.9).
+
+### 21.1 The rule [Q771, Q781]
+
+- skellycam needs exclusive control of each camera that it uses (Q771). This is a rule of the product, not only
+  of certify.
+- No OS gives a full exclusive lock. Thus skellycam holds the strongest lock that each OS offers, and it treats
+  each other process that the OS shows on the camera by the rules of 21.3 (Q781).
+- Windows: the controlling mode, plus the activity monitor of 21.3. The controlling mode is the default when no
+  share-mode attribute is set, and the source sets none (6.2). Only one controlling source can be active at a
+  time [S1]. Any number of shared-mode readers can join while it streams [S1]. [NV] that the source has no way to
+  refuse them: no source names one.
+- A camera that skellycam does not hold in this way is `camera-in-use`. It is not used for a take (Q771).
+- skellycam never closes another program. It does not scan the processes of the system before an open (Q768).
+
+### 21.2 Own processes and other processes [Q796]
+
+- Only the processes of the same camera group are own processes (Q796). Each other process is another process.
+  This includes a camera process of another skellycam group, for example in the server of freemocap, and a
+  session child of certify.
+- In one group, only the camera process of a camera attaches to that camera. Thus the source compares each
+  process id of a report with its own process id [X 1]. A risk: at a reopen, the camera process of the earlier
+  open of the same group can still be attached while it ends, and the new process then counts it as another process.
+  The reopen then fails with `camera-in-use` or gets a short `camera_attached` warning. T-CAP-145 tests it.
+
+### 21.3 The activity monitor [Q781, Q782]
+
+- The camera process creates one sensor activity monitor (`MFCreateSensorActivityMonitor`, Windows 10 1703 or
+  later [S2]) before step 3 of 6.2, and starts it [X 29]. Each call is bounded (6.6). The source stops the monitor at
+  step 1 of the close (6.9).
+- The monitor reports each process that is attached to a camera, with its process id, its streaming state and
+  its streaming mode (controller or shared) [S3, S4]. It also reports a process that is attached and does not
+  stream [M `research/usb_cameras/docs/windows_results_20261110.md` §9: LogiTuneAgent on four cameras].
+- The source keeps the newest report of its own camera: the symbolic link of the report gives the `camera_id` of
+  the camera by the rule of 7.2 [X 2].
+- A **streaming other process** is another process (21.2) whose streaming state is "streaming". It makes the
+  camera "in use" (Q782, answer (b)).
+- An **attached other process** is another process that is attached and does not stream. It does not make the
+  camera "in use". It gives the warning `camera_attached` with its name (21.8) (Q782). Such a process can change
+  the settings of the camera with no stream. 21.6 tells how skellycam finds a change.
+- The name of a process is the file name of its image, with no folder: `OpenProcess` with
+  `PROCESS_QUERY_LIMITED_INFORMATION`, then `QueryFullProcessImageNameW`, then the last part of the path [X 3].
+  The folder can hold the user name, so skellycam never keeps, shows or logs it. When a call fails, the name is
+  "another program".
+- With no monitor (a build before 1703, or a failed create), the source works as before this section: only the
+  HRESULTs of 6.7 tell "in use". The diagnostics key `activity_monitor` is `false` [X 4].
+- [NV] that `OnActivitiesReport` comes again for each process that joins later. [S5] says only that it comes
+  "when a new report is available". Certify `<label>:in-use-mid-take` verifies it.
+
+### 21.4 At the open [Q782, Q785]
+
+1. Before `ActivateObject` (6.2 step 3), the source waits for the first report of the monitor, at most 1 s
+   [X 5]. [NV] that the first report comes within 1 s; certify `<label>:in-use:other-program` reports it
+   (`first_report_ms`). A streaming other process gives the failure `camera-in-use`, stage `open`, with the reason of 21.8. An
+   attached other process gives the warning `camera_attached`.
+2. After the first frame (6.4), the source reads the newest report again, by the same rule. A streaming other
+   process then gives the same failure, stage `first frame` [X 5].
+3. The in-use set of 6.7 gets the sharing-violation code `0x80070020` (`ERROR_SHARING_VIOLATION`) (Q785). It
+   gives `camera-in-use` at each open stage, as the other in-use codes do.
+4. When an open fails with `0xC00D3704` (`MF_E_HW_MFT_FAILED_START_STREAMING`), the source reads the newest
+   report (Q785). With a streaming other process, the code is `camera-in-use`, and the reason names the process.
+   With no other process seen, or with no monitor, the code stays `camera-in-use`, with the reason "in use by another
+   program, or not enough USB bandwidth" [X 6]. The monitor can miss a holder: on 2026-11-10 `activity_after.json`
+   (22:05:59Z) did not show Signal, which was a Frame Server client on the C930e until it was closed at about
+   22:06Z, and an earlier report listed a client `?:39608` that could not be named
+   [M `research/usb_cameras/docs/windows_results_20261110.md` §9]. The code becomes `usb-bandwidth` only after a
+   certify result shows `0xC00D3704` with no holder (`group:open`, 21.9). The text of this HRESULT is "lack of
+   hardware resources". It was measured one time only, with a process of our own type as the holder
+   [M `research/usb_cameras/docs/windows_results_20261113.md` §2.4].
+5. A record start while a camera of the group has a streaming other process gets HTTP 409. The detail names the
+   camera and the process, as T-CAP-19 does for a failed camera [X 7].
+
+### 21.5 While the camera is open, and during a take [Q783]
+
+- The monitor runs from the open to the close.
+- A streaming other process that joins while the camera is open gives the warning `camera_shared` at once, with
+  its name. The camera stays open, and it keeps its state (Q783).
+- During a take, the take keeps recording (Q783). The camera gets a take mark `camera_shared` (21.7) from the
+  first frame after the join to the last frame before the leave, or to the end of the take. Each join gives one
+  interval.
+- An attached other process that joins gives `camera_attached`. It gives no take mark by itself.
+- When the other process leaves, its warning goes.
+
+### 21.6 Control changes by other processes [Q768, Q784, Q797]
+
+- **Windows 11 build 22621 or later** (`sys.getwindowsversion().build`): the source creates a camera control
+  monitor (`MFCreateCameraControlMonitor` [S6]) for its camera, with the wildcard subscription for each control
+  [S7]. It adds the subscription before `Start`: a subscription after `Start` gives `MF_E_INVALIDREQUEST` (the review
+  of 2026-11-25 read this in [S7]).
+  It starts the monitor after the first frame, and the monitor runs to the close [X 30]. Each `OnChange` is a control change, except
+  a change of a control that the source itself set in the last 1 s [X 8]. [NV] that `OnChange` comes for a change
+  of the own process: [S6] says "when another app makes changes".
+- **Older builds** (each Windows 10 build, and Windows 11 before 22621): the read of 11.4, one time each second,
+  stays during a take, and it finds a change by another program (Q811). Each read compares exposure, gain and focus
+  by the rule of the read-back at the take start below (the auto flag always, the value only in manual). A
+  difference gives the warning `control_changed_by_other` and a take mark `camera_control_changed` at the row of the
+  next frame after the read. Q811 supersedes the words "no poll during a take" of Q784 for this read. Its reason:
+  the four Kiyo Pro wedges "all began at a stream start or stop, never mid-stream and never during control polling
+  alone" [M `research/usb_cameras/docs/kiyo_pro_wedge_research.md` §1], and one read each second is not a burst. No
+  other control read is added during a take.
+- **A model that the read harms** (Q811). The certify check `<label>:control-read:gaps` ([`certify.md`](certify.md)
+  20.9) measures the frame gaps around each read for each camera model. When the local record or the shipped row of
+  the model says that the check failed (the local row has `control_read` `harms`, or the shipped row has the limit
+  code `control-read-harms`), the read of 11.4 pauses during a take for a camera of that model, on each build
+  ([ADR-J1HD](../decisions/entries/J1HD-choices-of-the-control-read-check.md) item 4, proposed). The
+  status then shows the last value read. On a build with no control monitor, the read-back at the take end then finds
+  a change; on a build with it, the control monitor does. With no evidence, or with `control_read` `ok`, the read
+  stays.
+- **Read-back at the take start** (each build, Q768): at the record start, the control thread reads each control
+  one time (one bounded `set_controls({})`). For exposure, gain and focus it compares the auto flag always, and the
+  value only for a control that is in manual: a take can start with a control in auto (11.3, D37), and the value of
+  a control in auto changes by itself [X 37]. A difference from the config gives the warning `control_changed_by_other` and
+  a take mark `camera_control_changed` at row 0. The source does not set the value back [X 9].
+- **Read-back at the take end** (builds with no control monitor, for a model whose read pauses during a take):
+  one read after the last frame of the take.
+  A difference from the read of the take start, by the same rule (the auto flag always, the value only in manual),
+  gives a take mark `camera_control_changed` with `row=unknown`.
+- A control change that the control monitor finds during a take gives the warning `control_changed_by_other` and
+  a take mark at the row of the next frame. Outside a take, it gives only the warning.
+- The accepted gap (Q797): on a build with no control monitor, a change by an attached tool is found at the next read
+  of 11.4, up to 1 s late; for a model whose read pauses during a take, only the read-back at the take end finds it.
+  The warning `camera_attached` names the tool before the take, so that the person can quit it.
+- QX-1 is decided (Q811, answer (b)): see the two items on older builds above.
+
+### 21.7 The take marks [Q783]
+
+The take marks are warnings of the manifest ([`recorder.md`](recorder.md) 6.6), beside `camera_gap` and
+`camera_dead`. Their `detail` is a text for people (SFF-727), in these forms [X 11]:
+
+| Code | `detail` |
+|---|---|
+| `camera_shared` | `rows=<a>-<b> by=<name>`: rows of the timing sidecar of that camera. A join before the take start gives `a` = 0. A process that stays to the end gives `b` = the last row. |
+| `camera_control_changed` | `row=<k> control=<exposure, gain, focus or other>`, or `row=unknown control=<name>` after the read-back at the take end. The OS does not name the process that changed a control. |
+
+A reader can then flag the frames of that interval. The format of skellyspecs must list the two codes, and
+[`recorder.md`](recorder.md) 6.6 must name them. Both changes are owed ([open-work.md](../decisions/open-work.md)).
+
+### 21.8 Messages, and the line before a take [Q758, Q768, Q782]
+
+- The warnings of the status (8.4) [X 12]: `camera_attached` ("<name> is attached to this camera and can change
+  its settings. Quit it before a take."), `camera_shared` ("<name> also streams this camera.") and
+  `control_changed_by_other` ("Another program changed <control>."). Their owners, storage and lifetimes go into
+  [`camera-requests.md`](camera-requests.md) 1.5 (owed).
+- The in-use failure names the process where the OS gives it: "in use by <name>. Quit it and try again". With no
+  name: "in use by another program" (D13).
+- The UI shows one line before a take (Q768): "Close other camera apps (for example LogiTune, Razer Synapse, Teams,
+  browser tabs)". The UI spec [`preview-4b.md`](preview-4b.md) must take the line (owed). Certify gives the same
+  line before a run ([`certify.md`](certify.md) 20.1).
+
+### 21.9 Facts not verified
+
+| Fact | Source | Certify check |
+|---|---|---|
+| The monitor reports a reader that joins after the start | [S5], inferred | `<label>:in-use-mid-take` |
+| A shared reader can change exposure, gain and focus | [S1]: shared instances can change the legacy controls | `<label>:in-use-mid-take` |
+| The source has no way to refuse a shared reader | inferred: no source names one | `<label>:in-use-mid-take` |
+| The first report of the monitor comes within 1 s | inferred | `<label>:in-use:other-program` (`first_report_ms`) |
+| The monitor shows each holder | refuted in part: it missed Signal on 2026-11-10 (21.4 item 4) | `<label>:in-use:other-program` (`holder_seen`) |
+| A DirectShow client goes through Frame Server, so the monitor sees it | not checked | `<label>:in-use:other-program` |
+| What a second program in exclusive mode gets | not checked | `<label>:in-use:other-program` |
+| `0xC00D3704` with no holder is a USB bandwidth refusal | inferred | `group:open` reports the code and `holder_seen`; until a result shows it, the code stays `camera-in-use` |
+| Shared readers exist on Windows 10, through MediaCapture | inferred | none; `<label>:in-use-mid-take` is `not-run` before build 26100 |
+
+### 21.10 Test list
+
+The IDs start at T-CAP-130. Thus they do not collide with the IDs of branches that are not merged [X 13]. Each test
+uses a fake activity monitor and a fake control monitor (seams of the fake source), unless its kind is "windows".
+
+| ID | Step | Kind | What it does | Pass criterion |
+|---|---|---|---|---|
+| T-CAP-130 | 3a | fake | The fake monitor reports, before the open: (1) another process that streams; (2) another process that is attached and does not stream; (3) only the own process id; (4) no report in 1 s. | (1) `failed`, code `camera-in-use`, stage `open`, the reason names the process; no `ActivateObject`. (2) `ready`, with the warning `camera_attached` that names it. (3) and (4) `ready` with no warning. |
+| T-CAP-131 | 3a | fake | A streaming other process joins after `ActivateObject` and before the first frame. | `failed`, code `camera-in-use`, stage `first frame`. |
+| T-CAP-132 | 3a | fake | Map `0x80070020` and each code of the in-use set of 6.7 (the map is plain Python, so the test runs on each OS). | Each gives `camera-in-use` at each open stage. |
+| T-CAP-133 | 3a | fake | An open fails with `0xC00D3704`: (1) the monitor shows a streaming other process; (2) it shows none; (3) there is no monitor. | (1) `camera-in-use`, the reason names the process; (2) and (3) `camera-in-use` with the reason "in use by another program, or not enough USB bandwidth"; never `usb-bandwidth` (21.4 item 4). |
+| T-CAP-134 | 3a | fake | Two fakes record 10 s. At 3 s a streaming other process joins the first; it leaves at 6 s. | The take records to the stop with no lost frame; `camera_shared` is in the status from the join to the leave; the manifest has one `camera_shared` with the rows of 3 s to 6 s and the name; the second camera has no mark. |
+| T-CAP-135 | 3a | fake | A record start while a streaming other process is on one camera. | HTTP 409; the detail names the camera and the process; no take starts. |
+| T-CAP-136 | 3a | fake | Build 22621: the fake control monitor sends a change of exposure during a take, and a second change 0.5 s after an own set of exposure. Build 22000: the same take. | 22621: one `control_changed_by_other` and one `camera_control_changed` mark at the row of the next frame; the change after the own set gives nothing. 22000: no `MFCreateCameraControlMonitor` call. |
+| T-CAP-137 | 3a | fake | Build 19045 (Q811). A take where the fake changed exposure from -7 to -5 before the record start; a second take where the fake changes gain at 4.2 s; a third take with focus in auto whose value changes, and whose auto flag another process then turns off. | First take: the warning at the start and a mark at row 0. Second take: the one-second reads go on; one `camera_control_changed` mark at the row of the next frame after the first read that sees the new gain (at most 1 s after 4.2 s); no end read. Third take: no mark for the value of focus in auto; one mark for its auto flag. |
+| T-CAP-146 | 3a | fake | Build 19045. A model whose local record row has `control_read` `harms`; a second model with no such row; a third whose shipped row has `control-read-harms`. A take of 10 s of each; the fake changes gain at 4 s during each. | First model: no control read between the read of the take start and the read of the take end; one mark `row=unknown control=gain`; the status shows the value of the start read. Second model: a read each second, and the mark at the row after the first read that sees the change. Third model: as the first. On build 22621 the first model also has no read during the take, and the control monitor gives the mark. |
+| T-CAP-138 | 3a | fake | The fake name call returns the path of `LogiTuneAgent.exe` in a user folder; then it fails. | The warning text and the log hold `LogiTuneAgent.exe` and no folder; after the failure, "another program". |
+| T-CAP-139 | 3a | fake | `MFCreateSensorActivityMonitor` fails, as on a build before 1703. | The camera opens as before this section; `activity_monitor` is `false`; no warning. |
+| T-CAP-140 | 3a | fake | A process of another camera group of skellycam (another process id) streams the camera. | The rule of an other process: `camera-in-use` (Q796). |
+| T-CAP-141 | 3a | fake | Open and close a camera; then a close that hangs at step 2 of 6.9. | The monitor (and the control monitor on build 22621) stops at step 1 of the close, before the flush; in the hang case it was stopped before the hang. |
+| T-CAP-142 | 3a | fake | Two fakes; the fake monitor sends a report with a streaming other process on the link of the second camera only. | The first camera opens with no warning; the second is `camera-in-use` (21.3: each source reads only the report of its own link). |
+| T-CAP-143 | 3a | fake | A take of 10 s; at 4 s an attached other process that does not stream joins. | The warning `camera_attached` from 4 s; no take mark; the take records to the stop. |
+| T-CAP-144 | 3a | fake | Build 22621: the order of the control monitor calls. | `AddControlSubscription` comes before `Start`; a fake that answers a later subscription with `MF_E_INVALIDREQUEST` is never reached. |
+| T-CAP-145 | 3a | fake | A reopen of a camera in the same group while the earlier camera process of that camera still shows in the report for 0.5 s. | The result is recorded: `camera-in-use` or a short `camera_attached`, as 21.2 says; no hang. The test documents the risk of 21.2; it does not decide it. |
+
+Tests of each rule: 21.1 and 21.2 by T-CAP-130, 140 and 145; 21.3 by T-CAP-130, 138, 139, 141 and 142; 21.4 by
+T-CAP-130 to 133 and 135; 21.5 by T-CAP-134 and 143; 21.6 by T-CAP-136, 137, 144 and 146; 21.7 by T-CAP-134, 136 and 137;
+21.8 by T-CAP-130, 134 and 138. The line before a take (21.8) is a UI text; the 4b UI tests check it. The hardware
+side of these rules is the certify checks of section 20 of [`certify.md`](certify.md).

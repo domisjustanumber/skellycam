@@ -1,7 +1,20 @@
 # RA16 — Step 4b choices of the preview UI: the three spec revisions, Q14 and the Displayed rate
 
-**Status:** accepted, 2026-11-20 (user: two rulings on review sheet 2 of 2026-11-20; the other items
-accepted through the review sheets of 2026-11-20; commit to dom/integration).
+**Status:** absorbed into
+[`specs/camera-requests.md#81-the-rule`](../../specs/camera-requests.md#81-the-rule),
+[`specs/preview-4b.md#2-the-base-branch-q2-s`](../../specs/preview-4b.md#2-the-base-branch-q2-s),
+[`specs/preview-4b.md#43-the-ring-reader-close-on-the-event-loop-q4`](../../specs/preview-4b.md#43-the-ring-reader-close-on-the-event-loop-q4),
+[`specs/preview-4b.md#56-the-grid-and-the-camera-list`](../../specs/preview-4b.md#56-the-grid-and-the-camera-list),
+[`specs/preview-4b.md#63-targets-q6-q9-agent-10-agent-26`](../../specs/preview-4b.md#63-targets-q6-q9-agent-10-agent-26),
+[`specs/preview-4b.md#77-what-t-prv-30-searches`](../../specs/preview-4b.md#77-what-t-prv-30-searches),
+[`specs/preview-4b.md#11-choices-of-the-agent`](../../specs/preview-4b.md#11-choices-of-the-agent),
+[`specs/preview-4b.md#121-the-answers-of-the-user`](../../specs/preview-4b.md#121-the-answers-of-the-user),
+[`specs/preview-4b.md#72-helpers-agent-11-agent-27-agent-28`](../../specs/preview-4b.md#72-helpers-agent-11-agent-27-agent-28),
+[`specs/preview-4b.md#74-test-list`](../../specs/preview-4b.md#74-test-list),
+[`specs/preview-4b.md#75-parity-of-the-systems-p7`](../../specs/preview-4b.md#75-parity-of-the-systems-p7),
+[`specs/preview-4b.md#78-counts-and-ci-agent-12`](../../specs/preview-4b.md#78-counts-and-ci-agent-12),
+2026-11-25 (commit to dom/log-cleanup; was accepted, 2026-11-20 (user: two rulings on review sheet 2 of 2026-11-20; the other items
+accepted through the review sheets of 2026-11-20; commit to dom/integration)).
 
 ## Decision
 

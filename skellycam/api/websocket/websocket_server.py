@@ -13,6 +13,7 @@ from skellylogs.handlers.websocket_log_queue_handler import get_websocket_log_qu
 
 from skellycam.api.websocket.websocket_message_types import WebsocketMessageType
 from skellycam.core.camera_group.camera_group_manager import CameraGroupManager, get_or_create_camera_group_manager
+from skellycam.core.capture_timings import PreviewTimings
 from skellycam.core.recorders.framerate_tracker import FramerateTracker, CurrentFramerate, ServerFramerateCalculator
 from skellycam.utilities.wait_functions import await_10ms
 from skellycam.core.types.type_overloads import CameraGroupIdString, FrameNumberInt, MultiframeTimestampFloat  # noqa: TC001 — beartype checks annotations at runtime
@@ -20,6 +21,7 @@ from skellycam.core.types.type_overloads import CameraGroupIdString, FrameNumber
 logger = logging.getLogger(__name__)
 
 BACKPRESSURE_WARNING_THRESHOLD: int = 1000  # Number of frames before we warn about backpressure
+CAPTURE_TIMINGS_INTERVAL_S = 1.0  # capture-timings.md 6.4: one `capture_timings` message each interval
 
 # Reusable msgspec JSON encoder for all websocket JSON messages
 _ws_json_encoder = msgspec.json.Encoder()
@@ -55,6 +57,7 @@ class WebsocketServer:
         # internal `assert waiter is None or waiter.cancelled()` in the
         # protocol drain logic.
         self._send_lock = asyncio.Lock()
+        self._preview_timings = PreviewTimings()  # the preview steps of this connection (capture-timings.md 6.5)
 
     async def __aenter__(self):
         logger.debug("Entering WebsocketRunner context manager...")
@@ -95,11 +98,20 @@ class WebsocketServer:
             if self.websocket.client_state == WebSocketState.CONNECTED:
                 await self.websocket.send_json(data)
 
-    async def _send_bytes(self, data: bytes|bytearray|memoryview) -> None:
-        """Send bytes through the websocket, serialized by the send lock."""
+    async def _send_bytes(self, data: bytes|bytearray|memoryview, preview_group: str | None = None) -> None:
+        """Send bytes through the websocket, serialized by the send lock. `preview_group`: the group of a preview
+        message of the interim relay; its send after the lock is `preview_send` (capture-timings.md 3.1, 6.5)."""
         async with self._send_lock:
             if self.websocket.client_state == WebSocketState.CONNECTED:
+                steps = self._preview_timings.steps
+                on = preview_group is not None and steps.control.on
+                if on:
+                    t0 = steps.control.clock()
+                    for camera_id, published_ns in steps.pending.pop(preview_group, ()):
+                        steps.add((preview_group, camera_id, "published_to_send"), t0 - published_ns)
                 await self.websocket.send_bytes(data)
+                if on:
+                    steps.add((preview_group, None, "preview_send"), steps.control.clock() - t0)
 
     async def _send_text(self, data: str) -> None:
         """Send text through the websocket, serialized by the send lock."""
@@ -156,15 +168,16 @@ class WebsocketServer:
                     if skipped_previous:  # skip an extra frame if there was backpressure from frontend
                         skipped_previous = False
                     else:
+                        steps = self._preview_timings.steps
                         new_frontend_payloads: dict[
                             CameraGroupIdString, tuple[
                                 FrameNumberInt, MultiframeTimestampFloat, memoryview]] = self._cgm.get_latest_frontend_payloads(
-                            if_newer_than=self._last_sent_by_group)
+                            if_newer_than=self._last_sent_by_group, step_set=steps if steps.control.on else None)
 
                         for camera_group_id, (frame_number,
                                               multiframe_timestamp,
                                               payload_bytes) in new_frontend_payloads.items():
-                            await self._send_bytes(payload_bytes)
+                            await self._send_bytes(payload_bytes, preview_group=camera_group_id)
                             self.last_sent_frame_number = int(frame_number)
                             self._last_sent_by_group[camera_group_id] = int(frame_number)
 
@@ -267,6 +280,7 @@ class WebsocketServer:
         """
         logger.info("Starting state sender task...")
         previous_state: dict | None = None
+        timings_failed = False  # one log line for a timings message that cannot be built
         try:
             while self.should_continue:
                 try:
@@ -282,7 +296,16 @@ class WebsocketServer:
                         "state": state_dict
                     }
                     await self._send_msgspec_json(state_message)
-                await asyncio.sleep(1.0)
+                try:  # capture-timings.md 6.4: a fault of the timings never ends the app, also not during a take
+                    timings_text = _ws_json_encoder.encode(self._capture_timings_message()).decode("utf-8")
+                except Exception as error:
+                    timings_text = None
+                    if not timings_failed:
+                        timings_failed = True
+                        logger.exception(f"The capture timings message could not be built; no message: {error!r}")
+                if timings_text is not None:
+                    await self._send_text(timings_text)
+                await asyncio.sleep(CAPTURE_TIMINGS_INTERVAL_S)
                 previous_state = state_dict
         except asyncio.CancelledError:
             logger.debug("State sender task cancelled")
@@ -302,6 +325,12 @@ class WebsocketServer:
         finally:
             self._signal_shutdown()
             logger.info("Ending state sender task...")
+
+    def _capture_timings_message(self) -> dict:
+        """capture-timings.md 6.4: the body of `capture_timings()`, with the preview summaries of this connection."""
+        body = self._cgm.capture_timings()
+        preview = self._preview_timings.summaries(body["log_capture_times"], list(self._cgm.camera_groups))
+        return {"message_type": WebsocketMessageType.CAPTURE_TIMINGS, **body, "summaries": body["summaries"] + preview}
 
     async def _client_message_handler(self):
         """

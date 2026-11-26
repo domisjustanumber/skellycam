@@ -1,6 +1,13 @@
 # F4N7 — Decisions of the user on the pace tests of fix lane 6 and the search check with no answer (Q669 to Q673, Q675)
 
-**Status:** accepted, 2026-11-24 (user; the coordinator asked the questions and relayed the answers).
+**Status:** absorbed into
+[`specs/windows-capture.md#102-after-a-live-control-change-d32`](../../specs/windows-capture.md#102-after-a-live-control-change-d32),
+[`specs/windows-capture.md#161-kinds`](../../specs/windows-capture.md#161-kinds),
+[`specs/windows-capture.md#162-test-list`](../../specs/windows-capture.md#162-test-list),
+[`specs/preview.md#91-kinds-and-helpers`](../../specs/preview.md#91-kinds-and-helpers),
+[`specs/preview.md#92-test-list`](../../specs/preview.md#92-test-list),
+[`skellycam/tests/capture/test_states.py`](../../skellycam/tests/capture/test_states.py),
+2026-11-25 (commit to dom/log-cleanup; was accepted, 2026-11-24 (user; the coordinator asked the questions and relayed the answers)).
 
 ## Decision
 

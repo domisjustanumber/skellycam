@@ -1,6 +1,7 @@
 # FC1C — Choices of the spec integration of 2026-11-20
 
 **Status:** proposed, 2026-11-20 (supervisor and agent).
+Accepted in part by [ADR-6YGH](6YGH-acceptance-of-the-as-built-choices-of-fix-lanes-4-and-5-and-of-certify.md) on 2026-11-25: items 1 to 3, 5 to 12 and 14 to 19 (Q759 to Q762).
 
 ## Decision
 

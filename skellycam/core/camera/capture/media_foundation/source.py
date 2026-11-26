@@ -20,6 +20,7 @@ from skellycam.core.camera.capture.modes import choose_mode, mode_fraction
 from skellycam.core.camera.capture.source import (
     BOUNDED_CALL_LIMIT_S, FIRST_FRAME_TIMEOUT_S, CapturedFrame, CaptureFailure, CaptureRequest, CaptureWaitingPlace,
     ControlRestore, ControlSetting, ControlState, ControlValue, FrameLog, OpenedMode, empty_diagnostics)
+from skellycam.core.capture_timings import MEDIA_FOUNDATION_STEPS, OFF_SET
 from skellycam.core.ipc.frame_ring import NO_SAMPLE_NS
 
 logger = logging.getLogger(__name__)
@@ -72,6 +73,9 @@ class _ReaderCallback(COMObject):
 class MediaFoundationSource:
     """The capture interface of 4.1 on Media Foundation. Opens the device whose `camera_id` equals
     the `camera_id` of the request (6.2, agent 12)."""
+
+    timing_steps = MEDIA_FOUNDATION_STEPS  # capture-timings.md 5.4
+    timing_set = OFF_SET  # the loop gives each open source its own set (5.1)
 
     def __init__(self):
         self._lock = threading.Lock()  # guards _closing, _issuing and the reader of the callback
@@ -341,7 +345,12 @@ class MediaFoundationSource:
         self._read_next()
 
     def _frame(self, arrival_ns, sample):
-        """Copy the sample into one `bytes` object (4.2). The callbacks of one stream never overlap."""
+        """Copy the sample into one `bytes` object (4.2). The callbacks of one stream never overlap. The whole call is
+        the bracket of `camera_sample_copy` (capture-timings.md 3.1)."""
+        steps = self.timing_set
+        on = steps.control.on
+        if on:
+            t0 = steps.control.clock()
         try:
             raw = c_void_p()
             check(sample.ConvertToContiguousBuffer(byref(raw)), "streaming")
@@ -362,6 +371,8 @@ class MediaFoundationSource:
         self._frame_log.add(number, None, sample_ns if has_time else None, arrival_ns, len(payload))
         self._discontinuities += discontinuity
         self._zero_bytes += not payload
+        if on:
+            steps.add("camera_sample_copy", steps.control.clock() - t0)
         return CapturedFrame(payload=payload, format=self._format, arrival_ns=arrival_ns,
                              sample_ns=sample_ns if self._sample_time_ok else NO_SAMPLE_NS,
                              delivered_len=len(payload), driver_error=False, source_frame_number=number,

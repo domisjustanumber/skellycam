@@ -186,7 +186,9 @@ def test_t_cert_91_a_check_with_no_code_has_no_row(monkeypatch, tmp_path, level)
     """T-CERT-91, 3.6.1, 3.6.3: 4 fakes of 3 models, two of one model. No row has `not-built` for a check with no
     code, and no row has `same-model`; `details.not_built.camera` and `.run` hold each such name one time, sorted,
     with `base` for the mode of `<base>`; the plan `total` and `details.checks` count no such check; a check with code
-    whose diagnostics key is `null` keeps `not-run` `not-built` and counts in `total`."""
+    whose diagnostics key is `null` keeps `not-run` `not-built` and counts in `total`. The not-built lists follow the
+    spec (Q822): the old take rows are gone, two stay (Q598), and no `system:disk-benchmark` (Q612). The test of
+    T-CERT-121 and T-CERT-122 in `test_certify_cases.py` checks Q617."""
     catalog = product(CATALOG)
     unfilled = good(diagnostics={**SOURCE_FACTS, "long_intervals": None})
     with capture_app(monkeypatch, [good(), good(), good(), unfilled]) as app:
@@ -205,11 +207,18 @@ def test_t_cert_91_a_check_with_no_code_has_no_row(monkeypatch, tmp_path, level)
     assert not [c for c in report["checks"] if c["reason"] == "same-model"]
     assert not [name for name in plan["details"]["checks"] if name in no_code]
     assert plan["total"] == len(plan["details"]["checks"]) + 1 == len(report["checks"]) + 1  # with `session:exit`
-    if level == "quick":
-        assert not_built == {"camera": [], "run": ["group:open", "self:hang-100ms:gap", "self:hang-100ms:hard-end"]}
+    if level == "quick":  # Q822: with the quick checks of 3.6.11 and 3.6.12
+        assert not_built == {"camera": ["records:mkv-opens"], "run": [
+            "group:in-step", "group:open", "report:rules", "self:hang-100ms:gap", "self:hang-100ms:hard-end",
+            "system:camera-access", "system:memory", "system:recording-space"]}
     else:
-        assert {"cycles", "exposure:base", "auto-exposure:searched:base", "timings"} <= set(not_built["camera"])
-        assert {"group:contention", "group:take-30:finished", "self:idle-cpu"} <= set(not_built["run"])
+        assert {"cycles", "exposure:base", "auto-exposure:searched:base", "records:mkv-opens", "bursts"} <= set(
+            not_built["camera"])  # Q624: no `timings`
+        assert {"group:contention", "group:take-30:finished", "group:take-30:rate", "group:take-60:rate",
+                "group:cycles", "group:restore-after-kill", "group:take-again", "group:preview-during-take",
+                "system:power", "system:timer", "self:idle-cpu"} <= set(not_built["run"])
+        assert not {"group:take-30:csv-rows", "group:take-30:no-missing", "group:take-30:frame-count",
+                    "system:disk-benchmark"} & set(not_built["run"])  # Q598, Q612
         last = labels(devices)[-1]
         assert (by_name(report)[f"{last}:time-gaps"]["result"], by_name(report)[f"{last}:time-gaps"]["reason"]) \
             == ("not-run", "not-built")

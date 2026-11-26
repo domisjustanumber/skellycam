@@ -9,5 +9,5 @@ class WebsocketMessageType(str, enum.Enum):
     """
     FRAMERATE_UPDATE = "framerate_update"
     APP_STATE = "app_state"
-    PERFORMANCE_DATA = "performance_data"
+    CAPTURE_TIMINGS = "capture_timings"
     LOG_RECORD = "log_record"
