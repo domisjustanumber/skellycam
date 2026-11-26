@@ -24,7 +24,7 @@ export const CamerasViewSettingsOverlay: React.FC<CamerasViewSettingsOverlayProp
     onSettingsChange,
     inline = false,
 }) => {
-    const { connectedCameraIds, isConnected } = useServer();
+    const { connectedCameraIds, gridCameraIds, isConnected } = useServer();
     const { t } = useTranslation();
     const dispatch = useAppDispatch();
     const cameras = useAppSelector(selectCameras);
@@ -46,7 +46,7 @@ export const CamerasViewSettingsOverlay: React.FC<CamerasViewSettingsOverlayProp
         if (total <= 9) return 3;
         return 4;
     };
-    const autoColumns = getAutoColumns(connectedCameraIds.length);
+    const autoColumns = getAutoColumns(gridCameraIds.length);   // the columns lay out the grid (preview-4b.md 5.6)
 
     const handleAutoToggle = (checked: boolean) => {
         setIsAuto(checked);

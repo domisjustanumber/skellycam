@@ -23,7 +23,7 @@ export type TileMark =
     | {kind: 'unfinished'};
 
 export interface TileLabel {
-    frame: number;
+    frame: number | null; // null: no frame part (preview-4b.md 5.3 rule 5)
     frameDigits: number;
     camera: string;
     timeNs: number | null;
@@ -219,7 +219,7 @@ export class Tile {
             .replace('{reason}', 'reason' in mark ? mark.reason : '')
             .replace('{frame}', 'frame' in mark ? String(mark.frame) : '');
         this.overlay = {
-            frame: showing ? formatFrame(label.frame, label.frameDigits) : null,
+            frame: showing && label.frame !== null ? formatFrame(label.frame, label.frameDigits) : null,
             camera: showing ? label.camera : null,
             time: showing ? formatTime(label.timeNs, timeFormat, label.nominalFps) : null,
             rate: rateText,

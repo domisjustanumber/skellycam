@@ -1,14 +1,16 @@
 // src/components/framerate-viewer/FramerateHistogramView.tsx
+// One histogram panel of the frame rate viewer: the bars of one series, one colour for each camera (5.8).
 import {useCallback, useRef} from "react"
 import * as d3 from "d3"
 import {applyAxisStyles, DISABLED_TEXT_COLOR} from "./d3ChartUtils"
 import BaseD3ChartView, {ChartScaffolding, ChartLifecycle} from "@/components/framerate-viewer/BaseD3ChartView"
 import {useTranslation} from "react-i18next"
 import {useServer} from "@/services/server/ServerContextProvider"
+import type {Series, ViewerCamera} from "./viewer-cameras"
 
 type FramerateHistogramProps = {
-    frontendColor: string
-    backendColor: string
+    cameras: ViewerCamera[]
+    series: Series   // one panel for each series (specs/preview-4b.md 5.8)
     title?: string
 }
 
@@ -56,39 +58,27 @@ function buildHistogram(fpsValues: number[]): {
     return {bins, maxDensity}
 }
 
-/**
- * Persistent mutable state shared between initChart and updateChart.
- */
+type CameraBins = {cameraId: string; colour: string; bins: HistogramBin[]}
+
 type ChartState = {
-    frontendBarGroup: d3.Selection<SVGGElement, unknown, null, undefined>
-    backendBarGroup: d3.Selection<SVGGElement, unknown, null, undefined>
     xScale: d3.ScaleLinear<number, number>
     yScale: d3.ScaleLinear<number, number>
-    height: number
 }
 
 const PAPER_COLOR = "var(--color-text-muted)"
 
-export default function FramerateHistogramView({
-    frontendColor,
-    backendColor,
-    title = "Framerate Distribution",
-}: FramerateHistogramProps) {
+export default function FramerateHistogramView({cameras, series, title = "Framerate Distribution"}: FramerateHistogramProps) {
     const {t} = useTranslation()
     const stateRef = useRef<ChartState | null>(null)
+    const camerasRef = useRef(cameras)
+    camerasRef.current = cameras
     const {getFramerateStore} = useServer()
 
-    // initChart — creates persistent groups
     const initChart = useCallback(
         ({svg, chartArea, width, height}: ChartScaffolding): ChartLifecycle => {
             const xScale = d3.scaleLinear().range([0, width])
             const yScale = d3.scaleLinear().range([height, 0])
 
-            // Persistent bar groups — one per series, never removed
-            const frontendBarGroup = chartArea.append("g").attr("class", "bars-frontend")
-            const backendBarGroup = chartArea.append("g").attr("class", "bars-backend")
-
-            // Axis labels (appended to svg root group, outside clip-path)
             svg.append("text")
                 .attr("class", "x-axis-label")
                 .attr("x", width / 2)
@@ -110,7 +100,6 @@ export default function FramerateHistogramView({
                 .style("fill", "var(--color-text-muted)")
                 .text("Density")
 
-            // Persistent empty-state text (hidden by default)
             chartArea.append("text")
                 .attr("class", "empty-text")
                 .attr("x", width / 2)
@@ -122,143 +111,78 @@ export default function FramerateHistogramView({
                 .style("fill", DISABLED_TEXT_COLOR)
                 .style("display", "none")
 
-            stateRef.current = {
-                frontendBarGroup,
-                backendBarGroup,
-                xScale,
-                yScale,
-                height,
-            }
-
-            return {
-                cleanup: () => {
-                    stateRef.current = null
-                },
-            }
+            stateRef.current = {xScale, yScale}
+            return {cleanup: () => { stateRef.current = null }}
         },
-        [frontendColor, backendColor]
+        []
     )
 
-    // updateChart — uses D3 data join for minimal DOM mutations
+    // updateChart — one group of bars for each camera, joined by camera id
     const updateChart = useCallback(
         ({svg, chartArea, xAxisG, yAxisG, width, height}: ChartScaffolding) => {
             const state = stateRef.current
             if (!state) return
-
-            // Read fresh data directly from the store — no React state involved.
-            const snapshot = getFramerateStore().getSnapshot()
-            const recentFrontendDurations = snapshot.recentFrontendDurations
-            const recentBackendDurations = snapshot.recentBackendDurations
-
-            const frontendFps = recentFrontendDurations.filter((s) => s.value > 0).map((s) => 1000 / s.value)
-            const backendFps = recentBackendDurations.filter((s) => s.value > 0).map((s) => 1000 / s.value)
-
-            const frontendHist = buildHistogram(frontendFps)
-            const backendHist = buildHistogram(backendFps)
-
-            state.height = height
-
-            const emptyText = chartArea.select<SVGTextElement>(".empty-text")
-
-            if (!frontendHist && !backendHist) {
-                // Clear all bars
-                state.frontendBarGroup.selectAll("rect").remove()
-                state.backendBarGroup.selectAll("rect").remove()
-                emptyText.style("display", null).text(t("waitingForData"))
-                return
-            }
-
-            emptyText.style("display", "none")
-
-            // Compute domain from all bins
+            const store = getFramerateStore()
+            const groups: CameraBins[] = []
             let minX = Infinity
             let maxX = -Infinity
             let maxDensity = 0
-
-            for (const hist of [frontendHist, backendHist]) {
-                if (!hist) continue
-                const bins = hist.bins
-                if (bins.length > 0) {
-                    minX = Math.min(minX, bins[0].x0)
-                    maxX = Math.max(maxX, bins[bins.length - 1].x1)
+            for (const camera of camerasRef.current) {
+                const fps = store.recentDurations(camera.id, series).filter(s => s.value > 0).map(s => 1000 / s.value)
+                const hist = buildHistogram(fps)
+                groups.push({cameraId: camera.id, colour: camera.colour, bins: hist?.bins ?? []})
+                if (hist && hist.bins.length > 0) {
+                    minX = Math.min(minX, hist.bins[0].x0)
+                    maxX = Math.max(maxX, hist.bins[hist.bins.length - 1].x1)
+                    maxDensity = Math.max(maxDensity, hist.maxDensity)
                 }
-                maxDensity = Math.max(maxDensity, hist.maxDensity)
             }
-
-            if (minX === Infinity) minX = 0
-            if (maxX === -Infinity) maxX = 60
+            const empty = minX === Infinity
+            chartArea.select<SVGTextElement>(".empty-text").style("display", empty ? "" : "none").text(t("waitingForData"))
+            if (empty) {
+                minX = 0
+                maxX = 60
+            }
             if (maxDensity === 0) maxDensity = 1
-
             const xPad = Math.max(1, (maxX - minX) * 0.05)
-
             state.xScale.domain([minX - xPad, maxX + xPad])
             state.yScale.domain([0, maxDensity * 1.15])
 
-            // Update axes in-place
-            const xAxisGen = d3
-                .axisBottom(state.xScale)
-                .ticks(Math.max(2, Math.min(8, Math.floor(width / 50))))
-                .tickSize(-height)
-            const yAxisGen = d3
-                .axisLeft(state.yScale)
-                .ticks(Math.max(2, Math.min(5, Math.floor(height / 30))))
-                .tickSize(-width)
-
-            // Clear old tick elements before redrawing to prevent SVG element accumulation.
-            // The histogram domain shifts as bin ranges change, so unlike the timeseries
-            // (which uses fixed relative-time ticks), we must explicitly remove stale ticks.
+            // The domain shifts as the bins change: remove the old ticks before the redraw.
             xAxisG.selectAll("*").remove()
-            xAxisG.call(xAxisGen)
+            xAxisG.call(d3.axisBottom(state.xScale).ticks(Math.max(2, Math.min(8, Math.floor(width / 50)))).tickSize(-height))
             yAxisG.selectAll("*").remove()
-            yAxisG.call(yAxisGen)
+            yAxisG.call(d3.axisLeft(state.yScale).ticks(Math.max(2, Math.min(5, Math.floor(height / 30)))).tickSize(-width))
             applyAxisStyles(svg)
 
-            // D3 data join for bars — enter/update/exit pattern
-            const numSources = [frontendHist, backendHist].filter(Boolean).length
-            const barInset = numSources > 1 ? 1 : 0
-
-            const updateBars = (
-                group: d3.Selection<SVGGElement, unknown, null, undefined>,
-                bins: HistogramBin[],
-                color: string,
-                srcIdx: number,
-            ) => {
-                const bars = group.selectAll<SVGRectElement, HistogramBin>("rect")
-                    .data(bins, (d) => `${d.x0}-${d.x1}`)
-
-                // EXIT: remove bars for bins that no longer exist
-                bars.exit().remove()
-
-                // ENTER: create new bars
-                const entered = bars.enter()
-                    .append("rect")
-                    .attr("fill", color)
-                    .attr("stroke", PAPER_COLOR)
-                    .attr("stroke-width", 0.5)
-                    .attr("opacity", 0.7)
-
-                // UPDATE + ENTER: update positions and sizes for all bars
-                entered.merge(bars)
-                    .attr("x", (d) => state.xScale(d.x0) + srcIdx * barInset)
-                    .attr("width", (d) => {
-                        const w = state.xScale(d.x1) - state.xScale(d.x0) - barInset
-                        return Math.max(1, w)
-                    })
-                    .attr("y", (d) => {
-                        const y = state.yScale(d.density)
-                        return isNaN(y) ? height : Math.min(height, Math.max(0, y))
-                    })
-                    .attr("height", (d) => {
-                        const y = state.yScale(d.density)
-                        if (isNaN(y)) return 0
-                        return Math.max(0, height - Math.min(height, Math.max(0, y)))
-                    })
-            }
-
-            updateBars(state.frontendBarGroup, frontendHist?.bins ?? [], frontendColor, 0)
-            updateBars(state.backendBarGroup, backendHist?.bins ?? [], backendColor, numSources > 1 ? 1 : 0)
+            const inset = groups.length > 1 ? 1 : 0
+            chartArea.selectAll<SVGGElement, CameraBins>("g.camera-bars")
+                .data(groups, d => d.cameraId)
+                .join("g")
+                .attr("class", "camera-bars")
+                .each(function (group, index) {
+                    d3.select(this).selectAll<SVGRectElement, HistogramBin>("rect")
+                        .data(group.bins, d => `${d.x0}-${d.x1}`)
+                        .join("rect")
+                        .attr("data-camera-id", group.cameraId)
+                        .attr("data-series", series)
+                        .attr("fill", group.colour)
+                        .attr("stroke", PAPER_COLOR)
+                        .attr("stroke-width", 0.5)
+                        .attr("opacity", 0.7)
+                        .attr("x", d => state.xScale(d.x0) + index * inset)
+                        .attr("width", d => Math.max(1, state.xScale(d.x1) - state.xScale(d.x0) - inset))
+                        .attr("y", d => {
+                            const y = state.yScale(d.density)
+                            return isNaN(y) ? height : Math.min(height, Math.max(0, y))
+                        })
+                        .attr("height", d => {
+                            const y = state.yScale(d.density)
+                            return isNaN(y) ? 0 : Math.max(0, height - Math.min(height, Math.max(0, y)))
+                        })
+                })
         },
-        [getFramerateStore, frontendColor, backendColor, t]
+        [getFramerateStore, series, t]
     )
 
     return <BaseD3ChartView title={title} initChart={initChart} updateChart={updateChart}

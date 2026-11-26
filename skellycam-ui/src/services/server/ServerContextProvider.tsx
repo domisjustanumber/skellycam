@@ -2,14 +2,19 @@
 import React, { createContext, ReactNode, useContext, useEffect, useRef, useState, useCallback, useMemo } from 'react';
 
 import { ConnectionState, WebSocketConnection } from "@/services/server/server-helpers/websocket-connection";
-import { FrameProcessor } from "@/services/server/server-helpers/frame-processor/frame-processor";
-import { CanvasManager } from "@/services/server/server-helpers/canvas-manager";
 import { serverUrls } from "@/services";
-import {DetailedFramerate, FramerateStore} from "@/services/server/server-helpers/framerate-store";
+import {FramerateStore} from "@/services/server/server-helpers/framerate-store";
 import {LogStore, LogRecord} from "@/services/server/server-helpers/log-store";
+import { PreviewTiles } from "@/services/server/preview/preview-tiles";
+import type { OverlayValues } from "@/services/server/preview/preview-tiles";
+import { appStateValues, isFramerateUpdate, rateTexts } from "@/services/server/preview/server-messages";
+import type { AppStateLike, CameraOverlay } from "@/services/server/preview/server-messages";
+import type { Tile } from '@/player/index.ts';
 import { store } from "@/store/store";
 import { serverStateReceived, wsConnectionChanged, serverDisconnected } from "@/store/slices/connection/connection-slice";
 import type { AppStateMessage } from "@/store/slices/connection/connection-types";
+
+type TileLike = Pick<Tile, 'update'>;
 
 interface ServerContextValue {
     isConnected: boolean;
@@ -17,25 +22,25 @@ interface ServerContextValue {
     connect: () => void;
     disconnect: () => void;
     send: (data: string | object) => void;
-    setCanvasForCamera: (cameraId: string, canvas: HTMLCanvasElement) => void;
-    getFps: (cameraId: string) => number | null;
-    getServerFps: () => number | null;
     getFramerateStore: () => FramerateStore;
     getLogStore: () => LogStore;
+    getPreviewTiles: () => PreviewTiles;
+    /** Give the tile of a camera to the preview, or remove it with null (specs/preview-4b.md 5.4). */
+    setTile: (cameraId: string, tile: TileLike | null) => void;
+    /** The cameras that stream: `checking`, `too_slow`, `ready` or `recording` (5.5) [Q7, Q10]. */
     connectedCameraIds: string[];
+    /** One tile for each camera of `app_state`, in the order of the camera list (5.5) [Q5, Q7]. */
+    gridCameraIds: string[];
+    /** The camera list label of each camera of the grid (5.4). */
+    cameraLabels: Record<string, string>;
     updateServerConnection: (host: string, port: number) => void;
     setStreamPaused: (paused: boolean) => void;
 }
 
 const ServerContext = createContext<ServerContextValue | null>(null);
 
-// Compare two already-sorted string arrays without allocating
-function sortedArraysEqual(a: string[], b: string[]): boolean {
-    if (a.length !== b.length) return false;
-    for (let i = 0; i < a.length; i++) {
-        if (a[i] !== b[i]) return false;
-    }
-    return true;
+function sameIds(a: string[], b: string[]): boolean {
+    return a.length === b.length && a.every((id, i) => id === b[i]);
 }
 
 // Type guard to check if a message is a log record
@@ -46,28 +51,6 @@ function isLogRecord(data: any): data is LogRecord {
         data.message_type === 'log_record' &&
         typeof data.levelname === 'string' &&
         typeof data.message === 'string'
-    );
-}
-
-// Type for framerate update message from backend
-interface FramerateUpdateMessage {
-    message_type: 'framerate_update';
-    camera_group_id: string;
-    backend_framerate: DetailedFramerate;
-    frontend_framerate: DetailedFramerate;
-}
-
-// Type guard to check if a message is a framerate update
-function isFramerateUpdate(data: any): data is FramerateUpdateMessage {
-    return (
-        data &&
-        typeof data === 'object' &&
-        data.message_type === 'framerate_update' &&
-        typeof data.camera_group_id === 'string' &&
-        data.backend_framerate &&
-        typeof data.backend_framerate === 'object' &&
-        data.frontend_framerate &&
-        typeof data.frontend_framerate === 'object'
     );
 }
 
@@ -84,38 +67,25 @@ function isAppState(data: any): data is AppStateMessage {
 }
 
 export const ServerContextProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-    // Reactive state - only updates when camera list actually changes
     const [isConnected, setIsConnected] = useState<boolean>(false);
     const [connectionState, setConnectionState] = useState<ConnectionState>(ConnectionState.DISCONNECTED);
     const [connectedCameraIds, setConnectedCameraIds] = useState<string[]>([]);
+    const [gridCameraIds, setGridCameraIds] = useState<string[]>([]);
+    const [cameraLabels, setCameraLabels] = useState<Record<string, string>>({});
 
-    // Service instances
     const wsConnectionRef = useRef<WebSocketConnection | null>(null);
-    const frameProcessorRef = useRef<FrameProcessor | null>(null);
-    const canvasManagerRef = useRef<CanvasManager | null>(null);
     const framerateStoreRef = useRef<FramerateStore>(new FramerateStore());
     const logStoreRef = useRef<LogStore>(new LogStore());
-
-    // Latest server-side (backend) FPS stored in a ref for non-reactive access
-    const serverFpsRef = useRef<number | null>(null);
-
-    // Holds the latest binary payload received from the WebSocket.
-    // The WebSocket onmessage handler writes here synchronously;
-    // a separate rAF-driven processing loop reads and clears it.
-    // This decouples decoding from the WebSocket message storm,
-    // preventing promise starvation where createImageBitmap microtasks
-    // can never resolve because the browser dispatches onmessage events
-    // back-to-back in a single macrotask without yielding.
-    const pendingPayloadRef = useRef<ArrayBuffer | null>(null);
-    const processingFrameRef = useRef<boolean>(false);
+    // 5.3 rule 4: one ready message for each draw; onDrawn feeds Displayed (5.8)
+    const previewTilesRef = useRef<PreviewTiles>(new PreviewTiles(
+        cameraId => void wsConnectionRef.current?.send({message_type: 'camera_ready', camera_id: cameraId}),
+        (cameraId, atMs) => framerateStoreRef.current.recordDrawn(cameraId, atMs),
+    ));
+    // the last overlay values of each camera: a tile that mounts again gets them (5.3 rule 9 drops them)
+    const overlaysRef = useRef<Record<string, Partial<OverlayValues>>>({});
+    const lastAppStateRef = useRef<AppStateLike | null>(null);
     const frameLoopRef = useRef<number | null>(null);
-    const isStreamPausedRef = useRef<boolean>(false);
 
-    // Cached sorted camera IDs from the last frame — compared by value to avoid
-    // per-frame Array.from().sort() allocations when the camera list hasn't changed.
-    const lastCameraIdsRef = useRef<string[]>([]);
-
-    // Initialize services once
     useEffect(() => {
         wsConnectionRef.current = new WebSocketConnection({
             url: serverUrls.getWebSocketUrl(),
@@ -123,155 +93,94 @@ export const ServerContextProvider: React.FC<{ children: ReactNode }> = ({ child
             maxReconnectAttempts: 5,
             heartbeatInterval: 30000
         });
-        frameProcessorRef.current = new FrameProcessor();
-        canvasManagerRef.current = new CanvasManager();
-
         return () => {
-            if (wsConnectionRef.current) {
-                wsConnectionRef.current.disconnect();
-            }
-            if (canvasManagerRef.current) {
-                canvasManagerRef.current.terminateAllWorkers();
-            }
-            if (frameProcessorRef.current) {
-                frameProcessorRef.current.reset();
-            }
+            wsConnectionRef.current?.disconnect();
         };
     }, []);
 
-    // Set up WebSocket connection and handlers
     useEffect(() => {
         const ws = wsConnectionRef.current;
         if (!ws) return;
+        const tiles = previewTilesRef.current;
+
+        const setOverlay = (cameraId: string, values: Partial<OverlayValues>): void => {
+            overlaysRef.current[cameraId] = {...overlaysRef.current[cameraId], ...values};
+            tiles.setOverlay(cameraId, values);
+        };
+
+        // 5.5: the overlay values and the two lists from app_state and the camera list of the store
+        const applyAppState = (): void => {
+            const message = lastAppStateRef.current;
+            if (!message) return;
+            const values = appStateValues(message, store.getState().cameras.cameras);
+            const labels: Record<string, string> = {};
+            for (const [id, overlay] of Object.entries(values.overlays) as [string, CameraOverlay][]) {
+                setOverlay(id, {label: overlay.label, cameraState: overlay.cameraState});
+                if (overlay.label !== null) labels[id] = overlay.label;
+            }
+            setGridCameraIds(prev => (sameIds(prev, values.gridCameraIds) ? prev : values.gridCameraIds));
+            setConnectedCameraIds(prev => (sameIds(prev, values.connectedCameraIds) ? prev : values.connectedCameraIds));
+            setCameraLabels(prev => (JSON.stringify(prev) === JSON.stringify(labels) ? prev : labels));
+        };
+
+        // a new camera list (a detection) changes the labels and the order with no new app_state
+        let cameraList = store.getState().cameras.cameras;
+        const unsubscribe = store.subscribe(() => {
+            const next = store.getState().cameras.cameras;
+            if (next !== cameraList) {
+                cameraList = next;
+                applyAppState();
+            }
+        });
 
         const handleStateChange = (newState: ConnectionState): void => {
             const connected = newState === ConnectionState.CONNECTED;
             setIsConnected(connected);
             setConnectionState(newState);
             store.dispatch(wsConnectionChanged(connected));
-
+            if (!connected) tiles.clearPending();   // 5.3 rule 10: each close
             if (newState === ConnectionState.DISCONNECTED || newState === ConnectionState.FAILED) {
-                canvasManagerRef.current?.terminateAllWorkers();
-                frameProcessorRef.current?.reset();
-                serverFpsRef.current = null;
-                processingFrameRef.current = false;
-                pendingPayloadRef.current = null;
-                lastCameraIdsRef.current = [];
+                lastAppStateRef.current = null;
+                overlaysRef.current = {};
                 framerateStoreRef.current.clear();
                 setConnectedCameraIds([]);
+                setGridCameraIds([]);
+                setCameraLabels({});
                 // Clear all server-derived Redux state so the UI self-heals on
                 // reconnect rather than showing the previous server's stale state.
                 store.dispatch(serverDisconnected());
             }
         };
 
-        // Process a decoded frame result: update camera list, dispatch to workers, send ack.
-        const dispatchFrames = (
-            result: Awaited<ReturnType<FrameProcessor['processFramePayload']>>
-        ): void => {
-            if (!result) return;
-
-            const { frames, cameraIds, frameNumbers } = result;
-
-            // Only allocate a new sorted array if the camera set actually changed.
-            // Compare against the cached ref to avoid Array.from().sort() on every frame.
-            const lastIds = lastCameraIdsRef.current;
-            let cameraListChanged = lastIds.length !== cameraIds.size;
-            if (!cameraListChanged) {
-                for (const id of lastIds) {
-                    if (!cameraIds.has(id)) {
-                        cameraListChanged = true;
-                        break;
-                    }
-                }
-            }
-
-            if (cameraListChanged) {
-                const newIds = Array.from(cameraIds).sort();
-                lastCameraIdsRef.current = newIds;
-
-                setConnectedCameraIds(prevIds => {
-                    if (!sortedArraysEqual(prevIds, newIds)) {
-                        const removedCameras = prevIds.filter(id => !cameraIds.has(id));
-                        for (const cameraId of removedCameras) {
-                            canvasManagerRef.current?.terminateWorker(cameraId);
-                        }
-                        return newIds;
-                    }
-                    return prevIds;
-                });
-            }
-
-            for (const frameData of frames) {
-                canvasManagerRef.current!.sendFrameToWorker(
-                    frameData.cameraId,
-                    frameData.bitmap
-                );
-            }
-
-            if (frameNumbers.size > 0) {
-                const maxFrameNumber = Math.max(...Array.from(frameNumbers));
-                ws.send({ type: 'frameAcknowledgment', frameNumber: maxFrameNumber });
-            }
+        // 5.3 rule 6: the display drives the draws
+        const frameLoop = (): void => {
+            tiles.tick();
+            frameLoopRef.current = requestAnimationFrame(frameLoop);
         };
-
-        // rAF-driven processing loop. Runs on its own macrotask boundary,
-        // so createImageBitmap promises can resolve without being starved
-        // by the WebSocket onmessage dispatch loop.
-        const processFrameLoop = async (): Promise<void> => {
-            if (!isStreamPausedRef.current && !processingFrameRef.current && pendingPayloadRef.current !== null) {
-                const payload = pendingPayloadRef.current;
-                pendingPayloadRef.current = null;
-                processingFrameRef.current = true;
-                try {
-                    const result = await frameProcessorRef.current!.processFramePayload(payload);
-                    dispatchFrames(result);
-                } catch (error) {
-                    console.error('Error processing frame:', error);
-                } finally {
-                    processingFrameRef.current = false;
-                }
-            }
-            frameLoopRef.current = requestAnimationFrame(processFrameLoop);
-        };
-
-        frameLoopRef.current = requestAnimationFrame(processFrameLoop);
+        frameLoopRef.current = requestAnimationFrame(frameLoop);
 
         const handleMessage = (event: MessageEvent): void => {
-            // Handle binary frame data: just buffer the latest payload.
-            // Older unprocessed payloads are overwritten (frame dropping).
             if (event.data instanceof ArrayBuffer) {
-                pendingPayloadRef.current = event.data;
+                tiles.receive(event.data);
+                return;
             }
-            // Handle text/JSON messages (logs, framerate updates, etc.)
-            else if (typeof event.data === 'string') {
-                // Skip heartbeat pong responses — they're plain text, not JSON
-                if (event.data === 'pong') return;
-
-                try {
-                    const jsonData = JSON.parse(event.data);
-
-                    // Handle log records
-                    if (isLogRecord(jsonData)) {
-                        logStoreRef.current.add(jsonData);
-                    }
-                    // Handle framerate updates
-                    else if (isFramerateUpdate(jsonData)) {
-                        // Store backend FPS in ref for fast non-reactive access
-                        serverFpsRef.current = jsonData.backend_framerate.mean_frames_per_second;
-                        // Update mutable framerate store (no Redux, no re-renders)
-                        framerateStoreRef.current.updateBackend(jsonData.backend_framerate);
-                        framerateStoreRef.current.updateFrontend(jsonData.frontend_framerate);
-                    }
-                    // Handle the authoritative server-state snapshot
-                    else if (isAppState(jsonData)) {
-                        store.dispatch(serverStateReceived(jsonData));
-                    }
-                    // Handle other message types (silently ignored to avoid
-                    // retaining object references in the DevTools console)
-                } catch (error) {
-                    console.error('Error parsing JSON message:', error);
+            if (typeof event.data !== 'string' || event.data === 'pong') return;
+            try {
+                const jsonData = JSON.parse(event.data);
+                if (isLogRecord(jsonData)) {
+                    logStoreRef.current.add(jsonData);
+                } else if (isFramerateUpdate(jsonData)) {
+                    for (const [id, rateText] of Object.entries(rateTexts(jsonData))) setOverlay(id, {rateText});
+                    framerateStoreRef.current.recordFramerateUpdate(jsonData as never);
+                } else if (isAppState(jsonData)) {
+                    store.dispatch(serverStateReceived(jsonData));
+                    lastAppStateRef.current = jsonData as AppStateLike;
+                    framerateStoreRef.current.recordAppState(jsonData as AppStateLike);
+                    applyAppState();
                 }
+                // other message types are ignored, so that the DevTools console keeps no reference to them
+            } catch (error) {
+                console.error('Error parsing JSON message:', error);
             }
         };
 
@@ -282,6 +191,7 @@ export const ServerContextProvider: React.FC<{ children: ReactNode }> = ({ child
         // No auto-connect here — the component's autoConnectWs loop handles it.
 
         return () => {
+            unsubscribe();
             ws.off('state-change', handleStateChange);
             ws.off('message', handleMessage);
             ws.disconnect();
@@ -304,28 +214,18 @@ export const ServerContextProvider: React.FC<{ children: ReactNode }> = ({ child
         wsConnectionRef.current?.send(data);
     }, []);
 
-    const setCanvasForCamera = useCallback((cameraId: string, canvas: HTMLCanvasElement): void => {
-        canvasManagerRef.current?.setCanvasForCamera(cameraId, canvas);
-    }, []);
+    const getFramerateStore = useCallback((): FramerateStore => framerateStoreRef.current, []);
+    const getLogStore = useCallback((): LogStore => logStoreRef.current, []);
+    const getPreviewTiles = useCallback((): PreviewTiles => previewTilesRef.current, []);
 
-    const getFps = useCallback((cameraId: string): number | null => {
-        return frameProcessorRef.current?.getFps(cameraId) ?? null;
-    }, []);
-
-    const getServerFps = useCallback((): number | null => {
-        return serverFpsRef.current;
-    }, []);
-
-    const getFramerateStore = useCallback((): FramerateStore => {
-        return framerateStoreRef.current;
-    }, []);
-
-    const getLogStore = useCallback((): LogStore => {
-        return logStoreRef.current;
+    const setTile = useCallback((cameraId: string, tile: TileLike | null): void => {
+        previewTilesRef.current.setTile(cameraId, tile);
+        const overlay = overlaysRef.current[cameraId];
+        if (tile && overlay) previewTilesRef.current.setOverlay(cameraId, overlay);
     }, []);
 
     const setStreamPaused = useCallback((paused: boolean): void => {
-        isStreamPausedRef.current = paused;
+        previewTilesRef.current.setPaused(paused);   // 5.3 rule 7: the only pause of the display
     }, []);
 
     const updateServerConnection = useCallback((host: string, port: number): void => {
@@ -348,15 +248,17 @@ export const ServerContextProvider: React.FC<{ children: ReactNode }> = ({ child
         connect,
         disconnect,
         send,
-        setCanvasForCamera,
-        getFps,
-        getServerFps,
         getFramerateStore,
         getLogStore,
+        getPreviewTiles,
+        setTile,
         connectedCameraIds,
+        gridCameraIds,
+        cameraLabels,
         updateServerConnection,
         setStreamPaused,
-    }), [isConnected, connectionState, connectedCameraIds, connect, disconnect, send, setCanvasForCamera, getFps, getServerFps, getFramerateStore, getLogStore, updateServerConnection, setStreamPaused]);
+    }), [isConnected, connectionState, connectedCameraIds, gridCameraIds, cameraLabels, connect, disconnect, send,
+        getFramerateStore, getLogStore, getPreviewTiles, setTile, updateServerConnection, setStreamPaused]);
 
     return (
         <ServerContext.Provider value={contextValue}>

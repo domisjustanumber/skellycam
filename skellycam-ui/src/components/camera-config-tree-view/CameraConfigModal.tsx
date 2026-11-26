@@ -1,5 +1,5 @@
 import React, { useEffect, useCallback } from 'react';
-import { useAppDispatch, useAppSelector, selectCameras, selectConnectedCameras, selectIsLoading, detectCameras } from '@/store';
+import { useAppDispatch, useAppSelector, selectCameras, selectIsLoading, detectCameras } from '@/store';
 import { camerasConnectOrUpdate } from '@/store/slices/cameras/cameras-thunks';
 import { savedSettingsCleared } from '@/store/slices/cameras/cameras-slice';
 import { CameraTreeItem } from './CameraTreeItem';
@@ -14,10 +14,9 @@ interface CameraConfigModalProps {
 
 export const CameraConfigModal: React.FC<CameraConfigModalProps> = ({ open, onClose }) => {
     const dispatch = useAppDispatch();
-    const { isConnected } = useServer();
+    const { isConnected, connectedCameraIds } = useServer();
     const { requestGuardedAction } = useRecordingGuard();
     const cameras = useAppSelector(selectCameras);
-    const connectedCameras = useAppSelector(selectConnectedCameras);
     const isLoading = useAppSelector(selectIsLoading);
 
     useEffect(() => {
@@ -59,9 +58,9 @@ export const CameraConfigModal: React.FC<CameraConfigModalProps> = ({ open, onCl
                     <p className="text md text-white text-nowrap">
                         {cameras.length} Cameras
                     </p>
-                    {connectedCameras.length > 0 && (
+                    {connectedCameraIds.length > 0 && (  // preview-4b.md 5.6: the cameras that stream [Q10]
                         <p className="text md text-nowrap" style={{ color: 'var(--color-success, #4ade80)' }}>
-                            {connectedCameras.length} Streaming
+                            {connectedCameraIds.length} Streaming
                         </p>
                     )}
                     <button className="button icon-button" onClick={handleDetect} title="Detect cameras">

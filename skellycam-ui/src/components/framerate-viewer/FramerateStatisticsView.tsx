@@ -1,14 +1,15 @@
 // src/components/framerate-viewer/FramerateStatisticsView.tsx
 import React, {useEffect, useRef} from "react";
 import {DetailedFramerate} from "@/services/server/server-helpers/framerate-store";
-import {frontendColor, backendColor} from "@/components/framerate-viewer/FrameRateViewer";
+import {SERIES, SERIES_KEY} from "./viewer-cameras";
+import type {Series, ViewerCamera} from "./viewer-cameras";
 import {useTranslation} from "react-i18next";
 import {useServer} from "@/services/server/ServerContextProvider";
 
 const STATS_POLL_INTERVAL_MS = 500;
 
 type FramerateStatisticsViewProps = {
-    compact?: boolean;
+    cameras: ViewerCamera[];   // the cameras of the grid, in the order of the camera list
 };
 
 const formatNumber = (num: number | null, precision = 3): string => {
@@ -17,9 +18,8 @@ const formatNumber = (num: number | null, precision = 3): string => {
 
 const METRIC_KEYS = ["recent", "mean", "median", "stdDev", "max", "min"] as const;
 type MetricKey = typeof METRIC_KEYS[number];
-const ROW_KEYS = ["backend", "frontend"] as const;
-type RowKey = typeof ROW_KEYS[number];
-type RefKey = `${RowKey}-${MetricKey}-${"primary" | "secondary"}` | `${RowKey}-samples`;
+// the four counts of 5.8, in the Captured row; never added [A7]
+const COUNT_KEYS = ["notShown", "ringSkipped", "oversize", "replaced"] as const;
 
 // CSS class suffix per metric key (stdDev → stddev for valid class names)
 const metricClass = (metric: MetricKey) => metric === "stdDev" ? "stddev" : metric;
@@ -60,42 +60,44 @@ function computeCellValues(
     };
 }
 
-export default function FramerateStatisticsView({compact = false}: FramerateStatisticsViewProps) {
+export default function FramerateStatisticsView({cameras}: FramerateStatisticsViewProps) {
     const {t} = useTranslation();
     const {getFramerateStore} = useServer();
 
     const spanRefs = useRef<Record<string, HTMLSpanElement | null>>({});
-    const setSpanRef = (key: RefKey) => (el: HTMLSpanElement | null) => {
+    const setSpanRef = (key: string) => (el: HTMLSpanElement | null) => {
         spanRefs.current[key] = el;
     };
 
     useEffect(() => {
         const tick = () => {
-            const snapshot = getFramerateStore().getSnapshot();
-            const rows: [RowKey, DetailedFramerate | null, DetailedFramerate | null][] = [
-                ["backend", snapshot.currentBackendFramerate, snapshot.aggregateBackendFramerate],
-                ["frontend", snapshot.currentFrontendFramerate, snapshot.aggregateFrontendFramerate],
-            ];
-
-            for (const [rowKey, currentData, aggregateData] of rows) {
-                const vals = computeCellValues(currentData, aggregateData);
-                for (const metric of METRIC_KEYS) {
-                    const pEl = spanRefs.current[`${rowKey}-${metric}-primary`];
-                    if (pEl) pEl.textContent = vals[metric].primary;
-                    const sEl = spanRefs.current[`${rowKey}-${metric}-secondary`];
-                    if (sEl) sEl.textContent = vals[metric].secondary;
+            const store = getFramerateStore();
+            for (const camera of cameras) {
+                const values = store.getCamera(camera.id);
+                for (const series of SERIES) {
+                    const key = `${camera.id}-${series}`;
+                    const vals = computeCellValues(values?.[series].current ?? null, values?.[series].aggregate ?? null);
+                    for (const metric of METRIC_KEYS) {
+                        const pEl = spanRefs.current[`${key}-${metric}-primary`];
+                        if (pEl) pEl.textContent = vals[metric].primary;
+                        const sEl = spanRefs.current[`${key}-${metric}-secondary`];
+                        if (sEl) sEl.textContent = vals[metric].secondary;
+                    }
+                    const samplesEl = spanRefs.current[`${key}-samples`];
+                    if (samplesEl) samplesEl.textContent = `${vals.samples} ${t("samples")}`;
                 }
-                const samplesEl = spanRefs.current[`${rowKey}-samples`];
-                if (samplesEl) samplesEl.textContent = `${vals.samples} ${t("samples")}`;
+                for (const count of COUNT_KEYS) {
+                    const el = spanRefs.current[`${camera.id}-${count}`];
+                    if (el) el.textContent = values ? String(values[count]) : "--";
+                }
             }
         };
         tick();
         const id = setInterval(tick, STATS_POLL_INTERVAL_MS);
         return () => clearInterval(id);
-    }, [getFramerateStore, t]);
+    }, [getFramerateStore, cameras, t]);
 
     const tooltips = {
-        source: {short: t("statsSourceShort"), long: t("statsSourceLong")},
         recent: {short: t("statsCurrentShort"), long: t("statsCurrentLong")},
         mean: {short: t("statsMeanShort"), long: t("statsMeanLong")},
         median: {short: t("statsMedianShort"), long: t("statsMedianLong")},
@@ -112,30 +114,41 @@ export default function FramerateStatisticsView({compact = false}: FramerateStat
         </div>
     );
 
-    const renderMetricCell = (rowKey: RowKey, metric: MetricKey) => (
+    const renderMetricCell = (key: string, metric: MetricKey) => (
         <td key={metric} className={`stats-td stats-col-${metricClass(metric)}`}>
             <div className={`stats-cell-primary stats-cell-${metricClass(metric)}-text`}>
-                <span ref={setSpanRef(`${rowKey}-${metric}-primary`)}>--</span>
+                <span ref={setSpanRef(`${key}-${metric}-primary`)}>--</span>
             </div>
             <div className={`stats-cell-secondary stats-cell-${metricClass(metric)}-text`}>
-                <span ref={setSpanRef(`${rowKey}-${metric}-secondary`)}>--</span>
+                <span ref={setSpanRef(`${key}-${metric}-secondary`)}>--</span>
             </div>
         </td>
     );
 
-    const renderRow = (rowKey: RowKey, sourceLabel: string, tooltip: string) => (
-        <tr key={rowKey}>
-            <td className={`stats-td stats-source-cell stats-source-${rowKey}`}>
-                {sourceLabel}
-                <div className="stats-source-samples">
-                    <span ref={setSpanRef(`${rowKey}-samples`)}>--</span>
-                </div>
-                {renderTooltip(tooltip, "pos-bottom-left")}
-            </td>
-            {METRIC_KEYS.map((metric) => renderMetricCell(rowKey, metric))}
-        </tr>
-    );
+    const renderRow = (camera: ViewerCamera, series: Series) => {
+        const key = `${camera.id}-${series}`;
+        return (
+            <tr key={key}>
+                <td className={`stats-td stats-source-cell stats-source-${series}`} style={{color: camera.colour}}>
+                    {camera.label} {t(SERIES_KEY[series])}
+                    <div className="stats-source-samples">
+                        <span ref={setSpanRef(`${key}-samples`)}>--</span>
+                    </div>
+                    {renderTooltip(t(`${SERIES_KEY[series]}Tooltip`), "pos-bottom-left")}
+                </td>
+                {METRIC_KEYS.map((metric) => renderMetricCell(key, metric))}
+                {COUNT_KEYS.map((count) => (
+                    <td key={count} className="stats-td">
+                        <div className="stats-cell-primary">
+                            {series === "captured" ? <span ref={setSpanRef(`${camera.id}-${count}`)}>--</span> : null}
+                        </div>
+                    </td>
+                ))}
+            </tr>
+        );
+    };
 
+    const columns = 1 + METRIC_KEYS.length + COUNT_KEYS.length;
     return (
         <div className="stats-table-wrapper">
             <table className="stats-table">
@@ -143,7 +156,7 @@ export default function FramerateStatisticsView({compact = false}: FramerateStat
                     <tr>
                         <th className="stats-th stats-th-source">
                             {t("source")}
-                            {renderTooltip(`${tooltips.source.short} ${tooltips.source.long}`, "pos-bottom-left")}
+                            {renderTooltip(t("framerateSourceTooltip"), "pos-bottom-left")}
                         </th>
                         {METRIC_KEYS.map((metric) => (
                             <th key={metric}
@@ -152,13 +165,22 @@ export default function FramerateStatisticsView({compact = false}: FramerateStat
                                 {renderTooltip(`${tooltips[metric].short} ${tooltips[metric].long}`, (metric === "recent") ? "pos-bottom-left" : (metric === "stdDev" || metric === "max" || metric === "min") ? "pos-bottom-right" : "pos-bottom")}
                             </th>
                         ))}
+                        {COUNT_KEYS.map((count) => (
+                            <th key={count} className="stats-th">
+                                {t(`${count}Count`)}
+                                {renderTooltip(t(`${count}CountTooltip`), "pos-bottom-right")}
+                            </th>
+                        ))}
                     </tr>
-                    <tr className="stats-divider"><td colSpan={7} /></tr>
+                    <tr className="stats-divider"><td colSpan={columns} /></tr>
                 </thead>
                 <tbody>
-                    {renderRow("backend", t("server"), t("capturesFramesFromCamera"))}
-                    <tr className="stats-divider"><td colSpan={7} /></tr>
-                    {renderRow("frontend", t("display"), t("rendersReceivedFrames"))}
+                    {cameras.map((camera) => (
+                        <React.Fragment key={camera.id}>
+                            {SERIES.map((series) => renderRow(camera, series))}
+                            <tr className="stats-divider"><td colSpan={columns} /></tr>
+                        </React.Fragment>
+                    ))}
                 </tbody>
             </table>
         </div>
