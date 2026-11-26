@@ -9,7 +9,7 @@
 [`skellycam/tests/take_recorder/test_connection.py`](../../skellycam/tests/take_recorder/test_connection.py),
 [`skellycam/tests/certify/test_certify_report_shape.py`](../../skellycam/tests/certify/test_certify_report_shape.py),
 2026-11-26 (commit to dom/ci-triage; was accepted, 2026-11-26 (user, Q882 and Q883,
-[ADR-N2VE](N2VE-decisions-of-the-user-on-the-ci-triage-q882-to-q884.md)); was proposed, 2026-11-26 (agent)).
+[ADR-N2VE](N2VE-decisions-of-the-user-on-the-ci-triage-and-the-stall-watch-code.md)); was proposed, 2026-11-26 (agent)).
 
 ## Decision
 

@@ -98,6 +98,10 @@ task. Delete an item when its work is done. The PR that closes an item records t
   - The DirectShow open order of `sfn26` (item 1 of ADR-6T78) waits for a check on the cameras.
   - The UI does not show the `start_failure` warning item.
   - Not verified: real cameras, Linux, macOS and the installer build.
+- **The full stall-watch test** (Q892 of
+  [ADR-N2VE](entries/N2VE-decisions-of-the-user-on-the-ci-triage-and-the-stall-watch-code.md), low priority). A later
+  small test lane writes it: a real camera loop, a fake camera whose frames stop after a reopen, the watch on the
+  same clock (`unix-capture.md` 4.10).
 - **The certify run of skellycam.** The spec [`specs/certify.md`](../specs/certify.md) is draft 3. The code is in `skellycam/core/certify/` (section 19 of the
   spec). Open: the checks that are `not-run`
   `not-built` (the status line of the spec). Not decided: FC1C items 4 and 13, HQE5 items 2 and 3
