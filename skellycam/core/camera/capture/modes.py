@@ -1,8 +1,9 @@
-"""Modes and rates (specs/windows-capture.md, sections 7.3 and 7.5; names of ADR-HP7D item 8).
+"""Modes and rates (specs/windows-capture.md, sections 7.3 to 7.5 and 22.2; names of ADR-HP7D item 8).
 
 Pure functions.
 """
 
+import dataclasses
 import json
 import math
 from dataclasses import dataclass
@@ -14,6 +15,10 @@ from skellycam.core.camera.capture.source import CaptureFailure, CaptureRequest
 
 FLOOR_FPS = 30000 / 1001  # U11: 29.97 counts as 30
 NO_FLOOR_MODE = "no mode at 30 fps or more"
+RAW_FORMATS = ("YUY2", "NV12")  # 13.1: the uncompressed formats that skellycam opens
+RAW_ORDER = ("YUY2", "NV12")  # 22.2 [N72V 1, Q845]: the raw mode that an MJPG request opens when the size has no MJPG
+UNCOMPRESSED = ("YUY2", "NV12", "RAW")  # 7.4
+NEVER_OPENED = ("H264", "RAW")  # 7.4 [D4, U8]
 
 
 class CaptureMode(BaseModel):
@@ -38,6 +43,19 @@ class NativeMode:
     @property
     def fps(self) -> float:
         return self.fps_num / self.fps_den
+
+
+class CaptureModeEntry(BaseModel):
+    """One item of `CameraDeviceInfo.capture_modes` (7.4, 22.2 [V1, 3WCA 1]), with the fields in the order of its JSON."""
+    width: int
+    height: int
+    fps_num: int
+    fps_den: int
+    framerate: float
+    format: str
+    uncompressed: bool
+    selectable: bool
+    reason: str | None
 
 
 def rates_equal(a: float, b: float) -> bool:
@@ -74,8 +92,46 @@ def supported_modes(native: list[NativeMode]) -> list[CaptureMode]:
     return [CaptureMode(width=w, height=h, framerates=sorted(rates[w, h])) for w, h in sizes]
 
 
+def _synthesized(native: list[NativeMode], index: int) -> bool:
+    """7.4 [agent 19]: an NV12 type immediately before an MJPG type of the same size and rate; Media Foundation made it."""
+    mode = native[index]
+    after = native[index + 1] if index + 1 < len(native) else None
+    return (mode.format == "NV12" and after is not None and after.format == "MJPG"
+            and (after.width, after.height, after.fps_num, after.fps_den)
+            == (mode.width, mode.height, mode.fps_num, mode.fps_den))
+
+
+def capture_modes(native: list[NativeMode]) -> list[CaptureModeEntry]:
+    """The full mode list of 7.4 and 22.2 [3WCA 2]: an exact duplicate once; sizes as 7.3; for one size the rounded
+    rates ascend; for one size and rounded rate MJPG first, then the native list order. No synthesized NV12."""
+    kept: dict[NativeMode, int] = {}
+    for index, mode in enumerate(native):
+        if mode not in kept and not _synthesized(native, index):
+            kept[mode] = index
+    order = sorted(kept, key=lambda m: (-m.width * m.height, -m.width, round(m.fps, 2), m.format != "MJPG", kept[m]))
+    return [CaptureModeEntry(width=m.width, height=m.height, fps_num=m.fps_num, fps_den=m.fps_den,
+                             framerate=round(m.fps, 2), format=m.format, uncompressed=m.format in UNCOMPRESSED,
+                             selectable=m.format not in NEVER_OPENED and at_floor(m.fps),
+                             reason="never opened" if m.format in NEVER_OPENED else None if at_floor(m.fps)
+                             else "below 30 fps")
+            for m in order]
+
+
+def native_from_capture_modes(entries: list[CaptureModeEntry]) -> list[NativeMode]:
+    """The native types that `capture_modes` lists, for the whole-request check (7.5 [agent 20], 22.2 [N72V 3])."""
+    return [NativeMode(e.width, e.height, e.fps_num, e.fps_den, e.format) for e in entries]
+
+
 def choose_mode(native: list[NativeMode], request: CaptureRequest) -> NativeMode:
-    """The mode choice of 7.5. Raises `CaptureFailure` with stage "set mode"."""
+    """The mode choice of 7.5, with the raw-mode open of 22.2 [Q807]. Never a synthesized NV12 type (13.1).
+    Raises `CaptureFailure` with stage "set mode"."""
+    native = [m for k, m in enumerate(native) if not _synthesized(native, k)]
+    if request.capture_fourcc == "MJPG":
+        at_size = [m for m in native if (m.width, m.height) == (request.width, request.height) and at_floor(m.fps)]
+        if not any(m.format == "MJPG" for m in at_size):
+            raw = next((fmt for fmt in RAW_ORDER if any(m.format == fmt for m in at_size)), None)
+            if raw is not None:  # Q807: no MJPG mode at the floor at this size, but a raw mode there
+                request = dataclasses.replace(request, capture_fourcc=raw)
     sized = [m for m in native
              if (m.width, m.height, m.format) == (request.width, request.height, request.capture_fourcc)]
     if request.framerate in (-1, 0):

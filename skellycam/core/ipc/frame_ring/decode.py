@@ -18,6 +18,29 @@ logger = logging.getLogger(__name__)
 TAKE_TIMEOUT_S = 0.1  # 8.3: at least 100 ms; only for the shutdown check
 WARNING_INTERVAL_S = 60.0  # 8.9: one log line per different line per minute at most
 _YUV_TO_BGR = {"YUY2": cv2.COLOR_YUV2BGR_YUY2, "NV12": cv2.COLOR_YUV2BGR_NV12}  # ADR-467Z item 4
+_LEVELS = np.arange(256, dtype=np.float64)
+# Full range to limited range (BT.601): the default conversion of OpenCV then gives the full-range BGR (V6).
+TO_LIMITED_Y = np.clip(np.rint(16 + _LEVELS * 219 / 255), 0, 255).astype(np.uint8)
+TO_LIMITED_C = np.clip(np.rint(128 + (_LEVELS - 128) * 224 / 255), 0, 255).astype(np.uint8)
+
+
+def map_levels(raw: np.ndarray, fmt: str, y_table: np.ndarray, c_table: np.ndarray) -> np.ndarray:
+    """A new YUY2 `(h, w, 2)` or NV12 `(h * 3 // 2, w)` frame with each Y value and each chroma value through its table."""
+    out = np.empty_like(raw)
+    if fmt == "YUY2":
+        out[..., 0], out[..., 1] = y_table[raw[..., 0]], c_table[raw[..., 1]]
+    else:
+        height = raw.shape[0] * 2 // 3
+        out[:height], out[height:] = y_table[raw[:height]], c_table[raw[height:]]
+    return out
+
+
+def raw_to_bgr(raw: np.ndarray, fmt: str, full_range: bool = False) -> np.ndarray:
+    """YUY2 or NV12 to BGR with the decided input range of the camera (ring 8.7, windows-capture.md 22.2 [V6]): the
+    default OpenCV conversion takes the input as limited range; a full-range frame goes to limited range first."""
+    if full_range:
+        raw = map_levels(raw, fmt, TO_LIMITED_Y, TO_LIMITED_C)
+    return cv2.cvtColor(raw, _YUV_TO_BGR[fmt])
 
 
 @dataclass(frozen=True)
@@ -25,7 +48,8 @@ class DecodeInput:
     """One frame for the decode thread, with the numbers and times of its JPEG frame (8.6).
 
     `source` is "JPEG" (`payload` is `bytes`), "BGR" (`(h, w, 3)` uint8), "YUY2" (`(h, w, 2)`
-    uint8) or "NV12" (`(h * 3 // 2, w)` uint8). `flags` are the flags of the JPEG frame.
+    uint8) or "NV12" (`(h * 3 // 2, w)` uint8). `flags` are the flags of the JPEG frame. `full_range`: the decided
+    input range of a YUY2 or NV12 frame (8.7).
     """
     payload: bytes | np.ndarray
     source: str
@@ -35,6 +59,7 @@ class DecodeInput:
     source_frame_number: int
     flags: int
     rotation_cw_deg: int
+    full_range: bool = False
 
 
 class WaitingPlace:
@@ -139,7 +164,7 @@ class DecodeStage:
             return self._decode(item.payload)
         if item.source == "BGR":  # 8.7 and 8.8: a new array that the writer copies into the slot
             return item.payload
-        return cv2.cvtColor(item.payload, _YUV_TO_BGR[item.source])
+        return raw_to_bgr(item.payload, item.source, item.full_range)
 
 
 _libjpeg_lock = threading.Lock()

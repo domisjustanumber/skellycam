@@ -11,13 +11,17 @@ from fastapi import FastAPI
 from skellycam.core.camera.capture.modes import (
     FLOOR_FPS,
     NO_FLOOR_MODE,
+    RAW_FORMATS,
     choose_mode,
     group_rate_problem,
     mixed_rate_text,
+    native_from_capture_modes,
     native_from_supported,
     rates_equal,
 )
 from skellycam.core import capture_timings
+from skellycam.core.camera.camera_worker import select_capture_source
+from skellycam.core.camera.capture import encoder as capture_encoder
 from skellycam.core.camera.capture import restore_store as restore_files
 from skellycam.core.camera.capture.failure_codes import WEDGE_CODES
 from skellycam.core.camera.capture.source import CaptureFailure, CaptureRequest
@@ -63,6 +67,7 @@ class CameraGroupManager:
         default_factory=dict
     )
     _log_capture_times: bool = False  # capture-timings.md 2: the one switch of the app
+    quick_sync: bool | None = None  # windows-capture.md 13.2 [3WCA 6]: the one Quick Sync check of the app run
 
     @property
     def log_capture_times(self) -> bool:
@@ -80,6 +85,7 @@ class CameraGroupManager:
         cameras = group.cameras
         for status in [*cameras.orchestrator.camera_statuses.values(), *cameras.removed_statuses.values()]:
             status.log_capture_times.value = self._log_capture_times
+            status.quick_sync.value = bool(self.quick_sync)  # 13.2: each camera process gets the result
 
     def capture_timings(self) -> dict:
         """capture-timings.md 6.3: the newest summary of each camera of each open group, at most 3 s old. It reads no
@@ -194,6 +200,10 @@ class CameraGroupManager:
         if camera_group is not None:
             camera_group.adopt_search_results()
         warnings, rates_known = self._check_request(camera_configs, camera_group)
+        if self.quick_sync is None and self._opens_raw(camera_configs):
+            self.quick_sync = await asyncio.to_thread(capture_encoder.quick_sync_works)
+            if camera_group is not None:
+                self._write_switch(camera_group)
         before, counts = {}, {}  # camera-requests.md 2.4a [ADR-1T0S]: for the fall back to 30 fps
         if camera_group is not None:  # camera-requests.md 1.5 [AC5B]: each apply request of the user clears them
             camera_group.request_runs = True  # 2.4a item 7: no wait since the check
@@ -258,6 +268,23 @@ class CameraGroupManager:
                 logger.warning(text)
         return camera_group, failures, warnings
 
+    def _opens_raw(self, camera_configs: CameraConfigs) -> bool:
+        """13.2 [3WCA 6]: a request with a camera of the Media Foundation source that opens YUY2 or NV12 (also by
+        22.2 [Q807]). The detection of the OpenCV source has no `capture_modes` (22.2 [V5])."""
+        if self.source_factory is None and select_capture_source() == "opencv":
+            return False
+        for camera_id, config in camera_configs.items():
+            info = self.detected_cameras.get(camera_id)
+            if not config.use_this_camera or info is None or not info.capture_modes:
+                continue
+            try:
+                mode = choose_mode(native_from_capture_modes(info.capture_modes), _request(camera_id, config))
+            except CaptureFailure:
+                continue
+            if mode.format in RAW_FORMATS:
+                return True
+        return False
+
     def _check_request(self, camera_configs: CameraConfigs, camera_group: CameraGroup | None) -> tuple[list, bool]:
         """The whole-request check of 8.3: 422 by content (7.5, U11), then 409 by the camera states.
 
@@ -279,20 +306,22 @@ class CameraGroupManager:
         infos = {camera_id: self.detected_cameras.get(camera_id) for camera_id in selected}
         problems += [f"camera {camera_id} is a virtual camera; virtual cameras cannot be selected"
                      for camera_id, info in infos.items() if info is not None and info.virtual]  # ADR-PDD3 W5
-        # 7.5: the modes were read and none is at the floor (an unread list is also [])
+        # 7.5: the modes were read and none is at the floor (an unread list is also []); 22.2 [Q807]: a raw mode counts
         problems += [f"camera {camera_id}: {NO_FLOOR_MODE}" for camera_id, info in infos.items()
-                     if info is not None and info.modes_read and not info.supported_modes]
-        rates_known = bool(selected) and all(info is not None and info.supported_modes for info in infos.values())
+                     if info is not None and info.modes_read and not info.supported_modes
+                     and not any(mode.selectable for mode in info.capture_modes)]
+        rates_known = bool(selected) and all(info is not None and (info.capture_modes or info.supported_modes)
+                                             for info in infos.values())
         warnings = []
         if rates_known:  # ADR-HP7D item 2: the mode rates that 7.5 gives from the detection data
             rates = {}
             for camera_id, config in selected.items():
-                request = CaptureRequest(camera_id=camera_id, width=config.resolution.width,
-                                         height=config.resolution.height, framerate=config.framerate,
-                                         capture_fourcc=config.capture_fourcc)
+                info = infos[camera_id]
+                # 7.5 [agent 20], 22.2 [V1, N72V 3]: the full native list where detection has it
+                native = (native_from_capture_modes(info.capture_modes) if info.capture_modes
+                          else native_from_supported(info.supported_modes))
                 try:
-                    rates[camera_id] = choose_mode(native_from_supported(infos[camera_id].supported_modes),
-                                                   request).fps
+                    rates[camera_id] = choose_mode(native, _request(camera_id, config)).fps
                 except CaptureFailure as failure:
                     problems.append(f"camera {camera_id}: {failure.reason}")
             if not problems and rates:
@@ -490,6 +519,11 @@ class CameraGroupManager:
 
 
 _CAMERA_GROUP_MANAGER: CameraGroupManager | None = None
+
+
+def _request(camera_id: CameraIdString, config) -> CaptureRequest:
+    return CaptureRequest(camera_id=camera_id, width=config.resolution.width, height=config.resolution.height,
+                          framerate=config.framerate, capture_fourcc=config.capture_fourcc)
 
 
 async def close_camera_groups_before_exit() -> None:

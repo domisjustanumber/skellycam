@@ -68,6 +68,8 @@ GIVE_UP_AFTER_EXIT_S = 1.0  # the result message of an ended camera process can 
 TAKE_QUEUE_SECONDS = 3.0  # recorder.md 5.1; starting value [C6DE D2]
 TAKE_STALL_LIMIT_S = 10.0  # recorder.md 5.3; starting value [C6DE D2]
 STALL_MARGIN_S = 5.0  # recorder.md 5.3 item 4 [agent 25]
+# recorder.md 6.7, SFF-800: the capture format of a take for each opened format (22.2 [Q808])
+TAKE_FORMATS = {"MJPG": "MJPG", "YUY2": "YUYV", "NV12": "NV12", "H264": "H264"}
 TAKE_START_LIMIT_S = 10.0  # each camera starts its writer within this time of the take spec
 # The parent waits this long for a camera process at the start, as sfn26 549217112. The camera process has its own
 # limit of 15 s (9.3); this one ends a wait on a camera process that does not answer at all.
@@ -751,20 +753,23 @@ class CameraGroup:
         else:  # OpenCV reports no rate: the requested rate, or 30 for "auto" (ADR-PDD3 W2)
             fraction = Fraction(config.framerate if config.framerate > 0 else 30).limit_denominator(1001)
             rate = (fraction.numerator, fraction.denominator)
+        # recorder.md 6.7, windows-capture.md 22.2 [Q808, N72V 4]: the opened format, in the names of SFF-800
+        opened = mode.get("format") if mode.get("format") in TAKE_FORMATS else config.capture_fourcc
+        capture_format = TAKE_FORMATS.get(opened, opened)
         source = info.get("source")
         backend = ((device.backend_name if device is not None and device.backend_name else "opencv").lower()
                    if source == "opencv" else "media_foundation" if source is None else source)
         return TakeCamera(
             camera_id=camera_id, nominal_rate=rate, width=mode.get("width", config.resolution.width),
             height=mode.get("height", config.resolution.height), rotation_cw_deg=rotation_to_cw_deg(config.rotation),
-            capture_format=config.capture_fourcc,
+            capture_format=capture_format,
             layout=JpegLayout(layout["width"], layout["height"], tuple(map(tuple, layout["factors"]))) if layout else None,
             os_name=device.name if device is not None else None,
             vendor_id=f"{device.vendor_id:04x}" if device is not None and device.vendor_id is not None else None,
             product_id=f"{device.product_id:04x}" if device is not None and device.product_id is not None else None,
             backend=backend, os_index=device.index if device is not None else config.camera_index,
             requested=dict(width=config.resolution.width, height=config.resolution.height,
-                           framerate=config.framerate, capture_format=config.capture_fourcc,
+                           framerate=config.framerate, capture_format=capture_format,
                            exposure_mode=config.exposure_mode.lower()),
             controls={name: (value["value"], value["auto"]) for name, value in controls.items() if value.get("present")})
 
