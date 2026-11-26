@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import NameDropdownSelector from '@/components/ui-components/NameDropdownSelector';
 import { CameraConfig } from "@/store/slices/cameras/cameras-types";
 import { useTranslation } from 'react-i18next';
+import { sizeAtFloor, trackingLimited } from "@/store/slices/cameras/resolution-floor";
 
 interface CameraConfigResolutionProps {
     resolution: CameraConfig['resolution'];
@@ -14,7 +15,8 @@ const PRESET_RESOLUTIONS = [
     { width: 1920, height: 1080, label: "1920 × 1080" },
 ];
 
-const RESOLUTION_CONSTRAINTS = { min: 1, max: 7680 };
+// windows-capture.md 22.2 (Q887 to Q889): no size below 640 wide or 360 high is offered
+const RESOLUTION_CONSTRAINTS = { minWidth: 640, minHeight: 360, max: 7680 };
 
 export const CameraConfigResolution: React.FC<CameraConfigResolutionProps> = ({
     resolution, onChange,
@@ -43,7 +45,7 @@ export const CameraConfigResolution: React.FC<CameraConfigResolutionProps> = ({
     const applyCustom = () => {
         const w = parseInt(customWidth, 10);
         const h = parseInt(customHeight, 10);
-        if (!isNaN(w) && !isNaN(h) && w >= RESOLUTION_CONSTRAINTS.min && h >= RESOLUTION_CONSTRAINTS.min) {
+        if (!isNaN(w) && !isNaN(h) && sizeAtFloor(w, h)) {
             onChange(w, h);
         }
     };
@@ -68,7 +70,7 @@ export const CameraConfigResolution: React.FC<CameraConfigResolutionProps> = ({
                             className="input-field numeric-input"
                             type="number"
                             value={customWidth}
-                            min={RESOLUTION_CONSTRAINTS.min}
+                            min={RESOLUTION_CONSTRAINTS.minWidth}
                             max={RESOLUTION_CONSTRAINTS.max}
                             onChange={(e) => setCustomWidth(e.target.value)}
                             onBlur={applyCustom}
@@ -82,7 +84,7 @@ export const CameraConfigResolution: React.FC<CameraConfigResolutionProps> = ({
                             className="input-field numeric-input"
                             type="number"
                             value={customHeight}
-                            min={RESOLUTION_CONSTRAINTS.min}
+                            min={RESOLUTION_CONSTRAINTS.minHeight}
                             max={RESOLUTION_CONSTRAINTS.max}
                             onChange={(e) => setCustomHeight(e.target.value)}
                             onBlur={applyCustom}
@@ -92,6 +94,9 @@ export const CameraConfigResolution: React.FC<CameraConfigResolutionProps> = ({
                         <span className="unit-label text md">H</span>
                     </div>
                 </div>
+            )}
+            {trackingLimited(resolution.width, resolution.height) && (
+                <p className="text sm text-gray p-1" style={{ whiteSpace: 'normal' }}>{t('trackingLimitedByResolution')}</p>
             )}
         </div>
     );

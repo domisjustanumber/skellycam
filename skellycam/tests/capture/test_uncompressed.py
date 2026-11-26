@@ -35,7 +35,7 @@ from skellycam.tests.capture.uncompressed import (
     is_quick_sync_jpeg, jpeg_chroma, jpeg_quant_tables, mean_difference, raw_shape, stop_line_count, synthetic_raw,
     to_bgr)
 
-W, H = 320, 240
+W, H = 640, 480  # the size floor of 22.2 (Q887): the smallest size that a camera opens
 CLOSE = "/skellycam/camera/group/close/all"
 MODES_MODULE = "skellycam.core.camera.capture.modes"
 CHROMA = {"YUY2": "4:2:2", "NV12": "4:2:0"}
@@ -57,13 +57,13 @@ class FeedSpy:
     def __init__(self, monkeypatch):
         from skellycam.core.camera.capture.encoder import FrameEncoder
 
-        self.lists, by_encoder, feed = [], {}, FrameEncoder.feed
+        self.lists, feed = [], FrameEncoder.feed
 
         def spy_feed(encoder, frame):
-            if id(encoder) not in by_encoder:
-                by_encoder[id(encoder)] = []
-                self.lists.append(by_encoder[id(encoder)])
-            by_encoder[id(encoder)].append(frame.source_frame_number)
+            if not hasattr(encoder, "fed_by_spy"):  # an attribute, not id(): a new encoder can reuse a freed id
+                encoder.fed_by_spy = []
+                self.lists.append(encoder.fed_by_spy)
+            encoder.fed_by_spy.append(frame.source_frame_number)
             return feed(encoder, frame)
 
         monkeypatch.setattr(FrameEncoder, "feed", spy_feed)
@@ -148,7 +148,7 @@ NATIVE_61 = (
     (960, 540, 30, 1, "MJPG"), (960, 540, 60, 1, "YUY2"), (960, 540, 30, 1, "YUY2"),
     (800, 600, 30, 1, "MJPG"), (800, 600, 60, 1, "YUY2"), (800, 600, 30000, 1001, "YUY2"),
     (1024, 768, 30, 1, "MJPG"), (1024, 768, 24, 1, "YUY2"), (1024, 768, 60, 1, "YUY2"),
-    (320, 240, 30, 1, "MJPG"), (320, 240, 10, 1, "YUY2"),
+    (1600, 900, 30, 1, "MJPG"), (1600, 900, 10, 1, "YUY2"),
 )
 
 
@@ -182,7 +182,7 @@ def test_t_cap_61_native_raw_types_are_chosen():
             fake, request = _open_format("YUY2", width, height, auto)
             opened = fake.open(request)
             assert (opened.format, (opened.fps_num, opened.fps_den)) == ("YUY2", rate), f"auto at {width}x{height}"
-        fake, request = _open_format("YUY2", 320, 240, auto)
+        fake, request = _open_format("YUY2", 1600, 900, auto)
         with pytest.raises(source_module.CaptureFailure) as failure:
             fake.open(request)
         assert (failure.value.stage, failure.value.reason) == ("set mode", "no mode at 30 fps or more")
@@ -470,6 +470,9 @@ EXPECTED_71 = [
     _mode(1280, 720, 10, 1, "YUY2", 10.0, LOW),
     _mode(1280, 720, 30, 1, "MJPG", 30.0),
     _mode(1280, 720, 60, 1, "MJPG", 60.0),
+    _mode(960, 960, 30, 1, "MJPG", 30.0),
+    _mode(1024, 576, 15, 2, "MJPG", 7.5, LOW),
+    _mode(1024, 576, 24, 1, "MJPG", 24.0, LOW),
     _mode(960, 540, 30, 1, "H264", 30.0, NEVER),
     _mode(800, 600, 30, 1, "YUY2", 30.0),
     _mode(800, 600, 30, 1, "NV12", 30.0),
@@ -478,9 +481,6 @@ EXPECTED_71 = [
     _mode(640, 480, 30, 1, "MJPG", 30.0),
     _mode(640, 480, 30, 1, "YUY2", 30.0),
     _mode(640, 480, 30, 1, "RAW", 30.0, NEVER),
-    _mode(480, 640, 30, 1, "MJPG", 30.0),
-    _mode(320, 240, 15, 2, "MJPG", 7.5, LOW),
-    _mode(320, 240, 24, 1, "MJPG", 24.0, LOW),
 ]
 
 
@@ -650,7 +650,7 @@ def take_capture_format(directory, camera_id, name="take"):
     return configs[camera_key_of(directory, camera_id, name)]["requested"]["capture_format"]
 
 
-# Each case: the native types at W x H (each script also has MJPG at 30 at 640x480), the format that
+# Each case: the native types at W x H (each script also has MJPG at 30 at 1280x720), the format that
 # opens, and the capture format of the take; None: not checked (NV12 waits for SFF-800, Q808).
 CASES_154 = {
     "MJPG below 30 and YUY2": (((W, H, 15, 1, "MJPG"), (W, H, 30, 1, "YUY2")), "YUY2", "YUYV"),
@@ -669,7 +669,7 @@ def test_t_cap_154_a_camera_with_no_mjpg_mode_opens_its_raw_mode(monkeypatch, tm
     source; `jpeg_encoder` is "cv2"; the take records the format of 22.2 (Q808). A camera with MJPG at
     30 there opens MJPG and logs no such line."""
     native, opened, recorded = CASES_154[case]
-    script = FakeScript(modes=native + ((640, 480, 30, 1, "MJPG"),))
+    script = FakeScript(modes=native + ((1280, 720, 30, 1, "MJPG"),))
     with capture_logs() as logs, capture_app(monkeypatch, [script], full_modes=True) as app:
         QuickSyncFake(monkeypatch, available=False)
         spies = Spies(monkeypatch, app, keep_payloads=True)
@@ -908,3 +908,122 @@ def test_t_cap_160_the_range_setting_and_the_os_flag(monkeypatch, case):
     reference = full_range_to_bgr(raw, "YUY2") if expected == "full" else to_bgr(raw, "YUY2")
     for event in spies.of("jpeg", camera_id)[:5]:
         assert mean_difference(decode(event["payload"]), reference) <= LIMIT_LEVELS
+
+
+# ---------------------------------------------------------------------------
+# T-CAP-161: no Quick Sync for a camera after its fallback, for the app run (22.2, Q886)
+# ---------------------------------------------------------------------------
+
+def test_t_cap_161_after_a_fallback_a_new_group_uses_cv2(monkeypatch):
+    """T-CAP-161, section 22.2 [U Q886]: the Quick Sync encoder of a camera fails. After a close of all groups, a new
+    group opens the camera in YUY2 again in the same app run: no second Quick Sync encoder opens, and `jpeg_encoder`
+    is "cv2"."""
+    with capture_app(monkeypatch, [raw_camera()], full_modes=True) as app:
+        quick_sync = QuickSyncFake(monkeypatch, available=True)
+        spies = Spies(monkeypatch, app, keep_payloads=True)
+        camera_id = app.factory.camera_ids[0]
+        ready_app_steps(app, [app.config(camera_id, capture_fourcc="YUY2")])
+        quick_sync.fail_when = lambda: len(spies.of("jpeg", camera_id)) >= 20
+        app.wait(lambda: quick_sync.failures == 1 and jpeg_encoder(app, camera_id) == "cv2", "the failure")
+        assert app.client.delete(CLOSE).status_code == 200
+        ready_app_steps(app, [app.config(camera_id, capture_fourcc="YUY2")])
+        assert jpeg_encoder(app, camera_id) == "cv2"
+        before = len(spies.of("jpeg", camera_id))
+        app.wait(lambda: len(spies.of("jpeg", camera_id)) >= before + 10, "10 ring frames in the new group")
+        app.client.delete(CLOSE)
+    assert len(quick_sync.encoders) == 1, "a Quick Sync encoder opened after the fallback"
+    assert not any(is_quick_sync_jpeg(e["payload"]) for e in spies.of("jpeg", camera_id)[before:])
+
+
+# ---------------------------------------------------------------------------
+# T-CAP-162 to T-CAP-164: the size floor of 640x480 (22.2, Q887)
+# ---------------------------------------------------------------------------
+
+NO_SIZE_MODE = "no mode of 640x360 or more"
+SMALL_SIZES = ((320, 240), (424, 240), (480, 360), (600, 480), (639, 480), (640, 359))
+FLOOR_MODES = (tuple((w, h, 30, 1, "MJPG") for w, h in SMALL_SIZES)
+               + ((640, 480, 30, 1, "MJPG"), (640, 360, 30, 1, "MJPG"), (320, 240, 30, 1, "YUY2")))
+
+
+def test_t_cap_162_modes_below_the_size_floor_are_ignored():
+    """T-CAP-162, section 22.2 [U Q887, Q888, YQN1 1 to 3]: modes below 640 wide or 360 high (320x240, 424x240,
+    480x360, 600x480, 639x480, 640x359) are left out of `supported_modes`, listed in `capture_modes` with the reason
+    "below 640x360" (also a mode below both floors), and refused by the mode choice with "no mode of 640x360 or
+    more", code `below-floor`. 640x480 and 640x360 pass. The raw-mode open of Q807 never opens a size below the
+    floor."""
+    modes = product(MODES_MODULE)
+    source_module = product(SOURCE_MODULE)
+    native = [modes.NativeMode(*m) for m in FLOOR_MODES]
+    assert [m.model_dump() for m in modes.supported_modes(native)] == [
+        {"width": 640, "height": 480, "framerates": [30.0]}, {"width": 640, "height": 360, "framerates": [30.0]}]
+    listed = {(e.width, e.height, e.format): (e.selectable, e.reason) for e in modes.capture_modes(native)}
+    assert listed[(640, 480, "MJPG")] == listed[(640, 360, "MJPG")] == (True, None)
+    for width, height in SMALL_SIZES:
+        assert listed[(width, height, "MJPG")] == (False, "below 640x360"), (width, height)
+    assert listed[(320, 240, "YUY2")] == (False, "below 640x360")
+    (both,) = modes.capture_modes([modes.NativeMode(320, 240, 15, 1, "MJPG")])
+    assert (both.selectable, both.reason) == (False, "below 640x360")
+    fake = FakeSource(FakeScript(modes=FLOOR_MODES), clock=VirtualClock())
+    opened = fake.open(source_module.CaptureRequest(camera_id="0", width=640, height=360, framerate=30.0))
+    assert (opened.width, opened.height) == (640, 360)
+    for width, height in SMALL_SIZES:
+        for fmt, framerate in (("MJPG", 30.0), ("MJPG", -1.0), ("YUY2", 30.0)):
+            fake = FakeSource(FakeScript(modes=FLOOR_MODES), clock=VirtualClock())
+            request = source_module.CaptureRequest(camera_id="0", width=width, height=height, framerate=framerate,
+                                                   capture_fourcc=fmt)
+            with pytest.raises(source_module.CaptureFailure) as failure:
+                fake.open(request)
+            assert (failure.value.stage, failure.value.reason, failure.value.code) == (
+                "set mode", NO_SIZE_MODE, "below-floor"), (width, height, fmt, framerate)
+            assert "read_sample" not in fake.log.names()
+
+
+def test_t_cap_163_a_request_below_640x480_gets_422(monkeypatch):
+    """T-CAP-163, section 22.2 [U Q887, Q889, YQN1 3]: a request for 320x240, to a fake with a mode there, gets HTTP 422
+    with "no mode of 640x360 or more" and opens no camera; also with the OpenCV detection data (no mode list)."""
+    script = FakeScript(modes=((640, 480, 30, 1, "MJPG"), (320, 240, 30, 1, "MJPG")))
+    with capture_app(monkeypatch, [script], full_modes=True) as app:
+        app.detect()
+        camera_id = app.factory.camera_ids[0]
+        refused = app.apply([app.config(camera_id, width=320, height=240)])
+        assert refused.status_code == 422 and NO_SIZE_MODE in detail(refused), refused.text
+        assert opens(app, camera_id) == 0 and not app.manager.camera_groups
+    factory = OpenCVFakeFactory(monkeypatch)
+    app = CaptureApp(monkeypatch, factory)
+    try:
+        app.detect()
+        camera_id = factory.camera_ids[0]
+        refused = app.apply([app.config(camera_id, width=320, height=240)])
+        assert refused.status_code == 422 and NO_SIZE_MODE in detail(refused), refused.text
+        assert factory.opens[camera_id] == 0
+    finally:
+        app.close()
+
+
+def test_t_cap_164_an_opencv_camera_that_reports_a_small_size_fails(monkeypatch):
+    """T-CAP-164, section 14.1 [U Q887, Q889, YQN1 4]: the OpenCV fake opens and reports 320x240 for a request of
+    640x480. The camera fails, stage `set mode`, code `below-floor`, reason "no mode of 640x360 or more"."""
+    factory = OpenCVFakeFactory(monkeypatch)
+    fake_class = factory._fake_class
+
+    class SmallFake(fake_class):
+        def __init__(self, width, height, **kwargs):
+            super().__init__(320, 240, **kwargs)
+
+        def set(self, prop_id, value):
+            if prop_id in (cv2.CAP_PROP_FRAME_WIDTH, cv2.CAP_PROP_FRAME_HEIGHT):
+                return False  # the camera keeps its size
+            return super().set(prop_id, value)
+
+    factory._fake_class = SmallFake
+    app = CaptureApp(monkeypatch, factory)
+    try:
+        app.detect()
+        camera_id = factory.camera_ids[0]
+        response = app.apply([app.config(camera_id)])
+        assert response.status_code == 200, response.text
+        app.wait_state(camera_id, "failed")
+        failure = app.status(camera_id)["failure"]
+        assert (failure["stage"], failure["code"], failure["reason"]) == ("set mode", "below-floor", NO_SIZE_MODE)
+    finally:
+        app.close()

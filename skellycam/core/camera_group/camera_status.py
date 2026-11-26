@@ -71,6 +71,8 @@ class CameraStatus:
     # windows-capture.md 13.2: the result of the one Quick Sync check of the app run; the manager writes it before the
     # camera opens a YUY2 or NV12 mode. `reset_for_start` keeps it.
     quick_sync: Any = field(default_factory=lambda: multiprocessing.Value("b", False, lock=False))
+    # windows-capture.md 22.2 [U Q886]: the camera fell back from Quick Sync; the manager keeps it for the app run.
+    encoder_failed: Any = field(default_factory=lambda: multiprocessing.Value("b", False, lock=False))
     # The main process only: the counter subset of the newest diagnostics of the camera (unix-capture.md 4.2 item 2).
     diagnostics: dict = field(default_factory=dict)
     # Per process, and never pickled: the worker of the camera (the main process sets it), whether that process

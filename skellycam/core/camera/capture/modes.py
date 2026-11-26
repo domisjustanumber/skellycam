@@ -15,6 +15,7 @@ from skellycam.core.camera.capture.source import CaptureFailure, CaptureRequest
 
 FLOOR_FPS = 30000 / 1001  # U11: 29.97 counts as 30
 NO_FLOOR_MODE = "no mode at 30 fps or more"
+NO_SIZE_MODE = "no mode of 640x360 or more"  # 22.2 [U Q887, Q888, YQN1 3]
 RAW_FORMATS = ("YUY2", "NV12")  # 13.1: the uncompressed formats that skellycam opens
 RAW_ORDER = ("YUY2", "NV12")  # 22.2 [N72V 1, Q845]: the raw mode that an MJPG request opens when the size has no MJPG
 UNCOMPRESSED = ("YUY2", "NV12", "RAW")  # 7.4
@@ -68,6 +69,12 @@ def at_floor(fps: float) -> bool:
     return fps > FLOOR_FPS or rates_equal(fps, FLOOR_FPS)
 
 
+def size_at_floor(width: int, height: int) -> bool:
+    """22.2 [U Q887, Q888]: a mode below 640 wide or 360 high is ignored, as a mode below 30 fps is (640x480 and 640x360
+    pass). The one place of the rule on the server [YQN1 1]; the UI has the same two numbers (`resolution-floor.ts`)."""
+    return width >= 640 and height >= 360
+
+
 def same_rate_class(a: float, b: float) -> bool:
     """The one-rate rule (D18): equal rates, or 29.97 and 30, which are one rate class (U15)."""
     return rates_equal(a, b) or all(rates_equal(r, 30.0) or rates_equal(r, FLOOR_FPS) for r in (a, b))
@@ -86,7 +93,7 @@ def supported_modes(native: list[NativeMode]) -> list[CaptureMode]:
     """The `supported_modes` of 7.3: MJPG only, one entry for each size, rates at the floor or above."""
     rates: dict[tuple[int, int], set[float]] = {}
     for mode in native:
-        if mode.format == "MJPG" and at_floor(mode.fps):
+        if mode.format == "MJPG" and at_floor(mode.fps) and size_at_floor(mode.width, mode.height):
             rates.setdefault((mode.width, mode.height), set()).add(round(mode.fps, 2))
     sizes = sorted(rates, key=lambda size: (-size[0] * size[1], -size[0]))
     return [CaptureMode(width=w, height=h, framerates=sorted(rates[w, h])) for w, h in sizes]
@@ -111,10 +118,17 @@ def capture_modes(native: list[NativeMode]) -> list[CaptureModeEntry]:
     order = sorted(kept, key=lambda m: (-m.width * m.height, -m.width, round(m.fps, 2), m.format != "MJPG", kept[m]))
     return [CaptureModeEntry(width=m.width, height=m.height, fps_num=m.fps_num, fps_den=m.fps_den,
                              framerate=round(m.fps, 2), format=m.format, uncompressed=m.format in UNCOMPRESSED,
-                             selectable=m.format not in NEVER_OPENED and at_floor(m.fps),
-                             reason="never opened" if m.format in NEVER_OPENED else None if at_floor(m.fps)
-                             else "below 30 fps")
+                             selectable=_reason(m) is None, reason=_reason(m))
             for m in order]
+
+
+def _reason(mode: NativeMode) -> str | None:
+    """7.4: why a mode of `capture_modes` is not selectable; the size before the rate [YQN1 2]."""
+    if mode.format in NEVER_OPENED:
+        return "never opened"
+    if not size_at_floor(mode.width, mode.height):
+        return "below 640x360"
+    return None if at_floor(mode.fps) else "below 30 fps"
 
 
 def native_from_capture_modes(entries: list[CaptureModeEntry]) -> list[NativeMode]:
@@ -125,6 +139,8 @@ def native_from_capture_modes(entries: list[CaptureModeEntry]) -> list[NativeMod
 def choose_mode(native: list[NativeMode], request: CaptureRequest) -> NativeMode:
     """The mode choice of 7.5, with the raw-mode open of 22.2 [Q807]. Never a synthesized NV12 type (13.1).
     Raises `CaptureFailure` with stage "set mode"."""
+    if not size_at_floor(request.width, request.height):
+        raise CaptureFailure("set mode", NO_SIZE_MODE, code="below-floor")  # 22.2 [U Q887]
     native = [m for k, m in enumerate(native) if not _synthesized(native, k)]
     if request.capture_fourcc == "MJPG":
         at_size = [m for m in native if (m.width, m.height) == (request.width, request.height) and at_floor(m.fps)]

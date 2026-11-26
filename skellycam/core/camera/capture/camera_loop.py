@@ -22,7 +22,7 @@ from skellycam.core.camera.capture import encoder as capture_encoder
 from skellycam.core.camera.capture import rate_check
 from skellycam.core.camera.capture.failure_codes import WEDGE_CODES
 from skellycam.core.camera.capture.exposure_search import ExposureSearch, add_light_text, failed_text, search_values
-from skellycam.core.camera.capture.modes import NO_FLOOR_MODE, RAW_FORMATS, at_floor, rates_equal
+from skellycam.core.camera.capture.modes import NO_FLOOR_MODE, NO_SIZE_MODE, RAW_FORMATS, at_floor, rates_equal, size_at_floor
 from skellycam.core.camera.capture.source import (
     BOUNDED_CALL_LIMIT_S,
     HASH_COUNT,
@@ -335,6 +335,8 @@ class CameraLoop:
         rate = opened.fps_num / opened.fps_den if opened.fps_num > 0 else 0.0
         if rate and not at_floor(rate):
             raise CaptureFailure("set mode", NO_FLOOR_MODE, code="below-floor")  # 14.1: OpenCV reports a rate under the floor
+        if opened.width > 0 and not size_at_floor(opened.width, opened.height):
+            raise CaptureFailure("set mode", NO_SIZE_MODE, code="below-floor")  # 14.1, 22.2 [U Q887]: a size under the floor
         # D22; with no reported rate (OpenCV), the requested rate and 30 for "auto" (ADR-PDD3 W2)
         self.reference_rate = rate or (config.framerate if config.framerate > 0 else rate_check.AUTO_REFERENCE_FPS)
         opencv = getattr(self.source, "name", None) == "opencv"
@@ -407,7 +409,7 @@ class CameraLoop:
                 self.full_range = opened.os_range == "full"
                 why = f"the flag of the OS is {opened.os_range or 'not set'}"
             logger.info(f"Camera {self.camera_id}: input range {'full' if self.full_range else 'limited'} ({why})")
-        quick_sync = bool(self.status.quick_sync.value) and not self.fallbacks
+        quick_sync = bool(self.status.quick_sync.value) and not self.status.encoder_failed.value  # [U Q886]
         args = (self.raw_format, opened.width, opened.height, self.full_range)
         try:
             self.encoder = capture_encoder.FrameEncoder(*args, quick_sync)
@@ -439,6 +441,7 @@ class CameraLoop:
     def _encoder_fell_back(self, error: str | None) -> None:
         """13.2 [V3, 3WCA 3]: one WARNING line, a count for the stop line, and an item while the take runs."""
         self.fallbacks += 1
+        self.status.encoder_failed.value = True  # each later open in this app run uses cv2 [U Q886]
         text = (f"Camera {self.camera_id}: the Quick Sync JPEG encoder failed ({error}); the camera uses cv2.imencode "
                 f"from now on")
         logger.warning(text)

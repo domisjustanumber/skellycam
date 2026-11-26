@@ -87,9 +87,10 @@ def quick_sync_works() -> bool:
     if sys.platform == "darwin":
         return False
     try:
-        encoder = open_quick_sync_encoder("NV12", 320, 240, quality=QUALITY)
+        # 22.2 [U Q887]: a test frame of 1280x720, the size that skellycam uses most (640x480 is the floor)
+        encoder = open_quick_sync_encoder("NV12", 1280, 720, quality=QUALITY)
         try:
-            jpegs = encoder.encode(np.full(raw_shape("NV12", 320, 240), 128, np.uint8)) + encoder.flush()
+            jpegs = encoder.encode(np.full(raw_shape("NV12", 1280, 720), 128, np.uint8)) + encoder.flush()
         finally:
             encoder.close()
     except Exception as error:  # no Intel GPU, no driver, a build of FFmpeg with no QSV

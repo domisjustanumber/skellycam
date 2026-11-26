@@ -11,6 +11,7 @@ from fastapi import FastAPI
 from skellycam.core.camera.capture.modes import (
     FLOOR_FPS,
     NO_FLOOR_MODE,
+    NO_SIZE_MODE,
     RAW_FORMATS,
     choose_mode,
     group_rate_problem,
@@ -18,6 +19,7 @@ from skellycam.core.camera.capture.modes import (
     native_from_capture_modes,
     native_from_supported,
     rates_equal,
+    size_at_floor,
 )
 from skellycam.core import capture_timings
 from skellycam.core.camera.camera_worker import select_capture_source
@@ -68,6 +70,7 @@ class CameraGroupManager:
     )
     _log_capture_times: bool = False  # capture-timings.md 2: the one switch of the app
     quick_sync: bool | None = None  # windows-capture.md 13.2 [3WCA 6]: the one Quick Sync check of the app run
+    encoder_failed: set = field(default_factory=set)  # 22.2 [U Q886]: cameras that fell back from Quick Sync
 
     @property
     def log_capture_times(self) -> bool:
@@ -83,9 +86,18 @@ class CameraGroupManager:
 
     def _write_switch(self, group) -> None:
         cameras = group.cameras
-        for status in [*cameras.orchestrator.camera_statuses.values(), *cameras.removed_statuses.values()]:
+        statuses = {**cameras.removed_statuses, **cameras.orchestrator.camera_statuses}
+        self._keep_encoder_failures(group)
+        for camera_id, status in statuses.items():
             status.log_capture_times.value = self._log_capture_times
             status.quick_sync.value = bool(self.quick_sync)  # 13.2: each camera process gets the result
+            status.encoder_failed.value = camera_id in self.encoder_failed  # [U Q886]
+
+    def _keep_encoder_failures(self, group) -> None:
+        """22.2 [U Q886]: a camera that fell back from Quick Sync uses cv2 at each later open of this app run."""
+        cameras = group.cameras
+        statuses = {**cameras.removed_statuses, **cameras.orchestrator.camera_statuses}
+        self.encoder_failed.update(camera_id for camera_id, status in statuses.items() if status.encoder_failed.value)
 
     def capture_timings(self) -> dict:
         """capture-timings.md 6.3: the newest summary of each camera of each open group, at most 3 s old. It reads no
@@ -142,6 +154,7 @@ class CameraGroupManager:
                 await camera_group.close()
             except Exception as close_err:
                 logger.error(f"Error closing failed camera group {camera_group.id}: {close_err}")
+            self._keep_encoder_failures(camera_group)
             self.camera_groups.pop(camera_group.id, None)  # a close of all groups can have removed it first
             self.camera_group_framerate_subscriptions.pop(camera_group.id, None)
             raise
@@ -301,6 +314,8 @@ class CameraGroupManager:
             raise RequestRefused(422, "The request selects no camera")
         problems = [f"camera {camera_id}: {NO_FLOOR_MODE}" for camera_id, config in selected.items()
                     if config.framerate not in (-1, 0) and config.framerate < FLOOR_FPS - 0.5]  # agent 55
+        problems += [f"camera {camera_id}: {NO_SIZE_MODE}" for camera_id, config in selected.items()  # 22.2 [U Q887]
+                     if not size_at_floor(config.resolution.width, config.resolution.height)]
         by_number = {}  # camera-requests.md 8.1: camera_index stays unique in a group
         for camera_id, config in selected.items():
             by_number.setdefault(config.camera_index, []).append(camera_id)
@@ -340,8 +355,8 @@ class CameraGroupManager:
                 problems.append("all cameras of a group must request one frame rate, or each 'auto': "
                                 + ", ".join(f"camera {camera_id} {config.framerate:g}"
                                             for camera_id, config in selected.items()))
-        if problems:
-            raise RequestRefused(422, "; ".join(problems))
+        if problems:  # one text once: the size floor and the mode choice can give the same reason [YQN1 3]
+            raise RequestRefused(422, "; ".join(dict.fromkeys(problems)))
         if camera_group is not None:
             if camera_group.request_runs:  # camera-requests.md 2.4a item 7 [ADR-1T0S]
                 raise RequestRefused(409, REQUEST_RUNS)
@@ -436,6 +451,7 @@ class CameraGroupManager:
                 if group is None:  # a second close, or the teardown of a failed start, removed it first
                     continue
                 await group.close()
+                self._keep_encoder_failures(group)
                 self.closed_diagnostics.update({camera_id: group.diagnostics(camera_id) for camera_id in group.camera_ids})
                 self.camera_groups.pop(camera_group_id, None)
                 self.camera_group_framerate_subscriptions.pop(camera_group_id, None)
