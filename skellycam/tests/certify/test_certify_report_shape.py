@@ -3,6 +3,7 @@ sources only; no test opens a camera. Each test names the T-CERT test of section
 part; a part that a later step of 3.6.7 builds joins at that step.
 """
 
+import asyncio
 import json
 import subprocess
 import threading
@@ -312,6 +313,47 @@ def test_t_cert_92_a_hang_at_the_open(monkeypatch, tmp_path):
     assert_valid(report)
     hung, _ = labels(devices)
     assert by_name(report)[f"{hung}:opens"]["reason"] == "hung"
+    assert_not_reached(report, plan, messages, {hung: "prior-failure"}, labels(devices))
+
+
+class SlowRingLook:
+    """`asyncio` for the certify session module: after its first look, the ring look of the open step
+    (`Session.watch_rings`) waits until the open step cancels it. This is the worst case of a busy event loop: no
+    look comes between the open of a ring and the judge of the open (windows-2025, CI run 45872128301)."""
+
+    def __getattr__(self, name):
+        return getattr(asyncio, name)
+
+    @staticmethod
+    async def sleep(delay, result=None):
+        task = asyncio.current_task()
+        if task is not None and task.get_coro().__qualname__.endswith("watch_rings"):
+            delay = 3600.0
+        return await asyncio.sleep(delay, result)
+
+
+@pytest.mark.capture_timing
+@pytest.mark.xfail(strict=True, raises=AssertionError, reason="needs a product fix (ADR-2HW5, open work): a camera "
+                   "that waited in `waiting` for a hung camera is `ready` at the judge of the open with no ring "
+                   "watch, and the session leaves it out of `live`")
+def test_t_cert_151_a_ready_camera_with_no_ring_watch_at_the_judge(monkeypatch, tmp_path):
+    """T-CERT-151, 4.4, 3.6.1: a camera hangs at the open (5 s) and a good camera waits for it in `waiting` (PROCESS
+    workers). The group opens the rings only after the hang, and the good camera is `ready` at once. No ring look of
+    the session comes before the judge of the open (`SlowRingLook`). The good camera still gets its ready, settings
+    and take checks, and it has no `not-reached` row."""
+    monkeypatch.setattr(product("skellycam.core.certify.session"), "asyncio", SlowRingLook())
+    messages = []
+    with capture_app(monkeypatch, [good(hang_at="open", hang_armed=True), good()], workers="process") as app:
+        devices = app.factory.device_infos()
+        plan = product(RUN).plan("quick", devices=devices, **plan_options(tmp_path))
+        report = run_with(app, tmp_path, progress=messages.append)
+    assert_valid(report)
+    hung, fine = labels(devices)
+    checks = by_name(report)
+    assert checks[f"{hung}:opens"]["reason"] == "hung"
+    for name in ("opens", "native-jpeg:format", "settings-stick:readback", "records:rows-complete"):
+        assert checks.get(f"{fine}:{name}", {}).get("result") == "pass", (
+            name, [c for c in report["checks"] if c["name"].startswith(fine + ":")])
     assert_not_reached(report, plan, messages, {hung: "prior-failure"}, labels(devices))
 
 
