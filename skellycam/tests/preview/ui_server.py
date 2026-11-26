@@ -203,14 +203,15 @@ CONNECTIONS = Connections()
 
 def install_observer():
     """Replace `PreviewRelay` with a subclass that counts, before `websocket_server` imports it. It uses
-    only the interface of 4a: the constructor and `handle_text`."""
+    only the interface of 4a: the constructor and `handle_text`. It passes each keyword of the constructor on (the
+    `step_set` and the `send_lock` of capture-timings.md 6.5)."""
     from skellycam.api.websocket import preview_relay
     from skellycam.api.websocket.websocket_message_types import WebsocketMessageType
 
     base = preview_relay.PreviewRelay
 
     class CountingRelay(base):
-        def __init__(self, manager, send_bytes, send_json):
+        def __init__(self, manager, send_bytes, send_json, **kwargs):
             record = CONNECTIONS.new()
             self._record = record
 
@@ -227,7 +228,7 @@ def install_observer():
                         record["not_shown"][camera_id] = values.get("not_shown_count")
                 await send_json(data)
 
-            super().__init__(manager, counted_bytes, counted_json)
+            super().__init__(manager, counted_bytes, counted_json, **kwargs)
 
         def handle_text(self, text):
             result = super().handle_text(text)
