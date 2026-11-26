@@ -4,6 +4,7 @@ part; a part that a later step of 3.6.7 builds joins at that step.
 """
 
 import asyncio
+import contextlib
 import json
 import subprocess
 import threading
@@ -348,10 +349,39 @@ def test_t_cert_151_a_ready_camera_with_no_ring_watch_at_the_judge(monkeypatch, 
     hung, fine = labels(devices)
     checks = by_name(report)
     assert checks[f"{hung}:opens"]["reason"] == "hung"
-    for name in ("opens", "native-jpeg:format", "settings-stick:readback", "records:rows-complete"):
+    # `source-equals-ring` `pass`: the watch attached before the judge (4.4), not only a camera that goes on with none
+    for name in ("opens", "native-jpeg:format", "native-jpeg:source-equals-ring", "settings-stick:readback",
+                 "records:rows-complete"):
         assert checks.get(f"{fine}:{name}", {}).get("result") == "pass", (
             name, [c for c in report["checks"] if c["name"].startswith(fine + ":")])
     assert_not_reached(report, plan, messages, {hung: "prior-failure"}, labels(devices))
+
+
+def test_a_cancel_in_the_open_step_ends_the_ring_look(tmp_path):
+    """4.4 [ADR-2HW5]: a cancel of the open step while the apply waits also ends `watch_rings`, so no look after the
+    open step attaches a ring watch that nothing stops."""
+    session = product("skellycam.core.certify.session")
+
+    class Manager:
+        camera_groups, closed_diagnostics = {}, {}
+
+        async def create_or_update_camera_group(self, configs):
+            await asyncio.Event().wait()  # an apply that does not end
+
+    unit = session.Unit(label="cam.media-foundation.feed-0000.0", camera_id="e605", index=0, base=(640, 480, 30.0),
+                        module="Fake camera 0", device=None)
+    run = session.Session(Manager(), [unit], tmp_path, "quick", False, begin=lambda name: None,
+                          done=lambda result: None, fact=lambda name, value: None, sleep=time.sleep)
+
+    async def cancel_the_open_step():
+        task = asyncio.create_task(run.open_step())
+        await asyncio.sleep(0.05)
+        task.cancel()
+        with contextlib.suppress(asyncio.CancelledError):
+            await task
+        return [t for t in asyncio.all_tasks() if t is not asyncio.current_task()]
+
+    assert asyncio.run(cancel_the_open_step()) == []
 
 
 class NoRingReader:

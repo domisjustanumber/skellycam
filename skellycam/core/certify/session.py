@@ -350,16 +350,18 @@ class Session:
         refused = None
         watching = asyncio.create_task(self.watch_rings(usable))
         try:
-            await self.manager.create_or_update_camera_group({u.camera_id: self.config(u) for u in usable})
-        except Exception as error:  # a refused request (RequestRefused) or a failed start of the group
-            refused = type(error).__name__
-            logger.warning(f"certify: the apply failed: {error!r}")
-        seconds = round(time.monotonic() - t0, 2)
-        if refused is None:
-            await self.wait_states(usable, ("ready", "failed", "dead", "too_slow"))
-        watching.cancel()
-        with contextlib.suppress(asyncio.CancelledError):
-            await watching
+            try:
+                await self.manager.create_or_update_camera_group({u.camera_id: self.config(u) for u in usable})
+            except Exception as error:  # a refused request (RequestRefused) or a failed start of the group
+                refused = type(error).__name__
+                logger.warning(f"certify: the apply failed: {error!r}")
+            seconds = round(time.monotonic() - t0, 2)
+            if refused is None:
+                await self.wait_states(usable, ("ready", "failed", "dead", "too_slow"))
+        finally:  # also on a cancel or an error: no look after the open step attaches a watch that nothing stops
+            watching.cancel()
+            with contextlib.suppress(asyncio.CancelledError):
+                await watching
         # 4.4 [ADR-2HW5]: one more look, so a camera whose ring opened after the last look of `watch_rings` (it
         # waited in `waiting` for a hung camera and was `ready` at once) has its watch at the judge
         self.attach_watches(usable)
