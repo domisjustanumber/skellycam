@@ -62,6 +62,7 @@ These entries are `accepted`.
 | [EM6A](entries/EM6A-answers-of-the-owner-to-the-v1-playback-questions-of-revision-5.md) | v1 playback answers Q733 to Q749, Q764 to Q767: file rules to skellyspecs, secret header, F6 too slow, macOS re-sign, default token, watch later | accepted |
 | [DC43](entries/DC43-choices-of-fix-lane-5.md) | Choices of fix lane 5: control thread on the test clock, test waits for a short `ready` and for a killed process, Windows Server OS key | accepted |
 | [8CP7](entries/8CP7-certify-spec-draft-3-choices-of-the-agent.md) | Certify spec draft 3 on format 1.4.0, tests T-CERT-01 to 67, 15 agent choices: split checks, model item, gate roll-ups, local record, macOS probes | accepted |
+| [PA3A](entries/PA3A-decision-of-the-user-on-the-test-workflow-on-dom-integration.md) | "Yes": `test.yml` runs on each push to `dom/integration`: ruff, the test suite and the UI typecheck | accepted |
 
 ### Proposed
 
@@ -90,6 +91,7 @@ These entries wait for a decision of the user. Section is the section or area of
 | [JFG4](entries/JFG4-choices-of-the-capture-timings-build.md) | Choices of the capture timings build that the user did not decide: source sets, sets, main process, message loop, route, test seams, faults | none | proposed |
 | [J1HD](entries/J1HD-choices-of-the-control-read-check.md) | Choices of the certify check of the control read: 30 s on and off, the 100 ms rule, `control_read` in the record, a harmed model pauses on each build | none | proposed |
 | [TYH0](entries/TYH0-choices-after-the-acceptance-of-the-v1-playback-spec.md) | After the v1 spec acceptance: the code that goes with the old routes in 6c part 1; the certify row `player-legacy-decode` | `player` | proposed |
+| [QF7V](entries/QF7V-choices-of-the-test-workflow-on-dom-integration.md) | Choices of the push run of `test.yml`: no run for log-only pushes, no macOS job on a push, pinned labels, PortAudio, no `capture_local`, no fail-fast, 60 min | none | proposed |
 
 The entries that are `rejected`, `superseded by XXXX`, `absorbed into <path>#<anchor>`,
 `evidence; used by XXXX`, `evidence; replaced by XXXX` or `done` are in [historical.md](historical.md).
