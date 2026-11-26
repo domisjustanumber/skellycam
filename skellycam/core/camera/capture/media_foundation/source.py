@@ -377,6 +377,7 @@ class MediaFoundationSource:
         self._zero_bytes += not payload
         if on:
             steps.add("camera_sample_copy", steps.control.clock() - t0)
+        delivered_len = len(payload)  # bytes, also for a raw frame (4.2)
         if self._format in RAW_FORMATS:  # 13.2: one new array; a frame of the wrong length stays 1-D [3WCA 9]
             shape = raw_shape(self._format, self._mode.width, self._mode.height)
             payload = np.frombuffer(payload, np.uint8)
@@ -384,7 +385,7 @@ class MediaFoundationSource:
                 payload = payload.reshape(shape)
         return CapturedFrame(payload=payload, format=self._format, arrival_ns=arrival_ns,
                              sample_ns=sample_ns if self._sample_time_ok else NO_SAMPLE_NS,
-                             delivered_len=len(payload), driver_error=False, source_frame_number=number,
+                             delivered_len=delivered_len, driver_error=False, source_frame_number=number,
                              discontinuity=discontinuity)
 
     def _read_next(self):

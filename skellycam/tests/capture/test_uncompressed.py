@@ -13,10 +13,12 @@ encoder of the product module `capture.encoder` (ADR-3WCA items 6 and 7): `avail
 Thus no test needs an Intel GPU. No test measures time.
 """
 
+import asyncio
 import json
 import logging
 import re
 import sys
+import threading
 from pathlib import Path
 
 import cv2
@@ -29,13 +31,34 @@ from skellycam.tests.capture.capture_session import (
 from skellycam.tests.capture.fake_source import FakeScript, FakeSource, VirtualClock
 from skellycam.tests.capture.test_detection_and_modes import NATIVE_25
 from skellycam.tests.capture.uncompressed import (
-    Q90_TABLES, RAW_FORMATS, BgrImages, QuickSyncFake, full_range_to_bgr, is_quick_sync_jpeg, jpeg_chroma,
-    jpeg_quant_tables, mean_difference, raw_shape, stop_line_count, synthetic_raw, to_bgr)
+    QUICK_SYNC_MARK, Q90_TABLES, RAW_FORMATS, BgrImages, FakeQuickSyncEncoder, QuickSyncFake, full_range_to_bgr,
+    is_quick_sync_jpeg, jpeg_chroma, jpeg_quant_tables, mean_difference, raw_shape, stop_line_count, synthetic_raw,
+    to_bgr)
 
 W, H = 320, 240
 CLOSE = "/skellycam/camera/group/close/all"
 MODES_MODULE = "skellycam.core.camera.capture.modes"
 CHROMA = {"YUY2": "4:2:2", "NV12": "4:2:0"}
+
+
+QUICK_SYNC_NUMBER = re.compile(re.escape(QUICK_SYNC_MARK) + rb" (\d+)")
+
+
+def quick_sync_number(jpeg):
+    """The input number that the fake Quick Sync encoder wrote into the JPEG (`uncompressed.with_mark`), or None."""
+    match = QUICK_SYNC_NUMBER.search(bytes(jpeg)[:64])
+    return int(match.group(1)) if match else None
+
+
+def assert_own_frames(writes, taken):
+    """Each Quick Sync ring JPEG is the JPEG of its own frame: its input number is the place of its source frame
+    among the frames that the loop took, counted from the frame of input 0 [ZEK6 13]. This is stronger than
+    "the sfn minus the first sfn": a frame that a newer frame replaced is never taken, so it is no input."""
+    numbered = [(event["sfn"], quick_sync_number(event["payload"])) for event in writes]
+    numbered = [(sfn, number) for sfn, number in numbered if number is not None]
+    assert numbered, "no Quick Sync ring JPEG"
+    base = taken.index(next(sfn for sfn, number in numbered if number == 0))
+    assert all(number == taken.index(sfn) - base for sfn, number in numbered), numbered[:10]
 
 
 def ring_flags():
@@ -355,6 +378,7 @@ def test_t_cap_67_recorder_gets_the_encoded_jpeg(monkeypatch, tmp_path):
     assert all(is_quick_sync_jpeg(block) and jpeg_chroma(block) == "4:2:2" for block in blocks), \
         "a block of the take file is not the encoded JPEG"
     assert not spies.of("bgr", camera_id), "a BGR ring was written with the BGR ring off"
+    assert_own_frames(spies.of("jpeg", camera_id), app.factory.logs[camera_id].taken)
 
 
 # ---------------------------------------------------------------------------
@@ -658,3 +682,189 @@ def test_t_cap_155_a_yuy2_take_records_yuyv(monkeypatch, tmp_path):
     assert take_capture_format(tmp_path, camera_id) == "YUYV"
     blocks = block_payloads(tmp_path, camera_id)
     assert blocks and all(jpeg_chroma(block) == "4:2:2" for block in blocks)
+
+
+# ---------------------------------------------------------------------------
+# T-CAP-156: the Quick Sync check and the flag of a change that runs (camera-requests.md 2.4a item 7)
+# ---------------------------------------------------------------------------
+
+REQUEST_RUNS = "Another change of the cameras runs now. Send the request again when the cameras are ready."
+
+
+def test_t_cap_156_no_wait_between_the_check_of_a_running_change_and_its_flag(monkeypatch):
+    """T-CAP-156, section 22.2 [ZEK6 2], camera-requests.md 2.4a item 7: request A asks a running camera for YUY2,
+    and the Quick Sync check of A is slow. Meanwhile request B (an exposure change) passes its whole-request check
+    and holds in its apply. When the check of A returns, A gets 409: the Quick Sync check runs before the check of
+    the flag, so the check and the set of the flag have no wait between them. Two changes never run at once."""
+    from skellycam.core.camera.capture import encoder as encoder_module
+    from skellycam.core.camera_group.camera_group import CameraGroup
+
+    in_check, go_check, in_apply, go_apply = (threading.Event() for _ in range(4))
+    running, most = [0], [0]
+
+    def slow_check():
+        in_check.set()
+        go_check.wait(30)
+        return False
+
+    apply = CameraGroup.apply
+
+    async def counted(group, requested, retry=()):
+        running[0] += 1
+        most[0] = max(most[0], running[0])
+        try:
+            if any(config.exposure == -9 for config in requested.values()):
+                in_apply.set()
+                while not go_apply.is_set():
+                    await asyncio.sleep(0.01)
+            return await apply(group, requested, retry)
+        finally:
+            running[0] -= 1
+
+    with capture_app(monkeypatch, [raw_camera()], full_modes=True) as app:
+        monkeypatch.setattr(encoder_module, "quick_sync_works", slow_check)
+        monkeypatch.setattr(CameraGroup, "apply", counted)
+        camera_id = app.factory.camera_ids[0]
+        ready_app_steps(app, [app.config(camera_id)])
+        out = {}
+        thread_a = threading.Thread(target=lambda: out.setdefault(
+            "a", app.apply([app.config(camera_id, capture_fourcc="YUY2")])))
+        thread_b = threading.Thread(target=lambda: out.setdefault("b", app.apply([app.config(camera_id, exposure=-9)])))
+        thread_a.start()
+        try:
+            app.wait(in_check.is_set, "the Quick Sync check of A runs")
+            thread_b.start()
+            app.wait(in_apply.is_set, "B holds in its apply")
+            go_check.set()
+            thread_a.join(30)
+        finally:
+            go_check.set()
+            go_apply.set()
+            thread_a.join(60)
+            thread_b.join(60)
+        assert most[0] == 1, "two changes of the cameras ran at the same time"
+        assert out["a"].status_code == 409 and REQUEST_RUNS in out["a"].text, out["a"].text
+        assert out["b"].status_code == 200, out["b"].text
+
+
+# ---------------------------------------------------------------------------
+# T-CAP-157 to T-CAP-160: an encoder with no output, held frames, a fallback outside a take, the range setting
+# ---------------------------------------------------------------------------
+
+class SilentEncoder(FakeQuickSyncEncoder):
+    """A fake Quick Sync encoder that takes each frame and never gives a JPEG or an error (a stalled device)."""
+
+    def encode(self, raw):
+        super().encode(raw)
+        return []
+
+
+def test_t_cap_157_an_encoder_with_no_output_falls_back(monkeypatch):
+    """T-CAP-157, section 22.2 [ZEK6 12]: the Quick Sync encoder takes each frame and gives no JPEG and no error.
+    When more than `ASYNC_DEPTH` frames wait, the camera falls back to `cv2.imencode`: the held frames are encoded
+    from their raw frames, the first ring frame has `DISCONTINUITY`, no taken frame is lost, the WARNING line and the
+    stop line come, and `jpeg_encoder` is "cv2"."""
+    flag = ring_flags()
+    with capture_logs() as logs, capture_app(monkeypatch, [raw_camera()], full_modes=True) as app:
+        quick_sync = QuickSyncFake(monkeypatch, available=True)
+        silent = []
+
+        def open_silent(fmt, width, height, *, quality):
+            silent.append(SilentEncoder(quick_sync, fmt, width, height, quality))
+            return silent[-1]
+
+        monkeypatch.setattr(quick_sync.module, "open_quick_sync_encoder", open_silent)
+        spies = Spies(monkeypatch, app, keep_payloads=True)
+        camera_id = app.factory.camera_ids[0]
+        ready_app_steps(app, [app.config(camera_id, capture_fourcc="YUY2")])
+        app.wait(lambda: len(spies.of("jpeg", camera_id)) >= 30, "30 ring frames")
+        assert jpeg_encoder(app, camera_id) == "cv2"
+        app.client.delete(CLOSE)
+    writes = spies.of("jpeg", camera_id)
+    assert len(silent) == 1 and silent[0].accepted == 3 and silent[0].closed  # ASYNC_DEPTH 2: the third frame
+    assert not any(is_quick_sync_jpeg(event["payload"]) for event in writes)
+    assert [k for k, event in enumerate(writes) if event["flags"] & flag.DISCONTINUITY] == [0]
+    taken = app.factory.logs[camera_id].taken
+    sfns = [event["sfn"] for event in writes]
+    assert sfns == [k for k in taken if sfns[0] <= k <= sfns[-1]], "a taken frame has no ring frame"
+    assert any(camera_id in m and "cv2.imencode" in m for m in logs.messages(logging.WARNING))
+    assert stop_line_count(logs.messages(), camera_id, "encoder fallbacks") == 1
+
+
+def test_t_cap_158_a_held_frame_at_a_reopen_and_at_the_close(monkeypatch):
+    """T-CAP-158, section 22.2 [ZEK6 6]: Quick Sync holds one frame. At a reopen (the BGR ring turned on) and at the
+    close, the held frame is dropped: each encoder is closed with one frame more in than out; each JPEG that came
+    out is a ring frame of its own frame; the reopen opens a new encoder."""
+    with capture_app(monkeypatch, [raw_camera()], full_modes=True) as app:
+        quick_sync = QuickSyncFake(monkeypatch, available=True)
+        spies = Spies(monkeypatch, app, keep_payloads=True)
+        camera_id = app.factory.camera_ids[0]
+        ready_app_steps(app, [app.config(camera_id, capture_fourcc="YUY2")])
+        app.wait(lambda: len(spies.of("jpeg", camera_id)) >= 10, "10 ring frames")
+        response = app.apply([app.config(camera_id, capture_fourcc="YUY2", bgr_ring=True)])
+        assert response.status_code == 200, response.text
+        app.wait(lambda: len(quick_sync.encoders) == 2 and quick_sync.encoders[1].outputs >= 10, "the reopen")
+        app.client.delete(CLOSE)
+    assert all(encoder.closed and encoder.accepted == encoder.outputs + 1 for encoder in quick_sync.encoders)
+    writes = spies.of("jpeg", camera_id)
+    assert sum(is_quick_sync_jpeg(event["payload"]) for event in writes) == sum(e.outputs for e in quick_sync.encoders)
+    history = app.factory.logs[camera_id].history
+    assert len(history) == 2
+    opens_at = [k for k, event in enumerate(writes) if quick_sync_number(event["payload"]) == 0]
+    assert len(opens_at) == 2, opens_at
+    first, second = writes[:opens_at[1]], writes[opens_at[1]:]
+    assert [quick_sync_number(e["payload"]) for e in first] == list(range(len(first)))
+    assert [quick_sync_number(e["payload"]) for e in second] == list(range(len(second)))
+
+
+def test_t_cap_159_a_fallback_outside_a_take_and_a_reopen_after_it(monkeypatch):
+    """T-CAP-159, section 22.2 [ZEK6 7]: the encoder fails while no take runs. The WARNING line comes, and the status
+    has no `encoder_fallback` item. A reopen after it uses `cv2.imencode`: no second Quick Sync encoder opens. At the
+    close, the stop line gives one fallback."""
+    with capture_logs() as logs, capture_app(monkeypatch, [raw_camera()], full_modes=True) as app:
+        quick_sync = QuickSyncFake(monkeypatch, available=True)
+        spies = Spies(monkeypatch, app, keep_payloads=True)
+        camera_id = app.factory.camera_ids[0]
+        ready_app_steps(app, [app.config(camera_id, capture_fourcc="YUY2")])
+        quick_sync.fail_when = lambda: len(spies.of("jpeg", camera_id)) >= 20
+        app.wait(lambda: quick_sync.failures == 1 and jpeg_encoder(app, camera_id) == "cv2", "the failure")
+        assert not [w for w in app.status(camera_id)["warnings"] if w["kind"] == "encoder_fallback"]
+        response = app.apply([app.config(camera_id, capture_fourcc="YUY2", bgr_ring=True)])
+        assert response.status_code == 200, response.text
+        app.wait(lambda: len(app.factory.logs[camera_id].history) == 2, "the reopen")
+        app.wait_state(camera_id, "ready")
+        before = len(spies.of("jpeg", camera_id))
+        app.wait(lambda: len(spies.of("jpeg", camera_id)) >= before + 10, "10 ring frames after the reopen")
+        assert jpeg_encoder(app, camera_id) == "cv2"
+        app.client.delete(CLOSE)
+    assert len(quick_sync.encoders) == 1, "a Quick Sync encoder opened after the fallback"
+    assert not any(is_quick_sync_jpeg(e["payload"]) for e in spies.of("jpeg", camera_id)[before:])
+    assert any(camera_id in m and "cv2.imencode" in m for m in logs.messages(logging.WARNING))
+    assert stop_line_count(logs.messages(), camera_id, "encoder fallbacks") == 1
+
+
+RANGE_SETTINGS = {
+    "setting full": (dict(input_range="full"), dict(os_range="limited"), "full"),
+    "setting limited": (dict(input_range="limited"), dict(os_range="limited", y_outside=((0, 0.02),)), "limited"),
+    "OS flag full": ({}, dict(os_range="full"), "full"),
+}
+
+
+@pytest.mark.parametrize("case", list(RANGE_SETTINGS))
+def test_t_cap_160_the_range_setting_and_the_os_flag(monkeypatch, case):
+    """T-CAP-160, section 13.3 [ZEK6 4]: the config `input_range` "full" or "limited" wins over the share of the
+    warm-up; with "auto", the OS flag "full" and no Y value outside 16 to 235 give full range. The log line gives the
+    range, and the ring JPEG is the full-range BGR of the source with that range (3 levels)."""
+    config, script, expected = RANGE_SETTINGS[case]
+    with capture_logs() as logs, capture_app(monkeypatch, [raw_camera(**script)], full_modes=True) as app:
+        QuickSyncFake(monkeypatch, available=False)
+        spies = Spies(monkeypatch, app, keep_payloads=True)
+        camera_id = app.factory.camera_ids[0]
+        ready_app_steps(app, [app.config(camera_id, capture_fourcc="YUY2", **config)])
+        app.wait(lambda: len(spies.of("jpeg", camera_id)) >= 5, "5 ring frames")
+        app.client.delete(CLOSE)
+    assert range_values(logs, camera_id) == [expected]
+    raw = synthetic_raw("YUY2", W, H, dict(script.get("y_outside", ((0, 0.0),)))[0])
+    reference = full_range_to_bgr(raw, "YUY2") if expected == "full" else to_bgr(raw, "YUY2")
+    for event in spies.of("jpeg", camera_id)[:5]:
+        assert mean_difference(decode(event["payload"]), reference) <= LIMIT_LEVELS

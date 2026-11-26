@@ -269,12 +269,14 @@ class CameraLoop:
             t1 = timing.clock()
             self.gate_ns += t1 - t0
         frame = self._read()
+        t2 = None
         if on:
             retrieve = getattr(self.source, "retrieve_ns", None) if frame is not None and frame.format == "BGR" else None
             if retrieve is not None:  # 3.1: the OpenCV wait ends at the read before its retrieve (no read of its own)
                 self.wait_ns += retrieve[0] - t1
             else:
-                self.wait_ns += timing.clock() - t1
+                t2 = timing.clock()
+                self.wait_ns += t2 - t1
         if frame is not None:
             if on:
                 steps = self.loop_steps
@@ -282,7 +284,7 @@ class CameraLoop:
                 steps.add("gate_wait", self.gate_ns)
             self.wait_ns = self.gate_ns = 0
             if self.encoder is not None and frame.format in RAW_FORMATS:
-                self._encode(frame, on)
+                self._encode(frame, on, t2)
             else:
                 self._process(frame, on)
 
@@ -421,18 +423,21 @@ class CameraLoop:
         if encoder is not None:
             encoder.close()
 
-    def _encode(self, frame: CapturedFrame, on: bool) -> None:
-        """5.1 step 4 for YUY2 and NV12 (13.2): each frame whose JPEG came out goes on through the loop."""
+    def _encode(self, frame: CapturedFrame, on: bool, t0: int | None = None) -> None:
+        """5.1 step 4 for YUY2 and NV12 (13.2): each frame whose JPEG came out goes on through the loop. One
+        `jpeg_encode` sample for each call of `feed` (capture-timings.md 5.4 [ZEK6 11]): it starts at the read that
+        ends `camera_wait` (`t0`), and its end is the first read of the next bracket (5.3)."""
         encoder, before = self.encoder, self.encoder.fallbacks
-        if on:
-            t0 = self.timing.clock()
         ready = encoder.feed(frame)
+        t = None
         if on:
-            self.loop_steps.add("jpeg_encode", self.timing.clock() - t0)
+            t = self.timing.clock()
+            self.loop_steps.add("jpeg_encode", t - t0)
         if encoder.fallbacks != before:
             self._encoder_fell_back(encoder.error)
         for item, jpeg, bgr in ready:
-            self._process(item, on, jpeg=jpeg, bgr=bgr)
+            self._process(item, on, jpeg=jpeg, bgr=bgr, start=t)
+            t = None
 
     def _encoder_fell_back(self, error: str | None) -> None:
         """13.2 [V3, 3WCA 3]: one WARNING line, a count for the stop line, and an item while the take runs."""
@@ -654,10 +659,11 @@ class CameraLoop:
     # ----- each frame (5.1) -----
 
     def _process(self, frame: CapturedFrame, on: bool = False, jpeg: bytes | None = None,
-                 bgr: np.ndarray | None = None) -> None:
+                 bgr: np.ndarray | None = None, start: int | None = None) -> None:
         """`on`: the capture timings measure this frame. Brackets that follow one another share one clock read (`t`),
         so the loop reads the clock at most 10 times for each frame (capture-timings.md 5.3). `jpeg`: the JPEG of a
-        YUY2 or NV12 frame (13.2; `b""` for a frame of the wrong length), with `bgr`, the image that `cv2` encoded."""
+        YUY2 or NV12 frame (13.2; `b""` for a frame of the wrong length), with `bgr`, the image that `cv2` encoded.
+        `start`: a clock read that the caller already made, the first read of this frame."""
         if self.replaced_base is None:
             self.replaced_base = self.source.replaced_count  # the first frame in the gate (5.2, agent 49)
         self.gate_count += 1
@@ -665,7 +671,7 @@ class CameraLoop:
         should_record, should_finish = self.orchestrator.should_record_frame_number(frame_number=number)
         timing, steps = self.timing, self.loop_steps
         if on:
-            t = timing.clock()
+            t = start if start is not None else timing.clock()
         image = None
         if frame.format == "BGR":
             image = frame.payload

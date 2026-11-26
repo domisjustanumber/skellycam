@@ -302,6 +302,34 @@ def test_t_tim_23_the_clock_reads_of_each_frame(monkeypatch, tmp_path):
     assert window["steps"]["exposure_search_brightness"]["n"] == 10
 
 
+def test_t_tim_23_the_clock_reads_of_a_raw_camera(monkeypatch, tmp_path):
+    """T-TIM-23 for a YUY2 camera with Quick Sync (5.3, 5.4 [ZEK6 11]): the limit counts the frames that the loop
+    takes. The fake Quick Sync encoder holds one frame, so the first frame gives no ring frame. One `jpeg_encode`
+    sample for each taken frame; at most 10 reads for each taken frame, with the hashes and a take."""
+    from skellycam.core.camera.capture import encoder as encoder_module
+    from skellycam.tests.capture.uncompressed import QuickSyncFake
+
+    clock = VClock()
+    source = ScriptSource(clock, raw=True, timing_steps=timings().MEDIA_FOUNDATION_STEPS)
+    loop = make_loop(monkeypatch, clock, source)
+    QuickSyncFake(monkeypatch, available=True)
+    loop.raw_format, loop.full_range = "YUY2", False
+    loop.encoder = encoder_module.FrameEncoder("YUY2", 64, 48, False, True)
+    switch_on(loop)
+    start_take(loop, tmp_path)
+    loop._arm_hashes("recording")
+    reads = count_reads(monkeypatch)
+    me = threading.get_ident()
+    taken = source.frames
+    frames(loop, 10)
+    taken = source.frames - taken
+    in_loop = sum(ident == me for ident in reads)
+    assert taken == 11 and 0 < in_loop <= 10 * taken, (taken, in_loop)
+    end_take(loop)
+    window = summary(loop)
+    assert window["steps"]["jpeg_encode"]["n"] == taken
+
+
 def test_t_tim_16_a_fault_of_the_timings_still_sends_the_diagnostics(monkeypatch, caplog):
     """6.2: a fault while the loop builds its timings sends `timings` None with the full diagnostics dict, and is
     logged one time; the next publish sends a summary again."""

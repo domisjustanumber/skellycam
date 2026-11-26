@@ -78,14 +78,16 @@ JPEG = synthetic_jpeg(64, 48)
 
 class ScriptSource:
     """A pull source. Each read moves the clock by `read_ns` and gives a frame; `empty` is a list of the read
-    calls (0 is the first) that give no frame. `copy_ns`: the fake callback copy of each frame."""
+    calls (0 is the first) that give no frame. `copy_ns`: the fake callback copy of each frame. `raw`: each frame is
+    a synthetic YUY2 frame (windows-capture.md 13.2)."""
 
     name = "fake"
     searches = False
 
     def __init__(self, clock, *, read_ns=30 * MS, empty=(), copy_ns=None, bgr=False, diagnostics=None,
-                 timing_steps=None, on_read=None):
+                 timing_steps=None, on_read=None, raw=False):
         self.clock, self.read_ns, self.empty, self.copy_ns, self.bgr = clock, read_ns, set(empty), copy_ns, bgr
+        self.raw = raw
         self.reads = self.frames = 0
         self.extra_diagnostics = diagnostics or {}
         self.diagnostics_ns = 0
@@ -125,7 +127,11 @@ class ScriptSource:
             self.clock.advance(self.copy_ns)
             if on:
                 steps.add("camera_sample_copy", steps.control.clock() - t0)
-        if self.bgr:
+        if self.raw:
+            from skellycam.tests.capture.uncompressed import synthetic_raw
+            payload = synthetic_raw("YUY2", 64, 48)
+            fmt, length = "YUY2", payload.nbytes
+        elif self.bgr:
             payload, fmt, length = np.full((48, 64, 3), 128, np.uint8), "BGR", 0
         else:
             payload = with_comment(JPEG, number)

@@ -106,7 +106,9 @@ class FrameEncoder:
     `feed(frame)` gives the frames whose JPEG is ready, in the order of the source: (frame, JPEG, BGR image or None).
     A raw frame of the wrong length is not encoded; its JPEG is `b""` (the loop flags it). Quick Sync holds a frame,
     so a frame can come out one call later. When Quick Sync fails, `cv2.imencode` encodes the held frames again from
-    their raw frames and each later frame; the first frame out after the event gets the discontinuity [ring 4]."""
+    their raw frames and each later frame; the first frame out after the event gets the discontinuity [ring 4]. More
+    than `ASYNC_DEPTH` frames with no JPEG is a failure too [ZEK6 12]: else the camera would publish nothing and hold
+    the lockstep gate of each other camera."""
 
     def __init__(self, fmt: str, width: int, height: int, full_range: bool, quick_sync: bool):
         self.format, self.width, self.height, self.full_range = fmt, width, height, full_range
@@ -134,8 +136,11 @@ class FrameEncoder:
             except Exception as error:
                 self._fall_back(error)
             else:
-                for jpeg, waiting in zip(jpegs, [e for e in self._queue if e[1] is None]):
-                    waiting[1] = jpeg
+                waiting = [e for e in self._queue if e[1] is None]
+                for jpeg, held in zip(jpegs, waiting):
+                    held[1] = jpeg
+                if len(waiting) - len(jpegs) > ASYNC_DEPTH:  # Quick Sync gives no JPEG and no error: it stalled
+                    self._fall_back(RuntimeError(f"no JPEG came out for {len(waiting) - len(jpegs)} frames"))
         ready = []
         while self._queue and self._queue[0][1] is not None:
             ready.append(tuple(self._queue.popleft()))

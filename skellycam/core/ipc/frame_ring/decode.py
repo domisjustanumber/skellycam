@@ -25,14 +25,12 @@ TO_LIMITED_C = np.clip(np.rint(128 + (_LEVELS - 128) * 224 / 255), 0, 255).astyp
 
 
 def map_levels(raw: np.ndarray, fmt: str, y_table: np.ndarray, c_table: np.ndarray) -> np.ndarray:
-    """A new YUY2 `(h, w, 2)` or NV12 `(h * 3 // 2, w)` frame with each Y value and each chroma value through its table."""
-    out = np.empty_like(raw)
-    if fmt == "YUY2":
-        out[..., 0], out[..., 1] = y_table[raw[..., 0]], c_table[raw[..., 1]]
-    else:
-        height = raw.shape[0] * 2 // 3
-        out[:height], out[height:] = y_table[raw[:height]], c_table[raw[height:]]
-    return out
+    """A new YUY2 `(h, w, 2)` or NV12 `(h * 3 // 2, w)` frame with each Y value and each chroma value through its table.
+    `cv2.LUT`: 2.4 ms (YUY2) and 1.3 ms (NV12) at 1080p against 8.5 and 5.7 ms with NumPy indexing, same bytes [ZEK6 14]."""
+    if fmt == "YUY2":  # channel 0 is Y, channel 1 is U or V: one table for each channel
+        return cv2.LUT(raw, np.stack([y_table, c_table], axis=-1).reshape(1, 256, 2))
+    height = raw.shape[0] * 2 // 3
+    return np.concatenate([cv2.LUT(raw[:height], y_table), cv2.LUT(raw[height:], c_table)])
 
 
 def raw_to_bgr(raw: np.ndarray, fmt: str, full_range: bool = False) -> np.ndarray:
