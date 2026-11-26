@@ -11,7 +11,10 @@ Choices of the supervisor (review of the step):
 
 1. The main-process stall watch (4.10) trips after 3 s, not 2 s: the in-process rule of
    [`windows-capture.md`](../../specs/windows-capture.md) 9.5 (2 s) must come first, because it finishes
-   the files and closes the camera, and the watch kills the process.
+   the files and closes the camera, and the watch kills the process. The user decided against this item on
+   2026-11-26: the watch trips after 2 s, item 14 of
+   [ADR-22EJ](22EJ-decisions-of-the-user-for-linux-and-macos-native-capture.md) (Q850 of
+   [ADR-88HQ](88HQ-decisions-of-the-user-on-q842-to-q856.md)). The other items stay proposed.
 2. The watch is off while `should_pause` is set (the record start opens the files on the loop thread).
    `SKELLYCAM_STALL_WATCH=0` turns it off; the group reads it when it is made, and logs it at its start.
 3. A pull source whose read or control call blocks longer than the limit ends the camera, by design.

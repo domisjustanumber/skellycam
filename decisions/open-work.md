@@ -62,13 +62,12 @@ task. Delete an item when its work is done. The PR that closes an item records t
   - The failing tests of 6a are in `skellycam-ui/src/player/tests/` and
     `skellycam-ui/src/components/playback/tests/`. The benchmarks T-PLAY-65 to T-PLAY-70 run by hand with
     `playwright.player-bench.config.ts`.
-  - The `xvfb` version of `.github/workflows/player.yml` is not verified. The unit tests ran on Node
-    26.13.1 on the Windows test machine only.
+  - The unit tests ran on Node 26.13.1 on Windows only.
   - The recorder spec needs one sentence for a `camera_dead` detail that does not parse (item 4 of
     ADR-1ACK).
-  - ADR-4D94 changes the player: no `picked-take-folders.json` in 6a (section 5.3 and item 6 of the
-    spec must change); `xvfb` from the runner image (section 12.6 must change); a `.gitignore`
-    exception for `skellycam-ui/src/player/`.
+  - Code owed to `player.md` (Q851): no `picked-take-folders.json` and T-PLAY-62 (5.3); the label (8.4); a
+    `.gitignore` exception for `skellycam-ui/src/player/` that wins over the later `index.ts` lines (4.1).
+  - `player.md` lacks about 30 rules of ADR-4D94 (4MJ4 names, 1ACK 7, 9 to 18, 5FBS 12); then absorb it.
 - **Step 6c part 1 (v1 playback).** [`specs/player-legacy.md`](../specs/player-legacy.md) revision 6
   is accepted ([ADR-2Z2D](entries/2Z2D-answers-of-the-owner-q800-to-q803-and-acceptance-of-the-v1-playback-spec.md)).
   Next: its failing tests. Open:
@@ -106,9 +105,9 @@ task. Delete an item when its work is done. The PR that closes an item records t
   - Not verified: real cameras, Linux, macOS and the installer build.
 - **The certify run of skellycam.** The spec [`specs/certify.md`](../specs/certify.md) is draft 3. The code is in `skellycam/core/certify/` (section 19 of the
   spec). Open: the checks that are `not-run`
-  `not-built` (the status line of the spec). [ADR-6YGH](entries/6YGH-acceptance-of-the-as-built-choices-of-fix-lanes-4-and-5-and-of-certify.md)
-  accepted KY81 and DC43 in full, and FC1C and HQE5 in part (still proposed); 8CP7 is accepted by Q814. Not
-  decided: FC1C items 4 and 13, HQE5 items 2 and 3.
+  `not-built` (the status line of the spec). Not decided: FC1C items 4 and 13, HQE5 items 2 and 3
+  ([ADR-6YGH](entries/6YGH-acceptance-of-the-as-built-choices-of-fix-lanes-4-and-5-and-of-certify.md)). The next
+  certify lane checks whether 8CP7 can be absorbed (Q853).
 - **Certify report fields, decided 2026-11-23, not built**
   ([ADR-F6C3](entries/F6C3-decisions-of-the-user-on-the-certify-report-fields.md)). The fields, the
   kept logs are in section 3.5 of the spec, in the slim form of Q594, with the build order of 3.6.7 (Q626) and
@@ -188,14 +187,15 @@ task. Delete an item when its work is done. The PR that closes an item records t
   - macOS [NV]: the runner's open-file limit, and that its errors came from this leak. A run of the macOS jobs by
     hand gives the result.
 - **The later merge of `dom/jpeg-encode-tests`.** On TC9B, 53VB, JWZ1 and 8ACV, the status text of
-  `dom/log-cleanup` wins. 2AQT stays accepted, not absorbed, until `windows-capture.md` 16.1 states that both
-  cameras stay `ready` in the blocking half.
+  `dom/log-cleanup` wins. Both branches absorb 2AQT into `windows-capture.md` 16.1, so they agree; the 16.1
+  text of `dom/answers-q842` (both cameras stay `ready`) wins.
+- **Next CI lane (Q854).** Each workflow pins uv 0.13.7 (also `test.yml`, ADR-PA3A); ADR-7DE6 says 0.13.9. An
+  entry with the version of the workflows supersedes ADR-7DE6.
 - **ZEX9** ([ADR-ZEX9](entries/ZEX9-decisions-of-the-user-on-the-housekeeping-of-2026-11-25.md)) becomes `done`
   after the CI result of its item 4.
 - **Exclusive access** (accepted, [ADR-5PAR](entries/5PAR-decisions-of-the-user-on-the-control-read-the-holder-and-the-exclusive-access-drafts.md)).
   `windows-capture.md` 21, `unix-capture.md` 4.13 and `certify.md` 20 are accepted. Next: the Windows lane writes the
-  failing tests, then the code; Linux and macOS land with phase 7. The user decides the choices of the control-read
-  check ([ADR-J1HD](entries/J1HD-choices-of-the-control-read-check.md)). Owed: the codes `camera_shared` and
+  failing tests, then the code; Linux and macOS land with phase 7. Owed: the codes `camera_shared` and
   `camera_control_changed` in `recorder.md` 6.6 and the format of skellyspecs; the three warnings in
   `camera-requests.md` 1.5; the line before a take in `preview-4b.md`; a contract field for `details.before_run`.
 - **Certify for freemocap** ([ADR-CQ2X](entries/CQ2X-decisions-of-the-user-on-the-overlaps-with-freemocap.md),

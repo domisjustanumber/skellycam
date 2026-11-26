@@ -1,8 +1,10 @@
 # J1HD — Choices of the agent for the certify check of the control read and the rule that follows from it
 
-**Status:** proposed, 2026-11-25 (agent; builds Q811 of
+**Status:** absorbed into [`specs/certify.md#209-the-control-read-during-a-take-q811-q843-q844`](../../specs/certify.md#209-the-control-read-during-a-take-q811-q843-q844),
+[`specs/windows-capture.md#216-control-changes-by-other-processes-q768-q784-q797`](../../specs/windows-capture.md#216-control-changes-by-other-processes-q768-q784-q797),
+2026-11-26 (commit to dom/answers-q842; was accepted, 2026-11-26 (user, Q843 and Q844 of [ADR-88HQ](88HQ-decisions-of-the-user-on-q842-to-q856.md)); was proposed, 2026-11-25 (agent; builds Q811 of
 [ADR-5PAR](5PAR-decisions-of-the-user-on-the-control-read-the-holder-and-the-exclusive-access-drafts.md); commit to
-dom/exclusive-access-spec).
+dom/exclusive-access-spec)).
 
 ## Decision
 

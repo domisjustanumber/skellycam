@@ -93,8 +93,8 @@ recorder step 5a opens, so the two can land together [Y1].
 - A change of the player of today [L5], except the one optional prop of `PlaybackControls` [U3]
   (section 10).
 - A reload of a take that is still being written. The reader reads a snapshot at open [agent 12].
-- The capture info JSON, the processing info JSON, the calibration TOML, the Parquet and the journal.
-  The player needs none of them in 6a [agent 14].
+- The processing info JSON, the calibration TOML, the Parquet and the journal. The player needs none of
+  them in 6a [agent 14]. It reads the capture info JSON only for the camera label (8.4).
 - The full reader result of SFF-885 and the JavaScript test adapter [L2].
 
 ### 1.5 Decided elsewhere
@@ -218,8 +218,8 @@ The module is the folder `skellycam-ui/src/player/`:
 | `tests/` | `unit/`, `browser/`, `bench/`, `fixtures/`, `harness/` (section 12). |
 
 The root `.gitignore` of the repository ignores each file with the name `index.ts` or `tsconfig.json`.
-Add `index.ts` and `tsconfig.json` of the module with `git add -f`. Do not change the `.gitignore`
-([ADR-1ACK](../decisions/entries/1ACK-corrections-and-choices-of-the-6a-player-code.md)).
+An exception for `skellycam-ui/src/player/` in the `.gitignore`, after those lines, keeps the `index.ts`
+and `tsconfig.json` of the module tracked, with no `git add -f` (1ACK 6 as changed by [ADR-4D94](../decisions/entries/4D94-step-6a-choices-of-the-canvas-player.md)).
 
 ### 4.2 The boundary rule [Y6] [agent 2]
 
@@ -249,7 +249,7 @@ The module is the engine and the tile. The controls bar, the tile grid and the k
 A host does these steps:
 
 1. In the main process, before `app` is ready: call `registerTakeScheme()` of `main/take-scheme.ts`.
-   After `app` is ready: call `installTakeHandler({ recordingsFolder, pickedFoldersFile })` (5.3).
+   After `app` is ready: call `installTakeHandler({ recordingsFolder })` (5.3) [agent 40].
 2. In the preload script: call `exposeTakeBridge(contextBridge, ipcRenderer)` of `main/bridge.ts`.
 3. In the page: `const files = await electronTakeFiles(folderPath)`. When `isTakeFolder(files)` is
    false, the host closes `files` and uses its other player (section 10). Else
@@ -298,7 +298,7 @@ interface PlayerState {
 }
 
 interface CameraState {
-  label: string;                          // camera_label
+  label: string;                          // the camera label of 8.4
   name: string;                           // the path of the camera file
   state: 'finished' | 'repaired' | 'unfinished' | 'damaged' | 'invalid' | 'unsupported_version';
   reason: string | null;                  // a reason code of SFF-887
@@ -371,9 +371,10 @@ the user picked in the system folder dialog [L7]:
   `installTakeHandler` as `recordingsFolder`.
 - A picked folder is a folder that `dialog.showOpenDialog` returned in the main process, through the
   existing call `fileSystem.selectDirectory` [C `electron/main/api.ts`]. The main process adds each
-  such folder to a list, and keeps the list in the file `pickedFoldersFile` in the user data folder of
-  the app (`app.getPath('userData')`). A folder that the user picked in an earlier run, for example the
-  base recording folder of the recording browser, stays allowed [U1].
+  such folder to a list in its memory, for the run of the app. In 6a it writes no list file
+  (`picked-take-folders.json`): the list file waits for step 6c (the ruling of [ADR-4D94](../decisions/entries/4D94-step-6a-choices-of-the-canvas-player.md), which overturns
+  the "remembered across restarts" of U1 for 6a; Q851 of [ADR-88HQ](../decisions/entries/88HQ-decisions-of-the-user-on-q842-to-q856.md)). A folder that the user picked earlier
+  in the same run, for example the base recording folder of the recording browser, stays allowed.
 - Only a dialog pick in the main process adds a folder to the list. No bridge call, IPC message or
   request of a page can add a folder, change the list or read it [U1]. T-PLAY-62 tests this.
 - "Inside" compares real paths (`fs.realpath`): the folder is the allowed folder or below it. On
@@ -477,6 +478,8 @@ answer as a read error [M `RT` §7] [agent 10]. Thus a later transport that answ
 ### 5.8 What the reader reads
 
 - the manifest: `readWhole('recording_manifest.json', 16 MiB)` [agent 11];
+- the capture info JSON, for the camera label of 8.4: `readWhole('<recording_name>_info.json', 16 MiB)`;
+  a failed read gives no error, only the label `camera_label` [agent 40];
 - each video sidecar: `readWhole(<csv>, no limit)`;
 - each camera file: its head (6.9), the range of each frame that it shows (6.10) and its tail (6.9).
 
@@ -893,7 +896,7 @@ interface DecodedImage { displayWidth: number; displayHeight: number; close(): v
 interface TileLabel {
   frame: number;          // k* for the player; the ring frame number for the preview
   frameDigits: number;    // the digits for the leading zeros (F4)
-  camera: string;         // camera_label for the player
+  camera: string;         // the camera label of 8.4 for the player
   timeNs: number | null;  // the time of the shown image, relative to the start; null: no time part
   nominalFps: number;     // for the timecode frame field
   timeEstimated?: boolean; // true: `~` before the time part (player-legacy.md 2.2)
@@ -983,8 +986,14 @@ overlay [SFF-737].
 - The overlay has a fixed size in CSS pixels.
 - The canvas `title` is "timestamp from recording" while the time part shows (F6).
 - The tile keeps the text of its last overlay, so that a test can read it.
-- For the player: `frame` = k*, `frameDigits` = the digits of K, `camera` = `camera_label`, `timeNs` =
+- For the player: `frame` = k*, `frameDigits` = the digits of K, `camera` = the label below, `timeNs` =
   the player time of the image row, `nominalFps` = the nominal rate of the camera.
+- The camera label of the player is `Camera <os_index> · <os_name>`, from `device.os_index` and `device.os_name`
+  of the member of the camera in `camera_configs` of the capture info JSON ([`recorder.md`](recorder.md) 6.7). The
+  tiles are in the order of `group_position`. A take without these values (an older take, a take with no
+  manifest, a capture info that is missing or does not parse, or a null value) shows `camera_label`
+  (Q11 of [ADR-VYS7](../decisions/entries/VYS7-answers-of-the-user-to-the-step-4b-spec-and-go-ahead-for-its-tests.md); Q851 of [ADR-88HQ](../decisions/entries/88HQ-decisions-of-the-user-on-q842-to-q856.md)). The reader finds the file by the name `<recording_name>_info.json` of the
+  manifest [agent 40].
 - `nominalFps` of the player state, for "Rec: fps", is the nominal rate of the camera with the lowest
   `group_position`, rounded to 3 decimals as SFF-728 rounds `nominal_fps` [agent 30].
 
@@ -1138,7 +1147,7 @@ cold disk; a low-end laptop; a file that a writer still writes; real clock align
   test Vite config builds the harness page and the harness main process. The tests of the host view are
   in `skellycam-ui/src/components/playback/tests/` and use the same runner.
 - **electron**: the handler, in the same test Electron app, with real files. The harness gives
-  `installTakeHandler` a temporary `recordingsFolder` and `pickedFoldersFile`. It has two test-only
+  `installTakeHandler` a temporary `recordingsFolder`. It has two test-only
   hooks: one records a dialog pick, one makes the reads of one path fail.
 - **benchmark**: timed runs on the Windows test machine, started by hand. They record results and
   compare them with the targets of 11.3. They do not run in CI.
@@ -1292,7 +1301,7 @@ The recorder spec uses this description as the model of its placeholder, so it i
 | T-PLAY-59 | electron | A test variant of the handler answers 200 with the exact length, 200 with the whole file, and 206 with a wrong `Content-Range` start. | The page client accepts only the first; the two others are read errors. |
 | T-PLAY-60 | electron | A sparse file of 5 GiB; read 3 ranges past 4 GiB. | The bytes equal the bytes that the test wrote at those offsets. |
 | T-PLAY-61 | electron | Open `normal`, play it to the end, seek 50 times, close. | Each file of the folder has the same bytes and modification time as before [SFF-799]. |
-| T-PLAY-62 | electron | Open a folder outside the test `recordingsFolder` and not picked; the page calls each bridge and IPC channel of the module with that folder; the same folder after the test hook records a dialog pick; a folder inside the `recordingsFolder`; a link inside the `recordingsFolder` to an outside folder. | Refused with "folder not allowed" and no token, also after the page calls (the list file does not change); allowed after the pick, also after a restart of the harness (the list file); allowed inside; the link is refused [L7, U1]. |
+| T-PLAY-62 | electron | Open a folder outside the test `recordingsFolder` and not picked; the page calls each bridge and IPC channel of the module with that folder; the same folder after the test hook records a dialog pick; a folder inside the `recordingsFolder`; a link inside the `recordingsFolder` to an outside folder. | Refused with "folder not allowed" and no token, also after the page calls; allowed after the pick; refused again after a restart of the harness, and no `picked-take-folders.json` exists (5.3, ADR-4D94); allowed inside; the link is refused [L7, U1]. |
 | T-PLAY-63 | electron | Open a take in window A; navigate A; open a take in window B, then open a second take in B; close B. | A's token gets 404 after the navigation; B's first token gets 404 after the second open; B's second token gets 404 after the close. |
 | T-PLAY-64 | electron | The shared `TakeFiles` check suite of T-PLAY-39 on the Electron implementation. | The same results as T-PLAY-39 [L8]. |
 | T-PLAY-65 | benchmark | 16 readers × 60 fps × 150 kB for 60 s through the handler; CPU of the main, renderer and GPU processes. | Target 11.3; results recorded [M `RT` §8 item 3]. |
@@ -1406,11 +1415,11 @@ A new workflow `.github/workflows/player.yml`, on the pattern of `.github/workfl
   `949feb2413d6458794dcd2491c4babbbce0c15c1` (v7.1.0) with Node `26.13.1`, as
   `build-installers-pyinstaller.yml` [NV: no test ran on Node 26.13.1].
 - Steps in `skellycam-ui/`: `npm ci`, `npm run test:player:unit`, `npm run test:player:browser`.
-- Job `player-windows` on `windows-2025`; job `player-linux` on `ubuntu-24.04`, with `xvfb` installed by
-  `apt-get` at one exact version; job `player-macos` on `macos-15`, with its own concurrency group and a
+- Job `player-windows` on `windows-2025`; job `player-linux` on `ubuntu-24.04`, with the `xvfb` of the runner
+  image: a step prints its version and checks `xvfb-run`; the image label is the pin, because an apt pin goes
+  away at the next update of the archive (5FBS 11 of [ADR-4D94](../decisions/entries/4D94-step-6a-choices-of-the-canvas-player.md)); job `player-macos` on `macos-15`, with its own concurrency group and a
   time limit of 40 minutes, as the macOS job of `capture.yml`.
-- The exact `xvfb` package version is taken from the runner image when the workflow is written. This is
-  [NV] now.
+- In each job the test steps run only when `npm ci` passed (5FBS 11).
 - The workflow does not run the benchmarks.
 
 ## 13. Format changes that the player contributes
@@ -1466,7 +1475,7 @@ Section 14.2 lists the cases that the format still leaves open.
 3. The Chromium version of Electron 45.3.4: `process.versions` gives Chrome 156.0.8078.100 and Node
    24.22.3 (read on the Windows test machine, 2026-11-20). The timing on 45.3.4 is still [NV].
 4. A page from `http://` (Vite dev server) that reads the custom scheme was not tested [M `RT` §4].
-5. The exact `xvfb` version for the Linux job [NV]; Node 26.13.1 [NV].
+5. Node 26.13.1 [NV].
 6. That no other page can learn a token (5.4) [NV].
 7. The golden folders of skellyfileformat: G1 to G16 and G18 exist, each case with a `.player.json`
    result (`../skellyfileformat/golden/README.md`). The conformance run against them comes with 6c
@@ -1488,7 +1497,7 @@ Section 14.2 lists the cases that the format still leaves open.
   it (5.7).
 - A request to the scheme does not name its window; the token is the only key (5.4).
 - A recordings folder that the user set in the settings and never picked in the dialog, outside the
-  default folder, is refused until the user picks it once (5.3).
+  default folder, is refused until the user picks it, in each run of the app (5.3).
 - All timing evidence is from one Windows machine with an NVIDIA GPU, at 1080p30 and 720p, with JPEG
   re-encodes (11.2).
 - The decode runs on the page main thread. A busy page can delay the draws (step 4b measures it).
@@ -1570,8 +1579,8 @@ each one [agent n].
 4. The names of the public interface, the state and the events (4.4).
 5. The scheme `skellycam-take`, its privileges, the token of 32 lower-case hexadecimal characters, tied
    to the window that asked (5.2, 5.4).
-6. The recordings folder computed with the backend rule; the list file of picked folders in the user
-   data folder (U1 decides that picks are remembered); "inside" by real path, without case on Windows
+6. The recordings folder computed with the backend rule; the picked folders in memory for the run of the
+   app, with no list file in 6a (ADR-4D94); "inside" by real path, without case on Windows
    (5.3).
 7. The open: a scan of the root and the media folder only, regular files only, no links or junctions,
    an allow-list by exact relative path, identities by `stat` with `bigint`, no absolute path to the
@@ -1628,6 +1637,10 @@ each one [agent n].
 37. A read error also sends an `error` event; a shortened file is a read error (5.7).
 38. The link case of T-PLAY-57 on Windows is a junction (12.5).
 39. The wording of the three items that the player contributes to the F-list (13).
+40. Of the answers of 2026-11-26 (Q851): the capture info found by `<recording_name>_info.json` of the
+    manifest, read with the limit of the manifest; each failure of that read falls back to `camera_label`
+    with no error; `installTakeHandler` loses `pickedFoldersFile` (8.4, 5.3, 5.8,
+    [ADR-4PPS](../decisions/entries/4PPS-choices-of-the-answers-lane-of-q842-to-q856.md), proposed).
 
 ## 17. Questions for the user
 
@@ -1745,7 +1758,8 @@ The user gave these answers on 2026-11-20, relayed by the supervisor
 ([ADR-4HNY](../decisions/entries/4HNY-missing-frames-m1-to-m10-and-player-decisions-l1-to-l8.md)):
 
 - U1: A folder that the user picked in the system folder dialog is remembered across restarts of the
-  app. A page must not be able to add to the list without a dialog pick.
+  app. A page must not be able to add to the list without a dialog pick. For 6a, ADR-4D94 overturns the
+  first sentence: the picks are kept for the run of the app, and the list file waits for step 6c (5.3).
 - U2: A write error on one camera file is a second short-file case: the same short pair as a killed
   process (`missing` rows with empty byte fields and no block, `# repair`, `# end`), with the manifest
   warnings `camera_file_short` and `take_error`, and no `camera_dead`.

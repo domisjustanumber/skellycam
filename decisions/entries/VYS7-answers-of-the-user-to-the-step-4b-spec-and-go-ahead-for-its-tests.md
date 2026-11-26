@@ -1,6 +1,10 @@
 # VYS7 — Answers of the user to the questions of the step 4b spec, and the PR target; acceptance in principle and go-ahead for its tests
 
-**Status:** accepted, 2026-11-20 (user).
+**Status:** absorbed into [`specs/preview-4b.md#phase-4-preview-specification-step-4b-the-ui-side-the-connection-of-the-sender-the-deletion`](../../specs/preview-4b.md#phase-4-preview-specification-step-4b-the-ui-side-the-connection-of-the-sender-the-deletion),
+[`specs/player.md#84-the-label-and-the-overlay-e6-agent-24`](../../specs/player.md#84-the-label-and-the-overlay-e6-agent-24),
+[`specs/recorder.md#67-the-capture-info-json`](../../specs/recorder.md#67-the-capture-info-json),
+[`AGENTS.md#6-git-rules`](../../AGENTS.md#6-git-rules),
+2026-11-26 (commit to dom/answers-q842; was accepted, 2026-11-20 (user)).
 
 ## Decision
 

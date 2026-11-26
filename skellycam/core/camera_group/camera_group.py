@@ -80,8 +80,8 @@ SEARCH_WAIT_LIMIT_S = 20.0 + 2 * 5.0 + 5.0
 WATCHED_STATES = ("waiting", "adjusting", "checking", "too_slow", "ready")
 # camera-requests.md 1.3b [H1, AC5B]: the apply waits for a camera in AUTO until it is in one of these states.
 AUTO_SETTLED_STATES = ("adjusting", "ready", "too_slow", "failed", "dead")
-STALL_WATCH_S = 3.0  # over the 2 s of the in-process rule (W 9.5), which closes the camera and its files cleanly
-STALL_REASON = "no loop pass for 3 s"
+STALL_WATCH_S = 2.0  # the 2 s of the in-process rule (W 9.5) too; that rule normally comes first (ADR-22EJ item 14, Q850)
+STALL_REASON = "no loop pass for 2 s"
 KILL_AFTER_S = 1.0
 STALL_WATCH_SETTING = "SKELLYCAM_STALL_WATCH"  # "0" turns the watch off; read when a group is made
 REQUEST_RUNS = "Another change of the cameras runs now. Send the request again when the cameras are ready."  # 2.4a 7

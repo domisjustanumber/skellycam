@@ -3,7 +3,7 @@ specs/windows-capture.md 9.5; ADR-AC5B items 1 and 11).
 
 The shared loop adds one to `CameraStatus.alive_count` at each pass, and a wait of the loop in the recorder
 adds one at least each 0.5 s. The watch thread of the group ends a camera whose counter did not change for
-3 s in a watched state. These tests check that it ends a camera that cannot run a loop pass, and that it
+2 s in a watched state (ADR-22EJ item 14, Q850). These tests check that it ends a camera that cannot run a loop pass, and that it
 ends no healthy camera: a `waiting` camera, the internal pause of a record start, a wait in the recorder, a
 slow close of a reopen, the OpenCV fake (a pull source), and cameras under a load of the main process.
 
@@ -64,8 +64,8 @@ def no_camera_ended(watchers):
 
 def test_t_unx_75_a_suspended_camera_process_ends_as_stalled(monkeypatch):
     """T-UNX-75: three fake cameras in real camera processes; the process of one is suspended (`psutil`
-    `suspend()`), so it runs no loop pass. The main process removes it from the gate and ends it 3.0 to
-    3.5 s after its last loop pass: `dead`, `stalled`. The third camera has no gap longer than 3.5 s; the
+    `suspend()`), so it runs no loop pass. The main process removes it from the gate and ends it 2.0 to
+    2.5 s after its last loop pass: `dead`, `stalled`. The third camera has no gap longer than 2.5 s; the
     second stays `ready`."""
     with capture_app(monkeypatch, [FakeScript(), FakeScript(), FakeScript()], workers="process") as app:
         ready_app_steps(app)
@@ -87,12 +87,12 @@ def test_t_unx_75_a_suspended_camera_process_ends_as_stalled(monkeypatch):
             ring.stop()
             if process.is_running():
                 process.resume()
-        assert 3.0 <= took <= 3.5, f"dead {took:.3f} s after the last loop pass"
+        assert 2.0 <= took <= 2.5, f"dead {took:.3f} s after the last loop pass"
         assert app.status(stalled)["failure"] == {"camera_id": stalled, "stage": "streaming",
-                                                  "reason": "no loop pass for 3 s", "code": "stalled"}
+                                                  "reason": "no loop pass for 2 s", "code": "stalled"}
         assert app.state(second) == "ready" and app.state(third) == "ready"
         gap = ring.largest_gap_s()
-        assert gap <= 3.5, f"the third camera had a gap of {gap:.2f} s"
+        assert gap <= 2.5, f"the third camera had a gap of {gap:.2f} s"
 
 
 def test_t_unx_75_waiting_pause_and_a_slow_reopen_trip_nothing(monkeypatch):
@@ -255,7 +255,12 @@ def stalled_forever():
 def test_f1_a_tripped_camera_with_a_take_ends_within_1_s():
     """F1 (the experiment `end_process_delay.py`): `ManagedProcess.terminate` first waits for the save of a take
     while `recording_in_progress` is set (15 s). The watch clears it and marks the stop as intended, so the
-    process ends within about 1 s, and the registry logs no crash."""
+    process ends within about 1 s, and the registry logs no crash.
+
+    [ADR-DC43] item 3: the product stays as unix-capture.md 4.10 states it: `terminate`, then `kill` after 1 s, with
+    no wait for the end. On POSIX the SIGTERM handler of a camera process only sets the stop flag, and SIGKILL does
+    not wait for the end. Thus the test joins for at most 1 s after `_end_process` and measures up to the end. The
+    bound of 2 s stays."""
     from skellycam.core.camera_group.camera_group import CameraGroup
     from skellycam.core.camera_group.camera_status import CameraStatus
     from skellycam.core.ipc.process_management.managed_worker import ManagedProcess
@@ -321,8 +326,9 @@ def test_f1_a_trip_during_a_take(monkeypatch, tmp_path):
 @pytest.mark.parametrize("trial", range(2))
 def test_f6_the_in_process_rule_wins_when_frames_stop(monkeypatch, trial):
     """F6 (the experiment `test_race_scratch.py`): three cameras whose frames stop, in real camera processes.
-    The in-process rule of W 9.5 (2 s) ends each one, never the main-process watch (3 s): the in-process rule
-    finishes the files and closes the camera; the watch kills it."""
+    The in-process rule of W 9.5 (2 s) ends each one, never the main-process watch (also 2 s, Q850): the watch counts
+    from its first round that sees the last loop pass, after the last arrival. The in-process rule finishes the files
+    and closes the camera; the watch kills it."""
     scripts = [FakeScript(stop_after_frame=n) for n in (200, 215, 230)]
     with capture_app(monkeypatch, scripts, workers="process") as app:
         ready_app_steps(app)
@@ -363,16 +369,17 @@ def step(group, worker, clock, seconds):
     assert not thread.is_alive(), "the watch blocked"
 
 
-def test_f2_the_watch_limit_is_3_s(monkeypatch):
-    """F2 (ii): no loop pass for 2.9 s trips nothing; 3.0 s trips, with the reason and the code of 4.10."""
+def test_f2_the_watch_limit_is_2_s(monkeypatch):
+    """F2 (ii): no loop pass for 1.9 s trips nothing; 2.0 s trips, with the reason and the code of 4.10 (ADR-22EJ
+    item 14, Q850)."""
     group, status, worker, clock, ended = watch_group(monkeypatch)
     step(group, worker, clock, 0)
-    step(group, worker, clock, 2.9)
+    step(group, worker, clock, 1.9)
     assert status.state == "ready" and not ended
     step(group, worker, clock, 0.1)
     assert status.state == "dead" and ended
     assert status.info_dict()["failure"] == {"camera_id": "cam0", "stage": "streaming",
-                                             "reason": "no loop pass for 3 s", "code": "stalled"}
+                                             "reason": "no loop pass for 2 s", "code": "stalled"}
 
 
 @pytest.mark.parametrize("case", ["paused", "watch off", "closing"])

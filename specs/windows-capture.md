@@ -914,11 +914,11 @@ Reason: on the C930e the gain read 6 before the stream started and 0 after it st
 - The main process also watches each camera ([`unix-capture.md`](unix-capture.md) 4.10) [ADR-AC5B](../decisions/entries/AC5B-choices-of-the-third-consistency-check.md): the shared loop adds one to the
   shared counter `alive_count` at each loop pass, for each source (OpenCV and Media Foundation
   alike). A camera in `waiting`, `adjusting`, `checking`, `too_slow` or `ready` (also with a
-  recording) whose counter did not change for 3 s, with its process alive, no failure reported, no
+  recording) whose counter did not change for 2 s, with its process alive, no failure reported, no
   pause (`should_pause`) and no close started, is removed from the gate, marked `dead` with the code
   `stalled`, and its process ends. The rule of this section (2 s) comes first for a `read_frame` that
   returns; the two give the same code `stalled`. The main-process watch also catches a `read_frame` that
-  never returns; for the OpenCV source a read or a control call that blocks longer than 3 s ends the
+  never returns; for the OpenCV source a read or a control call that blocks longer than 2 s ends the
   camera, by design. `SKELLYCAM_STALL_WATCH=0` turns the watch off ([`unix-capture.md`](unix-capture.md) 4.10).
 
 ## 10. Rate check
@@ -1265,6 +1265,8 @@ section adds only what capture adds.
 - The hosted runners do not run the tests with the marker `capture_local` (T-CAP-49, T-CAP-50).
   They need the Windows development machine [D48] [agent 2].
 - The arm64 job stays as it is (ring tests only) [D47].
+- No workflow raises the open-file limit of its runner: a higher limit can hide a leak, as it would have hidden
+  the leak of 5.9 (item 2 of [ADR-N14T](../decisions/entries/N14T-decisions-of-the-user-on-the-ci-review-of-2026-11-25.md)).
 - The Media Foundation module loads `mfplat.dll` at the first Media Foundation call, not at import.
   Whether a hosted Windows runner has Media Foundation is [NV]. T-CAP-46 passes without it
   [agent 39].
@@ -1316,7 +1318,9 @@ section adds only what capture adds.
   not block); the arrivals of a row of `test_a_camera_selected_again_shares_the_gate_with_a_restarted_camera`; the
   largest gap of the loop passes of `test_the_watch_ends_no_healthy_camera_under_load` with THREAD workers, and
   with PROCESS workers (Q721, [ADR-2AQT](../decisions/entries/2AQT-decision-of-the-user-on-the-gap-of-the-stall-test-with-process-workers.md)); and
-  the shares and the counts of messages of [`preview.md`](preview.md) 9.2. T-CAP-110 (16.2) and the gate test
+  the shares and the counts of messages of [`preview.md`](preview.md) 9.2. The blocking half of the test under load
+  keeps, with THREAD and with PROCESS workers: no healthy camera is ended, both cameras stay `ready`, and the loops
+  keep passing (Q721). T-CAP-110 (16.2) and the gate test
   have no fixed count of rows (Q671): conditions replace the counts. The gate test waits for frame 300 of camera A
   with a loose time limit, not for 12 s, and the take must hold the gap of A.
   The nominal value of a gap between two frames of one camera is one frame period (1/30 s), so the tolerance of
@@ -1330,6 +1334,10 @@ section adds only what capture adds.
   At the start of a group, each camera loop thread of the group holds the clock before the first thread starts.
   While such a thread is not started, the forced steps do not move the clock. The start of the group starts the
   thread or drops it [ADR-R394](../decisions/entries/R394-choices-of-fix-lane-7.md).
+  This rule replaces the words "until then only forced steps move the time" of item 8 of ADR-B7YV (item 1 of
+  [ADR-2SX2](../decisions/entries/2SX2-acceptance-of-the-choices-of-fix-lane-7-and-its-follow-ups.md)).
+  T-CAP-91 stays a blocking test with no change: these two rules fix the cause of its CI failure, and a change of
+  product code or a move to `pace` for it needs the user (item 3 of ADR-R394 and of ADR-N14T).
   A camera loop at the lockstep gate does not hold the virtual clock while its gate stays shut. When its gate
   opens, the loop holds the clock until its next gate probe. The forced steps still move the clock, so a loop that
   does not come back cannot stop it
@@ -2406,7 +2414,8 @@ of [`certify.md`](certify.md) section 20 verifies each of them (21.9).
   20.9) measures the frame gaps around each read for each camera model. When the local record or the shipped row of
   the model says that the check failed (the local row has `control_read` `harms`, or the shipped row has the limit
   code `control-read-harms`), the read of 11.4 pauses during a take for a camera of that model, on each build
-  ([ADR-J1HD](../decisions/entries/J1HD-choices-of-the-control-read-check.md) item 4, proposed). The
+  ([ADR-J1HD](../decisions/entries/J1HD-choices-of-the-control-read-check.md) item 4, accepted by Q843 of
+  [ADR-88HQ](../decisions/entries/88HQ-decisions-of-the-user-on-q842-to-q856.md)). The
   status then shows the last value read. On a build with no control monitor, the read-back at the take end then finds
   a change; on a build with it, the control monitor does. With no evidence, or with `control_read` `ok`, the read
   stays.

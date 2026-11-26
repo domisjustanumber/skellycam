@@ -1,6 +1,12 @@
 # 22EJ — Decisions of the user for Linux and macOS native capture
 
-**Status:** accepted, 2026-11-20 (user; relayed by the supervisor session on 2026-11-20).
+**Status:** absorbed into [`specs/unix-capture.md#linux-and-macos-native-capture-specification-v4l2-and-avfoundation`](../../specs/unix-capture.md#linux-and-macos-native-capture-specification-v4l2-and-avfoundation),
+[`specs/camera-requests.md#camera-requests-of-2026-11-20-exposure-one-frame-rate-usb-link-label`](../../specs/camera-requests.md#camera-requests-of-2026-11-20-exposure-one-frame-rate-usb-link-label),
+[`specs/certify.md#certify-specification-what-a-certify-run-of-skellycam-measures-draft-3`](../../specs/certify.md#certify-specification-what-a-certify-run-of-skellycam-measures-draft-3),
+[`specs/windows-capture.md#111-exposure-d29-d35`](../../specs/windows-capture.md#111-exposure-d29-d35),
+[`specs/windows-capture.md#162-test-list`](../../specs/windows-capture.md#162-test-list),
+[`AGENTS.md#4-project-rules`](../../AGENTS.md#4-project-rules),
+2026-11-26 (commit to dom/answers-q842; was accepted, 2026-11-20 (user; relayed by the supervisor session on 2026-11-20)).
 
 ## Decision
 
