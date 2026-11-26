@@ -197,6 +197,12 @@ class CameraRecord {
  */
 export class FramerateStore {
     private readonly cameras = new Map<string, CameraRecord>();
+    private readonly now: () => number;
+
+    /** `now`: the clock of the Displayed window, the clock of `recordDrawn` (5.8) [Q864]. */
+    constructor(now: () => number = () => performance.now()) {
+        this.now = now;
+    }
 
     private record(cameraId: string): CameraRecord {
         let r = this.cameras.get(cameraId);
@@ -237,6 +243,7 @@ export class FramerateStore {
         }
         r.lastDrawnMs = atMs;
         r.recentDrawnMs.push(atMs);
+        // keep the window short also when no viewer reads the store
         while (r.recentDrawnMs.length > 0 && r.recentDrawnMs[0] < atMs - DISPLAYED_WINDOW_MS) r.recentDrawnMs.shift();
     }
 
@@ -248,11 +255,15 @@ export class FramerateStore {
         const r = this.cameras.get(cameraId);
         if (!r) return null;
         const drawn = r.recentDrawnMs;
+        const from = this.now() - DISPLAYED_WINDOW_MS;
+        while (drawn.length > 0 && drawn[0] < from) drawn.shift();
         const recent = new Float64Array(Math.max(0, drawn.length - 1));
         for (let i = 1; i < drawn.length; i++) recent[i - 1] = drawn[i] - drawn[i - 1];
+        // a camera that drew before and drew less than two frames in the last 1 s shows 0 [Q864]
+        const displayed = statsOf(recent, 'Displayed') ?? (r.lastDrawnMs === null ? null : {...statsOf(Float64Array.of(0), 'Displayed')!, calculation_window_size: 0});
         return {
             captured: {current: r.capturedCurrent, aggregate: statsOf(r.capturedDurations.valuesToFloat64Array(), 'Captured')},
-            displayed: {current: statsOf(recent, 'Displayed'), aggregate: statsOf(r.displayedDurations.valuesToFloat64Array(), 'Displayed')},
+            displayed: {current: displayed, aggregate: statsOf(r.displayedDurations.valuesToFloat64Array(), 'Displayed')},
             notShown: r.notShown,
             ringSkipped: r.ringSkipped,
             oversize: r.oversize,
