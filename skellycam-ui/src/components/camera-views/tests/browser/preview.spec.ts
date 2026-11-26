@@ -142,6 +142,9 @@ test('T-PRV-48 cameras come, go and restart; the order of the camera list', asyn
         return {dom: cells.map(c => c.id), visual};
     };
     expect(await order(), 'the grid cells in the order of the list numbers').toEqual({dom: [B.id, C.id, A.id], visual: [B.id, C.id, A.id]});
+    // Q895: no grow-and-slide animation of the cells
+    expect(await page.evaluate(() => [...document.querySelectorAll('#grid .react-grid-item')].map(e => getComputedStyle(e).transitionDuration)),
+        'each grid cell has no transition').toEqual(['0s', '0s', '0s']);
 
     // D comes
     const added = Date.now();

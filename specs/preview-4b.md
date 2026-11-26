@@ -486,7 +486,9 @@ A camera in `starting` or `failed` sends no frame, so it would get no tile, and 
 show those states [A4]. Today's grid also uses `selectConnectedCameras` of the Redux slice, which
 marks a camera connected only when its group is `alive` (4.5). In 4b, the grid shows
 `gridCameraIds` (5.5), in the order of the camera list, and does not filter on
-`selectConnectedCameras` [Q7, Q5]. A drag swap of the grid stays a change of the layout only.
+`selectConnectedCameras` [Q7, Q5]. A drag swap of the grid stays a change of the layout only. The
+cells of the camera grid have no transition: a tile does not grow or slide into place (the 0.2 s animation of
+`react-grid-layout` is off for this grid) [Q895].
 `useServer()` gives `getPreviewTiles()` and `gridCameraIds`, and each tile canvas has the attribute
 `data-camera-id` [Q824].
 
@@ -1128,7 +1130,8 @@ test falls back to a pixel read-back.
 - Pass: the grid cells are in the order of the list numbers, in the DOM and on the screen (B, C, A;
   then D, B, C, A after D is added; then D, C, A) [Q833]; D gets a tile
   that the observer reads within 2 s; B's tile leaves the grid; A's tile shows the frames of the new
-  ring (the kept overlay frame starts again at a low number); the other cameras continue.
+  ring (the kept overlay frame starts again at a low number); the other cameras continue; each grid cell has a
+  transition duration of 0 s [Q895].
 - Must not: change the layout by a drag during the test.
 
 **T-PRV-49** (component). A hidden window gets only the safety net.
