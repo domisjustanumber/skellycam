@@ -173,12 +173,21 @@ def install_watch_clock(monkeypatch, clock, lead=8):
     start (`VirtualClock.expect`), holds the time while it is `lead` frames behind the head of its ring
     (`hold_clock_while_behind`; a certify ring holds 1 s of frames, frame-ring.md 3.7), and leaves the clock at its
     end. In the open step of certify, the thread that opens the rings holds the time from the open of each JPEG ring
-    until a watch reads it: the session looks for new rings only each 5 ms of real time [ADR-2HW5]."""
+    until a watch reads it or the ring closes [ADR-2HW5].
+
+    This last hold hides a race of the product in each THREAD certify test: the session looks for new rings only
+    each 5 ms, and a camera that waited for the open of another camera can be `ready` and judged before the next
+    look, with no watch (`test_t_cert_151_...` covers it with PROCESS workers). A second app in one test wraps the
+    product functions, not the wrappers of the first app (as `install_gate_probe`): the watch then follows the clock of
+    the newest app. No certify test has two apps."""
     from skellycam.core.camera_group.camera_group import CameraGroup
     from skellycam.core.ipc.frame_ring import FrameRingReader
 
     session = product("skellycam.core.certify.session")
     in_open_step, unwatched = [False], set()  # the JPEG rings of the open step that no watch reads yet
+
+    def product_of(function):
+        return getattr(function, "product_function", function)
 
     class WatchThread(threading.Thread):
         def start(self):
@@ -202,7 +211,7 @@ def install_watch_clock(monkeypatch, clock, lead=8):
         def __getattr__(self, name):
             return getattr(threading, name)
 
-    read = FrameRingReader.read
+    read = product_of(FrameRingReader.read)
 
     def read_on_the_clock(self, frame_number):
         result = read(self, frame_number)
@@ -210,14 +219,22 @@ def install_watch_clock(monkeypatch, clock, lead=8):
             hold_clock_while_behind(clock, self, frame_number, lead)
         return result
 
-    open_rings, open_step, watch_init = CameraGroup._open_rings, session.Session.open_step, session.RingWatch.__init__
+    open_rings, open_step = product_of(CameraGroup._open_rings), product_of(session.Session.open_step)
+    watch_init = product_of(session.RingWatch.__init__)
 
     def open_rings_on_the_clock(group, configs):
         if not in_open_step[0]:
             return open_rings(group, configs)
+
+        def waits_for_a_watch():  # no lock and no clock call (`VirtualClock.gate`); a ring that closed waits for none
+            try:
+                return None in unwatched or bool(unwatched & {i.jpeg_ring_name for i in tuple(group.ring_infos.values())})
+            except RuntimeError:  # the dict changed in the read: the next look decides
+                return True
+
         unwatched.add(None)  # holds the time from before the open, while the names are not known
         clock.expect(threading.current_thread())
-        clock.gate(True, shut=lambda: not unwatched)
+        clock.gate(True, shut=lambda: not waits_for_a_watch())
         try:
             return open_rings(group, configs)
         finally:
@@ -238,6 +255,9 @@ def install_watch_clock(monkeypatch, clock, lead=8):
         finally:
             unwatched.discard(name)  # its thread holds the time now (`expect`), or there is no watch
 
+    for wrapper, function in ((read_on_the_clock, read), (open_rings_on_the_clock, open_rings),
+                              (open_step_on_the_clock, open_step), (watch_init_on_the_clock, watch_init)):
+        wrapper.product_function = function
     monkeypatch.setattr(session, "threading", Threading())
     monkeypatch.setattr(FrameRingReader, "read", read_on_the_clock)
     monkeypatch.setattr(CameraGroup, "_open_rings", open_rings_on_the_clock)
