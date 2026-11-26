@@ -3,7 +3,7 @@
 // PreviewTiles and Tile. The images are checked only with the outside observer; the overlay is the kept
 // `Tile.overlay` (product state). The thresholds are loose, so that a slow runner passes.
 import {expect} from '@playwright/test';
-import {observe, readings} from '../../../../player/tests/harness/observer.ts';
+import {captureOnce, observe, readings} from '../../../../player/tests/harness/observer.ts';
 import {
     connectionNumbers, counts, describe, geometry, otherErrors, overlayFrame, requirePreviewTiles, sameReading, SIZE_640,
     sleep, test, toCaptures, waitDrawn, watch, written,
@@ -82,6 +82,7 @@ test('T-PRV-47 reconnect, then give up', async ({preview}) => {
     const win = await preview.open(server, seed(cams));
     await requirePreviewTiles(win.page);
     await waitDrawn(win.page, ids);
+    await sleep(1000);   // the grid layout settles after the first draw, as in T-PRV-43, before the observer takes its places
 
     await observe(win.app, await geometry(win.page, ids, SIZE_640), win.windowId);
     await sleep(1000);
@@ -90,8 +91,11 @@ test('T-PRV-47 reconnect, then give up', async ({preview}) => {
     await expect.poll(async () => {
         const log = await win.page.evaluate(() => window.preview.stateLog());
         const r = log.findIndex(e => e.at >= closed && e.state === 'RECONNECTING');
-        return r >= 0 && log.slice(r + 1).some(e => e.state === 'CONNECTED');
-    }, {message: 'the UI goes RECONNECTING, then CONNECTED again', timeout: 15_000}).toBe(true);
+        const back = r >= 0 && log.slice(r + 1).some(e => e.state === 'CONNECTED');
+        // Q867: a still window gives no capture; force one while RECONNECTING (spec 7.2)
+        if (r >= 0 && !back) await captureOnce(win.app, win.windowId);
+        return back;
+    }, {message: 'the UI goes RECONNECTING, then CONNECTED again', timeout: 15_000, intervals: [100]}).toBe(true);
     const log = await win.page.evaluate(() => window.preview.stateLog());
     const r = log.findIndex(e => e.at >= closed && e.state === 'RECONNECTING');
     const reconnecting = log[r].at;

@@ -20,8 +20,8 @@ GAP_LIMIT_S = 2.0  # loose: "A and C get camera messages during the whole test",
 
 
 def test_t_prv_29_each_ring_reader_close_runs_on_the_event_loop(monkeypatch):
-    """T-PRV-29: run the sender; end the process of camera B, so that the watch thread acts; wait until the camera
-    status of B changes; restart B; run 2 s more. Each `close` of a ring reader runs on the thread of the event
+    """T-PRV-29: run the sender; when B has sent 3 frames (Q866), end the process of camera B, so that the watch
+    thread acts; wait until the camera status of B changes; restart B; run 2 s more. Each `close` of a ring reader runs on the thread of the event
     loop; A and C get camera messages during the whole test; B's camera messages come from the new ring after the
     restart."""
     from skellycam.core.ipc.frame_ring.reader import FrameRingReader
@@ -59,6 +59,8 @@ def test_t_prv_29_each_ring_reader_close_runs_on_the_event_loop(monkeypatch):
         run = portal.start_task_soon(relay.run)
         try:
             app.wait(lambda: all(received[cid] for cid in (a, b, c)), "a camera message of each camera", 20)
+            # Q866: B sends at least 3 frames first, so that a frame of the new ring is lower than the last old one
+            app.wait(lambda: len(received[b]) >= 3, "three camera messages of B", 20)
             old_ring = app.ring_name(b)
             app.factory.logs[b].arm()
             app.wait_state(b, "dead", "failed", timeout=20)

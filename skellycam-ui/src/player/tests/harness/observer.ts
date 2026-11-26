@@ -20,11 +20,11 @@ export interface Geometry {
  * [time in ms since the epoch, the ref value (when the geometry has `ref`), the value of each tile]. */
 export async function observe(app: ElectronApplication, geo: Geometry, windowId?: number) {
     await app.evaluate(({BrowserWindow}, [g, id]) => {
-        const G = globalThis as never as {__observed: Record<string, number[][]>};
+        const G = globalThis as never as {__observed: Record<string, number[][]>; __readers: Record<string, (image: Electron.NativeImage) => void>};
         const rows: number[][] = [];
         G.__observed = {...G.__observed, [String(id)]: rows};
         const win = id === null ? BrowserWindow.getAllWindows()[0] : BrowserWindow.fromId(id)!;
-        win.webContents.beginFrameSubscription(false, image => {
+        const read = (image: Electron.NativeImage) => {
             const s = image.getSize().width / g.innerWidth;
             const out = [performance.timeOrigin + performance.now()];
             for (const pts of [...(g.ref ? [g.ref] : []), ...g.tiles]) {
@@ -46,8 +46,20 @@ export async function observe(app: ElectronApplication, geo: Geometry, windowId?
                 }
             }
             rows.push(out);
-        });
+        };
+        G.__readers = {...G.__readers, [String(id)]: read};
+        win.webContents.beginFrameSubscription(false, read);
     }, [geo, windowId ?? null] as const);
+}
+
+/** One more row of a running observer from `capturePage()`: a window whose image does not change gives no
+ * composited image (specs/preview-4b.md 7.2, Q867). */
+export async function captureOnce(app: ElectronApplication, windowId?: number) {
+    await app.evaluate(async ({BrowserWindow}, id) => {
+        const G = globalThis as never as {__readers: Record<string, (image: Electron.NativeImage) => void>};
+        const win = id === null ? BrowserWindow.getAllWindows()[0] : BrowserWindow.fromId(id)!;
+        G.__readers[String(id)](await win.webContents.capturePage());
+    }, windowId ?? null);
 }
 
 /** Stop the observer of a window and give its rows. */

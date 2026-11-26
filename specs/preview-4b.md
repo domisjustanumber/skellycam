@@ -751,7 +751,9 @@ frames each second on each of 8 tiles during a scrub [M ADR-1ACK evidence].
   gives. The page gives the place of each tile from `getBoundingClientRect()` of its canvas and the
   image fit (`canvasPoint` of `src/player/tests/fixtures/barcode.ts`). This is layout, not a pixel
   read. A reading of a tile is its camera number and its frame number, or "none" when the barcode
-  row has no light cell (a black tile).
+  row has no light cell (a black tile). A window whose image does not change gives no capture, so a test
+  that must see a still window (T-PRV-47, while `RECONNECTING`) forces one capture: `captureOnce` reads an
+  image of `webContents.capturePage()` in the same way [Q867].
 - **The kept overlay text.** A test reads the overlay of a tile from `Tile.overlay`, which the tile
   keeps "so that a test can read it" [player 8.4], through `window.__previewTiles.tiles`. This is
   product state, not a pixel read.
@@ -848,8 +850,8 @@ and `npm run test:player:browser` (Linux under `xvfb-run`). `doc-checks.yml` run
   with fake send functions that record the messages. Fake: three fake sources of
   `skellycam/tests/capture/fake_source.py`, made as `capture_app` of `capture_session.py` does. A
   spy wraps `FrameRingReader.close` and records `threading.get_ident()` of each call.
-- Steps: run the sender. End the process of camera B (its fake source exits), so that the watch
-  thread acts. Wait until the camera status of B changes. Restart B. Run 2 s more.
+- Steps: run the sender. When B has sent at least 3 camera messages [Q866], end the process of camera B (its
+  fake source exits), so that the watch thread acts. Wait until the camera status of B changes. Restart B. Run 2 s more.
 - Pass: each `close` of a ring reader runs on the thread of the event loop; A and C get camera
   messages during the whole test; B's camera messages come from the new ring after the restart.
 - Runs: no marker. `capture-windows`, `capture-linux`, `capture-macos`. It can pass before the 4b
@@ -1071,8 +1073,8 @@ test falls back to a pixel read-back.
 
 - File: `skellycam-ui/src/components/camera-views/tests/browser/preview.spec.ts`.
 - Set-up: fake rings; 2 cameras at 30 fps.
-- Steps: close the connections in `ui_server.py` while frames flow; the UI reconnects. Then stop
-  `ui_server.py` until the UI gives up.
+- Steps: close the connections in `ui_server.py` while frames flow; the UI reconnects. While
+  `RECONNECTING`, force a capture of the window (7.2) [Q867]. Then stop `ui_server.py` until the UI gives up.
 - Pass: while `RECONNECTING`, the reading of each tile does not change and is not "none"; after the
   reconnect, the readings change again within 3 s; after the UI gives up (`DISCONNECTED` or `FAILED`),
   the grid shows its empty state (DOM), and the console has no error except the connection errors
