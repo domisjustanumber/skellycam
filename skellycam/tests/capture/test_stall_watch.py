@@ -3,7 +3,8 @@ specs/windows-capture.md 9.5; ADR-AC5B items 1 and 11).
 
 The shared loop adds one to `CameraStatus.alive_count` at each pass, and a wait of the loop in the recorder
 adds one at least each 0.5 s. The watch thread of the group ends a camera whose counter did not change for
-2 s in a watched state (ADR-22EJ item 14, Q850). These tests check that it ends a camera that cannot run a loop pass, and that it
+2.5 s in a watched state: the limit of 2 s (ADR-22EJ item 14, Q850) plus a head start of 0.5 s for the
+in-process rule of W 9.5, which thus decides when frames stop (Q863 [ADR-3RJJ], ADR-4PPS item 4). These tests check that it ends a camera that cannot run a loop pass, and that it
 ends no healthy camera: a `waiting` camera, the internal pause of a record start, a wait in the recorder, a
 slow close of a reopen, the OpenCV fake (a pull source), and cameras under a load of the main process.
 
@@ -64,8 +65,8 @@ def no_camera_ended(watchers):
 
 def test_t_unx_75_a_suspended_camera_process_ends_as_stalled(monkeypatch):
     """T-UNX-75: three fake cameras in real camera processes; the process of one is suspended (`psutil`
-    `suspend()`), so it runs no loop pass. The main process removes it from the gate and ends it 2.0 to
-    2.5 s after its last loop pass: `dead`, `stalled`. The third camera has no gap longer than 2.5 s; the
+    `suspend()`), so it runs no loop pass. The main process removes it from the gate and ends it 2.5 to
+    3.0 s after its last loop pass: `dead`, `stalled`. The third camera has no gap longer than 3.0 s; the
     second stays `ready`."""
     with capture_app(monkeypatch, [FakeScript(), FakeScript(), FakeScript()], workers="process") as app:
         ready_app_steps(app)
@@ -87,12 +88,12 @@ def test_t_unx_75_a_suspended_camera_process_ends_as_stalled(monkeypatch):
             ring.stop()
             if process.is_running():
                 process.resume()
-        assert 2.0 <= took <= 2.5, f"dead {took:.3f} s after the last loop pass"
+        assert 2.5 <= took <= 3.0, f"dead {took:.3f} s after the last loop pass"
         assert app.status(stalled)["failure"] == {"camera_id": stalled, "stage": "streaming",
-                                                  "reason": "no loop pass for 2 s", "code": "stalled"}
+                                                  "reason": "no loop pass for 2.5 s", "code": "stalled"}
         assert app.state(second) == "ready" and app.state(third) == "ready"
         gap = ring.largest_gap_s()
-        assert gap <= 2.5, f"the third camera had a gap of {gap:.2f} s"
+        assert gap <= 3.0, f"the third camera had a gap of {gap:.2f} s"
 
 
 def test_t_unx_75_waiting_pause_and_a_slow_reopen_trip_nothing(monkeypatch):
@@ -326,9 +327,9 @@ def test_f1_a_trip_during_a_take(monkeypatch, tmp_path):
 @pytest.mark.parametrize("trial", range(2))
 def test_f6_the_in_process_rule_wins_when_frames_stop(monkeypatch, trial):
     """F6 (the experiment `test_race_scratch.py`): three cameras whose frames stop, in real camera processes.
-    The in-process rule of W 9.5 (2 s) ends each one, never the main-process watch (also 2 s, Q850): the watch counts
-    from its first round that sees the last loop pass, after the last arrival. The in-process rule finishes the files
-    and closes the camera; the watch kills it."""
+    The in-process rule of W 9.5 (2 s) ends each one, never the main-process watch (Q863 [ADR-3RJJ]): the watch counts
+    from its first round that sees the last loop pass, which comes after the last arrival, and waits 2 s plus a head
+    start of 0.5 s. The in-process rule finishes the files and closes the camera; the watch kills it."""
     scripts = [FakeScript(stop_after_frame=n) for n in (200, 215, 230)]
     with capture_app(monkeypatch, scripts, workers="process") as app:
         ready_app_steps(app)
@@ -369,17 +370,41 @@ def step(group, worker, clock, seconds):
     assert not thread.is_alive(), "the watch blocked"
 
 
-def test_f2_the_watch_limit_is_2_s(monkeypatch):
-    """F2 (ii): no loop pass for 1.9 s trips nothing; 2.0 s trips, with the reason and the code of 4.10 (ADR-22EJ
-    item 14, Q850)."""
+def test_f2_the_watch_trips_after_the_head_start(monkeypatch):
+    """F2 (ii), Q863 [ADR-3RJJ]: no loop pass for 2.0 s (the deadline of the in-process rule of W 9.5) trips nothing,
+    nor 2.4 s; 2.5 s (the limit of 2 s of Q850 plus the head start of 0.5 s, ADR-4PPS item 4) trips, with the
+    reason and the code of 4.10."""
     group, status, worker, clock, ended = watch_group(monkeypatch)
     step(group, worker, clock, 0)
-    step(group, worker, clock, 1.9)
+    step(group, worker, clock, 2.0)
+    assert status.state == "ready" and not ended
+    step(group, worker, clock, 0.4)
     assert status.state == "ready" and not ended
     step(group, worker, clock, 0.1)
     assert status.state == "dead" and ended
     assert status.info_dict()["failure"] == {"camera_id": "cam0", "stage": "streaming",
-                                             "reason": "no loop pass for 2 s", "code": "stalled"}
+                                             "reason": "no loop pass for 2.5 s", "code": "stalled"}
+
+
+def test_f2_the_in_process_rule_decides_in_the_head_start(monkeypatch):
+    """Q863 [ADR-3RJJ]: the watch runs a round each 0.1 s while the frames stop. The in-process rule fires at its
+    deadline (2 s after the last loop pass at the latest) and sets the failure, then `dead`, 50 ms later. No round
+    of the watch trips before it, and none after it: the camera keeps the failure of the in-process rule, and the
+    watch ends no process."""
+    group, status, worker, clock, ended = watch_group(monkeypatch)
+    step(group, worker, clock, 0)
+    for _ in range(20):  # the rounds up to 2.0 s
+        step(group, worker, clock, 0.1)
+    step(group, worker, clock, 0.02)  # a round just past the deadline of the in-process rule
+    assert status.state == "ready" and not ended
+    clock.now += 0.03
+    failure = {"camera_id": "cam0", "stage": "streaming", "reason": "no frame for 2 s", "code": "stalled"}
+    status.update_info(failure=failure)
+    status.set_state("dead")
+    for _ in range(20):
+        step(group, worker, clock, 0.1)
+    assert not ended and status.state == "dead"
+    assert status.info_dict()["failure"] == failure
 
 
 @pytest.mark.parametrize("case", ["paused", "watch off", "closing"])
