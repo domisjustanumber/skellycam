@@ -7,8 +7,8 @@
 Section 22 of [`specs/windows-capture.md`](../../specs/windows-capture.md) and its tests leave these
 details open. An agent chose them when it wrote the code (Q815, Q855). The code is in
 `skellycam/core/camera/capture/encoder.py`, `modes.py`, `camera_loop.py`, the Media Foundation source,
-`camera_group_manager.py` and `skellycam/core/ipc/frame_ring/decode.py`. The user accepted items 1, 6, 9,
-11 and 12, and parts of items 4 and 7, on 2026-11-26 (Q876 to Q881, [ADR-4TBY](4TBY-decisions-of-the-user-on-the-review-of-the-3b-code.md)). Each accepted item is
+`camera_group_manager.py` and `skellycam/core/ipc/frame_ring/decode.py`. The user accepted items 1, 6, 9 and
+12, and parts of items 4, 7 and 11, on 2026-11-26 (Q876 to Q881, [ADR-4TBY](4TBY-decisions-of-the-user-on-the-review-of-the-3b-code.md)). Each accepted item is
 in that entry. The other items wait for the user.
 
 1. **The raw mode of Q807.** Accepted (Q881).
@@ -39,18 +39,29 @@ in that entry. The other items wait for the user.
 9. **The take format.** Accepted (Q877).
 10. **Media Foundation.** The range flag of the OS is `MF_MT_VIDEO_NOMINAL_RANGE` of the current type
     (1 full, 2 limited, else not set). A raw frame is a NumPy view of the copied bytes (no second copy).
-11. **Capture timings.** Accepted (Q880); capture-timings.md 5.3, 5.4 and 8.5 state the sample rule.
-12. **A stalled encoder.** Accepted (Q878). Real Quick Sync gave one JPEG for each frame from the second
+11. **Capture timings.** That a raw camera reports `jpeg_encode` is accepted (Q880). Proposed: one sample for
+    each call of `feed` (each taken frame), also when Quick Sync holds the frame. The bracket starts at the
+    read that ends `camera_wait` and ends with a read of its own; `_process` reads the clock again after
+    `should_record_frame_number`, which stays outside each bracket. The read budget of 5.3 counts the taken
+    frames: at most 10 reads in a pass that gives a ring frame, 4 in a pass whose frame Quick Sync holds
+    (T-TIM-23).
+12. **A stalled encoder.** Accepted (Q878): the fallback comes when a call gives no JPEG and more than 2
+    frames wait (the words of the user). Real Quick Sync gave one JPEG for each frame from the second
     frame on, in a smoke run on the development machine.
-13. **The pairing test.** T-CAP-67 also checks that each Quick Sync JPEG belongs to its own frame: the
-    input number in the fake JPEG equals the place of its source frame among the taken frames, counted
-    from input 0. This is stronger than "the sfn minus the first sfn": a frame that a newer frame
-    replaced is never taken.
+13. **The pairing test.** T-CAP-67 and T-CAP-158 check that each Quick Sync JPEG belongs to its own
+    frame: a spy keeps the source frame number of each frame given to `feed`, and the ring frame of the
+    JPEG with input number k has the k-th of them. T-CAP-157 checks that the ring frames are exactly the
+    frames given to `feed`. A temporary shift of the pairing by one frame, and a temporary drop of the
+    oldest held frame at a fallback, each made the test fail.
 14. **The range tables.** `map_levels` uses `cv2.LUT` (a two-channel table for YUY2, one call per plane
     for NV12). At 1080p it took 2.38 ms (YUY2) and 1.33 ms (NV12), against 8.54 and 5.71 ms with NumPy
     indexing, with the same bytes (median of 200 runs, synthetic frames, one OpenCV thread, OpenCV of
     the lock file, development machine only).
 15. **T-CAP-26.** Resolved by the user (Q876): the NV12 type of its fixture is at 15 fps.
+16. **Short frames behind a held frame.** A frame of the wrong length is not encoded, but it waits in the
+    queue behind a frame that Quick Sync holds. Thus the limit of Q878 counts the whole queue: when a
+    call gives no JPEG, the oldest frame waits for its JPEG and the queue holds more than 2 frames, the
+    camera falls back. Else frames of the wrong length could pile up for ever behind one held frame.
 
 ## Reason
 

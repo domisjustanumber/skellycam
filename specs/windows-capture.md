@@ -2565,7 +2565,8 @@ side of these rules is the certify checks of section 20 of [`certify.md`](certif
   [3WCA 3]. The item has the kind `encoder_fallback`, and it is in the status `warnings` while the take
   runs [3WCA 3]. "The first frame after the event" is the first ring frame written after it [3WCA 7].
   When Quick Sync holds more frames than its depth (2) and gives none back, the camera falls back to
-  `cv2.imencode` for the rest of that open, as after a Quick Sync error [U Q878]. Frames that Quick Sync
+  `cv2.imencode` for the rest of that open, as after a Quick Sync error [U Q878]. A frame of the wrong
+  length that waits behind a held frame counts as held [ZEK6 16]. Frames that Quick Sync
   still holds at a close are dropped. A Quick Sync encoder that does not open at the start of a camera
   is not counted as a fallback: the camera uses `cv2.imencode` [U Q881].
 - **OpenCV source [V4].** A YUY2 or NV12 request gives a `cv2.imencode` JPEG at quality 90 of the
@@ -2606,8 +2607,8 @@ missing module, not with an error at collection (22.6 item 20).
 | T-CAP-153 | 3b | fake | As T-CAP-152, with the BGR ring on [V6]. | The BGR ring image of each frame equals the decoded ring JPEG of the same frame within 3 levels. |
 | T-CAP-154 | 3b | fake | An MJPG request at 320x240 at 30 fps for four fakes: MJPG at 15 and YUY2 at 30 there; NV12 only there; NV12 and YUY2 there; MJPG at 30 and YUY2 there (each fake also has MJPG at 30 at 640x480); record [Q807, Q808]. | The first three open YUY2, NV12 and YUY2, reach `ready`, log one line of 22.2 each, give ring JPEGs with the chroma of the source, show `jpeg_encoder` "cv2" and record `YUYV` for YUY2; the fourth opens MJPG, logs no such line and records `MJPG`. |
 | T-CAP-155 | 3b | fake | A YUY2 request (`capture_fourcc`) records a take [Q808]. | `requested.capture_format` of the capture info is `"YUYV"`; each block of the camera file is a 4:2:2 JPEG. |
-| T-CAP-156 | 3b | fake | A request for YUY2 with a slow Quick Sync check; during the check, an exposure change that holds in its apply [ZEK6 2]. | The YUY2 request gets 409 with the reason of [`camera-requests.md`](camera-requests.md) 2.4a item 7; two changes never run at once. |
-| T-CAP-157 | 3b | fake | A fake Quick Sync encoder that takes each frame and gives no JPEG and no error [U Q878]. | The camera falls back to `cv2.imencode` at the third frame; the first ring frame has `DISCONTINUITY`; no taken frame is lost; the WARNING line and the stop line come. |
+| T-CAP-156 | 3b | fake | A request for YUY2 with a slow Quick Sync check; during the check, an exposure change that holds in its apply [ZEK6 2]. Also a request that the one-rate rule refuses, with a YUY2 camera. | The YUY2 request gets 409 with the reason of [`camera-requests.md`](camera-requests.md) 2.4a item 7; two changes never run at once. The refused request (422) runs no Quick Sync check. |
+| T-CAP-157 | 3b | fake | A fake Quick Sync encoder that takes each frame and gives no JPEG and no error [U Q878]. | The camera falls back to `cv2.imencode` at the third frame; the first ring frame has `DISCONTINUITY`; the ring frames are exactly the frames given to the encoder; the WARNING line and the stop line come. |
 | T-CAP-158 | 3b | fake | Quick Sync holds one frame; a reopen (BGR ring on), then the close [U Q881]. | Each encoder closes with one frame more in than out; each JPEG out is a ring frame of its own frame. |
 | T-CAP-159 | 3b | fake | The encoder fails while no take runs; then a reopen [ZEK6 7]. | No `encoder_fallback` item; the WARNING line; the reopen opens no Quick Sync encoder; one fallback in the stop line. |
 | T-CAP-160 | 3b | fake | `input_range` "full" and "limited" against the share of the warm-up; "auto" with the OS flag "full" [ZEK6 4]. | The log gives the set range; the ring JPEG is the full-range BGR of the source with that range, within 3 levels. |

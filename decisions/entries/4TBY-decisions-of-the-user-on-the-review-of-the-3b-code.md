@@ -5,7 +5,6 @@
 [`specs/windows-capture.md#222-rules-of-step-3b`](../../specs/windows-capture.md#222-rules-of-step-3b),
 [`specs/recorder.md#67-the-capture-info-json`](../../specs/recorder.md#67-the-capture-info-json),
 [`specs/recorder.md#152-open-points`](../../specs/recorder.md#152-open-points),
-[`specs/capture-timings.md#53-cost-budget-of-the-measurement-u-q587-9`](../../specs/capture-timings.md#53-cost-budget-of-the-measurement-u-q587-9),
 [`specs/capture-timings.md#54-steps-that-apply`](../../specs/capture-timings.md#54-steps-that-apply),
 [`specs/capture-timings.md#85-the-step-ids`](../../specs/capture-timings.md#85-the-step-ids),
 [`skellycam/tests/capture/test_detection_and_modes.py`](../../skellycam/tests/capture/test_detection_and_modes.py),

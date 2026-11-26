@@ -311,9 +311,10 @@ Rules and limits:
   each bracket, and the OpenCV `camera_wait` ends at `pre_ns`.
   The gate uses the read that exists at `camera_loop.py:231`. The OpenCV source uses its `pre_ns` and
   `post_ns`. For a YUY2 or NV12 camera, the limit counts the frames that the loop takes: the
-  `jpeg_encode` bracket starts at the read that ends `camera_wait`, and its end is the first read of the
-  next frame; a pass whose frame Quick Sync holds reads the clock 4 times [U Q880]. [U Q880] is
-  decision Q880 of the user ([ADR-4TBY](../decisions/entries/4TBY-decisions-of-the-user-on-the-review-of-the-3b-code.md)).
+  `jpeg_encode` bracket starts at the read that ends `camera_wait` and has a read of its own at its end;
+  `_process` reads the clock again after `should_record_frame_number`. A pass whose frame Quick Sync holds
+  reads the clock 4 times [ZEK6 11]. [ZEK6 n] is item n of [ADR-ZEK6](../decisions/entries/ZEK6-choices-of-the-jpeg-encode-at-capture-code.md), a proposed choice of an agent;
+  [U Q880] is decision Q880 of the user ([ADR-4TBY](../decisions/entries/4TBY-decisions-of-the-user-on-the-review-of-the-3b-code.md)).
 - When on, each other thread reads the clock at most 2 times for each step.
 - Measured costs [M ADR-3TYP]: one `perf_counter_ns` call under 0.05 µs p50 and 0.1 µs p99; one
   sample store 0.1 µs p50 and 0.2 µs p99. Thus about 1.5 µs for each frame in the loop thread: under
@@ -606,7 +607,7 @@ exposure search).
 | `gate_wait` | wait | frame | `camera_loop` | Wait at the lockstep gate for the other cameras |
 | `camera_sample_copy` | work | frame | `camera_callback` | Copy of the frame out of Media Foundation (Windows) |
 | `opencv_retrieve` | work | frame | `camera_loop` | OpenCV `retrieve()`, with its hidden JPEG decode. On Windows DirectShow it also holds the wait for the camera. |
-| `jpeg_encode` | work | frame | `camera_loop` | JPEG encode of an OpenCV frame, or of a YUY2 or NV12 frame: one sample for each frame that the loop takes, also when Quick Sync holds it and no JPEG comes out yet [U Q880] |
+| `jpeg_encode` | work | frame | `camera_loop` | JPEG encode of an OpenCV frame, or of a YUY2 or NV12 frame [U Q880]: one sample for each frame that the loop takes, also when Quick Sync holds it and no JPEG comes out yet [ZEK6 11] |
 | `capture_check` | work | frame | `camera_loop` | JPEG marker check, and the DHT insertion |
 | `frame_hash` | work | frame | `camera_loop` | Two SHA-256 of the first 30 frames after a ready or a record start |
 | `recorder_give` | wait | frame | `camera_loop` | Hand-over to the recorder; a wait when its queue is full |
@@ -714,7 +715,7 @@ user and a change of the certify spec. This spec does not change certify [U Q587
 | T-TIM-20 | Route: `POST /camera/timings` sets the switch and answers its value; a body with no boolean gets HTTP 422. | no |
 | T-TIM-21 | Removal: `WebsocketMessageType` has `CAPTURE_TIMINGS` and no `PERFORMANCE_DATA`; the module `performance_data` does not import; `CameraGroupManager` has no `get_latest_performance_data`; `test_websocket_internals.py` still imports and runs `TestServerFramerateCalculator`. | no |
 | T-TIM-22 | Step registry: the `STEPS` constant (id, kind, cadence, where) equals table 3.1 and table 8.5; each id in each summary of T-TIM-06, T-TIM-12, T-TIM-13, T-TIM-19 and T-TIM-26 is in `STEPS`. | no |
-| T-TIM-23 | Budget: with the switch on, the camera loop calls `TimingControl.clock()` at most 10 times for each frame plus one time for each refused pass. Also a YUY2 camera with the fake Quick Sync encoder: at most 10 reads for each taken frame, and one `jpeg_encode` sample for each [U Q880]. | no |
+| T-TIM-23 | Budget: with the switch on, the camera loop calls `TimingControl.clock()` at most 10 times for each frame plus one time for each refused pass. Also a YUY2 camera with the fake Quick Sync encoder: at most 10 reads for each taken frame, at most 10 reads in each pass that gives a ring frame and 4 in a pass whose frame Quick Sync holds, and one `jpeg_encode` sample for each [ZEK6 11]. | no |
 | T-TIM-24 | One shape (node): the summary function of `tile/timings.ts` and the Python function give the same JSON for one shared fixture file of samples. | no |
 | T-TIM-25 | Tile off (playwright): with `timings.on` false, a tile with a handle calls `now` zero times; `takeSummaries()` gives summaries with `n` 0; a tile with no handle works as today. | no |
 | T-TIM-26 | Tile on (playwright): a fake decode seam and a fake `now` give `ui_jpeg_decode`, `ui_draw` and `receive_to_draw` with the expected values; an update with `image` gives no `ui_jpeg_decode`; a resize redraw and an overlay-only update give no `ui_draw`; a replaced message gives no sample; a second `takeSummaries()` with no new step gives `n` 0 and `seq` + 1. | no |
