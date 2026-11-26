@@ -269,7 +269,8 @@ def assert_not_reached(report, plan, messages, expected, all_labels):
         assert row["numbers"] == {"checks": len(planned) - len(own)} and row["numbers"]["checks"] > 0, (row, own)
         assert not [n for n in planned if n in named and n not in checks], label
     for label in set(all_labels) - set(expected):
-        assert f"{label}:not-reached" not in checks, label
+        # the rows of the camera in the message: the cause of a CI failure on windows-2025 is not known [ADR-2HW5]
+        assert f"{label}:not-reached" not in checks, [c for c in report["checks"] if c["name"].startswith(label + ":")]
     totals = [m for m in messages if m["total"] is not None]
     assert totals[-1]["state"] == "done" and totals[-1]["done"] == totals[-1]["total"] == plan["total"]
     assert all(m["done"] <= m["total"] for m in totals)
