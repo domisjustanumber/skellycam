@@ -236,12 +236,13 @@ def test_t_ring_40_both_rings_match(monkeypatch, cleanup):
     that the BGR ring does not give is a counted BGR skip.
 
     The fake source gives 640x360 MJPG frames (the smallest size of the floor, windows-capture.md 22.2, Q888)
-    at 1,000 frames/s of a virtual clock, and each ring has 1,000 slots, so that the reader keeps up.
+    at 100 frames/s of a virtual clock, and each ring has 100 slots (about 89 MiB for the two rings, near the
+    82 MB of the 160x120 frames at 1,000 slots before the floor); the reader keeps up.
     """
     fr = ring()
     both = not_in_bgr = 0
     k = 0
-    with capture_app(monkeypatch, [FakeScript(modes=((640, 360, 1000, 1, "MJPG"),))]) as app:
+    with capture_app(monkeypatch, [FakeScript(modes=((640, 360, 100, 1, "MJPG"),))]) as app:
         camera_id, names, (jpeg_shm, bgr_shm) = _ready_fake_camera(cleanup, app)
         jpeg_reader, bgr_reader = (cleanup.handle(fr.FrameRingReader.attach(name)) for name in names)
         deadline = time.monotonic() + max(WAIT_TIMEOUT_S, 180.0)
