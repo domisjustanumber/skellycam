@@ -63,7 +63,6 @@ These entries are `accepted`.
 | [DC43](entries/DC43-choices-of-fix-lane-5.md) | Choices of fix lane 5: control thread on the test clock, test waits for a short `ready` and for a killed process, Windows Server OS key | accepted |
 | [8CP7](entries/8CP7-certify-spec-draft-3-choices-of-the-agent.md) | Certify spec draft 3 on format 1.4.0, tests T-CERT-01 to 67, 15 agent choices: split checks, model item, gate roll-ups, local record, macOS probes | accepted |
 | [8MTY](entries/8MTY-answers-v1-to-v7-of-the-user-to-the-3b-and-3c-tests.md) | Answers V1 to V7: `capture_modes` in 3b, auto rate of a raw format, `jpeg_encoder`, OpenCV parity, range tests | accepted |
-| [CD2C](entries/CD2C-decision-of-the-user-on-the-jpeg-encode-at-capture.md) | Q689: build the JPEG encode at capture for uncompressed cameras (step 3b), tests first | accepted |
 
 ### Proposed
 

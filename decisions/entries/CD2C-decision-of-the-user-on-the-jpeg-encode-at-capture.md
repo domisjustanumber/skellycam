@@ -1,6 +1,8 @@
 # CD2C — Decision of the user on the JPEG encode at capture
 
-**Status:** accepted, 2026-11-24 (user, relayed by the supervisor).
+**Status:** absorbed into
+[`specs/windows-capture.md#221-source-and-status`](../../specs/windows-capture.md#221-source-and-status),
+2026-11-26 (commit to dom/jpeg-encode-tests; was accepted, 2026-11-24 (user, relayed by the supervisor)).
 
 ## Decision
 
