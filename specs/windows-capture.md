@@ -1290,7 +1290,8 @@ section adds only what capture adds.
   the marker `pace` (a decision of the user of 2026-11-23, Q619: "A red workflow should mean a real
   fault") [ADR-81RE](../decisions/entries/81RE-decisions-of-the-user-on-the-restore-file-the-take-rate-and-pace-tests.md).
   On a real machine it runs strict, in the normal run. Each workflow of `.github/workflows/` runs the
-  tests of its paths with `-m "not pace"` in its blocking step. Then it runs `-m pace` in a step of its
+  tests of its paths with `-m "not pace"` in its blocking step. The tests with the markers `ring_slow` and
+  `capture_timing` stay in that blocking step on the hosted runners (Q884) [ADR-N2VE](../decisions/entries/N2VE-decisions-of-the-user-on-the-ci-triage-q882-to-q884.md). Then it runs `-m pace` in a step of its
   own with `continue-on-error: true` and `SKELLYCAM_PACE_MARGIN: "3"`: a failure there shows as a
   failed step, and the workflow stays green. `skellycam/tests/pace.py` gives the margin (`margin()`,
   1 when the setting is not there). In a `pace` test, the tolerance of each bound (the part of the bound
@@ -1335,6 +1336,13 @@ section adds only what capture adds.
   does not come back cannot stop it
   [ADR-7GC1](../decisions/entries/7GC1-choices-of-the-gate-on-the-test-clock-and-the-end-of-t-cap-05.md)
   ([ADR-B1DE](../decisions/entries/B1DE-decisions-of-the-user-on-the-share-level-and-the-test-clock.md), Q692).
+  A test thread that reads a ring in real time on a virtual clock holds the clock while the head of the ring is a
+  set number of frames past its last read (`capture_session.hold_clock_while_behind`): the ring watch of certify
+  8 frames (its ring holds 1 s), the reader of T-RING-40 500 frames. The thread of the certify watch holds the
+  clock from its start and leaves it at its end. In the open step of certify, the time also holds from the open of
+  each JPEG ring until a watch reads it or the ring closes (`capture_session.install_watch_clock`). That hold hides
+  the race of [`certify.md`](certify.md) 4.4 in each THREAD test, so T-CERT-151 covers the race with PROCESS
+  workers [ADR-2HW5](../decisions/entries/2HW5-choices-of-the-ci-triage-of-the-first-test-run-on-dom-integration.md) ([ADR-N2VE](../decisions/entries/N2VE-decisions-of-the-user-on-the-ci-triage-q882-to-q884.md), Q883).
 
 Systems [U18, U20, U21]:
 

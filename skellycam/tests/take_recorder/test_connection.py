@@ -181,7 +181,8 @@ def test_t_rec_40_full_queue_waits_and_gives_gap_rows(monkeypatch, tmp_path):
 def test_t_rec_41_no_decode_for_the_recorder(monkeypatch, tmp_path, bgr_ring):
     """T-REC-41 [D9, ring 8.2]: record with and without a BGR ring; count `cv2.imdecode` calls on the
     loop thread and on the decode thread. No decode for the recorder; one decode per frame on the
-    decode thread only when a BGR ring exists."""
+    decode thread only when a BGR ring exists. With a BGR ring the test also waits for 60 BGR writes with an image
+    before the stop: the decode stage can fall behind the recorder (ring 8.3) [ADR-2HW5]."""
     # "One decode per frame": no frame is decoded two times, and each BGR ring write with an image has one
     # decode (the decode stage can skip a frame that a newer one replaced, ring 8.3).
     with capture_app(monkeypatch, [FakeScript(modes=((320, 240, 30, 1, "MJPG"),))]) as app:
@@ -190,7 +191,7 @@ def test_t_rec_41_no_decode_for_the_recorder(monkeypatch, tmp_path, bgr_ring):
         ready_app_steps(app, [app.config(camera_id, bgr_ring=bgr_ring)])
         assert app.record_start(tmp_path).status_code == 200
         record_until(app, spies, 60)
-        if bgr_ring:  # ring 8.3: the decode stage can fall behind the recorder; wait for 60 decoded frames [ADR-2HW5]
+        if bgr_ring:
             app.wait(lambda: len([e for e in spies.of("bgr") if e["hash"] is not None]) >= 60, "60 BGR frames")
         stop(app)
         app.client.delete("/skellycam/camera/group/close/all")

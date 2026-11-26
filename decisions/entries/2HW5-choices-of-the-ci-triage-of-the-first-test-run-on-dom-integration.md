@@ -1,12 +1,20 @@
 # 2HW5 — Choices of the CI triage of the first test run on dom/integration
 
-**Status:** proposed, 2026-11-26 (agent; the CI triage lane of the run of `test.yml` on 32eb69e20, CI run
-45872128301; waits for the user).
+**Status:** absorbed into
+[`specs/windows-capture.md#161-kinds`](../../specs/windows-capture.md#161-kinds),
+[`specs/certify.md#44-native-jpeg-u-a`](../../specs/certify.md#44-native-jpeg-u-a),
+[`specs/certify.md#17-test-list-of-the-certify-code`](../../specs/certify.md#17-test-list-of-the-certify-code),
+[`skellycam/tests/capture/capture_session.py`](../../skellycam/tests/capture/capture_session.py),
+[`skellycam/tests/frame_ring/test_bgr_camera.py`](../../skellycam/tests/frame_ring/test_bgr_camera.py),
+[`skellycam/tests/take_recorder/test_connection.py`](../../skellycam/tests/take_recorder/test_connection.py),
+[`skellycam/tests/certify/test_certify_report_shape.py`](../../skellycam/tests/certify/test_certify_report_shape.py),
+2026-11-26 (commit to dom/ci-triage; was accepted, 2026-11-26 (user, Q882 and Q883,
+[ADR-N2VE](N2VE-decisions-of-the-user-on-the-ci-triage-q882-to-q884.md)); was proposed, 2026-11-26 (agent)).
 
 ## Decision
 
-These are the choices of the agent for the failures of that run. Each change is in the tests. No product file
-changes.
+These are the choices of the agent for the failures of that run. Items 1 to 4 and 6 are in the tests. The fix of
+item 5 is in the product (Q882).
 
 1. **The certify ring watch holds the virtual clock while it is behind.** On a virtual clock, the thread of
    `session.RingWatch` (certify) is a participant from its start (`VirtualClock.expect`). After each read, the
@@ -28,11 +36,13 @@ changes.
 4. **T-RING-38 accepts `ready` or `dead` at its start.** The fake stops after frame 200, so the camera ends
    (`dead`) soon after `ready`. The start of the test waits for `ready` or `dead`, as
    `capture_session.one_camera` does for such a camera. The test opens its views of the rings just after the
-   apply, before that wait: the group watch can close the rings of a camera whose loop ended. Each check of
-   T-RING-38 stays.
-5. **The failure of `test_t_cert_92_a_hang_at_the_open` on windows-2025 is a product race. The fix waits for
-   the user.** T-CERT-151 (`test_t_cert_151_a_ready_camera_with_no_ring_watch_at_the_judge`) is its regression
-   test: a strict `xfail` until the fix lands, with the marker `capture_timing` (PROCESS workers, real time).
+   apply: the group watch can close the rings of an ended camera. Each check of T-RING-38 stays.
+5. **The failure of `test_t_cert_92_a_hang_at_the_open` on windows-2025 is a product race.** The fix (Q882,
+   [`certify.md`](../../specs/certify.md) 4.4): after the wait of the open step, `Session.open_step` makes one more
+   look that attaches a ring watch to each camera whose ring exists and that has none; `judge_open` puts each
+   `ready` camera in `live`, also with no watch (`NO_WATCH`), and then `source-equals-ring` is `not-run`
+   `ring-lapped`. T-CERT-151 is its regression test: case 1 (PROCESS workers, marker `capture_timing`) and case 2
+   (a watch that cannot attach).
    The check "no `not-reached` row for a camera that can go on" of `assert_not_reached` also gives the rows of
    that camera in its message. The race: `CameraGroup.start` opens the rings only after the hung camera fails
    (5 s); the good camera waited in `waiting` and is `ready` about 1 ms after its ring opens; the session judges
@@ -40,8 +50,8 @@ changes.
    leaves it out of `live` with no reason, and its later checks become one `not-reached` row. The file and line
    of each step are in [the evidence file](../evidence/2HW5-ci-triage-evidence.md).
 6. **The pace failure on windows-2025 is a pace result.** `test_a_slow_stop_has_a_gap_only_on_the_last_row[0.2-60]`
-   (marker `pace`, a non-blocking step) found one `camera_gap` of one frame on row 17 of 30. This is the busy-machine
-   case of Q619 that its marker names. No change.
+   (marker `pace`, not blocking) found one `camera_gap` of one frame on row 17 of 30: the busy-machine case of
+   Q619. No change.
 
 ## Reason
 
@@ -54,13 +64,10 @@ changes.
    `native-jpeg:source-equals-ring` `not-run` `ring-lapped`, as section 4.4 of
    [`certify.md`](../../specs/certify.md) states, and rule 4 of the summary item (section 3.4) makes the item
    `partial`. The product was correct. The tests expect `pass`, which is correct for a watch that keeps up.
-3. Items 1 and 2 keep the time of the fake cameras within a known number of frames of the reader, whatever the
-   pace of the machine. A cap on the speed of the virtual clock would slow each test and still depend on the
-   pace.
+3. Items 1 and 2 keep the fake cameras within a known number of frames of the reader on any machine.
 4. Items 3 and 4 are waits that the pace of the machine no longer decides. No check is removed or loosened.
-5. Item 5: no spec rule says what certify does with a camera that is `ready` but has no ring watch. The fix is
-   a choice for the user (spec and tests before code). The regression test fails today and passes after a fix
-   that does not depend on the time of a look of `watch_rings`.
+5. Item 5: no spec rule said what certify does with a camera that is `ready` but has no ring watch. The user
+   chose the fix (Q882). It does not depend on the time of a look of `watch_rings`.
 
 ## Evidence
 
@@ -75,6 +82,7 @@ See [the evidence file](../evidence/2HW5-ci-triage-evidence.md).
 2. A larger ring for certify, or a start of the watch at the oldest slot: a product change for a fault of the
    test clock.
 3. The decode stage as a participant of the clock: T-RING-38 needs a decode stage that falls behind.
+4. A cap on the speed of the virtual clock: it slows each test and depends on the pace.
 
 ## Open work
 
