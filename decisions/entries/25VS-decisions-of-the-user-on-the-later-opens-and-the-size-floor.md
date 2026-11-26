@@ -20,8 +20,9 @@ be limited by resolution. Q889 yes".
 2. **Q887.** The choices of
    [ADR-ZEK6](ZEK6-choices-of-the-jpeg-encode-at-capture-code.md) that the supervisor listed are
    accepted (items 2, 3, 4, 5, 7, 8, 10, 11, 13, 14 and 16), except the Quick Sync test frame of
-   320x240: the test frame is 1280x720. 640x480 is the smallest size that skellycam uses; 1280x720 is
-   the ideal. As modes below 30 fps are ignored, modes of a size below 640x480 are ignored too (the
+   320x240: the test frame is at least 640x480, ideally 720p (an agent chose 1280x720,
+   [ADR-YQN1](YQN1-choices-of-the-size-floor.md) item 12). 640x480 is the smallest size that skellycam
+   uses; 720p is the ideal. As modes below 30 fps are ignored, modes of a size below 640x480 are ignored too (the
    supervisor reads "frame rates lower than 640x480" as "modes of a size below 640x480").
 3. **Q888.** 640x360 is allowed too. When the user picks a size below 1280x720, the user is told that
    hand and face tracking will be limited by the resolution. The supervisor reads the floor as two

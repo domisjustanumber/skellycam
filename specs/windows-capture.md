@@ -635,8 +635,8 @@ fields of `CameraMode` [ring 9] plus the rounded rate:
   other than the four test cameras].
 - Order: sizes as in 7.3, rates ascending, and for one size and rate MJPG first ("JPEG preferred")
   [D14] [agent 19].
-- A mode of a size below the size floor is listed with `selectable: false` and the reason "below 640x360"
-  (22.2 [U Q887, Q888]). A mode below 29.97 fps is listed with `selectable: false` and the reason "below 30 fps" [U11]
+- A mode of a size below the size floor (22.2 [U Q887, Q888]) is listed with `selectable: false` and the
+  reason "below 640x360" [YQN1 2]. A mode below 29.97 fps is listed with `selectable: false` and the reason "below 30 fps" [U11]
   [agent 53]. The field `reason` is null for a selectable mode. H.264 and RAW modes have
   the reason "never opened" [agent 53].
 - `supported_modes` stays as in 7.3.
@@ -648,7 +648,8 @@ fields of `CameraMode` [ring 9] plus the rounded rate:
   list wins [proto parse.py `select_native_type`]. No such mode: the camera fails, stage `set mode`,
   with a message that lists its modes in the form of 7.3.
 - **Size floor** [U Q887, Q888]: skellycam does not offer a mode below 640 wide and 360 high either.
-  The rules of the size floor are in 22.2.
+  The rules of the size floor are in 22.2. A camera whose every mode is below a floor is not usable
+  (22.2).
 - **Floor of 30 fps** [U11]: skellycam does not offer a mode below 30 fps. A mode at 29.97 fps counts
   as 30: the floor is 30000/1001 fps.
   - The floor applies to the exact rate of the chosen mode (`fps_num / fps_den`, before rounding for
@@ -1224,9 +1225,9 @@ test list of the encode at capture (2026-11-25).
   (section 8) and one rate per group (7.5) [D46].
 - The rate check runs on each OpenCV camera. The reference is the reported rate, or the requested
   rate (30 fps for "auto") when OpenCV reports no rate [W2].
-- The size floor of 22.2 [U Q887 to Q889] applies to the OpenCV source as the rate floor does: a request
-  for a size below the floor is refused in the whole-request check, and a camera whose open reports a
-  size below the floor fails, stage `set mode` [NV for Linux and macOS until a certify report].
+- The size floor of 22.2 applies to the OpenCV source as the rate floor does [U Q889]: a request for a size
+  below the floor is refused in the whole-request check [YQN1 3], and a camera whose open reports a size
+  below the floor fails, stage `set mode` [YQN1 4] [NV for Linux and macOS until a certify report].
 - The floor of U11: a request below the floor is refused in the whole-request check, as on each
   source. When OpenCV reports a real rate above 0 and below 29.97 after the open, the camera fails,
   stage `set mode`, reason "no mode at 30 fps or more". When OpenCV reports no rate (0 or less), the
@@ -2539,7 +2540,9 @@ side of these rules is the certify checks of section 20 of [`certify.md`](certif
   [ADR-4TBY](../decisions/entries/4TBY-decisions-of-the-user-on-the-review-of-the-3b-code.md),
   [ADR-25VS](../decisions/entries/25VS-decisions-of-the-user-on-the-later-opens-and-the-size-floor.md)). A mark
   [YQN1 n] is item n of [ADR-YQN1](../decisions/entries/YQN1-choices-of-the-size-floor.md), a proposed choice of
-  an agent. A mark [ZEK6 n] is item n of [ADR-ZEK6](../decisions/entries/ZEK6-choices-of-the-jpeg-encode-at-capture-code.md), a proposed choice of the agent that wrote the code.
+  an agent. A mark [ZEK6 n] is item n of
+  [ADR-ZEK6](../decisions/entries/ZEK6-choices-of-the-jpeg-encode-at-capture-code.md), a choice of the agent
+  that wrote the code, which the user accepted (Q881, Q886, Q887).
   V5 (OpenCV controls, except the empty mode list) and V7 (3c hardware) are not part of this section.
 
 ### 22.2 Rules of step 3b
@@ -2551,7 +2554,8 @@ side of these rules is the certify checks of section 20 of [`certify.md`](certif
   [agent 53] at each rate [3WCA 2]. A synthesized NV12 type is left out [agent 19]. With the OpenCV
   source, detection gives `capture_modes = []` [V5].
 - **Whole-request check [V1, agent 20].** For a YUY2 or NV12 request, the check of 7.5 in the main
-  process uses `capture_modes`, not `supported_modes`.
+  process uses `capture_modes`, not `supported_modes`. A camera with no usable mode is refused (the size
+  floor below).
 - **Auto rate for YUY2 and NV12 [V2].** An auto rate (-1 or 0) looks at the modes of the requested
   format at the requested size: 30 if that format has 30, else 29.97, else its highest rate at the
   floor or above. With none, the camera fails at `set mode` with "no mode at 30 fps or more".
@@ -2573,16 +2577,28 @@ side of these rules is the certify checks of section 20 of [`certify.md`](certif
   `selectable: false` and the reason "below 640x360"; a mode below both floors has this reason
   [YQN1 2]. A request for a size below the floor is refused as a request with no mode at the floor
   rate is: in the whole-request check (HTTP 422), else at the open, stage `set mode`, code
-  `below-floor`, with the reason "no mode of 640x360 or more" [YQN1 3]. After the open, a source that
-  reports a size below the floor (the OpenCV source) fails the same way (14.1) [YQN1 4].
+  `below-floor`, with the reason "no mode of 640x360 or more" [YQN1 3]. The 422 of a requested size below
+  the floor says so: "camera `<id>`: the requested size `<w>x<h>` is below the smallest size 640x360"
+  [YQN1 9]. After the open, a source that reports a size below the floor (the OpenCV source) fails the
+  same way (14.1) [YQN1 4].
+- **A camera with no usable mode [U Q887, Q889].** A camera whose every mode is below the size floor or
+  below 30 fps is not usable: each request that selects it gets HTTP 422. This changes the behaviour
+  of step 3a for a camera with modes of 640x360 or more at no rate of 30 fps or more and others below
+  640x360. When a mode of the camera is below the size floor, the text names that floor:
+  "camera `<id>` has no mode of 640x360 or more at 30 fps", with no list of modes [YQN1 9]; else the text
+  of 7.5 stays.
 - **The size in the UI [U Q888, Q889].** The resolution control (`CameraConfigResolution`) offers only
   sizes at the floor: its presets are 640x480, 1280x720 and 1920x1080, and a custom size below the floor
   is not applied [YQN1 5]. When the chosen size is below 1280x720 (a width below 1280 or a height below
   720), a note under the control tells the user that hand and face tracking will be limited by the
   resolution. The note does not block the choice. Its English text is "Hand and face tracking will be
   limited at this resolution. 1280 × 720 or more gives the best tracking." (key
-  `trackingLimitedByResolution`) [YQN1 6]. The default size of a camera config is 1280x720, the size
-  that the user calls ideal (Q888).
+  `trackingLimitedByResolution`) [YQN1 6]. The note shows when the width is below 1280 or the height is
+  below 720, so 960x960 shows it too [YQN1 11]. The second resolution control, in the settings of a grid
+  tile (`CameraGridSettingsModal`), shows the same note; each control points at it with
+  `aria-describedby` [YQN1 6]. A custom size below the floor is not applied, and the fields show the
+  applied size again [YQN1 5]. The default size of a camera config is 1280x720, the size that the user
+  calls ideal (Q888).
 - **The format of a raw take [Q808].** A take of a camera in YUY2 records `requested.capture_format`
   `"YUYV"` (SFF-800; [`recorder.md`](recorder.md) 6.7). This also applies to a camera that opened its
   raw mode by Q807: the take records the opened format, not the requested format [N72V 4]. A take of a
@@ -2602,7 +2618,9 @@ side of these rules is the certify checks of section 20 of [`certify.md`](certif
   still holds at a close are dropped. A Quick Sync encoder that does not open at the start of a camera
   is not counted as a fallback: the camera uses `cv2.imencode` [U Q881]. After one fallback, each later
   open of that camera in the same app run uses `cv2.imencode` too, also in a new group, until the app
-  restarts [U Q886]. The Quick Sync check of 13.2 encodes one NV12 test frame of 1280x720 [U Q887].
+  restarts [U Q886]. The camera is kept by its `camera_id` [YQN1 8]. The Quick Sync check of 13.2
+  encodes one NV12 test frame of 1280x720: the user asked for at least 640x480, ideally 720p (Q887), and
+  an agent chose 720p [YQN1 12].
 - **OpenCV source [V4].** A YUY2 or NV12 request gives a `cv2.imencode` JPEG at quality 90 of the
   image that OpenCV delivers. No Quick Sync check runs. `jpeg_encoder` is `"cv2"`. There is no input
   range: no range line in the log, because [`recorder.md`](recorder.md) 6.7 gives the range to the

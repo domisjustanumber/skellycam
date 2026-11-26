@@ -23,10 +23,11 @@ Q886 and Q887 ([ADR-25VS](25VS-decisions-of-the-user-on-the-later-opens-and-the-
 of item 2: it is 1280x720, not 320x240 (Q887).
 
 1. **The raw mode of Q807.** Accepted (Q881).
-2. **The Quick Sync check.** The manager runs the check in a worker thread, after the detection and
-   before the whole-request check, at the first request in which a camera opens YUY2 or NV12 by the
-   detection data. Thus the check of `request_runs` and its set have no wait between them
-   (camera-requests.md 2.4a item 7; T-CAP-156). A camera with
+2. **The Quick Sync check.** The manager runs the check in a worker thread, after the whole-request check
+   of a request that it accepts, at the first such request in which a camera opens YUY2 or NV12 by the
+   detection data; then it runs the whole-request check again. Thus the check of `request_runs` and its
+   set have no wait between them (camera-requests.md 2.4a item 7; T-CAP-156). (The text that the user
+   accepted with Q887 gave the earlier order: the check before the whole-request check.) A camera with
    no `capture_modes` (the OpenCV detection) never starts the check. With no source factory and
    `SKELLYCAM_WINDOWS_CAPTURE=opencv`, the check does not run. The test frame was NV12 at 320x240; Q887 made it 1280x720.
 3. **The result in the camera processes.** Each status has a flag `quick_sync`. The manager writes it

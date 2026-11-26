@@ -78,7 +78,7 @@ The common codes of the contract keep the meaning of the contract (section 5.3):
 | `no-permission` | The application has no camera permission. |
 | `usb-bandwidth` | The USB controller refused the stream for bandwidth. |
 | `no-mode` | The camera does not declare this mode. |
-| `below-floor` | The nearest mode is below 30 fps. |
+| `below-floor` | The nearest mode is below 30 fps, or the size is below 640 wide or 360 high (windows-capture.md 22.2). |
 | `open-failed` | The open failed for another cause. |
 | `first-frame-timeout` | No first frame came in 5 seconds. |
 | `not-ready` | The camera was not ready in 15 seconds. |
