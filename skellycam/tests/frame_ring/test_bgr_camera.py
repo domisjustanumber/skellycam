@@ -51,15 +51,17 @@ def _ready_fake_camera(cleanup, app, until=("ready",)):
     """Apply the one fake camera of `app` with a BGR ring and wait until it is in a state of `until`. Give its
     ID, and the names and raw views (open after the close of the session) of its JPEG and BGR rings. A camera
     that ends soon after `ready` must also accept `dead`: on the virtual clock its time in `ready` can be
-    shorter than one poll of `wait_state` (as `capture_session.one_camera`) [ADR-2HW5]."""
+    shorter than one poll of `wait_state` (as `capture_session.one_camera`). The views open just after the apply,
+    before the wait: the group watch closes the rings of a camera whose loop ended [ADR-2HW5]."""
     camera_id = app.factory.camera_ids[0]
     app.detect()
     response = app.apply([app.config(camera_id, bgr_ring=True)])
     assert response.status_code == 200, response.text
-    app.wait_state(camera_id, *until)
-    info = app.group.ring_infos[camera_id]
+    info = app.group.ring_infos[camera_id]  # the apply returns after the open of the rings (CameraGroup.start)
     names = (info.jpeg_ring_name, info.bgr_ring_name)
-    return camera_id, names, [cleanup.handle(open_raw(name)) for name in names]
+    views = [cleanup.handle(open_raw(name)) for name in names]
+    app.wait_state(camera_id, *until)
+    return camera_id, names, views
 
 
 def _count_imdecode(monkeypatch):
