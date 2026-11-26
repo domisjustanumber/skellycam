@@ -2023,7 +2023,8 @@ each key; `decoded_by_skellycam` is read by no check and is not written [U Q627,
 - After the wait of the open step and before the judge of the open, certify attaches a ring watch to each camera
   whose ring exists and that has none. A camera that is `ready` goes on to the next steps also with no ring watch;
   then `native-jpeg:source-equals-ring` is `not-run` with `ring-lapped` (Q882, T-CERT-151)
-  [ADR-2HW5](../decisions/entries/2HW5-choices-of-the-ci-triage-of-the-first-test-run-on-dom-integration.md).
+  [ADR-2HW5](../decisions/entries/2HW5-choices-of-the-ci-triage-of-the-first-test-run-on-dom-integration.md),
+  [ADR-N2VE](../decisions/entries/N2VE-decisions-of-the-user-on-the-ci-triage-and-the-stall-watch-code.md).
 - Measured on Windows: MJPG passthrough is byte-equal on the three good test cameras
   [M `research/usb_cameras/docs/hardware_run_3a_20261120.md`, T-CAP-52].
 

@@ -102,6 +102,9 @@ task. Delete an item when its work is done. The PR that closes an item records t
   [ADR-N2VE](entries/N2VE-decisions-of-the-user-on-the-ci-triage-and-the-stall-watch-code.md), low priority). A later
   small test lane writes it: a real camera loop, a fake camera whose frames stop after a reopen, the watch on the
   same clock (`unix-capture.md` 4.10).
+- **Question for the user: the six full checks run in quick.** `certify.md` 3.4 and 3.6.2 give quick twelve checks
+  for each camera (Q593). The code gives the six full checks in quick too (`catalog.camera_names`, `ITEM`), so a
+  quick item counts them: a camera with no ring watch is then `partial`. Restrict them to full, as the spec says?
 - **The certify run of skellycam.** The spec [`specs/certify.md`](../specs/certify.md) is draft 3. The code is in `skellycam/core/certify/` (section 19 of the
   spec). Open: the checks that are `not-run`
   `not-built` (the status line of the spec). Not decided: FC1C items 4 and 13, HQE5 items 2 and 3
