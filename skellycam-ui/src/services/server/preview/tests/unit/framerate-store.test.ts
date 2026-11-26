@@ -61,8 +61,8 @@ test('T-PRV-41 the frame rate store keeps each camera and each count apart', asy
 test('T-PRV-53 the Displayed series comes from the drawn frames [Q3]', async () => {
     const {FramerateStore} = await framerateStore();
     const {PreviewTiles} = await previewTiles();
-    const store = new FramerateStore();
     const f = fakes();
+    const store = new FramerateStore(f.now);   // the clock of the store [Q864]
     const tiles = new PreviewTiles(f.sendReady, (id, at) => store.recordDrawn(id, at), f.now);
     tiles.setTile('a1b2', new FakeTile('drawn'));
     let frame = 0;
@@ -96,4 +96,9 @@ test('T-PRV-53 the Displayed series comes from the drawn frames [Q3]', async () 
     assert.equal(store.getCamera('a1b2')!.displayed.aggregate?.calculation_window_size, 60, 'the flagged message and the overlay update add no value');
     assert.equal(store.getCamera('a1b2')!.captured.current, null, 'Captured stays empty');
     assert.equal(store.getCamera('a1b2')!.captured.aggregate, null);
+
+    // a camera that draws nothing for 1 s shows 0 [Q864]
+    f.clock.ms += 1001;
+    assert.equal(store.getCamera('a1b2')!.displayed.current?.mean_frames_per_second, 0, 'Displayed is 0 after 1 s with no drawn frame');
+    assert.equal(store.getCamera('a1b2')!.displayed.aggregate?.calculation_window_size, 60, 'the pause adds no value');
 });

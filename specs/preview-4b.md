@@ -543,10 +543,12 @@ The viewer has two series for each camera, named for what they mean [Q3]:
 - the Displayed values: `recordDrawn(cameraId, atMs)` adds the time from the previous drawn frame of
   that camera to the same kind of windowed statistics. A time longer than 1 s is not added: it is a
   pause or a hidden page. It only sets the start of the next time [agent 22]. The Displayed rate (the
-  current value) is the rate over the frames drawn in the last 1 s of `now` [Q826];
+  current value) is the rate over the frames drawn in the last 1 s of `now` [Q826]. A camera that has
+  drawn before and draws nothing for 1 s shows 0 [Q864];
 - the four counts.
 
-The API of the store [Q824]: `recordFramerateUpdate(message)`, `recordAppState(message)`,
+The API of the store [Q824]: the constructor takes the clock `now` (default `performance.now`) [Q864];
+`recordFramerateUpdate(message)`, `recordAppState(message)`,
 `recordDrawn(cameraId, atMs)`, `cameraIds()`, `clear()` and `getCamera(id)`. `getCamera` gives `null`, or
 `{captured, displayed, notShown, ringSkipped, oversize, replaced}`, where `captured` and `displayed` are
 `{current, aggregate}`, each a `DetailedFramerate` or `null`. The viewer keeps the classes
@@ -1016,14 +1018,14 @@ order [Q5, Q7].
 
 - File: `skellycam-ui/src/services/server/preview/tests/unit/framerate-store.test.ts`.
 - Set-up: a real `PreviewTiles` with fake tiles that resolve `'drawn'` at once, a fake `now`, and
-  `onDrawn` connected to a real `FramerateStore.recordDrawn`.
+  `onDrawn` connected to a real `FramerateStore.recordDrawn`. The store gets the same fake `now` [Q864].
 - Steps: camera A: 31 frames, one tick each, with `now` in steps of 33.333 ms. Then a gap of 2 s
   with no tick. Then 31 frames in steps of 16.667 ms. Also one flagged message and one overlay
-  update for A.
+  update for A. Then 1 s more with no drawn frame [Q864].
 - Pass: Displayed of A (the rate over the last 1 s of drawn frames, 5.8) is 30.0 ± 0.1 after the first
   part and 60.0 ± 0.1 after the last part [Q826]; the
   gap of 2 s adds no value; the flagged message and the overlay update add no value; Captured of A
-  stays empty.
+  stays empty; after the 1 s with no drawn frame, Displayed of A is 0 [Q864].
 - Must not: use a real clock.
 
 #### UI component tests
