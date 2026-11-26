@@ -7,12 +7,14 @@
 // the send-to-ready times that ui_server.py counts; TaskDuration of the page through CDP; the claim of the product
 // (`drawnCount`), read only at the end of a run and never given as an outside proof.
 import {expect} from '@playwright/test';
-import type {ElectronApplication} from '@playwright/test';
-import {mkdirSync, writeFileSync} from 'node:fs';
+import {spawn} from 'node:child_process';
+import {mkdirSync, readFileSync, writeFileSync} from 'node:fs';
+import {createRequire} from 'node:module';
+import {createInterface} from 'node:readline';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
-import {observe, readings} from '../../../../player/tests/harness/observer.ts';
-import {counts, connectionNumbers, geometry, PreviewKit, requirePreviewTiles, sleep, test, toCaptures, waitDrawn, written} from '../browser/preview-kit.ts';
+import {HARNESS_MAIN} from '../../../../player/tests/browser/harness.ts';
+import {counts, connectionNumbers, PreviewKit, test, toCaptures, written} from '../browser/preview-kit.ts';
 import type {Capture} from '../browser/preview-kit.ts';
 
 const UI = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../../../..');
@@ -40,21 +42,26 @@ const percentile = (values: number[], p: number) => {
     return s.length ? s[Math.min(s.length - 1, Math.floor((p / 100) * s.length))] : NaN;
 };
 
-/** CDP `Performance.getMetrics` of the first window (TaskDuration in seconds) [NV: main thread of the renderer only]. */
-async function pageMetrics(app: ElectronApplication): Promise<Record<string, number>> {
-    return app.evaluate(async ({BrowserWindow}) => {
-        const d = BrowserWindow.getAllWindows()[0].webContents.debugger;
-        if (!d.isAttached()) {
-            d.attach('1.3');
-            await d.sendCommand('Performance.enable');
-        }
-        const r = await d.sendCommand('Performance.getMetrics') as {metrics: {name: string; value: number}[]};
-        return Object.fromEntries(r.metrics.map(m => [m.name, m.value]));
+/** One run of the harness app in bench mode, with no Playwright attached (preview-bench-run.ts, Q869). `onLine`
+ * gets each line that the app prints; the app ends itself after the run. */
+function runHarness(env: Record<string, string>, onLine: (line: string) => void, timeoutMs: number): Promise<void> {
+    const electron = createRequire(import.meta.url)('electron') as string;
+    const full: Record<string, string> = {};
+    for (const [k, v] of Object.entries(process.env)) if (v !== undefined && k !== 'ELECTRON_RUN_AS_NODE') full[k] = v;
+    const proc = spawn(electron, [HARNESS_MAIN, '--no-sandbox'], {env: {...full, ...env}, stdio: ['ignore', 'pipe', 'pipe']});
+    createInterface({input: proc.stdout}).on('line', onLine);
+    createInterface({input: proc.stderr}).on('line', () => undefined);
+    return new Promise((resolve, reject) => {
+        const timer = setTimeout(() => {
+            proc.kill();
+            reject(new Error(`the bench app did not end in ${timeoutMs} ms`));
+        }, timeoutMs);
+        proc.on('exit', () => {
+            clearTimeout(timer);
+            resolve();
+        });
     });
 }
-
-const processSample = (app: ElectronApplication) => app.evaluate(({app: a}) =>
-    a.getAppMetrics().map(m => ({pid: m.pid, type: m.type, cpu: m.cpu.cumulativeCPUUsage ?? 0, ws: m.memory.workingSetSize})));
 
 /** B-1a (6.3): own camera, at most 2 frames behind the newest tile of the capture, and distinct frame numbers
  * each second. Captures of the first second are left out. */
@@ -95,33 +102,37 @@ function outsideProof(captures: Capture[], from: number, to: number, fps: number
 async function run(preview: PreviewKit, fps: number) {
     const server = await preview.server({cameras: CAMS.map(c => ({id: c.id, number: c.number, index: 90 + c.number, name: `ring ${c.id}`})),
         width: SIZE[0], height: SIZE[1], fps, targetBytes: TARGET_BYTES, startTimeoutMs: 600_000});
-    const win = await preview.open(server, CAMS.map(c => ({id: c.id, index: c.list, name: c.name})), {viewer: null});
     const ids = CAMS.map(c => c.id);
-    await requirePreviewTiles(win.page);
-    await waitDrawn(win.page, ids, 30_000);
-    const firstDraw = Date.now();
-    const refresh = await win.app.evaluate(({screen}) => screen.getPrimaryDisplay().displayFrequency);
-    await sleep(WARMUP_MS);
-
-    const geo = await geometry(win.page, ids, SIZE);
-    const m0 = await pageMetrics(win.app);
-    const p0 = await processSample(win.app);
-    const loop0 = await server.command<{loop_thread_cpu_s: number}>({cmd: 'loop_cpu'});
-    const w0 = await written(server);
-    await observe(win.app, geo, win.windowId);
-    const from = Date.now();
-    await sleep(MEASURE_MS);
-    const to = Date.now();
-    const captures = toCaptures(await readings(win.app, win.windowId), ids);
-    const m1 = await pageMetrics(win.app);
-    const p1 = await processSample(win.app);
-    const loop1 = await server.command<{loop_thread_cpu_s: number}>({cmd: 'loop_cpu'});
-    const w1 = await written(server);
+    const configFile = path.join(preview.root, 'bench-config.json');
+    const outFile = path.join(preview.root, 'bench-run.json');
+    writeFileSync(configFile, JSON.stringify({port: server.port, cameras: CAMS.map(c => ({id: c.id, index: c.list, name: c.name})),
+        size: SIZE, warmupMs: WARMUP_MS, measureMs: MEASURE_MS, out: outFile}));
+    // the counts of the server at the start and the end of the measurement, at the lines of the app
+    const marks: Promise<unknown>[] = [];
+    let loop0 = {loop_thread_cpu_s: NaN};
+    let loop1 = {loop_thread_cpu_s: NaN};
+    let w0: Record<string, number> = {};
+    let w1: Record<string, number> = {};
+    await runHarness({PREVIEW_BENCH_RUN: configFile, PLAYER_HARNESS_PAGE: 'preview', PLAYER_HARNESS_RECORDINGS: path.join(preview.root, 'recordings'),
+        PLAYER_HARNESS_PICKED: path.join(preview.root, 'picked.json')}, line => {
+        if (line === '@bench measure-start') marks.push((async () => {
+            loop0 = await server.command<{loop_thread_cpu_s: number}>({cmd: 'loop_cpu'});
+            w0 = await written(server);
+        })());
+        if (line === '@bench measure-end') marks.push((async () => {
+            loop1 = await server.command<{loop_thread_cpu_s: number}>({cmd: 'loop_cpu'});
+            w1 = await written(server);
+        })());
+    }, WARMUP_MS + MEASURE_MS + 180_000);
+    await Promise.all(marks);
+    const r = JSON.parse(readFileSync(outFile, 'utf8'));
+    if (!r.ok) throw new Error(`the bench run: ${r.error}`);
+    const {firstDraw, refresh, from, to, end, m0, m1, p0, p1, drawn} = r as {firstDraw: number; refresh: number; from: number; to: number;
+        end: number; m0: Record<string, number>; m1: Record<string, number>; p0: {pid: number; type: string; cpu: number; ws: number}[];
+        p1: {pid: number; type: string; cpu: number; ws: number}[]; drawn: Record<string, number> | null};
+    const captures = toCaptures(r.rows, ids);
     const n = await counts(server, from, to);
     const notShown = await server.command<{connections: Record<string, Record<string, number>>}>({cmd: 'not_shown'});
-    // the claim of the product, read only now, at the end of the run
-    const drawn = await win.page.evaluate(() => window.preview.drawnCount());
-    const end = Date.now();
 
     const seconds = (to - from) / 1000;
     const conn = connectionNumbers(n).at(-1)!;

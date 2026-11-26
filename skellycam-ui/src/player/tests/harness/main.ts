@@ -6,9 +6,13 @@
 // PLAYER_HARNESS_PRODUCT_THROTTLING=1 (T-PRV-49) the app has no switch against backgrounding, as the product
 // app, and `openWindow(name, {productThrottling: true})` opens a window with the default `backgroundThrottling`.
 import {app, BrowserWindow, ipcMain, protocol} from 'electron';
+import type {NativeImage} from 'electron';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {patternBytes} from '../fixtures/take-files-checks.ts';
+import {observeWindow} from './observer.ts';
+import type {Geometry} from './observer.ts';
+import {runPreviewBench} from './preview-bench-run.ts';
 
 type SchemeModule = typeof import('../../main/take-scheme.ts');
 type Handler = Awaited<ReturnType<SchemeModule['installTakeHandler']>>;
@@ -82,6 +86,8 @@ function installVariant(mode: 'ok-exact' | 'ok-whole' | 'bad-start'): void {
     });
 }
 
+const observed: Record<string, {rows: number[][]; read: (image: NativeImage) => void}> = {};
+
 const need = (): Handler => {
     if (!handler) throw new Error(productError ?? 'the take handler is not installed');
     return handler;
@@ -94,6 +100,21 @@ const need = (): Handler => {
     openWindow: (name?: string, options?: WindowOptions) => openWindow(name, options),
     installVariant,
     channels: async () => (await import('../../main/bridge.ts')).TAKE_CHANNELS,
+    // the outside observer (observer.ts): the rows and the reader of each observed window
+    observe: (geo: Geometry, id: number | null) => {
+        const win = id === null ? BrowserWindow.getAllWindows()[0] : BrowserWindow.fromId(id)!;
+        const rows: number[][] = [];
+        observed[String(id)] = {rows, read: observeWindow(win, geo, rows)};
+    },
+    readings: (id: number | null) => {
+        const win = id === null ? BrowserWindow.getAllWindows()[0] : BrowserWindow.fromId(id);
+        win?.webContents.endFrameSubscription();
+        return observed[String(id)]?.rows ?? [];
+    },
+    captureOnce: async (id: number | null) => {
+        const win = id === null ? BrowserWindow.getAllWindows()[0] : BrowserWindow.fromId(id)!;
+        observed[String(id)].read(await win.webContents.capturePage());
+    },
 };
 
 ipcMain.handle('harness:product-error', () => productError);
@@ -106,7 +127,9 @@ void app.whenReady().then(async () => {
             productError = String(e);
         }
     }
-    openWindow();
+    // the preview bench runs in this process, with no Playwright attached (preview-bench-run.ts, Q869)
+    if (process.env.PREVIEW_BENCH_RUN) void runPreviewBench(name => openWindow(name), process.env.PREVIEW_BENCH_RUN);
+    else openWindow();
 });
 
 app.on('window-all-closed', () => app.quit());
