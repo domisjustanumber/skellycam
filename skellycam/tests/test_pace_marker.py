@@ -37,6 +37,8 @@ PACE_TESTS = [
     ("skellycam.tests.preview.test_ws_flow", "test_t_prv_13_client_1_gets_its_share"),
     ("skellycam.tests.preview.test_ws_flow", "test_t_prv_15_b_gets_8_messages_within_0_5_s"),
     ("skellycam.tests.preview.test_ws_flow", "test_t_prv_16_b_gets_30_messages_within_2_s"),
+    # step 4b: the share of T-PRV-26 (Q827 [ADR-NA1N])
+    ("skellycam.tests.preview.test_endpoint", "test_t_prv_26_each_camera_gets_its_share"),
 ]
 # A test whose failure does not depend on the pace blocks (16.1): the functional halves of the split tests, the
 # long-interval test (no bound of time), the slow stop (its row counts are the lock rule), and the tests of item 1
@@ -68,6 +70,7 @@ NOT_PACE = [
     ("skellycam.tests.preview.test_ws_flow", "test_t_prv_15_ring_recreated"),
     ("skellycam.tests.preview.test_ws_flow", "test_t_prv_16_a_camera_stops"),
     ("skellycam.tests.preview.test_ws_flow", "test_t_prv_54_the_next_message_after_an_answer_holds_the_newest_frame"),
+    ("skellycam.tests.preview.test_endpoint", "test_t_prv_26_the_product_endpoint_sends_camera_messages"),
 ]
 
 
