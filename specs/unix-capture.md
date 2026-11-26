@@ -1460,7 +1460,8 @@ The signal and the watch [ADR-AC5B](../decisions/entries/AC5B-choices-of-the-thi
   camera is paused (a sleep of 50 ms), waits at the gate (1 ms) or is `waiting`. Thus the counter
   works for each source (OpenCV, the fake source, Media Foundation, V4L2, AVFoundation) with no change
   to a source. The capture thread or the callback of a push source MAY also add one.
-- No step of the loop in a watched state runs longer than the limit (2 s) outside a pass:
+- No step of the loop in a watched state runs longer than the trip of the watch (2.5 s, below) outside a pass
+  ([ADR-4PPS](../decisions/entries/4PPS-choices-of-the-answers-lane-of-q842-to-q856.md) item 12):
   - The exposure search [req 1.3] and the check of [W 10.2] run inside the passes.
   - A wait of the loop in the recorder (`CameraTakeWriter.give` with a full queue, `end`, `abandon`)
     adds one to `alive_count` at least each 0.5 s: each blocking attempt of its wait is at most
@@ -1486,16 +1487,23 @@ The signal and the watch [ADR-AC5B](../decisions/entries/AC5B-choices-of-the-thi
 - The order of the two rules (Q863 of [ADR-3RJJ](../decisions/entries/3RJJ-decision-of-the-user-on-the-order-of-the-two-stall-rules.md)): when frames stop, the in-process rule decides, not
   the watch. The watch counts from the later of the last loop pass and the last frame arrival. The last loop pass
   is never the earlier one: the loop adds to the counter at the start of each pass, after the arrival and the waits
-  of the pass before. Thus the watch counts from the first round (each 0.1 s) that sees the last change of the
-  counter. The in-process rule ends a read 2 s after the later of the last arrival and the last wait of the loop,
+  of the pass before. The first pass in `waiting` after an open (also the open of a reopen, which runs inside a
+  pass) attaches the rings and starts the clock of the in-process rule at that attach (`last_arrival`); the loop
+  then adds one more to the counter, before its read, so this path keeps the order too ([ADR-4PPS](../decisions/entries/4PPS-choices-of-the-answers-lane-of-q842-to-q856.md) item 10).
+  Thus the watch counts from the first round (each 0.1 s) that sees the last change of the counter. The in-process rule ends a read 2 s after the later of the last arrival and the last wait of the loop,
   thus at most 2 s after that change. The watch waits 0.5 s more, the head start (Q874 of
   [ADR-EQ3K](../decisions/entries/EQ3K-decisions-of-the-user-on-the-head-start-of-the-stall-watch.md)). In the head start
-  the camera process wakes from its read, reports the failure (one put on the queue of the setup failures and one
-  write of `info`) and sets `dead`; then the watch is off. The `info` lock waits no more than one read or one
+  the camera process wakes from its read and reports the failure in this order: one write of `failure` into
+  `info` (from then on the watch is off), one put on the queue of the setup failures (the main process reads that
+  queue only to empty it), then the state `dead` ([ADR-4PPS](../decisions/entries/4PPS-choices-of-the-answers-lane-of-q842-to-q856.md) item 11). The `info` lock waits no more than one read or one
   write of another holder, because each holder of a live camera holds it only that long. A camera process that
   cannot do this in 0.5 s is a stalled camera for the watch.
-- A first lock wait of a frame decision (1.5 s) and a first lock wait of a status array (0.5 s) in one pass give
-  2.0 s with no loop pass: not longer than the limit, and 0.5 s before the trip, so they trip nothing.
+- In a take, one pass can hold the first lock wait of a frame decision (1.5 s), the read (one frame period) and
+  the first attempt of `give` with a full queue (0.5 s; the next attempts add to the counter): about 2.03 s at
+  30 fps with no new count, about 0.47 s before the trip. A first wait of 0.5 s for the lock of a status array on
+  top would pass the trip. It is not expected in a live camera process: each camera process gets new arrays, and
+  the main process holds such a lock only for one read or one write ([ADR-4PPS](../decisions/entries/4PPS-choices-of-the-answers-lane-of-q842-to-q856.md) item 12, which corrects item 5 of
+  ADR-EQ3K).
 - A loop that makes no pass (a hung call, a suspended process) is `stalled` at most 2.6 s after its last pass:
   at most 0.1 s until a round of the watch sees the change, then 2.5 s. Its process ends at most 1 s later (the
   `kill`).

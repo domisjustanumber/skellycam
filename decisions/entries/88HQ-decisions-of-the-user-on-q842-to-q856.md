@@ -53,7 +53,7 @@ repository records them.
 Items 2, 3 and 6 are in the specs that absorb ADR-J1HD and ADR-TYH0. Item 9 is in `unix-capture.md` 4.10 and
 `windows-capture.md` 9.5. Items 10 and 11 are in `player.md`, `windows-capture.md` and the test docstrings.
 Items 12 and 13 are in [open-work.md](../open-work.md). Items 1, 4, 5, 7, 8, 14 and 15 are actions, or rules of
-another branch or repository. Note: the push of item 1 is done (dom/integration later moved to 32eb69e20).
+another branch or repository.
 
 ## Reason
 

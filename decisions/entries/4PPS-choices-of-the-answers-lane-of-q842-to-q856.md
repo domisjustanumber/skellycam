@@ -31,6 +31,20 @@ The user did not decide these details.
 8. **The Windows OS key** (`certify.md` 11.2) is written from the code `current_os_key`: `platform.release()`, a
    space and `DisplayVersion` of the registry, `unknown` when it cannot be read.
 9. Accepted by Q874 and moved to [ADR-EQ3K](EQ3K-decisions-of-the-user-on-the-head-start-of-the-stall-watch.md) item 5.
+10. **The count at the attach** (`unix-capture.md` 4.10). `_wait_pass` sets `last_arrival` at the attach of the
+    rings, after the count of its pass; then the in-process clock starts after the count, and the head start
+    shrinks by the attach time (on the first open and on the open of a reopen, which runs inside a pass). The loop
+    adds one to `alive_count` just after it sets `last_arrival`, so the count again comes after the start of the
+    in-process clock. `alive_count` has no other reader than the watch; one more count only shortens a gap.
+11. **The order in `_fail`** (`unix-capture.md` 4.10). The failure goes into `info` first, then on the queue of the
+    setup failures, then the state. The put can wait (its lock, the pipe), and the watch stops only when `info`
+    holds the failure. The main process reads the queue only to empty it (`_watch_workers`), so no reader needs
+    the old order. The rule of section 12 (the failure object before the state) holds.
+12. **The longest pass with no count** (`unix-capture.md` 4.10). The rule "no step longer than the limit" now
+    names the trip (2.5 s): a pass in a take can hold the first frame-decision wait (1.5 s), the read and the
+    first attempt of `give` (0.5 s), about 2.03 s at 30 fps. This corrects item 5 of ADR-EQ3K, which counted an
+    array-lock wait in place of the attempt of `give`; a first array-lock wait is not expected in a live camera
+    process.
 
 ## Reason
 
@@ -43,6 +57,11 @@ The user did not decide these details.
 7. The new sums would change the run times that the user accepted; that is a question for the user.
 8. The spec said `os.label`, but the code and ADR-DC43 item 4 use the release.
 9. See [ADR-EQ3K](EQ3K-decisions-of-the-user-on-the-head-start-of-the-stall-watch.md).
+10. Each path to a read must keep the count after the start of the in-process clock, or the head start is less
+    than 0.5 s.
+11. The watch must see the failure before any step that can wait.
+12. The code (`camera_orchestrator.py`, `camera_writer.py`) gives these waits; the old sentence did not.
+
 ## Open work
 
 [open-work.md](../open-work.md)
