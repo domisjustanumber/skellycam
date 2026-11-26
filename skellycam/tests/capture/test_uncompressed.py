@@ -50,15 +50,33 @@ def quick_sync_number(jpeg):
     return int(match.group(1)) if match else None
 
 
-def assert_own_frames(writes, taken):
-    """Each Quick Sync ring JPEG is the JPEG of its own frame: its input number is the place of its source frame
-    among the frames that the loop took, counted from the frame of input 0 [ZEK6 13]. This is stronger than
-    "the sfn minus the first sfn": a frame that a newer frame replaced is never taken, so it is no input."""
+class FeedSpy:
+    """The source frame number of each frame that the loop gives to `FrameEncoder.feed`, one list for each encoder,
+    in the order in which the encoders got their first frame."""
+
+    def __init__(self, monkeypatch):
+        from skellycam.core.camera.capture.encoder import FrameEncoder
+
+        self.lists, by_encoder, feed = [], {}, FrameEncoder.feed
+
+        def spy_feed(encoder, frame):
+            if id(encoder) not in by_encoder:
+                by_encoder[id(encoder)] = []
+                self.lists.append(by_encoder[id(encoder)])
+            by_encoder[id(encoder)].append(frame.source_frame_number)
+            return feed(encoder, frame)
+
+        monkeypatch.setattr(FrameEncoder, "feed", spy_feed)
+
+
+def assert_own_frames(writes, fed):
+    """Each Quick Sync ring JPEG is the JPEG of its own frame [ZEK6 13]: the ring frame whose JPEG has the input number
+    k of the fake encoder has the source frame number of the k-th frame given to `feed` (`fed[k]`)."""
     numbered = [(event["sfn"], quick_sync_number(event["payload"])) for event in writes]
     numbered = [(sfn, number) for sfn, number in numbered if number is not None]
     assert numbered, "no Quick Sync ring JPEG"
-    base = taken.index(next(sfn for sfn, number in numbered if number == 0))
-    assert all(number == taken.index(sfn) - base for sfn, number in numbered), numbered[:10]
+    wrong = [(sfn, number, fed[number]) for sfn, number in numbered if fed[number] != sfn]
+    assert not wrong, f"(ring sfn, input number, fed sfn) of the JPEGs of another frame: {wrong[:5]}"
 
 
 def ring_flags():
@@ -361,6 +379,7 @@ def test_t_cap_67_recorder_gets_the_encoded_jpeg(monkeypatch, tmp_path):
     with capture_app(monkeypatch, [raw_camera()], full_modes=True) as app:
         quick_sync = QuickSyncFake(monkeypatch, available=True)
         spies = Spies(monkeypatch, app, keep_payloads=True)
+        feeds = FeedSpy(monkeypatch)
         camera_id = app.factory.camera_ids[0]
         ready_app_steps(app, [app.config(camera_id, capture_fourcc="YUY2", bgr_ring=False)])
         assert jpeg_encoder(app, camera_id) == "quick_sync"
@@ -378,7 +397,8 @@ def test_t_cap_67_recorder_gets_the_encoded_jpeg(monkeypatch, tmp_path):
     assert all(is_quick_sync_jpeg(block) and jpeg_chroma(block) == "4:2:2" for block in blocks), \
         "a block of the take file is not the encoded JPEG"
     assert not spies.of("bgr", camera_id), "a BGR ring was written with the BGR ring off"
-    assert_own_frames(spies.of("jpeg", camera_id), app.factory.logs[camera_id].taken)
+    assert len(feeds.lists) == 1
+    assert_own_frames(spies.of("jpeg", camera_id), feeds.lists[0])
 
 
 # ---------------------------------------------------------------------------
@@ -747,6 +767,21 @@ def test_t_cap_156_no_wait_between_the_check_of_a_running_change_and_its_flag(mo
         assert out["b"].status_code == 200, out["b"].text
 
 
+def test_t_cap_156_a_refused_request_runs_no_quick_sync_check(monkeypatch):
+    """T-CAP-156, section 22.2 [ZEK6 2]: a request that the whole-request check refuses (422, the one-rate rule) runs
+    no Quick Sync check, also when one of its cameras would open YUY2. A later accepted YUY2 request runs it."""
+    scripts = [raw_camera(), FakeScript(modes=((W, H, 30, 1, "MJPG"), (W, H, 60, 1, "MJPG")))]
+    with capture_app(monkeypatch, scripts, full_modes=True) as app:
+        quick_sync = QuickSyncFake(monkeypatch, available=False)
+        app.detect()
+        raw, mjpg = app.factory.camera_ids
+        refused = app.apply([app.config(raw, capture_fourcc="YUY2"), app.config(mjpg, framerate=60.0)])
+        assert refused.status_code == 422, refused.text
+        assert quick_sync.checks == 0, "a refused request ran the Quick Sync check"
+        ready_app_steps(app, [app.config(raw, capture_fourcc="YUY2"), app.config(mjpg)])
+        assert quick_sync.checks == 1
+
+
 # ---------------------------------------------------------------------------
 # T-CAP-157 to T-CAP-160: an encoder with no output, held frames, a fallback outside a take, the range setting
 # ---------------------------------------------------------------------------
@@ -775,6 +810,7 @@ def test_t_cap_157_an_encoder_with_no_output_falls_back(monkeypatch):
 
         monkeypatch.setattr(quick_sync.module, "open_quick_sync_encoder", open_silent)
         spies = Spies(monkeypatch, app, keep_payloads=True)
+        feeds = FeedSpy(monkeypatch)
         camera_id = app.factory.camera_ids[0]
         ready_app_steps(app, [app.config(camera_id, capture_fourcc="YUY2")])
         app.wait(lambda: len(spies.of("jpeg", camera_id)) >= 30, "30 ring frames")
@@ -784,9 +820,8 @@ def test_t_cap_157_an_encoder_with_no_output_falls_back(monkeypatch):
     assert len(silent) == 1 and silent[0].accepted == 3 and silent[0].closed  # ASYNC_DEPTH 2: the third frame
     assert not any(is_quick_sync_jpeg(event["payload"]) for event in writes)
     assert [k for k, event in enumerate(writes) if event["flags"] & flag.DISCONTINUITY] == [0]
-    taken = app.factory.logs[camera_id].taken
-    sfns = [event["sfn"] for event in writes]
-    assert sfns == [k for k in taken if sfns[0] <= k <= sfns[-1]], "a taken frame has no ring frame"
+    (fed,) = feeds.lists
+    assert [event["sfn"] for event in writes] == fed, "a frame given to the encoder has no ring frame"
     assert any(camera_id in m and "cv2.imencode" in m for m in logs.messages(logging.WARNING))
     assert stop_line_count(logs.messages(), camera_id, "encoder fallbacks") == 1
 
@@ -798,6 +833,7 @@ def test_t_cap_158_a_held_frame_at_a_reopen_and_at_the_close(monkeypatch):
     with capture_app(monkeypatch, [raw_camera()], full_modes=True) as app:
         quick_sync = QuickSyncFake(monkeypatch, available=True)
         spies = Spies(monkeypatch, app, keep_payloads=True)
+        feeds = FeedSpy(monkeypatch)
         camera_id = app.factory.camera_ids[0]
         ready_app_steps(app, [app.config(camera_id, capture_fourcc="YUY2")])
         app.wait(lambda: len(spies.of("jpeg", camera_id)) >= 10, "10 ring frames")
@@ -815,6 +851,10 @@ def test_t_cap_158_a_held_frame_at_a_reopen_and_at_the_close(monkeypatch):
     first, second = writes[:opens_at[1]], writes[opens_at[1]:]
     assert [quick_sync_number(e["payload"]) for e in first] == list(range(len(first)))
     assert [quick_sync_number(e["payload"]) for e in second] == list(range(len(second)))
+    assert len(feeds.lists) == 2
+    assert_own_frames(first, feeds.lists[0])
+    assert_own_frames(second, feeds.lists[1])
+    assert [len(fed) for fed in feeds.lists] == [len(first) + 1, len(second) + 1], "not one held frame dropped"
 
 
 def test_t_cap_159_a_fallback_outside_a_take_and_a_reopen_after_it(monkeypatch):

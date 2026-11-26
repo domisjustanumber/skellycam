@@ -197,15 +197,16 @@ class CameraGroupManager:
             # 7.1, U17: the check needs the detection data, also to refuse a virtual camera (ADR-PDD3 W5)
             self.detected_cameras = {camera.camera_id: camera
                                      for camera in await asyncio.to_thread(detect_available_cameras)}
-        if self.quick_sync is None and self._opens_raw(camera_configs):
-            # 13.2: before the whole-request check, so that the check of `request_runs` and its set have no wait
-            # between them (camera-requests.md 2.4a item 7)
-            self.quick_sync = await asyncio.to_thread(capture_encoder.quick_sync_works)
-            if camera_group is not None:
-                self._write_switch(camera_group)
         if camera_group is not None:
             camera_group.adopt_search_results()
         warnings, rates_known = self._check_request(camera_configs, camera_group)
+        if self.quick_sync is None and self._opens_raw(camera_configs):
+            # 13.2: only for a request that the check accepts; the check runs again after the wait, so the check of
+            # `request_runs` and its set have no wait between them (camera-requests.md 2.4a item 7) [ZEK6 2]
+            self.quick_sync = await asyncio.to_thread(capture_encoder.quick_sync_works)
+            if camera_group is not None:
+                self._write_switch(camera_group)
+            warnings, rates_known = self._check_request(camera_configs, camera_group)
         before, counts = {}, {}  # camera-requests.md 2.4a [ADR-1T0S]: for the fall back to 30 fps
         if camera_group is not None:  # camera-requests.md 1.5 [AC5B]: each apply request of the user clears them
             camera_group.request_runs = True  # 2.4a item 7: no wait since the check

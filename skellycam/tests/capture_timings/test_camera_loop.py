@@ -320,11 +320,14 @@ def test_t_tim_23_the_clock_reads_of_a_raw_camera(monkeypatch, tmp_path):
     loop._arm_hashes("recording")
     reads = count_reads(monkeypatch)
     me = threading.get_ident()
-    taken = source.frames
-    frames(loop, 10)
+    taken, passes, start = source.frames, [], loop.gate_count
+    while loop.gate_count < start + 10:
+        before, ring_before = sum(ident == me for ident in reads), loop.gate_count
+        loop._pass()
+        passes.append((sum(ident == me for ident in reads) - before, loop.gate_count - ring_before))
     taken = source.frames - taken
-    in_loop = sum(ident == me for ident in reads)
-    assert taken == 11 and 0 < in_loop <= 10 * taken, (taken, in_loop)
+    assert taken == 11 and passes[0] == (4, 0), (taken, passes)  # Quick Sync holds the first frame: 4 reads
+    assert all(0 < count <= 10 for count, out in passes[1:]) and all(out == 1 for _, out in passes[1:]), passes
     end_take(loop)
     window = summary(loop)
     assert window["steps"]["jpeg_encode"]["n"] == taken
