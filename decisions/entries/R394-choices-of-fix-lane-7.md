@@ -1,8 +1,14 @@
 # R394 — Choices of fix lane 7: the macOS jobs by hand, the leak of open files, and the start of a group on the test clock
 
-**Status:** accepted, 2026-11-25 (user: [ADR-2SX2](2SX2-acceptance-of-the-choices-of-fix-lane-7-and-its-follow-ups.md),
+**Status:** absorbed into [`specs/windows-capture.md#59-the-queues-of-a-closed-group`](../../specs/windows-capture.md#59-the-queues-of-a-closed-group),
+[`specs/windows-capture.md#15-ci-d47`](../../specs/windows-capture.md#15-ci-d47),
+[`specs/windows-capture.md#161-kinds`](../../specs/windows-capture.md#161-kinds),
+[`specs/recorder.md#121-kinds-markers-workflow-and-parity`](../../specs/recorder.md#121-kinds-markers-workflow-and-parity),
+[`skellycam/tests/capture/test_helpers.py`](../../skellycam/tests/capture/test_helpers.py),
+[`skellycam/tests/capture/capture_session.py`](../../skellycam/tests/capture/capture_session.py),
+2026-11-26 (commit to dom/answers-q842; was accepted, 2026-11-25 (user: [ADR-2SX2](2SX2-acceptance-of-the-choices-of-fix-lane-7-and-its-follow-ups.md),
 "yes to all"; commit to dom/fix-lane-7; was proposed, 2026-11-25 (agent; builds items 1 to 3 of
-[ADR-N14T](N14T-decisions-of-the-user-on-the-ci-review-of-2026-11-25.md))).
+[ADR-N14T](N14T-decisions-of-the-user-on-the-ci-review-of-2026-11-25.md)))).
 
 ## Decision
 

@@ -31,9 +31,7 @@ These entries are `accepted`.
 | [HP7D](entries/HP7D-python-api-of-capture-as-the-3a-tests-assume-it.md) | Python API of capture, as the 3a tests assume it: names, seams for fake sources and a virtual clock, log line forms | accepted |
 | [C6DE](entries/C6DE-stall-as-no-progress-limits-and-no-fat-disk.md) | Recorder decisions D1 to D3: a stall is no writer progress for the limit; 3 s and 10 s stay as starting values; no take on a FAT disk | accepted |
 | [JMS0](entries/JMS0-review-decisions.md) | Connection review: frame count, error end, start wait, failed start, stall watch, gap detail, hang rule, exposure, allow-lists, dead server, summary rate | accepted |
-| [VYS7](entries/VYS7-answers-of-the-user-to-the-step-4b-spec-and-go-ahead-for-its-tests.md) | Answers Q1 to Q13 to the 4b spec: Captured and Displayed, list label, 30 fps outside proof; PR to `development`; go-ahead for tests | accepted |
 | [EQY4](entries/EQY4-base-the-work-on-upstream-sfn26-without-rust.md) | Base the work on upstream `sfn26`: keep our camera layer and recorder, remove each Rust part, four ports, PRs to upstream `development` | accepted |
-| [22EJ](entries/22EJ-decisions-of-the-user-for-linux-and-macos-native-capture.md) | Linux and macOS native capture: certify validates it; own OS folders; test parity; SkellyCam Auto only; restore at close; checked per model | accepted |
 | [GVC0](entries/GVC0-certify-decisions-of-the-user.md) | Certify run of skellycam: levels, quick camera checks and 3 s take, camera summary list, rules that hold everywhere, fake cameras, functions, draft 1 answers | accepted |
 | [2GS1](entries/2GS1-step-3a-choices-of-the-capture-code-and-its-fixes.md) | Supersedes S6HT, MA22, 6EKB, 037V, BM73, R60B, FTC3: step 3a choices; virtual by link; macOS timing step; loop, source, review and CI fixes | accepted |
 | [68JT](entries/68JT-step-4a-choices-of-the-preview-sender.md) | Supersedes 162X, 24FZ, MZ02: step 4a choices of the preview sender; spec section 13 items, Python API of the 4a tests, code choices | accepted |
@@ -43,10 +41,6 @@ These entries are `accepted`.
 | [6T78](entries/6T78-choices-of-the-sfn26-integration.md) | Choices of the `sfn26` integration: OpenCV helpers stay ours, kept and dropped items, forms of the four ports, Rust removal | accepted |
 | [X1T8](entries/X1T8-two-way-kit-sync-adoption.md) | Two-way kit sync: skellycam is the pilot; values in `kit.toml`; Python 3.13; the winners of 19 differences; CI runs only `check`; kit uv | accepted |
 | [0AMX](entries/0AMX-propose-from-skellycam-and-review-in-the-kit.md) | Q657: a skellycam agent runs `propose`; the kit session reviews and commits the result in its own repository | accepted |
-| [2AQT](entries/2AQT-decision-of-the-user-on-the-gap-of-the-stall-test-with-process-workers.md) | Q721: the 1 s gap limit of the stall test under load with PROCESS workers moves to the `pace` test, as for THREAD workers | accepted |
-| [N14T](entries/N14T-decisions-of-the-user-on-the-ci-review-of-2026-11-25.md) | CI review of 2026-11-25: the macOS jobs run only by hand; find if "Too many open files" is a leak, no higher limit; find the cause of T-CAP-91 on Linux | accepted |
-| [R394](entries/R394-choices-of-fix-lane-7.md) | Choices of fix lane 7: macOS jobs by hand; the open files leak in the pubsub registry (product, proposal only); a group start holds the test clock | accepted |
-| [2SX2](entries/2SX2-acceptance-of-the-choices-of-fix-lane-7-and-its-follow-ups.md) | "Yes to all": ADR-R394 accepted (its clock rule changes B7YV item 8); fix the pubsub leak, spec and test first; look at the T-UNX-98 thread; merge lane 7 | accepted |
 | [4CAF](entries/4CAF-choices-of-the-close-of-the-queues-of-a-group.md) | Choices of fix lane 8: a closed group closes its queues and leaves the pubsub registry (windows-capture.md 5.9, T-CAP-114) | accepted |
 | [JC4X](entries/JC4X-choices-of-the-gate-probe-of-a-second-app-on-the-test-clock.md) | Choices of fix lane 8: a second app of one test wraps the product gate probe, so `shut` never calls the test clock (T-UNX-98 stuck thread) | accepted |
 | [GZS7](entries/GZS7-decisions-of-the-user-on-the-capture-timings-build-and-the-merge-order.md) | Q837 to Q841, Q814 to Q816: capture timings choices (first summary, read budget, rounding, send lock); merge order; clean-up lane; test branches | accepted |
@@ -60,9 +54,9 @@ These entries are `accepted`.
 | [VHD3](entries/VHD3-answers-of-the-owner-q694-q717-q718.md) | v1 playback answers Q694, Q717, Q718: WebCodecs for H.264 in each phase, WASM for `mp4v`, WASM `h264` fallback per tile, 8-bit 4:2:0 H.264 later | accepted |
 | [A56K](entries/A56K-choices-of-the-v1-playback-spec.md) | Draft `specs/player-legacy.md` rev. 5, T-LEG-01 to 72: WebCodecs route and WASM fallback, frame table and seek rules, locked play, decoder build, Dependabot | accepted |
 | [EM6A](entries/EM6A-answers-of-the-owner-to-the-v1-playback-questions-of-revision-5.md) | v1 playback answers Q733 to Q749, Q764 to Q767: file rules to skellyspecs, secret header, F6 too slow, macOS re-sign, default token, watch later | accepted |
-| [DC43](entries/DC43-choices-of-fix-lane-5.md) | Choices of fix lane 5: control thread on the test clock, test waits for a short `ready` and for a killed process, Windows Server OS key | accepted |
 | [8CP7](entries/8CP7-certify-spec-draft-3-choices-of-the-agent.md) | Certify spec draft 3 on format 1.4.0, tests T-CERT-01 to 67, 15 agent choices: split checks, model item, gate roll-ups, local record, macOS probes | accepted |
 | [PA3A](entries/PA3A-decision-of-the-user-on-the-test-workflow-on-dom-integration.md) | "Yes": `test.yml` runs on each push to `dom/integration`: ruff, the test suite and the UI typecheck | accepted |
+| [88HQ](entries/88HQ-decisions-of-the-user-on-q842-to-q856.md) | Q842 to Q856: J1HD and TYH0 accepted, the stall watch at 2 s, the player label and picked folders, absorb sentences, N72V, push rule | accepted |
 
 ### Proposed
 
@@ -77,7 +71,7 @@ These entries wait for a decision of the user. Section is the section or area of
 | [FC1C](entries/FC1C-choices-of-the-spec-integration.md) | Spec integration choices: hash set, route results, no record in certify, model turn-on, waits, steps, quick order, take error state | none | proposed |
 | [F8C0](entries/F8C0-third-review-choices.md) | Choices of the third review fixes: start and stop with no lost take, no stop pause, exit through the take level, Ctrl-C, dead-server end, summary rate | `recorder` | proposed |
 | [AC5B](entries/AC5B-choices-of-the-third-consistency-check.md) | Choices of the third spec check: loop-pass stall counter, diagnostics message, code table, warning owners, apply wait, search reason, `ended_take_summary` | none | proposed |
-| [Q2NY](entries/Q2NY-choices-of-code-step-2.md) | Choices of code step 2: stall watch at 3 s and off in the pause, diagnostics topic and close dict, no OpenCV restore, no restore after a failure | none | proposed |
+| [Q2NY](entries/Q2NY-choices-of-code-step-2.md) | Choices of code step 2: stall watch at 3 s (Q850: 2 s) and off in the pause, diagnostics topic and close dict, no OpenCV restore, no restore after a failure | none | proposed |
 | [GEH0](entries/GEH0-choices-of-code-step-3.md) | Choices of code step 3: `not_streaming`, held value through the status, search flag, exposure range (`no-value-in-range`), 409 and 422 rules | none | proposed |
 | [QJH6](entries/QJH6-choices-of-the-fix-lane.md) | Choices of the fix lane: held value at the nearest search value, `cameras_left_out`, status locks, failed start keeps the summary, OpenCV mode FOURCC | none | proposed |
 | [Z7F3](entries/Z7F3-choices-of-fix-lane-3.md) | Choices of fix lane 3: restore record within one step, retry list, restore after a failure, one group creation, Media Foundation clock, median rate | none | proposed |
@@ -89,9 +83,8 @@ These entries wait for a decision of the user. Section is the section or area of
 | [B7YV](entries/B7YV-choices-of-fix-lane-6.md) | Choices of fix lane 6: one run for the two halves, nominal values and loose checks, T-PRV-54, loop threads on the test clock, T-CAP-86 diagnostics | none | proposed |
 | [7GC1](entries/7GC1-choices-of-the-gate-on-the-test-clock-and-the-end-of-t-cap-05.md) | Choices of fix lane 6: a loop at an open gate holds the test clock until its next probe, forced steps still move it; T-CAP-05 checks the last ring frames | none | proposed |
 | [JFG4](entries/JFG4-choices-of-the-capture-timings-build.md) | Choices of the capture timings build that the user did not decide: source sets, sets, main process, message loop, route, test seams, faults | none | proposed |
-| [J1HD](entries/J1HD-choices-of-the-control-read-check.md) | Choices of the certify check of the control read: 30 s on and off, the 100 ms rule, `control_read` in the record, a harmed model pauses on each build | none | proposed |
-| [TYH0](entries/TYH0-choices-after-the-acceptance-of-the-v1-playback-spec.md) | After the v1 spec acceptance: the code that goes with the old routes in 6c part 1; the certify row `player-legacy-decode` | `player` | proposed |
 | [QF7V](entries/QF7V-choices-of-the-test-workflow-on-dom-integration.md) | Choices of the push run of `test.yml`: no run for log-only pushes, no macOS job on a push, pinned labels, PortAudio, no `capture_local`, no fail-fast, 60 min | none | proposed |
+| [4PPS](entries/4PPS-choices-of-the-answers-lane-of-q842-to-q856.md) | Choices of the answers lane: the label from `<recording_name>_info.json` with a fall back, no `pickedFoldersFile`, Q852 sentences, control-read setting, OS key | none | proposed |
 
 The entries that are `rejected`, `superseded by XXXX`, `absorbed into <path>#<anchor>`,
 `evidence; used by XXXX`, `evidence; replaced by XXXX` or `done` are in [historical.md](historical.md).

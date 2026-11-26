@@ -1,6 +1,7 @@
 # 2AQT — Decision of the user on the gap limit of the stall test with PROCESS workers (Q721)
 
-**Status:** accepted, 2026-11-24 (user; the coordinator asked the question and relayed the answer).
+**Status:** absorbed into [`specs/windows-capture.md#161-kinds`](../../specs/windows-capture.md#161-kinds),
+2026-11-26 (commit to dom/answers-q842; was accepted, 2026-11-24 (user; the coordinator asked the question and relayed the answer)).
 
 ## Decision
 

@@ -918,7 +918,7 @@ def test_a_stop_whose_unpause_fails_still_finishes_the_take(monkeypatch, tmp_pat
 
 def held_paused_sleep(monkeypatch, camera_id):
     """Hold the paused loop of one camera 1 s at its next paused sleep, when `hold["on"]` is set. Not 2 s: the
-    main-process stall watch ends a camera with no loop pass for 2 s (unix-capture.md 4.10)."""
+    main-process stall watch ends a camera with no loop pass for 2.5 s (unix-capture.md 4.10)."""
     import types
 
     loop_module = importlib.import_module("skellycam.core.camera.capture.camera_loop")
