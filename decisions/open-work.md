@@ -101,16 +101,15 @@ task. Delete an item when its work is done. The PR that closes an item records t
     `dom/preview-4b-tests` ([ADR-70WD](entries/70WD-failing-tests-of-step-4b-and-the-names-they-assume.md)). The
     user accepted their names and answered Q824 to Q836
     ([ADR-NA1N](entries/NA1N-answers-of-the-user-to-the-questions-of-the-step-4b-tests.md)); revision 4 of the
-    spec holds the answers. Run the quick ones with
+    spec holds the answers. The product code is on `dom/preview-4b-tests` (Q855;
+    [ADR-8WX9](entries/8WX9-choices-of-the-step-4b-code.md), proposed). Run the quick ones with
     `npm run test:player:unit` in `skellycam-ui/` and
-    `uv run pytest skellycam/tests/preview tools/tests/test_camera_message_fixture.py -m "not pace"`. Not run yet:
-    T-PRV-28 and T-PRV-29 (heavy real-time runs), the component tests T-PRV-43, 44, 47 to 50 and T-PLAY-44
-    (`npm run test:player:browser`), the benchmarks T-PRV-51 and T-PRV-52 (by hand). Not done: the CI changes of
-    7.8, in their own PR; T-PRV-25 runs only in the capture jobs (Q836). After the first run of T-PRV-49, look at
-    it again (Q835). The 4b code must also change `skellycam/tests/capture/test_group_watch.py`, which uses
-    `get_latest_ring_payload` (item 5). Next: the product code of 4b, after a go-ahead of the user.
-    The tests stay unmerged until their code passes (Q815). At their merge, the pause text of `preview-4b.md`
-    on the integration side wins (no server pause, ADR-V8RS).
+    `uv run pytest skellycam/tests/preview tools/tests/test_camera_message_fixture.py -m "not pace"`. Open: T-PRV-29
+    (B sends only frame 0 before its end), T-PRV-47 (no capture of a still window) and T-PRV-49 (the hidden window
+    stays `visible`) fail on their test, not on the code (Q835); the benchmarks T-PRV-51 and T-PRV-52 (by hand); the
+    CI changes of 7.8, in their own PR; the tile timings of step 8 of `capture-timings.md`. The tests and the code
+    merge together after an independent review (Q815). The pause text of `preview-4b.md` on the integration side
+    wins (no server pause, ADR-V8RS).
 - **The `sfn26` integration on `dom/integration`**
   ([ADR-EQY4](entries/EQY4-base-the-work-on-upstream-sfn26-without-rust.md),
   [ADR-6T78](entries/6T78-choices-of-the-sfn26-integration.md)). Open:

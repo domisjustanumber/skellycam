@@ -189,9 +189,13 @@ session fixture to `skellycam/tests/conftest.py` that calls `configure_logging` 
 
 In `WebsocketServer`:
 
-1. `__init__` makes `self._preview = PreviewRelay(self._cgm, self._send_bytes,
-   self._send_msgspec_json)`. The two send functions hold the send lock [4a agent 27]. ADR-24FZ
-   item 2 allows `_send_msgspec_json` as `send_json`.
+1. `__init__` makes `self._preview = PreviewRelay(self._cgm, self._send_bytes_in_lock,
+   self._send_msgspec_json, step_set=self._preview_timings.steps, send_lock=self._send_lock)`. The
+   two sends hold the send lock [4a agent 27]: `_send_msgspec_json` takes it, and the relay takes
+   `send_lock` around `_send_bytes_in_lock`, so that the `preview_send` bracket starts after the
+   lock (`capture-timings.md` 6.5, Q839)
+   ([ADR-8WX9](../decisions/entries/8WX9-choices-of-the-step-4b-code.md) item 1). ADR-24FZ item 2
+   allows `_send_msgspec_json` as `send_json`.
 2. `run` starts the task `_preview_relay` in place of `_frontend_image_relay`. `_preview_relay`
    awaits `self._preview.run()`. It has the same `except` clauses and the same `finally:
    self._signal_shutdown()` as `_logs_relay` [agent 1].
