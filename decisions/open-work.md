@@ -99,6 +99,9 @@ task. Delete an item when its work is done. The PR that closes an item records t
     - T-PRV-49 (Q868): minimised, window 2 stays `visible` (`document.hidden` false), but `requestAnimationFrame`
       stops and the server sends about 1 message each second for each camera. The test keeps the hide; the user
       decides the next step.
+    - T-PRV-51 and T-PRV-52, first clean run
+      ([ADR-0ZKW](entries/0ZKW-first-run-of-the-step-4b-preview-benchmarks.md)): B-1a misses at 30 fps (0.996) and
+      B-1b at 60 fps (52.5 of 53.1); the user decides (6.4).
     - The CI changes of 7.8, in their own PR. Tests and code merge together after an independent review (Q815).
     - After the merge: the tile timings lane (step 8 of `capture-timings.md`), tests first (Q870); a small lane
       deletes `read_latest_ring_frames` and `_send_json`, with the spec line and the probe of their three tests
