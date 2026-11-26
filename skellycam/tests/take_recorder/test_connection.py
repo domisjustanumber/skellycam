@@ -190,6 +190,8 @@ def test_t_rec_41_no_decode_for_the_recorder(monkeypatch, tmp_path, bgr_ring):
         ready_app_steps(app, [app.config(camera_id, bgr_ring=bgr_ring)])
         assert app.record_start(tmp_path).status_code == 200
         record_until(app, spies, 60)
+        if bgr_ring:  # ring 8.3: the decode stage can fall behind the recorder; wait for 60 decoded frames [ADR-2HW5]
+            app.wait(lambda: len([e for e in spies.of("bgr") if e["hash"] is not None]) >= 60, "60 BGR frames")
         stop(app)
         app.client.delete("/skellycam/camera/group/close/all")
     decodes = spies.of("imdecode")
