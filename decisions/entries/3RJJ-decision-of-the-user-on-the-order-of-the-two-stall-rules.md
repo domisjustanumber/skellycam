@@ -1,7 +1,10 @@
 # 3RJJ — Decision of the user on the order of the two stall rules (Q863)
 
-**Status:** accepted, 2026-11-26 (user; the coordinator asked the question and relayed the answer; commit to
-dom/answers-q842).
+**Status:** absorbed into [`specs/unix-capture.md#410-main-process-stall-watch-u`](../../specs/unix-capture.md#410-main-process-stall-watch-u),
+[`specs/windows-capture.md#95-stall-watch`](../../specs/windows-capture.md#95-stall-watch),
+[`skellycam/tests/capture/test_stall_watch.py`](../../skellycam/tests/capture/test_stall_watch.py),
+2026-11-26 (commit to dom/answers-q842; was accepted, 2026-11-26 (user; the coordinator asked the question and relayed the answer; commit to
+dom/answers-q842)).
 
 ## Decision
 
