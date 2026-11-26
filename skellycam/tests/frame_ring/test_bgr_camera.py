@@ -14,13 +14,14 @@ import os
 import re
 import subprocess
 import sys
+import threading
 import time
 
 import cv2
 import numpy as np
 import pytest
 
-from skellycam.tests.capture.capture_session import capture_app, ready_app_steps
+from skellycam.tests.capture.capture_session import capture_app, hold_clock_while_behind, ready_app_steps
 from skellycam.tests.capture.fake_source import FakeScript
 from skellycam.tests.frame_ring.ring_session import (
     fake_configs,
@@ -236,7 +237,8 @@ def test_t_ring_40_both_rings_match(monkeypatch, cleanup):
     that the BGR ring does not give is a counted BGR skip.
 
     The fake source gives 160x120 MJPG frames at 1,000 frames/s of a virtual clock, and each ring
-    has 1,000 slots, so that the reader keeps up.
+    has 1,000 slots. The test thread holds the clock while it is 500 frames behind the JPEG ring, so
+    that the reader keeps up also on a slow machine (`hold_clock_while_behind`) [ADR-2HW5].
     """
     fr = ring()
     both = not_in_bgr = 0
@@ -245,26 +247,32 @@ def test_t_ring_40_both_rings_match(monkeypatch, cleanup):
         camera_id, names, (jpeg_shm, bgr_shm) = _ready_fake_camera(cleanup, app)
         jpeg_reader, bgr_reader = (cleanup.handle(fr.FrameRingReader.attach(name)) for name in names)
         deadline = time.monotonic() + max(WAIT_TIMEOUT_S, 180.0)
-        while k < FRAMES_T_RING_40:
-            assert app.state(camera_id) == "ready", app.status(camera_id)
-            assert time.monotonic() < deadline, f"timed out at frame {k}"
-            upto = min(raw_head(jpeg_shm), raw_head(bgr_shm), FRAMES_T_RING_40 - 1)
-            while k <= upto:
-                jpeg = jpeg_reader.read(k)
-                bgr = bgr_reader.read(k)
-                assert jpeg.result == fr.ReadResult.OK, (k, jpeg.result)
-                if bgr.result == fr.ReadResult.OK:
-                    both += 1
-                    assert (bgr.frame_number, bgr.arrival_ns, bgr.sample_ns) == (
-                        jpeg.frame_number, jpeg.arrival_ns, jpeg.sample_ns), k
-                    assert (bgr.source_frame_number, bgr.rotation_cw_deg) == (
-                        jpeg.source_frame_number, jpeg.rotation_cw_deg), k
-                    assert bgr.published_ns >= jpeg.published_ns, k
-                else:
-                    assert bgr.result in (fr.ReadResult.MISSING, fr.ReadResult.LAPPED), (k, bgr.result)
-                    not_in_bgr += 1
-                k += 1
-            time.sleep(0.001)
+        app.clock.expect(threading.current_thread())
+        try:
+            while k < FRAMES_T_RING_40:
+                assert app.state(camera_id) == "ready", app.status(camera_id)
+                assert time.monotonic() < deadline, f"timed out at frame {k}"
+                upto = min(raw_head(jpeg_shm), raw_head(bgr_shm), FRAMES_T_RING_40 - 1)
+                while k <= upto:
+                    jpeg = jpeg_reader.read(k)
+                    hold_clock_while_behind(app.clock, jpeg_reader, k, 500)
+                    bgr = bgr_reader.read(k)
+                    assert jpeg.result == fr.ReadResult.OK, (k, jpeg.result)
+                    if bgr.result == fr.ReadResult.OK:
+                        both += 1
+                        assert (bgr.frame_number, bgr.arrival_ns, bgr.sample_ns) == (
+                            jpeg.frame_number, jpeg.arrival_ns, jpeg.sample_ns), k
+                        assert (bgr.source_frame_number, bgr.rotation_cw_deg) == (
+                            jpeg.source_frame_number, jpeg.rotation_cw_deg), k
+                        assert bgr.published_ns >= jpeg.published_ns, k
+                    else:
+                        assert bgr.result in (fr.ReadResult.MISSING, fr.ReadResult.LAPPED), (k, bgr.result)
+                        not_in_bgr += 1
+                    k += 1
+                hold_clock_while_behind(app.clock, jpeg_reader, k, 500)
+                time.sleep(0.001)
+        finally:
+            app.clock.leave()  # before the close: the gate reads the ring
         skipped = parse_ring_header(bgr_shm.buf)["skipped_count"]
     assert both >= 1
     assert not_in_bgr <= skipped, f"{not_in_bgr} numbers not in the BGR ring, {skipped} BGR skips counted"
