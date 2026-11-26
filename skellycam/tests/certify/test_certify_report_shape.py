@@ -333,11 +333,8 @@ class SlowRingLook:
 
 
 @pytest.mark.capture_timing
-@pytest.mark.xfail(strict=True, raises=AssertionError, reason="needs a product fix (ADR-2HW5, open work): a camera "
-                   "that waited in `waiting` for a hung camera is `ready` at the judge of the open with no ring "
-                   "watch, and the session leaves it out of `live`")
 def test_t_cert_151_a_ready_camera_with_no_ring_watch_at_the_judge(monkeypatch, tmp_path):
-    """T-CERT-151, 4.4, 3.6.1: a camera hangs at the open (5 s) and a good camera waits for it in `waiting` (PROCESS
+    """T-CERT-151 case 1, 4.4, 3.6.1: a camera hangs at the open (5 s) and a good camera waits for it in `waiting` (PROCESS
     workers). The group opens the rings only after the hang, and the good camera is `ready` at once. No ring look of
     the session comes before the judge of the open (`SlowRingLook`). The good camera still gets its ready, settings
     and take checks, and it has no `not-reached` row."""
@@ -355,6 +352,31 @@ def test_t_cert_151_a_ready_camera_with_no_ring_watch_at_the_judge(monkeypatch, 
         assert checks.get(f"{fine}:{name}", {}).get("result") == "pass", (
             name, [c for c in report["checks"] if c["name"].startswith(fine + ":")])
     assert_not_reached(report, plan, messages, {hung: "prior-failure"}, labels(devices))
+
+
+class NoRingReader:
+    """`FrameRingReader` for the certify session module: no ring watch can attach."""
+
+    @staticmethod
+    def attach(name):
+        raise FileNotFoundError(name)
+
+
+def test_t_cert_151_a_ready_camera_whose_ring_watch_cannot_attach(monkeypatch, tmp_path):
+    """T-CERT-151 case 2, 4.4: a `ready` camera whose ring watch cannot attach goes on to the settings step and the
+    take; `native-jpeg:source-equals-ring` is `not-run` `ring-lapped`; it has no `not-reached` row."""
+    monkeypatch.setattr(product("skellycam.core.certify.session"), "FrameRingReader", NoRingReader)
+    with capture_app(monkeypatch, [good()]) as app:
+        (label,) = labels(app.factory.device_infos())
+        report = run_with(app, tmp_path)
+    assert_valid(report)
+    checks = by_name(report)
+    rows = [c for c in report["checks"] if c["name"].startswith(label + ":")]
+    assert (checks[f"{label}:native-jpeg:source-equals-ring"]["result"],
+            checks[f"{label}:native-jpeg:source-equals-ring"]["reason"]) == ("not-run", "ring-lapped"), rows
+    for name in ("opens", "native-jpeg:format", "settings-stick:readback", "records:rows-complete"):
+        assert checks[f"{label}:{name}"]["result"] == "pass", (name, rows)
+    assert f"{label}:not-reached" not in checks, rows
 
 
 def test_t_cert_92_a_cancel_in_the_take_and_the_end_of_the_budget(monkeypatch, tmp_path):
