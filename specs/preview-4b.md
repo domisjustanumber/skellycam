@@ -178,10 +178,10 @@ of `CameraGroupManager` stays [agent 13].
 The other three tests of `test_websocket.py` (connect, `ping`, `app_state`) fail on `dom/preview`
 today. `websocket_server_connect` calls `logger.success`, which exists only after
 `skellylogs.configure_logging`, and no test configures it: each test stops with
-`AttributeError: 'Logger' object has no attribute 'success'` (run on 2026-11-20). 4b adds a
-session fixture to `skellycam/tests/conftest.py` that calls `configure_logging` as
-`skellycam/__main__.py` does. Then these three tests and T-PRV-26 to T-PRV-28 can pass
-[agent 19]. `test_websocket_internals.py` and `test_websocket_compression.py` stay.
+`AttributeError: 'Logger' object has no attribute 'success'` (run on 2026-11-20). On
+`dom/integration`, the fixture `logging_runtime` of `skellycam/tests/conftest.py`, which the `app` fixture
+uses, gives `logger.success` and the other logging prerequisites. Thus 4b adds no session fixture, and
+these three tests and T-PRV-26 to T-PRV-28 pass ([ADR-8WX9](../decisions/entries/8WX9-choices-of-the-step-4b-code.md) item 4, proposed; it replaces agent 19). `test_websocket_internals.py` and `test_websocket_compression.py` stay.
 
 ## 4. Server
 
@@ -451,6 +451,10 @@ The product never reads a tile canvas back (`getImageData`, `toDataURL`, `toBlob
   frame rate store (5.8). The guard checks `message_type` and that `cameras` is an object.
 - `log_record`, `pong`: as today.
 
+The functions of `server-messages.ts` [Q824]: `appStateValues(message, cameraList)` gives
+`{overlays, gridCameraIds, connectedCameraIds}`, with `overlays[id]` = `{label, cameraState}`;
+`rateTexts(message)` gives the rate text of each camera; `isFramerateUpdate(data)` is the guard.
+
 ### 5.6 The grid and the camera list
 
 The grid, the settings modal and the layout code stay: `CameraViewsGrid.tsx`,
@@ -463,6 +467,8 @@ show those states [A4]. Today's grid also uses `selectConnectedCameras` of the R
 marks a camera connected only when its group is `alive` (4.5). In 4b, the grid shows
 `gridCameraIds` (5.5), in the order of the camera list, and does not filter on
 `selectConnectedCameras` [Q7, Q5]. A drag swap of the grid stays a change of the layout only.
+`useServer()` gives `getPreviewTiles()` and `gridCameraIds`, and each tile canvas has the attribute
+`data-camera-id` [Q824].
 
 `connectedCameraIds` has these other users. Each keeps the meaning "the cameras that stream" [Q7]:
 
@@ -532,12 +538,22 @@ The viewer has two series for each camera, named for what they mean [Q3]:
 `FramerateStore` keeps one record for each camera id:
 
 - the Captured values: each `delivered_framerate` that arrives, in the windowed statistics of today
-  (`TimestampedRingBuffer`, `WindowedStats`);
+  (`TimestampedRingBuffer`; one function `statsOf` in place of the class `WindowedStats`, [ADR-8WX9](../decisions/entries/8WX9-choices-of-the-step-4b-code.md) item 12,
+  proposed);
 - the Displayed values: `recordDrawn(cameraId, atMs)` adds the time from the previous drawn frame of
   that camera to the same kind of windowed statistics. A time longer than 1 s is not added: it is a
   pause or a hidden page. It only sets the start of the next time [agent 22]. The Displayed rate (the
   current value) is the rate over the frames drawn in the last 1 s of `now` [Q826];
 - the four counts.
+
+The API of the store [Q824]: `recordFramerateUpdate(message)`, `recordAppState(message)`,
+`recordDrawn(cameraId, atMs)`, `cameraIds()`, `clear()` and `getCamera(id)`. `getCamera` gives `null`, or
+`{captured, displayed, notShown, ringSkipped, oversize, replaced}`, where `captured` and `displayed` are
+`{current, aggregate}`, each a `DetailedFramerate` or `null`. The viewer keeps the classes
+`.framerate-viewer` and `.framerate-collapsed-summary`. Each series element is
+`svg [data-camera-id][data-series]`, with its colour as the fill of a `rect`, else as the stroke. The labels
+are in the SVG texts or in an HTML legend. Each count header starts with its English text of the table
+below. The collapsed text of a camera is `<label>: Captured <x> fps, Displayed <y> fps`.
 
 | i18n key | English text | Source | Tooltip (English) |
 |---|---|---|---|
@@ -689,8 +705,8 @@ frames each second on each of 8 tiles during a scrub [M ADR-1ACK evidence].
 
 ### 7.2 Helpers [agent 11, agent 27, agent 28]
 
-- **The session fixture.** `skellycam/tests/conftest.py` gets a session fixture that calls
-  `configure_logging` as `skellycam/__main__.py` does (3.2) [agent 19].
+- **The logging prerequisites.** The fixture `logging_runtime` of `skellycam/tests/conftest.py` gives them
+  (3.2). 4b adds no session fixture ([ADR-8WX9](../decisions/entries/8WX9-choices-of-the-step-4b-code.md) item 4, proposed).
 - **The shared fixture.** `tools/write_camera_message_fixture.py` writes
   `skellycam-ui/src/services/server/preview/tests/camera-messages.json` with `pack_camera_frame`.
   `--check` compares the tracked file with a new output, and writes nothing. Each case has its input
@@ -1086,6 +1102,7 @@ test falls back to a pixel read-back.
 - Runs: `player-windows` only. The spec file skips on other systems with
   `test.skip(process.platform !== 'win32', ...)`, with the reason of 7.5.
 - Must not: open window 2 with `backgroundThrottling: false`.
+- The test stays as it is. It is looked at again after its first run [Q835].
 
 **T-PRV-50** (component). The frame rate viewer [Q3].
 

@@ -37,7 +37,6 @@ These entries are `accepted`.
 | [GVC0](entries/GVC0-certify-decisions-of-the-user.md) | Certify run of skellycam: levels, quick camera checks and 3 s take, camera summary list, rules that hold everywhere, fake cameras, functions, draft 1 answers | accepted |
 | [2GS1](entries/2GS1-step-3a-choices-of-the-capture-code-and-its-fixes.md) | Supersedes S6HT, MA22, 6EKB, 037V, BM73, R60B, FTC3: step 3a choices; virtual by link; macOS timing step; loop, source, review and CI fixes | accepted |
 | [68JT](entries/68JT-step-4a-choices-of-the-preview-sender.md) | Supersedes 162X, 24FZ, MZ02: step 4a choices of the preview sender; spec section 13 items, Python API of the 4a tests, code choices | accepted |
-| [NA1N](entries/NA1N-answers-of-the-user-to-the-questions-of-the-step-4b-tests.md) | Q824 to Q836 of 2026-11-25: 70WD accepted; `cameraLabel` and `labelText`; Displayed over the last 1 s; T-PRV-25 in the capture jobs | accepted |
 | [70WD](entries/70WD-failing-tests-of-step-4b-and-the-names-they-assume.md) | The failing tests of step 4b (T-PRV-25 to 53, T-PLAY-37, T-PLAY-44): the TypeScript names they assume, the split of T-PRV-26, the helpers | accepted |
 | [P98T](entries/P98T-step-5a-choices-of-the-recorder-and-its-connection.md) | Supersedes Q03C, QEQ8, T24F, YNM2, P5VE: step 5a recorder and connection choices; F-1 to F-10 as one request; 15 s writer limit | accepted |
 | [4D94](entries/4D94-step-6a-choices-of-the-canvas-player.md) | Supersedes 4K7V, 4MJ4, 1ACK, 5FBS: step 6a player choices; picked folders only for the app run, no list file; test names; review fixes | accepted |
@@ -92,7 +91,7 @@ These entries wait for a decision of the user. Section is the section or area of
 | [JFG4](entries/JFG4-choices-of-the-capture-timings-build.md) | Choices of the capture timings build that the user did not decide: source sets, sets, main process, message loop, route, test seams, faults | none | proposed |
 | [J1HD](entries/J1HD-choices-of-the-control-read-check.md) | Choices of the certify check of the control read: 30 s on and off, the 100 ms rule, `control_read` in the record, a harmed model pauses on each build | none | proposed |
 | [TYH0](entries/TYH0-choices-after-the-acceptance-of-the-v1-playback-spec.md) | After the v1 spec acceptance: the code that goes with the old routes in 6c part 1; the certify row `player-legacy-decode` | `player` | proposed |
-| [8WX9](entries/8WX9-choices-of-the-step-4b-code.md) | Choices of the step 4b code: the send lock of `PreviewRelay` (Q839), interim relay tests gone, `setTile` of the provider, Displayed, viewer, docs | none | proposed |
+| [8WX9](entries/8WX9-choices-of-the-step-4b-code.md) | Choices of the step 4b code: send lock inside `PreviewRelay` (form differs from Q839), Displayed follows T-PRV-53 not 5.8, `setTile`, viewer, docs | none | proposed |
 
 The entries that are `rejected`, `superseded by XXXX`, `absorbed into <path>#<anchor>`,
 `evidence; used by XXXX`, `evidence; replaced by XXXX` or `done` are in [historical.md](historical.md).

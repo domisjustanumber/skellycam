@@ -93,24 +93,12 @@ task. Delete an item when its work is done. The PR that closes an item records t
     M-PRV-1 to M-PRV-5 are done on Windows
     ([ADR-HDC9](entries/HDC9-measurements-m-prv-1-to-m-prv-5-of-the-preview-sender.md)). Open: M-PRV-4
     on Linux.
-  - Step 4b: the spec [`specs/preview-4b.md`](../specs/preview-4b.md) is accepted in principle,
-    with a go-ahead for its tests, not its code
-    ([ADR-VYS7](entries/VYS7-answers-of-the-user-to-the-step-4b-spec-and-go-ahead-for-its-tests.md)).
-    Revision 3 has the full test list (section 7.4). The user accepted Q14 and the agent choices
-    ([ADR-RA16](entries/RA16-step-4b-choices-of-the-preview-ui.md)). The failing 4b tests are written on
-    `dom/preview-4b-tests` ([ADR-70WD](entries/70WD-failing-tests-of-step-4b-and-the-names-they-assume.md)). The
-    user accepted their names and answered Q824 to Q836
-    ([ADR-NA1N](entries/NA1N-answers-of-the-user-to-the-questions-of-the-step-4b-tests.md)); revision 4 of the
-    spec holds the answers. The product code is on `dom/preview-4b-tests` (Q855;
-    [ADR-8WX9](entries/8WX9-choices-of-the-step-4b-code.md), proposed). Run the quick ones with
-    `npm run test:player:unit` in `skellycam-ui/` and
-    `uv run pytest skellycam/tests/preview tools/tests/test_camera_message_fixture.py -m "not pace"`. Open: T-PRV-29
-    (B sends only frame 0 before its end), T-PRV-47 (no capture of a still window) and T-PRV-49 (the hidden window
-    stays `visible`) fail on their test, not on the code (Q835); the benchmarks T-PRV-51 and T-PRV-52 (their first run, 2026-11-26: the harness page closes, the devtools link of
-    Playwright overflows at 256 MB); the
-    CI changes of 7.8, in their own PR; the tile timings of step 8 of `capture-timings.md`. The tests and the code
-    merge together after an independent review (Q815). The pause text of `preview-4b.md` on the integration side
-    wins (no server pause, ADR-V8RS).
+  - Step 4b ([`specs/preview-4b.md`](../specs/preview-4b.md), tests
+    [ADR-70WD](entries/70WD-failing-tests-of-step-4b-and-the-names-they-assume.md)): the code is on
+    `dom/preview-4b-tests` (Q855; choices [ADR-8WX9](entries/8WX9-choices-of-the-step-4b-code.md), proposed). Open:
+    T-PRV-29, T-PRV-47 and T-PRV-49 fail on their test (Q835 for T-PRV-49); T-PRV-51 and T-PRV-52 (first run
+    2026-11-26: the devtools link of Playwright overflows at 256 MB); the CI changes of 7.8, in their own PR. Tests and
+    code merge together after an independent review (Q815).
 - **The `sfn26` integration on `dom/integration`**
   ([ADR-EQY4](entries/EQY4-base-the-work-on-upstream-sfn26-without-rust.md),
   [ADR-6T78](entries/6T78-choices-of-the-sfn26-integration.md)). Open:
@@ -172,7 +160,7 @@ task. Delete an item when its work is done. The PR that closes an item records t
   [ADR-GZS7](entries/GZS7-decisions-of-the-user-on-the-capture-timings-build-and-the-merge-order.md); the rest
   of [ADR-JFG4](entries/JFG4-choices-of-the-capture-timings-build.md) is proposed. Open: the timed test
   `test_process_workers.py` (an OK of the user first); M-TIM-1 on the hardware of the user (step 7); the tile with
-  step 4b (step 8: T-TIM-24 in TypeScript, T-TIM-25, T-TIM-26, and the `preview_send` bracket of 6.5, Q839).
+  step 4b (step 8: T-TIM-24 in TypeScript, T-TIM-25, T-TIM-26).
 - **Merge order (2026-11-25, ADR-GZS7).** `dom/log-cleanup` holds the clean-up of Q814 and the merges of
   Q841; it goes into `dom/integration` after a review. Each merge runs the tests that no CI job runs on a push (Q841). The branches of failing
   tests stay unmerged; each code lane builds on its test branch, and tests and code merge together when they pass

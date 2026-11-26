@@ -1,6 +1,16 @@
 # NA1N — Answers of the user to the questions of the step 4b tests (Q824 to Q836)
 
-**Status:** accepted, 2026-11-25 (user; the supervisor relayed the answers).
+**Status:** absorbed into
+[`specs/preview-4b.md#51-files-agent-3`](../../specs/preview-4b.md#51-files-agent-3),
+[`specs/preview-4b.md#54-the-tile-for-each-camera`](../../specs/preview-4b.md#54-the-tile-for-each-camera),
+[`specs/preview-4b.md#55-text-messages-in-the-provider`](../../specs/preview-4b.md#55-text-messages-in-the-provider),
+[`specs/preview-4b.md#56-the-grid-and-the-camera-list`](../../specs/preview-4b.md#56-the-grid-and-the-camera-list),
+[`specs/preview-4b.md#58-the-frame-rate-viewer-a7-p4-q3`](../../specs/preview-4b.md#58-the-frame-rate-viewer-a7-p4-q3),
+[`specs/preview-4b.md#62-method-agent-9`](../../specs/preview-4b.md#62-method-agent-9),
+[`specs/preview-4b.md#74-test-list`](../../specs/preview-4b.md#74-test-list),
+[`specs/preview-4b.md#77-what-t-prv-30-searches`](../../specs/preview-4b.md#77-what-t-prv-30-searches),
+[`specs/preview-4b.md#78-counts-and-ci-agent-12`](../../specs/preview-4b.md#78-counts-and-ci-agent-12),
+2026-11-26 (commit to dom/preview-4b-tests; was accepted, 2026-11-25 (user; the supervisor relayed the answers)).
 
 ## Decision
 
