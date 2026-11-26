@@ -1,8 +1,18 @@
 name: Tests
 
+# The whole test suite of the package, ruff and the typecheck of the UI. A pull request to main or development
+# runs them on Windows, Linux and macOS. A push to dom/integration runs them on Windows and Linux [ADR-PA3A]: on a
+# push, the macOS job runs only by hand, as in capture.yml (ADR-N14T) [ADR-QF7V].
 on:
   pull_request:
     branches: [main, development]
+  push:
+    branches: [dom/integration]
+    paths-ignore:
+      - "decisions/**"
+      - "specs/**"
+      - "skellycam-docs/**"
+  workflow_dispatch:
 
 concurrency:
   group: tests-${{ github.ref }}
@@ -15,16 +25,12 @@ jobs:
   backend-tests:
     name: Backend Tests (Python ${{ matrix.python-version }}, ${{ matrix.os }})
     runs-on: ${{ matrix.os }}
+    timeout-minutes: 60
     strategy:
-      fail-fast: true
+      fail-fast: false
       matrix:
-        os: [ubuntu-latest]
+        os: ${{ fromJSON(github.event_name == 'push' && '["ubuntu-24.04", "windows-2025"]' || '["ubuntu-24.04", "windows-2025", "macos-15"]') }}
         python-version: ["3.13.18"]
-        include:
-          - os: windows-latest
-            python-version: "3.13.18"
-          - os: macos-latest
-            python-version: "3.13.18"
 
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -38,14 +44,22 @@ jobs:
       - name: Set up Python ${{ matrix.python-version }}
         run: uv python install ${{ matrix.python-version }}
 
+      # The tests' conftest imports sounddevice. Its Linux wheel does not hold PortAudio.
+      - name: Install PortAudio
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends libportaudio2=19.6.0-1.2build3
+
       - name: Install dependencies
         run: uv sync --group dev --python ${{ matrix.python-version }}
 
       - name: Run linter (ruff)
         run: uv run ruff check skellycam/
 
+      # The tests with the marker capture_local need the Windows development machine (windows-capture.md 15).
       - name: Run tests
-        run: uv run pytest skellycam/tests/ -m "not pace" -v --tb=short
+        run: uv run pytest skellycam/tests/ -m "not pace and not capture_local" -v --tb=short
 
       # Q619 of the user ("A red workflow should mean a real fault"): the tests with the marker `pace` run here with
       # wide margins. A failure shows as a failed step, a warning and lines in the job summary; the job stays green.
@@ -57,7 +71,7 @@ jobs:
           SKELLYCAM_PACE_MARGIN: "3"
         run: |
           status=0
-          uv run pytest skellycam/tests/ -m "pace" -rfE > pace.log 2>&1 || status=$?
+          uv run pytest skellycam/tests/ -m "pace and not capture_local" -rfE > pace.log 2>&1 || status=$?
           cat pace.log
           if [ "$status" -eq 5 ]; then status=0; fi
           { echo "### Pace tests (reported, not blocking: Q619)"; echo '```'; grep -E '^(FAILED|ERROR)|(passed|failed|error)' pace.log | tail -n 20 || true; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
@@ -66,7 +80,7 @@ jobs:
 
   frontend-typecheck:
     name: Frontend Typecheck
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
 
     defaults:
       run:
