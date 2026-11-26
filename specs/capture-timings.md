@@ -182,7 +182,7 @@ ids are stable `snake_case` [U Q587 5].
 | `mkv_close` | work | event | `recorder_thread` | All of `_finish` (`camera_writer.py:325-351`) minus the samples of `mkv_mux`, `csv_row` and `fsync` that it records: `close_container()`, the search of the last block in the file, the end line and the two file closes. | Not measured. | all |
 | `preview_ring_read` | work | frame | `main_process` | The ring read of the preview sender: `reader.read` in `PreviewRelay._newest_unsent` (`skellycam/api/websocket/preview_relay.py:163`, `:167`), or `reader.read_newest()` in `CameraGroup.read_latest_ring_frames` (`skellycam/core/camera_group/camera_group.py:559`) [U Q587 11]. | 0.08 / 0.25 ms median, 0.16 / 0.44 ms p99 at 720p / 1080p [M ADR-HDC9] | all |
 | `preview_pack` | work | frame | `main_process` | `pack_camera_frame(camera_id, read)` (`preview_relay.py:146`), or the build of the group message in `CameraGroup.get_latest_ring_payload` after its reads (`camera_group.py:573-596`) [U Q587 11]. | `pack_camera_frame`: 0.005 / 0.11 ms median [M ADR-HDC9]. Group message: not measured. | all |
-| `preview_send` | work | frame | `main_process` | `await self.websocket.send_bytes(data)` inside `_send_bytes`, after the send lock (`skellycam/api/websocket/websocket_server.py:102`). The wait for the send lock is outside it. | 0.13 / 0.23 ms median, 0.63 / 1.11 ms p99 with compression off [M ADR-HDC9] | all |
+| `preview_send` | work | frame | `main_process` | The send of the bytes of one camera message, after the send lock of the connection: in `PreviewRelay`, which holds the lock that the server passes in (6.5). The wait for the send lock is outside it. | 0.13 / 0.23 ms median, 0.63 / 1.11 ms p99 with compression off [M ADR-HDC9] | all |
 | `ui_jpeg_decode` | work | frame | `ui_tile` | The call `this.#decode(p.u.jpeg!)` in `Tile.#next` to its result (`skellycam-ui/src/player/tile/tile.ts:170`): `decodeJpeg` with `ImageDecoder`, the EXIF undo and the decoder close (`tile.ts:73-87`, [player 8.1]). Only an update with `jpeg` and no `image`. | Not measured live. The player `ImageDecoder`: 2.7 ms median at 1080p, 1 tile; 3.7 ms at 4 tiles [M `decisions/evidence/1ACK-findings-of-the-6a-player-code.md`]. | all |
 | `ui_draw` | work | frame | `ui_tile` | The call `this.#draw()` in `Tile.#apply` (`tile.ts:179-182`, `#draw` at `:184`, [player 8.2]) after an update that set a new decoded image. A redraw for a resize or an overlay-only update gives no sample. | Not measured live. The player draw at tile size: 0.4 to 0.5 ms [M same]. | all |
 
@@ -413,8 +413,11 @@ has `where`, `n`, `p50_ms`, `p95_ms` and `max_ms`; its `where` is the place of i
   `published_to_send`: the per-camera `PreviewRelay` after step 4b, or the interim
   `_frontend_image_relay` before it.
 - With `PreviewRelay`, each step is for one camera: one `"preview"` summary for each camera. Its
-  `preview_send` bracket starts after the send lock, as for the interim relay: the server's locked send takes
-  the bracket (Q839, step 4b).
+  `preview_send` bracket starts after the send lock (Q839). The lock and the bracket are in the relay:
+  `WebsocketServer` passes its send lock in (`send_lock`) with a send that needs the lock held, and the relay
+  takes the lock, then starts the bracket and ends `published_to_send` (Q865,
+  [ADR-BPP8](../decisions/entries/BPP8-answers-of-the-user-q864-to-q873-on-the-step-4b-code.md)). The wait for
+  the lock is not in `preview_send`, and it is in `published_to_send`.
 - With the interim relay: `preview_ring_read` is for one camera, in a `"preview"` summary for each
   camera. `preview_pack` and `preview_send` are for the group: one more `"preview"` summary with
   `camera_id` `null`. `published_to_send` uses the `published_ns` of each camera of the group

@@ -92,7 +92,6 @@ These entries wait for a decision of the user. Section is the section or area of
 | [JFG4](entries/JFG4-choices-of-the-capture-timings-build.md) | Choices of the capture timings build that the user did not decide: source sets, sets, main process, message loop, route, test seams, faults | none | proposed |
 | [J1HD](entries/J1HD-choices-of-the-control-read-check.md) | Choices of the certify check of the control read: 30 s on and off, the 100 ms rule, `control_read` in the record, a harmed model pauses on each build | none | proposed |
 | [TYH0](entries/TYH0-choices-after-the-acceptance-of-the-v1-playback-spec.md) | After the v1 spec acceptance: the code that goes with the old routes in 6c part 1; the certify row `player-legacy-decode` | `player` | proposed |
-| [8WX9](entries/8WX9-choices-of-the-step-4b-code.md) | Choices of the step 4b code: send lock inside `PreviewRelay` (form differs from Q839), Displayed follows T-PRV-53 not 5.8, `setTile`, viewer, docs | none | proposed |
 | [QF7V](entries/QF7V-choices-of-the-test-workflow-on-dom-integration.md) | Choices of the push run of `test.yml`: no run for log-only pushes, no macOS job on a push, pinned labels, PortAudio, no `capture_local`, no fail-fast, 60 min | none | proposed |
 
 The entries that are `rejected`, `superseded by XXXX`, `absorbed into <path>#<anchor>`,

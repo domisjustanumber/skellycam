@@ -93,12 +93,16 @@ task. Delete an item when its work is done. The PR that closes an item records t
     M-PRV-1 to M-PRV-5 are done on Windows
     ([ADR-HDC9](entries/HDC9-measurements-m-prv-1-to-m-prv-5-of-the-preview-sender.md)). Open: M-PRV-4
     on Linux.
-  - Step 4b ([`specs/preview-4b.md`](../specs/preview-4b.md), tests
-    [ADR-70WD](entries/70WD-failing-tests-of-step-4b-and-the-names-they-assume.md)): the code is on
-    `dom/preview-4b-tests` (Q855; choices [ADR-8WX9](entries/8WX9-choices-of-the-step-4b-code.md), proposed). Open:
-    T-PRV-29, T-PRV-47 and T-PRV-49 fail on their test (Q835 for T-PRV-49); T-PRV-51 and T-PRV-52 (first run
-    2026-11-26: the devtools link of Playwright overflows at 256 MB); the CI changes of 7.8, in their own PR. Tests and
-    code merge together after an independent review (Q815).
+  - Step 4b ([`specs/preview-4b.md`](../specs/preview-4b.md); tests
+    [ADR-70WD](entries/70WD-failing-tests-of-step-4b-and-the-names-they-assume.md); code on `dom/preview-4b-tests`,
+    [ADR-BPP8](entries/BPP8-answers-of-the-user-q864-to-q873-on-the-step-4b-code.md)). Open:
+    - T-PRV-49 (Q868): minimised, window 2 stays `visible` (`document.hidden` false), but `requestAnimationFrame`
+      stops and the server sends about 1 message each second for each camera. The test keeps the hide; the user
+      decides the next step.
+    - The CI changes of 7.8, in their own PR. Tests and code merge together after an independent review (Q815).
+    - After the merge: the tile timings lane (step 8 of `capture-timings.md`), tests first (Q870); a small lane
+      deletes `read_latest_ring_frames` and `_send_json`, with the spec line and the probe of their three tests
+      (Q871); a docs lane rewrites the first section of the real-time streaming page (Q873).
 - **The `sfn26` integration on `dom/integration`**
   ([ADR-EQY4](entries/EQY4-base-the-work-on-upstream-sfn26-without-rust.md),
   [ADR-6T78](entries/6T78-choices-of-the-sfn26-integration.md)). Open:
@@ -159,8 +163,8 @@ task. Delete an item when its work is done. The PR that closes an item records t
   [`specs/capture-timings.md`](../specs/capture-timings.md); the user decided its open choices in
   [ADR-GZS7](entries/GZS7-decisions-of-the-user-on-the-capture-timings-build-and-the-merge-order.md); the rest
   of [ADR-JFG4](entries/JFG4-choices-of-the-capture-timings-build.md) is proposed. Open: the timed test
-  `test_process_workers.py` (an OK of the user first); M-TIM-1 on the hardware of the user (step 7); the tile with
-  step 4b (step 8: T-TIM-24 in TypeScript, T-TIM-25, T-TIM-26).
+  `test_process_workers.py` (an OK of the user first); M-TIM-1 on the hardware of the user (step 7); the tile
+  timings of step 8 (Q870, the lane of step 4b).
 - **Merge order (2026-11-25, ADR-GZS7).** `dom/log-cleanup` holds the clean-up of Q814 and the merges of
   Q841; it goes into `dom/integration` after a review. Each merge runs the tests that no CI job runs on a push (Q841). The branches of failing
   tests stay unmerged; each code lane builds on its test branch, and tests and code merge together when they pass

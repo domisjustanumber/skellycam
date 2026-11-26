@@ -30,6 +30,7 @@ Marks:
   one ready message per draw; the old group message deleted with no period of two formats; the
   branch to `development-streaming` only after 4b (now upstream `development` [PR]); an interface
   note at the end of 4b; no read-back of a tile canvas; websocket compression off.
+- **[Q864]** to **[Q873]**: the answers of the user of 2026-11-26 on the 4b code [ADR-BPP8](../decisions/entries/BPP8-answers-of-the-user-q864-to-q873-on-the-step-4b-code.md).
 - **[Q824]** to **[Q836]**: the answers of the user of 2026-11-25 on the 4b tests (global numbers)
   [ADR-NA1N](../decisions/entries/NA1N-answers-of-the-user-to-the-questions-of-the-step-4b-tests.md).
 - **[Q1]** to **[Q9]**: the answer of the user of 2026-11-20 to question n of revision 2
@@ -174,6 +175,12 @@ of `CameraGroupManager` stays [agent 13].
 | T-CAP-86 in `skellycam/tests/capture/test_states.py`, with `_collect`, and `parse_relay` in `capture_session.py` | Each camera on its own while one camera reopens | T-PRV-09, T-PRV-14, T-PRV-15 [4a 9.2]; T-PRV-48 (the UI) |
 | `test_websocket_frame_acknowledgment` in `skellycam/tests/test_websocket.py` | A client text keeps the connection open, and `ping` works after it | T-PRV-21 [4a 9.2]; T-PRV-27 (the product endpoint) |
 | The mocks `get_latest_frontend_payloads` and `get_backend_framerate_updates` in `skellycam/tests/conftest.py` | none (mocks) | The mock manager gets `closing = False` instead |
+| The two T-TIM-19 tests of the interim relay in `skellycam/tests/capture_timings/test_main_process.py` | the steps of the interim relay (`capture-timings.md` 6.5) | none: the relay is gone. The send-lock test of T-TIM-19 runs through `WebsocketServer.__init__` and its `PreviewRelay` [ADR-BPP8](../decisions/entries/BPP8-answers-of-the-user-q864-to-q873-on-the-step-4b-code.md) |
+
+Two tests that used a deleted name keep their rule [Q872]: `test_group_watch.py` reads with
+`read_latest_ring_frames`, and `test_websocket_internals.py` imports `ServerFramerateCalculator` from
+`framerate_tracker`. The counting relay of `ui_server.py` passes each keyword of the constructor of
+`PreviewRelay` on, and `test_pace_marker.py` lists the two halves of T-PRV-26 [Q872].
 
 The other three tests of `test_websocket.py` (connect, `ping`, `app_state`) fail on `dom/preview`
 today. `websocket_server_connect` calls `logger.success`, which exists only after
@@ -181,7 +188,7 @@ today. `websocket_server_connect` calls `logger.success`, which exists only afte
 `AttributeError: 'Logger' object has no attribute 'success'` (run on 2026-11-20). On
 `dom/integration`, the fixture `logging_runtime` of `skellycam/tests/conftest.py`, which the `app` fixture
 uses, gives `logger.success` and the other logging prerequisites. Thus 4b adds no session fixture, and
-these three tests and T-PRV-26 to T-PRV-28 pass ([ADR-8WX9](../decisions/entries/8WX9-choices-of-the-step-4b-code.md) item 4, proposed; it replaces agent 19). `test_websocket_internals.py` and `test_websocket_compression.py` stay.
+these three tests and T-PRV-26 to T-PRV-28 pass [Q872] (it replaces agent 19). `test_websocket_internals.py` and `test_websocket_compression.py` stay.
 
 ## 4. Server
 
@@ -193,8 +200,8 @@ In `WebsocketServer`:
    self._send_msgspec_json, step_set=self._preview_timings.steps, send_lock=self._send_lock)`. The
    two sends hold the send lock [4a agent 27]: `_send_msgspec_json` takes it, and the relay takes
    `send_lock` around `_send_bytes_in_lock`, so that the `preview_send` bracket starts after the
-   lock (`capture-timings.md` 6.5, Q839)
-   ([ADR-8WX9](../decisions/entries/8WX9-choices-of-the-step-4b-code.md) item 1). ADR-24FZ item 2
+   lock (`capture-timings.md` 6.5, Q839). The lock and the bracket are in the relay; the server passes its
+   lock in [Q865] ([ADR-BPP8](../decisions/entries/BPP8-answers-of-the-user-q864-to-q873-on-the-step-4b-code.md)). ADR-24FZ item 2
    allows `_send_msgspec_json` as `send_json`.
 2. `run` starts the task `_preview_relay` in place of `_frontend_image_relay`. `_preview_relay`
    awaits `self._preview.run()`. It has the same `except` clauses and the same `finally:
@@ -312,7 +319,7 @@ export function parseCameraMessage(data: ArrayBuffer): CameraMessage;   // throw
   - `rotation_cw_deg` is not 0, 90, 180 or 270;
   - `camera_id` is empty.
 - `PreviewTiles` catches the error. It writes one `console.error` for each reason and connection,
-  and drops the message. It sends no ready message for it, because its camera id is not trusted.
+  and drops the message. A reason is the text of the error: one line for each distinct text [Q872]. It sends no ready message for it, because its camera id is not trusted.
 - `jpeg` is a view, not a copy. The tile decodes from it [player 8.1].
 - A message with a bit of 0x0F has `jpeg` `null` [4a 3.3]. Its mark is `flagged` (5.4).
 
@@ -379,12 +386,19 @@ Rules:
 10. **Connection closed.** The provider calls `clearPending()` on each close. It drops each
     `pending` message. The tiles and their images stay. An update in flight can send its ready
     message on the next connection; the server ignores a ready message for a camera that is ready
-    [4a 4.1].
+    [4a 4.1]. The provider calls it at each state that is not `CONNECTED`.
+11. **A failed update.** An update whose promise rejects clears `busy` and writes one `console.error`.
+    It sends no ready message; the safety net of the server sends the next message [Q872].
+
+The state of a camera starts at its first message or overlay. Before its first label, the label of an
+update has `camera: ''`. The last frame number and the mark of an overlay update are those of the last
+message given to the tile [Q872].
 
 ### 5.4 The tile for each camera
 
 `CameraView` makes `new Tile(canvas)` with the default options [player 8.3], and calls
-`previewTiles.setTile(cameraId, tile)`. On unmount it calls `setTile(cameraId, null)` and
+`previewTiles.setTile(cameraId, tile)` through `setTile(cameraId, tile)` of `useServer()`, which also gives a
+new tile the overlay values that the provider keeps: rule 9 of 5.3 drops them at a removal [Q872]. On unmount it calls `setTile(cameraId, null)` and
 `tile.close()`. The tile draws on the main thread with ImageDecoder [T, player 8.1].
 
 The update of rule 3 of 5.3:
@@ -428,7 +442,7 @@ What a tile shows:
 | A ring recreated (a mode change, "apply again", "Update Cameras" [demo]) | The frames of the new ring show. Their frame numbers start again at 0 [4a 4.4]. |
 | The camera leaves `app_state` | The tile leaves the grid and closes. |
 | The connection drops; `WebSocketConnection` tries again (`RECONNECTING`) | Each tile keeps its last image and overlay. |
-| The connection is `DISCONNECTED` or `FAILED` | The provider clears its camera lists, as it clears today's list. The grid shows its empty state. |
+| The connection is `DISCONNECTED` or `FAILED` | The provider clears its camera lists, as it clears today's list, and also the frame rate store and its kept overlay values [Q872]. The grid shows its empty state. |
 | A hidden page or the playback tab | No draw. The tile keeps its last image. |
 
 The product never reads a tile canvas back (`getImageData`, `toDataURL`, `toBlob`, `readPixels`)
@@ -450,6 +464,9 @@ The product never reads a tile canvas back (`getImageData`, `toDataURL`, `toBlob
 - `framerate_update`: for each camera of `cameras`, `setOverlay(id, { rateText })`, and the
   frame rate store (5.8). The guard checks `message_type` and that `cameras` is an object.
 - `log_record`, `pong`: as today.
+
+`useServer()` also gives `cameraLabels`, the label of each camera of the grid. A new camera list of the
+store computes the overlays and the two lists again from the last `app_state` [Q872].
 
 The functions of `server-messages.ts` [Q824]: `appStateValues(message, cameraList)` gives
 `{overlays, gridCameraIds, connectedCameraIds}`, with `overlays[id]` = `{label, cameraState}`;
@@ -538,8 +555,7 @@ The viewer has two series for each camera, named for what they mean [Q3]:
 `FramerateStore` keeps one record for each camera id:
 
 - the Captured values: each `delivered_framerate` that arrives, in the windowed statistics of today
-  (`TimestampedRingBuffer`; one function `statsOf` in place of the class `WindowedStats`, [ADR-8WX9](../decisions/entries/8WX9-choices-of-the-step-4b-code.md) item 12,
-  proposed);
+  (`TimestampedRingBuffer`; one function `statsOf` in place of the class `WindowedStats` [Q872]);
 - the Displayed values: `recordDrawn(cameraId, atMs)` adds the time from the previous drawn frame of
   that camera to the same kind of windowed statistics. A time longer than 1 s is not added: it is a
   pause or a hidden page. It only sets the start of the next time [agent 22]. The Displayed rate (the
@@ -582,7 +598,15 @@ below. The collapsed text of a camera is `<label>: Captured <x> fps, Displayed <
   any more. The locale files keep them. The key `deliveredFramerate` of revision 2 is not added
   [agent 25].
 - The new keys go into `en-english.json`. The other 40 locales fall back to English
-  (`fallbackLng`) [Q8].
+  (`fallbackLng`) [Q8]. The tooltips have the keys `<key>Tooltip`, and the source column the key
+  `framerateSourceTooltip` [Q872].
+- `viewer-cameras.ts` gives the cameras of the grid with their label and colour. A camera with no camera
+  list label shows its hex camera id in the viewer. One HTML legend names each camera with both series.
+  The two histogram panels are one component with a `series` property. Each row of the table has the four
+  count columns; only the Captured row fills them [Q872].
+- The store and the viewer keep `performance.now()` times, so that the timeline has one clock. The table
+  and the collapsed view read the store on their 500 ms timers, so Displayed drops to 0 on the screen with
+  no new frame [Q864].
 
 ### 5.9 Docs
 
@@ -593,7 +617,8 @@ below. The collapsed text of a camera is `<label>: Captured <x> fps, Displayed <
   `docs/technical/architecture.mdx` (the WebSocket Server item, the flow diagram, steps 3 and 4, and
   the FrameProcessor item): the camera message, the flow control for each camera and the tile.
 - The copies of these three pages in `skellycam-docs/i18n/` (`zh-CN`, `es`, `ar`, where a copy
-  exists): the same tables and code blocks, with English prose for the changed parts [Q8].
+  exists): the same tables and code blocks, with English prose for the changed parts [Q8]. Each copy keeps
+  its translated headings and the prose of the parts that do not change [Q872].
 - `docs/intro.mdx`: its table row "Binary frame format, JSON messages, backpressure" stays true.
 
 ## 6. The measurement: 8 cameras on the main-thread tile, at 30 and 60 fps [T, Q9]
@@ -645,6 +670,12 @@ checked" means each capture, not each camera frame. The B-1a criterion of 6.3 al
   `CameraViewsGrid`. The window is 1400 x 1000, shown inactive with opacity 0, as the player
   harness does, so that `requestAnimationFrame` runs at the display rate [ADR-1ACK evidence of
   `dom/player`].
+- **No test tool attached.** The bench runs the harness app with no Playwright attached: the devtools link of
+  Playwright copies each websocket frame of the page and overflows at 256 MB with 8 cameras at 1080p (first run,
+  2026-11-26). The harness main process runs the run (`src/player/tests/harness/preview-bench-run.ts`): it starts
+  the page, takes the observer rows, the CDP metrics of its own debugger and the process metrics, reads
+  `drawnCount` at the end, and writes them to a file. It prints a line at the start and the end of the
+  measurement, so that the bench reads the counts of `ui_server.py` at the same times [Q869].
 - **Observers outside the page.** The page reads no canvas back [T].
   - The Electron main process captures the composited window with `beginFrameSubscription` and
     reads the barcode of each tile with the observer of 7.2.
@@ -708,7 +739,7 @@ frames each second on each of 8 tiles during a scrub [M ADR-1ACK evidence].
 ### 7.2 Helpers [agent 11, agent 27, agent 28]
 
 - **The logging prerequisites.** The fixture `logging_runtime` of `skellycam/tests/conftest.py` gives them
-  (3.2). 4b adds no session fixture ([ADR-8WX9](../decisions/entries/8WX9-choices-of-the-step-4b-code.md) item 4, proposed).
+  (3.2). 4b adds no session fixture [Q872].
 - **The shared fixture.** `tools/write_camera_message_fixture.py` writes
   `skellycam-ui/src/services/server/preview/tests/camera-messages.json` with `pack_camera_frame`.
   `--check` compares the tracked file with a new output, and writes nothing. Each case has its input

@@ -1,6 +1,6 @@
 # 8WX9 — Choices of the step 4b code that the user did not decide
 
-**Status:** proposed, 2026-11-26 (agent: the code lane of step 4b, go-ahead Q815 and Q855).
+**Status:** superseded by [BPP8](BPP8-answers-of-the-user-q864-to-q873-on-the-step-4b-code.md), 2026-11-26 (commit to dom/preview-4b-tests; was proposed, 2026-11-26 (agent: the code lane of step 4b, go-ahead Q815 and Q855); the user accepted item 1 in Q865 and the other items in Q872, and Q864 replaced item 9).
 
 ## Decision
 
