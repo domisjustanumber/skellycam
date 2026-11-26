@@ -1,7 +1,7 @@
 # ZT5F — The user accepts the choices of fix lane 8 and its merge
 
-**Status:** accepted, 2026-11-25 (user; the supervisor asked the four questions and the coordinator relayed the
-answer; commit to dom/fix-lane-8).
+**Status:** done, 2026-11-25 (commit to dom/log-cleanup; was accepted, 2026-11-25 (user; the supervisor asked the four questions and the coordinator relayed the
+answer; commit to dom/fix-lane-8)).
 
 ## Decision
 

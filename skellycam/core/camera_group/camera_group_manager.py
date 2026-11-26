@@ -8,7 +8,6 @@ from collections.abc import Callable
 import numpy as np
 from fastapi import FastAPI
 
-from skellycam.api.websocket.performance_data import extract_performance_data_from_frames
 from skellycam.core.camera.capture.modes import (
     FLOOR_FPS,
     NO_FLOOR_MODE,
@@ -18,6 +17,7 @@ from skellycam.core.camera.capture.modes import (
     native_from_supported,
     rates_equal,
 )
+from skellycam.core import capture_timings
 from skellycam.core.camera.capture import restore_store as restore_files
 from skellycam.core.camera.capture.failure_codes import WEDGE_CODES
 from skellycam.core.camera.capture.source import CaptureFailure, CaptureRequest
@@ -62,6 +62,38 @@ class CameraGroupManager:
     camera_group_framerate_subscriptions: dict[CameraGroupIdString, TopicSubscriptionQueue] = field(
         default_factory=dict
     )
+    _log_capture_times: bool = False  # capture-timings.md 2: the one switch of the app
+
+    @property
+    def log_capture_times(self) -> bool:
+        return self._log_capture_times
+
+    def set_log_capture_times(self, on: bool) -> None:
+        """capture-timings.md 2 items 2 to 5: write the switch into each status of each group. The kept summaries go
+        at each change; each camera applies the change at its next publish."""
+        self._log_capture_times = bool(on)
+        for group in list(self.camera_groups.values()):
+            self._write_switch(group)
+            group.camera_timings = {}
+
+    def _write_switch(self, group) -> None:
+        cameras = group.cameras
+        for status in [*cameras.orchestrator.camera_statuses.values(), *cameras.removed_statuses.values()]:
+            status.log_capture_times.value = self._log_capture_times
+
+    def capture_timings(self) -> dict:
+        """capture-timings.md 6.3: the newest summary of each camera of each open group, at most 3 s old. It reads no
+        ring, never raises for a missing camera, and is safe from any thread of the main process."""
+        summaries = []
+        if self._log_capture_times:
+            now = capture_timings.main_clock_ns()
+            for group in list(self.camera_groups.values()):
+                if group._closing:
+                    continue
+                summaries.extend(summary for summary, received_ns in group.camera_timings.values()
+                                 if now - received_ns <= capture_timings.MAX_AGE_NS)
+        return {"version": capture_timings.VERSION, "log_capture_times": self._log_capture_times,
+                "summaries": summaries}
 
     async def create_and_start_camera_group(self, camera_configs: CameraConfigs) -> CameraGroup:
         """Create a camera group with the provided configuration settings."""
@@ -88,6 +120,7 @@ class CameraGroupManager:
             restore_store=self.restore_store,
             restore_identities=identities,
         )
+        self._write_switch(camera_group)  # before the camera processes start (capture-timings.md 2 item 2)
         self.camera_group_framerate_subscriptions[camera_group.id] = (
             camera_group.ipc.pubsub.get_subscription(TopicTypes.FRAMERATE)
         )
@@ -398,6 +431,7 @@ class CameraGroupManager:
     def get_latest_frontend_payloads(
         self,
         if_newer_than: dict[CameraGroupIdString, int],
+        step_set=None,  # the preview steps of a connection (capture-timings.md 6.5)
     ) -> dict[CameraGroupIdString, tuple[FrameNumberInt, MultiframeTimestampFloat, memoryview]]:
         if self.closing:
             return {}
@@ -405,7 +439,7 @@ class CameraGroupManager:
             CameraGroupIdString, tuple[FrameNumberInt, MultiframeTimestampFloat, memoryview]
         ] = {}
         for camera_group in self.camera_groups.values():
-            fe_return = camera_group.get_latest_ring_payload()
+            fe_return = camera_group.get_latest_ring_payload(step_set)
             if fe_return is None:
                 continue
             frame_number, multiframe_timestamp, fe_payload = fe_return
@@ -428,32 +462,6 @@ class CameraGroupManager:
                         f"{type(framerate_update)}"
                     )
         return framerate_updates
-
-    def get_latest_performance_data(
-        self,
-        session_start_perf_ns: int,
-    ) -> dict[CameraGroupIdString, dict]:
-        """
-        Get per-camera frame lifecycle performance data for all camera groups.
-        Returns a dict mapping camera_group_id to performance data dicts
-        suitable for streaming to the frontend Perspective tables.
-        """
-        if self.closing:
-            return {}
-        result: dict[CameraGroupIdString, dict] = {}
-        for camera_group in self.camera_groups.values():
-            latest_frames = camera_group.read_latest_ring_frames()
-            if latest_frames is None:
-                continue
-            try:
-                perf_data = extract_performance_data_from_frames(
-                    latest_frames=latest_frames,
-                    session_start_perf_ns=session_start_perf_ns,
-                )
-                result[camera_group.id] = perf_data
-            except Exception as e:
-                logger.debug(f"Error extracting performance data for group {camera_group.id}: {e}")
-        return result
 
     def find_camera_group_by_camera_ids(
         self, camera_ids: list[CameraIdString]

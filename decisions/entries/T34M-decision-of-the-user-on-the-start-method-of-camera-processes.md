@@ -1,6 +1,8 @@
 # T34M — Decision of the user on the start method of camera processes (Q651)
 
-**Status:** accepted, 2026-11-23 (user; the supervisor asked the question and relayed the answer).
+**Status:** absorbed into
+[`specs/unix-capture.md#412-the-start-method-of-a-camera-process-a`](../../specs/unix-capture.md#412-the-start-method-of-a-camera-process-a),
+2026-11-25 (commit to dom/log-cleanup; was accepted, 2026-11-23 (user; the supervisor asked the question and relayed the answer)).
 
 ## Decision
 

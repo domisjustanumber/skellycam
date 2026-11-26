@@ -1,6 +1,7 @@
 # WWR1 — Decision of the user on the time between frames with the same number (Q719)
 
-**Status:** accepted, 2026-11-24 (user; the coordinator asked the question and relayed the answer).
+**Status:** absorbed into [`specs/windows-capture.md#53-frame-numbers-d27`](../../specs/windows-capture.md#53-frame-numbers-d27),
+2026-11-25 (commit to dom/exclusive-access-spec; was accepted, 2026-11-24 (user; the coordinator asked the question and relayed the answer)).
 
 ## Decision
 

@@ -1,6 +1,22 @@
 # KG00 — Decisions of the user on draft 2 of the certify spec
 
-**Status:** accepted, 2026-11-20 (user, relayed by the supervisor).
+**Status:** absorbed into
+[`specs/certify.md#1-purpose-and-the-start-question`](../../specs/certify.md#1-purpose-and-the-start-question),
+[`specs/certify.md#23-order-of-a-run-u-a`](../../specs/certify.md#23-order-of-a-run-u-a),
+[`specs/certify.md#25-checked-camera-models-and-the-local-record-u-a`](../../specs/certify.md#25-checked-camera-models-and-the-local-record-u-a),
+[`specs/certify.md#34-the-check-groups-of-a-camera-and-the-summary-item-u-c-37`](../../specs/certify.md#34-the-check-groups-of-a-camera-and-the-summary-item-u-c-37),
+[`specs/certify.md#43-settings-stick-u`](../../specs/certify.md#43-settings-stick-u),
+[`specs/certify.md#53-skellycam-auto-u-a-13`](../../specs/certify.md#53-skellycam-auto-u-a-13),
+[`specs/certify.md#63-the-disk-benchmark-u`](../../specs/certify.md#63-the-disk-benchmark-u),
+[`specs/certify.md#83-phase-g-re-check-u-a`](../../specs/certify.md#83-phase-g-re-check-u-a),
+[`specs/certify.md#93-cancel-and-time-limits-a`](../../specs/certify.md#93-cancel-and-time-limits-a),
+[`specs/certify.md#96-progress-before-each-step-u-a`](../../specs/certify.md#96-progress-before-each-step-u-a),
+[`specs/certify.md#97-cameras-busy-u-a-c-25`](../../specs/certify.md#97-cameras-busy-u-a-c-25),
+[`specs/certify.md#102-the-assumptions-as-checks`](../../specs/certify.md#102-the-assumptions-as-checks),
+[`specs/certify.md#112-the-data-file-u`](../../specs/certify.md#112-the-data-file-u),
+[`specs/certify.md#113-how-the-product-uses-it-u`](../../specs/certify.md#113-how-the-product-uses-it-u),
+[`specs/certify.md#115-from-a-report-to-a-release-u-a`](../../specs/certify.md#115-from-a-report-to-a-release-u-a),
+2026-11-25 (commit to dom/log-cleanup; was accepted, 2026-11-20 (user, relayed by the supervisor)).
 
 ## Decision
 

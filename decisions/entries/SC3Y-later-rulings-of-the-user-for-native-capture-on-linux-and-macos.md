@@ -1,6 +1,17 @@
 # SC3Y — Later rulings of the user for native capture on Linux and macOS
 
-**Status:** accepted, 2026-11-20 (user; relayed by the supervisor session on 2026-11-20).
+**Status:** absorbed into
+[`specs/unix-capture.md#0-how-to-read-this-spec`](../../specs/unix-capture.md#0-how-to-read-this-spec),
+[`specs/unix-capture.md#446-controls-m-15`](../../specs/unix-capture.md#446-controls-m-15),
+[`specs/unix-capture.md#4410-approaches-for-exposure-and-for-the-cameras-jpeg-u`](../../specs/unix-capture.md#4410-approaches-for-exposure-and-for-the-cameras-jpeg-u),
+[`specs/unix-capture.md#47-restore-of-the-controls-at-the-close-u`](../../specs/unix-capture.md#47-restore-of-the-controls-at-the-close-u),
+[`specs/unix-capture.md#49-source-selection-u`](../../specs/unix-capture.md#49-source-selection-u),
+[`specs/certify.md#25-checked-camera-models-and-the-local-record-u-a`](../../specs/certify.md#25-checked-camera-models-and-the-local-record-u-a),
+[`specs/certify.md#113-how-the-product-uses-it-u`](../../specs/certify.md#113-how-the-product-uses-it-u),
+[`specs/camera-requests.md#13b-the-search-at-an-open`](../../specs/camera-requests.md#13b-the-search-at-an-open),
+[`specs/unix-capture.md#22-macos-avfoundation-coremediaio`](../../specs/unix-capture.md#22-macos-avfoundation-coremediaio),
+[`specs/unix-capture.md#9-questions-for-the-user`](../../specs/unix-capture.md#9-questions-for-the-user),
+2026-11-25 (commit to dom/log-cleanup; was accepted, 2026-11-20 (user; relayed by the supervisor session on 2026-11-20)).
 
 ## Decision
 

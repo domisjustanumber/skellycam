@@ -9,6 +9,7 @@ from dataclasses import dataclass
 import cv2
 import numpy as np
 
+from skellycam.core.capture_timings import BGR_STEPS, OFF_SET, StepSet
 from skellycam.core.ipc.frame_ring.layout import ERROR_FLAGS, FrameFlag
 from skellycam.core.ipc.frame_ring.writer import FrameRingWriter
 
@@ -73,7 +74,9 @@ class DecodeStage:
     waits and counts it as skipped (ADR-467Z item 2). It does not close the writer.
     """
 
-    def __init__(self, writer: FrameRingWriter, *, decode=decode_jpeg):
+    def __init__(self, writer: FrameRingWriter, *, decode=decode_jpeg, timing=None):
+        # `timing`: the TimingControl of the camera loop; this stage writes its own StepSet (capture-timings.md 5.1)
+        self.timing_set = OFF_SET if timing is None else StepSet(timing, BGR_STEPS)
         self.waiting_place = WaitingPlace()
         self._writer = writer
         self._decode = decode
@@ -95,16 +98,23 @@ class DecodeStage:
                     f"{self.waiting_place.skipped} skipped, {self._writer._counters[4]} decode errors")
 
     def _run(self) -> None:
-        place, writer = self.waiting_place, self._writer
+        place, writer, steps = self.waiting_place, self._writer, self.timing_set
+        control = steps.control
         while not self._stopping.is_set():
             item = place.take(TAKE_TIMEOUT_S)
             if item is None:
                 continue
+            on = control.on
             flags = item.flags
             bgr = None
             if not flags & ERROR_FLAGS:  # 8.4 step 2: a flagged frame never reaches the decoder
                 try:
-                    bgr = self._to_bgr(item)
+                    if on and item.source != "BGR":  # a BGR input needs no work: no sample (capture-timings.md 3.1)
+                        t0 = control.clock()
+                        bgr = self._to_bgr(item)
+                        steps.add("bgr_decode", control.clock() - t0)
+                    else:
+                        bgr = self._to_bgr(item)
                 except Exception as error:
                     # debug only: decode_error_count records each failure (8.5), and a log line per frame floods
                     logger.debug(f"Decode of frame {item.frame_number} for {writer.name} failed: {error}")
@@ -112,9 +122,13 @@ class DecodeStage:
                     flags |= FrameFlag.DECODE_ERROR
                     bgr = None
             try:
+                if on:
+                    t0 = control.clock()
                 writer.write(bgr, frame_number=item.frame_number, arrival_ns=item.arrival_ns,
                              sample_ns=item.sample_ns, source_frame_number=item.source_frame_number,
                              flags=flags, rotation_cw_deg=item.rotation_cw_deg)
+                if on:
+                    steps.add("bgr_ring_write", control.clock() - t0)
                 writer.set_skipped_count(place.skipped)
             except Exception:
                 logger.exception(f"BGR ring write of frame {item.frame_number} for {writer.name} failed")

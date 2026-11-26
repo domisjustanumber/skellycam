@@ -3,7 +3,7 @@
 **Status:** absorbed into
 [`AGENTS.md#other-systems-only-through-certify`](../../AGENTS.md#other-systems-only-through-certify),
 [`.claude/skills/verify-on-other-systems/SKILL.md#steps`](../../.claude/skills/verify-on-other-systems/SKILL.md#steps),
-2026-11-25 (commit to dom/jpeg-encode-tests; was accepted, 2026-11-23 (user, relayed by the supervisor)).
+2026-11-25 (commit to dom/log-cleanup; was accepted, 2026-11-23 (user, relayed by the supervisor)).
 
 ## Decision
 

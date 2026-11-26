@@ -1,6 +1,8 @@
 # KY81 — Certify spec draft 2, its test list and the choices of the agent
 
-**Status:** proposed, 2026-11-20 (agent).
+**Status:** absorbed into
+[`specs/certify.md#certify-specification-what-a-certify-run-of-skellycam-measures-draft-3`](../../specs/certify.md#certify-specification-what-a-certify-run-of-skellycam-measures-draft-3),
+2026-11-25 (commit to dom/log-cleanup; was accepted, 2026-11-25 (user; [ADR-6YGH](6YGH-acceptance-of-the-as-built-choices-of-fix-lanes-4-and-5-and-of-certify.md) accepts the remaining items (Q756), so each item is decided; commit to dom/log-cleanup; was proposed, 2026-11-20 (agent))).
 
 ## Decision
 

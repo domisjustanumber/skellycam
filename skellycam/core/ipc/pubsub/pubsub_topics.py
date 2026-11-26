@@ -45,6 +45,7 @@ class DiagnosticsMessage(TopicMessageABC):
     at a failure and at the close. The main process keeps the newest of each camera."""
     camera_id: CameraIdString
     diagnostics: dict
+    timings: dict | None = None  # the capture timings summary of the window that ended; None when off (capture-timings.md 6.2)
 
 
 @dataclass

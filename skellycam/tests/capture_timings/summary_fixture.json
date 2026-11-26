@@ -1,0 +1,35 @@
+{
+  "about": "T-TIM-24: one window of samples and its summary (specs/capture-timings.md 5.2, 6.1). The Python summary function and the summary function of tile/timings.ts must give this summary.",
+  "input": {
+    "source": "camera",
+    "camera_group_id": "g1",
+    "camera_id": "a1b2",
+    "clock": "perf_counter_ns",
+    "seq": 3,
+    "window_end_ns": 81234567890123,
+    "window_ns": 1000400000,
+    "step_ids": ["camera_wait", "ring_write", "fsync", "arrival_to_published"],
+    "windows": {
+      "camera_wait": [3, [34877000, 31912000, 33105000]],
+      "ring_write": [2, [410000, 92000]],
+      "arrival_to_published": [700, [210000, 1401500, 2330499]]
+    }
+  },
+  "expected": {
+    "source": "camera",
+    "camera_group_id": "g1",
+    "camera_id": "a1b2",
+    "clock": "perf_counter_ns",
+    "seq": 3,
+    "window_end_ns": 81234567890123,
+    "window_s": 1.0,
+    "steps": {
+      "camera_wait": {"kind": "wait", "cadence": "frame", "where": "camera_loop", "n": 3, "p50_ms": 33.105, "p95_ms": 34.877, "max_ms": 34.877},
+      "ring_write": {"kind": "work", "cadence": "frame", "where": "camera_loop", "n": 2, "p50_ms": 0.092, "p95_ms": 0.41, "max_ms": 0.41},
+      "fsync": {"kind": "work", "cadence": "second", "where": "recorder_thread", "n": 0, "p50_ms": null, "p95_ms": null, "max_ms": null}
+    },
+    "delays": {
+      "arrival_to_published": {"where": "camera_loop", "n": 700, "p50_ms": 1.402, "p95_ms": 2.33, "max_ms": 2.33}
+    }
+  }
+}

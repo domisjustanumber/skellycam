@@ -1,6 +1,11 @@
 # V8RS — Pause freezes the UI display only
 
-**Status:** accepted, 2026-11-20 (user).
+**Status:** absorbed into
+[`specs/camera-requests.md#13b-the-search-at-an-open`](../../specs/camera-requests.md#13b-the-search-at-an-open),
+[`specs/camera-requests.md#111-tests`](../../specs/camera-requests.md#111-tests),
+[`specs/windows-capture.md#94-wait-for-the-others-d21`](../../specs/windows-capture.md#94-wait-for-the-others-d21),
+[`specs/preview-4b.md#56-the-grid-and-the-camera-list`](../../specs/preview-4b.md#56-the-grid-and-the-camera-list),
+2026-11-25 (commit to dom/log-cleanup; was accepted, 2026-11-20 (user)).
 
 ## Decision
 

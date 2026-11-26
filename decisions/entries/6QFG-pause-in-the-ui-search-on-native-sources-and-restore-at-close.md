@@ -1,6 +1,21 @@
 # 6QFG — Pause in the UI only, the search on the native sources, no manual exposure, the restore at the close
 
-**Status:** accepted, 2026-11-20 (user, relayed by the supervisor; commit to dom/requests-spec).
+**Status:** absorbed into
+[`specs/camera-requests.md#11-the-rule`](../../specs/camera-requests.md#11-the-rule),
+[`specs/camera-requests.md#13b-the-search-at-an-open`](../../specs/camera-requests.md#13b-the-search-at-an-open),
+[`specs/camera-requests.md#15-api`](../../specs/camera-requests.md#15-api),
+[`specs/camera-requests.md#15a-the-texts-of-a-slow-camera`](../../specs/camera-requests.md#15a-the-texts-of-a-slow-camera),
+[`specs/camera-requests.md#16-the-auto-exposure-of-the-camera`](../../specs/camera-requests.md#16-the-auto-exposure-of-the-camera),
+[`specs/camera-requests.md#17-linux-and-macos-the-opencv-source`](../../specs/camera-requests.md#17-linux-and-macos-the-opencv-source),
+[`specs/camera-requests.md#19-edge-cases`](../../specs/camera-requests.md#19-edge-cases),
+[`specs/camera-requests.md#24-the-real-60-fps-check-and-the-fall-back`](../../specs/camera-requests.md#24-the-real-60-fps-check-and-the-fall-back),
+[`specs/camera-requests.md#35-what-the-label-shows`](../../specs/camera-requests.md#35-what-the-label-shows),
+[`specs/camera-requests.md#5c-decisions-of-the-user-of-2026-11-20-third-set`](../../specs/camera-requests.md#5c-decisions-of-the-user-of-2026-11-20-third-set),
+[`specs/camera-requests.md#81-the-rule`](../../specs/camera-requests.md#81-the-rule),
+[`specs/unix-capture.md#45-exposure-the-source-parts`](../../specs/unix-capture.md#45-exposure-the-source-parts),
+[`specs/unix-capture.md#47-restore-of-the-controls-at-the-close-u`](../../specs/unix-capture.md#47-restore-of-the-controls-at-the-close-u),
+[`specs/windows-capture.md#71-detection-on-windows-d11`](../../specs/windows-capture.md#71-detection-on-windows-d11),
+2026-11-25 (commit to dom/log-cleanup; was accepted, 2026-11-20 (user, relayed by the supervisor; commit to dom/requests-spec)).
 
 ## Decision
 

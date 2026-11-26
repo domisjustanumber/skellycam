@@ -2,7 +2,7 @@
 
 **Status:** absorbed into
 [`specs/windows-capture.md#162-test-list`](../../specs/windows-capture.md#162-test-list),
-2026-11-25 (commit to dom/jpeg-encode-tests; was accepted, 2026-11-24 (user; the coordinator asked the question and relayed the answer)).
+2026-11-25 (commit to dom/log-cleanup; was accepted, 2026-11-24 (user; the coordinator asked the question and relayed the answer)).
 
 ## Decision
 

@@ -1,6 +1,17 @@
 # H0BQ — Rulings of the user for the spec integration of 2026-11-20
 
-**Status:** accepted, 2026-11-20 (user, relayed by the supervisor).
+**Status:** absorbed into
+[`specs/certify.md#31-check-names-a`](../../specs/certify.md#31-check-names-a),
+[`specs/certify.md#34-the-check-groups-of-a-camera-and-the-summary-item-u-c-37`](../../specs/certify.md#34-the-check-groups-of-a-camera-and-the-summary-item-u-c-37),
+[`specs/certify.md#41-the-rules-u`](../../specs/certify.md#41-the-rules-u),
+[`specs/certify.md#83-phase-g-re-check-u-a`](../../specs/certify.md#83-phase-g-re-check-u-a),
+[`specs/certify.md#96-progress-before-each-step-u-a`](../../specs/certify.md#96-progress-before-each-step-u-a),
+[`specs/certify.md#102-the-assumptions-as-checks`](../../specs/certify.md#102-the-assumptions-as-checks),
+[`specs/certify.md#107-macos-the-approach-probes-for-exposure-and-for-the-cameras-jpeg-u-a`](../../specs/certify.md#107-macos-the-approach-probes-for-exposure-and-for-the-cameras-jpeg-u-a),
+[`specs/certify.md#113-how-the-product-uses-it-u`](../../specs/certify.md#113-how-the-product-uses-it-u),
+[`specs/recorder.md#84-the-state-ended-with-an-error-added-on-2026-11-20`](../../specs/recorder.md#84-the-state-ended-with-an-error-added-on-2026-11-20),
+[`specs/camera-requests.md#84-the-ui-when-a-take-ends-by-itself-with-an-error`](../../specs/camera-requests.md#84-the-ui-when-a-take-ends-by-itself-with-an-error),
+2026-11-25 (commit to dom/log-cleanup; was accepted, 2026-11-20 (user, relayed by the supervisor)).
 
 ## Decision
 

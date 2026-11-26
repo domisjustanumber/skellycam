@@ -1,6 +1,16 @@
 # BVK7 — Rulings of the user after the cross-spec review: one test one row, the gate, macOS routes
 
-**Status:** accepted, 2026-11-20 (user, relayed by the supervisor).
+**Status:** absorbed into
+[`specs/certify.md#33-one-test-one-row-u`](../../specs/certify.md#33-one-test-one-row-u),
+[`specs/certify.md#25-checked-camera-models-and-the-local-record-u-a`](../../specs/certify.md#25-checked-camera-models-and-the-local-record-u-a),
+[`specs/certify.md#51-selection-rule-a`](../../specs/certify.md#51-selection-rule-a),
+[`specs/certify.md#53-skellycam-auto-u-a-13`](../../specs/certify.md#53-skellycam-auto-u-a-13),
+[`specs/certify.md#104-probes-u-a`](../../specs/certify.md#104-probes-u-a),
+[`specs/certify.md#107-macos-the-approach-probes-for-exposure-and-for-the-cameras-jpeg-u-a`](../../specs/certify.md#107-macos-the-approach-probes-for-exposure-and-for-the-cameras-jpeg-u-a),
+[`specs/certify.md#113-how-the-product-uses-it-u`](../../specs/certify.md#113-how-the-product-uses-it-u),
+[`specs/certify.md#115-from-a-report-to-a-release-u-a`](../../specs/certify.md#115-from-a-report-to-a-release-u-a),
+[`specs/certify.md#116-what-the-contract-lacks-for-this`](../../specs/certify.md#116-what-the-contract-lacks-for-this),
+2026-11-25 (commit to dom/log-cleanup; was accepted, 2026-11-20 (user, relayed by the supervisor)).
 
 ## Decision
 

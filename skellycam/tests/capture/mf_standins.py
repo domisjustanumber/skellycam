@@ -11,7 +11,9 @@ sample each 33 ms on its own thread, as the work queue of Media Foundation does.
 Cases: `diagnostics`; `restore` (the restore at the close, on by default); `restore-off`
 (`SKELLYCAM_RESTORE_CONTROLS=0`); `restore-fails` (the restore `Set` of gain fails); `after-error` (a removal
 HRESULT in `OnReadSample` before the close); `after-hang` (the `Set` of gain does not return); `restore-hangs`
-(the restore `Set` of gain does not return); `loop-failed` (the close of a camera whose loop failed).
+(the restore `Set` of gain does not return); `loop-failed` (the close of a camera whose loop failed); `timings`
+(the bracket `camera_sample_copy` of the callback, specs/capture-timings.md 3.1, on a clock that adds 1000 ns at
+each read).
 """
 
 import ctypes
@@ -168,6 +170,15 @@ def run(case):
     if case.startswith("auto-open"):
         return auto_open(mf, camera_id, calls, int(case.split(":")[1]))
     source = mf.MediaFoundationSource()
+    if case == "timings":
+        import itertools
+
+        from skellycam.core import capture_timings
+
+        reads = itertools.count(0, 1000)
+        control = capture_timings.TimingControl(lambda: next(reads))
+        control.on = True
+        source.timing_set = capture_timings.StepSet(control, capture_timings.MEDIA_FOUNDATION_STEPS)
     source.open(CaptureRequest(camera_id=camera_id, width=640, height=480, framerate=30.0))
     frames = [source.read_frame(1.0) for _ in range(10)]
     source.set_controls({"exposure": ControlSetting(auto=False, value=-7)})
@@ -188,6 +199,9 @@ def run(case):
     except CaptureFailure as failure:
         result["close_failure"] = [failure.stage, failure.code, failure.hung]
     result["close_s"] = time.monotonic() - t0
+    if case == "timings":
+        samples = source.timing_set.samples["camera_sample_copy"]
+        result["copy_samples"] = [samples.values[i] for i in range(samples.total)]
     return dict(frames=sum(frame is not None for frame in frames), diagnostics=source.diagnostics(), calls=calls,
                 **result)
 

@@ -99,6 +99,9 @@ def mock_camera_group_manager():
     mgr.get_backend_framerate_updates = MagicMock(return_value={})
     mgr.to_state_dict = MagicMock(return_value={"camera_groups": {}})
     mgr.camera_groups = {}
+    # capture-timings.md 6.3: the switch is off (the `capture_timings` message of the websocket encodes this body)
+    mgr.log_capture_times = False
+    mgr.capture_timings = MagicMock(return_value={"version": 1, "log_capture_times": False, "summaries": []})
     return mgr
 
 

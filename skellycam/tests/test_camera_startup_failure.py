@@ -6,6 +6,7 @@ response gives the config that each camera read back (T-CAP-41)."""
 import asyncio
 import multiprocessing
 import time
+from types import SimpleNamespace
 from unittest.mock import AsyncMock, Mock, patch
 
 import pytest
@@ -63,12 +64,13 @@ def test_failed_group_cleanup_preserves_failure_and_allows_retry():
     registry = Mock(spec=WorkerRegistry)
     registry.heartbeat_timestamp = multiprocessing.Value('d', time.perf_counter())
     manager = CameraGroupManager(global_kill_flag=multiprocessing.Value('b', False), worker_registry=registry)
-    failed = Mock(spec=CameraGroup, id='failed', ipc=Mock())
+    no_cameras = SimpleNamespace(orchestrator=SimpleNamespace(camera_statuses={}), removed_statuses={})
+    failed = Mock(spec=CameraGroup, id='failed', ipc=Mock(), cameras=no_cameras)
     failed.ipc.pubsub.get_subscription.return_value = multiprocessing.Queue()
     failure = CameraSetupFailedException('Camera 1622 failed opening: access denied')
     failed.start = AsyncMock(side_effect=failure)
     failed.close = AsyncMock()
-    healthy = Mock(spec=CameraGroup, id='retry', ipc=Mock(), camera_ids=['1622'])
+    healthy = Mock(spec=CameraGroup, id='retry', ipc=Mock(), camera_ids=['1622'], cameras=no_cameras)
     healthy.ipc.pubsub.get_subscription.return_value = multiprocessing.Queue()
     healthy.start = AsyncMock()
     configs = {'1622': CameraConfig(camera_id='1622', camera_index=0)}

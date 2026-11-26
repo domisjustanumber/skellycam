@@ -1,6 +1,10 @@
 # 81RE — Decisions of the user on the restore file, the take rate and the pace tests (Q608, Q609, Q619)
 
-**Status:** accepted, 2026-11-23 (user; the supervisor asked the questions and relayed the answers).
+**Status:** absorbed into
+[`specs/unix-capture.md#471-the-restore-record-on-disk-u-q608`](../../specs/unix-capture.md#471-the-restore-record-on-disk-u-q608),
+[`specs/recorder.md#82-the-stop-response-r5`](../../specs/recorder.md#82-the-stop-response-r5),
+[`specs/windows-capture.md#161-kinds`](../../specs/windows-capture.md#161-kinds),
+2026-11-25 (commit to dom/log-cleanup; was accepted, 2026-11-23 (user; the supervisor asked the questions and relayed the answers)).
 
 ## Decision
 
