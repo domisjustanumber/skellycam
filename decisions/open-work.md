@@ -172,11 +172,6 @@ task. Delete an item when its work is done. The PR that closes an item records t
     refuses it with `start-method-fork` (`unix-capture.md` 4.12). Not verified on Linux.
 - **Fix lane 5 follow-ups** ([ADR-DC43](entries/DC43-choices-of-fix-lane-5.md)): Windows Server `os.label`
   `Windows 2025Server 24H2` [NV]; `stop_after_frame=200` tests that wait for `ready` have the risk of T-UNX-95.
-- **The stall watch at 2 s** ([ADR-88HQ](entries/88HQ-decisions-of-the-user-on-q842-to-q856.md) Q850). Not decided:
-  - F6 (`capture_timing`, blocking in `test.yml` and `capture.yml`) has a margin of tens of ms now; one race that
-    the watch wins turns CI red.
-  - The first lock waits of a frame decision (1.5 s) and of a status array (0.5 s) in one pass reach 2 s, against
-    "no step of the loop in a watched state runs longer than the limit" (`unix-capture.md` 4.10).
 - **Fix lane 7 follow-ups** ([ADR-R394](entries/R394-choices-of-fix-lane-7.md),
   [ADR-2SX2](entries/2SX2-acceptance-of-the-choices-of-fix-lane-7-and-its-follow-ups.md)).
   - Question for the user (not decided by [ADR-ZT5F](entries/ZT5F-acceptance-of-the-choices-of-fix-lane-8.md) item 3):

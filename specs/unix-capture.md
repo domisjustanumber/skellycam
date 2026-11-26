@@ -1231,7 +1231,7 @@ The failure dicts that the main process writes get a code too:
 | `CameraGroup._give_up` (`camera_group.py:292`) | `open` or `warm-up`, `no answer from the camera process in 30 s` | `open-failed` at `open`; `not-ready` at `warm-up` |
 | `CameraGroup._mark_ended` (`camera_group.py:348`) | `open` or `streaming`, `camera process ended (exit code <n>)` | `process-ended` |
 | `CameraGroup._end_stuck_camera` and the stuck writer of `_collect_results` ([recorder.md](recorder.md) 5.3) | `recording`, `disk stall` | `disk-stall` |
-| The stall watch of 4.10 | `streaming`, `no loop pass for 2 s` | `stalled` |
+| The stall watch of 4.10 | `streaming`, `no loop pass for 2.5 s` | `stalled` |
 | `CameraWorker.start` when the start method is `fork` (4.12) | `open`, the text of 4.12 | `start-method-fork` |
 
 The new sources set their own codes (4.3.6, 4.4.8): `not-found`, `no-access`, `no-permission`,
@@ -1475,16 +1475,29 @@ The signal and the watch [ADR-AC5B](../decisions/entries/AC5B-choices-of-the-thi
 - When a driver call or PyObjC holds the GIL of a camera process, the counter stops: that is the
   signal (M-8).
 - The watch: `CameraGroup._watch_camera`, in the watch thread (each 0.1 s). It trips when
-  `alive_count` did not change for 2 s while the camera process is alive, the state is `waiting`,
+  `alive_count` did not change for 2.5 s while the camera process is alive, the state is `waiting`,
   `adjusting`, `checking`, `too_slow` or `ready` (also `ready` with a recording), the camera reported
   no failure, and none of `should_pause`, `should_close` and `closing` is set. It is off in `starting`
   (the ready limit of [W 9.3] applies) and during the close (the bounded steps of [W 6.6, 6.9] apply).
   The limit is 2 s, the limit of the in-process rule of [W 9.5] (item 14 of
   [ADR-22EJ](../decisions/entries/22EJ-decisions-of-the-user-for-linux-and-macos-native-capture.md); Q850 of
-  [ADR-88HQ](../decisions/entries/88HQ-decisions-of-the-user-on-q842-to-q856.md) replaces the 3 s of ADR-Q2NY item 1). With equal limits
-  the in-process rule normally comes first (see the last item of this section), but no rule fixes the order. Both
-  give `dead` with the code `stalled`, and neither restores the controls: `stalled` is a wedge code (4.7). Only the
-  reason text differs. When the watch wins, it also ends the process: on Windows `terminate` ends it at once, so the
+  [ADR-88HQ](../decisions/entries/88HQ-decisions-of-the-user-on-q842-to-q856.md) replaces the 3 s of ADR-Q2NY
+  item 1), plus a head start of 0.5 s for the in-process rule.
+- The order of the two rules (Q863 of [ADR-3RJJ](../decisions/entries/3RJJ-decision-of-the-user-on-the-order-of-the-two-stall-rules.md)): when frames stop, the in-process rule decides, not
+  the watch. The watch counts from the later of the last loop pass and the last frame arrival. The last loop pass
+  is never the earlier one: the loop adds to the counter at the start of each pass, after the arrival and the waits
+  of the pass before. Thus the watch counts from the first round (each 0.1 s) that sees the last change of the
+  counter. The in-process rule ends a read 2 s after the later of the last arrival and the last wait of the loop,
+  thus at most 2 s after that change. The watch waits 0.5 s more, the head start [ADR-4PPS](../decisions/entries/4PPS-choices-of-the-answers-lane-of-q842-to-q856.md). In the head start
+  the camera process wakes from its read, reports the failure (one put on the queue of the setup failures and one
+  write of `info`) and sets `dead`; then the watch is off. The `info` lock waits no more than one read or one
+  write of another holder, because each holder of a live camera holds it only that long. A camera process that
+  cannot do this in 0.5 s is a stalled camera for the watch.
+- A loop that makes no pass (a hung call, a suspended process) is `stalled` at most 2.6 s after its last pass:
+  at most 0.1 s until a round of the watch sees the change, then 2.5 s. Its process ends at most 1 s later (the
+  `kill`).
+- The two rules give `dead` with the code `stalled`, and neither restores the controls: `stalled` is a wedge
+  code (4.7). Only the reason text differs. When the watch trips, it also ends the process: on Windows `terminate` ends it at once, so the
   camera does not finish its take files (the take level completes them, [recorder.md](recorder.md) 7.4) and its
   close diagnostics are lost; on POSIX the SIGTERM handler only sets the stop flag, so the loop can still fail and
   end as usual, and the `kill` after 1 s cuts off only an end that takes longer. The counter has no lock: a process
@@ -1516,18 +1529,15 @@ The signal and the watch [ADR-AC5B](../decisions/entries/AC5B-choices-of-the-thi
 - The setting `SKELLYCAM_STALL_WATCH=0` turns the watch off. The group reads it when it is made, and logs
   at its start that the watch is off [ADR-Q2NY](../decisions/entries/Q2NY-choices-of-code-step-2.md).
 - When it trips, the main process removes the camera from the gate, marks it `dead` with the failure
-  `{stage: "streaming", reason: "no loop pass for 2 s", code: "stalled"}`, clears
+  `{stage: "streaming", reason: "no loop pass for 2.5 s", code: "stalled"}`, clears
   `recording_in_progress` and marks the stop as intended (so the end of the process waits for no save of
   a take, and the registry logs no crash), and ends its process (`terminate`, then `kill` after 1 s) [U].
   The `camera_dead` warning of a take gives that reason ([recorder.md](recorder.md) 7.4).
-- A pull source whose `read_frame` blocks for more than 2 s in a watched state is a stalled camera.
+- A pull source whose `read_frame` blocks for more than 2.5 s in a watched state is a stalled camera.
   This is by design: the OpenCV source holds one lock across `grab()`, `retrieve()` and `set_controls`,
   so a read or a control call that blocks longer than the limit ends the camera [ADR-Q2NY](../decisions/entries/Q2NY-choices-of-code-step-2.md).
-  When `read_frame` returns, the in-process stall rule of [W 9.5] (`no frame for 2 s`) normally comes
-  first: it ends the read 2 s after the last arrival, and the watch counts its 2 s from the first round of the
-  watch (each 0.1 s) that sees the last change of the counter, which comes after that arrival. In the review of
-  ADR-Q2NY the in-process rule came first in 24 of 24 races with both limits at 2 s. The camera is then `dead`, and the watch is off. When the two come
-  together, the result is the same: `dead` with the code `stalled`. This watch also catches a
+  When `read_frame` returns, the in-process stall rule of [W 9.5] (`no frame for 2 s`) comes first, by the
+  head start above (Q863). The camera is then `dead`, and the watch is off. This watch also catches a
   `read_frame` that never returns (for example an OpenCV `grab()` that blocks), which the in-process
   rule cannot see.
 
@@ -1932,7 +1942,7 @@ facts of macOS only.
 | T-UNX-72 | fake | D-11: a camera reaches `ready`, gets a live change that ends in `ready` again, then records; one camera sends no DHT. | 30 hashes after the first `ready` with their `source_frame_number`; the live change does not replace them; a new set at the record start; each hash equals the SHA-256 of the ring slot and of the MKV block of that frame; no warm-up frame is hashed; `dht_inserted` counts the DHT camera. |
 | T-UNX-73 | fake | The OpenCV source on Linux with a native detection result; on macOS with a device order. | Linux: `cv2.VideoCapture('/dev/videoN', CAP_V4L2)` of the detected node; macOS: the index of the matching `uniqueID`. |
 | T-UNX-74 | fake | Detection with an evidence file and a local record. | `evidence`, `checked`, `id_source`, `has_serial`, `backend`, `usb_link` in `CameraDeviceInfo`; `system_evidence` in the status. |
-| T-UNX-75 | fake | `capture_timing`. Three fake cameras (pull sources, as the OpenCV source) in real camera processes: the process of one is suspended with `psutil` `suspend()` (it cannot run a loop pass then); a second camera is `waiting`; then the group is in the internal pause of a record start; then a take whose writer of one camera is held for 4 s with progress and then for 4 s with no progress (scaled stall limit); then a reopen by a size change whose close takes 3 s; then the OpenCV fake streams for 10 s. | The main process removes the suspended camera from the gate and ends it 2.0 to 2.5 s after its last loop pass, `dead` with `stalled`; the `waiting` camera, the internal pause, the writer waits, the slow close of the reopen and the OpenCV fake trip nothing; the held writer ends by the rule of recorder.md 5.3, not by this watch; the third camera has no gap longer than 2.5 s (4.10). |
+| T-UNX-75 | fake | `capture_timing`. Three fake cameras (pull sources, as the OpenCV source) in real camera processes: the process of one is suspended with `psutil` `suspend()` (it cannot run a loop pass then); a second camera is `waiting`; then the group is in the internal pause of a record start; then a take whose writer of one camera is held for 4 s with progress and then for 4 s with no progress (scaled stall limit); then a reopen by a size change whose close takes 3 s; then the OpenCV fake streams for 10 s. | The main process removes the suspended camera from the gate and ends it 2.5 to 3.0 s after its last loop pass, `dead` with `stalled`; the `waiting` camera, the internal pause, the writer waits, the slow close of the reopen and the OpenCV fake trip nothing; the held writer ends by the rule of recorder.md 5.3, not by this watch; the third camera has no gap longer than 3.0 s (4.10). |
 | T-UNX-76 | windows | `MediaFoundationSource.diagnostics()` with the stand-in interfaces of the Windows tests; a second case with one interval of 150 ms at 30 fps. | Every key of 4.6.2; `id_source` `mf-link`; `native_domain` `hresult`; `clock` `unknown`; `t_*_ms` filled; the second case counts at least one `long_intervals` [ADR-Z7F3](../decisions/entries/Z7F3-choices-of-fix-lane-3.md). |
 | T-UNX-77 | windows | Map the HRESULTs of [W 6.7] and `0x800718CF` to codes. | In-use codes give `camera-in-use`; removal codes give `device-removed`; `0x800718CF` gives `usb-bandwidth`; `0x80004005` gives `open-failed` at open and `stream-error` in streaming. |
 | T-UNX-78 | windows | The restore of the Media Foundation source at the close, with stand-in control interfaces. | Each changed control is set back to its "before" value and flags before the flush, and read back; on by default. |
