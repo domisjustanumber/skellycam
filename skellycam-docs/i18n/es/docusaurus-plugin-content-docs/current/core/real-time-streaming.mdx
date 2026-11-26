@@ -21,9 +21,9 @@ Cada carga contiene exactamente **una imagen por camara por evento de fotograma*
 
 SkellyCam usa un protocolo binario WebSocket compacto para transmitir fotogramas:
 
-1. **Compresion JPEG** — El fotograma de cada camara se comprime en JPEG (calidad 80 por defecto) y opcionalmente se reduce para coincidir con las dimensiones de visualizacion del cliente.
-2. **Empaquetado binario** — Todos los fotogramas comprimidos para un solo evento multi-fotograma se empaquetan en un unico mensaje binario WebSocket, junto con metadatos por camara (ID de camara, resolucion, marca de tiempo).
-3. **Gestion de contrapresion** — Si el cliente no puede mantener el ritmo, el servidor descarta fotogramas en lugar de almacenarlos indefinidamente. Esto previene la acumulacion de memoria y mantiene el flujo responsivo.
+1. **Untouched JPEG** — The server sends the JPEG of the frame ring of each camera as it is: no resize, no re-encode, no rotation.
+2. **One message for each camera frame** — Each binary message holds one frame of one camera, after a header of 48 bytes (version, flags, frame number, arrival time, rotation, JPEG length, camera ID).
+3. **Flow control for each camera** — The server sends a camera its next frame when the client has drawn the last one, and drops the frames in between. With no ready message, a safety net sends one frame each second. A slow camera or a slow tile holds back only its own camera.
 
 La misma conexion WebSocket tambien transporta mensajes JSON para logs, actualizaciones de estado, estadisticas de velocidad de fotogramas y comandos de control.
 
@@ -33,9 +33,9 @@ Para detalles completos del protocolo, consulta la referencia del [Protocolo Web
 
 El frontend React/Electron procesa los fotogramas entrantes a traves de un pipeline optimizado para rendimiento:
 
-1. **Analisis binario** — La carga binaria se analiza para extraer los blobs JPEG por camara.
-2. **Creacion de ImageBitmap** — Cada blob JPEG se decodifica en un `ImageBitmap`, que puede transferirse a un hilo worker sin copiar.
-3. **Renderizado con OffscreenCanvas** — La transmision de cada camara se renderiza en un `OffscreenCanvas` en un Web Worker dedicado, manteniendo el hilo principal libre para interacciones de la interfaz.
+1. **Parse** — `parseCameraMessage` reads the header and gives a view of the JPEG bytes, with no copy.
+2. **Newest pending** — `PreviewTiles` keeps only the newest message of each camera and gives each tile one update at a time, at most one for each display refresh.
+3. **Decode and draw** — The shared tile of the player decodes the JPEG with `ImageDecoder` and draws it with its overlay on the main thread. Then the UI sends one ready message for that camera.
 
 Esta arquitectura soporta muchas transmisiones de camara simultaneas sin perdida de fotogramas en la interfaz.
 

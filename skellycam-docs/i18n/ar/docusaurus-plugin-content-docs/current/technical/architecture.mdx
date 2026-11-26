@@ -20,7 +20,7 @@ graph TB
     subgraph UI ["React / Electron UI"]
         Redux["Redux Store"]
         WS_Client["WebSocket Connection"]
-        Canvas["OffscreenCanvas Workers<br/>(per camera)"]
+        Canvas["Tile of each camera<br/>(ImageDecoder, main thread)"]
     end
 
     WS_Client -- "WebSocket (binary frames + JSON)" --> WS_Server
@@ -112,15 +112,15 @@ graph LR
     A["Camera Sensor"] --> B["CameraWorker<br/>grab() + retrieve()"]
     B --> C["Per-Camera<br/>SharedMemory<br/>Ring Buffer"]
     C --> D["CameraGroup<br/>Multi-Frame Assembly"]
-    D --> E["WebSocket Server<br/>JPEG compress + pack"]
-    E --> F["Frontend<br/>Binary parse -> ImageBitmap"]
-    F --> G["OffscreenCanvas<br/>Web Workers"]
+    D --> E["WebSocket Server<br/>One camera message each"]
+    E --> F["PreviewTiles<br/>Newest pending, one ready each"]
+    F --> G["Tile<br/>ImageDecoder, main thread"]
 ```
 
 1. **الكاميرا -> الذاكرة المشتركة** — يكتب كل عامل كاميرا إطاره في مخزن حلقي للذاكرة المشتركة خاص بالكاميرا.
 2. **الذاكرة المشتركة -> مخزن الإطارات المتعددة** — تقرأ مجموعة الكاميرات الإطارات من جميع الكاميرات وتكتب إطارًا متعددًا متزامنًا إلى مخزن ذاكرة مشتركة ثانٍ.
 3. **الإطارات المتعددة -> WebSocket** — يقرأ خادم WebSocket آخر إطار متعدد، ويضغط صورة كل كاميرا بتنسيق JPEG (جودة 80، مع تغيير الحجم لمطابقة أبعاد عرض العميل أو 50% من الدقة الأصلية)، ويحزمها في حمولة ثنائية.
-4. **WebSocket -> الواجهة الأمامية** — تُرسل الحمولة الثنائية عبر WebSocket. تحلل الواجهة الأمامية البروتوكول الثنائي، وتنشئ كائنات `ImageBitmap`، وتعرض على `OffscreenCanvas` عبر Web Workers.
+4. **WebSocket → Frontend** — The server sends one camera message for each frame of each camera that it sends, and waits for the ready message of that camera, with a safety net of 1 s. `PreviewTiles` gives the newest message of each camera to its tile; the tile decodes the JPEG with `ImageDecoder` and draws it on the main thread.
 
 ## تدفق البيانات: التسجيل
 
@@ -150,8 +150,8 @@ graph LR
 
 - **Redux Toolkit** — إدارة الحالة العامة للكاميرات، التسجيل، بيانات معدل الإطارات، السجلات، والسمة.
 - **اتصال WebSocket** — اتصال مستمر بالخادم مع إعادة اتصال تلقائية ونبض قلب.
-- **FrameProcessor** — يحلل بروتوكول الإطارات المتعددة الثنائي وينشئ كائنات `ImageBitmap`.
-- **CanvasManager** — يدير أزواج `OffscreenCanvas` + `Worker` لكل كاميرا، مما يتيح العرض المُسرّع بالعتاد دون حجب الخيط الرئيسي.
+- **PreviewTiles** — Reads each camera message (`parseCameraMessage`), keeps the newest pending message of each camera, gives each tile one update at a time on `requestAnimationFrame`, and sends one `camera_ready` for each draw.
+- **Tile** (`skellycam-ui/src/player/`) — The shared tile of the player and the preview: it decodes the JPEG with `ImageDecoder` and draws it with its overlay (camera list label, rate, state) on the main thread.
 - **تشغيل مقفل بالإطارات قائم على القائد** — تنتخب صفحة التشغيل الفيديو الأول كـ"قائد" تقود `.play()` الأصلية الوقت المعتمد. تقرأ حلقة `requestAnimationFrame` قيمة `leader.currentTime` وتشتق رقم الإطار. يتم تصحيح انحراف مقاطع الفيديو التابعة فقط عندما تنحرف بأكثر من إطارين. عند الإيقاف المؤقت أو التقدم إطارًا بإطار، يتم تعيين `video.currentTime` مباشرة على جميع العناصر في نفس الوقت. يتم تحديث تراكبات الإطارات عبر مراجع DOM مباشرة لتجنب إعادة عرض React أثناء التشغيل.
 - **Material UI** — مكتبة مكونات لألواح التحكم، وعروض الشجرة، والتخطيط.
 - **i18next** — تدويل مع ملفات ترجمة يحافظ عليها المجتمع.

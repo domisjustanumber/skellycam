@@ -21,9 +21,9 @@ SkellyCam API 的一个关键设计目标是**多摄像头组的行为就像单�
 
 SkellyCam 使用紧凑的二进制 WebSocket 协议来流传输帧：
 
-1. **JPEG 压缩** — 每个摄像头的帧经过 JPEG 压缩（默认质量 80），并可选择缩小到匹配客户端的显示尺寸。
-2. **二进制打包** — 单个多帧事件的所有压缩帧被打包到一条二进制 WebSocket 消息中，连同每个摄像头的元数据（摄像头 ID、分辨率、时间戳）。
-3. **背压管理** — 如果客户端跟不上，服务器丢弃帧而不是无限缓冲。这防止了内存积累并保持流的响应性。
+1. **Untouched JPEG** — The server sends the JPEG of the frame ring of each camera as it is: no resize, no re-encode, no rotation.
+2. **One message for each camera frame** — Each binary message holds one frame of one camera, after a header of 48 bytes (version, flags, frame number, arrival time, rotation, JPEG length, camera ID).
+3. **Flow control for each camera** — The server sends a camera its next frame when the client has drawn the last one, and drops the frames in between. With no ready message, a safety net sends one frame each second. A slow camera or a slow tile holds back only its own camera.
 
 同一 WebSocket 连接还承载日志、状态更新、帧率统计和控制命令的 JSON 消息。
 
@@ -33,9 +33,9 @@ SkellyCam 使用紧凑的二进制 WebSocket 协议来流传输帧：
 
 React/Electron 前端通过优化性能的管道处理传入的帧：
 
-1. **二进制解析** — 解析二进制负载以提取每个摄像头的 JPEG blob。
-2. **ImageBitmap 创建** — 每个 JPEG blob 被解码为 `ImageBitmap`，可以无需复制地传输到工作线程。
-3. **OffscreenCanvas 渲染** — 每个摄像头的画面在专用 Web Worker 中的 `OffscreenCanvas` 上渲染，保持主线程可用于 UI 交互。
+1. **Parse** — `parseCameraMessage` reads the header and gives a view of the JPEG bytes, with no copy.
+2. **Newest pending** — `PreviewTiles` keeps only the newest message of each camera and gives each tile one update at a time, at most one for each display refresh.
+3. **Decode and draw** — The shared tile of the player decodes the JPEG with `ImageDecoder` and draws it with its overlay on the main thread. Then the UI sends one ready message for that camera.
 
 此架构支持多个同时的摄像头画面而不会在 UI 中丢帧。
 
