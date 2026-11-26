@@ -2517,8 +2517,10 @@ side of these rules is the certify checks of section 20 of [`certify.md`](certif
   16.7 change with them (22.6 item 17).
 - A mark [3WCA n] is item n of 22.6, the Python API that the tests use (Q810). A mark [N72V n] is item
   n of [ADR-N72V](../decisions/entries/N72V-choices-of-the-raw-mode-open-and-the-yuyv-format.md), a
-  choice of an agent that waits for the user. V5 (OpenCV controls, except the empty mode list) and V7
-  (3c hardware) are not part of this section.
+  choice of an agent that the user accepted on 2026-11-26 (Q845). A mark [U Qn] is a decision of the
+  user of 2026-11-26
+  ([ADR-8WY3](../decisions/entries/8WY3-decisions-of-the-user-on-the-raw-mode-open-and-its-flag.md)).
+  V5 (OpenCV controls, except the empty mode list) and V7 (3c hardware) are not part of this section.
 
 ### 22.2 Rules of step 3b
 
@@ -2536,10 +2538,12 @@ side of these rules is the certify checks of section 20 of [`certify.md`](certif
 - **A camera with no MJPG mode [Q807].** An MJPG request (the default) for a camera with no MJPG mode
   at 30 fps or more at the requested size, but with a YUY2 or NV12 mode at that size, opens the raw
   mode. The camera logs one line, and its frames are encoded to JPEG at capture. YUY2 comes before
-  NV12 [N72V 1]. The rate follows 7.5 for the raw format, and the auto rate of V2 [N72V 1]. The line
-  holds the camera ID, the words "no MJPG mode" and the opened format [N72V 2]. The whole-request
-  check of 7.5 applies the same rule with `capture_modes` [N72V 3]. A camera with an MJPG mode at the
-  floor at that size opens MJPG and logs no such line.
+  NV12 [N72V 1, U Q845]. The rate follows 7.5 for the raw format, and the auto rate of V2 [N72V 1]. The
+  line is at INFO, one for each open of the raw mode. It holds the camera ID, the words "no MJPG mode"
+  and the opened format [N72V 2]. The whole-request check of 7.5 applies the same rule with
+  `capture_modes`, so the main process does not refuse a request that the raw mode serves [N72V 3]. A
+  camera with an MJPG mode at the floor at that size opens MJPG and logs no such line. No UI flag shows
+  the raw-mode open: the log line and the `capture_format` of the take are enough for now [U Q846].
 - **The format of a raw take [Q808].** A take of a camera in YUY2 records `requested.capture_format`
   `"YUYV"` (SFF-800; [`recorder.md`](recorder.md) 6.7). This also applies to a camera that opened its
   raw mode by Q807: the take records the opened format, not the requested format [N72V 4]. NV12 waits

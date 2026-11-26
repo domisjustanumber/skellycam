@@ -42,10 +42,9 @@ task. Delete an item when its work is done. The PR that closes an item records t
   - Open: section 15 must name the macOS timing step (BM73 7); item 90 of section 18 is stale.
   - The `README.md` of `skellycam/tests/reference_recordings/` still names the deleted tests of the
     phase 2 loop (W8); it changes after the redaction decision of that file.
-  - Step 3b (Q689, Q807 to Q810): failing tests in `test_uncompressed.py` (spec section 22). The user
-    decides [ADR-N72V](entries/N72V-choices-of-the-raw-mode-open-and-the-yuyv-format.md). A take format
-    `NV12` waits for skellyspecs `dom/nv12-capture-format` (Q808). Q809: a later lane ports the 3c
-    tests of `dom/3bc-tests`; then that branch is retired, never merged.
+  - Step 3b (spec section 22): code and tests on `dom/jpeg-encode-tests` merge after a review (Q815).
+    The user decides [ADR-ZEK6](entries/ZEK6-choices-of-the-jpeg-encode-at-capture-code.md). No camera
+    ran the tests of 22.5. Q809: a later lane ports the 3c tests of `dom/3bc-tests`, never merged.
   - Phase 7: the parity table of section 16.7 of the spec is the to-do list for Linux and macOS
     (14 tests with no counterpart yet).
 - **Support virtual cameras.** Detection shows a virtual camera with `virtual=True`, and a request
@@ -191,9 +190,8 @@ task. Delete an item when its work is done. The PR that closes an item records t
     `pace`, or stay as it is? It fails 1 in 20 on 2 cores (real time; JC4X item 3).
   - macOS [NV]: the runner's open-file limit, and that its errors came from this leak. A run of the macOS jobs by
     hand gives the result.
-- **The later merge of `dom/jpeg-encode-tests`.** On TC9B, 53VB, JWZ1 and 8ACV, the status text of
-  `dom/log-cleanup` wins. 2AQT stays accepted, not absorbed, until `windows-capture.md` 16.1 states that both
-  cameras stay `ready` in the blocking half.
+- **2AQT** stays accepted, not absorbed, until `windows-capture.md` 16.1 states that both cameras stay `ready` in
+  the blocking half (the merge of `dom/integration` into `dom/jpeg-encode-tests` kept it so).
 - **ZEX9** ([ADR-ZEX9](entries/ZEX9-decisions-of-the-user-on-the-housekeeping-of-2026-11-25.md)) becomes `done`
   after the CI result of its item 4.
 - **Exclusive access** (accepted, [ADR-5PAR](entries/5PAR-decisions-of-the-user-on-the-control-read-the-holder-and-the-exclusive-access-drafts.md)).

@@ -1,6 +1,9 @@
 # N72V — Choices of the raw-mode open and the YUYV format
 
-**Status:** proposed, 2026-11-25 (agent).
+**Status:** absorbed into
+[`specs/windows-capture.md#222-rules-of-step-3b`](../../specs/windows-capture.md#222-rules-of-step-3b),
+2026-11-26 (commit to dom/jpeg-encode-tests; was accepted, 2026-11-26 (user, Q845,
+[ADR-8WY3](8WY3-decisions-of-the-user-on-the-raw-mode-open-and-its-flag.md))).
 
 ## Decision
 
