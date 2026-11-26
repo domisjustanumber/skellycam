@@ -460,6 +460,74 @@ def test_f9_the_watch_is_off_in_a_close_from_the_group_flag(monkeypatch):
         assert (app.status(camera_id)["failure"] or {}).get("code") != "stalled", app.status(camera_id)
 
 
+class TimedCounter:
+    """Stands in for `alive_count`: keeps the `time.perf_counter_ns()` of each add."""
+
+    def __init__(self):
+        self._value, self.adds = 0, []
+
+    @property
+    def value(self):
+        return self._value
+
+    @value.setter
+    def value(self, value):
+        self._value = value
+        self.adds.append(time.perf_counter_ns())
+
+
+def test_the_count_comes_after_the_start_of_the_in_process_clock_at_the_attach():
+    """unix-capture.md 4.10, ADR-4PPS item 10: the first pass in `waiting` after an open (also the open of a reopen,
+    which runs inside a pass) sets `last_arrival` at the attach of the rings, after the count of its pass. The loop
+    then adds one more to the counter before its read, so the watch counts from a point after the start of the clock
+    of the in-process rule, and the head start of Q874 stays whole. A test of the loop alone: the watch is in
+    `test_f2_*`."""
+    from skellycam.core.camera.capture.camera_loop import CameraLoop
+    from skellycam.core.camera_group.camera_status import CameraStatus
+
+    class Read(Exception):
+        pass
+
+    loop = CameraLoop.__new__(CameraLoop)
+    loop.status = CameraStatus()
+    loop.status.alive_count = counter = TimedCounter()
+    loop.ring_writer = None
+    loop._attach_rings = lambda: setattr(loop, "ring_writer", object())
+
+    def read():
+        raise Read(loop.last_arrival, list(counter.adds))
+
+    loop._read = read
+    with pytest.raises(Read) as raised:
+        loop._wait_pass()
+    clock_start, adds = raised.value.args
+    assert adds and adds[-1] >= clock_start, (clock_start, adds)
+
+
+def test_fail_writes_the_failure_into_info_before_the_put():
+    """unix-capture.md 4.10, ADR-4PPS item 11: the watch stops when `info` holds the failure, and the put on the queue
+    of the setup failures can wait (its lock, the pipe). Thus `_fail` writes `info` first, then puts, then sets
+    `dead` (the failure object before the state, section 12)."""
+    from skellycam.core.camera.capture.camera_loop import CameraLoop
+    from skellycam.core.camera.capture.source import CaptureFailure
+    from skellycam.core.camera_group.camera_status import CameraStatus
+
+    loop = CameraLoop.__new__(CameraLoop)
+    loop.status = CameraStatus()
+    loop.status.set_state("ready")
+    loop._failure_lock, loop.failed, loop.started, loop.camera_id = threading.Lock(), False, True, "cam0"
+    loop._publish_diagnostics = lambda: None
+    seen = []
+    loop.ipc = SimpleNamespace(report_setup_failure=lambda report: seen.append(
+        (loop.status.info_dict().get("failure"), loop.status.state)))
+    loop._fail(CaptureFailure("streaming", "no frame for 2 s", code="stalled"))
+    assert len(seen) == 1
+    failure, state = seen[0]
+    assert failure is not None and failure["code"] == "stalled", seen
+    assert state == "ready", "the state comes after the put"
+    assert loop.status.state == "dead"
+
+
 def test_f3_a_reopen_closes_the_source_in_starting(monkeypatch):
     """F3: a live change on the control thread can set `checking` while the reopen stops that thread. The
     reopen sets `starting` again after the stop, so the watch is off during the close of the source."""
