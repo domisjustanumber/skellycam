@@ -329,6 +329,7 @@ backend and the OS [C 7.4]. The label holds the first two; `host.os` holds the t
 | `<label>:<group>:<condition>` | One condition of a group of checks of the camera (3.3, 3.4), for example `<label>:native-jpeg:valid`. |
 | `<label>:<check>[:<mode>]` | Another check of the camera. `<mode>` is `<w>x<h>@<rate>`, with the rate rounded as cap 7.3 rounds it: `1280x720@30`, `1920x1080@30`, `1280x720@60`, `640x480@29.97`. |
 | `detect` | The detection. |
+| `player-legacy-decode` | The decode check of the v1 player (3.6.2; [`player-legacy.md`](player-legacy.md) 10.5) [U Q735, Q766, Q803]. |
 | `group:<check>`, `system:<check>` | A check of the cameras together; a fact or a check of the system. |
 | `self:<check>` | A self-check with fake cameras (section 7). It never counts toward a camera item [U]. |
 | `probe:<check>`, `probe:<model>:<approach>[:<control>]` | A probe of 10.4: code of certify, outside the product path. |
@@ -1137,6 +1138,15 @@ sections 6 and 7 are not built: their names are in `details.not_built`.
 | `<label>:in-use-mid-take` | `warned_s`, `marked`, `control_marked`, `control_blocked`, `frames_lost` | `not-warned`, `not-marked`; `not-run` `no-shared-mode` (20.3) |
 | `probe:<model>:hog-mode` (macOS) | `hog_set`, `second_refused`, `hog_released` | `hog-not-settable`, `hog-not-exclusive` (20.4) |
 | `<label>:control-read:gaps` (phase D, the first unit of each model) | `reads`, `read_ms_p50`, `read_ms_max`, `gap_at_read_max_ms`, `gap_no_read_max_ms`, `reads_over_limit` | `read-gap`, `hung` (20.9) |
+
+**Full, the v1 player decoder: one check [U Q735, Q766, Q803] [ADR-2Z2D](../decisions/entries/2Z2D-answers-of-the-owner-q800-to-q803-and-acceptance-of-the-v1-playback-spec.md).** `player-legacy-decode`
+decodes the generated `mp4v` and H.264 sets of [`player-legacy.md`](player-legacy.md) section 10.5 in the page of the app, with the
+routes of the product, and reports for each tile the values that 10.5 lists (the route and its reason,
+`decoderInfo`, the seek, step and play times, `lateShare` at 12 s and 22 s, and the switch with
+`switchAt`). The row is `record-only`: no target until the owner sets one. Its values are in
+`details.player_legacy_decode`, not in `numbers`. Its `module` is the name of the pipeline item
+(3.6.10). It needs the page of the app: a run with no app page gives `not-run` `no-ui`. Until the code
+of the v1 player exists, its name is in `details.not_built` [A].
 
 **The take: five rows become two [U Q598].** The contract keeps one check for each test that can fail [C 3.4].
 Each test of the five old rows keeps a check that carries its failure:
@@ -3408,6 +3418,7 @@ of a product failure gives the product code as its reason, with one exception: t
 | `scale-too-short`, `auto-search-failed`, `not-camera-jpeg`, `frame-gap`, `ring-lapped` | 10.2, 5.3, 10.7, 4.4 | The unitless exposure route has fewer than 8 steps; the search ended `failed`; the JPEG is not the camera's own by the proof rules; a probe made a frame gap over 2 times the baseline; the ring no longer holds the hashed frame. |
 | `auto-not-searched` | `auto-exposure` checks | SkellyCam Auto did not search at the open, or after a change of the frame rate (5.3). |
 | `one-camera` | group checks | The check needs two cameras. |
+| `no-ui` | `player-legacy-decode` | The run has no page of the app, so the decode check of the v1 player cannot run (3.6.2) [A]. |
 | `no-mode` | mode checks | The camera does not declare this mode. |
 | `no-mjpg-mode` | `<label>:detect` | No MJPG mode at 30 fps or more (before 3b). |
 | `below-floor` | `opens` | The nearest mode is below 30 fps (cap 7.5). |
@@ -3674,6 +3685,7 @@ tests only the self-check.
 | T-CERT-147 | macOS fake, 3 OS. The permission (20.8): a quick run with the status `not-determined`. | Certify makes no request for the permission; `system:camera-access` gives the status, and each camera is `not-run` `no-permission`. |
 | T-CERT-148 | 3 OS. The reason codes of section 20 (`not-refused`, `holder-failed`, `not-marked`, `not-warned`, `no-shared-mode`, `hog-not-settable`, `hog-not-exclusive`, `no-frame`, `read-gap`). | Each is in the list of section 15, and each reason that the checks of section 20 give is in it (the rule of T-CERT-30). |
 | T-CERT-149 | 3 OS; the Linux and macOS cases land with phase 7. `<label>:control-read:gaps` (20.9) with fakes: (1) each read takes 3 ms and delays no frame; (2) each read holds the frames for 150 ms; (3) the fake has gaps of 150 ms also with the read off; (4) a read hangs. Then the local record and a product open of each model. | (1) `pass`, `reads_over_limit` 0, the row `control_read` `ok`; (2) `fail` `read-gap`, the row `control_read` `harms`, and a later take of that model has no read during the take (T-CAP-146); (3) `pass`: the gaps come from the camera; (4) `fail` `hung`, the camera state `replug`, `control_read` `harms`. `details.limits.control_read_gap_ms` is 100. |
+| T-CERT-150 | 3 OS, fakes of the app page [U Q735, Q766, Q803]. A full run with a fake page result for the check `player-legacy-decode`: an `mp4v` tile, a WebCodecs tile, a tile switched by F6 and a tile that the core rule stopped; then a run with no app page; then a run before the v1 player code exists. | The row `player-legacy-decode` is `record-only` with the `module` of the pipeline item and blocks no gate; `details.player_legacy_decode` holds for each tile the fields of `player-legacy.md` 10.5 (T-LEG-79 checks their shape); with no app page: `not-run` `no-ui`; before the code: the name is in `details.not_built`. |
 
 **The changes of 3.6 to the tests above [U Q591 to Q599, Q610 to Q618, A].** Where a row above and this list
 differ, this list is the rule. T-CERT-91 to T-CERT-132 are new. Q624 also changes T-CERT-61 to T-CERT-64:

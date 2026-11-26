@@ -74,6 +74,14 @@ task. Delete an item when its work is done. The PR that closes an item records t
   - ADR-4D94 changes the player: no `picked-take-folders.json` in 6a (section 5.3 and item 6 of the
     spec must change); `xvfb` from the runner image (section 12.6 must change); a `.gitignore`
     exception for `skellycam-ui/src/player/`.
+- **Step 6c part 1 (v1 playback).** [`specs/player-legacy.md`](../specs/player-legacy.md) revision 6
+  is accepted ([ADR-2Z2D](entries/2Z2D-answers-of-the-owner-q800-to-q803-and-acceptance-of-the-v1-playback-spec.md)).
+  Next: its failing tests. Open:
+  - The skellyspecs pin `fd41818e4` (spec 2.1) resolves only after the owner's yes to push
+    `dom/v1-player-rules` (better: a merge to its main).
+  - Owed, outside the player: the Origin and Host checks for `/connect` and the other routes (Q748).
+  - Later: the Dependabot entries, the upstream watch and its fork settings (spec 10, Q767).
+  - The owner decides the patent position separately (Q733).
 - **The full reader result and the conformance run of the JavaScript reader.** They come with step 6c
   (L2 of [ADR-4HNY](entries/4HNY-missing-frames-m1-to-m10-and-player-decisions-l1-to-l8.md)).
 - **Option B for the take files of the player (not part of 6a).** Review how the Python server can
