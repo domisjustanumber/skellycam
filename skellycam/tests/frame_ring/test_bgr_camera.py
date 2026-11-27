@@ -253,9 +253,9 @@ def test_t_ring_40_both_rings_match(monkeypatch, cleanup):
 
     The fake source gives 640x360 MJPG frames (the smallest size of the floor, windows-capture.md 22.2, Q888)
     at 100 frames/s of a virtual clock, and each ring has 100 slots (about 89 MiB for the two rings, near the
-    82 MB of the 160x120 frames at 1,000 slots before the floor). The test thread holds the clock while it is
-    50 frames behind the JPEG ring (half of its slots), so that the reader keeps up also on a slow machine
-    (`hold_clock_while_behind`) [ADR-2HW5].
+    82 MB of the 160x120 frames at 1,000 slots before the floor). The test thread holds the clock from the open of
+    the JPEG ring until its first read, and while it is half of the slots (50 frames) behind the ring, so that the
+    reader keeps up also on a slow machine (`hold_clock_from_the_ring_open`, `hold_clock_while_behind`) [ADR-2HW5].
     """
     fr = ring()
     both = not_in_bgr = 0
@@ -271,7 +271,7 @@ def test_t_ring_40_both_rings_match(monkeypatch, cleanup):
                 upto = min(raw_head(jpeg_shm), raw_head(bgr_shm), FRAMES_T_RING_40 - 1)
                 while k <= upto:
                     jpeg = jpeg_reader.read(k)
-                    hold_clock_while_behind(app.clock, jpeg_reader, k, 50)
+                    hold_clock_while_behind(app.clock, jpeg_reader, k)
                     bgr = bgr_reader.read(k)
                     assert jpeg.result == fr.ReadResult.OK, (k, jpeg.result)
                     if bgr.result == fr.ReadResult.OK:
@@ -285,7 +285,7 @@ def test_t_ring_40_both_rings_match(monkeypatch, cleanup):
                         assert bgr.result in (fr.ReadResult.MISSING, fr.ReadResult.LAPPED), (k, bgr.result)
                         not_in_bgr += 1
                     k += 1
-                hold_clock_while_behind(app.clock, jpeg_reader, k, 50)
+                hold_clock_while_behind(app.clock, jpeg_reader, k)
                 time.sleep(0.001)
         finally:
             app.clock.leave()  # before the close: the gate reads the ring
