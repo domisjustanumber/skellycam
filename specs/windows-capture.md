@@ -1312,7 +1312,8 @@ section adds only what capture adds.
   answer, or wrong ring data) blocks [ADR-HQE5](../decisions/entries/HQE5-choices-of-fix-lane-4.md).
   The `pace` tests: the times of T-UNX-26, the sample-minus-arrival value of T-UNX-76, the close time of
   the hanging restore of F7, the writer p99 of T-RING-12 and of T-RING-23, and the rows of the gaps of
-  the slow stop (`test_a_slow_stop_has_a_gap_only_on_the_last_row`). Their other checks are in blocking
+  the slow stop (`test_a_slow_stop_has_a_gap_only_on_the_last_row`), and the `give` waits of the short stall of
+  T-REC-STALL (`test_t_rec_stall_short_has_no_give_wait`, Q905 [ADR-P3EZ](../decisions/entries/P3EZ-decision-of-the-user-on-the-give-wait-check-of-the-short-stall-test.md)). Their other checks are in blocking
   tests of the same files: `test_a_slow_stop_ends_each_camera_at_the_last_frame` holds the row counts
   ([`recorder.md`](recorder.md) 12.1). The long-interval test of T-UNX-76 has no bound of time and no
   marker.
