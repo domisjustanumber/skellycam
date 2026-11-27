@@ -1194,7 +1194,8 @@ target goes to the user, and section 6.4 applies.
 
 Two unit tests of `preview/tests/unit/` are guards of the code lane, with no T-ID: `preview-tiles-order.test.ts`
 (the order of the tile updates turns at each refresh [Q893]) and `preview-tiles-reject.test.ts` (a rejected tile
-update clears `busy`).
+update clears `busy`). One Python test is a guard too: `skellycam/tests/preview/test_raw_camera_preview.py` (the
+JPEGs of a YUY2 or NV12 camera of step 3b reach `PreviewRelay` like any other).
 
 T-PRV-45 and T-PRV-46 were cut in revision 2: T-PRV-36 tests the flagged message, T-PLAY-41 tests
 the rotation of the tile, and T-PRV-36 tests that the rotation reaches the tile.
