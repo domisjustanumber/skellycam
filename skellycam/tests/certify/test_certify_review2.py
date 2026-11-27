@@ -118,12 +118,19 @@ def test_review2_n4_a_crash_of_the_session_child_during_the_open(tmp_path):
     again, it gets `camera-not-restored`, and no record row is written."""
     factory = FakeSourceFactory([good(open_delay_s=4.0)])
     (label,) = labels(factory.device_infos())
-    started = time.time()
+    known = {child.pid for child in psutil.Process().children()}  # e.g. the resource tracker of an earlier test
+    killed = []
 
     def kill_session_child():
+        # The main process of the session child only (a crash): the new spawn child of this process. Not by
+        # `create_time`: on Linux psutil counts it from a boot time in whole seconds, up to 1 s early (CI 45984632727).
         for child in psutil.Process().children():
-            if child.create_time() >= started - 0.5:
-                child.kill()  # the main process of the session child only: a crash
+            try:
+                if child.pid not in known and "spawn_main" in " ".join(child.cmdline()):
+                    child.kill()
+                    killed.append(child.pid)
+            except psutil.Error:
+                continue
 
     def progress(message):
         if (message.get("step") or {}).get("name", "").startswith(f"{label}:modes:granted"):
@@ -131,6 +138,7 @@ def test_review2_n4_a_crash_of_the_session_child_during_the_open(tmp_path):
     before = descendants()
     report = product(RUN).run("quick", progress, devices=factory.device_infos(), source_factory=factory,
                               **paths(tmp_path))
+    assert len(killed) == 1, killed  # the crash happened, during the open (the open takes 4 s)
     assert_valid(report)
     assert by_name(report)[f"{label}:opens"] == {**by_name(report)[f"{label}:opens"], "result": "not-run"}
     assert not [c for c in report["checks"] if c["result"] == "fail"]
