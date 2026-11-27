@@ -98,6 +98,7 @@ task. Delete an item when its work is done. The PR that closes an item records t
     - Soon, a small lane, spec and test first (Q907): does the product server hang at its shutdown when a client
       resets its connection (uvicorn waiting for a lost connection; seen in the test server)? If so, a shutdown
       time limit. The same lane looks at the blocked queue feeder thread (likely the websocket log queue).
+      After the Q907 fix: a kill in `PreviewKit.close` fails the test (Q909).
 - **The `sfn26` integration on `dom/integration`**
   ([ADR-EQY4](entries/EQY4-base-the-work-on-upstream-sfn26-without-rust.md),
   [ADR-6T78](entries/6T78-choices-of-the-sfn26-integration.md)). Open:

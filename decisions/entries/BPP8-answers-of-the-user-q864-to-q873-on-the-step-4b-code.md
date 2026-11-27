@@ -1,4 +1,4 @@
-# BPP8 — Answers of the user Q864 to Q873, Q885, Q893 to Q897, Q906 and Q907 on the step 4b code
+# BPP8 — Answers of the user Q864 to Q873, Q885, Q893 to Q897, Q906, Q907 and Q909 on the step 4b code
 
 **Status:** absorbed into
 [`specs/preview-4b.md#32-tests`](../../specs/preview-4b.md#32-tests),
@@ -15,7 +15,7 @@
 [`specs/preview-4b.md#74-test-list`](../../specs/preview-4b.md#74-test-list),
 [`specs/preview-4b.md#75-parity-of-the-systems-p7`](../../specs/preview-4b.md#75-parity-of-the-systems-p7),
 [`specs/capture-timings.md#65-the-preview-sender-u-q587-11`](../../specs/capture-timings.md#65-the-preview-sender-u-q587-11),
-2026-11-26 (commit to dom/preview-4b-tests; the open work of items 7, 8, 10, 16 and 18 is in open-work.md; was accepted, 2026-11-26 (user; the supervisor relayed the answers)).
+2026-11-26 (commit to dom/preview-4b-tests; the open work of items 7, 8, 10, 16, 18 and 19 is in open-work.md; was accepted, 2026-11-26 (user; the supervisor relayed the answers)).
 
 ## Decision
 
@@ -62,10 +62,12 @@ other items (Q872), and Q864 replaces its item 9. Each answer accepts the recomm
 18. **Q907.** A small lane, soon, spec and test first: does the product server hang at its shutdown when a client
     resets its connection (uvicorn waiting for a lost connection), and if so a shutdown time limit; the same lane
     looks at the blocked queue feeder thread (open work).
+19. **Q909.** A browser test whose server had to be killed after the time limit keeps passing, with the note
+    "hung step" in its report, until the lane of Q907 fixes the cause; then a kill fails the test (7.2, open work).
 
 ## Reason
 
-The user, 2026-11-26: "agree to all Q864-Q881", and the answers Q885 and "agree to all Q893-Q902" of the same day; "Q906-907 agree" of 2026-11-27.
+The user, 2026-11-26: "agree to all Q864-Q881", and the answers Q885 and "agree to all Q893-Q902" of the same day; "Q906-907 agree" and Q909 "agree" of 2026-11-27.
 
 ## Open work
 
