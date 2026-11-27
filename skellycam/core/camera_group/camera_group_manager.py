@@ -465,6 +465,7 @@ class CameraGroupManager:
                 group = self.camera_groups.get(camera_group_id)
                 if group is None:  # a second close, or the teardown of a failed start, removed it first
                     continue
+                await group.await_take_end()  # recorder.md 9.1 item 3: a shielded start or stop ends first
                 await group.close()
                 self.closed_diagnostics.update({camera_id: group.diagnostics(camera_id) for camera_id in group.camera_ids})
                 self.camera_groups.pop(camera_group_id, None)

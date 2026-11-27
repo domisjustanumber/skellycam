@@ -1,6 +1,8 @@
 # 75CF — Decision of the user on the shutdown of the server
 
-**Status:** accepted, 2026-11-27 (user, Q907).
+**Status:** absorbed into
+[`specs/recorder.md#91-the-end-of-the-server-process`](../../specs/recorder.md#91-the-end-of-the-server-process),
+2026-11-27 (commit to dom/server-shutdown-limit; was accepted, 2026-11-27 (user, Q907)).
 
 ## Decision
 
@@ -17,6 +19,6 @@ merge of the two branches, this entry and that item must keep one home: one of t
 
 The words of the user, above. A test server of the preview tests hung in its stop after a browser reset its
 connection. The product server builds its `uvicorn.Config` with no `timeout_graceful_shutdown`, and the Electron app
-waits for the exit of the server with no time limit. The lane found no hang of the product (0 of 39 runs), so this
-branch builds no limit; the choices and the open question are in
-[ADR-06PW](06PW-choices-of-the-shutdown-limit-lane.md).
+waits for the exit of the server with no time limit. The lane found no hang of the product (0 of 39 runs), so the
+limit came only after the shield of Q928 ([ADR-9V4Y](9V4Y-decisions-of-the-user-on-the-shutdown-lane-q924-to-q928.md));
+the choices are in [ADR-06PW](06PW-choices-of-the-shutdown-limit-lane.md).

@@ -1,60 +1,57 @@
 # 06PW — Choices of the shutdown limit lane
 
-**Status:** proposed, 2026-11-27 (agent; applies Q907 of
-[ADR-75CF](75CF-decision-of-the-user-on-the-shutdown-of-the-server.md); commit to dom/server-shutdown).
+**Status:** absorbed into
+[`specs/recorder.md#91-the-end-of-the-server-process`](../../specs/recorder.md#91-the-end-of-the-server-process),
+2026-11-27 (commit to dom/server-shutdown-limit; was accepted, 2026-11-27 (user, Q924 of
+[ADR-9V4Y](9V4Y-decisions-of-the-user-on-the-shutdown-lane-q924-to-q928.md)); was proposed, 2026-11-27 (agent)).
 
 ## Decision
 
-The user did not decide these details. [`recorder.md`](../../specs/recorder.md) 9.1 states them.
+Q924 accepts these choices of the lane, subject to the review; the limit comes in the order of Q928.
 
-1. **No connection limit is built.** Q907 asks for a limit only if the product hangs. The product did not hang
-   (0 of 39 runs, Evidence). A first version of the lane added a limit of 5 s (`timeout_graceful_shutdown`) all the
-   same; a review found that the limit can leave a take unfinished (open work), so this branch takes it out. The
-   full work with the limit is kept, not merged, on the branch `dom/server-shutdown-limit` for the user to decide.
-2. **The exit does not wait for the feeder thread of the websocket log queue** (9.1 item 1): `entry_point()` calls
+1. **The exit does not wait for the feeder thread of the websocket log queue** (9.1 item 1): `entry_point()` calls
    `get_websocket_log_queue().cancel_join_thread()` after `configure_logging`.
-3. **One DEBUG line for each suppressed `ConnectionResetError`** (9.1 item 2), with the message of the context.
+2. **One DEBUG line for each suppressed `ConnectionResetError`** (9.1 item 2), with the message of the context.
    The handler stays.
-4. **The tests** (9.1 item 3). `test_server_exit.py` starts the real server with `server_exit_child.py` (no
-   telemetry, no bytecode pass, a temporary base folder and log file) on a port that the test holds, and checks that
-   the process ends with an error code. `test_entry_point.py` checks the cancel.
+3. **The limit is 5 s** (9.1 item 5): `skellycam/__main__.py` sets `timeout_graceful_shutdown=SHUTDOWN_CONNECTION_LIMIT_S`
+   (5) in its `uvicorn.Config`, only after the shield of 9.1 item 3. That is the only `uvicorn.Config` of the
+   product; the one of `decisions/scripts/measure_preview_m_prv.py` does not change after its entry.
+4. **The tests** (9.1 item 4). `test_server_exit.py` starts the real server with `server_exit_child.py` (no
+   telemetry, no bytecode pass, a temporary base folder and log file). A server whose port is in use ends with an
+   error code. A lost connection is made the same on each system: the child skips `Server._detach` for its first
+   connection; the test is split as Q669 says, and `test_pace_marker.py` names both halves. `test_entry_point.py`
+   checks the cancel.
 
 ## Reason
 
-1. The words of Q907 and the first rule of the user: a recording must not be lost. A limit cancels the request
-   tasks that still run, and a cancelled take stop leaves the manifest `recording` (open work). With no hang found,
-   the limit has no gain to weigh against that. The 5 s of the first version came from the brief of the
-   supervisor, not from the user: the 5 s of the user (Q906) is for the test server `ui_server.py`.
-2. With no open websocket, nobody reads the queue. The feeder thread then waits in `_send_bytes` on a full pipe,
+1. With no open websocket, nobody reads the queue. The feeder thread then waits in `_send_bytes` on a full pipe,
    and the exit handler `_cleanup_log_queue` of `skellylogs` waits for it with `join_thread`. The records that the
    cancel drops at the exit have no reader.
-3. The handler hid the 10054 error of the stop of the test server. The default level is TRACE (`LOG_LEVEL` of
+2. The handler hid the 10054 error of the stop of the test server. The default level is TRACE (`LOG_LEVEL` of
    `skellycam/__init__.py`), so the DEBUG line shows in the console and in the log file.
-4. A port-in-use start is the case that hung (Evidence); the test makes it with no camera and no race.
+3. The product did not hang (0 of 39 runs), so a first version that added the limit at once was taken out: a review
+   found that the limit left a take unfinished on each path but the shutdown endpoint
+   ([evidence](../evidence/cancelled-take-stop-at-a-shutdown-limit-20261127.md)). Q928 put the shield first. The 5 s
+   came from the brief of the supervisor, not from the user (the 5 s of Q906 is for the test server).
+4. A port-in-use start is the case that hung; the skipped `_detach` gives a lost connection with no race.
 
 ## Evidence
 
-Windows 11, CPython 3.13.18, uvicorn 0.54.0, Chromium 1255 of Playwright (headless). The scripts are local
-(scratchpad) and not tracked: a wrapper of `skellycam/__main__.py` with the patches of item 4 and a probe that
-prints when `_call_connection_lost` raises, and a driver that connects a client, ends it, calls `/shutdown` and
-times the exit of the process.
+Windows 11, CPython 3.13.18, uvicorn 0.54.0, Chromium 1255 of Playwright (headless); local scratchpad scripts, not
+tracked (a wrapper of `__main__` with a probe on `_call_connection_lost`, and a driver that ends a client, calls
+`/shutdown` and times the exit).
 
-- **No hang of the product with reset clients: 0 of 39 runs.** Exit 0.18 s to 1.16 s after the answer of
-  `/shutdown` (the period of the worker monitor is 1 s). Clients: a normal close (1), a socket reset with
-  `SO_LINGER` 0 before `/shutdown` (1) and after it (4), a close frame 1001 then a reset (4), a killed client process
-  (4), and a Chromium page that stays open (8), is killed with its process tree (8) or closes with 1001 (8). The
-  probe never printed: no `ConnectionResetError` in `_call_connection_lost`. A plain asyncio server with eight
-  orders of reset, close and write gave no case either. The test server that hung (3 of 20 stops) sent a preview
-  stream to the browser and closed the websockets itself; the product with no camera sends no preview stream.
-- **The port in use: 3 of 3 runs did not end in 20 s.** The stacks: the main thread in
-  `skellylogs.configure_logging._cleanup_log_queue` → `Queue.join_thread` → `_finalize_join` → `Thread.join`; the
-  feeder thread of the websocket log queue in `queues._feed` → `connection._send_bytes`. The startup logs fill the
-  pipe before a websocket reads it.
-- **An idle server**: after 10 s with no websocket, the feeder thread waited for new items
-  (`queues._feed` in `wait`), and the exit took 1.11 s.
-- The port-in-use test and the test of the cancel failed before the code change and pass after it.
+- **No hang with reset clients: 0 of 39 runs**, exit 0.18 s to 1.16 s after `/shutdown`. Clients: a normal close
+  (1), `SO_LINGER` 0 resets before and after `/shutdown` (1, 4), a close frame 1001 then a reset (4), a killed
+  client (4), a Chromium page that stays open, is killed or closes with 1001 (8 each). The probe never printed. The
+  test server that hung (3 of 20) sent a preview stream and closed the websockets itself.
+- **The port in use: 3 of 3 runs did not end in 20 s.** The main thread waited in
+  `_cleanup_log_queue` → `Queue.join_thread`; the feeder thread in `queues._feed` → `connection._send_bytes`.
+- **An idle server** with no websocket for 10 s: the feeder waited for items, and the exit took 1.11 s.
+- With the cancel and the limit, ten lost-connection runs ended 5.66 s to 5.75 s after `/shutdown`.
 
 ## Alternatives rejected
 
-- **A connection limit of 5 s now** (`dom/server-shutdown-limit`). Not built: see Reason 1 and open work.
-- **`os._exit` for a `SystemExit` in `entry_point()`.** It covers only that path; the cancel covers each exit.
+- **Detach the transport in the exception handler**: private names, and it bounds only the one known cause.
+- **A subclass of `uvicorn.Server` that bounds only `wait_closed()`**: a private method, and no bound for a request.
+- **`os._exit` for a `SystemExit` in `entry_point()`**: only that path; the cancel covers each exit.

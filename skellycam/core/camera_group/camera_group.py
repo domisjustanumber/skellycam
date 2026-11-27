@@ -151,6 +151,7 @@ class CameraGroup:
     stall_watch: bool = True
     _closing: bool = False  # `close` runs: the watch thread reads the queues but watches no camera (F4)
     _end_lock: Any = field(default_factory=asyncio.Lock)
+    _end_tasks: set = field(default_factory=set)  # the shielded take starts and stops that run (recorder.md 9.1)
     _ring_lock: Any = field(default_factory=threading.RLock)
     _life_lock: Any = field(default_factory=threading.Lock)  # a spawn and a close of camera processes, one at a time
     _cameras_closed: bool = False
@@ -596,8 +597,41 @@ class CameraGroup:
     async def start_recording(self, recording_info: RecordingInfo, devices: dict | None = None) -> list:
         """Start a take (recorder.md section 10 items 3 to 5, 13). Return the warnings of 11.3. One start, stop or
         error end at a time: a second start waits for the finish of a failed start (ADR-P5VE)."""
+        async def locked() -> list:
+            async with self._end_lock:
+                return await self._start_recording(recording_info, devices)
+
+        return await self._shielded(locked())
+
+    async def _shielded(self, body):
+        """recorder.md 9.1 item 3 [ADR-9V4Y]: a cancel of the caller (a request that uvicorn cancels at its limit) does
+        not cancel a take start or stop. The task holds `_end_lock` to its end; a later stop or close waits for it."""
+        task = asyncio.ensure_future(body)
+        self._end_tasks.add(task)
+
+        def ended(done) -> None:
+            self._end_tasks.discard(done)
+            if not done.cancelled():
+                done.exception()  # read: asyncio does not log it as lost; `lost` below logs it when no caller waits
+
+        def lost(done) -> None:
+            error = None if done.cancelled() else done.exception()
+            if error is not None and not isinstance(error, RequestRefused):
+                logger.error(f"The take start or stop of group {self.id} failed after its caller was cancelled: "
+                             f"{error!r}", exc_info=error)
+
+        task.add_done_callback(ended)
+        try:
+            return await asyncio.shield(task)
+        except asyncio.CancelledError:
+            task.add_done_callback(lost)  # the caller is gone: nobody else gets the outcome
+            raise
+
+    async def await_take_end(self) -> None:
+        """Wait until no take start, stop or error end runs (recorder.md 9.1 item 3): the close of all groups calls it
+        before `close`, so a start that has not set `self.take` yet ends first."""
         async with self._end_lock:
-            return await self._start_recording(recording_info, devices)
+            pass
 
     async def _start_recording(self, recording_info: RecordingInfo, devices: dict | None) -> list:
         statuses = self.cameras.orchestrator.camera_statuses
@@ -747,13 +781,16 @@ class CameraGroup:
 
     async def stop_recording(self) -> TakeSummary:
         """Stop the take (recorder.md 8.1). After a take that an error ended, return its summary once."""
-        async with self._end_lock:  # one end at a time: a second stop waits, then gets the 409
-            if self.take is None:
-                if self.ended_take is None:
-                    raise RequestRefused(409, "No recording runs")
-                summary, self.ended_take, self.ended_take_summary = self.ended_take, None, None
-                return summary
-            return await self._end_take()
+        async def locked() -> TakeSummary:
+            async with self._end_lock:  # one end at a time: a second stop waits, then gets the 409
+                if self.take is None:
+                    if self.ended_take is None:
+                        raise RequestRefused(409, "No recording runs")
+                    summary, self.ended_take, self.ended_take_summary = self.ended_take, None, None
+                    return summary
+                return await self._end_take()
+
+        return await self._shielded(locked())
 
     async def _end_after_error(self) -> None:
         """A stall or a write error ends the take at once for every camera (5.3, 5.4) [C5]."""

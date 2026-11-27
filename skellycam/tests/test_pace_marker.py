@@ -46,6 +46,8 @@ PACE_TESTS = [
     # Q922, Q923 [ADR-D2YZ]: the give waits of T-REC-36 and the count of T-PRV-17
     ("skellycam.tests.take_recorder.test_queue_and_writer", "test_t_rec_36_has_no_give_wait"),
     ("skellycam.tests.preview.test_ws_flow", "test_t_prv_17_b_gets_15_messages_within_1_s"),
+    # Q907, Q928 [ADR-9V4Y]: the connection limit of the shutdown of the server (recorder.md 9.1)
+    ("skellycam.tests.test_server_exit", "test_the_server_ends_within_the_connection_limit"),
 ]
 # A test whose failure does not depend on the pace blocks (16.1): the functional halves of the split tests, the
 # long-interval test (no bound of time), the slow stop (its row counts are the lock rule), and the tests of item 1
@@ -85,6 +87,8 @@ NOT_PACE = [
     # Q922, Q923 [ADR-D2YZ]: the blocking halves of T-REC-36 and T-PRV-17
     ("skellycam.tests.take_recorder.test_queue_and_writer", "test_t_rec_36_1080p60_frames_of_600_kb_for_30_s"),
     ("skellycam.tests.preview.test_ws_flow", "test_t_prv_17_reader_removed_then_closed"),
+    # Q907, Q928 [ADR-9V4Y]: the server process ends after /shutdown with a lost connection
+    ("skellycam.tests.test_server_exit", "test_the_server_ends_after_shutdown_with_a_lost_connection"),
 ]
 
 
