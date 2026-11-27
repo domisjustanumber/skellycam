@@ -19,10 +19,6 @@ import signal  # noqa: E402
 
 logger = logging.getLogger(__name__)
 
-# recorder.md 9.1 [ADR-06PW]: the shutdown of uvicorn waits at most this long for open connections. It starts at the
-# SIGTERM of the worker monitor, after each take and each protected save has finished.
-SHUTDOWN_CONNECTION_LIMIT_S = 5
-
 
 async def main() -> None:
     import sys
@@ -43,7 +39,7 @@ async def main() -> None:
         def _suppress_connection_reset(loop: asyncio.AbstractEventLoop, context: dict) -> None:
             exception = context.get("exception")
             if isinstance(exception, ConnectionResetError):
-                logger.debug(f"Suppressed a connection reset: {context.get('message')}")  # recorder.md 9.1
+                logger.debug(f"Suppressed a connection reset: {context.get('message')}")  # recorder.md 9.1 item 2
                 return
             if _default_handler is not None:
                 _default_handler(loop, context)
@@ -85,7 +81,6 @@ async def main() -> None:
             reload=False,
             # A JPEG does not compress: deflate cost 12.7 ms of the event loop for each 1080p frame (ADR-HDC9)
             ws_per_message_deflate=False,
-            timeout_graceful_shutdown=SHUTDOWN_CONNECTION_LIMIT_S,
         )
         server = uvicorn.Server(config)
 
@@ -113,7 +108,7 @@ def entry_point() -> None:
     # the app calls logger.api / logger.success, which exist only after this (a host such as freemocap
     # configures logging itself; the standalone server must do it here)
     configure_logging(level=LOG_LEVEL, log_file_path=get_log_file_path())
-    # recorder.md 9.1 item 4: only an open websocket reads this queue; no exit waits for its feeder thread
+    # recorder.md 9.1 item 1: only an open websocket reads this queue; no exit waits for its feeder thread
     get_websocket_log_queue().cancel_join_thread()
 
     multiprocessing.freeze_support()
