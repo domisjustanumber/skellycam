@@ -1041,6 +1041,11 @@ choices [ADR-06PW](../decisions/entries/06PW-choices-of-the-shutdown-limit-lane.
      its first and last frame. `take.finish` never ran: the manifest stayed `recording`. Each camera then ended at
      the close with a frame count from frame 0, not the frame count of the take (70 rows for a take of 50 frames).
      A cancel in the thread of `start_take` left a `recording` take folder that nobody finished.
+   - Ctrl-Break (SIGBREAK, Windows) is handled as Ctrl-C. A camera process ignores it, as it ignores SIGINT; the main
+     process drives the exit. `__main__` handles SIGBREAK as SIGINT and SIGTERM, so the SIGBREAK that uvicorn raises
+     again after `serve()` returns does not end the process before `WorkerRegistry.shutdown_all()`. Before this rule,
+     a Ctrl-Break to the process group ended each camera process at once (exit code `0xC000013A`): the take ended
+     with `camera_dead` for each camera, and the server process ended with exit code 3.
    - Not covered: a second Ctrl-C (uvicorn's `force_exit`) skips the lifespan end, which ends a running take
      ([`open-work.md`](../decisions/open-work.md), a question for the user).
 4. **Tests.** `skellycam/tests/test_server_exit.py` runs the real server in a child process with its port in use:
@@ -1048,6 +1053,10 @@ choices [ADR-06PW](../decisions/entries/06PW-choices-of-the-shutdown-limit-lane.
    `take_recorder/test_take_end_cancel.py` cancels a take stop that waits for a held camera, a close of all groups
    at the same place, and a take start in `start_take`, as uvicorn cancels a request; then it closes the groups as
    the lifespan end does. The manifest is `finished`, and each camera has the frame count of the take.
+   Its last test runs the real server of `__main__` with two fake cameras (`take_recorder/server_take_child.py`):
+   during a take stop that waits for its cameras, the server process group gets Ctrl-Break (Windows) or the server
+   gets SIGINT. The process ends with code 0, the manifest is `finished` with no `camera_dead`, and each camera has
+   the same rows.
 5. **Open: the wait for connections has no limit yet.** The shutdown of uvicorn waits with no time limit for the
    open connections, their request tasks and `Server.wait_closed()`. The product did not hang in 39 runs with reset
    clients. Q928: the limit of 5 s comes after item 3.
