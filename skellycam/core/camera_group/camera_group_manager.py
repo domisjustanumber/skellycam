@@ -55,7 +55,7 @@ class CameraGroupManager:
     worker_registry: WorkerRegistry
     source_factory: Callable | None = None  # ADR-HP7D item 10; None: the source of 14.2
     detected_cameras: dict[CameraIdString, CameraDeviceInfo] = field(default_factory=dict)  # U17 (c)
-    closing: bool = False
+    closing: int = 0  # the closes of all groups that run (recorder.md 9.1 item 7)
     closed_diagnostics: dict = field(default_factory=dict)  # the last dicts of each camera of a closed group (F4)
     searching: bool = False  # an exposure search of the endpoint runs (camera-requests.md 1.5)
     creating: bool = False  # an apply request makes a group: no second one may (camera-requests.md 2.4a item 7) [Z7F3]
@@ -459,7 +459,7 @@ class CameraGroupManager:
         if not self.camera_groups:
             logger.warning("No camera groups to close.")
             return  # `closing` stays False: else the payloads stay empty after a close with no group (sfn26)
-        self.closing = True
+        self.closing += 1
         try:
             # sfn26 43e2b968a: a group whose close raises stays listed, so that a retry closes it
             for camera_group_id in list(self.camera_groups):
@@ -473,7 +473,7 @@ class CameraGroupManager:
                 self.camera_group_framerate_subscriptions.pop(camera_group_id, None)
                 logger.info(f"Closed camera group ID: {camera_group_id}")
         finally:
-            self.closing = False
+            self.closing -= 1
 
     async def start_recording_all_groups(self, recording_info: RecordingInfo) -> list:
         """Start recording for all camera groups. Return the warnings of 11.3."""

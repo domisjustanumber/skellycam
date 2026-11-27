@@ -16,12 +16,59 @@ import logging  # noqa: E402
 import multiprocessing  # noqa: E402
 import os  # noqa: E402
 import signal  # noqa: E402
+import threading  # noqa: E402
+import time  # noqa: E402
+from typing import Callable  # noqa: E402
 
 logger = logging.getLogger(__name__)
 
 # recorder.md 9.1 item 5 [ADR-9V4Y]: the shutdown of uvicorn waits at most this long for open connections. It starts at
 # the first signal; a take start or stop is shielded (item 3), and the lifespan close runs after it.
 SHUTDOWN_CONNECTION_LIMIT_S = 5
+
+SECOND_CTRL_C_AFTER_S = 1.0  # recorder.md 9.1 item 9: a Ctrl-C sooner after the first one is the same key press
+FORCED_EXIT_AFTER_S = 5.0  # 9.1 item 9 (Q977): the process still runs this long after the abort: os._exit(1)
+_CTRL_C_SIGNALS = tuple(sig for sig in (signal.SIGINT, getattr(signal, "SIGBREAK", None)) if sig is not None)
+
+
+def _forced_exit_after(seconds: float) -> None:
+    """9.1 item 9 (Q977): a thread still holds the process `seconds` after the abort, so the process ends."""
+    time.sleep(seconds)
+    logger.error(f"The exit still waits {seconds:g} s after the second Ctrl-C; running threads: "
+                 f"{[thread.name for thread in threading.enumerate()]}; forced exit")
+    os._exit(1)
+
+
+def _start_forced_exit() -> None:
+    threading.Thread(target=_forced_exit_after, args=(FORCED_EXIT_AFTER_S,), name="ForcedExitAfterAbort",
+                     daemon=True).start()
+
+
+def abort_on_a_second_ctrl_c(server: object, kill_flag: object, *, clock: Callable[[], float] = time.monotonic,
+                             start_forced_exit: Callable[[], None] = _start_forced_exit) -> Callable[[int, object], None]:
+    """recorder.md 9.1 item 9 (Q934): the signal handler of uvicorn for the server. The first signal goes to uvicorn.
+    A Ctrl-C or Ctrl-Break less than SECOND_CTRL_C_AFTER_S after it is the same key press and is dropped. One later
+    is the abort: uvicorn stops its waits (`force_exit`), the kill flag ends each camera process, and the forced exit
+    starts."""
+    handle_exit = server.handle_exit
+    first: list[float] = []
+
+    def handler(signum: int, frame: object) -> None:
+        now = clock()
+        if first and signum in _CTRL_C_SIGNALS:
+            if now - first[0] < SECOND_CTRL_C_AFTER_S:
+                return
+            if not server.force_exit:
+                handle_exit(signum, frame)
+                server.force_exit = True
+                kill_flag.value = True
+                start_forced_exit()
+                return
+        if not first:
+            first.append(now)
+        handle_exit(signum, frame)
+
+    return handler
 
 
 async def main() -> None:
@@ -90,19 +137,7 @@ async def main() -> None:
             timeout_graceful_shutdown=SHUTDOWN_CONNECTION_LIMIT_S,
         )
         server = uvicorn.Server(config)
-        handle_exit = server.handle_exit
-        abort_signals = (signal.SIGINT, getattr(signal, "SIGBREAK", signal.SIGINT))
-
-        def abort_on_a_second_ctrl_c(signum: int, frame: object) -> None:
-            """recorder.md 9.1 item 9 (Q934): a second Ctrl-C or Ctrl-Break aborts. uvicorn stops its waits, and the
-            kill flag ends each camera process at once; the first signal does as before."""
-            second = server.should_exit and signum in abort_signals
-            handle_exit(signum, frame)
-            if second:
-                server.force_exit = True
-                global_kill_flag.value = True
-
-        server.handle_exit = abort_on_a_second_ctrl_c
+        server.handle_exit = abort_on_a_second_ctrl_c(server, global_kill_flag)  # recorder.md 9.1 item 9
 
         logger.info(f"Starting server on {HOSTNAME}:{PORT}")
         await server.serve()
