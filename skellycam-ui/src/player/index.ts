@@ -6,4 +6,6 @@ export type {TakeFiles} from './files/take-files.ts';
 export {isTakeFolder} from './reader/take.ts';
 export type {CameraState, TakeState} from './reader/take.ts';
 export {Tile} from './tile/tile.ts';
+export {TileTimings, buildSummary} from './tile/timings.ts';
+export type {Summary as TileTimingSummary, TileTimingHandle} from './tile/timings.ts';
 export type {CameraStateName, DecodedImage, JpegDecoder, TileLabel, TileMark, TileOptions, TileOverlay, TileTexts, TileUpdate} from './tile/tile.ts';

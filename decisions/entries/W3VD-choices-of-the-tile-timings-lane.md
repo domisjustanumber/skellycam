@@ -44,7 +44,8 @@ items. Section 7 of the spec states them, with a link to this entry.
     `onDrawn`), also when the timings are off: `PreviewTiles` does not know the switch. That is one
     `performance.now()` call for each message.
 11. **Test parts in addition to 10.2.** T-TIM-26 gets a Node part in `preview-tiles.test.ts`: the stamp, its pass to
-    the update, and a replaced message whose stamp never reaches the tile. T-TIM-25 gets a Node part in
+    the update, and a replaced message whose stamp never reaches the tile. It gets one more in `timings.test.ts`: the
+    window of a handle, the newest 512 samples, `seq` and one handle for each camera id. T-TIM-25 gets a Node part in
     `server-messages.test.ts`: the guard of item 9.
 
 ## Reason

@@ -17,19 +17,20 @@ interface CameraViewProps {
  */
 export const CameraView: React.FC<CameraViewProps> = memo(({ cameraId, scale, maxWidth }) => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
-    const { setTile } = useServer();
+    const { setTile, getTileTimings } = useServer();
     const isPaused = useAppSelector(selectIsPaused);
 
     useEffect(() => {
         const canvas = canvasRef.current;
         if (!canvas) return;
-        const tile = new Tile(canvas);
+        // capture-timings.md 7: the timing handle of the camera; skellycam-ui reads no summary, so no group id
+        const tile = new Tile(canvas, {}, {timing: getTileTimings().handle(cameraId, null)});
         setTile(cameraId, tile);
         return () => {
             setTile(cameraId, null);
             tile.close();
         };
-    }, [cameraId, setTile]);
+    }, [cameraId, setTile, getTileTimings]);
 
     const canvasStyle = useMemo((): React.CSSProperties => {
         if (maxWidth) {

@@ -7,8 +7,9 @@ import {FramerateStore} from "@/services/server/server-helpers/framerate-store";
 import {LogStore, LogRecord} from "@/services/server/server-helpers/log-store";
 import { PreviewTiles } from "@/services/server/preview/preview-tiles";
 import type { OverlayValues } from "@/services/server/preview/preview-tiles";
-import { appStateValues, isFramerateUpdate, rateTexts } from "@/services/server/preview/server-messages";
+import { appStateValues, isCaptureTimings, isFramerateUpdate, rateTexts } from "@/services/server/preview/server-messages";
 import type { AppStateLike, CameraOverlay } from "@/services/server/preview/server-messages";
+import { TileTimings } from '@/player/index.ts';
 import type { Tile } from '@/player/index.ts';
 import { store } from "@/store/store";
 import { serverStateReceived, wsConnectionChanged, serverDisconnected } from "@/store/slices/connection/connection-slice";
@@ -25,6 +26,8 @@ interface ServerContextValue {
     getFramerateStore: () => FramerateStore;
     getLogStore: () => LogStore;
     getPreviewTiles: () => PreviewTiles;
+    /** The decode and draw timing of the tiles (capture-timings.md 7): give each tile a handle. */
+    getTileTimings: () => TileTimings;
     /** Give the tile of a camera to the preview, or remove it with null (specs/preview-4b.md 5.4). */
     setTile: (cameraId: string, tile: TileLike | null) => void;
     /** The cameras that stream: `checking`, `too_slow`, `ready` or `recording` (5.5) [Q7, Q10]. */
@@ -76,6 +79,7 @@ export const ServerContextProvider: React.FC<{ children: ReactNode }> = ({ child
     const wsConnectionRef = useRef<WebSocketConnection | null>(null);
     const framerateStoreRef = useRef<FramerateStore>(new FramerateStore());
     const logStoreRef = useRef<LogStore>(new LogStore());
+    const tileTimingsRef = useRef<TileTimings>(new TileTimings());
     // 5.3 rule 4: one ready message for each draw; onDrawn feeds Displayed (5.8)
     const previewTilesRef = useRef<PreviewTiles>(new PreviewTiles(
         cameraId => void wsConnectionRef.current?.send({message_type: 'camera_ready', camera_id: cameraId}),
@@ -177,6 +181,8 @@ export const ServerContextProvider: React.FC<{ children: ReactNode }> = ({ child
                     lastAppStateRef.current = jsonData as AppStateLike;
                     framerateStoreRef.current.recordAppState(jsonData as AppStateLike);
                     applyAppState();
+                } else if (isCaptureTimings(jsonData)) {
+                    tileTimingsRef.current.on = jsonData.log_capture_times;   // capture-timings.md 7: the switch
                 }
                 // other message types are ignored, so that the DevTools console keeps no reference to them
             } catch (error) {
@@ -217,6 +223,7 @@ export const ServerContextProvider: React.FC<{ children: ReactNode }> = ({ child
     const getFramerateStore = useCallback((): FramerateStore => framerateStoreRef.current, []);
     const getLogStore = useCallback((): LogStore => logStoreRef.current, []);
     const getPreviewTiles = useCallback((): PreviewTiles => previewTilesRef.current, []);
+    const getTileTimings = useCallback((): TileTimings => tileTimingsRef.current, []);
 
     const setTile = useCallback((cameraId: string, tile: TileLike | null): void => {
         previewTilesRef.current.setTile(cameraId, tile);
@@ -251,6 +258,7 @@ export const ServerContextProvider: React.FC<{ children: ReactNode }> = ({ child
         getFramerateStore,
         getLogStore,
         getPreviewTiles,
+        getTileTimings,
         setTile,
         connectedCameraIds,
         gridCameraIds,
@@ -258,7 +266,7 @@ export const ServerContextProvider: React.FC<{ children: ReactNode }> = ({ child
         updateServerConnection,
         setStreamPaused,
     }), [isConnected, connectionState, connectedCameraIds, gridCameraIds, cameraLabels, connect, disconnect, send,
-        getFramerateStore, getLogStore, getPreviewTiles, setTile, updateServerConnection, setStreamPaused]);
+        getFramerateStore, getLogStore, getPreviewTiles, getTileTimings, setTile, updateServerConnection, setStreamPaused]);
 
     return (
         <ServerContext.Provider value={contextValue}>
