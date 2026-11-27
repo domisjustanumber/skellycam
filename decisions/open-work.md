@@ -182,6 +182,16 @@ task. Delete an item when its work is done. The PR that closes an item records t
   entry with the version of the workflows supersedes ADR-7DE6.
   The same lane tries the runner's D: drive for the temp folder of the Windows recorder job (Q922 of
   [ADR-D2YZ](entries/D2YZ-decisions-of-the-user-on-t-rec-36-t-prv-17-and-the-slow-holder-reading.md)): T-REC-36 and T-REC-STALL failed with `give` waits there.
+- **Question for the user: the stall watch under load with THREAD workers.** The `[thread]` case of
+  `test_the_watch_ends_no_healthy_camera_under_load` failed once on CI from GIL starvation in the test process, a mode
+  that the product does not use ([evidence](evidence/stall-watch-under-load-thread-20261127.md)). Move its check "no
+  camera ended" to `pace`, and keep `[process]` blocking? Recommended: yes. (The other way, a change of the
+  in-process rule, would weaken the detection of real stalls.) It stays blocking until the user answers.
+- **Question for the user: T-PRV-25 and Doc checks.** `doc-checks.yml` syncs only the dev group, and T-PRV-25 imports
+  `skellycam`; the `--ignore` of `preview-4b.md` 7.8 (Q836) is in kit text (`kit.toml`), so it needs an entry, a
+  `kit_sync.py propose` and a PR to freemocap/project. The other way: move the test into `skellycam/tests/preview/`,
+  which reverses "stays in `tools/tests/`" of Q836. Recommended: move the test (one local change; `test.yml` and
+  `capture.yml` run it). Doc checks stays red until the user answers.
 - **ZEX9** ([ADR-ZEX9](entries/ZEX9-decisions-of-the-user-on-the-housekeeping-of-2026-11-25.md)) becomes `done`
   after the CI result of its item 4.
 - **Exclusive access** (accepted, [ADR-5PAR](entries/5PAR-decisions-of-the-user-on-the-control-read-the-holder-and-the-exclusive-access-drafts.md)).
