@@ -7,12 +7,14 @@
 The user decided Q929 to Q955 ([ADR-6PJ2](6PJ2-decisions-of-the-user-on-q929-to-q941.md),
 [ADR-318R](318R-decisions-of-the-user-on-q942-to-q955.md)). These details his answers did not settle.
 
-1. **Q931: what moves with "no camera ended".** The `[thread]` case checked three things: no camera ended, both
-   cameras `ready` at the end, and more than 30 loop passes in the 12 s. All three fail from the same starved GIL:
-   a camera that ends is not `ready` and makes no more passes. So all three move to the `pace` test
-   `test_no_camera_ends_under_load_with_thread_workers`. The blocking `[thread]` case keeps a loose check: each
-   camera made at least one loop pass under the load. Both run on one run (`one_run`). The `[process]` case and
-   every other test do not change. Question: is this the split you meant? Yes accepts it.
+1. **Q931: may more move with "no camera ended"?** The `[thread]` case checks three things: no camera ended, both
+   cameras `ready` at the end, and more than 30 loop passes in the 12 s. As built, only "no camera ended" is the
+   `pace` test `test_no_camera_ends_under_load_with_thread_workers` (the words of Q931). The blocking `[thread]` case
+   keeps `ready` and more than 30 passes for each camera that did not end, and that each loop passed under the load
+   (at least one pass). Both run on one run (`one_run`). But a camera that ends from a starved GIL also is not
+   `ready` and makes fewer passes, and a starved loop that does not end can still make 30 passes or fewer: those two
+   checks can fail from the same cause. Question: may `ready` and the pass count of `[thread]` move to the `pace`
+   test too, with the blocking check of at least one pass? Yes accepts it.
 2. **Q932: the form of `_same`.** The same pid and a create time within 1.5 s. On Linux `create_time()` is the
    start time since boot plus the boot time of `/proc/stat` in whole seconds, read again at each call, so a tick of
    it moves the value by exactly 1 s. psutil 7.2.2 (the lock file) has no public monotonic create time: only the
@@ -34,8 +36,8 @@ The user decided Q929 to Q955 ([ADR-6PJ2](6PJ2-decisions-of-the-user-on-q929-to-
 ## Reason
 
 1. Q931 moves the check that fails from the test mode, not from the product. A check that fails from the same cause
-   would keep the CI failure. A loop that makes no pass at all in 12 s is a real fault, and its check does not depend
-   on the pace.
+   can keep a CI failure; the user decides whether it moves. A loop that makes no pass at all in 12 s is a real fault,
+   and its check does not depend on the pace.
 2. A tolerance is one line; a private API can change in any psutil release.
 3. Q945 names item 13 and "any item that says picks are never remembered across runs"; the lane took each sentence
    that holds a pick or the list file to one run.

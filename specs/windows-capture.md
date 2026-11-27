@@ -1351,10 +1351,11 @@ test list of the encode at capture (2026-11-25).
   keeps, with PROCESS workers: no healthy camera is ended, both cameras stay `ready`, and the loops keep passing
   (more than 30 passes in the 12 s, Q721). With THREAD workers the camera loops share the GIL of the test process, a
   mode that the product does not use, and a loop that gets no GIL for 2 s ends by the in-process rule (CI run
-  45933928951, [evidence](../decisions/evidence/stall-watch-under-load-thread-20261127.md)). There these three
-  checks are the `pace` test `test_no_camera_ends_under_load_with_thread_workers` [U Q931]
-  [ADR-6PJ2](../decisions/entries/6PJ2-decisions-of-the-user-on-q929-to-q941.md), and the blocking half keeps that
-  each loop passes under the load (at least one pass)
+  45933928951, [evidence](../decisions/evidence/stall-watch-under-load-thread-20261127.md)). There the check "no
+  camera ended" is the `pace` test `test_no_camera_ends_under_load_with_thread_workers` [U Q931]
+  [ADR-6PJ2](../decisions/entries/6PJ2-decisions-of-the-user-on-q929-to-q941.md). `ready` and more than 30 passes
+  stay blocking for each camera that did not end, and each loop must pass under the load (at least one pass).
+  Whether these two checks may move too is a question of
   [ADR-9GHT](../decisions/entries/9GHT-choices-of-the-answers-lane-of-q929-to-q955.md) (proposed). T-CAP-110 (16.2) and the gate test
   have no fixed count of rows (Q671): conditions replace the counts. The gate test waits for frame 300 of camera A
   with a loose time limit, not for 12 s, and the take must hold the gap of A.

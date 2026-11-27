@@ -1054,8 +1054,10 @@ choices [ADR-06PW](../decisions/entries/06PW-choices-of-the-shutdown-limit-lane.
      again after `serve()` returns does not end the process before `WorkerRegistry.shutdown_all()`. Before this rule,
      a Ctrl-Break to the process group ended each camera process at once (exit code `0xC000013A`): the take ended
      with `camera_dead` for each camera, and the server process ended with exit code 3.
-   - Not covered: a second Ctrl-C (uvicorn's `force_exit`) skips the lifespan end, which ends a running take
-     ([`open-work.md`](../decisions/open-work.md), a question for the user).
+   - Not covered: a second Ctrl-C (uvicorn's `force_exit`) skips the lifespan end. Q934
+     ([ADR-6PJ2](../decisions/entries/6PJ2-decisions-of-the-user-on-q929-to-q941.md) item 6): a second Ctrl-C means
+     "abort now"; every process must end and release every hold and lock; cleaning up the recording would be nice but
+     is not expected ([`open-work.md`](../decisions/open-work.md)).
 4. **Tests.** `skellycam/tests/test_server_exit.py` runs the real server in a child process with its port in use:
    the process ends with an error code. With one connection that never leaves its server, the process ends after
    `/shutdown` (the blocking half), within the limit plus the period of the worker monitor (the `pace` half).

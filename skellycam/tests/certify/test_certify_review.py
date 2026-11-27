@@ -216,6 +216,7 @@ def test_same_finds_a_live_process_across_a_tick_of_the_boot_time():
     created = me.create_time()
     assert _same(dict(pid=me.pid, created=created))
     assert _same(dict(pid=me.pid, created=created - 1.0)) and _same(dict(pid=me.pid, created=created + 1.0))
+    assert not _same(dict(pid=me.pid, created=created + 2.0))
     assert not _same(dict(pid=me.pid, created=created - 60.0))
     child = multiprocessing.get_context("spawn").Process(target=time.sleep, args=(0,))
     child.start()

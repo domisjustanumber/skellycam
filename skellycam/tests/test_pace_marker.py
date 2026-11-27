@@ -110,7 +110,7 @@ def test_each_pace_test_has_the_marker(module, name):
 
 
 def test_the_marked_tests_are_exactly_the_pace_tests():
-    """16.1: a `pace` test holds only its bounds of time. No other test of the package has the marker."""
+    """16.1: a `pace` test holds only the checks that depend on the pace. No other test of the package has the marker."""
     marked = set()
     for path in (REPO / "skellycam" / "tests").rglob("test_*.py"):
         lines = path.read_text(encoding="utf-8").splitlines()

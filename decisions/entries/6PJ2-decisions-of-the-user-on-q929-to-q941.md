@@ -20,8 +20,8 @@ otherwise. I'll do periodic check-ins". Each other answer accepts the recommenda
    for (open work). Doc checks stays red until he decides.
 3. **Q931.** The check "no camera ended" of the `[thread]` case of
    `test_the_watch_ends_no_healthy_camera_under_load` moves to a `pace` test; `[process]` stays blocking. Built:
-   `test_no_camera_ends_under_load_with_thread_workers` (`windows-capture.md` 16.1). Which other checks of
-   `[thread]` move with it is the reading of the lane in [ADR-9GHT](9GHT-choices-of-the-answers-lane-of-q929-to-q955.md)
+   `test_no_camera_ends_under_load_with_thread_workers` (`windows-capture.md` 16.1). Whether `ready` and the pass
+   count of `[thread]` move too is a question of [ADR-9GHT](9GHT-choices-of-the-answers-lane-of-q929-to-q955.md)
    (proposed).
 4. **Q932.** A small lane makes `_same` of `test_certify_review.py` robust to the boot time that Linux reads again in
    whole seconds, low priority. Built here; the form is in ADR-9GHT (proposed).

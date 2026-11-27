@@ -194,10 +194,10 @@ task. Delete an item when its work is done. The PR that closes an item records t
   Q935 ([ADR-6PJ2](entries/6PJ2-decisions-of-the-user-on-q929-to-q941.md) item 7), one later lane, test first: tests of the requests that the 5 s limit cuts (an apply, a
   search); a record start during the background close of `/shutdown` gets 409, not 500 (no `_closing` check in
   `_start_recording`).
-- **A second Ctrl-C** (Q934, [ADR-6PJ2](entries/6PJ2-decisions-of-the-user-on-q929-to-q941.md) item 6), the shutdown lane: prove that a second Ctrl-C ends every process and
-  releases every hold and lock; the take's clean-up is not expected
-  ([evidence](evidence/cancelled-take-stop-at-a-shutdown-limit-20261127.md)). `recorder.md` 9.1 item 3 still calls it a
-  question for the user.
+- **A second Ctrl-C** (Q934, [ADR-6PJ2](entries/6PJ2-decisions-of-the-user-on-q929-to-q941.md) item 6), the shutdown lane: a second manual Ctrl-C is
+  "abort now, something has gone wrong": the goal is that all processes stop and release any holds and locks;
+  cleaning up the recording would be nice, but is not expected. A test proves it
+  ([evidence](evidence/cancelled-take-stop-at-a-shutdown-limit-20261127.md)).
 - **Docs** (Q951, [ADR-318R](entries/318R-decisions-of-the-user-on-q942-to-q955.md) item 10), a later docs lane: the front matter `description` of the streaming page and the
   feature text of `content.config` (`preview-4b.md` 5.9).
 - **Question for the user (Q946, [ADR-318R](entries/318R-decisions-of-the-user-on-q942-to-q955.md) item 5).** The player should remember the last folder it played from: what
