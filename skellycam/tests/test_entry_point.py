@@ -1,6 +1,6 @@
 """The standalone entry point must configure logging before it starts the server: the app calls logger.api /
 logger.success, which exist only after skellylogs.configure_logging has run. Then it cancels the join of the feeder
-thread of the websocket log queue (recorder.md 9.1 item 4 [ADR-06PW])."""
+thread of the websocket log queue (recorder.md 9.1 item 1 [ADR-06PW])."""
 from unittest.mock import Mock
 
 import skellylogs
