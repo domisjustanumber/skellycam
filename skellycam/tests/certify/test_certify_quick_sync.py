@@ -68,21 +68,17 @@ def test_t_cert_152_each_answer_gives_one_record_only_row(monkeypatch, tmp_path,
     assert len(calls) == 1, calls
 
 
-def test_t_cert_152_the_row_changes_no_summary_item(monkeypatch, tmp_path, backend):
-    """T-CERT-152: a quick run with one fake camera gives the same summary and the same camera rows with a check that
-    works and with a crashed check."""
-    reports = {}
-    for kind in ("works", "crashed"):
-        answer(monkeypatch, ANSWERS[kind])
-        (tmp_path / kind).mkdir()
-        with capture_app(monkeypatch, [good()]) as app:
-            reports[kind] = run_with(app, tmp_path / kind)
-        assert_valid(reports[kind])
-    rows = {kind: {c["name"]: (c["result"], c["reason"]) for c in r["checks"] if c["name"] != NAME}
-            for kind, r in reports.items()}
-    assert rows["works"] == rows["crashed"]
-    assert reports["works"]["summary"] == reports["crashed"]["summary"]
-    assert by_name(reports["crashed"])[NAME]["numbers"]["failure"] == "crashed"
+@pytest.mark.parametrize("kind", ["works", "crashed"])
+def test_t_cert_152_the_row_changes_no_summary_item(monkeypatch, tmp_path, backend, kind):
+    """T-CERT-152: a quick run with one fake camera that passes each check gives the item `pass` and no camera row
+    that is not `pass` or `record-only`, with a check that works and with a crashed check."""
+    answer(monkeypatch, ANSWERS[kind])
+    with capture_app(monkeypatch, [good()]) as app:
+        report = run_with(app, tmp_path)
+    assert_valid(report)
+    assert [item["result"] for item in report["summary"]] == ["pass"], report["summary"]
+    assert not [c for c in report["checks"] if c["name"] != NAME and c["result"] not in ("pass", "record-only")]
+    assert by_name(report)[NAME]["numbers"]["failure"] == ANSWERS[kind]["failure"]
 
 
 def test_t_cert_152_a_cancel_during_the_check(monkeypatch, tmp_path, backend):

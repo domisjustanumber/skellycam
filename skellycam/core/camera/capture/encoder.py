@@ -1,23 +1,27 @@
 """The JPEG encode at capture of a YUY2 or NV12 frame (specs/windows-capture.md, sections 13.2 and 22.2; the names of
 ADR-3WCA items 6 and 7, which section 22.6 states).
 
-Quick Sync (`mjpeg_qsv` through PyAV) where the check of the main process gave true, else `cv2.imencode`. Both at
+Quick Sync (`mjpeg_qsv` through PyAV) where the check of 13.2 (in its child, 22.7) gave true, else `cv2.imencode`. Both at
 quality 90 with the chroma of the source. The JPEG is always full range [V6]: Quick Sync takes its input as full
 range, so a limited-range frame gets the range-expanding table first; `cv2` converts with the decided range.
 """
 
 import logging
 import sys
+import time
 from collections import deque
-from dataclasses import replace
+from dataclasses import dataclass, replace
 from fractions import Fraction
 
 import cv2
 import numpy as np
 
+from skellycam.core.camera.capture import bounded as capture_bounded
+from skellycam.core.camera.capture.source import BOUNDED_CALL_LIMIT_S, CaptureFailure
 from skellycam.core.ipc.frame_ring.decode import map_levels, raw_to_bgr
 
 logger = logging.getLogger(__name__)
+QUICK_SYNC_LIMIT_S = BOUNDED_CALL_LIMIT_S  # 22.7 item 3: the limit of the detection calls, from the child start
 
 QUALITY = 90  # notes: Encoder settings, one setting for both encoders
 ASYNC_DEPTH = 2  # Quick Sync holds one frame [notes: Encoder settings]
@@ -81,24 +85,77 @@ def open_quick_sync_encoder(format: str, width: int, height: int, *, quality: in
     return QuickSyncEncoder(format, width, height, quality)
 
 
+@dataclass(frozen=True)
+class QuickSyncCheck:
+    """The answer of `check_quick_sync` (22.7 item 2). `failure`: None, "timed-out", "crashed", "no-jpeg" or the class
+    name of the error."""
+    works: bool
+    failure: str | None
+    check_ms: float
+    encode_ms: float | None
+    exit_code: int | None
+
+
+def _encode_test_frame() -> bool:
+    """The encode of the check, in the check child only (22.7 item 2): True when a JPEG comes out. Raises when Quick
+    Sync does not open (no Intel GPU, no driver, a build of FFmpeg with no QSV)."""
+    # 22.2 [YQN1 12]: a test frame of 1280x720 (the user: at least 640x480, ideally 720p)
+    encoder = open_quick_sync_encoder("NV12", 1280, 720, quality=QUALITY)
+    try:
+        jpegs = encoder.encode(np.full(raw_shape("NV12", 1280, 720), 128, np.uint8)) + encoder.flush()
+    finally:
+        encoder.close()
+    return bool(jpegs) and jpegs[0][:2] == b"\xff\xd8"
+
+
+def _check_in_child(check, sender) -> None:
+    """The check child: one message ("ok", (works, ms)) or ("error", (class name, text, ms))."""
+    t0 = time.perf_counter()
+    try:
+        works = bool((check or _encode_test_frame)())  # None: this child's own import, never a patch of the parent
+    except Exception as error:
+        sender.send(("error", (type(error).__name__, str(error), (time.perf_counter() - t0) * 1e3)))
+    else:
+        sender.send(("ok", (works, (time.perf_counter() - t0) * 1e3)))
+
+
+def check_quick_sync(*, limit_s: float = QUICK_SYNC_LIMIT_S, check=None) -> QuickSyncCheck:
+    """The Quick Sync check in a child process with a time limit (22.7 items 2 to 5). Never raises an `Exception`."""
+    t0 = time.perf_counter()
+    encode_ms = exit_code = None
+    try:
+        kind, value = capture_bounded.in_child("quick sync", "the Quick Sync check process", _check_in_child, (check,),
+                                               limit_s=limit_s, name="skellycam quick sync check")
+        if kind == "ok":
+            works, encode_ms = value
+            failure = None if works else "no-jpeg"
+            logger.info(f"Quick Sync JPEG encoder {'works' if works else 'gave no JPEG; cv2.imencode is used'} "
+                        f"({(time.perf_counter() - t0) * 1e3:.0f} ms)")
+        else:  # the encode raised: the normal answer of a machine with no Quick Sync, at INFO (22.7 item 4)
+            failure, text, encode_ms = value
+            works = False
+            logger.info(f"Quick Sync JPEG encoder not available ({failure}: {text}); cv2.imencode is used")
+    except CaptureFailure as error:
+        works = False
+        if error.code == "hung":
+            failure = "timed-out"
+            logger.warning(f"Quick Sync check: time-out after {limit_s:g} s; cv2.imencode is used")
+        else:
+            failure, exit_code = "crashed", getattr(error, "exit_code", None)
+            logger.warning(f"Quick Sync check: the check process crashed with exit code {exit_code}; "
+                           f"cv2.imencode is used")
+    except Exception as error:  # the child did not start, or its answer is not a result
+        works, failure = False, type(error).__name__
+        logger.warning(f"Quick Sync check: error {failure}: {error}; cv2.imencode is used")
+    return QuickSyncCheck(works, failure, (time.perf_counter() - t0) * 1e3, encode_ms, exit_code)
+
+
 def quick_sync_works() -> bool:
-    """The central check of 13.2 (ADR-3WCA item 6): encode one small test frame. Never on macOS [notes: JPEG
-    encoder]. Any error gives False."""
+    """The central check of 13.2 (ADR-3WCA item 6), through the check child of 22.7. Never on macOS [notes: JPEG
+    encoder]. Each answer other than a JPEG gives False."""
     if sys.platform == "darwin":
         return False
-    try:
-        # 22.2 [YQN1 12]: a test frame of 1280x720 (the user: at least 640x480, ideally 720p)
-        encoder = open_quick_sync_encoder("NV12", 1280, 720, quality=QUALITY)
-        try:
-            jpegs = encoder.encode(np.full(raw_shape("NV12", 1280, 720), 128, np.uint8)) + encoder.flush()
-        finally:
-            encoder.close()
-    except Exception as error:  # no Intel GPU, no driver, a build of FFmpeg with no QSV
-        logger.info(f"Quick Sync JPEG encoder not available ({type(error).__name__}: {error}); cv2.imencode is used")
-        return False
-    works = bool(jpegs) and jpegs[0][:2] == b"\xff\xd8"
-    logger.info(f"Quick Sync JPEG encoder {'works' if works else 'gave no JPEG; cv2.imencode is used'}")
-    return works
+    return check_quick_sync().works
 
 
 class FrameEncoder:

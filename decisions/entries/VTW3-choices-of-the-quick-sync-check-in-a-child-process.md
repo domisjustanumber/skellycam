@@ -58,11 +58,12 @@ entry holds the choices of the lane that the user did not decide. `specs/windows
 
 ## Evidence
 
-- The times of 22.7 item 3: a scratch script outside the repository spawned five children for each case (an empty
-  child; a child that imports `skellycam.core.camera.capture.encoder`; a child that runs the encode of
-  `quick_sync_works`), with Python 3.13.18, PyAV and OpenCV of `uv.lock`, on the development machine, 2026-11-26.
-  Empty child 53 to 59 ms; imports 492 to 516 ms (1169 ms the first time); the whole check 1027 to 1079 ms, with the
-  encode 545 to 569 ms.
+- 22.7 item 3, a scratch script (five spawned children per case, Python 3.13.18, `uv.lock`, the development machine,
+  2026-11-26): empty child 53 to 59 ms; the encoder imports 492 to 516 ms (1169 ms the first time); the whole check
+  1027 to 1079 ms, the encode 545 to 569 ms.
+- The built code, no camera: five `check_quick_sync()` calls gave `works` True, `check_ms` 1057 to 1112,
+  `encode_ms` 537 to 545. A certify run with `devices=[]` (no detection, no camera) gave `system:quick-sync`
+  `record-only`, `works` true, `check_ms` 1061.9 (quick) and 1071.4 (full).
 
 ## Alternatives rejected
 

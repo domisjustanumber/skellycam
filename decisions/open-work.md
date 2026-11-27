@@ -41,9 +41,8 @@ task. Delete an item when its work is done. The PR that closes an item records t
   - The `README.md` of `skellycam/tests/reference_recordings/` still names the deleted tests of the
     phase 2 loop (W8); it changes after the redaction decision of that file.
   - Step 3b (section 22): merges after a review (Q815). No test of the real `QuickSyncEncoder` or of the raw path
-    of Media Foundation; 22.5 not run. Q879 ([ADR-4TBY](entries/4TBY-decisions-of-the-user-on-the-review-of-the-3b-code.md)),
-    a lane after the merge, spec and tests first: a record-only certify check of Quick Sync and its time; the
-    product check in a child process with a 5 s limit (a hang or crash: OpenCV). 13.2 keeps [NV] until then.
+    of Media Foundation; 22.5 not run. The Quick Sync check is [NV] off the development machine until a certify
+    report gives `system:quick-sync` (22.7; [ADR-VTW3](entries/VTW3-choices-of-the-quick-sync-check-in-a-child-process.md)).
     Q900 ([ADR-Y2RN](entries/Y2RN-decisions-of-the-user-on-the-size-floor-review-and-certify-quick-runs.md)): the
     next UI lane adds `trackingLimitedByResolution` and `smallestSizeIs640x360` to the other three language
     files. Q809: the 3c tests of `dom/3bc-tests` come later.

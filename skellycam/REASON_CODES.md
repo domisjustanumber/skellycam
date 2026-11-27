@@ -89,6 +89,7 @@ The common codes of the contract keep the meaning of the contract (section 5.3):
 | `start-method-fork` | The start method of the process is `fork`, so skellycam did not start the camera process: the host program must call `multiprocessing.set_start_method('spawn')` before it creates a multiprocessing object. |
 | `stream-error` | The stream gave an error. |
 | `format-changed` | The format changed during the stream. |
+| `no-jpeg` | The Quick Sync check gave no JPEG (`numbers.failure` of `system:quick-sync`). |
 | `<ExceptionClass>` | A step raised an exception of this class. The report never holds the message. |
 
 ## Notice codes
