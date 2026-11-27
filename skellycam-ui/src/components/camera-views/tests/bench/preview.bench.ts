@@ -129,8 +129,7 @@ async function run(preview: PreviewKit, fps: number) {
     let loop1 = {loop_thread_cpu_s: NaN};
     let w0: Record<string, number> = {};
     let w1: Record<string, number> = {};
-    const tail = await runHarness({PREVIEW_BENCH_RUN: configFile, PLAYER_HARNESS_PAGE: 'preview', PLAYER_HARNESS_RECORDINGS: path.join(preview.root, 'recordings'),
-        PLAYER_HARNESS_PICKED: path.join(preview.root, 'picked.json')}, line => {
+    const tail = await runHarness({PREVIEW_BENCH_RUN: configFile, PLAYER_HARNESS_PAGE: 'preview', PLAYER_HARNESS_RECORDINGS: path.join(preview.root, 'recordings')}, line => {
         if (line === '@bench measure-start') marks.push((async () => {
             loop0 = await server.command<{loop_thread_cpu_s: number}>({cmd: 'loop_cpu'});
             w0 = await written(server);

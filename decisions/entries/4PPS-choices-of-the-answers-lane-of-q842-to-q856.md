@@ -8,14 +8,8 @@
 
 The user did not decide these details.
 
-1. **The camera label of the player** ([`player.md`](../../specs/player.md) 8.4, 5.8, item 40 of section 16).
-   The reader finds the capture info JSON by the name `<recording_name>_info.json`, with `recording_name` of the
-   manifest. It reads the file with `readWhole` and the limit of the manifest, 16 MiB. A take with no manifest, a
-   missing file, a file that does not parse, or a null `os_index` or `os_name` gives the label `camera_label`, with
-   no error and no warning.
-2. **The handler of the take scheme** (`player.md` 4.3, 12.1, 16 item 40). `installTakeHandler` takes only
-   `recordingsFolder`: with no list file in 6a, `pickedFoldersFile` has no use. T-PLAY-62 checks that a picked
-   folder is refused again after a restart of the harness, and that no `picked-take-folders.json` exists.
+1. Accepted by Q919 and moved to [ADR-70J6](70J6-decisions-of-the-user-on-the-remaining-items-of-4pps.md) item 1.
+2. Accepted by Q919 and moved to [ADR-70J6](70J6-decisions-of-the-user-on-the-remaining-items-of-4pps.md) item 2.
 3. Accepted by Q874 and moved to [ADR-EQ3K](EQ3K-decisions-of-the-user-on-the-head-start-of-the-stall-watch.md) item 3.
 4. Accepted by Q874 and moved to [ADR-EQ3K](EQ3K-decisions-of-the-user-on-the-head-start-of-the-stall-watch.md) item 4.
 5. **The sentences of Q852.** `windows-capture.md` 15 says that the workflow does not raise the open-file limit
@@ -23,13 +17,10 @@ The user did not decide these details.
    N14T item 3), that the clock rule replaces the words of item 8 of ADR-B7YV (2SX2 item 1), and that the blocking
    half of the test under load keeps both cameras `ready` (2AQT). `unix-capture.md` 7 says that each new dependency
    must be justified (item 11 of ADR-22EJ).
-6. **The setting of the control read.** `windows-capture.md` 11.4 and 21.6 say that the product read of 11.4
-   honours `SKELLYCAM_CONTROL_READ=0`, as the restore honours `SKELLYCAM_RESTORE_CONTROLS=0`, so that the off half
-   of the check of ADR-J1HD item 1 has a product setting to use. It is not built.
+6. Accepted by Q919 and moved to [ADR-70J6](70J6-decisions-of-the-user-on-the-remaining-items-of-4pps.md) item 3.
 7. **The time of the control-read check.** `certify.md` 16 says that its sums and run times leave out the 60 s for
    each model of `<label>:control-read:gaps`; the sums are not recomputed.
-8. **The Windows OS key** (`certify.md` 11.2) is written from the code `current_os_key`: `platform.release()`, a
-   space and `DisplayVersion` of the registry, `unknown` when it cannot be read.
+8. Accepted by Q919 and moved to [ADR-70J6](70J6-decisions-of-the-user-on-the-remaining-items-of-4pps.md) item 4.
 9. Accepted by Q874 and moved to [ADR-EQ3K](EQ3K-decisions-of-the-user-on-the-head-start-of-the-stall-watch.md) item 5.
 10. Accepted by Q891 and moved to [ADR-N2VE](N2VE-decisions-of-the-user-on-the-ci-triage-and-the-stall-watch-code.md) item 5.
 11. Accepted by Q891 and moved to [ADR-N2VE](N2VE-decisions-of-the-user-on-the-ci-triage-and-the-stall-watch-code.md) item 5.
@@ -37,14 +28,14 @@ The user did not decide these details.
 
 ## Reason
 
-1. The manifest already names the take; a label is not worth an error, because `camera_label` is always there.
-2. An option that nothing reads is dead code.
+1. See [ADR-70J6](70J6-decisions-of-the-user-on-the-remaining-items-of-4pps.md).
+2. See [ADR-70J6](70J6-decisions-of-the-user-on-the-remaining-items-of-4pps.md).
 3. See [ADR-EQ3K](EQ3K-decisions-of-the-user-on-the-head-start-of-the-stall-watch.md).
 4. See [ADR-EQ3K](EQ3K-decisions-of-the-user-on-the-head-start-of-the-stall-watch.md).
 5. Each sentence states a rule of an accepted entry that no spec stated, so that the entry can be absorbed.
-6. A setting that certify uses must be a setting that the product reads.
+6. See [ADR-70J6](70J6-decisions-of-the-user-on-the-remaining-items-of-4pps.md).
 7. The new sums would change the run times that the user accepted; that is a question for the user.
-8. The spec said `os.label`, but the code and ADR-DC43 item 4 use the release.
+8. See [ADR-70J6](70J6-decisions-of-the-user-on-the-remaining-items-of-4pps.md).
 9. See [ADR-EQ3K](EQ3K-decisions-of-the-user-on-the-head-start-of-the-stall-watch.md).
 10. See [ADR-N2VE](N2VE-decisions-of-the-user-on-the-ci-triage-and-the-stall-watch-code.md).
 11. See [ADR-N2VE](N2VE-decisions-of-the-user-on-the-ci-triage-and-the-stall-watch-code.md).

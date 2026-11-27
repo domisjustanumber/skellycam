@@ -86,7 +86,7 @@ These entries wait for a decision of the user. Section is the section or area of
 | [B7YV](entries/B7YV-choices-of-fix-lane-6.md) | Choices of fix lane 6: one run for the two halves, nominal values and loose checks, T-PRV-54, loop threads on the test clock, T-CAP-86 diagnostics | none | proposed |
 | [7GC1](entries/7GC1-choices-of-the-gate-on-the-test-clock-and-the-end-of-t-cap-05.md) | Choices of fix lane 6: a loop at an open gate holds the test clock until its next probe, forced steps still move it; T-CAP-05 checks the last ring frames | none | proposed |
 | [JFG4](entries/JFG4-choices-of-the-capture-timings-build.md) | Choices of the capture timings build that the user did not decide: source sets, sets, main process, message loop, route, test seams, faults | none | proposed |
-| [4PPS](entries/4PPS-choices-of-the-answers-lane-of-q842-to-q856.md) | Choices of the answers lane: the label from `<recording_name>_info.json` with a fall back, no `pickedFoldersFile`, Q852 sentences, control-read setting, OS key | none | proposed |
+| [4PPS](entries/4PPS-choices-of-the-answers-lane-of-q842-to-q856.md) | Choices of the answers lane that wait: the Q852 sentences (item 5) and the time of the control-read check (item 7) | none | proposed |
 | [4W3H](entries/4W3H-choices-of-the-q928-build.md) | Choices of the Q928 build: the take start and stop as shielded tasks, Ctrl-Break as Ctrl-C, the cancel and real-signal tests | `recorder` | proposed |
 | [SKZ8](entries/SKZ8-choices-of-the-blocking-half-of-t-prv-17.md) | Choices of the blocking half of T-PRV-17 (Q923): B gets 15 camera messages within the loose limit of 9.1; the check of A keeps 1 s | none | proposed |
 | [C47T](entries/C47T-choices-of-the-ci-lane.md) | Choices of the CI lane: uv from `doc-checks.yml`, `test_workflows.py`, `tsconfig.tests.json`, one type fix, uv steps in `player.yml`, D: drive try | none | proposed |
@@ -94,6 +94,7 @@ These entries wait for a decision of the user. Section is the section or area of
 | [W3VD](entries/W3VD-choices-of-the-tile-timings-lane.md) | Choices of the tile timings lane: `buildSummary` on the fixture input, a checked copy of the step table, one handle for each camera, the host in skellycam-ui | none | proposed |
 | [FP47](entries/FP47-choices-of-the-triage-of-the-first-ci-run-of-the-4b-component-tests.md) | Triage of the first CI run of the 4b component tests: the harness window and grid fit a small runner screen; no product fault | none | proposed |
 | [KXQ9](entries/KXQ9-choices-of-the-quick-run-without-the-six-full-checks.md) | Q902 choices: no quick row of the six full checks (not planned, no `not-run`, not in `not_built`); the work stays; T-CERT-153; 8CP7 not absorbed (Q853) | `certify` | proposed |
+| [WP77](entries/WP77-choices-of-the-player-label-and-picked-folders-lane.md) | Choices of the player label and picked-folders lane: when the capture info is read, its checks, the member by key, equal labels, picks for the run, links | none | proposed |
 
 The entries that are `rejected`, `superseded by XXXX`, `absorbed into <path>#<anchor>`,
 `evidence; used by XXXX`, `evidence; replaced by XXXX` or `done` are in [historical.md](historical.md).
