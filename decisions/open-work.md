@@ -168,7 +168,8 @@ task. Delete an item when its work is done. The PR that closes an item records t
 - **The CI lane** ([ADR-C47T](entries/C47T-choices-of-the-ci-lane.md)). Not run on a runner yet: the D: drive
   step of `recorder-windows`, the uv steps of `player.yml` and the type check of the UI test code. Q953 ([ADR-318R](entries/318R-decisions-of-the-user-on-q942-to-q955.md) item
   12), one CI lane: fix the type error of `vite.config.ts` and type-check it; the player's own type check; a 1920 x
-  1080 virtual screen for the Linux player job.
+  1080 virtual screen for the Linux player job. Also (the review of `dom/server-spawn`): no tsconfig type-checks
+  `electron/main/services/tests/`; no CI path has a space.
 - **Question for the user: T-PRV-25 and Doc checks.** `doc-checks.yml` syncs only the dev group, and T-PRV-25 imports
   `skellycam`; the `--ignore` of `preview-4b.md` 7.8 (Q836) is in kit text (`kit.toml`), so it needs an entry, a
   `kit_sync.py propose` and a PR to freemocap/project. The other way: move the test into `skellycam/tests/preview/`,
@@ -191,6 +192,8 @@ task. Delete an item when its work is done. The PR that closes an item records t
 - **Shutdown, UI messages** ([ADR-9V4Y](entries/9V4Y-decisions-of-the-user-on-the-shutdown-lane-q924-to-q928.md)):
   Q925 and Q927 are built on `dom/ui-saving-port` (`recorder.md` 9.2); the user answers the questions of ADR-590X
   and tries the two boxes by hand. Q926 (skellylogs) is the work of another lane.
+  The start with no output limit (`recorder.md` 9.3, ADR-YR3G, ADR-D6YZ): the user tries the packaged Windows app
+  after the merge (Q975).
   Q935 ([ADR-6PJ2](entries/6PJ2-decisions-of-the-user-on-q929-to-q941.md) item 7), one later lane, test first: tests of the requests that the 5 s limit cuts (an apply, a
   search); a record start during the background close of `/shutdown` gets 409, not 500 (no `_closing` check in
   `_start_recording`).

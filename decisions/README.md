@@ -62,6 +62,8 @@ These entries are `accepted`.
 | [C47T](entries/C47T-choices-of-the-ci-lane.md) | Choices of the CI lane: uv from `doc-checks.yml`, `test_workflows.py`, `tsconfig.tests.json`, one type fix, uv steps in `player.yml`, D: drive try | accepted |
 | [6PJ2](entries/6PJ2-decisions-of-the-user-on-q929-to-q941.md) | Q929 to Q941: merge and push rule; Q931 pace split; Q934 a second Ctrl-C; Q938 Quick Sync hang; VTW3, KXQ9, 4W3H accepted; 8CP7 absorbed | accepted |
 | [318R](entries/318R-decisions-of-the-user-on-q942-to-q955.md) | Q942 to Q955: SKZ8, W3VD, FP47, CM9S, C47T and WP77 (in part) accepted; three locales; Q950 marks; later lanes; Q946 open | accepted |
+| [D6YZ](entries/D6YZ-decisions-of-the-user-on-the-server-spawn-lane-q961-q973-to-q975.md) | Q961, Q973 to Q975: `dom/server-spawn` merges; stdout stays dropped; YR3G accepted once safe; the packaged app tried after the merge | accepted |
+| [YR3G](entries/YR3G-choices-of-the-server-spawn-lane.md) | Choices of the server spawn lane: `spawn` with no shell and no output limit, stdout to the null device, the stderr tail, no kill | accepted |
 
 ### Proposed
 
