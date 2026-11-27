@@ -112,6 +112,11 @@ task. Delete an item when its work is done. The PR that closes an item records t
 - **Quick certify runs** (Q902, [ADR-Y2RN](entries/Y2RN-decisions-of-the-user-on-the-size-floor-review-and-certify-quick-runs.md)): the next certify lane, spec text and test
   first: a quick run leaves out the six full-only checks of Q593 (image-effect, not-reencoded, size,
   ring-equals-mkv, source-equals-ring, gaps-explained).
+- **Question for the user: the count of T-PRV-17.** "15 camera messages of B within 1 s after A's reader is
+  removed": move it to `pace` as T-PRV-16 (Q669), and add T-PRV-17 to the list of `preview.md` 9.1? It failed once on
+  macOS (10 of 15; CI run 45925313532); it stays blocking until then. The review (from the code only): no product path
+  slows B after the removal (`preview_relay.py`, `reader.py`); the count depends on the pace of the test client. A
+  later `pace` half must count the frames of B written after the removal (`rings[B].written[k] > t_removed`).
 - **The certify run of skellycam.** The spec [`specs/certify.md`](../specs/certify.md) is draft 3. The code is in `skellycam/core/certify/` (section 19 of the
   spec). Open: the checks that are `not-run`
   `not-built` (the status line of the spec). Not decided: FC1C items 4 and 13, HQE5 items 2 and 3

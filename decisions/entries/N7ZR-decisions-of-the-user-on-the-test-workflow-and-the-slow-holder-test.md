@@ -12,12 +12,10 @@ The user wrote on 2026-11-27: "agree to all" (Q910 to Q921). These are Q917 (a) 
 
 1. **Q917 (a).** [ADR-QF7V](QF7V-choices-of-the-test-workflow-on-dom-integration.md) is accepted: how `test.yml`
    runs on a push to `dom/integration`.
-2. **Q917 (b).** In `test_status_locks.py::test_a_live_but_slow_holder_and_torn_json_never_raise`, the checks that
-   depend on the pace move to the `pace` test `test_a_live_but_slow_holder_waits_once_and_logs_one_line`, by the rule
-   of Q619 and as Q905: the first read waits 0.5 s, the second read of the stretch does not wait, the status is in
-   the stretch after the second read, more than 100 reads in 3 s, one error line. These need the main process to read
-   within the hold of 1.5 s of the child. The blocking test keeps: the status never marks the live holder dead, no
-   torn JSON escapes a read, and the lock comes again at the end. Both halves check one run (`one_run`).
+2. **Q917 (b).** The status-lock test (`test_status_locks.py::test_a_live_but_slow_holder_and_torn_json_never_raise`):
+   "its timing-dependent check moves to `pace`, the rest stays blocking, as Q905". Which checks the lane counts as
+   timing-dependent, and the checks that the blocking half adds, are the reading of the lane in
+   [ADR-GV50](GV50-choices-of-the-split-of-the-slow-holder-test.md) (proposed).
 
 ## Reason
 
