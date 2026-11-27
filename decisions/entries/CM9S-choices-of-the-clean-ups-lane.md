@@ -21,7 +21,13 @@ The user decided the work (Q871, Q873, Q892, Q900, Q909 of
    `ar`). The other 37 locales fall back to English, as the other keys of step 4 do
    ([`preview-4b.md`](../../specs/preview-4b.md) 5.8). No test checks that all locale files have the same keys
    (English has 63 keys that no other file has), so T-CAP-165 gets one small test: the three files have both
-   keys, with "1280 × 720" and "640 × 360" unchanged (`windows-capture.md` 22.2).
+   keys, with "1280 × 720" and "640 × 360" unchanged (`windows-capture.md` 22.2). The texts are the lane's
+   translations: es "El seguimiento de manos y cara será limitado con esta resolución. 1280 × 720 o más da el
+   mejor seguimiento." and "El tamaño mínimo es 640 × 360"; zh-CN "在此分辨率下，手部和面部跟踪会受到限制。1280 × 720
+   或更高可获得最佳跟踪效果。" and "最小尺寸为 640 × 360"; ar "سيكون تتبع اليدين والوجه محدودًا بهذه الدقة. تعطي دقة
+   1280 × 720 أو أعلى أفضل تتبع." and "أصغر حجم هو 640 × 360". In the Arabic file each size is in a left-to-right
+   isolate (`⁦` … `⁩`, written as escapes): in right-to-left text the bidi rules would show
+   "720 × 1280". No native speaker checked them.
 
 ## Reason
 
