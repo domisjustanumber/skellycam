@@ -22,8 +22,9 @@ entry holds the choices of the lane that the user did not decide. `specs/windows
    INFO line, as before. A time-out, a crash and another error of the child call give one WARNING line that names
    which, and ends with "cv2.imencode is used".
 5. **No process left.** The call kills and joins the child after a time-out; a test checks it with `psutil`.
-6. **App start.** PyAV is imported only in the check child and in a camera process with a Quick Sync encoder. A
-   test checks that an import of `skellycam.app` does not import `av`.
+6. **App start.** The app already imports PyAV at its start (`take_recorder/mkv.py`), so the check adds no import
+   there. The start of the app and a request with no raw camera start no check child; T-CAP-172 and T-CAP-173 check
+   it.
 7. **The wait of the request.** About 1.05 s here in place of 0.55 s; at most the limit and the join.
 8. **The answer of the manager.** Kept for the app run, also False after a time-out or a crash. Certify does not
    set it.

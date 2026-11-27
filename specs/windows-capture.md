@@ -2854,8 +2854,10 @@ proposed choice of an agent.
    `process-ended`, and the exit code of the child is in `exit_code`. At its end the call joins the child, and it
    kills a child that is still alive. Detection (7.1) and the Quick Sync check use this function. No other child
    mechanism is added [VTW3 1].
-2. **The calls.** `capture.encoder.check_quick_sync(*, limit_s=QUICK_SYNC_LIMIT_S) -> QuickSyncCheck` runs the
-   encode of the one NV12 test frame of 1280x720 (22.2 [YQN1 12]) in a child, through `in_child`. `QuickSyncCheck`
+2. **The calls.** `capture.encoder.check_quick_sync(*, limit_s=QUICK_SYNC_LIMIT_S, check=None) -> QuickSyncCheck`
+   runs the encode of the one NV12 test frame of 1280x720 (22.2 [YQN1 12]) in a child, through `in_child`. `check`
+   is the seam of the tests: a module function with no argument that stands for the encode and gives True for a
+   JPEG. With None the child takes the real encode from its own import of the module. `QuickSyncCheck`
    has `works` (bool), `failure` (null, or the value of item 4), `check_ms` (from the start of the child to its
    answer, or to the kill), `encode_ms` (the open, the encode and the flush in the child; null when the child gave
    no answer) and `exit_code` (the exit code of a child that crashed, else null). It never raises an `Exception`.
@@ -2883,9 +2885,10 @@ proposed choice of an agent.
    no Intel GPU, so it stays at INFO; only a fault of the child is a WARNING [VTW3 4].
 5. **No process left.** After a time-out or a crash no check child is left: the call kills the child and joins it.
    A test checks it with a process listing [VTW3 5].
-6. **App start.** The child starts only at the first accepted request that opens a raw camera (22.2). PyAV is
-   imported only in the check child and in a camera process that opens a Quick Sync encoder. An import of the app
-   (`skellycam.app`) does not import `av` [VTW3 6].
+6. **App start.** The child starts only at the first accepted request that opens a raw camera (22.2). The start of
+   the app and a request with no raw camera start no check child. The app already imports PyAV at its start (the
+   take recorder, `take_recorder/mkv.py`), so the check adds no import to the start of the app; the child imports
+   the encoder module and PyAV again, in its own process [VTW3 6].
 7. **The wait of the request.** The worker thread of 22.2 waits for the child: about 1.05 s on the development
    machine (0.55 s before this section), at most the limit and the join. Then the whole-request check runs again
    (22.2), so the check of `request_runs` and its set have no wait between them
@@ -2909,8 +2912,8 @@ module `skellycam/tests/capture/quick_sync_child_fakes.py`, because a `spawn` ch
 | T-CAP-169 | 3b | fake child | A fake check that ends its process with `os._exit(3)`; on Windows also with the code of an access violation (`0xC0000005`). | `works` False, `failure` `crashed`, `exit_code` 3 (and 3221225477); one WARNING line with "crashed" and the code; no child is left. |
 | T-CAP-170 | 3b | fake child | A fake check that raises `RuntimeError`; and a check that cannot reach the child (a target that does not pickle). | The first: `works` False, `failure` `RuntimeError`, no WARNING line. The second: `works` False, `failure` the class name of the error, one WARNING line with "error". |
 | T-CAP-171 | 3b | child | `quick_sync_works()` with the encode of the main process replaced by a function that records a call. On macOS (a patched `sys.platform`): `in_child` replaced by a function that records a call. | A bool comes back and the encode of the main process never ran. On macOS: False and no child call. |
-| T-CAP-172 | 3b | fake | The manager with `check_quick_sync` replaced by a counter that gives `timed-out`: a refused YUY2 request (422), then an accepted YUY2 request, then a second accepted YUY2 request. | The refused request makes no call; the accepted request makes one call; the second request makes none; the status flag `quick_sync` of the camera is False. |
-| T-CAP-173 | 3b | process | A new interpreter imports `skellycam.app`. | `av` is not in `sys.modules`. |
+| T-CAP-172 | 3b | fake | The manager with `check_quick_sync` replaced by a counter that gives `timed-out`: an accepted MJPG request, a refused YUY2 request (422), then an accepted YUY2 request, then a second accepted YUY2 request. | The MJPG request and the refused request make no call; the accepted YUY2 request makes one call; the second request makes none; the status flag `quick_sync` of the camera is False. |
+| T-CAP-173 | 3b | process | A new interpreter imports `skellycam.app`. | No child process of that interpreter exists after the import. |
 
 T-CAP-156 (22.3) still checks that the check of `request_runs` and its set have no wait between them, with a slow
 check in place of `quick_sync_works`. The tests of the detection child (T-CAP-23, T-CAP-24, T-CAP-48) check the
