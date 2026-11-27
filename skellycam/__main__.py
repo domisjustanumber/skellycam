@@ -31,42 +31,51 @@ FORCED_EXIT_AFTER_S = 5.0  # 9.1 item 9 (Q977): the process still runs this long
 _CTRL_C_SIGNALS = tuple(sig for sig in (signal.SIGINT, getattr(signal, "SIGBREAK", None)) if sig is not None)
 
 
-def _forced_exit_after(seconds: float) -> None:
-    """9.1 item 9 (Q977): a thread still holds the process `seconds` after the abort, so the process ends."""
+def _forced_exit_after(abort: threading.Event, seconds: float) -> None:
+    """9.1 item 9 (Q977): after the abort, a thread that still holds the process `seconds` later ends it."""
+    abort.wait()
     time.sleep(seconds)
     logger.error(f"The exit still waits {seconds:g} s after the second Ctrl-C; running threads: "
                  f"{[thread.name for thread in threading.enumerate()]}; forced exit")
     os._exit(1)
 
 
-def _start_forced_exit() -> None:
-    threading.Thread(target=_forced_exit_after, args=(FORCED_EXIT_AFTER_S,), name="ForcedExitAfterAbort",
+def _install_forced_exit() -> Callable[[], None]:
+    """The thread starts here, not in the signal handler: a handler that starts a thread can block on a lock of
+    `threading` that the main thread holds. The handler only sets the event."""
+    abort = threading.Event()
+    threading.Thread(target=_forced_exit_after, args=(abort, FORCED_EXIT_AFTER_S), name="ForcedExitAfterAbort",
                      daemon=True).start()
+    return abort.set
 
 
 def abort_on_a_second_ctrl_c(server: object, kill_flag: object, *, clock: Callable[[], float] = time.monotonic,
-                             start_forced_exit: Callable[[], None] = _start_forced_exit) -> Callable[[int, object], None]:
-    """recorder.md 9.1 item 9 (Q934): the signal handler of uvicorn for the server. The first signal goes to uvicorn.
-    A Ctrl-C or Ctrl-Break less than SECOND_CTRL_C_AFTER_S after it is the same key press and is dropped. One later
-    is the abort: uvicorn stops its waits (`force_exit`), the kill flag ends each camera process, and the forced exit
-    starts."""
+                             forced_exit: Callable[[], None] | None = None) -> Callable[[int, object], None]:
+    """recorder.md 9.1 item 9 (Q934): the signal handler of uvicorn for the server. Only Ctrl-C and Ctrl-Break are
+    presses. The first press goes to uvicorn, unless uvicorn already ends (a SIGTERM came first). A press less than
+    SECOND_CTRL_C_AFTER_S after the last press is the same key press and is dropped. One later is the abort:
+    uvicorn stops its waits (`force_exit`), the kill flag ends each camera process, and the forced exit is set off."""
     handle_exit = server.handle_exit
-    first: list[float] = []
+    forced_exit = forced_exit or _install_forced_exit()
+    last: list[float] = []  # the time of the last press
 
     def handler(signum: int, frame: object) -> None:
+        if signum not in _CTRL_C_SIGNALS:
+            handle_exit(signum, frame)
+            return
         now = clock()
-        if first and signum in _CTRL_C_SIGNALS:
-            if now - first[0] < SECOND_CTRL_C_AFTER_S:
-                return
-            if not server.force_exit:
+        if not last:
+            last.append(now)
+            if not server.should_exit:  # after a SIGTERM uvicorn would take this press as `force_exit`
                 handle_exit(signum, frame)
-                server.force_exit = True
-                kill_flag.value = True
-                start_forced_exit()
-                return
-        if not first:
-            first.append(now)
+            return
+        since, last[0] = now - last[0], now
+        if since < SECOND_CTRL_C_AFTER_S or server.force_exit:
+            return
         handle_exit(signum, frame)
+        server.force_exit = True
+        kill_flag.value = True
+        forced_exit()
 
     return handler
 
