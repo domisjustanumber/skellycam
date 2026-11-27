@@ -1,9 +1,9 @@
-// Electron tests of the take handler with real files: T-PLAY-55 to T-PLAY-64 (specs/player.md section 5).
+// Electron tests of the take handler with real files: T-PLAY-55 to T-PLAY-64 and T-PLAY-85 (specs/player.md section 5).
 import {expect} from '@playwright/test';
 import type {Page} from '@playwright/test';
 import {execFileSync} from 'node:child_process';
 import {createHash} from 'node:crypto';
-import {appendFileSync, existsSync, mkdirSync, openSync, closeSync, readdirSync, readFileSync, renameSync, rmSync, statSync, symlinkSync, writeFileSync, writeSync, ftruncateSync} from 'node:fs';
+import {appendFileSync, mkdirSync, openSync, closeSync, readdirSync, readFileSync, renameSync, rmSync, statSync, symlinkSync, writeFileSync, writeSync, ftruncateSync} from 'node:fs';
 import path from 'node:path';
 import {writeSuiteFolder} from '../fixtures/node-take-files.ts';
 import {patternBytes} from '../fixtures/take-files-checks.ts';
@@ -54,6 +54,19 @@ const bytesOf = (f: Fetched) => new Uint8Array(Buffer.from(f.base64, 'base64'));
 function patternFile(file: string, size: number, seed: number) {
     mkdirSync(path.dirname(file), {recursive: true});
     writeFileSync(file, patternBytes(seed, 0, size));
+}
+
+const recordPick = (h: Harness, folder: string) =>
+    h.app.evaluate((_e, f) => (globalThis as never as {__harness: {recordPick(f: string): Promise<void>}}).__harness.recordPick(f), folder);
+
+/** Each file below a folder, with its size and modification time: a test of "no file is written". */
+function filesBelow(root: string): Record<string, string> {
+    const out: Record<string, string> = {};
+    for (const rel of readdirSync(root, {recursive: true}) as string[]) {
+        const st = statSync(path.join(root, rel), {throwIfNoEntry: false});
+        if (st?.isFile()) out[rel] = `${st.size}:${st.mtimeMs}`;
+    }
+    return out;
 }
 
 function assertCommonHeaders(f: Fetched) {
@@ -258,7 +271,6 @@ test('T-PLAY-62 which folders open: recordings folder, dialog picks, links', asy
     await h.requireProduct();
     const outside = path.join(h.root, 'outside_take');
     patternFile(path.join(outside, 'synchronized_videos', 'o.mkv'), 4 * KiB, 8);
-    const listBefore = existsSync(h.picked) ? readFileSync(h.picked, 'utf8') : null;
     await expect(bridgeOpen(h.page, outside)).rejects.toThrow(/folder not allowed/);
     // the page calls each bridge function and each IPC channel of the module with that folder
     await h.page.evaluate(async f => {
@@ -284,12 +296,13 @@ test('T-PLAY-62 which folders open: recordings folder, dialog picks, links', asy
         }, [ch, outside] as const);
     }
     await expect(bridgeOpen(h.page, outside)).rejects.toThrow(/folder not allowed/);
-    expect(existsSync(h.picked) ? readFileSync(h.picked, 'utf8') : null, 'the list file does not change').toBe(listBefore);
-    // a dialog pick in the main process allows it, also after a restart
-    await h.app.evaluate((_e, f) => (globalThis as never as {__harness: {recordPick(f: string): Promise<void>}}).__harness.recordPick(f), outside);
+    // a dialog pick in the main process allows it for the run of the app only, and writes no file (5.3, ADR-70J6)
+    const filesBefore = filesBelow(h.root);
+    await recordPick(h, outside);
     expect((await bridgeOpen(h.page, outside)).token).toMatch(/^[0-9a-f]{32}$/);
     await h.relaunch();
-    expect((await bridgeOpen(h.page, outside)).token).toMatch(/^[0-9a-f]{32}$/);
+    await expect(bridgeOpen(h.page, outside), 'a pick ends with the run of the app').rejects.toThrow(/folder not allowed/);
+    expect(filesBelow(h.root), 'no file is added or changed, so no picked-take-folders.json').toEqual(filesBefore);
     // inside the recordings folder
     const inside = path.join(h.recordings, 'inside');
     patternFile(path.join(inside, 'synchronized_videos', 'i.mkv'), 4 * KiB, 9);
@@ -300,6 +313,30 @@ test('T-PLAY-62 which folders open: recordings folder, dialog picks, links', asy
     const link = path.join(h.recordings, 'link_to_outside');
     symlinkSync(other, link, process.platform === 'win32' ? 'junction' : 'dir');
     await expect(bridgeOpen(h.page, link)).rejects.toThrow(/folder not allowed/);
+});
+
+test('T-PLAY-85 a pick lasts for the run: reloads, windows, subfolders and links', async ({harness: h}) => {
+    await h.requireProduct();
+    const picked = path.join(h.root, 'picked_take');
+    patternFile(path.join(picked, 'synchronized_videos', 'p.mkv'), 4 * KiB, 10);
+    const link = path.join(h.root, 'link_to_picked');
+    symlinkSync(picked, link, process.platform === 'win32' ? 'junction' : 'dir');
+    const filesBefore = filesBelow(h.root);
+    await recordPick(h, picked);
+    const token = /^[0-9a-f]{32}$/;
+    expect((await bridgeOpen(h.page, picked)).token).toMatch(token);
+    expect((await bridgeOpen(h.page, path.join(picked, 'synchronized_videos'))).token, 'a folder below the pick').toMatch(token);
+    await h.page.reload();
+    await h.page.waitForFunction(() => 'harness' in window);
+    expect((await bridgeOpen(h.page, picked)).token, 'after a reload').toMatch(token);
+    const windowsBefore = h.app.windows().length;
+    await h.app.evaluate(() => (globalThis as never as {__harness: {openWindow(): number}}).__harness.openWindow());
+    await expect.poll(() => h.app.windows().length).toBe(windowsBefore + 1);
+    const second = h.app.windows().at(-1)!;
+    await second.waitForFunction(() => 'harness' in window);
+    expect((await bridgeOpen(second, picked)).token, 'in a second window').toMatch(token);
+    expect((await bridgeOpen(h.page, link)).token, 'a link outside to the picked folder: its real path is inside').toMatch(token);
+    expect(filesBelow(h.root), 'the pick writes no file').toEqual(filesBefore);
 });
 
 test('T-PLAY-63 tokens end with their window', async ({harness: h}) => {
