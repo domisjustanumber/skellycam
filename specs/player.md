@@ -371,18 +371,21 @@ the user picked in the system folder dialog [L7]:
   `installTakeHandler` as `recordingsFolder`.
 - A picked folder is a folder that `dialog.showOpenDialog` returned in the main process, through the
   existing call `fileSystem.selectDirectory` [C `electron/main/api.ts`]. The main process adds each
-  such folder to a list in its memory, for the run of the app. In 6a it writes no list file
-  (`picked-take-folders.json`): the list file waits for step 6c (the ruling of [ADR-4D94](../decisions/entries/4D94-step-6a-choices-of-the-canvas-player.md), which overturns
+  such folder to a list in its memory, for the run of the app. No list file (`picked-take-folders.json`) is
+  read or written (the ruling of [ADR-4D94](../decisions/entries/4D94-step-6a-choices-of-the-canvas-player.md), which overturns
   the "remembered across restarts" of U1 for 6a; Q851 of [ADR-88HQ](../decisions/entries/88HQ-decisions-of-the-user-on-q842-to-q856.md);
-  Q919 of [ADR-70J6](../decisions/entries/70J6-decisions-of-the-user-on-the-remaining-items-of-4pps.md)). A folder that the user picked earlier
+  Q919 of [ADR-70J6](../decisions/entries/70J6-decisions-of-the-user-on-the-remaining-items-of-4pps.md): "no saved picked-folders file").
+  Whether a later step adds one is a question for the user (ADR-WP77). A folder that the user picked earlier
   in the same run, for example the base recording folder of the recording browser, stays allowed.
 - How long a pick lasts ([ADR-WP77](../decisions/entries/WP77-choices-of-the-player-label-and-picked-folders-lane.md), proposed):
   until the main process ends. A reload, a navigation or a close of a window does not end it, and each
   window of the run can open the picked folder. A restart of the app ends every pick. The handler writes
   no file, and it reads no file of an earlier pick: a `picked-take-folders.json` that an earlier build left
   in the user data folder is not read and not deleted. T-PLAY-62 and T-PLAY-85 test it.
-- The main process keeps the real path of the picked folder, taken at the pick. A pick allows that folder
-  and each folder below it, by the "inside" rule below.
+- The main process keeps the real path of the picked folder, taken at the pick, and never resolves it
+  again. A pick allows that folder and each folder below it, by the "inside" rule below. When the picked
+  folder is later replaced by a link to another folder, the pick does not follow the link: the other
+  folder is refused (T-PLAY-86).
 - The handler takes the real path of the recordings folder at each open, so a recordings folder that the
   backend makes after the start of the app is allowed.
 - Only a dialog pick in the main process adds a folder to the list. No bridge call, IPC message or
@@ -1194,7 +1197,9 @@ cold disk; a low-end laptop; a file that a writer still writes; real clock align
   test Vite config builds the harness page and the harness main process. The tests of the host view are
   in `skellycam-ui/src/components/playback/tests/` and use the same runner.
 - **electron**: the handler, in the same test Electron app, with real files. The harness gives
-  `installTakeHandler` a temporary `recordingsFolder`. It has two test-only
+  `installTakeHandler` a temporary `recordingsFolder`, and it sets the Electron `userData` folder to a
+  folder in the temporary folder of the test, so no test touches the profile of the user and the
+  checks of 5.3 see each file of the harness ([ADR-WP77](../decisions/entries/WP77-choices-of-the-player-label-and-picked-folders-lane.md)). It has two test-only
   hooks: one records a dialog pick, one makes the reads of one path fail.
 - **benchmark**: timed runs on the Windows test machine, started by hand. They record results and
   compare them with the targets of 11.3. They do not run in CI.
@@ -1348,7 +1353,7 @@ The recorder spec uses this description as the model of its placeholder, so it i
 | T-PLAY-59 | electron | A test variant of the handler answers 200 with the exact length, 200 with the whole file, and 206 with a wrong `Content-Range` start. | The page client accepts only the first; the two others are read errors. |
 | T-PLAY-60 | electron | A sparse file of 5 GiB; read 3 ranges past 4 GiB. | The bytes equal the bytes that the test wrote at those offsets. |
 | T-PLAY-61 | electron | Open `normal`, play it to the end, seek 50 times, close. | Each file of the folder has the same bytes and modification time as before [SFF-799]. |
-| T-PLAY-62 | electron | Open a folder outside the test `recordingsFolder` and not picked; the page calls each bridge and IPC channel of the module with that folder; the same folder after the test hook records a dialog pick; a folder inside the `recordingsFolder`; a link inside the `recordingsFolder` to an outside folder. | Refused with "folder not allowed" and no token, also after the page calls; allowed after the pick; refused again after a restart of the harness; no file below the temporary folder of the test is added or changed, so no `picked-take-folders.json` exists (5.3, ADR-4D94, ADR-70J6); allowed inside; the link is refused [L7, U1]. |
+| T-PLAY-62 | electron | Open a folder outside the test `recordingsFolder` and not picked; the page calls each bridge and IPC channel of the module with that folder; the same folder after the test hook records a dialog pick; a folder inside the `recordingsFolder`; a link inside the `recordingsFolder` to an outside folder. | Refused with "folder not allowed" and no token, also after the page calls; allowed after the pick; refused again after a restart of the harness; from before the page calls to after the restart, no file below the temporary folder of the test is added or changed outside the user data folder of the harness, and no file below the temporary folder holds the path of the pick, so no `picked-take-folders.json` exists (5.3, ADR-4D94, ADR-70J6); allowed inside; the link is refused [L7, U1]. |
 | T-PLAY-63 | electron | Open a take in window A; navigate A; open a take in window B, then open a second take in B; close B. | A's token gets 404 after the navigation; B's first token gets 404 after the second open; B's second token gets 404 after the close. |
 | T-PLAY-64 | electron | The shared `TakeFiles` check suite of T-PLAY-39 on the Electron implementation. | The same results as T-PLAY-39 [L8]. |
 | T-PLAY-65 | benchmark | 16 readers × 60 fps × 150 kB for 60 s through the handler; CPU of the main, renderer and GPU processes. | Target 11.3; results recorded [M `RT` §8 item 3]. |
@@ -1371,7 +1376,8 @@ The recorder spec uses this description as the model of its placeholder, so it i
 | T-PLAY-82 | unit | Copies of `dead_short` whose camera 3 has: row 100 with one empty byte field; row 100 with empty byte fields and no flag `missing`; row 78 with empty byte fields and no block, so that row 79 has byte fields after it. Also a copy whose camera 3 has no block. | The first three: camera 3 is `invalid` with `bad_metadata` (SFF-759; skellyfileformat ADR-76NN item 10). No block: camera 3 is `repaired` and not refused, 120 rows, `deadFrom` 0, K = 120, the mark "camera lost at frame 0" (SFF-754) ([ADR-3B97](../decisions/entries/3B97-format-sync-to-the-format-commit-with-f1-to-f10.md)). |
 | T-PLAY-83 | unit | `normal` with a capture info `<rec>_info.json` whose members give camera 0 `os_index` 0 and `os_name` "USB Camera"; camera 1 `os_name` null; camera 2 no member; camera 3 `os_index` "3" (a string). A copy whose cameras 2 and 3 get `os_index` 7, `os_name` "Same Cam"; a copy whose camera 1 gets `os_name` "  " and camera 2 `os_index` −1. ([ADR-WP77](../decisions/entries/WP77-choices-of-the-player-label-and-picked-folders-lane.md)) | Camera 0: `Camera 0 · USB Camera` in the state and in the tile label; each other camera of the first take: its `camera_label`; the copy: cameras 2 and 3 both `Camera 7 · Same Cam`, no added text, no `duplicate_label`; the second copy: cameras 1 and 2 `camera_label`; the camera order, the take warnings and K equal those of the take with no capture info; no `error` event (8.4). |
 | T-PLAY-84 | unit | `normal` with a usable capture info, then copies: the capture info missing; not JSON; another `take_uuid`; `skellyfileformat` another value; `camera_configs` not an object; a read of the file that fails; `recording_name` of the manifest with a `/`; no manifest. A spy records the path and the limit of each whole read. ([ADR-WP77](../decisions/entries/WP77-choices-of-the-player-label-and-picked-folders-lane.md)) | The usable file: the labels of the capture info, read once with the limit 16 MiB; each copy: `camera_label` on each camera, no `error` event, the take warnings of the take with no capture info, and the take opens; with the `/` and with no manifest, no read of a capture info (5.8, 8.4). |
-| T-PLAY-85 | electron | Record a dialog pick of a folder outside the test `recordingsFolder`; open it and a folder below it in the first window; reload that window and open it again; open it in a second window; open it through a link outside every allowed folder that points to it. ([ADR-WP77](../decisions/entries/WP77-choices-of-the-player-label-and-picked-folders-lane.md)) | Each open gives a token; no file below the temporary folder of the test is added or changed by the pick (5.3). |
+| T-PLAY-85 | electron | Record a dialog pick of a folder outside the test `recordingsFolder`; open it and a folder below it in the first window; reload that window and open it again; open it in a second window; open it through a link outside every allowed folder that points to it. ([ADR-WP77](../decisions/entries/WP77-choices-of-the-player-label-and-picked-folders-lane.md)) | Each open gives a token; the pick adds or changes no file below the temporary folder of the test outside the user data folder, and no file there holds the path of the pick (5.3). |
+| T-PLAY-86 | electron | Record a dialog pick of a folder P outside the test `recordingsFolder` and open it; replace P by a link to a folder S outside every allowed folder; open P, S and a folder below S; make a real folder P again with a link inside it to S, and open that link. ([ADR-WP77](../decisions/entries/WP77-choices-of-the-player-label-and-picked-folders-lane.md)) | The first open gives a token; after the swap P, S and the folder below S are refused with "folder not allowed"; the link inside P to S is refused (5.3). |
 
 ### 12.4 Decisions and reader rules to tests
 
@@ -1396,7 +1402,7 @@ The recorder spec uses this description as the model of its placeholder, so it i
 | L3 | T-PLAY-11, T-PLAY-54, T-PLAY-58 |
 | L4 | T-PLAY-31, T-PLAY-44, T-PLAY-50, T-PLAY-51 |
 | L5 | T-PLAY-51 (today's `PlaybackControls` as it is); no test changes the player of today. |
-| L7 | T-PLAY-62, T-PLAY-85 |
+| L7 | T-PLAY-62, T-PLAY-85, T-PLAY-86 |
 | E1 | T-PLAY-25, T-PLAY-40, T-PLAY-49, T-PLAY-66 |
 | E2 | T-PLAY-53 (an old folder opens in today's player) |
 | E3 | No test: the reader is in the module (T-PLAY-35). |
@@ -1435,7 +1441,7 @@ The recorder spec uses this description as the model of its placeholder, so it i
 | SFF-890 | T-PLAY-02 |
 | F1 to F21 | T-PLAY-31, T-PLAY-37, T-PLAY-44, T-PLAY-50 to T-PLAY-53 |
 
-Counts: 48 unit, 17 component, 14 electron, 6 benchmark: 85 tests.
+Counts: 48 unit, 17 component, 15 electron, 6 benchmark: 86 tests.
 
 ### 12.5 Parity of the systems [Y7]
 

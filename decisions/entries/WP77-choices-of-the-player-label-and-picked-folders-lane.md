@@ -29,14 +29,22 @@ The user decided the label rule and "no saved picked-folders file" (ADR-70J6). H
 8. **How long a pick lasts.** Until the main process ends. A reload, a navigation or a close of a window does not
    end it, and each window of the run can open the folder. A `picked-take-folders.json` of an earlier build is not
    read and not deleted.
-9. **Real paths.** The pick keeps the real path at the pick time. The handler takes the real path of the recordings
-   folder at each open, so a recordings folder that the backend makes later is allowed.
+9. **Real paths.** The pick keeps the real path at the pick time and never resolves it again: when the picked
+   folder is later replaced by a link, the pick does not follow the link. The handler takes the real path of the
+   recordings folder at each open, so a recordings folder that the backend makes later is allowed.
 10. **Links.** The rule uses the real path of the asked folder. A link outside every allowed folder that points to
     a folder inside one opens: this is the code of today, and it gives access to no file outside.
 11. **The v1 server route.** A pick adds no root to the route of `player-legacy.md` 4.2.
-12. **Tests.** T-PLAY-83 and T-PLAY-84 (unit) test items 1 to 6; T-PLAY-85 (electron) tests items 8 and 10.
-    T-PLAY-62 checks "no list file" as "no file below the temporary folder of the test is added or changed". The
-    harness loses its picked-folders file (`PLAYER_HARNESS_PICKED`, `Harness.picked`).
+12. **Tests.** T-PLAY-83 and T-PLAY-84 (unit) test items 1 to 6; T-PLAY-85 (electron) tests items 8 and 10;
+    T-PLAY-86 (electron) tests item 9. T-PLAY-62 checks "no list file" as: from before the page calls to after the
+    restart, no file below the temporary folder of the test is added or changed outside the user data folder, and no
+    file below it holds the path of the pick. The harness sets the Electron `userData` folder to a folder of the test
+    (`PLAYER_HARNESS_USER_DATA`), and it loses its picked-folders file (`PLAYER_HARNESS_PICKED`, `Harness.picked`).
+13. **Question for the user: a list file later?** `player.md` 5.3 states only what is true now: no list file is
+    read or written. U1 asked for picks remembered across restarts; ADR-4D94 said that the list file waits for step
+    6c; Q919 says "no saved picked-folders file". Recommended: never, unless the user asks for remembered folders
+    later.
+14. **Not limited.** `os_name` has no length limit in the label; a long name is cut only by the tile.
 
 ## Reason
 
@@ -50,9 +58,15 @@ The user decided the label rule and "no saved picked-folders file" (ADR-70J6). H
 7. A v1 folder has no capture info of this format.
 8. "No saved file" (Q919) leaves the memory of the main process as the only store; the main process is shared by
    the windows. A delete of the old file would be a write to the user data that nobody asked for.
-9. and 10. This is the code of today; the spec did not state it.
+9. A pick that the main process resolves again at each open follows a link that someone puts in place of the
+   folder later, so a folder that the user never picked would open. Resolving the recordings folder at each open
+   follows the backend, which makes that folder.
+10. This is the code of today; the spec did not state it.
 11. The v1 route is in the Python server; it has its own list (Q688).
-12. A fixed file name in the check would pass for any other file name.
+12. A fixed file name in the check would pass for any other file name. Chromium writes its own files in the user
+    data folder during a run, so there the check looks for the path of the pick, not for a changed file.
+13. The answers do not agree on the future; only the user can choose.
+14. The review of the lane noted it; nothing asks for a limit.
 
 ## Alternatives rejected
 
