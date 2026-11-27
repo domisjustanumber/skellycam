@@ -229,8 +229,26 @@ def test_the_watch_ends_no_healthy_camera_under_load(workers):
     each camera keeps its loop passes, with no pause near the limit of 2 s. The bound on the pause is in
     `test_the_loop_passes_have_no_pause_above_1_s_under_load`, with THREAD workers (Q672) [ADR-F4N7] and with
     PROCESS workers (Q721) [ADR-2AQT]. On the CI runners it was 0.78 s to 1.20 s with THREAD workers (CI runs
-    45401541234 and 45412934839), and 1.067 s with PROCESS workers (CI run 45493213866)."""
+    45401541234 and 45412934839), and 1.067 s with PROCESS workers (CI run 45493213866).
+    With THREAD workers the camera loops share the GIL of the test process: a loop that gets no GIL for 2 s ends by
+    the in-process rule (CI run 45933928951). There "no camera ended", `ready` and the pass count are in the `pace`
+    test `test_no_camera_ends_under_load_with_thread_workers` (Q931), and this test checks only that each loop passed
+    under the load."""
     facts = one_run(("under load", workers), lambda: _under_load_run(workers))
+    if workers == "thread":
+        assert all(value > 0 for value in facts["passes"].values()), facts["passes"]
+        return
+    assert not facts["ended"], facts["ended"]
+    assert all(state == "ready" for state in facts["states"].values()), facts["states"]
+    assert all(value > 30 for value in facts["passes"].values()), facts["passes"]
+
+
+@pytest.mark.pace  # Q931: with THREAD workers a loop that the GIL of the test process starves for 2 s ends
+def test_no_camera_ends_under_load_with_thread_workers():
+    """The risk guard with THREAD workers, the checks that depend on the pace of the test process (Q931): no camera
+    ends, both stay `ready`, and each loop makes more than 30 passes in the 12 s. The product runs camera loops as
+    processes only (decisions/evidence/stall-watch-under-load-thread-20261127.md)."""
+    facts = one_run(("under load", "thread"), lambda: _under_load_run("thread"))
     assert not facts["ended"], facts["ended"]
     assert all(state == "ready" for state in facts["states"].values()), facts["states"]
     assert all(value > 30 for value in facts["passes"].values()), facts["passes"]
