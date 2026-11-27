@@ -117,6 +117,18 @@ class RingWatch:
             self.reader.close()
 
 
+class NoWatch:
+    """The ring watch of a `ready` camera whose ring certify could not attach (4.4): no frame and no hash. The camera
+    goes on to the next steps; `native-jpeg:source-equals-ring` is then `not-run` `ring-lapped` [ADR-2HW5]."""
+    first: tuple = ()
+    last: tuple = ()
+    hashes: dict = {}
+    flagged = 0
+
+
+NO_WATCH = NoWatch()
+
+
 def luma(payloads) -> float | None:
     """The mean grey value of the frames, decoded at 1/8 size in memory (4.6)."""
     values = []
@@ -338,16 +350,21 @@ class Session:
         refused = None
         watching = asyncio.create_task(self.watch_rings(usable))
         try:
-            await self.manager.create_or_update_camera_group({u.camera_id: self.config(u) for u in usable})
-        except Exception as error:  # a refused request (RequestRefused) or a failed start of the group
-            refused = type(error).__name__
-            logger.warning(f"certify: the apply failed: {error!r}")
-        seconds = round(time.monotonic() - t0, 2)
-        if refused is None:
-            await self.wait_states(usable, ("ready", "failed", "dead", "too_slow"))
-        watching.cancel()
-        with contextlib.suppress(asyncio.CancelledError):
-            await watching
+            try:
+                await self.manager.create_or_update_camera_group({u.camera_id: self.config(u) for u in usable})
+            except Exception as error:  # a refused request (RequestRefused) or a failed start of the group
+                refused = type(error).__name__
+                logger.warning(f"certify: the apply failed: {error!r}")
+            seconds = round(time.monotonic() - t0, 2)
+            if refused is None:
+                await self.wait_states(usable, ("ready", "failed", "dead", "too_slow"))
+        finally:  # also on a cancel or an error: no look after the open step attaches a watch that nothing stops
+            watching.cancel()
+            with contextlib.suppress(asyncio.CancelledError):
+                await watching
+        # 4.4 [ADR-2HW5]: one more look, so a camera whose ring opened after the last look of `watch_rings` (it
+        # waited in `waiting` for a hung camera and was `ready` at once) has its watch at the judge
+        self.attach_watches(usable)
         for unit in usable:
             self.judge_open(unit, seconds, refused)
 
@@ -355,15 +372,20 @@ class Session:
         """Attach a ring watch as soon as the ring of a camera exists, so that it sees the first frames after `ready`
         (the hash set of D-11 hashes them) before the ring laps them."""
         while True:
-            group = self.group()
+            self.attach_watches(units)
             for unit in units:
-                info = group.ring_infos.get(unit.camera_id) if group is not None else None
-                if info is not None and unit.label not in self.watches:
-                    with contextlib.suppress(FileNotFoundError, OSError, ValueError):
-                        self.watches[unit.label] = RingWatch(info.jpeg_ring_name)
                 self.send_before(unit)
             self.scan(units)  # a wedge in the open reaches the caller at once, also when a kill comes next
             await asyncio.sleep(0.005)
+
+    def attach_watches(self, units):
+        """A ring watch for each camera whose ring exists and that has none (4.4)."""
+        group = self.group()
+        for unit in units:
+            info = group.ring_infos.get(unit.camera_id) if group is not None else None
+            if info is not None and unit.label not in self.watches:
+                with contextlib.suppress(FileNotFoundError, OSError, ValueError):
+                    self.watches[unit.label] = RingWatch(info.jpeg_ring_name)
 
     def judge_open(self, unit, seconds, refused):
         self.send_before(unit)
@@ -400,7 +422,7 @@ class Session:
         mode_fps = mode["fps_num"] / mode["fps_den"] if mode.get("fps_den") else None
         rate_numbers = dict(mode_fps=mode_fps, measured_fps=status.get("measured_fps"), luma_mean=None,
                             jpeg_kb_mean=None)
-        if state == "ready" and unit.label in self.watches:
+        if state == "ready":  # 4.4 [ADR-2HW5]: also with no ring watch (`NO_WATCH`)
             self.live.append(unit)
         elif unit.label in self.watches:
             self.watches.pop(unit.label).stop()
@@ -434,7 +456,7 @@ class Session:
             names = catalog.camera_names(unit.label, unit.base, self.level, self.unix)
             data = await self.wait_hashes(unit)
             self.send_before(unit)
-            watch = self.watches[unit.label]
+            watch = self.watches.get(unit.label, NO_WATCH)
             facts = self.facts[unit.label]
             payloads = list(watch.first)
             facts["luma_m7"] = luma(list(watch.last))
@@ -492,7 +514,7 @@ class Session:
             {u.camera_id: group.configs[u.camera_id].model_copy(update=dict(exposure=EXPOSURE_CHANGED)) for u in manual})
         readback = {u.label: ((self.status(u).get("controls") or {}).get("exposure") or {}).get("value") for u in manual}
         await self.wait_states(manual, ("ready", "too_slow", "failed", "dead"))
-        luma_m8 = {u.label: luma(list(self.watches[u.label].last)) for u in manual}
+        luma_m8 = {u.label: luma(list(self.watches.get(u.label, NO_WATCH).last)) for u in manual}
         await asyncio.to_thread(time.sleep, 1.1)  # the control thread reads the controls each second (cap 11.4)
         later = {u.label: ((self.status(u).get("controls") or {}).get("exposure") or {}).get("value") for u in manual}
         self.scan(manual)  # a camera that left in the change: the running check is the read-back (B1)
@@ -633,7 +655,7 @@ class Session:
         blocks = [(r, mkv[r.byte_offset:r.byte_offset + r.byte_size]) for r in rows
                   if r.byte_offset is not None and r.byte_size]
         real = [(r, block) for r, block in blocks if not r.flags & sidecar.MISSING]
-        watch = self.watches[unit.label]
+        watch = self.watches.get(unit.label, NO_WATCH)
         frames = list(watch.first) + [block for _, block in real]
         width, height, _ = unit.base
         jpeg = self.facts[unit.label].get("jpeg", {})

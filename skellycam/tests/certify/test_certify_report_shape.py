@@ -3,6 +3,8 @@ sources only; no test opens a camera. Each test names the T-CERT test of section
 part; a part that a later step of 3.6.7 builds joins at that step.
 """
 
+import asyncio
+import contextlib
 import json
 import subprocess
 import threading
@@ -269,7 +271,8 @@ def assert_not_reached(report, plan, messages, expected, all_labels):
         assert row["numbers"] == {"checks": len(planned) - len(own)} and row["numbers"]["checks"] > 0, (row, own)
         assert not [n for n in planned if n in named and n not in checks], label
     for label in set(all_labels) - set(expected):
-        assert f"{label}:not-reached" not in checks, label
+        # the rows of the camera in the message: the cause of a CI failure on windows-2025 is not known [ADR-2HW5]
+        assert f"{label}:not-reached" not in checks, [c for c in report["checks"] if c["name"].startswith(label + ":")]
     totals = [m for m in messages if m["total"] is not None]
     assert totals[-1]["state"] == "done" and totals[-1]["done"] == totals[-1]["total"] == plan["total"]
     assert all(m["done"] <= m["total"] for m in totals)
@@ -312,6 +315,98 @@ def test_t_cert_92_a_hang_at_the_open(monkeypatch, tmp_path):
     hung, _ = labels(devices)
     assert by_name(report)[f"{hung}:opens"]["reason"] == "hung"
     assert_not_reached(report, plan, messages, {hung: "prior-failure"}, labels(devices))
+
+
+class SlowRingLook:
+    """`asyncio` for the certify session module: after its first look, the ring look of the open step
+    (`Session.watch_rings`) waits until the open step cancels it. This is the worst case of a busy event loop: no
+    look comes between the open of a ring and the judge of the open (windows-2025, CI run 45872128301)."""
+
+    def __getattr__(self, name):
+        return getattr(asyncio, name)
+
+    @staticmethod
+    async def sleep(delay, result=None):
+        task = asyncio.current_task()
+        if task is not None and task.get_coro().__qualname__.endswith("watch_rings"):
+            delay = 3600.0
+        return await asyncio.sleep(delay, result)
+
+
+@pytest.mark.capture_timing
+def test_t_cert_151_a_ready_camera_with_no_ring_watch_at_the_judge(monkeypatch, tmp_path):
+    """T-CERT-151 case 1, 4.4, 3.6.1: a camera hangs at the open (5 s) and a good camera waits for it in `waiting` (PROCESS
+    workers). The group opens the rings only after the hang, and the good camera is `ready` at once. No ring look of
+    the session comes before the judge of the open (`SlowRingLook`). The good camera still gets its ready, settings
+    and take checks, and it has no `not-reached` row."""
+    monkeypatch.setattr(product("skellycam.core.certify.session"), "asyncio", SlowRingLook())
+    messages = []
+    with capture_app(monkeypatch, [good(hang_at="open", hang_armed=True), good()], workers="process") as app:
+        devices = app.factory.device_infos()
+        plan = product(RUN).plan("quick", devices=devices, **plan_options(tmp_path))
+        report = run_with(app, tmp_path, progress=messages.append)
+    assert_valid(report)
+    hung, fine = labels(devices)
+    checks = by_name(report)
+    assert checks[f"{hung}:opens"]["reason"] == "hung"
+    # `source-equals-ring` `pass`: the watch attached before the judge (4.4), not only a camera that goes on with none
+    for name in ("opens", "native-jpeg:format", "native-jpeg:source-equals-ring", "settings-stick:readback",
+                 "records:rows-complete"):
+        assert checks.get(f"{fine}:{name}", {}).get("result") == "pass", (
+            name, [c for c in report["checks"] if c["name"].startswith(fine + ":")])
+    assert_not_reached(report, plan, messages, {hung: "prior-failure"}, labels(devices))
+
+
+def test_a_cancel_in_the_open_step_ends_the_ring_look(tmp_path):
+    """4.4 [ADR-2HW5]: a cancel of the open step while the apply waits also ends `watch_rings`, so no look after the
+    open step attaches a ring watch that nothing stops."""
+    session = product("skellycam.core.certify.session")
+
+    class Manager:
+        camera_groups, closed_diagnostics = {}, {}
+
+        async def create_or_update_camera_group(self, configs):
+            await asyncio.Event().wait()  # an apply that does not end
+
+    unit = session.Unit(label="cam.media-foundation.feed-0000.0", camera_id="e605", index=0, base=(640, 480, 30.0),
+                        module="Fake camera 0", device=None)
+    run = session.Session(Manager(), [unit], tmp_path, "quick", False, begin=lambda name: None,
+                          done=lambda result: None, fact=lambda name, value: None, sleep=time.sleep)
+
+    async def cancel_the_open_step():
+        task = asyncio.create_task(run.open_step())
+        await asyncio.sleep(0.05)
+        task.cancel()
+        with contextlib.suppress(asyncio.CancelledError):
+            await task
+        return [t for t in asyncio.all_tasks() if t is not asyncio.current_task()]
+
+    assert asyncio.run(cancel_the_open_step()) == []
+
+
+class NoRingReader:
+    """`FrameRingReader` for the certify session module: no ring watch can attach."""
+
+    @staticmethod
+    def attach(name):
+        raise FileNotFoundError(name)
+
+
+def test_t_cert_151_a_ready_camera_whose_ring_watch_cannot_attach(monkeypatch, tmp_path):
+    """T-CERT-151 case 2, 4.4: a `ready` camera whose ring watch cannot attach goes on to the settings step and the
+    take; `native-jpeg:source-equals-ring` is `not-run` `ring-lapped`; it has no `not-reached` row."""
+    monkeypatch.setattr(product("skellycam.core.certify.session"), "FrameRingReader", NoRingReader)
+    with capture_app(monkeypatch, [good()]) as app:
+        (label,) = labels(app.factory.device_infos())
+        report = run_with(app, tmp_path)
+    assert_valid(report)
+    checks = by_name(report)
+    rows = [c for c in report["checks"] if c["name"].startswith(label + ":")]
+    assert (checks[f"{label}:native-jpeg:source-equals-ring"]["result"],
+            checks[f"{label}:native-jpeg:source-equals-ring"]["reason"]) == ("not-run", "ring-lapped"), rows
+    for name in ("opens", "native-jpeg:format", "settings-stick:readback", "records:rows-complete"):
+        assert checks[f"{label}:{name}"]["result"] == "pass", (name, rows)
+    assert f"{label}:not-reached" not in checks, rows
 
 
 def test_t_cert_92_a_cancel_in_the_take_and_the_end_of_the_budget(monkeypatch, tmp_path):

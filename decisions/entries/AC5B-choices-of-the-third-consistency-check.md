@@ -14,9 +14,9 @@ Choices of the supervisor:
 
 1. Stall watch (B 4.10, W 9.5): the shared `Value` `alive_count` of `CameraStatus`, which the main
    process creates. The shared loop adds one at each pass, so each source counts with no change; a
-   push source may add too. The watch trips after 2 s with no change while the process is alive, in
-   `waiting`, `adjusting`, `checking`, `too_slow` or `ready`; it is off in `starting` and during the
-   close. The in-process rule of W 9.5 normally comes first; both give `stalled`. `delivered_count`
+   push source may add too. The watch trips after 2.5 s with no change (Q874,
+   [ADR-EQ3K](EQ3K-decisions-of-the-user-on-the-head-start-of-the-stall-watch.md)) while the process is alive, in
+   the watched states; off in `starting` and in the close. Both rules give `stalled`. `delivered_count`
    goes.
 2. Diagnostics (B 4.2 item 2, 4.6.1): not in `CameraStatus.info`. One message kind `diagnostics` each
    second on the channel of a take error (`TopicTypes.RECORDING_FINISHED`, read by

@@ -1,6 +1,9 @@
 # N14T — Decisions of the user on the CI review of 2026-11-25
 
-**Status:** accepted, 2026-11-25 (user; the coordinator gave the three recommendations and relayed the answer).
+**Status:** absorbed into [`specs/windows-capture.md#15-ci-d47`](../../specs/windows-capture.md#15-ci-d47),
+[`specs/windows-capture.md#161-kinds`](../../specs/windows-capture.md#161-kinds),
+[`specs/recorder.md#121-kinds-markers-workflow-and-parity`](../../specs/recorder.md#121-kinds-markers-workflow-and-parity),
+2026-11-26 (commit to dom/answers-q842; was accepted, 2026-11-25 (user; the coordinator gave the three recommendations and relayed the answer)).
 
 ## Decision
 

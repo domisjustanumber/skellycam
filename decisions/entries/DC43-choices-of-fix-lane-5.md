@@ -1,6 +1,16 @@
 # DC43 — Choices of fix lane 5: the control thread on the test clock, two test waits, the Windows Server OS key
 
-**Status:** accepted, 2026-11-25 (user; [ADR-6YGH](6YGH-acceptance-of-the-as-built-choices-of-fix-lanes-4-and-5-and-of-certify.md) accepts items 1 to 4 (Q755), so each item is decided; commit to dom/log-cleanup; was proposed, 2026-11-23 (agent; the supervisor gave the 8 failures of CI run 45278395951)).
+**Status:** absorbed into [`specs/windows-capture.md#161-kinds`](../../specs/windows-capture.md#161-kinds),
+[`specs/camera-requests.md#13-the-search`](../../specs/camera-requests.md#13-the-search),
+[`specs/certify.md#112-the-data-file-u`](../../specs/certify.md#112-the-data-file-u),
+[`specs/unix-capture.md#410-main-process-stall-watch-u`](../../specs/unix-capture.md#410-main-process-stall-watch-u),
+[`skellycam/tests/capture/capture_session.py`](../../skellycam/tests/capture/capture_session.py),
+[`skellycam/tests/capture/test_helpers.py`](../../skellycam/tests/capture/test_helpers.py),
+[`skellycam/tests/capture/test_camera_requests.py`](../../skellycam/tests/capture/test_camera_requests.py),
+[`skellycam/tests/capture/test_restore.py`](../../skellycam/tests/capture/test_restore.py),
+[`skellycam/tests/capture/test_stall_watch.py`](../../skellycam/tests/capture/test_stall_watch.py),
+[`skellycam/tests/capture/test_camera_checks.py`](../../skellycam/tests/capture/test_camera_checks.py),
+2026-11-26 (commit to dom/answers-q842; was accepted, 2026-11-25 (user; [ADR-6YGH](6YGH-acceptance-of-the-as-built-choices-of-fix-lanes-4-and-5-and-of-certify.md) accepts items 1 to 4 (Q755), so each item is decided; commit to dom/log-cleanup; was proposed, 2026-11-23 (agent; the supervisor gave the 8 failures of CI run 45278395951))).
 
 ## Decision
 

@@ -117,7 +117,12 @@ def test_f7_no_restore_when_the_loop_failed(monkeypatch):
 def test_t_unx_95_a_camera_whose_loop_failed_is_restored_unless_it_is_wedged(monkeypatch, failure, script, restored):
     """T-UNX-95, unix-capture.md 4.7 [Z7F3] (a decision of the user of 2026-11-21): the open set the exposure (auto -6
     before it, MANUAL -7 after it); then the loop fails. A failure that is not a wedge (`rate-low`, `not-ready`) gets
-    the restore at the close: auto -6 again, `restore_ok` true. A wedge (`stalled`) gets no set at the close."""
+    the restore at the close: auto -6 again, `restore_ok` true. A wedge (`stalled`) gets no set at the close.
+
+    [ADR-DC43] item 2: a test must not wait for a state that can be shorter than its poll. On the virtual clock the
+    2 s in `ready` before a removal can pass in less real time than the poll of the test thread (5 ms). Thus the
+    open waits `until` `ready`, `failed` or `dead`, and the two cases with `removed_after_frame` also accept
+    `dead`."""
     if failure == "not-ready":
         from skellycam.core.camera.capture import camera_loop
         monkeypatch.setattr(camera_loop, "READY_LIMIT_NS", 2_000_000_000)  # 2 s: the warm-up of 90 frames needs 3 s

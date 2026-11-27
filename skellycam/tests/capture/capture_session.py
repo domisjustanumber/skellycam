@@ -155,6 +155,116 @@ def install_loop_clock(monkeypatch, clock):
     monkeypatch.setattr(CameraWorker, "start", start_on_the_clock)
 
 
+def hold_clock_while_behind(clock, reader, number, lead):
+    """The calling thread reads a ring in real time and has just asked `reader` for frame `number`. Until its next
+    call, the virtual time does not move while the head of the ring is `lead` frames or more past `number`: a gate
+    whose `shut` reads the head of the block (8 bytes, no lock, no clock call). Else the fake cameras run seconds of
+    virtual time while the thread waits for the CPU, and the ring laps it: on 2 cores the certify ring watch missed
+    the hashed frames (`ring-lapped`), and the reader of T-RING-40 got `LAPPED` (CI run 45872128301) [ADR-2HW5]. The
+    thread must be a participant first (`VirtualClock.expect`), and it must leave the clock before the reader closes."""
+    from skellycam.core.ipc.frame_ring.layout import HEAD_OFFSET
+
+    view = reader._shm.buf
+    clock.gate(True, shut=lambda: int.from_bytes(view[HEAD_OFFSET:HEAD_OFFSET + 8], "little", signed=True) - number < lead)
+
+
+def install_watch_clock(monkeypatch, clock, lead=8):
+    """The ring watch of certify (`session.RingWatch`) on the virtual clock: its thread is a participant from its
+    start (`VirtualClock.expect`), holds the time while it is `lead` frames behind the head of its ring
+    (`hold_clock_while_behind`; a certify ring holds 1 s of frames, frame-ring.md 3.7), and leaves the clock at its
+    end. In the open step of certify, the thread that opens the rings holds the time from the open of each JPEG ring
+    until a watch reads it or the ring closes [ADR-2HW5].
+
+    This last hold hides a race of the product in each THREAD certify test: the session looks for new rings only
+    each 5 ms, and a camera that waited for the open of another camera can be `ready` and judged before the next
+    look, with no watch (`test_t_cert_151_...` covers it with PROCESS workers). A second app in one test wraps the
+    product functions, not the wrappers of the first app (as `install_gate_probe`): the watch then follows the clock of
+    the newest app. No certify test has two apps."""
+    from skellycam.core.camera_group.camera_group import CameraGroup
+    from skellycam.core.ipc.frame_ring import FrameRingReader
+
+    session = product("skellycam.core.certify.session")
+    in_open_step, unwatched = [False], set()  # the JPEG rings of the open step that no watch reads yet
+
+    def product_of(function):
+        return getattr(function, "product_function", function)
+
+    class WatchThread(threading.Thread):
+        def start(self):
+            clock.expect(self)
+            try:
+                super().start()
+            except BaseException:
+                clock.forget(self)
+                raise
+
+        def run(self):
+            try:
+                super().run()
+            finally:
+                clock.leave()
+
+    class Threading:
+        """`threading` for the session module, with `WatchThread` as `Thread`."""
+        Thread = WatchThread
+
+        def __getattr__(self, name):
+            return getattr(threading, name)
+
+    read = product_of(FrameRingReader.read)
+
+    def read_on_the_clock(self, frame_number):
+        result = read(self, frame_number)
+        if isinstance(threading.current_thread(), WatchThread):
+            hold_clock_while_behind(clock, self, frame_number, lead)
+        return result
+
+    open_rings, open_step = product_of(CameraGroup._open_rings), product_of(session.Session.open_step)
+    watch_init = product_of(session.RingWatch.__init__)
+
+    def open_rings_on_the_clock(group, configs):
+        if not in_open_step[0]:
+            return open_rings(group, configs)
+
+        def waits_for_a_watch():  # no lock and no clock call (`VirtualClock.gate`); a ring that closed waits for none
+            try:
+                return None in unwatched or bool(unwatched & {i.jpeg_ring_name for i in tuple(group.ring_infos.values())})
+            except RuntimeError:  # the dict changed in the read: the next look decides
+                return True
+
+        unwatched.add(None)  # holds the time from before the open, while the names are not known
+        clock.expect(threading.current_thread())
+        clock.gate(True, shut=lambda: not waits_for_a_watch())
+        try:
+            return open_rings(group, configs)
+        finally:
+            unwatched.update(group.ring_infos[c].jpeg_ring_name for c in configs if c in group.ring_infos)
+            unwatched.discard(None)
+
+    async def open_step_on_the_clock(self):
+        in_open_step[0] = True
+        try:
+            return await open_step(self)
+        finally:
+            in_open_step[0] = False
+            unwatched.clear()  # a ring that got no watch does not hold the time after the open step
+
+    def watch_init_on_the_clock(self, name):
+        try:
+            watch_init(self, name)
+        finally:
+            unwatched.discard(name)  # its thread holds the time now (`expect`), or there is no watch
+
+    for wrapper, function in ((read_on_the_clock, read), (open_rings_on_the_clock, open_rings),
+                              (open_step_on_the_clock, open_step), (watch_init_on_the_clock, watch_init)):
+        wrapper.product_function = function
+    monkeypatch.setattr(session, "threading", Threading())
+    monkeypatch.setattr(FrameRingReader, "read", read_on_the_clock)
+    monkeypatch.setattr(CameraGroup, "_open_rings", open_rings_on_the_clock)
+    monkeypatch.setattr(session.Session, "open_step", open_step_on_the_clock)
+    monkeypatch.setattr(session.RingWatch, "__init__", watch_init_on_the_clock)
+
+
 def spy_check_anchors(monkeypatch):
     """The `after` time of each check that the loop feeds (windows-capture.md 10.2) [ADR-0R76]: after a live
     change, the time that the control thread read just before the set; after a search, the time that the loop
@@ -381,6 +491,7 @@ class CaptureApp:
             install_gate_probe(monkeypatch, self.clock)
             install_control_clock(monkeypatch, self.clock, loop_module)
             install_loop_clock(monkeypatch, self.clock)
+            install_watch_clock(monkeypatch, self.clock)
             # A dead camera waits on the group frames in real time (recorder.md 10 item 7): not on the clock.
             missing_until_end = loop_module.CameraLoop._missing_until_end
 

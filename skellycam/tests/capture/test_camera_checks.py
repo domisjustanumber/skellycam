@@ -112,7 +112,11 @@ def test_t_unx_74_the_evidence_file_gives_verified_and_known_bad(tmp_path):
 
 
 def test_t_unx_74_the_os_key_and_the_abi():
-    """cert 11.2: the OS key of this system has the form of its OS; the ABI is `lp64` on a 64-bit Python."""
+    """cert 11.2: the OS key of this system has the form of its OS; the ABI is `lp64` on a 64-bit Python.
+
+    [ADR-DC43] item 4: the Windows key is the release of `platform.release()` and the feature version, so one
+    pattern (below) takes a client and a server release: `11 24H2` on a client, `2025Server 24H2` on Windows
+    Server 2025."""
     import platform
     import re
     import struct
@@ -128,7 +132,9 @@ def test_t_unx_74_the_os_key_and_the_abi():
 
 def test_t_unx_74_the_windows_os_key_of_a_client_and_a_server(monkeypatch):
     """cert 11.2: the Windows OS key is the release and the feature version. Windows Server keeps the release of
-    `platform.release()`: with the same feature version 24H2, the server key differs from the client key."""
+    `platform.release()`: with the same feature version 24H2, the server key differs from the client key
+    ([ADR-DC43] item 4): a new OS version is a new OS key (unix-capture.md 4.9), so no model of the client
+    counts as checked on the server."""
     import sys
     from types import SimpleNamespace
 
