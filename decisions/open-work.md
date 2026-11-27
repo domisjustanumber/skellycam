@@ -85,8 +85,7 @@ task. Delete an item when its work is done. The PR that closes an item records t
 - **Phase 4 (live preview)** ([`specs/preview.md`](../specs/preview.md), [`specs/preview-4b.md`](../specs/preview-4b.md);
   [ADR-BPP8](entries/BPP8-answers-of-the-user-q864-to-q873-on-the-step-4b-code.md)). Open:
   - M-PRV-4 on Linux ([ADR-HDC9](entries/HDC9-measurements-m-prv-1-to-m-prv-5-of-the-preview-sender.md)).
-  - Step 4b, after the merge: delete `read_latest_ring_frames` and `_send_json` with their
-    spec line and test probe (Q871); rewrite the top of the real-time streaming page (Q873).
+  - Step 4b, after the merge: rewrite the top of the real-time streaming page (Q873).
   - The next CI run of `player.yml` confirms the harness fix of the 4b component tests (the inner size in the launch
     line; [ADR-FP47](entries/FP47-choices-of-the-triage-of-the-first-ci-run-of-the-4b-component-tests.md)).
   - Soon, spec and test first (Q907): does the product server hang at its shutdown after a client connection reset?
