@@ -1,6 +1,19 @@
 # CM9S — Choices of the clean-ups lane
 
-**Status:** proposed, 2026-11-27 (agent: the clean-ups lane on `dom/cleanups-q871`, Q915 item 6).
+**Status:** absorbed into
+[`specs/preview-4b.md#31-code`](../../specs/preview-4b.md#31-code),
+[`specs/preview-4b.md#32-tests`](../../specs/preview-4b.md#32-tests),
+[`specs/preview-4b.md#59-docs`](../../specs/preview-4b.md#59-docs),
+[`specs/preview-4b.md#72-helpers-agent-11-agent-27-agent-28`](../../specs/preview-4b.md#72-helpers-agent-11-agent-27-agent-28),
+[`specs/preview-4b.md#77-what-t-prv-30-searches`](../../specs/preview-4b.md#77-what-t-prv-30-searches),
+[`specs/windows-capture.md#222-rules-of-step-3b`](../../specs/windows-capture.md#222-rules-of-step-3b),
+[`specs/unix-capture.md#65-shared-and-windows-tests-step-7s`](../../specs/unix-capture.md#65-shared-and-windows-tests-step-7s),
+[`specs/capture-timings.md#53-cost-budget-of-the-measurement-u-q587-9`](../../specs/capture-timings.md#53-cost-budget-of-the-measurement-u-q587-9),
+[`specs/capture-timings.md#102-test-list`](../../specs/capture-timings.md#102-test-list),
+[`skellycam/tests/capture/test_camera_requests.py`](../../skellycam/tests/capture/test_camera_requests.py),
+[`skellycam/tests/capture/test_stall_watch.py`](../../skellycam/tests/capture/test_stall_watch.py),
+2026-11-27 (commit to dom/answers-q929; was accepted, 2026-11-27 (user, Q947 and Q948 of [ADR-318R](318R-decisions-of-the-user-on-q942-to-q955.md)); was proposed,
+2026-11-27 (agent: the clean-ups lane on `dom/cleanups-q871`, Q915 item 6)).
 
 ## Decision
 
@@ -20,8 +33,8 @@ The user decided the work (Q871, Q873, Q892, Q900, Q909 of
    most of them are translated to a similar extent. "Three" first appears in ADR-Y2RN item 3. The lane reads it as
    the three languages of the docs copies (`skellycam-docs/i18n/`: `es`, `zh-CN`, `ar`); this is a guess. The other
    37 locales fall back to English, as the other keys of step 4 do
-   ([`preview-4b.md`](../../specs/preview-4b.md) 5.8). Question for the user (open work): es, zh-CN and ar only,
-   or all 40 locale files? Recommended: these three now, the rest when there are native-speaker translations.
+   ([`preview-4b.md`](../../specs/preview-4b.md) 5.8). Q948 of [ADR-318R](318R-decisions-of-the-user-on-q942-to-q955.md): these three now, the rest when there are
+   native-speaker translations; a native speaker reviews the three before a release.
    No test checks that all locale files have the same keys (English has 63 keys that no other file has), so
    T-CAP-165 gets one small test: the three files have both keys, with "1280 × 720" and "640 × 360" unchanged
    (`windows-capture.md` 22.2). The texts are the lane's translations: es "El seguimiento de manos y cara estará

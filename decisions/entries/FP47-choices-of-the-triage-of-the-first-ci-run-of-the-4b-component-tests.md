@@ -1,6 +1,9 @@
 # FP47 — Choices of the triage of the first CI run of the 4b component tests
 
-**Status:** proposed, 2026-11-27 (agent: the CI triage lane of the preview 4b tests, Q912).
+**Status:** absorbed into
+[`specs/preview-4b.md#72-helpers-agent-11-agent-27-agent-28`](../../specs/preview-4b.md#72-helpers-agent-11-agent-27-agent-28),
+2026-11-27 (commit to dom/answers-q929; was accepted, 2026-11-27 (user, Q944 of [ADR-318R](318R-decisions-of-the-user-on-q942-to-q955.md)); was proposed,
+2026-11-27 (agent: the CI triage lane of the preview 4b tests, Q912)).
 
 ## Decision
 
