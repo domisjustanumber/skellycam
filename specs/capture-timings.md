@@ -302,7 +302,8 @@ Rules and limits:
 
 ### 5.3 Cost budget of the measurement [U Q587 9]
 
-- When off: one branch for each step (section 2 item 6). No clock read.
+- When off: one branch for each step (section 2 item 6). No clock read, except one: `PreviewTiles` of
+  the UI stamps each camera message with `now()` also when off (section 7) [ADR-CM9S 5].
 - When on, the camera loop thread reads the clock at most 10 times for each frame, plus one read for
   each refused pass of the gate, plus three reads for each granted pass that gives no frame. The limit
   counts the steps of cadence `frame`; a step of cadence `event` (`take_start`, `take_end`,
