@@ -43,6 +43,9 @@ PACE_TESTS = [
     ("skellycam.tests.take_recorder.test_benchmarks", "test_t_rec_stall_short_has_no_give_wait"),
     # Q917 (b) [ADR-N7ZR]: the waits and the counts of the slow holder of the status locks
     ("skellycam.tests.capture.test_status_locks", "test_a_live_but_slow_holder_waits_once_and_logs_one_line"),
+    # Q922, Q923 [ADR-D2YZ]: the give waits of T-REC-36 and the count of T-PRV-17
+    ("skellycam.tests.take_recorder.test_queue_and_writer", "test_t_rec_36_has_no_give_wait"),
+    ("skellycam.tests.preview.test_ws_flow", "test_t_prv_17_b_gets_15_messages_within_1_s"),
     # Q907, Q928 [ADR-9V4Y]: the connection limit of the shutdown of the server (recorder.md 9.1)
     ("skellycam.tests.test_server_exit", "test_the_server_ends_within_the_connection_limit"),
 ]
@@ -81,6 +84,9 @@ NOT_PACE = [
     ("skellycam.tests.take_recorder.test_benchmarks", "test_t_rec_stall_short_pass_parts"),
     # Q917 (b) [ADR-N7ZR]: the slow holder never makes the status stop its tries; no torn JSON escapes
     ("skellycam.tests.capture.test_status_locks", "test_a_live_but_slow_holder_and_torn_json_never_raise"),
+    # Q922, Q923 [ADR-D2YZ]: the blocking halves of T-REC-36 and T-PRV-17
+    ("skellycam.tests.take_recorder.test_queue_and_writer", "test_t_rec_36_1080p60_frames_of_600_kb_for_30_s"),
+    ("skellycam.tests.preview.test_ws_flow", "test_t_prv_17_reader_removed_then_closed"),
     # Q907, Q928 [ADR-9V4Y]: the server process ends after /shutdown with a lost connection
     ("skellycam.tests.test_server_exit", "test_the_server_ends_after_shutdown_with_a_lost_connection"),
 ]

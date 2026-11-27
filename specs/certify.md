@@ -2,7 +2,7 @@
 
 Status: draft 3 for the user, 2026-11-20; the first code step on 2026-11-21. The code is in
 `skellycam/core/certify/`, the tests are in `skellycam/tests/certify/`, and section 19 states the choices of the code
-([ADR-VG5F](../decisions/entries/VG5F-choices-of-the-first-certify-code.md) and [ADR-X8XE](../decisions/entries/X8XE-choices-of-the-certify-review-fixes-and-format-1-6-0.md)). The code builds these checks: `detect`; for each camera `<label>:detect`,
+([ADR-VG5F](../decisions/entries/VG5F-choices-of-the-first-certify-code.md) and [ADR-X8XE](../decisions/entries/X8XE-choices-of-the-certify-review-fixes-and-format-1-6-0.md)). The code builds these checks: `detect`; on Windows `system:quick-sync` (3.6.2, Q879); for each camera `<label>:detect`,
 `:detect:mjpg-mode`, `:opens`, `:rate`, `:modes:granted:<base>`, `:native-jpeg:format`, `:native-jpeg:not-reencoded`,
 `:native-jpeg:valid`, `:native-jpeg:size`, `:native-jpeg:ring-equals-mkv`, `:native-jpeg:source-equals-ring`,
 `:settings-stick:readback`, `:settings-stick:holds`, `:settings-stick:image-effect`, `:records:rows-complete`,
@@ -132,6 +132,7 @@ Scope:
 | Caller process: `certify()` | The plan, the progress, the cancel, the time limits, the report, the privacy scrub. | Import `comtypes`, load a camera driver, open a camera. |
 | Detection child | The native detection of the product (`detect_media_foundation_cameras()` on Windows, which has its own child, cap 7.1; the V4L2 and AVFoundation detection of the new sources). | Stay alive after its limit. |
 | Session child | One `CameraGroupManager` of the product with the native source (or fake sources for a self-check). Its camera processes are its children [cap 6.6]. | Run HTTP. It never opens a port, and never port 53117. |
+| Quick Sync child | The check child of the product ([`windows-capture.md`](windows-capture.md) 22.7), through `check_quick_sync()` (`system:quick-sync`, 3.6.2). | Stay alive after its limit. |
 | Probe child | A probe of section 10.4: a fact that the product path cannot see. A camera probe (10.7) opens one camera, with the product session closed for that camera. | Open a camera that hung or is dead; claim, detach or seize a device; write outside the work folder. |
 
 The caller also reads and writes the local record `camera_checks.json` (2.5) in the skellycam base
@@ -1054,11 +1055,12 @@ not repeated here. 3.6.10 gives the kind of each check (camera, pipeline or syst
 On Linux and macOS, quick also has `clock:base`, `clock:before-arrival`, `clock:near-arrival` and one of
 `sequence` and `time-gaps` (10.6). They stay in quick [U Q620] ([ADR-G0AC](../decisions/entries/G0AC-decisions-of-the-user-on-the-certify-verdict-questions.md)).
 
-**Quick, the run: eight checks, and `session:exit` only after a fault of the exit.**
+**Quick, the run: eight checks, `system:quick-sync` on Windows, and `session:exit` only after a fault of the exit.**
 
 | Check | Numbers | Fail reasons |
 |---|---|---|
 | `detect` | `cameras`, `virtual`, `modes_read` | `timed-out`, `crashed`, `backend-missing` |
+| `system:quick-sync` [U Q879] (Windows) | `works`, `check_ms`, `encode_ms`, `failure`, `exit_code` | none: `record-only`; `not-run` `cancelled`, `over-budget`, `cameras-busy` |
 | `system:recording-space` [U Q613] | `volume_kind`, `free_gb`, `minutes_free` | `disk-full` (3.6.11) |
 | `system:memory` [U Q624l] | `memory_free_mib`, `rings_need_mib`, `shm_size_mib` | `memory-low`, `shm-too-small` (3.6.12) |
 | `system:camera-access` [U Q624m] | `access` | none: `record-only`; with `denied` each camera is `not-run` `no-access` (3.6.12) |
@@ -1148,6 +1150,37 @@ routes of the product, and reports for each tile the values that 10.5 lists (the
 `details.player_legacy_decode`, not in `numbers`. Its `module` is the name of the pipeline item
 (3.6.10). It needs the page of the app: a run with no app page gives `not-run` `no-ui`. Until the code
 of the v1 player exists, its name is in `details.not_built` [U Q847].
+
+**Both levels, Windows: the Quick Sync check [U Q879] [ADR-VTW3](../decisions/entries/VTW3-choices-of-the-quick-sync-check-in-a-child-process.md).**
+`system:quick-sync` reports whether the JPEG encode of Quick Sync works on this system, and how long the check
+takes. It is the product check of [`windows-capture.md`](windows-capture.md) 13.2 and 22.7: it calls
+`check_quick_sync()` (2.2), which encodes one NV12 test frame of 1280x720 in a child process with the limit of the
+product (5 s). The rules [VTW3 9 to 14]:
+
+- The row is `record-only`: it has no pass rule, it is in no gate and it changes no summary item (3.6.10 "no
+  verdict") [U Q879]. Its `module` follows 3.6.10; the code of today gives it no `module`, as each run check.
+- It is in both levels, right after `detect`: it needs no camera, so it also runs with no camera, and after a
+  `detect` that failed. It takes about 1 s (1.03 to 1.08 s on the development machine, windows-capture.md 22.7 item
+  3), at most the limit and the join.
+- The values are in `numbers`, because they are flat (3.2): `works` (boolean), `check_ms` and `encode_ms` (numbers
+  with one decimal; `encode_ms` is `null` when the child gave no answer), `failure` (`null` when `works` is true,
+  else `timed-out`, `crashed`, `no-jpeg` or the class name of the error, never its text, section 15) and
+  `exit_code` (the exit code of a child that crashed, else `null`).
+- A system with no Intel GPU, no driver or an FFmpeg with no QSV gives `works` false with the class name of the
+  error. This is the answer of the check, not a check that could not run (3.3), so it is not `not-run`. A time-out
+  and a crash of the child are answers too: the product then uses `cv2.imencode` (windows-capture.md 22.7 item 4).
+- `not-run` only when the check could not start: `cancelled` and `over-budget` when the run stopped before it, and
+  `cameras-busy` when the run is refused (9.7), as each row of such a run. A cancel during the check gives `not-run`
+  `cancelled` at once (9.3 reads the cancel two times each second); the child then ends at its own limit at the
+  latest. The wait for the row watches the cancel and the abandon, not the deadline of the run: the row always runs
+  to its own end, at worst about 10 s (the limit of 5 s and the join of 5 s, windows-capture.md 22.7 item 5), so a
+  quick run can pass its budget by that much [VTW3 14].
+- Linux and macOS: no row. The product runs the check only for a camera of the Media Foundation source (windows-
+  capture.md 22.6 item 6), and never on macOS. The row comes to a system when its native source encodes raw frames.
+- Certify does not set the answer of a camera group manager: the product still decides one time for each app run
+  at its first raw request (windows-capture.md 22.7 item 8).
+- On each system other than the development machine the check and the encoder are [NV] until a report gives this
+  row (windows-capture.md 13.2).
 
 **The take: five rows become two [U Q598].** The contract keeps one check for each test that can fail [C 3.4].
 Each test of the five old rows keeps a check that carries its failure:
@@ -1580,7 +1613,7 @@ contract owner confirmed its form [C 3.7]:
 | camera | `detect:mjpg-mode`, `opens`, `rate`, `modes:granted:<mode>`, `native-jpeg:format`, `native-jpeg:valid`, `native-jpeg:size`, `settings-stick:readback`, `:holds`, `:image-effect`, `:each-open`, `live-at-close` ([ADR-0Z6Q](../decisions/entries/0Z6Q-choices-of-the-certify-report-shape-build.md) item 15); in full when built: `rate:<mode>`, `rate:<w>x<h>@60`, `exposure:<base>:readback`, `control:gain`, `control:focus`, `auto-off:*`, `group-open`, `cycles`; `<model>:gate:no-hang`; `<label>:not-reached`; the cleanup rows `release:<label>` |
 | pipeline | `native-jpeg:not-reencoded`, `native-jpeg:source-equals-ring`, `native-jpeg:ring-equals-mkv`, `records:rows-complete`, `records:blocks-decode`, `records:gaps-explained`, `records:mkv-opens`, `clock:base`, `clock:before-arrival`, `clock:near-arrival`, `sequence`, `time-gaps`; the run checks `group:take-again` and `group:preview-during-take`, which count against the pipeline as a system check does, unless the rule below gives them to a model; in full when built: `identity:*`, `controls`, `controls:exposure-scale`, `auto-exposure:*`, `in-use` |
 | system | `detect`, `system:recording-space`, `system:memory`, `group:take:finished`, `group:take:rate`, `session:exit`; in full when built: `group:cycles`, `group:restore-after-kill`, `group:take-30:*`, `group:take-60:*`, `group:open`, `group:contention`, `system:*`, `self:*`; the cleanup rows `delete-work-folder` and `write-record` |
-| no verdict | the `record-only` checks (`group:in-step` [U Q616], `<label>:bursts` with the `module` of its model, `system:camera-access`, `system:power`, `system:timer`, `timestamps`, the sweeps); `report:rules` (its failure goes into `evidence.reasons`) and the macOS probes of 10.7, which keep the `module` `macOS probes` and count toward no item (10.4) |
+| no verdict | the `record-only` checks (`group:in-step` [U Q616], `<label>:bursts` with the `module` of its model, `system:camera-access`, `system:quick-sync` [U Q879], `system:power`, `system:timer`, `timestamps`, the sweeps); `report:rules` (its failure goes into `evidence.reasons`) and the macOS probes of 10.7, which keep the `module` `macOS probes` and count toward no item (10.4) |
 
 **The rule [U Q611].** A check has one `module` [C 3.4]. The rule gives it. For one pipeline check (one name
 without the label), the models that count are the models with at least one unit where that check judged
@@ -3427,6 +3460,7 @@ of a product failure gives the product code as its reason, with one exception: t
 | `scale-too-short`, `auto-search-failed`, `not-camera-jpeg`, `frame-gap`, `ring-lapped` | 10.2, 5.3, 10.7, 4.4 | The unitless exposure route has fewer than 8 steps; the search ended `failed`; the JPEG is not the camera's own by the proof rules; a probe made a frame gap over 2 times the baseline; the ring no longer holds the hashed frame. |
 | `auto-not-searched` | `auto-exposure` checks | SkellyCam Auto did not search at the open, or after a change of the frame rate (5.3). |
 | `one-camera` | group checks | The check needs two cameras. |
+| `no-jpeg` | `numbers.failure` of `system:quick-sync` | The Quick Sync check gave no JPEG (3.6.2, cap 22.7). The other values of `failure` are `timed-out`, `crashed` and an `<ExceptionClass>`. |
 | `no-ui` | `player-legacy-decode` | The run has no page of the app, so the decode check of the v1 player cannot run (3.6.2) [U Q847]. |
 | `no-mode` | mode checks | The camera does not declare this mode. |
 | `no-mjpg-mode` | `<label>:detect` | No MJPG mode at 30 fps or more and 640 wide and 360 high or more (before 3b). |
@@ -3483,7 +3517,8 @@ Fixed values in `numbers`: `backend` (3.1), `stage` (cap 12, `-` for a space), `
 `btrfs`, `xfs`, `other`), `usb_link` (the product values `USB 1`, `USB 2`, `USB 3`, `unknown`
 [req 3.2]), the values of 10.2, the
 `limits` codes of 11.2, and the vocabularies of 3.5: `native_domain`, `call` and `stage` (3.5.3),
-`take_error_kind` (3.5.7), `volume_kind` and `spread_source` (3.6.11), `access` and `power_plan` (3.6.12). The
+`take_error_kind` (3.5.7), `volume_kind` and `spread_source` (3.6.11), `access` and `power_plan` (3.6.12),
+`failure` of `system:quick-sync` (3.6.2). The
 codes of `take_warnings` (`camera_dead`, `camera_file_short`,
 `camera_gap`, `take_error`) are in a list, so `skellycam/REASON_CODES.md` lists them as codes [C 3.4].
 
@@ -3698,6 +3733,7 @@ tests only the self-check.
 | T-CERT-149 | 3 OS; the Linux and macOS cases land with phase 7. `<label>:control-read:gaps` (20.9) with fakes: (1) each read takes 3 ms and delays no frame; (2) each read holds the frames for 150 ms; (3) the fake has gaps of 150 ms also with the read off; (4) a read hangs. Then the local record and a product open of each model. | (1) `pass`, `reads_over_limit` 0, the row `control_read` `ok`; (2) `fail` `read-gap`, the row `control_read` `harms`, and a later take of that model has no read during the take (T-CAP-146); (3) `pass`: the gaps come from the camera; (4) `fail` `hung`, the camera state `replug`, `control_read` `harms`. `details.limits.control_read_gap_ms` is 100. |
 | T-CERT-150 | 3 OS, fakes of the app page [U Q735, Q766, Q803, Q847]. A full run with a fake page result for the check `player-legacy-decode`: an `mp4v` tile, a WebCodecs tile, a tile switched by F6 and a tile that the core rule stopped; then a run with no app page; then a run before the v1 player code exists. | The row `player-legacy-decode` is `record-only` with the `module` of the pipeline item and blocks no gate; `details.player_legacy_decode` holds for each tile the fields of `player-legacy.md` 10.5 (T-LEG-79 checks their shape); with no app page: `not-run` `no-ui`; before the code: the name is in `details.not_built`. |
 | T-CERT-151 | 3 OS, fakes (4.4) [ADR-2HW5]. (1) Quick, PROCESS workers: one camera hangs at the open (5 s), one good camera waits for it in `waiting`; no ring look of the session comes between the open of the rings and the judge of the open. (2) Quick: one good camera whose ring watch cannot attach. | (1) The good camera has its rows of the ready step, the settings step and the take (`native-jpeg:format`, `settings-stick:readback`, `records:rows-complete` `pass`) and no `not-reached` row. (2) The camera goes on to the settings step and the take; `native-jpeg:source-equals-ring` is `not-run` `ring-lapped`; no `not-reached` row. |
+| T-CERT-152 | 3 OS, a fake `check_quick_sync` and a patched backend [U Q879] [ADR-VTW3]. A quick and a full run with no camera, with each answer of cap 22.7 item 4: works; `no-jpeg`; `RuntimeError`; `timed-out`; `crashed` with exit code 3. A quick run with one fake camera, with works and with `crashed`. A cancel during the check; a refused run (`cameras-busy`); the runs and the plan with the backends of Linux and macOS; the plan on Windows. | Each answer gives one row `system:quick-sync`, right after `detect`, `record-only` with no `reason` and no `module`, and the five `numbers` of 3.6.2 with the values of the fake; with works and with `crashed` the item of the camera, which passes each check, stays `pass`; the cancel gives `not-run` `cancelled` while the fake check still runs, and the run returns within 2 s; the refused run gives `not-run` `cameras-busy` and calls no check; Linux and macOS have no such row, call no check and do not plan it; the plan on Windows lists it right after `detect`. |
 
 **The changes of 3.6 to the tests above [U Q591 to Q599, Q610 to Q618, A].** Where a row above and this list
 differ, this list is the rule. T-CERT-91 to T-CERT-132 are new. Q624 also changes T-CERT-61 to T-CERT-64:

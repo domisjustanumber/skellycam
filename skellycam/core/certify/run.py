@@ -744,6 +744,25 @@ def _detect(backend, stops, deadline, over, modes=True):
     return dict(name="detect", result="fail", reason="timed-out"), []
 
 
+def _quick_sync(stops):
+    """(the row `system:quick-sync`, the stop): the product check of cap 22.7 (2.2), waited for on a thread, so that a
+    cancel gives `not-run` `cancelled` at once (9.3); the check child then ends at its own limit."""
+    from skellycam.core.camera.capture import encoder
+
+    box = {}
+    thread = threading.Thread(target=lambda: box.setdefault("check", encoder.check_quick_sync()),
+                              name="certify quick sync", daemon=True)
+    thread.start()
+    while thread.is_alive() and stops.cause() is None:
+        thread.join(0.05)
+    check = box.get("check")
+    if check is None:  # a cancel, else the call ended with no answer
+        return _row(catalog.QUICK_SYNC, "not-run", "cancelled" if stops.cause() else "crashed"), stops.cause()
+    return _row(catalog.QUICK_SYNC, "record-only", None, works=check.works, check_ms=round(check.check_ms, 1),
+                encode_ms=None if check.encode_ms is None else round(check.encode_ms, 1), failure=check.failure,
+                exit_code=check.exit_code), None
+
+
 def _detect_row(devices, seconds):
     return dict(name="detect", result="pass", reason=None,
                 numbers=dict(seconds=round(seconds, 2), cameras=sum(1 for d in devices if not d.virtual),
@@ -852,6 +871,9 @@ def _run(out, level, reporter, stops, cameras, devices, manager, source_factory,
         stop = over
     if rows["detect"]["result"] == "pass" and not any(not d.virtual for d in devices):
         out["reasons"].append("no-camera")
+    if catalog.QUICK_SYNC in rows and stop is None:  # 3.6.2 [U Q879]: also with no camera and after a failed detect
+        reporter.send("running", rows, step=catalog.QUICK_SYNC)
+        rows[catalog.QUICK_SYNC], stop = _quick_sync(stops)
     units = [Unit(label=c["label"], camera_id=c["raw"].camera_id, index=c["raw"].index, base=c["base"],
                   module=c["module"], device=c["raw"]) for c in context.units]
     facts = dict(touched=[], before={}, release={}, prior={})

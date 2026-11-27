@@ -324,8 +324,9 @@ def test_t_cert_01_the_plan(tmp_path):
         assert quick["total"] == (len(quick["details"]["checks"]) + 1 if to_check else 0)
         assert quick["seconds_estimate"] == (min(30, -(-(20 * 4 + len(to_check)) // 4) + 10) if to_check else 0)
         assert full["total"] == len(full["details"]["checks"]) + (1 if count else 0)
-        assert not [n for n in quick["details"]["checks"] + full["details"]["checks"]
-                    if n.startswith(("self:", "group:open", "group:take-30", "system:")) or n.endswith(":cycles")]
+        # no check with no code; `system:quick-sync` has code (3.6.2, Q879) and T-CERT-152 checks its place
+        assert not [n for n in quick["details"]["checks"] + full["details"]["checks"] if n != catalog.QUICK_SYNC
+                    and (n.startswith(("self:", "group:open", "group:take-30", "system:")) or n.endswith(":cycles"))]
         if count == 4:
             by_device = {c["device"]: c for c in cameras}
             assert by_device["feed:0001"]["evidence"] == "verified" and by_device["feed:0002"]["checked"] is True

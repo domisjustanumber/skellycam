@@ -23,7 +23,6 @@ These entries are `accepted`.
 | [2S1P](entries/2S1P-bootstrap-answers-with-binding-specs.md) | Answers to the bootstrap questions of the kit adoption; supersedes S222: the specs in `specs/` are normative (item 4) | accepted |
 | [N2NH](entries/N2NH-index-limit-24000-no-shortened-rows-and-binding-specs.md) | Index limit 24,000 characters until the clean-up; no agent shortens the row of an entry it did not write; specs are binding | accepted |
 | [9G2W](entries/9G2W-python-api-of-the-frame-ring-as-the-2a-tests-assume-it.md) | Python API of the frame ring, as the 2a tests assume it; clarifications, corrections and decisions on the 2a code (items 52 to 67) | accepted |
-| [7DE6](entries/7DE6-arm64-ci-job-for-the-portable-frame-ring-tests.md) | CI job that runs the portable frame ring tests on an arm64 Linux runner, on pushes to `dom/native-jpeg` | accepted |
 | [5MYA](entries/5MYA-python-api-of-the-bgr-ring-and-the-decode-stage-as-the-2b-tests-assume-it.md) | Python API of the BGR ring and the decode stage, as the 2b tests assume it | accepted |
 | [467Z](entries/467Z-step-2b-self-check-stop-opencv-threads-and-yuv-conversion.md) | Step 2b: no BGR self-check log, `stop()` drops and counts a waiting frame, `cv2.setNumThreads(1)` in each camera process, default YUY2 and NV12 conversion | accepted |
 | [E817](entries/E817-choices-of-the-2b-code.md) | Choices of the 2b code: `bgr` on the JPEG creator, `set_skipped_count`, `None` payload for a flagged BGR frame, no libjpeg limit on Windows until phase 3 | accepted |
@@ -88,8 +87,10 @@ These entries wait for a decision of the user. Section is the section or area of
 | [7GC1](entries/7GC1-choices-of-the-gate-on-the-test-clock-and-the-end-of-t-cap-05.md) | Choices of fix lane 6: a loop at an open gate holds the test clock until its next probe, forced steps still move it; T-CAP-05 checks the last ring frames | none | proposed |
 | [JFG4](entries/JFG4-choices-of-the-capture-timings-build.md) | Choices of the capture timings build that the user did not decide: source sets, sets, main process, message loop, route, test seams, faults | none | proposed |
 | [4PPS](entries/4PPS-choices-of-the-answers-lane-of-q842-to-q856.md) | Choices of the answers lane: the label from `<recording_name>_info.json` with a fall back, no `pickedFoldersFile`, Q852 sentences, control-read setting, OS key | none | proposed |
-| [GV50](entries/GV50-choices-of-the-split-of-the-slow-holder-test.md) | The lane's reading of Q917 (b): the pace and blocking checks of the slow-holder test; the blocking half proves a stretch began | none | proposed |
 | [4W3H](entries/4W3H-choices-of-the-q928-build.md) | Choices of the Q928 build: the take start and stop as shielded tasks, Ctrl-Break as Ctrl-C, the cancel and real-signal tests | `recorder` | proposed |
+| [SKZ8](entries/SKZ8-choices-of-the-blocking-half-of-t-prv-17.md) | Choices of the blocking half of T-PRV-17 (Q923): B gets 15 camera messages within the loose limit of 9.1; the check of A keeps 1 s | none | proposed |
+| [C47T](entries/C47T-choices-of-the-ci-lane.md) | Choices of the CI lane: uv from `doc-checks.yml`, `test_workflows.py`, `tsconfig.tests.json`, one type fix, uv steps in `player.yml`, D: drive try | none | proposed |
+| [VTW3](entries/VTW3-choices-of-the-quick-sync-check-in-a-child-process.md) | Q879 choices: one child call for detection and Quick Sync, 5 s, log levels; `system:quick-sync` in both levels on Windows, record-only, no GPU is false | none | proposed |
 
 The entries that are `rejected`, `superseded by XXXX`, `absorbed into <path>#<anchor>`,
 `evidence; used by XXXX`, `evidence; replaced by XXXX` or `done` are in [historical.md](historical.md).

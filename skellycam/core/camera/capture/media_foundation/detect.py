@@ -6,12 +6,12 @@ cannot block the main process (agent 17). The main process does not import comty
 child and the camera process load it.
 """
 
-import multiprocessing
 import os
 import re
 
 from pydantic import computed_field
 
+from skellycam.core.camera.capture import bounded as capture_bounded
 from skellycam.core.camera.capture.modes import NativeMode, capture_modes, supported_modes
 from skellycam.core.camera.capture.source import BOUNDED_CALL_LIMIT_S, CaptureFailure
 from skellycam.core.device_detection.detect_cameras_devices import CameraDeviceInfo
@@ -88,7 +88,7 @@ def _usb_id(link: str, key: str) -> int | None:
     return int(found.group(1), 16) if found else None
 
 
-def _detect_in_child(backend, sender, modes: bool = True) -> None:
+def _detect_in_child(backend, modes, sender) -> None:
     """The detection child: each call bounded, one message after each step; after a hang, report and end hard.
     With `modes` False it lists the devices only and activates none."""
     from skellycam.core.camera.capture.media_foundation import bounded, com
@@ -122,39 +122,13 @@ def _detect_in_child(backend, sender, modes: bool = True) -> None:
         com.shutdown()
 
 
-def _child_result(receiver, child):
-    """The last message of the child. Each message must come within `STEP_LIMIT_S`."""
-    while True:
-        if not receiver.poll(STEP_LIMIT_S):
-            child.kill()
-            raise CaptureFailure("detection", f"the detection process did not answer in {STEP_LIMIT_S:g} s",
-                                 code="hung")
-        try:
-            kind, result = receiver.recv()
-        except EOFError:
-            raise CaptureFailure("detection", f"the detection process ended with code {child.exitcode}",
-                                 code="process-ended") from None
-        if kind != "alive":
-            return kind, result
-
-
 def detect_media_foundation_cameras(*, backend=None, modes: bool = True) -> list[CameraDeviceInfo]:
     """7.1: the Media Foundation cameras. A virtual camera is listed with `virtual=True`. With `modes` False,
     the device list only: no camera is activated, and no mode list is read (`modes_read` False).
     Raises `CaptureFailure` (stage `detection`) after a hang, and `ValueError` when two devices have
     one `camera_id`."""
-    context = multiprocessing.get_context("spawn")
-    receiver, sender = context.Pipe(duplex=False)
-    child = context.Process(target=_detect_in_child, args=(backend, sender, modes), name="skellycam detection", daemon=True)
-    child.start()
-    sender.close()
-    try:
-        kind, result = _child_result(receiver, child)
-    finally:
-        receiver.close()
-        child.join(BOUNDED_CALL_LIMIT_S)
-        if child.is_alive():
-            child.kill()
+    kind, result = capture_bounded.in_child("detection", "the detection process", _detect_in_child, (backend, modes),
+                                            limit_s=STEP_LIMIT_S, name="skellycam detection")
     if kind == "failed":
         raise result
     cameras, links = [], {}
