@@ -54,12 +54,16 @@ These entries are `accepted`.
 | [VHD3](entries/VHD3-answers-of-the-owner-q694-q717-q718.md) | v1 playback answers Q694, Q717, Q718: WebCodecs for H.264 in each phase, WASM for `mp4v`, WASM `h264` fallback per tile, 8-bit 4:2:0 H.264 later | accepted |
 | [A56K](entries/A56K-choices-of-the-v1-playback-spec.md) | Draft `specs/player-legacy.md` rev. 5, T-LEG-01 to 72: WebCodecs route and WASM fallback, frame table and seek rules, locked play, decoder build, Dependabot | accepted |
 | [EM6A](entries/EM6A-answers-of-the-owner-to-the-v1-playback-questions-of-revision-5.md) | v1 playback answers Q733 to Q749, Q764 to Q767: file rules to skellyspecs, secret header, F6 too slow, macOS re-sign, default token, watch later | accepted |
-| [8CP7](entries/8CP7-certify-spec-draft-3-choices-of-the-agent.md) | Certify spec draft 3 on format 1.4.0, tests T-CERT-01 to 67, 15 agent choices: split checks, model item, gate roll-ups, local record, macOS probes | accepted |
 | [PA3A](entries/PA3A-decision-of-the-user-on-the-test-workflow-on-dom-integration.md) | "Yes": `test.yml` runs on each push to `dom/integration`: ruff, the test suite and the UI typecheck | accepted |
 | [QF7V](entries/QF7V-choices-of-the-test-workflow-on-dom-integration.md) | Choices of the push run of `test.yml`: no run for log-only pushes, no macOS job on a push, pinned labels, PortAudio, no `capture_local`, no fail-fast, 60 min | accepted |
 | [88HQ](entries/88HQ-decisions-of-the-user-on-q842-to-q856.md) | Q842 to Q856: J1HD and TYH0 accepted, the stall watch at 2 s, the player label and picked folders, absorb sentences, N72V, push rule | accepted |
 | [8MTY](entries/8MTY-answers-v1-to-v7-of-the-user-to-the-3b-and-3c-tests.md) | Answers V1 to V7: `capture_modes` in 3b, auto rate of a raw format, `jpeg_encoder`, OpenCV parity, range tests | accepted |
 | [9V4Y](entries/9V4Y-decisions-of-the-user-on-the-shutdown-lane-q924-to-q928.md) | Q924 to Q928: the shutdown lane's choices; no Electron bound; skellylogs fix; "port in use" in the UI; shield first, then the limit | accepted |
+| [C47T](entries/C47T-choices-of-the-ci-lane.md) | Choices of the CI lane: uv from `doc-checks.yml`, `test_workflows.py`, `tsconfig.tests.json`, one type fix, uv steps in `player.yml`, D: drive try | accepted |
+| [6PJ2](entries/6PJ2-decisions-of-the-user-on-q929-to-q941.md) | Q929 to Q941: merge and push rule; Q931 pace split; Q934 a second Ctrl-C; Q938 Quick Sync hang; VTW3, KXQ9, 4W3H accepted; 8CP7 absorbed | accepted |
+| [318R](entries/318R-decisions-of-the-user-on-q942-to-q955.md) | Q942 to Q955: SKZ8, W3VD, FP47, CM9S, C47T and WP77 (in part) accepted; three locales; Q950 marks; later lanes; Q946 open | accepted |
+| [D6YZ](entries/D6YZ-decisions-of-the-user-on-the-server-spawn-lane-q961-q973-to-q975.md) | Q961, Q973 to Q975: `dom/server-spawn` merges; stdout stays dropped; YR3G accepted once safe; the packaged app tried after the merge | accepted |
+| [YR3G](entries/YR3G-choices-of-the-server-spawn-lane.md) | Choices of the server spawn lane: `spawn` with no shell and no output limit, stdout to the null device, the stderr tail, no kill | accepted |
 | [F7BK](entries/F7BK-decisions-of-the-user-on-the-shutdown-follow-ups-q972-q976-q977.md) | Q972, Q976, Q977: a thread join returns for a thread never started; the strict xfail stays until fixed; forced exit 5 s after a second Ctrl-C | accepted |
 
 ### Proposed
@@ -88,16 +92,11 @@ These entries wait for a decision of the user. Section is the section or area of
 | [7GC1](entries/7GC1-choices-of-the-gate-on-the-test-clock-and-the-end-of-t-cap-05.md) | Choices of fix lane 6: a loop at an open gate holds the test clock until its next probe, forced steps still move it; T-CAP-05 checks the last ring frames | none | proposed |
 | [JFG4](entries/JFG4-choices-of-the-capture-timings-build.md) | Choices of the capture timings build that the user did not decide: source sets, sets, main process, message loop, route, test seams, faults | none | proposed |
 | [4PPS](entries/4PPS-choices-of-the-answers-lane-of-q842-to-q856.md) | Choices of the answers lane that wait: the Q852 sentences (item 5) and the time of the control-read check (item 7) | none | proposed |
-| [4W3H](entries/4W3H-choices-of-the-q928-build.md) | Choices of the Q928 build: the take start and stop as shielded tasks, Ctrl-Break as Ctrl-C, the cancel and real-signal tests | `recorder` | proposed |
+| [K907](entries/K907-the-open-part-of-adr-wp77-picks-across-runs.md) | The part of ADR-WP77 that waits for Q946: a pick ends with the main process, the old list file, the T-PLAY-62 check, a list file later | none | proposed |
+| [9GHT](entries/9GHT-choices-of-the-answers-lane-of-q929-to-q955.md) | Choices of the answers lane of Q929 to Q955: the Q931 split, the Q932 tolerance, the split of WP77, log facts | none | proposed |
+| [590X](entries/590X-choices-of-the-ui-messages-lane.md) | Choices of the UI messages lane (Q925, Q927): native boxes, 10 s from the quit, the bind-error rule, no retry, `isRunning` after the exit, texts via the menu | `recorder` | proposed |
+| [6MMJ](entries/6MMJ-choices-of-the-move-of-t-prv-25-and-of-the-kit-proposal.md) | Choices of the Q964 move: a test that names no package and its limits, kind `tool`, `capture.yml`, the kit branch, skellytracker open | none | proposed |
 | [M5PJ](entries/M5PJ-choices-of-the-shutdown-follow-ups-q934-q935.md) | Choices of the shutdown follow-ups: a second Ctrl-C after 1 s sets the kill flag, forced exit, 409 while groups close, cancel tests | `recorder` | proposed |
-| [SKZ8](entries/SKZ8-choices-of-the-blocking-half-of-t-prv-17.md) | Choices of the blocking half of T-PRV-17 (Q923): B gets 15 camera messages within the loose limit of 9.1; the check of A keeps 1 s | none | proposed |
-| [C47T](entries/C47T-choices-of-the-ci-lane.md) | Choices of the CI lane: uv from `doc-checks.yml`, `test_workflows.py`, `tsconfig.tests.json`, one type fix, uv steps in `player.yml`, D: drive try | none | proposed |
-| [VTW3](entries/VTW3-choices-of-the-quick-sync-check-in-a-child-process.md) | Q879 choices: one child call for detection and Quick Sync, 5 s, log levels; `system:quick-sync` in both levels on Windows, record-only, no GPU is false | none | proposed |
-| [W3VD](entries/W3VD-choices-of-the-tile-timings-lane.md) | Choices of the tile timings lane: `buildSummary` on the fixture input, a checked copy of the step table, one handle for each camera, the host in skellycam-ui | none | proposed |
-| [FP47](entries/FP47-choices-of-the-triage-of-the-first-ci-run-of-the-4b-component-tests.md) | Triage of the first CI run of the 4b component tests: the harness window and grid fit a small runner screen; no product fault | none | proposed |
-| [KXQ9](entries/KXQ9-choices-of-the-quick-run-without-the-six-full-checks.md) | Q902 choices: no quick row of the six full checks (not planned, no `not-run`, not in `not_built`); the work stays; T-CERT-153; 8CP7 not absorbed (Q853) | `certify` | proposed |
-| [WP77](entries/WP77-choices-of-the-player-label-and-picked-folders-lane.md) | Choices of the player label and picked-folders lane: when the capture info is read, its checks, the member by key, equal labels, picks for the run, links | none | proposed |
-| [CM9S](entries/CM9S-choices-of-the-clean-ups-lane.md) | Choices of the clean-ups lane: the Q871 guard and probes, the three locales of Q900, the stall-watch test, the kill rule, the fixture, the docs page | none | proposed |
 
 The entries that are `rejected`, `superseded by XXXX`, `absorbed into <path>#<anchor>`,
 `evidence; used by XXXX`, `evidence; replaced by XXXX` or `done` are in [historical.md](historical.md).

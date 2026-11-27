@@ -11,6 +11,7 @@ import { localeChanged, selectLocale, localeToggled } from '@/store/slices/setti
 import { isElectron } from '@/services/electron-ipc/electron-ipc';
 import { SUPPORTED_LOCALES } from '@/i18n';
 import { useRecordingGuard } from '@/components/RecordingGuardProvider';
+import { DEFAULT_PORT } from '@/services/server/server-helpers/server-urls';
 
 import type { SupportedLocale } from '@/i18n';
 import type { MenuAction } from '../../electron/main/services/menu-builder';
@@ -44,6 +45,11 @@ const MENU_LABEL_KEYS = [
     'startRecording',
     'stopRecording',
     'language',
+    // The messages of the main process about the server (specs/recorder.md 9.2)
+    'savingRecordingsMessage',
+    'savingRecordingsDetail',
+    'portInUseMessage',
+    'portInUseDetail',
 ] as const;
 
 // Build the locale entries array from the SUPPORTED_LOCALES config (once)
@@ -71,7 +77,7 @@ export function useMenuActions({ onToggleSidebar }: UseMenuActionsParams): void 
 
         const labels: Record<string, string> = {};
         for (const key of MENU_LABEL_KEYS) {
-            labels[key] = t(key);
+            labels[key] = t(key, { port: DEFAULT_PORT });
         }
         window.electronAPI.sendMenuLabels({
             labels,

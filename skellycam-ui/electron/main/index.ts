@@ -8,6 +8,8 @@ import { LifecycleLogger } from './services/logger';
 import { buildApplicationMenu } from './services/menu-builder';
 import { installTakeHandler, registerTakeScheme } from '../../src/player/main/take-scheme.ts';
 import { setTakeHandler } from './api';
+import { SAVING_NOTICE_DELAY_MS, noticeWhileWaiting } from './services/server-messages.ts';
+import { showSavingNotice } from './services/server-dialogs';
 import path from 'node:path';
 // import os from 'node:os'; // Uncomment if needed for platform-specific checks
 
@@ -21,6 +23,14 @@ export const APP_ENVIRONMENT = {
 // Platform config
 // if (os.release().startsWith('6.1')) app.disableHardwareAcceleration();
 if (process.platform === 'win32') app.setAppUserModelId(app.getName());
+
+// A quit waits for the exit of the server with no bound (Q925); after 10 s it shows the "saving" box (recorder.md 9.2)
+let quitWait: Promise<void> | null = null;
+function waitForServerExit(): Promise<void> {
+    quitWait ??= noticeWhileWaiting(PythonServer.shutdown(), SAVING_NOTICE_DELAY_MS, showSavingNotice)
+        .finally(() => { quitWait = null; });
+    return quitWait;
+}
 
 // The scheme of the take handler must be registered before `app` is ready (specs/player.md 4.3)
 registerTakeScheme();
@@ -78,7 +88,7 @@ if (!gotTheLock) {
     app.on('window-all-closed', async () => {
         console.log('All windows closed, shutting down...');
         try {
-            await PythonServer.shutdown();
+            await waitForServerExit();
             app.quit();
         } catch (error) {
             console.error('Leaving backend running to protect video saves:', error);
@@ -96,7 +106,7 @@ if (!gotTheLock) {
         console.log('App is quitting, cleaning up...');
         UpdateHandler.shutdown();
         try {
-            await PythonServer.shutdown();
+            await waitForServerExit();
             app.exit(0);
         } catch (error) {
             console.error('Quit deferred to protect video saves:', error);

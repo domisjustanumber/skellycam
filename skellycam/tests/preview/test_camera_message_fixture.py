@@ -5,15 +5,15 @@ import subprocess
 import sys
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[2]
-TOOL = ROOT / "tools" / "write_camera_message_fixture.py"
+from skellycam.tests.preview.preview_helpers import SPEC_EXAMPLE, parse_camera_message
+
+ROOT = Path(__file__).resolve().parents[3]
+TOOL = Path(__file__).with_name("write_camera_message_fixture.py")
 FIXTURE = ROOT / "skellycam-ui" / "src" / "services" / "server" / "preview" / "tests" / "camera-messages.json"
 CASES = {"spec-example", "flagged", "oversize", "flags-0x30-rotation-270", "camera-id-16", "large-values"}
 
 
 def test_t_prv_25_the_shared_fixture_is_the_output_of_the_tool():
-    from skellycam.tests.preview.preview_helpers import SPEC_EXAMPLE, parse_camera_message
-
     before = FIXTURE.read_bytes() if FIXTURE.exists() else None
     run = subprocess.run([sys.executable, str(TOOL), "--check"], cwd=ROOT, capture_output=True, text=True)
     assert (FIXTURE.read_bytes() if FIXTURE.exists() else None) == before, "--check wrote the tracked file"

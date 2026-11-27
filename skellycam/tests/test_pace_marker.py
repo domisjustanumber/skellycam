@@ -48,6 +48,8 @@ PACE_TESTS = [
     ("skellycam.tests.preview.test_ws_flow", "test_t_prv_17_b_gets_15_messages_within_1_s"),
     # Q907, Q928 [ADR-9V4Y]: the connection limit of the shutdown of the server (recorder.md 9.1)
     ("skellycam.tests.test_server_exit", "test_the_server_ends_within_the_connection_limit"),
+    # Q931: no camera ends under load with THREAD workers (a GIL of the test process; the product uses processes)
+    ("skellycam.tests.capture.test_stall_watch", "test_no_camera_ends_under_load_with_thread_workers"),
     # Q934: the bound of 9.1 item 9 after a second Ctrl-C
     ("skellycam.tests.take_recorder.test_second_ctrl_c", "test_a_second_ctrl_c_ends_every_process_within_its_bound"),
     ("skellycam.tests.take_recorder.test_second_ctrl_c", "test_the_forced_exit_comes_5_s_after_the_abort"),
@@ -115,7 +117,7 @@ def test_each_pace_test_has_the_marker(module, name):
 
 
 def test_the_marked_tests_are_exactly_the_pace_tests():
-    """16.1: a `pace` test holds only its bounds of time. No other test of the package has the marker."""
+    """16.1: a `pace` test holds only the checks that depend on the pace. No other test of the package has the marker."""
     marked = set()
     for path in (REPO / "skellycam" / "tests").rglob("test_*.py"):
         lines = path.read_text(encoding="utf-8").splitlines()

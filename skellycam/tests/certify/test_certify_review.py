@@ -199,10 +199,29 @@ def test_review_3_the_session_child_ends_when_its_caller_dies(tmp_path):
 
 
 def _same(kid):
+    """The process of `kid` is still alive: the same pid and a create time within 1.5 s (one tick of the boot time of
+    Linux, Q932). shortcut: a clock step over 1.5 s between the two reads still hides the process; psutil 7.2.2 has
+    no public monotonic create time (only the private `_proc.create_time(monotonic=True)`), use it when one comes."""
     try:
-        return abs(psutil.Process(kid["pid"]).create_time() - kid["created"]) < 0.01
+        return abs(psutil.Process(kid["pid"]).create_time() - kid["created"]) < 1.5
     except psutil.NoSuchProcess:
         return False
+
+
+def test_same_finds_a_live_process_across_a_tick_of_the_boot_time():
+    """Q932: on Linux `create_time()` adds the boot time of `/proc/stat`, in whole seconds, read again at each call;
+    a tick of it between the two reads moves the value by 1 s. `_same` must still find the live process (else a
+    leak hides), and must not take another process of that pid (created at another time) or a pid that is gone."""
+    me = psutil.Process()
+    created = me.create_time()
+    assert _same(dict(pid=me.pid, created=created))
+    assert _same(dict(pid=me.pid, created=created - 1.0)) and _same(dict(pid=me.pid, created=created + 1.0))
+    assert not _same(dict(pid=me.pid, created=created + 2.0))
+    assert not _same(dict(pid=me.pid, created=created - 60.0))
+    child = multiprocessing.get_context("spawn").Process(target=time.sleep, args=(0,))
+    child.start()
+    child.join(30)
+    assert not _same(dict(pid=child.pid, created=created))
 
 
 # ---------------------------------------------------------------------------

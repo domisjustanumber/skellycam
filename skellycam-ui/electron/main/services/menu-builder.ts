@@ -1,5 +1,6 @@
 // electron/main/services/menu-builder.ts
 import { app, BrowserWindow, Menu, MenuItemConstructorOptions, shell } from 'electron';
+import { SERVER_MESSAGE_TEXTS } from './server-messages.ts';
 
 // Channel name for menu-triggered actions sent to the renderer
 const MENU_CHANNEL = 'menu-action';
@@ -58,6 +59,11 @@ export interface MenuLabels {
     startRecording: string;
     stopRecording: string;
     language: string;
+    // The messages of the main process about the server (specs/recorder.md 9.2), sent with the menu labels
+    savingRecordingsMessage: string;
+    savingRecordingsDetail: string;
+    portInUseMessage: string;
+    portInUseDetail: string;
 }
 
 // English fallback labels used until the renderer sends translated ones
@@ -89,7 +95,15 @@ const DEFAULT_LABELS: MenuLabels = {
     startRecording: 'Start Recording',
     stopRecording: 'Stop Recording',
     language: 'Language',
+    ...SERVER_MESSAGE_TEXTS,
 };
+
+let currentLabels: MenuLabels = DEFAULT_LABELS;
+
+/** The texts that the renderer sent last: they stay after the last window closed. */
+export function getLabels(): MenuLabels {
+    return currentLabels;
+}
 
 function sendMenuAction(action: MenuAction): void {
     const window = BrowserWindow.getFocusedWindow();
@@ -309,6 +323,7 @@ export interface MenuBuildParams {
 export function buildApplicationMenu(params: MenuBuildParams = {}): void {
     const { labels, locales = [], currentLocale = 'en' } = params;
     const t: MenuLabels = { ...DEFAULT_LABELS, ...labels };
+    currentLabels = t;
     const template: MenuItemConstructorOptions[] = [];
 
     // macOS app menu

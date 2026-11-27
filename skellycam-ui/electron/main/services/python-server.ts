@@ -1,12 +1,15 @@
-import {exec} from 'child_process';
+import type {ChildProcess} from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
 import {LifecycleLogger} from "./logger";
 import {gracefulPythonShutdown} from './graceful-python-shutdown';
 import {DEFAULT_PORT} from '../../../src/services/server/server-helpers/server-urls';
 import {PYTHON_EXECUTABLE_CANDIDATES} from "../app-paths";
+import {endedWithPortInUse, processIsRunning} from './server-messages.ts';
+import {showPortInUse} from './server-dialogs';
+import {startServerProcess} from './server-process.ts';
 
-let pythonProcess: ReturnType<typeof exec> | null = null;
+let pythonProcess: ChildProcess | null = null;
 
 export interface ExecutableCandidate {
     name: string;
@@ -43,16 +46,18 @@ export class PythonServer {
 
             this.currentExecutablePath = executablePath;
             console.log(`Launching Python server from: ${executablePath}`);
-            pythonProcess = exec(`"${executablePath}"`, {
-                env: {
-                    ...process.env,
-                },
-                maxBuffer: 1024 * 1024 * 100 // 100MB buffer
-            });
+            // recorder.md 9.3: no shell and no output limit, so no output size can kill or detach the server
+            const started = startServerProcess(executablePath);
+            pythonProcess = started.child;
 
             pythonProcess.on('exit', (code) => {
                 console.log(`Python server exited (code: ${code})`);
                 this.currentExecutablePath = null;
+            });
+
+            // recorder.md 9.2 item 2: decide at `close`, after the end of the output, not at `exit`
+            pythonProcess.on('close', (code) => {
+                if (endedWithPortInUse(code, started.stderrTail())) showPortInUse();
             });
 
             pythonProcess.on('error', (error) => {
@@ -185,7 +190,7 @@ export class PythonServer {
     }
 
     static isRunning(): boolean {
-        return pythonProcess !== null && pythonProcess.pid !== undefined && !pythonProcess.killed;
+        return processIsRunning(pythonProcess);
     }
 
     static getProcessInfo(): { pid: number | undefined; killed: boolean } | null {
