@@ -15,3 +15,4 @@ accepted entry uses, or that a later measurement replaces, is in [historical.md]
 | [953T](entries/953T-r11-measurements-after-the-review-fixes.md) | R11 measurements again after the review fixes and D1; the kill window that loses a second frame | evidence |
 | [HDC9](entries/HDC9-measurements-m-prv-1-to-m-prv-5-of-the-preview-sender.md) | M-PRV-1 to M-PRV-5 of the preview sender: uvicorn deflate compresses each JPEG (16.9 against 0.23 ms at 1080p); targets met with it off (Windows) | evidence |
 | [3TYP](entries/3TYP-timings-of-the-small-parts-of-the-frame-path.md) | Timings of the small parts of the frame path on synthetic JPEGs: check, hash, parse, puts, mean, pickle, clock read (Windows) | evidence |
+| [0ZKW](entries/0ZKW-first-run-of-the-step-4b-preview-benchmarks.md) | First clean runs of T-PRV-51 and T-PRV-52: two small misses, then each target met after Q893 (B-1b 55 of 53.1 at 60 fps) | evidence |

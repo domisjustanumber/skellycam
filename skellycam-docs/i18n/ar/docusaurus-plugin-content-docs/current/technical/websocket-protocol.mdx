@@ -10,9 +10,9 @@ import { AiGeneratedBanner } from '@freemocap/skellydocs';
 
 تحمل نقطة نهاية WebSocket على `/skellycam/websocket/connect` ثلاثة أنواع من حركة البيانات:
 
-1. **حمولات الإطارات الثنائية** (خادم -> عميل) — إطارات JPEG متعددة الكاميرات
-2. **رسائل JSON** (خادم -> عميل) — سجلات، تحديثات معدل الإطارات، حالة التطبيق
-3. **رسائل نصية** (عميل -> خادم) — إقرارات الإطارات و ping/pong
+1. **Binary camera messages** (server -> client): one JPEG frame of one camera in each message
+2. **JSON messages** (server -> client): log records, framerate updates, application state
+3. **Text messages** (client -> server): ready messages and ping/pong
 
 ## دورة حياة الاتصال
 
@@ -21,99 +21,64 @@ import { AiGeneratedBanner } from '@freemocap/skellydocs';
 3. يبدأ العميل في استقبال الرسائل فورًا.
 4. عندما ينقطع العميل (أو يُغلق الخادم)، تُلغى جميع المهام ويُغلق الاتصال.
 
-## تنسيق حمولة الإطارات الثنائية
+## Binary Camera Message Format
 
-عندما تكون الكاميرات نشطة، يرسل الخادم رسائل ثنائية (bytes) تحتوي على إطارات مضغوطة بتنسيق JPEG من جميع الكاميرات في المجموعة النشطة. كل رسالة ثنائية هي حمولة إطارات متعددة مستقلة بالهيكل التالي:
+When cameras are active, the server sends one binary message for each frame of each camera that it sends: the
+camera message. It is a header of 48 bytes, then the JPEG bytes of the frame ring, untouched (no resize, no
+re-encode, no rotation). Each camera has its own messages, so a slow or a stopped camera does not hold back another
+camera.
 
 ```
 +--------------------------------------------+
-|              Payload Header (24 bytes)      |
+|           Header (48 bytes)                |
 +--------------------------------------------+
-|         Frame Header Camera 0 (56 bytes)   |
-+--------------------------------------------+
-|         JPEG Data Camera 0 (variable)      |
-+--------------------------------------------+
-|         Frame Header Camera 1 (56 bytes)   |
-+--------------------------------------------+
-|         JPEG Data Camera 1 (variable)      |
-+--------------------------------------------+
-|                    ...                      |
-+--------------------------------------------+
-|         Frame Header Camera N (56 bytes)   |
-+--------------------------------------------+
-|         JPEG Data Camera N (variable)      |
-+--------------------------------------------+
-|              Payload Footer (24 bytes)      |
+|           JPEG (jpeg_len bytes)            |
 +--------------------------------------------+
 ```
 
-جميع الأعداد الصحيحة متعددة البايت هي **little-endian**. تستخدم الهياكل تخطيطًا **محاذيًا** (numpy `align=True`)، مما يُدخل بايتات حشو للمحاذاة الطبيعية.
+All multi-byte integers are **little-endian**. The Python form is `struct.Struct("<B3xIqqII16s")`. The message length
+is `48 + jpeg_len`.
 
-### ترويسة الحمولة (24 بايت)
+| Offset | Size | Type | Name | Value |
+|---|---|---|---|---|
+| 0 | 1 | u8 | `version` | 1. It is also the message type. |
+| 1 | 3 | | reserved | zero |
+| 4 | 4 | u32 | `flags` | the ring flags, all 32 bits |
+| 8 | 8 | i64 | `frame_number` | the frame number of the camera |
+| 16 | 8 | i64 | `arrival_ns` | `perf_counter_ns` at the capture callback |
+| 24 | 4 | u32 | `rotation_cw_deg` | 0, 90, 180 or 270 |
+| 28 | 4 | u32 | `jpeg_len` | the number of JPEG bytes after the header; 0 for a flagged frame |
+| 32 | 16 | ASCII | `camera_id` | the camera id, NUL-padded |
+| 48 | `jpeg_len` | bytes | JPEG | the bytes of the ring, untouched |
 
-| Offset | Size | Type | Field | الوصف |
-|--------|------|------|-------|-------------|
-| 0 | 1 | `uint8` | `message_type` | دائمًا `0` (PAYLOAD_HEADER) |
-| 1-7 | 7 | — | *(padding)* | حشو محاذاة لـ `frame_number` بحجم 8 بايت |
-| 8 | 8 | `int64` | `frame_number` | عداد إطارات متزايد بشكل رتيب |
-| 16 | 4 | `int32` | `number_of_cameras` | عدد إطارات الكاميرا في هذه الحمولة |
-| 20-23 | 4 | — | *(padding)* | حشو محاذاة الهيكل |
+Example: camera `a1b2`, frame 258, arrival 1,000,000,007 ns, rotation 90, flags 0x30, and the 4 bytes `FF D8 FF D9`
+as the JPEG:
 
-### ترويسة الإطار (56 بايت، واحدة لكل كاميرا)
+```text
+ 0: 01 00 00 00 30 00 00 00 02 01 00 00 00 00 00 00
+16: 07 ca 9a 3b 00 00 00 00 5a 00 00 00 04 00 00 00
+32: 61 31 62 32 00 00 00 00 00 00 00 00 00 00 00 00
+48: ff d8 ff d9
+```
 
-| Offset | Size | Type | Field | الوصف |
-|--------|------|------|-------|-------------|
-| 0 | 1 | `uint8` | `message_type` | دائمًا `1` (FRAME_HEADER) |
-| 1-7 | 7 | — | *(padding)* | حشو محاذاة |
-| 8 | 8 | `int64` | `frame_number` | نفس رقم الإطار في ترويسة الحمولة |
-| 16 | 16 | `ascii` | `camera_id` | سلسلة ASCII منتهية بـ null، محشوة بأصفار إلى 16 بايت |
-| 32 | 4 | `int32` | `camera_index` | فهرس الكاميرا الصحيح |
-| 36 | 4 | `int32` | `image_width` | عرض صورة JPEG بالبكسل |
-| 40 | 4 | `int32` | `image_height` | ارتفاع صورة JPEG بالبكسل |
-| 44 | 4 | `int32` | `color_channels` | عدد قنوات اللون (عادة 3) |
-| 48 | 4 | `int32` | `jpeg_string_length` | طول بيانات JPEG التالية بالبايت |
-| 52-55 | 4 | — | *(padding)* | حشو محاذاة الهيكل |
+### Field Rules
 
-تلي كل ترويسة إطار مباشرة بيانات JPEG الخام (`jpeg_string_length` بايت). لا يوجد حشو بين بيانات JPEG وترويسة الإطار التالية.
+- **`version`**: a parser that sees a value other than 1 refuses the message and logs both values.
+- **`frame_number`** and **`arrival_ns`** are 64-bit values. A JavaScript client reads them as `BigInt`
+  (`DataView.getBigInt64`).
+- **A flagged frame**: when `flags & 0x0F` is not zero, the message has no JPEG (`jpeg_len` 0). The client keeps the
+  last image and shows the mark "flagged frame".
+- A client refuses a message that is shorter than 48 bytes, whose length is not `48 + jpeg_len`, whose rotation is
+  not one of the four values, or whose camera id is empty.
 
-### تذييل الحمولة (24 بايت)
+### Implementation References
 
-| Offset | Size | Type | Field | الوصف |
-|--------|------|------|-------|-------------|
-| 0 | 1 | `uint8` | `message_type` | دائمًا `2` (PAYLOAD_FOOTER) |
-| 1-7 | 7 | — | *(padding)* | حشو محاذاة |
-| 8 | 8 | `int64` | `frame_number` | يجب أن يتطابق مع رقم الإطار في ترويسة الحمولة |
-| 16 | 4 | `int32` | `number_of_cameras` | يجب أن يتطابق مع عدد الكاميرات في ترويسة الحمولة |
-| 20-23 | 4 | — | *(padding)* | حشو محاذاة الهيكل |
-
-يعمل التذييل كفحص اتساق — يمكن للمحللين التحقق من تطابق `frame_number` و `number_of_cameras` مع الترويسة.
-
-### ثوابت نوع الرسالة
-
-| Value | Name | الوصف |
-|-------|------|-------------|
-| `0` | `PAYLOAD_HEADER` | بداية حمولة إطارات متعددة |
-| `1` | `FRAME_HEADER` | بيانات وصفية لإطار كاميرا (متبوعة ببيانات JPEG) |
-| `2` | `PAYLOAD_FOOTER` | نهاية حمولة إطارات متعددة |
-
-### تحليل الحمولة
-
-لتحليل حمولة ثنائية:
-
-1. اقرأ 24 بايت -> ترويسة الحمولة. تحقق من أن `message_type == 0`. استخرج `frame_number` و `number_of_cameras`.
-2. لكل كاميرا (عدد `number_of_cameras` من المرات):
-    1. اقرأ 56 بايت -> ترويسة الإطار. تحقق من أن `message_type == 1`. استخرج `jpeg_string_length`.
-    2. اقرأ `jpeg_string_length` بايت -> بيانات صورة JPEG الخام.
-3. اقرأ 24 بايت -> تذييل الحمولة. تحقق من أن `message_type == 2` ومن تطابق `frame_number` / `number_of_cameras` مع الترويسة.
-
-### مراجع التنفيذ
-
-- **Python (الخادم):** `skellycam/core/types/frontend_payload_bytearray.py` — تبني `create_frontend_payload()` الحمولة الثنائية باستخدام مصفوفات numpy المهيكلة.
-- **TypeScript (العميل):** `skellycam-ui/src/services/server/server-helpers/frame-processor/binary-protocol.ts` — تعريفات الهياكل وإزاحات الحقول. `binary-frame-parser.ts` — تحلل `parseMultiFramePayload()` البيانات الثنائية وتنشئ كائنات `ImageBitmap`.
-
-### ملاحظات معالجة الصور
-
-يغيّر الخادم حجم كل إطار كاميرا قبل ترميز JPEG. إذا أرسل العميل `displayImageSizes` في إقرار إطار، يغيّر الخادم الحجم لمطابقة أبعاد عرض العميل. وإلا، يتم تصغير الصور إلى 50% من دقتها الأصلية. يستخدم ترميز JPEG مستوى جودة 80 افتراضيًا.
+- **Python (server):** `skellycam/api/websocket/preview_relay.py`: `pack_camera_frame()` builds the message, and
+  `PreviewRelay` sends the messages of one connection. `skellycam/api/websocket/websocket_message_types.py`:
+  `WebsocketMessageType` defines the JSON message type strings.
+- **TypeScript (client):** `skellycam-ui/src/services/server/preview/camera-message.ts`: `parseCameraMessage()`.
+  `preview-tiles.ts`: `PreviewTiles`, the flow control for each camera. The shared tile of
+  `skellycam-ui/src/player/` decodes the JPEG with `ImageDecoder` and draws it on the main thread.
 
 ## رسائل JSON (خادم -> عميل)
 
@@ -137,33 +102,47 @@ import { AiGeneratedBanner } from '@freemocap/skellydocs';
 
 يتم توجيه سجلات بمستوى `TRACE` (المستوى 5) وأعلى إلى WebSocket. تعرض الواجهة الأمامية هذه السجلات في لوحة الطرفية. يتم إنتاج السجلات بواسطة [skellylogs](https://github.com/freemocap/skellylogs).
 
-### تحديثات معدل الإطارات
+### Framerate Updates
 
 ```json
 {
   "message_type": "framerate_update",
   "camera_group_id": "group-0",
-  "backend_framerate": {
-    "mean_frame_duration_ms": 33.3,
-    "mean_frames_per_second": 30.0,
-    "frame_duration_max": 40.1,
-    "frame_duration_min": 28.5,
-    "frame_duration_mean": 33.3,
-    "frame_duration_stddev": 2.1,
-    "frame_duration_median": 33.2,
-    "frame_duration_coefficient_of_variation": 0.063,
-    "calculation_window_size": 100,
-    "framerate_source": "Server"
-  },
-  "frontend_framerate": {
-    "mean_frame_duration_ms": 34.1,
-    "mean_frames_per_second": 29.3,
-    "framerate_source": "Display"
+  "cameras": {
+    "a1b2": {
+      "delivered_framerate": {
+        "mean_frame_duration_ms": 33.3,
+        "mean_frames_per_second": 30.0,
+        "frame_duration_max": 40.1,
+        "frame_duration_min": 28.5,
+        "frame_duration_mean": 33.3,
+        "frame_duration_stddev": 2.1,
+        "frame_duration_median": 33.2,
+        "frame_duration_coefficient_of_variation": 0.063,
+        "calculation_window_size": 8,
+        "framerate_source": "a1b2"
+      },
+      "not_shown_count": 3,
+      "ring_skipped_count": 0,
+      "oversize_count": 0
+    }
   }
 }
 ```
 
-تُرسل تقريبًا كل 250 ملي ثانية عندما تكون الكاميرات نشطة. يمثل `backend_framerate` معدل التقاط الكاميرا الحقيقي (محسوب من أرقام الإطارات وطوابع الالتقاط الزمنية، دقيق حتى عندما يتخطى WebSocket إطارات بسبب الضغط العكسي). يمثل `frontend_framerate` معدل تسليم WebSocket (ما تستقبله واجهة المستخدم فعليًا).
+Sent every 250 ms for each group, with one item for each camera. The values are for this connection:
+
+- `delivered_framerate`: the rate at which the camera delivered frames to the server, from the frame numbers and the
+  capture times of the frame ring. It does not depend on the client. `null` when there is not enough data. The UI
+  shows it as "Captured".
+- `not_shown_count`: the frames that the server did not send on this connection, because the client was slower than
+  the camera.
+- `ring_skipped_count`: the frames that the frame ring skipped.
+- `oversize_count`: the frames that were larger than their ring slot.
+
+The UI computes "Displayed" itself: the frames that its window drew for each camera. `replaced_count` (the frames
+that the gate replaced) is in the camera status of `app_state`, at
+`state.camera_groups[<group id>].cameras[<camera id>].status`, with the camera `state`.
 
 ### حالة التطبيق
 
@@ -185,38 +164,29 @@ import { AiGeneratedBanner } from '@freemocap/skellydocs';
 
 تُرسل تقريبًا كل ثانية وعند كل تغيير في حالة التطبيق (مثل بدء/إيقاف التسجيل).
 
-## رسائل العميل -> الخادم
+## Client -> Server Messages
 
-### إقرار الإطار
+### Ready Message
 
-بعد معالجة حمولة إطار ثنائية، يرسل العميل إقرارًا:
+When the client has drawn the frame of a camera message, it sends one ready message for that camera:
 
 ```json
-{
-  "frameNumber": 42,
-  "displayImageSizes": {
-    "group-0": {
-      "0": { "width": 640, "height": 480 },
-      "1": { "width": 640, "height": 480 }
-    }
-  }
-}
+{"message_type": "camera_ready", "camera_id": "a1b2"}
 ```
-
-يخبر حقل `frameNumber` الخادم بالإطار الذي تم عرضه. يستخدم الخادم هذا لإدارة الضغط العكسي — لن يرسل إطارات جديدة حتى يتم الإقرار بالإطار السابق. إذا تأخرت الواجهة الأمامية، يتخطى الخادم الإطارات لمنع تراكم المخزن المؤقت.
-
-حقل `displayImageSizes` (اختياري) يخبر الخادم بأبعاد العرض الحالية لكل كاميرا، مما يسمح له بتغيير حجم إطارات JPEG لتطابقها، مما يقلل عرض النطاق.
 
 ### Ping/Pong
 
-إرسال النص `"ping"` سيتلقى `"pong"` كاستجابة. يمكن استخدام هذا لفحوصات صحة الاتصال.
+Sending the text `"ping"` will receive `"pong"` in response. This can be used for connection health checks.
 
-## إدارة الضغط العكسي
+## Flow Control and the Safety Net
 
-يتتبع الخادم رقم آخر إطار مُرسل ورقم آخر إطار تم الإقرار به. إذا لم تُقر الواجهة الأمامية بأحدث إطار:
+The server sends a camera at most one camera message that is not yet ready:
 
-1. يتخطى الخادم إرسال إطارات جديدة.
-2. بعد وصول الإقرار، يتخطى الخادم إطارًا إضافيًا واحدًا للسماح للواجهة الأمامية باللحاق.
-3. إذا تجاوزت الفجوة 1000 إطار، يتم تسجيل تحذير بمستوى trace.
+1. After a camera message, the server waits for the ready message of that camera. Then it sends the newest frame of
+   that camera. The frames in between are not shown, and `not_shown_count` counts them.
+2. The client keeps only the newest pending message of each camera, gives the tile one update at a time, and draws at
+   most one frame of each camera for each display refresh. It sends one ready message for each draw.
+3. **The safety net**: when no ready message comes, the server sends the newest frame of the camera after 1 s all
+   the same. A hidden window thus gets one message each second for each camera.
 
-يضمن هذا ألا ينمو مخزن WebSocket المؤقت بلا حدود حتى عندما يكون عرض الواجهة الأمامية أبطأ من معدل التقاط الكاميرا.
+A slow camera or a slow tile holds back only its own camera. Websocket compression is off: a client must not need it.

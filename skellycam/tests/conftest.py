@@ -95,8 +95,7 @@ def mock_camera_group_manager():
     mgr.close_all_camera_groups = AsyncMock()
 
     # Sync methods
-    mgr.get_latest_frontend_payloads = MagicMock(return_value={})
-    mgr.get_backend_framerate_updates = MagicMock(return_value={})
+    mgr.closing = False  # the preview sender of each connection reads it (preview-4b.md 3.2)
     mgr.to_state_dict = MagicMock(return_value={"camera_groups": {}})
     mgr.camera_groups = {}
     # capture-timings.md 6.3: the switch is off (the `capture_timings` message of the websocket encodes this body)

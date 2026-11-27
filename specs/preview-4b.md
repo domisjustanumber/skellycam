@@ -12,7 +12,8 @@ later go-ahead. An agent wrote revisions 1 and 2 on 2026-11-20
 holds the agent choices of revision 3. The user answered the four new questions Q10 to Q13 of
 revision 3 on 2026-11-20, and decided the pull request target (section 12.1). One question, Q14,
 is open (section 12.3). The accepted step 4a spec [`preview.md`](preview.md) does not change. This
-file adds step 4b.
+file adds step 4b. Revision 4 of 2026-11-25 puts the answers Q824 to Q836 of the user on the 4b tests into
+5.1, 5.4, 5.8, 6.2, 7.4, 7.7 and 7.8 [ADR-NA1N](../decisions/entries/NA1N-answers-of-the-user-to-the-questions-of-the-step-4b-tests.md).
 
 ## 0. How to read this spec
 
@@ -29,6 +30,10 @@ Marks:
   one ready message per draw; the old group message deleted with no period of two formats; the
   branch to `development-streaming` only after 4b (now upstream `development` [PR]); an interface
   note at the end of 4b; no read-back of a tile canvas; websocket compression off.
+- **[Q864]** to **[Q873]**, **[Q885]**, **[Q893]** to **[Q897]**: the answers of the user of 2026-11-26 on the 4b
+  code [ADR-BPP8](../decisions/entries/BPP8-answers-of-the-user-q864-to-q873-on-the-step-4b-code.md).
+- **[Q824]** to **[Q836]**: the answers of the user of 2026-11-25 on the 4b tests (global numbers)
+  [ADR-NA1N](../decisions/entries/NA1N-answers-of-the-user-to-the-questions-of-the-step-4b-tests.md).
 - **[Q1]** to **[Q9]**: the answer of the user of 2026-11-20 to question n of revision 2
   (section 12.1). **[Q10]** to **[Q13]**: the answer of the user of 2026-11-20 to question n of
   revision 3 (section 12.1). **[Q14]**: an open question (section 12.3).
@@ -171,14 +176,20 @@ of `CameraGroupManager` stays [agent 13].
 | T-CAP-86 in `skellycam/tests/capture/test_states.py`, with `_collect`, and `parse_relay` in `capture_session.py` | Each camera on its own while one camera reopens | T-PRV-09, T-PRV-14, T-PRV-15 [4a 9.2]; T-PRV-48 (the UI) |
 | `test_websocket_frame_acknowledgment` in `skellycam/tests/test_websocket.py` | A client text keeps the connection open, and `ping` works after it | T-PRV-21 [4a 9.2]; T-PRV-27 (the product endpoint) |
 | The mocks `get_latest_frontend_payloads` and `get_backend_framerate_updates` in `skellycam/tests/conftest.py` | none (mocks) | The mock manager gets `closing = False` instead |
+| The two T-TIM-19 tests of the interim relay in `skellycam/tests/capture_timings/test_main_process.py` | the steps of the interim relay (`capture-timings.md` 6.5) | none: the relay is gone. The send-lock test of T-TIM-19 runs through `WebsocketServer.__init__` and its `PreviewRelay` [ADR-BPP8](../decisions/entries/BPP8-answers-of-the-user-q864-to-q873-on-the-step-4b-code.md) |
+
+Two tests that used a deleted name keep their rule [Q872]: `test_group_watch.py` reads with
+`read_latest_ring_frames`, and `test_websocket_internals.py` imports `ServerFramerateCalculator` from
+`framerate_tracker`. The counting relay of `ui_server.py` passes each keyword of the constructor of
+`PreviewRelay` on, and `test_pace_marker.py` lists the two halves of T-PRV-26 [Q872].
 
 The other three tests of `test_websocket.py` (connect, `ping`, `app_state`) fail on `dom/preview`
 today. `websocket_server_connect` calls `logger.success`, which exists only after
 `skellylogs.configure_logging`, and no test configures it: each test stops with
-`AttributeError: 'Logger' object has no attribute 'success'` (run on 2026-11-20). 4b adds a
-session fixture to `skellycam/tests/conftest.py` that calls `configure_logging` as
-`skellycam/__main__.py` does. Then these three tests and T-PRV-26 to T-PRV-28 can pass
-[agent 19]. `test_websocket_internals.py` and `test_websocket_compression.py` stay.
+`AttributeError: 'Logger' object has no attribute 'success'` (run on 2026-11-20). On
+`dom/integration`, the fixture `logging_runtime` of `skellycam/tests/conftest.py`, which the `app` fixture
+uses, gives `logger.success` and the other logging prerequisites. Thus 4b adds no session fixture, and
+these three tests and T-PRV-26 to T-PRV-28 pass [Q872] (it replaces agent 19). `test_websocket_internals.py` and `test_websocket_compression.py` stay.
 
 ## 4. Server
 
@@ -186,9 +197,13 @@ session fixture to `skellycam/tests/conftest.py` that calls `configure_logging` 
 
 In `WebsocketServer`:
 
-1. `__init__` makes `self._preview = PreviewRelay(self._cgm, self._send_bytes,
-   self._send_msgspec_json)`. The two send functions hold the send lock [4a agent 27]. ADR-24FZ
-   item 2 allows `_send_msgspec_json` as `send_json`.
+1. `__init__` makes `self._preview = PreviewRelay(self._cgm, self._send_bytes_in_lock,
+   self._send_msgspec_json, step_set=self._preview_timings.steps, send_lock=self._send_lock)`. The
+   two sends hold the send lock [4a agent 27]: `_send_msgspec_json` takes it, and the relay takes
+   `send_lock` around `_send_bytes_in_lock`, so that the `preview_send` bracket starts after the
+   lock (`capture-timings.md` 6.5, Q839). The lock and the bracket are in the relay; the server passes its
+   lock in [Q865] ([ADR-BPP8](../decisions/entries/BPP8-answers-of-the-user-q864-to-q873-on-the-step-4b-code.md)). ADR-24FZ item 2
+   allows `_send_msgspec_json` as `send_json`.
 2. `run` starts the task `_preview_relay` in place of `_frontend_image_relay`. `_preview_relay`
    awaits `self._preview.run()`. It has the same `except` clauses and the same `finally:
    self._signal_shutdown()` as `_logs_relay` [agent 1].
@@ -270,7 +285,7 @@ line 304). One camera in `starting`, `failed` or `dead` thus makes the whole gro
 | `skellycam-ui/src/services/server/preview/camera-message.ts` | `parseCameraMessage` (5.2). No import except types. |
 | `skellycam-ui/src/services/server/preview/preview-tiles.ts` | `PreviewTiles`: the newest pending message, the flow control, the tile updates (5.3, 5.4). It imports only `import type` of the tile. |
 | `skellycam-ui/src/services/server/preview/server-messages.ts` | Pure functions from an `app_state` or a `framerate_update` object, and the camera list, to the values of 5.5. The provider calls them. Node can load the file, so T-PRV-40 tests it. |
-| `skellycam-ui/src/store/slices/cameras/camera-labels.ts` | From the demo commits [demo]. 4b adds `cameraListLabel` (5.4) [agent 20]. No import. |
+| `skellycam-ui/src/store/slices/cameras/camera-labels.ts` | From the demo commits [demo]. It has `cameraLabel` and `labelText` (5.4) [agent 20, Q825]. No import. |
 | `skellycam-ui/src/services/server/preview/tests/unit/` | The Node unit tests (7.4). |
 | `skellycam-ui/src/services/server/preview/tests/camera-messages.json` | The shared fixture. `tools/write_camera_message_fixture.py` writes it (7.2). |
 | `skellycam-ui/src/components/camera-views/tests/browser/` | The component tests (7.4). |
@@ -305,7 +320,7 @@ export function parseCameraMessage(data: ArrayBuffer): CameraMessage;   // throw
   - `rotation_cw_deg` is not 0, 90, 180 or 270;
   - `camera_id` is empty.
 - `PreviewTiles` catches the error. It writes one `console.error` for each reason and connection,
-  and drops the message. It sends no ready message for it, because its camera id is not trusted.
+  and drops the message. A reason is the text of the error: one line for each distinct text [Q872]. It sends no ready message for it, because its camera id is not trusted.
 - `jpeg` is a view, not a copy. The tile decodes from it [player 8.1].
 - A message with a bit of 0x0F has `jpeg` `null` [4a 3.3]. Its mark is `flagged` (5.4).
 
@@ -357,7 +372,9 @@ Rules:
    the first frame [Q1]. When it resolves, clear `busy`. No ready message. No `onDrawn`. A frame
    update also carries the current overlay and clears `overlayChanged`.
 6. **The display drives the draws.** The provider calls `tick` in a `requestAnimationFrame` loop,
-   as today's loop does. Thus a tile draws at most one camera message for each display refresh. A
+   as today's loop does. Thus a tile draws at most one camera message for each display refresh. The
+   camera that `tick` gives its update first turns by one at each refresh, so that no camera is always last
+   [Q893]. A
    hidden page runs no `requestAnimationFrame` in the product window (default
    `backgroundThrottling`) [NV on Linux and macOS, 7.5]. It then draws nothing, sends no ready
    message, and the server sends only the safety-net messages: one each second for each camera
@@ -372,12 +389,19 @@ Rules:
 10. **Connection closed.** The provider calls `clearPending()` on each close. It drops each
     `pending` message. The tiles and their images stay. An update in flight can send its ready
     message on the next connection; the server ignores a ready message for a camera that is ready
-    [4a 4.1].
+    [4a 4.1]. The provider calls it at each state that is not `CONNECTED`.
+11. **A failed update.** An update whose promise rejects clears `busy` and writes one `console.error`.
+    It sends no ready message; the safety net of the server sends the next message [Q872].
+
+The state of a camera starts at its first message or overlay. Before its first label, the label of an
+update has `camera: ''`. The last frame number and the mark of an overlay update are those of the last
+message given to the tile [Q872].
 
 ### 5.4 The tile for each camera
 
 `CameraView` makes `new Tile(canvas)` with the default options [player 8.3], and calls
-`previewTiles.setTile(cameraId, tile)`. On unmount it calls `setTile(cameraId, null)` and
+`previewTiles.setTile(cameraId, tile)` through `setTile(cameraId, tile)` of `useServer()`, which also gives a
+new tile the overlay values that the provider keeps: rule 9 of 5.3 drops them at a removal [Q872]. On unmount it calls `setTile(cameraId, null)` and
 `tile.close()`. The tile draws on the main thread with ImageDecoder [T, player 8.1].
 
 The update of rule 3 of 5.3:
@@ -398,11 +422,11 @@ The update of rule 3 of 5.3:
   are `index` and `name` of the camera in the camera list of the store (`cameras` of the cameras
   slice). When the camera id is not in that list, they are `camera_index` and `camera_name` of
   `configs[<camera id>]` in `app_state`. The label never holds the hex camera id. One function,
-  `cameraListLabel({ index, name })` in `camera-labels.ts`, makes it. The separator is
+  `cameraLabel({ id, index, name })` in `camera-labels.ts`, makes it [Q825]. The separator is
   `" · "` (U+00B7 with one space on each side). This replaces the label `camera_name` of [4a 6.1]
   for the UI; the 4a spec does not change.
-- **One label form everywhere** [Q13]. `withCameraLabels` of `camera-labels.ts` [demo] also uses
-  `cameraListLabel`. Thus a server reason text says `Camera 1 · USB Camera`, not
+- **One label form everywhere** [Q13]. `labelText(text, cameras)` of `camera-labels.ts`
+  (`camera-requests.md` 1.8) also uses `cameraLabel` [Q825]. Thus a server reason text says `Camera 1 · USB Camera`, not
   `Camera 1 (USB Camera)`.
 - `timeNs` is `null`, so the label has no time part. `arrival_ns` is a `perf_counter_ns` value, not
   a time from a start.
@@ -421,7 +445,7 @@ What a tile shows:
 | A ring recreated (a mode change, "apply again", "Update Cameras" [demo]) | The frames of the new ring show. Their frame numbers start again at 0 [4a 4.4]. |
 | The camera leaves `app_state` | The tile leaves the grid and closes. |
 | The connection drops; `WebSocketConnection` tries again (`RECONNECTING`) | Each tile keeps its last image and overlay. |
-| The connection is `DISCONNECTED` or `FAILED` | The provider clears its camera lists, as it clears today's list. The grid shows its empty state. |
+| The connection is `DISCONNECTED` or `FAILED` | The provider clears its camera lists, as it clears today's list, and also the frame rate store and its kept overlay values [Q872]. The grid shows its empty state. |
 | A hidden page or the playback tab | No draw. The tile keeps its last image. |
 
 The product never reads a tile canvas back (`getImageData`, `toDataURL`, `toBlob`, `readPixels`)
@@ -444,6 +468,13 @@ The product never reads a tile canvas back (`getImageData`, `toDataURL`, `toBlob
   frame rate store (5.8). The guard checks `message_type` and that `cameras` is an object.
 - `log_record`, `pong`: as today.
 
+`useServer()` also gives `cameraLabels`, the label of each camera of the grid. A new camera list of the
+store computes the overlays and the two lists again from the last `app_state` [Q872].
+
+The functions of `server-messages.ts` [Q824]: `appStateValues(message, cameraList)` gives
+`{overlays, gridCameraIds, connectedCameraIds}`, with `overlays[id]` = `{label, cameraState}`;
+`rateTexts(message)` gives the rate text of each camera; `isFramerateUpdate(data)` is the guard.
+
 ### 5.6 The grid and the camera list
 
 The grid, the settings modal and the layout code stay: `CameraViewsGrid.tsx`,
@@ -455,7 +486,11 @@ A camera in `starting` or `failed` sends no frame, so it would get no tile, and 
 show those states [A4]. Today's grid also uses `selectConnectedCameras` of the Redux slice, which
 marks a camera connected only when its group is `alive` (4.5). In 4b, the grid shows
 `gridCameraIds` (5.5), in the order of the camera list, and does not filter on
-`selectConnectedCameras` [Q7, Q5]. A drag swap of the grid stays a change of the layout only.
+`selectConnectedCameras` [Q7, Q5]. A drag swap of the grid stays a change of the layout only. The
+cells of the camera grid have no transition: a tile does not grow or slide into place (the 0.2 s animation of
+`react-grid-layout` is off for this grid) [Q895].
+`useServer()` gives `getPreviewTiles()` and `gridCameraIds`, and each tile canvas has the attribute
+`data-camera-id` [Q824].
 
 `connectedCameraIds` has these other users. Each keeps the meaning "the cameras that stream" [Q7]:
 
@@ -525,11 +560,23 @@ The viewer has two series for each camera, named for what they mean [Q3]:
 `FramerateStore` keeps one record for each camera id:
 
 - the Captured values: each `delivered_framerate` that arrives, in the windowed statistics of today
-  (`TimestampedRingBuffer`, `WindowedStats`);
+  (`TimestampedRingBuffer`; one function `statsOf` in place of the class `WindowedStats` [Q872]);
 - the Displayed values: `recordDrawn(cameraId, atMs)` adds the time from the previous drawn frame of
   that camera to the same kind of windowed statistics. A time longer than 1 s is not added: it is a
-  pause or a hidden page. It only sets the start of the next time [agent 22];
+  pause or a hidden page. It only sets the start of the next time [agent 22]. The Displayed rate (the
+  current value) is the rate over the frames drawn in the last 1 s of `now` [Q826]. A camera that has
+  drawn before and draws nothing for 1 s shows 0 [Q864];
 - the four counts.
+
+The API of the store [Q824]: the constructor takes the clock `now` (default `performance.now`) [Q864];
+`recordFramerateUpdate(message)`, `recordAppState(message)`,
+`recordDrawn(cameraId, atMs)`, `cameraIds()`, `clear()` and `getCamera(id)`. `getCamera` gives `null`, or
+`{captured, displayed, notShown, ringSkipped, oversize, replaced}`, where `captured` and `displayed` are
+`{current, aggregate}`, each a `DetailedFramerate` or `null`. The viewer keeps the classes
+`.framerate-viewer` and `.framerate-collapsed-summary`. Each series element is
+`svg [data-camera-id][data-series]`, with its colour as the fill of a `rect`, else as the stroke. The labels
+are in the SVG texts or in an HTML legend. Each count header starts with its English text of the table
+below. The collapsed text of a camera is `<label>: Captured <x> fps, Displayed <y> fps`.
 
 | i18n key | English text | Source | Tooltip (English) |
 |---|---|---|---|
@@ -556,7 +603,15 @@ The viewer has two series for each camera, named for what they mean [Q3]:
   any more. The locale files keep them. The key `deliveredFramerate` of revision 2 is not added
   [agent 25].
 - The new keys go into `en-english.json`. The other 40 locales fall back to English
-  (`fallbackLng`) [Q8].
+  (`fallbackLng`) [Q8]. The tooltips have the keys `<key>Tooltip`, and the source column the key
+  `framerateSourceTooltip` [Q872].
+- `viewer-cameras.ts` gives the cameras of the grid with their label and colour. A camera with no camera
+  list label shows its hex camera id in the viewer. One HTML legend names each camera with both series.
+  The two histogram panels are one component with a `series` property. Each row of the table has the four
+  count columns; only the Captured row fills them [Q872].
+- The store and the viewer keep `performance.now()` times, so that the timeline has one clock. The table
+  and the collapsed view read the store on their 500 ms timers, so Displayed drops to 0 on the screen with
+  no new frame [Q864].
 
 ### 5.9 Docs
 
@@ -567,7 +622,8 @@ The viewer has two series for each camera, named for what they mean [Q3]:
   `docs/technical/architecture.mdx` (the WebSocket Server item, the flow diagram, steps 3 and 4, and
   the FrameProcessor item): the camera message, the flow control for each camera and the tile.
 - The copies of these three pages in `skellycam-docs/i18n/` (`zh-CN`, `es`, `ar`, where a copy
-  exists): the same tables and code blocks, with English prose for the changed parts [Q8].
+  exists): the same tables and code blocks, with English prose for the changed parts [Q8]. Each copy keeps
+  its translated headings and the prose of the parts that do not change [Q872].
 - `docs/intro.mdx`: its table row "Binary frame format, JSON messages, backpressure" stays true.
 
 ## 6. The measurement: 8 cameras on the main-thread tile, at 30 and 60 fps [T, Q9]
@@ -611,12 +667,20 @@ checked" means each capture, not each camera frame. The B-1a criterion of 6.3 al
   the same frame number at the same time. Each ring gets 60 distinct JPEGs, 1920 x 1080, about
   190 kB, in turn: noise with the barcode of 7.2 (camera number 1 to 8, frame number modulo 60),
   made with `cv2.imencode`. 190 kB is near the mean 1080p JPEG of the C922 (192,382 B) [player 12.2].
+  The barcode JPEGs come out at about 172 kB, inside the 10 % of the player bench. Each run gets a new
+  server and a new app. The send-to-ready time starts again at a safety-net resend [Q834].
   The JPEGs are checked to decode before the run. The server binds `127.0.0.1` on a port that the
   system chooses, never 53117.
 - **Page.** The harness page `preview` (7.2) with the real `ServerContextProvider` and
   `CameraViewsGrid`. The window is 1400 x 1000, shown inactive with opacity 0, as the player
   harness does, so that `requestAnimationFrame` runs at the display rate [ADR-1ACK evidence of
   `dom/player`].
+- **No test tool attached.** The bench runs the harness app with no Playwright attached: the devtools link of
+  Playwright copies each websocket frame of the page and overflows at 256 MB with 8 cameras at 1080p (first run,
+  2026-11-26). The harness main process runs the run (`src/player/tests/harness/preview-bench-run.ts`): it starts
+  the page, takes the observer rows, the CDP metrics of its own debugger and the process metrics, reads
+  `drawnCount` at the end, and writes them to a file. It prints a line at the start and the end of the
+  measurement, so that the bench reads the counts of `ui_server.py` at the same times [Q869].
 - **Observers outside the page.** The page reads no canvas back [T].
   - The Electron main process captures the composited window with `beginFrameSubscription` and
     reads the barcode of each tile with the observer of 7.2.
@@ -629,7 +693,8 @@ checked" means each capture, not each camera frame. The B-1a criterion of 6.3 al
 - **The claim of the product.** At the end of each run, the bench reads `drawnCount` of
   `PreviewTiles` through the harness page. It is reported as the claim of the product (6.1).
 - **Runs.** For each frame rate F (30 and 60): 3 runs of 2 s warm-up and 60 s measurement. Each
-  target uses the median of the runs.
+  target uses the median of the runs. The result file keeps, for B-1a, each second of each camera below its
+  ratio, with the frames that the observer read in that second [Q894].
 
 ### 6.3 Targets [Q6, Q9] [agent 10, agent 26]
 
@@ -679,8 +744,8 @@ frames each second on each of 8 tiles during a scrub [M ADR-1ACK evidence].
 
 ### 7.2 Helpers [agent 11, agent 27, agent 28]
 
-- **The session fixture.** `skellycam/tests/conftest.py` gets a session fixture that calls
-  `configure_logging` as `skellycam/__main__.py` does (3.2) [agent 19].
+- **The logging prerequisites.** The fixture `logging_runtime` of `skellycam/tests/conftest.py` gives them
+  (3.2). 4b adds no session fixture [Q872].
 - **The shared fixture.** `tools/write_camera_message_fixture.py` writes
   `skellycam-ui/src/services/server/preview/tests/camera-messages.json` with `pack_camera_frame`.
   `--check` compares the tracked file with a new output, and writes nothing. Each case has its input
@@ -723,7 +788,15 @@ frames each second on each of 8 tiles during a scrub [M ADR-1ACK evidence].
   gives. The page gives the place of each tile from `getBoundingClientRect()` of its canvas and the
   image fit (`canvasPoint` of `src/player/tests/fixtures/barcode.ts`). This is layout, not a pixel
   read. A reading of a tile is its camera number and its frame number, or "none" when the barcode
-  row has no light cell (a black tile).
+  row has no light cell (a black tile). A window whose image does not change gives no capture, so a test
+  that must see a still window (T-PRV-47, while `RECONNECTING`) forces one capture: `captureOnce` reads an
+  image of `webContents.capturePage()` in the same way [Q867].
+- **The clean-up after each test.** `PreviewKit.close` closes each app, then stops each `ui_server.py`, each step
+  with a time limit (10 s for an app, 20 s for a server), inside the 60 s of the test. At a time-out it kills that
+  process tree (on Windows `taskkill /T`; elsewhere the process group, [NV] off Windows), logs `hung step: <step>`
+  and adds it to the test report as an annotation; the kill does not fail the test [Q896]. `ui_server.py` sets the graceful-shutdown limit of uvicorn to 5 s,
+  so that its stop ends on its own also when a reset client connection never reports its loss; the time limit and
+  the kill stay as the backstop [Q906].
 - **The kept overlay text.** A test reads the overlay of a tile from `Tile.overlay`, which the tile
   keeps "so that a test can read it" [player 8.4], through `window.__previewTiles.tiles`. This is
   product state, not a pixel read.
@@ -772,8 +845,8 @@ and `npm run test:player:browser` (Linux under `xvfb-run`). `doc-checks.yml` run
   the independent parser.
 - Pass: exit code 0; the tracked file equals the new output, byte for byte; it has each case of 7.2;
   each parsed field equals the input field of its case.
-- Runs: no marker. `doc-checks.yml` (Linux); `capture-windows`, `capture-linux`, `capture-macos`
-  with the selection of 7.8.
+- Runs: no marker. `capture-windows`, `capture-linux`, `capture-macos` with the selection of 7.8. Not
+  in `doc-checks.yml`: it syncs no project package [Q836].
 - Must not: write the tracked file in `--check` mode.
 
 **T-PRV-26** (ws). The product endpoint sends camera messages.
@@ -784,7 +857,9 @@ and `npm run test:player:browser` (Linux under `xvfb-run`). `doc-checks.yml` run
   with two fake rings and paced writers at 30 fps. Starlette `TestClient`.
 - Steps: connect. Answer each camera message with `camera_ready` at once. Send `ping` after 1 s.
   Run 3 s.
-- Pass: each camera gets at least 80 % of its frames; each JPEG equals the ring payload; one
+- Pass: each camera gets at least 80 % of its frames (a `pace` test; the blocking test checks for more
+  camera messages than the safety net gives, on the same run, as 9.1 of [4a] says) [Q827]; each JPEG
+  equals the ring payload; one
   `app_state` message arrives; each `framerate_update` has `cameras` with both ids and no
   `backend_framerate` key; `pong` arrives.
 - Runs: no marker. `capture-windows`, `capture-linux`, `capture-macos`.
@@ -818,8 +893,8 @@ and `npm run test:player:browser` (Linux under `xvfb-run`). `doc-checks.yml` run
   with fake send functions that record the messages. Fake: three fake sources of
   `skellycam/tests/capture/fake_source.py`, made as `capture_app` of `capture_session.py` does. A
   spy wraps `FrameRingReader.close` and records `threading.get_ident()` of each call.
-- Steps: run the sender. End the process of camera B (its fake source exits), so that the watch
-  thread acts. Wait until the camera status of B changes. Restart B. Run 2 s more.
+- Steps: run the sender. When B has sent at least 3 camera messages [Q866], end the process of camera B (its
+  fake source exits), so that the watch thread acts. Wait until the camera status of B changes. Restart B. Run 2 s more.
 - Pass: each `close` of a ring reader runs on the thread of the event loop; A and C get camera
   messages during the whole test; B's camera messages come from the new ring after the restart.
 - Runs: no marker. `capture-windows`, `capture-linux`, `capture-macos`. It can pass before the 4b
@@ -871,7 +946,8 @@ React, no server, no timer wait (the test resolves the promises of its fake tile
 - Steps: change a fixture case: `version` 0 and 2; 47 bytes; a length one byte too long and one too
   short; `rotation_cw_deg` 45; an empty camera id. Give each to `PreviewTiles.receive` two times.
 - Pass: each throws in `parseCameraMessage` with its reason (the version text names both values);
-  `receive` writes one `console.error` for each reason, not two; no update; no ready message.
+  `receive` writes no second `console.error` for the same message; the seven messages write 4 to 7
+  `console.error` calls [Q829]; no update; no ready message.
 - Must not: check the full text of an error, except the two version values.
 
 **T-PRV-34** (unit). Newest pending; one ready message for each draw.
@@ -944,7 +1020,8 @@ React, no server, no timer wait (the test resolves the promises of its fake tile
 order [Q5, Q7].
 
 - File: `skellycam-ui/src/services/server/preview/tests/unit/server-messages.test.ts`.
-- Set-up: the real functions of `server-messages.ts` and `cameraListLabel` of `camera-labels.ts`;
+- Set-up: the real functions of `server-messages.ts` and `cameraLabel` and `labelText` of `camera-labels.ts`
+  [Q825];
   plain objects for `app_state`, `framerate_update` and the camera list.
 - Steps: give `app_state` objects: each of the eight states, `null`, `"unknown"`, no `status`; a
   group with `alive` `false` that has camera `c1` `failed`, `c2` `starting` and `c3` `ready`; a
@@ -958,7 +1035,7 @@ order [Q5, Q7].
   numbers 2, 4, 6, 9); for the group that is not alive, `connectedCameraIds` holds only `c3`; the
   label of `c3` is
   `Camera 6 · c922 Pro Stream Webcam`; the label of `c4` is `Camera 4 · USB Camera`; no label holds
-  a camera id; `withCameraLabels('camera c3 is failed', list)` gives
+  a camera id; `labelText('camera c3 is failed', list)` gives
   `Camera 6 · c922 Pro Stream Webcam is failed` [Q13]; `rateText` is `null` and `"30.0 fps"`.
 - Must not: import the store or React.
 
@@ -986,13 +1063,14 @@ order [Q5, Q7].
 
 - File: `skellycam-ui/src/services/server/preview/tests/unit/framerate-store.test.ts`.
 - Set-up: a real `PreviewTiles` with fake tiles that resolve `'drawn'` at once, a fake `now`, and
-  `onDrawn` connected to a real `FramerateStore.recordDrawn`.
+  `onDrawn` connected to a real `FramerateStore.recordDrawn`. The store gets the same fake `now` [Q864].
 - Steps: camera A: 31 frames, one tick each, with `now` in steps of 33.333 ms. Then a gap of 2 s
   with no tick. Then 31 frames in steps of 16.667 ms. Also one flagged message and one overlay
-  update for A.
-- Pass: Displayed of A is 30.0 ± 0.1 after the first part and 60.0 ± 0.1 after the last part; the
+  update for A. Then 1 s more with no drawn frame [Q864].
+- Pass: Displayed of A (the rate over the last 1 s of drawn frames, 5.8) is 30.0 ± 0.1 after the first
+  part and 60.0 ± 0.1 after the last part [Q826]; the
   gap of 2 s adds no value; the flagged message and the overlay update add no value; Captured of A
-  stays empty.
+  stays empty; after the 1 s with no drawn frame, Displayed of A is 0 [Q864].
 - Must not: use a real clock.
 
 #### UI component tests
@@ -1024,9 +1102,10 @@ test falls back to a pixel read-back.
 - File: `skellycam-ui/src/components/camera-views/tests/browser/states.spec.ts`.
 - Set-up: `ui_server.py` in the mode capture fakes: real `CameraGroupManager` and `CameraGroup`;
   camera A is a fake source that holds in `starting`; camera B fails to open (`failed`); camera C is
-  `ready`.
+  `ready`. A camera cannot join a running group, so A fails its first open, and its second open (an apply
+  with a retry of A) holds [Q830].
 - Steps: connect. Then release A. Then C's fake source stops its frames for more than 2 s (`dead`).
-- Pass: while A is `starting`: three tiles, although the group is not `alive`; the observer reads
+- Pass: while A is `starting`: three tiles, with no filter on `alive` [Q830]; the observer reads
   "none" for A and B (black) and the camera of C; the kept overlay of A has `starting`, of B
   `failed`, of C `ready`; the overlays of A and B have the label and no frame part [Q1]. After the
   release: the observer reads A's camera, with `ready`. After the stall: the reading of C stops
@@ -1037,11 +1116,12 @@ test falls back to a pixel read-back.
 
 - File: `skellycam-ui/src/components/camera-views/tests/browser/preview.spec.ts`.
 - Set-up: fake rings; 2 cameras at 30 fps.
-- Steps: close the connections in `ui_server.py` while frames flow; the UI reconnects. Then stop
-  `ui_server.py` until the UI gives up.
+- Steps: close the connections in `ui_server.py` while frames flow; the UI reconnects. While
+  `RECONNECTING`, force a capture of the window (7.2) [Q867]. Then stop `ui_server.py` until the UI gives up.
 - Pass: while `RECONNECTING`, the reading of each tile does not change and is not "none"; after the
-  reconnect, the readings change again within 3 s; after `FAILED`, the grid shows its empty state
-  (DOM) and no console error comes from `preview/`.
+  reconnect, the readings change again within 3 s; after the UI gives up (`DISCONNECTED` or `FAILED`),
+  the grid shows its empty state (DOM), and the console has no error except the connection errors
+  [Q831].
 - Must not: stop `ui_server.py` with a kill that leaves a port bound for the next test.
 
 **T-PRV-48** (component). Cameras come, go and restart; the order of the camera list [Q5].
@@ -1051,9 +1131,11 @@ test falls back to a pixel read-back.
   store.
 - Steps: check the order. Add camera D (list number 1). Remove camera B. Restart camera A with a new
   ring from frame 0.
-- Pass: the grid cells are in the order of the list numbers (B, C, A; then D, C, A); D gets a tile
+- Pass: the grid cells are in the order of the list numbers, in the DOM and on the screen (B, C, A;
+  then D, B, C, A after D is added; then D, C, A) [Q833]; D gets a tile
   that the observer reads within 2 s; B's tile leaves the grid; A's tile shows the frames of the new
-  ring (the kept overlay frame starts again at a low number); the other cameras continue.
+  ring (the kept overlay frame starts again at a low number); the other cameras continue; each grid cell has a
+  transition duration of 0 s [Q895].
 - Must not: change the layout by a drag during the test.
 
 **T-PRV-49** (component). A hidden window gets only the safety net.
@@ -1062,12 +1144,14 @@ test falls back to a pixel read-back.
 - Set-up: fake rings; 2 cameras at 30 fps; two windows with the page, each with its own connection.
   Window 2 has the default `backgroundThrottling` (the product setting).
 - Steps: hide window 2 for 5 s, then show it.
-- Pass: while hidden, `document.visibilityState` is `hidden` in window 2, and the server counts 0.5
-  to 1.6 messages each second for each camera of window 2; window 1 keeps at least 80 % of the
+- Pass: while hidden, window 2 draws nothing: `requestAnimationFrame` gives no frame in window 2 after its first
+  check [Q885], and the server counts 0.5 to 1.6 messages each second for each camera of window 2; window 1 keeps at least 80 % of the
   frames; after the show, the observer reads new frames in window 2 within 1 s.
 - Runs: `player-windows` only. The spec file skips on other systems with
   `test.skip(process.platform !== 'win32', ...)`, with the reason of 7.5.
 - Must not: open window 2 with `backgroundThrottling: false`.
+- The first run (Q835) showed that a hidden or minimised harness window keeps `document.visibilityState`
+  `visible` while it draws nothing, so the test checks that drawing stops, not the visibility flag [Q885].
 
 **T-PRV-50** (component). The frame rate viewer [Q3].
 
@@ -1076,8 +1160,8 @@ test falls back to a pixel read-back.
   `replaced_count` 7 in `app_state`.
 - Steps: open the frame rate viewer, full and collapsed.
 - Pass: the series and the table show "Captured" and "Displayed" for each camera, with the camera
-  list label; "Not shown", "Ring skipped", "Oversize" and "Replaced" show 3, 1 and 7 for A in the
-  Captured row, and "Not shown" equals the last `not_shown_count` of the server for this
+  list label; in the Captured row of A, "Oversize" shows 3, "Ring skipped" shows 1 and "Replaced"
+  shows 7 [Q832], and "Not shown" equals the last `not_shown_count` of the server for this
   connection; Captured of each camera is 30.0 ± 1 fps; Displayed of each camera is more than 0; no
   series or column is named "Server", "Display" or "Delivered"; the two cameras have two different
   colours; the collapsed view lists each camera with both values. The test reads the DOM and the SVG
@@ -1108,6 +1192,11 @@ target goes to the user, and section 6.4 applies.
   recorded, with no target.
 - Must not: report a value of the outside observer at 60 fps as a pass or a miss.
 
+Two unit tests of `preview/tests/unit/` are guards of the code lane, with no T-ID: `preview-tiles-order.test.ts`
+(the order of the tile updates turns at each refresh [Q893]) and `preview-tiles-reject.test.ts` (a rejected tile
+update clears `busy`). One Python test is a guard too: `skellycam/tests/preview/test_raw_camera_preview.py` (the
+JPEGs of a YUY2 or NV12 camera of step 3b reach `PreviewRelay` like any other).
+
 T-PRV-45 and T-PRV-46 were cut in revision 2: T-PRV-36 tests the flagged message, T-PLAY-41 tests
 the rotation of the tile, and T-PRV-36 tests that the rotation reaches the tile.
 
@@ -1118,7 +1207,7 @@ the rotation of the tile, and T-PRV-36 tests that the rotation reaches the tile.
 | T-PRV-25 to T-PRV-31 | runs | runs | runs |
 | T-PRV-32 to T-PRV-42, T-PRV-53 | runs | runs | runs |
 | T-PRV-43, T-PRV-44, T-PRV-47, T-PRV-48, T-PRV-50 | runs | runs, under `xvfb-run` | runs |
-| T-PRV-49 | runs | not run: no one has verified that a hidden window under `xvfb-run` is `hidden` and stops `requestAnimationFrame` [NV] | not run: the same for the macOS runner [NV] |
+| T-PRV-49 | runs | not run: no one has verified that a hidden window under `xvfb-run` stops `requestAnimationFrame` [NV] [Q885] | not run: the same for the macOS runner [NV] |
 | T-PRV-51, T-PRV-52 | runs (test machine, by hand) | owed | owed |
 
 T-PRV-38 keeps the rule of the hidden page on each system. When someone verifies the behaviour on
@@ -1147,7 +1236,8 @@ expects `Camera 1 · USB Camera` and `Camera 5 · Kiyo Pro` in place of `Camera 
 ### 7.7 What T-PRV-30 searches
 
 Files: `skellycam/**/*.py`, `skellycam-ui/src/**`, `skellycam-docs/docs/**` and
-`skellycam-docs/i18n/**`. Names:
+`skellycam-docs/i18n/**`. A name matches only as a whole word, so `FRAME_HEADER_SIZE` does not match
+`CAMERA_FRAME_HEADER_SIZE` of 5.2 [Q828]. Names:
 
 - In Python files and docs: `frameNumber` (the old JSON key), `frameAcknowledgment`,
   `backend_framerate`, `frontend_framerate`.
@@ -1188,6 +1278,9 @@ The test writer checks each name and path on `dom/integration` first [S].
   `specs/preview-4b.md`, `tools/write_camera_message_fixture.py` and its test to its paths, and
   `tools/tests/test_camera_message_fixture.py` to the selection of its three jobs, so that T-PRV-25
   runs on the three systems.
+- T-PRV-25 imports `skellycam`, and `doc-checks.yml` syncs only the dev group. T-PRV-25 runs only in the
+  three capture jobs, which sync the project, and stays in `tools/tests/` [Q836]. The CI PR thus adds
+  `--ignore=tools/tests/test_camera_message_fixture.py` to the pytest step of `doc-checks.yml`.
 
 ## 8. The interface note for the FreeMoCap session [P5]
 

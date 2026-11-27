@@ -22,16 +22,6 @@ export type TimestampedSample = {
     value: number;
 };
 
-/** Snapshot of all framerate data, returned by getSnapshot(). */
-export type FramerateSnapshot = {
-    currentBackendFramerate: DetailedFramerate | null;
-    currentFrontendFramerate: DetailedFramerate | null;
-    aggregateBackendFramerate: DetailedFramerate | null;
-    aggregateFrontendFramerate: DetailedFramerate | null;
-    recentFrontendDurations: TimestampedSample[];
-    recentBackendDurations: TimestampedSample[];
-};
-
 /**
  * Fixed-capacity ring buffer for timestamped numeric samples.
  * O(1) push. toArray() reuses its output array when possible to reduce GC pressure.
@@ -119,125 +109,176 @@ class TimestampedRingBuffer {
     }
 }
 
-/**
- * Computes statistics over the current contents of a ring buffer.
- * All stats reflect only the windowed data (last MAX_DURATION_HISTORY samples),
- * not all-time accumulations.
- */
-class WindowedStats {
-    private _buffer: TimestampedRingBuffer;
-    /** Reusable typed array to avoid allocating a fresh one on every snapshot. */
-    private _valuesBuf: Float64Array;
-
-    constructor(buffer: TimestampedRingBuffer, capacity: number) {
-        this._buffer = buffer;
-        this._valuesBuf = new Float64Array(capacity);
+/** The statistics of a set of frame durations (ms), as `CurrentFramerate` of the server. */
+function statsOf(values: Float64Array, source: string): DetailedFramerate | null {
+    const count = values.length;
+    if (count === 0) return null;
+    let sum = 0;
+    let min = Infinity;
+    let max = -Infinity;
+    for (let i = 0; i < count; i++) {
+        const v = values[i];
+        sum += v;
+        if (v < min) min = v;
+        if (v > max) max = v;
     }
-
-    /** Compute stats from the ring buffer's current window. */
-    computeAggregate(source: string): DetailedFramerate | null {
-        const count = this._buffer.getCount();
-        if (count === 0) return null;
-
-        // Reuse the pre-allocated buffer, only reallocating if capacity grew
-        if (this._valuesBuf.length < count) {
-            this._valuesBuf = new Float64Array(count);
-        }
-        const values = this._valuesBuf.subarray(0, count);
-        this._buffer.copyValuesInto(values);
-
-        let sum = 0;
-        let min = Infinity;
-        let max = -Infinity;
-        for (let i = 0; i < values.length; i++) {
-            const v = values[i];
-            sum += v;
-            if (v < min) min = v;
-            if (v > max) max = v;
-        }
-
-        const mean = sum / count;
-
-        let m2 = 0;
-        for (let i = 0; i < values.length; i++) {
-            const d = values[i] - mean;
-            m2 += d * d;
-        }
-        const variance = count > 1 ? m2 / count : 0;
-        const stddev = Math.sqrt(variance);
-        const cv = mean > 0 ? stddev / mean : 0;
-
-        // Sort for median
-        values.sort();
-        const median = count % 2 === 0
-            ? (values[count / 2 - 1] + values[count / 2]) / 2
-            : values[Math.floor(count / 2)];
-
-        return {
-            mean_frame_duration_ms: mean,
-            mean_frames_per_second: mean > 0 ? 1000 / mean : 0,
-            frame_duration_mean: mean,
-            frame_duration_median: median,
-            frame_duration_min: min,
-            frame_duration_max: max,
-            frame_duration_stddev: stddev,
-            frame_duration_coefficient_of_variation: cv,
-            calculation_window_size: count,
-            framerate_source: source,
-        };
+    const mean = sum / count;
+    let m2 = 0;
+    for (let i = 0; i < count; i++) {
+        const d = values[i] - mean;
+        m2 += d * d;
     }
+    const stddev = Math.sqrt(count > 1 ? m2 / count : 0);
+    values.sort();
+    const median = count % 2 === 0 ? (values[count / 2 - 1] + values[count / 2]) / 2 : values[Math.floor(count / 2)];
+    return {
+        mean_frame_duration_ms: mean,
+        mean_frames_per_second: mean > 0 ? 1000 / mean : 0,
+        frame_duration_mean: mean,
+        frame_duration_median: median,
+        frame_duration_min: min,
+        frame_duration_max: max,
+        frame_duration_stddev: stddev,
+        frame_duration_coefficient_of_variation: mean > 0 ? stddev / mean : 0,
+        calculation_window_size: count,
+        framerate_source: source,
+    };
+}
+
+/** One series of one camera: the windowed durations, and the current value. */
+export interface SeriesValues {
+    current: DetailedFramerate | null;
+    aggregate: DetailedFramerate | null;
+}
+
+/** The values of one camera (specs/preview-4b.md 5.8). Captured and Displayed are two series; the four counts are
+ * four numbers, never added [A7]. */
+export interface CameraFramerate {
+    captured: SeriesValues;
+    displayed: SeriesValues;
+    notShown: number;
+    ringSkipped: number;
+    oversize: number;
+    replaced: number;
+}
+
+export interface FramerateUpdateLike {
+    cameras: Record<string, {
+        delivered_framerate: DetailedFramerate | null;
+        not_shown_count: number;
+        ring_skipped_count: number;
+        oversize_count: number;
+    }>;
+}
+
+export interface AppStateWithReplaced {
+    state?: {camera_groups?: Record<string, {cameras?: Record<string, {status?: {replaced_count?: number} | null} | null>} | null>};
+}
+
+const DISPLAYED_GAP_MS = 1000;   // a longer time is a pause or a hidden page: not added (5.8)
+const DISPLAYED_WINDOW_MS = 1000;   // the Displayed rate is over the frames drawn in the last 1 s [Q826]
+
+class CameraRecord {
+    capturedCurrent: DetailedFramerate | null = null;
+    readonly capturedDurations = new TimestampedRingBuffer(MAX_DURATION_HISTORY);
+    readonly displayedDurations = new TimestampedRingBuffer(MAX_DURATION_HISTORY);
+    lastDrawnMs: number | null = null;
+    recentDrawnMs: number[] = [];
+    notShown = 0;
+    ringSkipped = 0;
+    oversize = 0;
+    replaced = 0;
 }
 
 /**
- * Mutable store for streaming framerate telemetry.
- * Lives in a ref — no Redux, no immutable copies, no re-renders on every update.
- * Components poll via getSnapshot() on their own schedule.
- *
- * Aggregate statistics are computed from the windowed ring buffer on each snapshot (~4Hz).
+ * Mutable store of the frame rates of each camera. It lives in a ref: no Redux, no re-render for an update.
+ * The viewer reads it on its own schedule. Captured: each `delivered_framerate` of `framerate_update`. Displayed:
+ * the times between the frames that this window drew (`recordDrawn`). The times are `performance.now()` values.
  */
 export class FramerateStore {
-    currentBackendFramerate: DetailedFramerate | null = null;
-    currentFrontendFramerate: DetailedFramerate | null = null;
+    private readonly cameras = new Map<string, CameraRecord>();
+    private readonly now: () => number;
 
-    private _recentFrontendDurations = new TimestampedRingBuffer(MAX_DURATION_HISTORY);
-    private _recentBackendDurations = new TimestampedRingBuffer(MAX_DURATION_HISTORY);
-    private _frontendStats = new WindowedStats(this._recentFrontendDurations, MAX_DURATION_HISTORY);
-    private _backendStats = new WindowedStats(this._recentBackendDurations, MAX_DURATION_HISTORY);
+    /** `now`: the clock of the Displayed window, the clock of `recordDrawn` (5.8) [Q864]. */
+    constructor(now: () => number = () => performance.now()) {
+        this.now = now;
+    }
 
-    updateBackend(data: DetailedFramerate): void {
-        this.currentBackendFramerate = data;
-        if (data.mean_frame_duration_ms > 0) {
-            this._recentBackendDurations.push(Date.now(), data.mean_frame_duration_ms);
+    private record(cameraId: string): CameraRecord {
+        let r = this.cameras.get(cameraId);
+        if (!r) {
+            r = new CameraRecord();
+            this.cameras.set(cameraId, r);
+        }
+        return r;
+    }
+
+    recordFramerateUpdate(message: FramerateUpdateLike): void {
+        for (const [cameraId, c] of Object.entries(message.cameras)) {
+            const r = this.record(cameraId);
+            r.capturedCurrent = c.delivered_framerate;
+            if (c.delivered_framerate && c.delivered_framerate.mean_frame_duration_ms > 0) {
+                r.capturedDurations.push(performance.now(), c.delivered_framerate.mean_frame_duration_ms);
+            }
+            r.notShown = c.not_shown_count;
+            r.ringSkipped = c.ring_skipped_count;
+            r.oversize = c.oversize_count;
         }
     }
 
-    updateFrontend(data: DetailedFramerate): void {
-        this.currentFrontendFramerate = data;
-        if (data.mean_frame_duration_ms > 0) {
-            this._recentFrontendDurations.push(Date.now(), data.mean_frame_duration_ms);
+    recordAppState(message: AppStateWithReplaced): void {
+        for (const group of Object.values(message.state?.camera_groups ?? {})) {
+            for (const [cameraId, camera] of Object.entries(group?.cameras ?? {})) {
+                const n = camera?.status?.replaced_count;
+                if (typeof n === 'number') this.record(cameraId).replaced = n;
+            }
         }
     }
 
-    /** Returns a snapshot for React components to read during render. */
-    getSnapshot(): FramerateSnapshot {
+    /** A frame of the camera drawn at `atMs` (`onDrawn` of PreviewTiles). */
+    recordDrawn(cameraId: string, atMs: number): void {
+        const r = this.record(cameraId);
+        if (r.lastDrawnMs !== null && atMs - r.lastDrawnMs <= DISPLAYED_GAP_MS) {
+            r.displayedDurations.push(atMs, atMs - r.lastDrawnMs);
+        }
+        r.lastDrawnMs = atMs;
+        r.recentDrawnMs.push(atMs);
+        // keep the window short also when no viewer reads the store
+        while (r.recentDrawnMs.length > 0 && r.recentDrawnMs[0] < atMs - DISPLAYED_WINDOW_MS) r.recentDrawnMs.shift();
+    }
+
+    cameraIds(): string[] {
+        return [...this.cameras.keys()];
+    }
+
+    getCamera(cameraId: string): CameraFramerate | null {
+        const r = this.cameras.get(cameraId);
+        if (!r) return null;
+        const drawn = r.recentDrawnMs;
+        const from = this.now() - DISPLAYED_WINDOW_MS;
+        while (drawn.length > 0 && drawn[0] < from) drawn.shift();
+        const recent = new Float64Array(Math.max(0, drawn.length - 1));
+        for (let i = 1; i < drawn.length; i++) recent[i - 1] = drawn[i] - drawn[i - 1];
+        // a camera that drew before and drew less than two frames in the last 1 s shows 0 [Q864]
+        const displayed = statsOf(recent, 'Displayed') ?? (r.lastDrawnMs === null ? null : {...statsOf(Float64Array.of(0), 'Displayed')!, calculation_window_size: 0});
         return {
-            currentBackendFramerate: this.currentBackendFramerate,
-            currentFrontendFramerate: this.currentFrontendFramerate,
-            aggregateBackendFramerate: this._backendStats.computeAggregate(
-                this.currentBackendFramerate?.framerate_source ?? "Server",
-            ),
-            aggregateFrontendFramerate: this._frontendStats.computeAggregate(
-                this.currentFrontendFramerate?.framerate_source ?? "Display",
-            ),
-            recentFrontendDurations: this._recentFrontendDurations.toArray(),
-            recentBackendDurations: this._recentBackendDurations.toArray(),
+            captured: {current: r.capturedCurrent, aggregate: statsOf(r.capturedDurations.valuesToFloat64Array(), 'Captured')},
+            displayed: {current: displayed, aggregate: statsOf(r.displayedDurations.valuesToFloat64Array(), 'Displayed')},
+            notShown: r.notShown,
+            ringSkipped: r.ringSkipped,
+            oversize: r.oversize,
+            replaced: r.replaced,
         };
     }
 
+    /** The timestamped durations of one series of a camera, oldest first (for the timeline and the histogram). */
+    recentDurations(cameraId: string, series: 'captured' | 'displayed'): TimestampedSample[] {
+        const r = this.cameras.get(cameraId);
+        if (!r) return [];
+        return (series === 'captured' ? r.capturedDurations : r.displayedDurations).toArray();
+    }
+
     clear(): void {
-        this.currentBackendFramerate = null;
-        this.currentFrontendFramerate = null;
-        this._recentFrontendDurations.clear();
-        this._recentBackendDurations.clear();
+        this.cameras.clear();
     }
 }

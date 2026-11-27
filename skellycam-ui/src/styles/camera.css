@@ -87,6 +87,12 @@
   border-radius: 4px;
 }
 
+/* Q895: no grow-and-slide animation of the camera tiles (the 0.2 s transition of react-grid-layout) */
+.camera-grid-container .react-grid-layout,
+.camera-grid-container .react-grid-layout .react-grid-item {
+    transition: none;
+}
+
 .camera-grid-container .react-grid-item > .react-resizable-handle {
   z-index: 10;
   opacity: 0.4;

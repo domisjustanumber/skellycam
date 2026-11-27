@@ -35,6 +35,7 @@ These entries are `accepted`.
 | [GVC0](entries/GVC0-certify-decisions-of-the-user.md) | Certify run of skellycam: levels, quick camera checks and 3 s take, camera summary list, rules that hold everywhere, fake cameras, functions, draft 1 answers | accepted |
 | [2GS1](entries/2GS1-step-3a-choices-of-the-capture-code-and-its-fixes.md) | Supersedes S6HT, MA22, 6EKB, 037V, BM73, R60B, FTC3: step 3a choices; virtual by link; macOS timing step; loop, source, review and CI fixes | accepted |
 | [68JT](entries/68JT-step-4a-choices-of-the-preview-sender.md) | Supersedes 162X, 24FZ, MZ02: step 4a choices of the preview sender; spec section 13 items, Python API of the 4a tests, code choices | accepted |
+| [70WD](entries/70WD-failing-tests-of-step-4b-and-the-names-they-assume.md) | The failing tests of step 4b (T-PRV-25 to 53, T-PLAY-37, T-PLAY-44): the TypeScript names they assume, the split of T-PRV-26, the helpers | accepted |
 | [P98T](entries/P98T-step-5a-choices-of-the-recorder-and-its-connection.md) | Supersedes Q03C, QEQ8, T24F, YNM2, P5VE: step 5a recorder and connection choices; F-1 to F-10 as one request; 15 s writer limit | accepted |
 | [4D94](entries/4D94-step-6a-choices-of-the-canvas-player.md) | Supersedes 4K7V, 4MJ4, 1ACK, 5FBS: step 6a player choices; picked folders only for the app run, no list file; test names; review fixes | accepted |
 | [XT31](entries/XT31-kit-adoption-choices-camera-media-check-and-fills.md) | Supersedes NMM1, 4A7H: kit adoption choices; the media check refuses PNG, GIF, WebP, SVG with an allow by path; index limit 24,000 | accepted |
@@ -56,7 +57,9 @@ These entries are `accepted`.
 | [EM6A](entries/EM6A-answers-of-the-owner-to-the-v1-playback-questions-of-revision-5.md) | v1 playback answers Q733 to Q749, Q764 to Q767: file rules to skellyspecs, secret header, F6 too slow, macOS re-sign, default token, watch later | accepted |
 | [8CP7](entries/8CP7-certify-spec-draft-3-choices-of-the-agent.md) | Certify spec draft 3 on format 1.4.0, tests T-CERT-01 to 67, 15 agent choices: split checks, model item, gate roll-ups, local record, macOS probes | accepted |
 | [PA3A](entries/PA3A-decision-of-the-user-on-the-test-workflow-on-dom-integration.md) | "Yes": `test.yml` runs on each push to `dom/integration`: ruff, the test suite and the UI typecheck | accepted |
+| [QF7V](entries/QF7V-choices-of-the-test-workflow-on-dom-integration.md) | Choices of the push run of `test.yml`: no run for log-only pushes, no macOS job on a push, pinned labels, PortAudio, no `capture_local`, no fail-fast, 60 min | accepted |
 | [88HQ](entries/88HQ-decisions-of-the-user-on-q842-to-q856.md) | Q842 to Q856: J1HD and TYH0 accepted, the stall watch at 2 s, the player label and picked folders, absorb sentences, N72V, push rule | accepted |
+| [8MTY](entries/8MTY-answers-v1-to-v7-of-the-user-to-the-3b-and-3c-tests.md) | Answers V1 to V7: `capture_modes` in 3b, auto rate of a raw format, `jpeg_encoder`, OpenCV parity, range tests | accepted |
 
 ### Proposed
 
@@ -83,8 +86,8 @@ These entries wait for a decision of the user. Section is the section or area of
 | [B7YV](entries/B7YV-choices-of-fix-lane-6.md) | Choices of fix lane 6: one run for the two halves, nominal values and loose checks, T-PRV-54, loop threads on the test clock, T-CAP-86 diagnostics | none | proposed |
 | [7GC1](entries/7GC1-choices-of-the-gate-on-the-test-clock-and-the-end-of-t-cap-05.md) | Choices of fix lane 6: a loop at an open gate holds the test clock until its next probe, forced steps still move it; T-CAP-05 checks the last ring frames | none | proposed |
 | [JFG4](entries/JFG4-choices-of-the-capture-timings-build.md) | Choices of the capture timings build that the user did not decide: source sets, sets, main process, message loop, route, test seams, faults | none | proposed |
-| [QF7V](entries/QF7V-choices-of-the-test-workflow-on-dom-integration.md) | Choices of the push run of `test.yml`: no run for log-only pushes, no macOS job on a push, pinned labels, PortAudio, no `capture_local`, no fail-fast, 60 min | none | proposed |
 | [4PPS](entries/4PPS-choices-of-the-answers-lane-of-q842-to-q856.md) | Choices of the answers lane: the label from `<recording_name>_info.json` with a fall back, no `pickedFoldersFile`, Q852 sentences, control-read setting, OS key | none | proposed |
+| [GV50](entries/GV50-choices-of-the-split-of-the-slow-holder-test.md) | The lane's reading of Q917 (b): the pace and blocking checks of the slow-holder test; the blocking half proves a stretch began | none | proposed |
 | [06PW](entries/06PW-choices-of-the-shutdown-limit-lane.md) | Choices of the shutdown limit lane: 5 s from the first signal, no join of the log queue feeder at the exit, a DEBUG line for a reset, tests | `recorder` | proposed |
 
 The entries that are `rejected`, `superseded by XXXX`, `absorbed into <path>#<anchor>`,

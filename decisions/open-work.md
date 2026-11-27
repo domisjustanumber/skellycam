@@ -40,6 +40,13 @@ task. Delete an item when its work is done. The PR that closes an item records t
   - Open: section 15 must name the macOS timing step (BM73 7); item 90 of section 18 is stale.
   - The `README.md` of `skellycam/tests/reference_recordings/` still names the deleted tests of the
     phase 2 loop (W8); it changes after the redaction decision of that file.
+  - Step 3b (section 22, merged). No test of the real `QuickSyncEncoder` or of the raw path
+    of Media Foundation; 22.5 not run. Q879 ([ADR-4TBY](entries/4TBY-decisions-of-the-user-on-the-review-of-the-3b-code.md)),
+    a lane after the merge, spec and tests first: a record-only certify check of Quick Sync and its time; the
+    product check in a child process with a 5 s limit (a hang or crash: OpenCV). 13.2 keeps [NV] until then.
+    Q900 ([ADR-Y2RN](entries/Y2RN-decisions-of-the-user-on-the-size-floor-review-and-certify-quick-runs.md)): the
+    next UI lane adds `trackingLimitedByResolution` and `smallestSizeIs640x360` to the other three language
+    files. Q809: the 3c tests of `dom/3bc-tests` come later.
   - Phase 7: the parity table of section 16.7 of the spec is the to-do list for Linux and macOS
     (14 tests with no counterpart yet).
 - **Support virtual cameras.** Detection shows a virtual camera with `virtual=True`, and a request
@@ -55,8 +62,6 @@ task. Delete an item when its work is done. The PR that closes an item records t
 - **Phase 6a (the canvas player for new takes).** The spec [`specs/player.md`](../specs/player.md) (revision 2)
   and its test list are accepted ([ADR-YV3V](entries/YV3V-acceptance-of-the-phase-6a-player-spec-and-test-list.md),
   [ADR-4D94](entries/4D94-step-6a-choices-of-the-canvas-player.md)).
-  - The benchmarks T-PLAY-65 to T-PLAY-70 run by hand with `playwright.player-bench.config.ts`.
-  - The unit tests ran on Node 26.13.1 on Windows only.
   - The recorder spec needs one sentence for a `camera_dead` detail that does not parse (item 4 of
     ADR-1ACK).
   - Owed to `player.md` (Q851), test first: T-PLAY-62 of `handler.spec.ts` still checks the old list file and
@@ -79,19 +84,15 @@ task. Delete an item when its work is done. The PR that closes an item records t
   expose header (user, Y2 of [ADR-J2BQ](entries/J2BQ-phase-6-player-decisions-y1-to-y7.md); section
   14.4 of [`specs/player.md`](../specs/player.md)). The measured gap at 16 cameras × 60 fps × 150 kB:
   the bare FastAPI route was 4 % short and 25 % short behind the logging middleware.
-- **Phase 4 (live preview).** The step 4a spec [`specs/preview.md`](../specs/preview.md) and its test list are
-  accepted ([ADR-WB08](entries/WB08-acceptance-of-the-step-4a-preview-spec-and-its-test-list.md),
-  [ADR-68JT](entries/68JT-step-4a-choices-of-the-preview-sender.md)).
-  - The tests of step 4a (T-PRV-01 to T-PRV-24) are in `skellycam/tests/preview/`, with the
-    helpers of spec section 9.1 in `preview_helpers.py`. The measurements
-    M-PRV-1 to M-PRV-5 are done on Windows
-    ([ADR-HDC9](entries/HDC9-measurements-m-prv-1-to-m-prv-5-of-the-preview-sender.md)). Open: M-PRV-4
-    on Linux.
-  - Step 4b: the spec [`specs/preview-4b.md`](../specs/preview-4b.md) is accepted in principle,
-    with a go-ahead for its tests, not its code
-    ([ADR-VYS7](entries/VYS7-answers-of-the-user-to-the-step-4b-spec-and-go-ahead-for-its-tests.md)).
-    The failing 4b tests are on `dom/preview-4b-tests`. They stay unmerged until their code passes
-    (Q815). At their merge, the pause text of `preview-4b.md` on this side wins (no server pause, ADR-V8RS).
+- **Phase 4 (live preview)** ([`specs/preview.md`](../specs/preview.md), [`specs/preview-4b.md`](../specs/preview-4b.md);
+  [ADR-BPP8](entries/BPP8-answers-of-the-user-q864-to-q873-on-the-step-4b-code.md)). Open:
+  - M-PRV-4 on Linux ([ADR-HDC9](entries/HDC9-measurements-m-prv-1-to-m-prv-5-of-the-preview-sender.md)).
+  - Step 4b: the CI changes of 7.8 (own PR). After the merge: the tile timings
+    (step 8 of `capture-timings.md`), tests first (Q870); delete `read_latest_ring_frames` and `_send_json` with their
+    spec line and test probe (Q871); rewrite the top of the real-time streaming page (Q873); a CI type check of the UI test code (Q897).
+  - Soon, spec and test first (Q907): does the product server hang at its shutdown after a client connection reset?
+    If so, a shutdown time limit; also the blocked queue feeder thread. After that fix, a
+    kill in `PreviewKit.close` fails the test (Q909).
 - **The `sfn26` integration on `dom/integration`**
   ([ADR-EQY4](entries/EQY4-base-the-work-on-upstream-sfn26-without-rust.md),
   [ADR-6T78](entries/6T78-choices-of-the-sfn26-integration.md)). Open:
@@ -102,9 +103,14 @@ task. Delete an item when its work is done. The PR that closes an item records t
   [ADR-N2VE](entries/N2VE-decisions-of-the-user-on-the-ci-triage-and-the-stall-watch-code.md), low priority). A later
   small test lane writes it: a real camera loop, a fake camera whose frames stop after a reopen, the watch on the
   same clock (`unix-capture.md` 4.10).
-- **Question for the user: the six full checks run in quick.** `certify.md` 3.4 and 3.6.2 give quick twelve checks
-  for each camera (Q593). The code gives the six full checks in quick too (`catalog.camera_names`, `ITEM`), so a
-  quick item counts them: a camera with no ring watch is then `partial`. Restrict them to full, as the spec says?
+- **Quick certify runs** (Q902, [ADR-Y2RN](entries/Y2RN-decisions-of-the-user-on-the-size-floor-review-and-certify-quick-runs.md)): the next certify lane, spec text and test
+  first: a quick run leaves out the six full-only checks of Q593 (image-effect, not-reencoded, size,
+  ring-equals-mkv, source-equals-ring, gaps-explained).
+- **Question for the user: the count of T-PRV-17.** "15 camera messages of B within 1 s after A's reader is
+  removed": move it to `pace` as T-PRV-16 (Q669), and add T-PRV-17 to the list of `preview.md` 9.1? It failed once on
+  macOS (10 of 15; CI run 45925313532); it stays blocking until then. The review (from the code only): no product path
+  slows B after the removal (`preview_relay.py`, `reader.py`); the count depends on the pace of the test client. A
+  later `pace` half must count the frames of B written after the removal (`rings[B].written[k] > t_removed`).
 - **The certify run of skellycam.** The spec [`specs/certify.md`](../specs/certify.md) is draft 3. The code is in `skellycam/core/certify/` (section 19 of the
   spec). Open: the checks that are `not-run`
   `not-built` (the status line of the spec). Not decided: FC1C items 4 and 13, HQE5 items 2 and 3
@@ -153,17 +159,11 @@ task. Delete an item when its work is done. The PR that closes an item records t
   ([ADR-TFD7](entries/TFD7-search-limit-stop-rate-median-role-flag-and-restore-after-a-failed-loop.md)):
   a role flag in place of the `parent_process()`
   guards.
-- **Capture timings: the capture side is merged into `dom/integration` (211130fd5)**
-  ([ADR-MX8V](entries/MX8V-decisions-of-the-user-on-capture-timings.md),
-  [ADR-8B85](entries/8B85-acceptance-of-the-capture-timings-spec.md)). Steps 1 to 6 of section 11 of
-  [`specs/capture-timings.md`](../specs/capture-timings.md); the user decided its open choices in
-  [ADR-GZS7](entries/GZS7-decisions-of-the-user-on-the-capture-timings-build-and-the-merge-order.md); the rest
-  of [ADR-JFG4](entries/JFG4-choices-of-the-capture-timings-build.md) is proposed. Open: the timed test
-  `test_process_workers.py` (an OK of the user first); M-TIM-1 on the hardware of the user (step 7); the tile with
-  step 4b (step 8: T-TIM-24 in TypeScript, T-TIM-25, T-TIM-26, and the `preview_send` bracket of 6.5, Q839).
-- **Merge order (2026-11-25, ADR-GZS7).** Each merge runs the tests that no CI job runs on a push (Q841). The branches of failing
-  tests stay unmerged; each code lane builds on its test branch, and tests and code merge together when they pass
-  (Q815). The FreeMoCap display comes after FreeMoCap moves to the frame-ring API.
+- **Capture timings** ([`specs/capture-timings.md`](../specs/capture-timings.md) steps 1 to 6 built;
+  [ADR-JFG4](entries/JFG4-choices-of-the-capture-timings-build.md) proposed). Open: the timed test
+  `test_process_workers.py` (an OK of the user first); M-TIM-1 on the hardware of the user (step 7); step 8 (Q870).
+- **Merges (ADR-GZS7).** Each merge runs the tests that no CI job runs on a push (Q841); tests and code merge
+  together when they pass (Q815). The FreeMoCap display comes after FreeMoCap moves to the frame-ring API.
 - **Deferred by the user (2026-11-23).** At 60 fps the exposure search never tries a value longer
   than the frame period. The product switches low light compensation off after each open.
 - **Fix lane 4 follow-ups** ([ADR-HQE5](entries/HQE5-choices-of-fix-lane-4.md)).
@@ -181,14 +181,8 @@ task. Delete an item when its work is done. The PR that closes an item records t
   `Windows 2025Server 24H2` [NV]; `stop_after_frame=200` tests that wait for `ready` have the risk of T-UNX-95.
 - **Fix lane 7 follow-ups** ([ADR-R394](entries/R394-choices-of-fix-lane-7.md),
   [ADR-2SX2](entries/2SX2-acceptance-of-the-choices-of-fix-lane-7-and-its-follow-ups.md)).
-  - Question for the user (not decided by [ADR-ZT5F](entries/ZT5F-acceptance-of-the-choices-of-fix-lane-8.md) item 3):
-    does `test_status_locks.py::test_a_live_but_slow_holder_and_torn_json_never_raise[writes with no lock]` move to
-    `pace`, or stay as it is? It fails 1 in 20 on 2 cores (real time; JC4X item 3).
   - macOS [NV]: the runner's open-file limit, and that its errors came from this leak. A run of the macOS jobs by
     hand gives the result.
-- **The later merge of `dom/jpeg-encode-tests`.** On TC9B, 53VB, JWZ1 and 8ACV, the status text of
-  `dom/log-cleanup` wins. Both branches absorb 2AQT into `windows-capture.md` 16.1, so they agree; the 16.1
-  text of `dom/answers-q842` (both cameras stay `ready`) wins.
 - **Next CI lane (Q854).** Each workflow pins uv 0.13.7 (also `test.yml`, ADR-PA3A); ADR-7DE6 says 0.13.9. An
   entry with the version of the workflows supersedes ADR-7DE6.
 - **ZEX9** ([ADR-ZEX9](entries/ZEX9-decisions-of-the-user-on-the-housekeeping-of-2026-11-25.md)) becomes `done`

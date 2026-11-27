@@ -894,7 +894,8 @@ interface TileUpdate {
 interface DecodedImage { displayWidth: number; displayHeight: number; close(): void }  // a VideoFrame fits
 
 interface TileLabel {
-  frame: number;          // k* for the player; the ring frame number for the preview
+  frame: number | null;   // k* for the player; the ring frame number for the preview; null: no frame part
+                          // (a preview tile before its first frame, specs/preview-4b.md 5.3 rule 5 [Q1])
   frameDigits: number;    // the digits for the leading zeros (F4)
   camera: string;         // the camera label of 8.4 for the player
   timeNs: number | null;  // the time of the shown image, relative to the start; null: no time part
@@ -974,7 +975,7 @@ overlay [SFF-737].
 
 | Part | Place | Value |
 |---|---|---|
-| Frame | top right | `F` and `frame` with leading zeros to `frameDigits` digits (F4) |
+| Frame | top right | `F` and `frame` with leading zeros to `frameDigits` digits (F4); none when `frame` is `null` |
 | Camera | bottom left | `camera` (F5) |
 | Time | bottom right | `timeNs` as seconds with 3 decimals (`1.234s`), or as `HH:MM:SS:FF`, with FF = ⌊fraction of the second × `nominalFps`⌋ (F6, F8) |
 | Rate text | under the camera part | `rateText` as given |

@@ -37,8 +37,12 @@ PACE_TESTS = [
     ("skellycam.tests.preview.test_ws_flow", "test_t_prv_13_client_1_gets_its_share"),
     ("skellycam.tests.preview.test_ws_flow", "test_t_prv_15_b_gets_8_messages_within_0_5_s"),
     ("skellycam.tests.preview.test_ws_flow", "test_t_prv_16_b_gets_30_messages_within_2_s"),
+    # step 4b: the share of T-PRV-26 (Q827 [ADR-NA1N])
+    ("skellycam.tests.preview.test_endpoint", "test_t_prv_26_each_camera_gets_its_share"),
     # Q905 [ADR-P3EZ]: the give waits of the short stall of T-REC-STALL
     ("skellycam.tests.take_recorder.test_benchmarks", "test_t_rec_stall_short_has_no_give_wait"),
+    # Q917 (b) [ADR-N7ZR]: the waits and the counts of the slow holder of the status locks
+    ("skellycam.tests.capture.test_status_locks", "test_a_live_but_slow_holder_waits_once_and_logs_one_line"),
     # Q907 [ADR-06PW]: the connection limit of the shutdown of the server (recorder.md 9.1)
     ("skellycam.tests.test_server_exit", "test_the_server_ends_within_the_connection_limit"),
 ]
@@ -72,8 +76,11 @@ NOT_PACE = [
     ("skellycam.tests.preview.test_ws_flow", "test_t_prv_15_ring_recreated"),
     ("skellycam.tests.preview.test_ws_flow", "test_t_prv_16_a_camera_stops"),
     ("skellycam.tests.preview.test_ws_flow", "test_t_prv_54_the_next_message_after_an_answer_holds_the_newest_frame"),
+    ("skellycam.tests.preview.test_endpoint", "test_t_prv_26_the_product_endpoint_sends_camera_messages"),
     # Q905 [ADR-P3EZ]: no lost frame, equal rows and finished files of the short stall of T-REC-STALL
     ("skellycam.tests.take_recorder.test_benchmarks", "test_t_rec_stall_short_pass_parts"),
+    # Q917 (b) [ADR-N7ZR]: the slow holder never makes the status stop its tries; no torn JSON escapes
+    ("skellycam.tests.capture.test_status_locks", "test_a_live_but_slow_holder_and_torn_json_never_raise"),
     # Q907 [ADR-06PW]: the server process ends after /shutdown, also with a lost connection or a port in use
     ("skellycam.tests.test_server_exit", "test_the_server_ends_after_shutdown_with_a_lost_connection"),
 ]

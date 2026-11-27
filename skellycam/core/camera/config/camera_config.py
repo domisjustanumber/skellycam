@@ -1,5 +1,5 @@
 import enum
-from typing import Tuple, Self, Any
+from typing import Tuple, Self, Any, Literal
 
 import cv2
 import numpy as np
@@ -131,6 +131,11 @@ class CameraConfig(BaseModel):
     bgr_ring: bool = Field(
         default=False,
         description="Whether this camera also gets a BGR frame ring (specs/frame-ring.md, section 8.1)",
+    )
+
+    input_range: Literal["auto", "limited", "full"] = Field(
+        default="auto",
+        description="The input range of a YUY2 or NV12 mode (specs/windows-capture.md, section 13.3)",
     )
 
     @field_validator("exposure_mode", mode="before")

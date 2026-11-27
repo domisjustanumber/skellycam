@@ -32,21 +32,21 @@ Learn more: [Client-server model (Wikipedia)](https://en.wikipedia.org/wiki/Clie
 graph TB
     subgraph UI ["React / Electron UI"]
         subgraph Rendering ["Rendering"]
-            Canvas["OffscreenCanvas Workers\n(per camera)"]
+            Canvas["Tile of each camera\n(ImageDecoder, main thread)"]
             Views["Camera Views\n& Playback"]
         end
 
         subgraph State ["State Management"]
             Redux["Redux Store\n(cameras, recording, settings)"]
             SCP["ServerContextProvider\n(WebSocket, real-time frames)"]
-            FP["FrameProcessor\n(Web Worker — JPEG decode)"]
+            FP["PreviewTiles + Tile\n(ImageDecoder, main thread)"]
         end
     end
 
     Redux -- "HTTP REST\n(Redux thunks)" --> HTTP_target["→ FastAPI HTTP Router"]
     SCP -- "WebSocket\n(binary frames + JSON)" --> WS_target["→ WebSocket Server"]
     SCP --> FP
-    FP -- "ImageBitmap" --> Canvas
+    FP -- "draw" --> Canvas
 ```
 
 ### Server Layer
@@ -134,7 +134,7 @@ The main process runs the FastAPI/Uvicorn server and manages:
 
 - **WorkerRegistry** — Tracks all spawned worker processes and provides a heartbeat mechanism for health monitoring.
 - **CameraGroupManager** — Singleton that creates/destroys camera groups and routes API calls to the correct group.
-- **WebSocket Server** — Sends binary payloads to connected clients. Each payload holds the JPEG of each camera from its frame ring, at the newest frame number that all cameras have. The server does not resize, encode or rotate the JPEG. JSON messages (logs, state updates, framerate statistics) are encoded with [msgspec](https://jcristharif.com/msgspec/) for fast serialization.
+- **WebSocket Server** — Sends one binary camera message for each frame of each camera that it sends: the JPEG of the frame ring, untouched (no resize, no encode, no rotation), after a header of 48 bytes. For each connection, `PreviewRelay` sends a camera its next frame when the client has drawn the last one, with a safety net of 1 s. JSON messages (logs, state updates, framerate statistics) are encoded with [msgspec](https://jcristharif.com/msgspec/) for fast serialization.
 
 ### Camera Worker Processes
 
@@ -155,16 +155,16 @@ graph TB
     A["USB Camera Sensor"] --> B["CameraWorker\ngrab() + retrieve()"]
     B --> C["Per-Camera JPEG\nFrame Ring"]
     C --> D["CameraGroup\nRing readers"]
-    D --> E["WebSocket Server\nPack ring JPEGs"]
-    E --> F["Frontend\nBinary parse"]
-    F --> G["FrameProcessor\nWeb Worker → ImageBitmap"]
-    G --> H["OffscreenCanvas\nWeb Workers"]
+    D --> E["WebSocket Server\nOne camera message each"]
+    E --> F["PreviewTiles\nNewest pending, one ready each"]
+    F --> G["Tile\nImageDecoder, main thread"]
+    G --> H["Canvas of each camera"]
 ```
 
 1. **Camera → Frame ring** — Each camera worker writes the JPEG of its frame into the frame ring of the camera.
-2. **Frame rings → CameraGroup** — The camera group reads the newest frame number that all rings have. It reads that frame from each ring.
-3. **CameraGroup → WebSocket** — The WebSocket server packs the JPEG of each camera into a binary payload, unchanged. The frames are full size. A rotated camera shows unrotated until the UI rotates the image.
-4. **WebSocket → Frontend** — The binary payload is sent over WebSocket. The frontend's `FrameProcessor` Web Worker parses the binary protocol and creates `ImageBitmap` objects. These are transferred to per-camera `OffscreenCanvas` workers for GPU-accelerated rendering.
+2. **Frame rings → PreviewRelay** — For each connection, `PreviewRelay` reads the newest frame of each ring on its own, so a camera that reopens does not hold back the other cameras.
+3. **PreviewRelay → WebSocket** — The JPEG of each frame goes into its camera message unchanged. The frames are full size. The header carries the rotation, and the tile turns the image.
+4. **WebSocket → Frontend** — The server sends one camera message for each frame of each camera that it sends, and waits for the ready message of that camera, with a safety net of 1 s. `PreviewTiles` gives the newest message of each camera to its tile; the tile decodes the JPEG with `ImageDecoder` and draws it on the main thread.
 
 ## Data Flow: Recording
 
@@ -226,8 +226,8 @@ The React UI separates real-time streaming data from user-driven state:
 
 - **Redux Toolkit** — Manages user-driven state: camera configurations, recording status, settings, and theme. HTTP API calls to the server are dispatched as Redux async thunks.
 - **ServerContextProvider** (React Context) — Manages the WebSocket connection and real-time frame data. This is deliberately kept outside Redux to avoid triggering React renders on every frame.
-- **FrameProcessor** (Web Worker) — Parses the binary multi-frame protocol and decodes JPEG blobs into `ImageBitmap` objects, all off the main thread.
-- **CanvasManager** — Manages `OffscreenCanvas` + `Worker` pairs for each camera, enabling GPU-accelerated rendering without blocking the main thread.
+- **PreviewTiles** — Reads each camera message (`parseCameraMessage`), keeps the newest pending message of each camera, gives each tile one update at a time on `requestAnimationFrame`, and sends one `camera_ready` for each draw.
+- **Tile** (`skellycam-ui/src/player/`) — The shared tile of the player and the preview: it decodes the JPEG with `ImageDecoder` and draws it with its overlay (camera list label, rate, state) on the main thread.
 - **Non-Redux stores** — `FramerateStore` and `LogStore` are ref-based mutable stores for high-frequency data that doesn't need to trigger React renders.
 - **Material UI** — Component library for the control panels, tree views, and layout.
 - **i18next** — Internationalization with community-maintained translation files.

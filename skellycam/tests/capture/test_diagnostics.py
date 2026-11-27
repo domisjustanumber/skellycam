@@ -229,7 +229,7 @@ def test_f10_a_restart_clears_the_counters_and_a_reopen_the_hashes(monkeypatch):
     status.diagnostics = {"frames": 3}
     status.reset_for_start()
     assert status.diagnostics == {}
-    modes = ((640, 480, 30, 1, "MJPG"), (320, 240, 30, 1, "MJPG"))
+    modes = ((640, 480, 30, 1, "MJPG"), (1280, 720, 30, 1, "MJPG"))
     with capture_app(monkeypatch, [FakeScript(modes=modes)]) as app:
         ready_app_steps(app)
         camera_id = app.factory.camera_ids[0]
@@ -243,6 +243,6 @@ def test_f10_a_restart_clears_the_counters_and_a_reopen_the_hashes(monkeypatch):
             seen.append((loop.hash_trigger, list(loop.hashes)))  # at the end of the open, before `ready`
             return result
         monkeypatch.setattr(loop_module.CameraLoop, "_start_up", spy)
-        assert app.apply([app.config(camera_id, width=320, height=240)]).status_code == 200
+        assert app.apply([app.config(camera_id, width=1280, height=720)]).status_code == 200
         app.wait_state(camera_id, "ready")
     assert seen == [(None, [])], seen

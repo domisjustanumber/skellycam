@@ -21,9 +21,9 @@ import config from '@site/content.config';
 
 يستخدم SkellyCam بروتوكول WebSocket ثنائي مضغوط لبث الإطارات:
 
-1. **ضغط JPEG** — يتم ضغط إطار كل كاميرا بصيغة JPEG (جودة 80 افتراضياً) ويُصغّر اختيارياً ليتناسب مع أبعاد عرض العميل.
-2. **التعبئة الثنائية** — جميع الإطارات المضغوطة لحدث إطار متعدد واحد تُعبأ في رسالة WebSocket ثنائية واحدة، مع بيانات وصفية لكل كاميرا (معرف الكاميرا، الدقة، الطابع الزمني).
-3. **إدارة الضغط الخلفي** — إذا لم يتمكن العميل من المتابعة، يسقط الخادم الإطارات بدلاً من التخزين المؤقت إلى أجل غير مسمى. هذا يمنع تراكم الذاكرة ويحافظ على استجابة التيار.
+1. **Untouched JPEG** — The server sends the JPEG of the frame ring of each camera as it is: no resize, no re-encode, no rotation.
+2. **One message for each camera frame** — Each binary message holds one frame of one camera, after a header of 48 bytes (version, flags, frame number, arrival time, rotation, JPEG length, camera ID).
+3. **Flow control for each camera** — The server sends a camera its next frame when the client has drawn the last one, and drops the frames in between. With no ready message, a safety net sends one frame each second. A slow camera or a slow tile holds back only its own camera.
 
 يحمل نفس اتصال WebSocket أيضاً رسائل JSON للسجلات وتحديثات الحالة وإحصائيات معدل الإطارات وأوامر التحكم.
 
@@ -33,9 +33,9 @@ import config from '@site/content.config';
 
 تعالج واجهة React/Electron الأمامية الإطارات الواردة عبر خط أنابيب محسن للأداء:
 
-1. **تحليل ثنائي** — يتم تحليل الحمولة الثنائية لاستخراج كائنات JPEG لكل كاميرا.
-2. **إنشاء ImageBitmap** — يتم فك تشفير كل كائن JPEG إلى `ImageBitmap`، الذي يمكن نقله إلى خيط عامل دون نسخ.
-3. **عرض OffscreenCanvas** — يتم عرض بث كل كاميرا على `OffscreenCanvas` في Web Worker مخصص، مما يحافظ على حرية الخيط الرئيسي لتفاعلات واجهة المستخدم.
+1. **Parse** — `parseCameraMessage` reads the header and gives a view of the JPEG bytes, with no copy.
+2. **Newest pending** — `PreviewTiles` keeps only the newest message of each camera and gives each tile one update at a time, at most one for each display refresh.
+3. **Decode and draw** — The shared tile of the player decodes the JPEG with `ImageDecoder` and draws it with its overlay on the main thread. Then the UI sends one ready message for that camera.
 
 تدعم هذه البنية العديد من بثوث الكاميرات المتزامنة دون إسقاط إطارات في واجهة المستخدم.
 

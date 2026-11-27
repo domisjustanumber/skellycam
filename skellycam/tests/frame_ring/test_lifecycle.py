@@ -105,7 +105,7 @@ async def test_t_ring_26_recreation(monkeypatch, cleanup):
         old_reader = cleanup.handle(fr.FrameRingReader.attach(old))
         old_raw = cleanup.handle(open_raw(old))
         await _wait_ok(fr, old_reader)
-        await group.update_camera_settings(fake_configs(2, 320, 240, 30.0))
+        await group.update_camera_settings(fake_configs(2, 1280, 720, 30.0))
         new = group.ring_infos["0"].jpeg_ring_name
         assert new != old
         assert int(new.rsplit("J", 1)[1]) == int(old.rsplit("J", 1)[1]) + 1
@@ -119,7 +119,7 @@ async def test_t_ring_26_recreation(monkeypatch, cleanup):
         new_reader = cleanup.handle(fr.FrameRingReader.attach(new))
         read = await _wait_ok(fr, new_reader)
         assert read.frame_number >= 0
-        assert decode(read.payload).shape == (240, 320, 3)
+        assert decode(read.payload).shape == (720, 1280, 3)
         new_reader.close()
 
 

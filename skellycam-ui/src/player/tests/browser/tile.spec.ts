@@ -41,8 +41,10 @@ test('T-PLAY-41 rotations: the quadrants at the upright corners', async ({harnes
     const built = h.build(planOf('rotations'));
     await h.page.evaluate(folder => window.harness.openPlayer(folder), built.dir);
     for (const [i, cam] of built.plan.cameras.entries()) {
-        await expect.poll(() => h.page.evaluate(n => window.harness.readPlayerTile(n), i)).toMatchObject({camera: cam.index, position: 0});
-        const r = await h.page.evaluate(n => window.harness.readPlayerTile(n), i);
+        // the quadrants of the same reading as the barcode: a second read could come between a resize of the canvas,
+        // which clears it, and the redraw of the tile
+        let r = await h.page.evaluate(n => window.harness.readPlayerTile(n), i);
+        await expect.poll(async () => (r = await h.page.evaluate(n => window.harness.readPlayerTile(n), i))).toMatchObject({camera: cam.index, position: 0});
         r.quadrants.forEach((q: Rgb, j: number) => expect(near(q, ycbcrToRgb(QUADRANTS[j])), `rotation ${cam.rotation} quadrant ${j}: ${q}`).toBe(true));
     }
     await h.page.evaluate(() => window.harness.closePlayer());
@@ -84,6 +86,10 @@ test('T-PLAY-44 the label on and off, seconds and timecode, the canvas title', a
     await h.page.evaluate(u => window.harness.updateTile('l', u), wire({jpeg: null, label: {...label, timeNs: null}}));
     await expect.poll(overlay).toMatchObject({overlay: {frame: 'F007', time: null}});
     expect((await overlay()).title).not.toBe('timestamp from recording');
+    // specs/preview-4b.md 7.6 [Q1]: the label on and `frame` null (an overlay before the first frame): the kept
+    // overlay has no frame text and has the camera text
+    await h.page.evaluate(u => window.harness.updateTile('l', u), wire({jpeg: null, label: {...label, frame: null as unknown as number, timeNs: null}}));
+    await expect.poll(overlay, {message: 'frame null: no frame text, the camera text stays'}).toMatchObject({overlay: {frame: null, camera: 'a1b2c3', time: null}});
 });
 
 test('T-PLAY-45 Tile alone: no new image, the eight states, a rate text, flagged, newest wins', async ({harness: h}) => {

@@ -922,24 +922,8 @@ class OpenCVFakeFactory:
 
 
 # ---------------------------------------------------------------------------
-# The interim relay (5.8) and the recording files
+# The recording files
 # ---------------------------------------------------------------------------
-
-def parse_relay(message):
-    """A relay message in the wire format of `frontend_payload_bytearray.py`:
-    (frame number of the message header, {camera_id: frame number of its frame header})."""
-    from skellycam.core.types.frontend_payload_bytearray import (
-        FRONTEND_FRAME_HEADER_DTYPE, FRONTEND_PAYLOAD_HEADER_FOOTER_DTYPE)
-
-    data = bytes(message)
-    header = np.frombuffer(data[:FRONTEND_PAYLOAD_HEADER_FOOTER_DTYPE.itemsize], FRONTEND_PAYLOAD_HEADER_FOOTER_DTYPE)[0]
-    offset, frames = FRONTEND_PAYLOAD_HEADER_FOOTER_DTYPE.itemsize, {}
-    for _ in range(int(header["number_of_cameras"])):
-        frame = np.frombuffer(data[offset:offset + FRONTEND_FRAME_HEADER_DTYPE.itemsize], FRONTEND_FRAME_HEADER_DTYPE)[0]
-        offset += FRONTEND_FRAME_HEADER_DTYPE.itemsize + int(frame["jpeg_string_length"])
-        frames[frame["camera_id"].decode("ascii")] = int(frame["frame_number"])
-    return int(header["frame_number"]), frames
-
 
 def take_manifest(directory, name="take"):
     """The manifest of a take of the take recorder (recorder.md 6.6)."""

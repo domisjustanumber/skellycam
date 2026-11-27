@@ -8,7 +8,7 @@ import { CameraGridCell } from "./CameraGridCell";
 import { useServer } from "@/services/server/ServerContextProvider";
 import { useTranslation } from "react-i18next";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import { selectConnectedCameras } from "@/store/slices/cameras/cameras-selectors";
+import { selectCameras } from "@/store/slices/cameras/cameras-selectors";
 import { camerasConnectOrUpdate } from "@/store/slices/cameras/cameras-thunks";
 import CameraEmptyState from "@/components/ui-components/camerasEmptyState";
 import { useRecordingGuard } from "@/components/RecordingGuardProvider";
@@ -53,7 +53,7 @@ interface CameraViewsGridProps {
 }
 
 export const CameraViewsGrid: React.FC<CameraViewsGridProps> = ({ manualColumns, resetKey }) => {
-    const { connectedCameraIds } = useServer();
+    const { gridCameraIds } = useServer();   // preview-4b.md 5.6: each camera of app_state, in the list order [Q5, Q7]
     const dispatch = useAppDispatch();
     const { requestGuardedAction } = useRecordingGuard();
     const [isConnecting, setIsConnecting] = useState(false);
@@ -86,35 +86,30 @@ export const CameraViewsGrid: React.FC<CameraViewsGridProps> = ({ manualColumns,
         return () => observer.disconnect();
     }, []);
 
-    const connectedCameras = useAppSelector(selectConnectedCameras);
+    const cameras = useAppSelector(selectCameras);
     const configFingerprint = useMemo(() =>
-        connectedCameras.map(cam =>
+        cameras.filter(cam => gridCameraIds.includes(cam.id)).map(cam =>
             `${cam.id}:${cam.actualConfig.rotation}:${cam.actualConfig.resolution.width}x${cam.actualConfig.resolution.height}`
         ).join("|"),
-        [connectedCameras]
+        [cameras, gridCameraIds]
     );
-
-    const sortedConnectedCameraIds = useMemo(() => {
-        const activeSet = new Set(connectedCameraIds);
-        return connectedCameras.filter(c => activeSet.has(c.id)).map(c => c.id);
-    }, [connectedCameraIds, connectedCameras]);
 
     const prevTilingRef = useRef<Tiling>({ cols: 1, rows: 1 });
     const tiling = useMemo(() => {
         const candidate = manualColumns !== null
-            ? tilingFromColumns(connectedCameraIds.length, manualColumns)
-            : computeOptimalTiling(connectedCameraIds.length, containerWidth, containerHeight);
+            ? tilingFromColumns(gridCameraIds.length, manualColumns)
+            : computeOptimalTiling(gridCameraIds.length, containerWidth, containerHeight);
         const prev = prevTilingRef.current;
         if (candidate.cols === prev.cols && candidate.rows === prev.rows) return prev;
         prevTilingRef.current = candidate;
         return candidate;
-    }, [connectedCameraIds.length, containerWidth, containerHeight, manualColumns]);
+    }, [gridCameraIds.length, containerWidth, containerHeight, manualColumns]);
 
-    const [layout, setLayout] = useState<LayoutItem[]>(() => buildLayout(sortedConnectedCameraIds, tiling));
+    const [layout, setLayout] = useState<LayoutItem[]>(() => buildLayout(gridCameraIds, tiling));
 
     useEffect(() => {
-        setLayout(buildLayout(sortedConnectedCameraIds, tiling));
-    }, [sortedConnectedCameraIds, tiling, resetKey, configFingerprint]);
+        setLayout(buildLayout(gridCameraIds, tiling));
+    }, [gridCameraIds, tiling, resetKey, configFingerprint]);
 
     const layoutBeforeDragRef = useRef<LayoutItem[]>(layout);
     const handleDragStart = useCallback(() => { layoutBeforeDragRef.current = layout; }, [layout]);
@@ -149,7 +144,7 @@ export const CameraViewsGrid: React.FC<CameraViewsGridProps> = ({ manualColumns,
         return Math.max(30, (containerHeight - totalMargin) / tiling.rows);
     }, [containerHeight, tiling.rows]);
 
-    if (sortedConnectedCameraIds.length === 0) {
+    if (gridCameraIds.length === 0) {
         return (
             <div ref={containerRef} className="camera-grid-empty-state-container camera-grid-container">
                 <CameraEmptyState />
@@ -171,7 +166,7 @@ export const CameraViewsGrid: React.FC<CameraViewsGridProps> = ({ manualColumns,
                 onDragStop={handleDragStop}
                 onResizeStop={handleResizeStop}
             >
-                {sortedConnectedCameraIds.map((cameraId) => (
+                {gridCameraIds.map((cameraId) => (
                     <div key={cameraId} className={clsx("camera-cell", isRecording && "recording")}>
                         <CameraGridCell cameraId={cameraId} />
                     </div>

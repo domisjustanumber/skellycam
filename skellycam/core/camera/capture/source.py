@@ -42,6 +42,7 @@ class OpenedMode:
     fps_den: int
     format: str
     device_path: str
+    os_range: str | None = None  # YUY2, NV12: the range flag of the OS, "limited" or "full"; None: not set (13.3)
 
 
 @dataclass(frozen=True)

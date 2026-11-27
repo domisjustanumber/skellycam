@@ -18,10 +18,11 @@ import cv2
 import numpy as np
 
 from skellycam.core import capture_timings
+from skellycam.core.camera.capture import encoder as capture_encoder
 from skellycam.core.camera.capture import rate_check
 from skellycam.core.camera.capture.failure_codes import WEDGE_CODES
 from skellycam.core.camera.capture.exposure_search import ExposureSearch, add_light_text, failed_text, search_values
-from skellycam.core.camera.capture.modes import NO_FLOOR_MODE, at_floor, rates_equal
+from skellycam.core.camera.capture.modes import NO_FLOOR_MODE, NO_SIZE_MODE, RAW_FORMATS, at_floor, rates_equal, size_at_floor
 from skellycam.core.camera.capture.source import (
     BOUNDED_CALL_LIMIT_S,
     HASH_COUNT,
@@ -116,6 +117,9 @@ def needs_reopen(requested: CameraConfig, current: CameraConfig) -> bool:
 
 
 class CameraLoop:
+    encoder = None  # the JPEG encoder of a YUY2 or NV12 open (13.2); class defaults for a loop that a test builds
+    fallbacks = 0
+
     def __init__(self, source_factory, config, ipc, orchestrator, update_sub, shm_sub, recording_sub):
         self.source_factory, self.config, self.ipc, self.orchestrator = source_factory, config, ipc, orchestrator
         self.source = None
@@ -153,6 +157,13 @@ class CameraLoop:
         self.search_replies = queue.Queue()
         self.no_exposure = False  # the camera has no working exposure control (camera-requests.md 1.9) [K3]
         self.exposure_range: tuple | None = None  # (min, max, step) of the camera at this open (1.3 item 1) [GEH0]
+        # The JPEG encode of a YUY2 or NV12 camera (13.2, 22.2): the encoder of this open, the input range that is
+        # decided one time (13.3), and the Quick Sync failures of this camera (after one, cv2 from then on).
+        self.encoder: capture_encoder.FrameEncoder | None = None
+        self.raw_format: str | None = None
+        self.full_range: bool | None = None
+        self.had_encoder = False
+        self.fallbacks = 0
         self.signals = queue.Queue()
         self.hung = threading.Event()
         self._failure_lock = threading.Lock()
@@ -258,19 +269,24 @@ class CameraLoop:
             t1 = timing.clock()
             self.gate_ns += t1 - t0
         frame = self._read()
+        t2 = None
         if on:
             retrieve = getattr(self.source, "retrieve_ns", None) if frame is not None and frame.format == "BGR" else None
             if retrieve is not None:  # 3.1: the OpenCV wait ends at the read before its retrieve (no read of its own)
                 self.wait_ns += retrieve[0] - t1
             else:
-                self.wait_ns += timing.clock() - t1
+                t2 = timing.clock()
+                self.wait_ns += t2 - t1
         if frame is not None:
             if on:
                 steps = self.loop_steps
                 steps.add("camera_wait", self.wait_ns)
                 steps.add("gate_wait", self.gate_ns)
             self.wait_ns = self.gate_ns = 0
-            self._process(frame, on)
+            if self.encoder is not None and frame.format in RAW_FORMATS:
+                self._encode(frame, on, t2)
+            else:
+                self._process(frame, on)
 
     def _read(self, deadline_ns: int | None = None) -> CapturedFrame | None:
         """`read_frame` with the stall watch (9.5): it waits at most until 2 s after the last arrival, or after
@@ -319,10 +335,21 @@ class CameraLoop:
         rate = opened.fps_num / opened.fps_den if opened.fps_num > 0 else 0.0
         if rate and not at_floor(rate):
             raise CaptureFailure("set mode", NO_FLOOR_MODE, code="below-floor")  # 14.1: OpenCV reports a rate under the floor
+        if opened.width > 0 and not size_at_floor(opened.width, opened.height):
+            raise CaptureFailure("set mode", NO_SIZE_MODE, code="below-floor")  # 14.1, 22.2 [YQN1 4]: a size under the floor
         # D22; with no reported rate (OpenCV), the requested rate and 30 for "auto" (ADR-PDD3 W2)
         self.reference_rate = rate or (config.framerate if config.framerate > 0 else rate_check.AUTO_REFERENCE_FPS)
+        opencv = getattr(self.source, "name", None) == "opencv"
         self.status.update_info(mode=dict(width=opened.width, height=opened.height, fps_num=opened.fps_num,
-                                          fps_den=opened.fps_den, format=opened.format))
+                                          fps_den=opened.fps_den, format=opened.format),
+                                jpeg_encoder="cv2" if opencv else None)
+        # 13.2: a YUY2 or NV12 frame of a native source is encoded here; the OpenCV source gives BGR (14.1)
+        self.raw_format = opened.format if opened.format in RAW_FORMATS and not opencv else None
+        if self.raw_format and config.capture_fourcc == "MJPG":  # 22.2 [Q807, N72V 2]
+            logger.info(f"Camera {self.camera_id}: no MJPG mode at 30 fps or more at {opened.width}x{opened.height}; "
+                        f"it opens {self.raw_format}, and its frames are encoded to JPEG")
+        raw_shape = capture_encoder.raw_shape(self.raw_format, opened.width, opened.height) if self.raw_format else None
+        outside = [0, 0]  # 13.3: the Y values outside 16 to 235 in the warm-up frames, and all Y values
         self._check_deadline_of_start(deadline)
         self.stage = "set controls"
         self._set_start_controls(deadline)
@@ -343,6 +370,10 @@ class CameraLoop:
             if frame is None:
                 continue
             warm_up_frame = frame.source_frame_number - s0 + 1
+            if raw_shape is not None and frame.payload.shape == raw_shape:
+                count, total = capture_encoder.y_outside(frame.payload, self.raw_format)
+                outside[0] += count
+                outside[1] += total
             if window_start is None and warm_up_frame >= rate_check.WINDOW_FIRST:
                 window_start = (frame.source_frame_number, frame.arrival_ns)
             # an empty window (the first frame seen is frame 90 or later) waits for one more frame
@@ -355,12 +386,70 @@ class CameraLoop:
             if not rate_check.within_limit(measured, self.reference_rate):
                 raise CaptureFailure("rate check", rate_check.slow_reason(self.reference_rate, measured),
                                      code="rate-low" if rate_check.is_slow(measured, self.reference_rate) else "rate-high")
+        if self.raw_format:
+            self._open_encoder(opened, *outside)
         self.started = True
         self.stage = "streaming"
         self.status.set_state("waiting")
         self.control = _ControlThread(self)
         self._publish_diagnostics()  # at the end of the open
         self.next_diagnostics_ns = perf_counter_ns() + DIAGNOSTICS_INTERVAL_NS
+
+    def _open_encoder(self, opened, outside: int, total: int) -> None:
+        """13.3: decide the input range one time, before the first recorded frame, and log it (recorder.md 6.7). Then
+        the encoder of 13.2: Quick Sync when the check of the main process gave true and it never failed here."""
+        if self.full_range is None:
+            setting = self.config.input_range
+            if setting != "auto":
+                self.full_range, why = setting == "full", "set in the camera config"
+            elif total and outside / total > 0.01:
+                self.full_range = True
+                why = f"{100 * outside / total:.2f} % of the Y values of the warm-up are outside 16 to 235"
+            else:
+                self.full_range = opened.os_range == "full"
+                why = f"the flag of the OS is {opened.os_range or 'not set'}"
+            logger.info(f"Camera {self.camera_id}: input range {'full' if self.full_range else 'limited'} ({why})")
+        quick_sync = (bool(self.status.quick_sync.value) and not self.status.encoder_failed.value  # [U Q886]
+                      and not self.fallbacks)
+        args = (self.raw_format, opened.width, opened.height, self.full_range)
+        try:
+            self.encoder = capture_encoder.FrameEncoder(*args, quick_sync)
+        except Exception as error:  # notes: Encoder check: a camera whose own encoder does not open uses cv2
+            logger.warning(f"Camera {self.camera_id}: the Quick Sync JPEG encoder did not open ({type(error).__name__}: "
+                           f"{error}); the camera uses cv2.imencode")
+            self.encoder = capture_encoder.FrameEncoder(*args, False)
+        self.had_encoder = True
+        self.status.update_info(jpeg_encoder=self.encoder.name)
+
+    def _close_encoder(self) -> None:
+        encoder, self.encoder = self.encoder, None
+        if encoder is not None:
+            encoder.close()
+
+    def _encode(self, frame: CapturedFrame, on: bool, t0: int | None = None) -> None:
+        """5.1 step 4 for YUY2 and NV12 (13.2): each frame whose JPEG came out goes on through the loop. One
+        `jpeg_encode` sample for each call of `feed` (capture-timings.md 5.4 [ZEK6 11]): it starts at the read that
+        ends `camera_wait` (`t0`). `_process` reads the clock again after `should_record_frame_number` (5.3)."""
+        encoder, before = self.encoder, self.encoder.fallbacks
+        ready = encoder.feed(frame)
+        if on:
+            self.loop_steps.add("jpeg_encode", self.timing.clock() - t0)
+        if encoder.fallbacks != before:  # outside each bracket
+            self._encoder_fell_back(encoder.error)
+        for item, jpeg, bgr in ready:
+            self._process(item, on, jpeg=jpeg, bgr=bgr)
+
+    def _encoder_fell_back(self, error: str | None) -> None:
+        """13.2 [V3, 3WCA 3]: one WARNING line, a count for the stop line, and an item while the take runs."""
+        self.fallbacks += 1
+        self.status.encoder_failed.value = True  # each later open in this app run uses cv2 [U Q886]
+        text = (f"Camera {self.camera_id}: the Quick Sync JPEG encoder failed ({error}); the camera uses cv2.imencode "
+                f"from now on")
+        logger.warning(text)
+        self.status.update_info(jpeg_encoder=self.encoder.name)
+        if self.take_writer is not None:
+            self.status.replace_warning_items("camera_warnings", ("encoder_fallback",), [
+                dict(kind="encoder_fallback", camera_ids=[self.camera_id], text=text)])
 
     def _new_source(self, config: CameraConfig):
         """A new source of the factory. A source with steps of its own (`timing_steps`) gets its own StepSet
@@ -572,9 +661,11 @@ class CameraLoop:
 
     # ----- each frame (5.1) -----
 
-    def _process(self, frame: CapturedFrame, on: bool = False) -> None:
+    def _process(self, frame: CapturedFrame, on: bool = False, jpeg: bytes | None = None,
+                 bgr: np.ndarray | None = None) -> None:
         """`on`: the capture timings measure this frame. Brackets that follow one another share one clock read (`t`),
-        so the loop reads the clock at most 10 times for each frame (capture-timings.md 5.3)."""
+        so the loop reads the clock at most 10 times for each frame (capture-timings.md 5.3). `jpeg`: the JPEG of a
+        YUY2 or NV12 frame (13.2; `b""` for a frame of the wrong length), with `bgr`, the image that `cv2` encoded."""
         if self.replaced_base is None:
             self.replaced_base = self.source.replaced_count  # the first frame in the gate (5.2, agent 49)
         self.gate_count += 1
@@ -592,9 +683,14 @@ class CameraLoop:
                 steps.add("jpeg_encode", t - t0)
             delivered_len = len(payload)
             self.encoded += 1
+        elif jpeg is not None:
+            image, payload, delivered_len = bgr, jpeg, len(jpeg)
+            self.encoded += bool(jpeg)
         else:
             payload, delivered_len = frame.payload, frame.delivered_len
-        payload, flags = check_jpeg(payload, delivered_len=delivered_len, driver_error=frame.driver_error)
+        # 13.2 [agent 36]: a raw frame of the wrong length is not encoded; its slot is flagged CAPTURE_ERROR
+        payload, flags = check_jpeg(payload, delivered_len=delivered_len,
+                                    driver_error=frame.driver_error or jpeg == b"")
         if on:
             t, t0 = timing.clock(), t
             steps.add("capture_check", t - t0)
@@ -621,7 +717,7 @@ class CameraLoop:
                 t, t0 = timing.clock(), t
                 steps.add("recorder_give", t - t0)
         elif should_finish and self.take_writer is not None:
-            self._end_take()
+            self._close_take()
             if on:
                 t = timing.clock()  # take_end has its own bracket
         self.ring_count += 1
@@ -633,8 +729,13 @@ class CameraLoop:
                 steps.add("arrival_to_published", t - frame.arrival_ns)
             if self.decode_stage is not None:
                 # The one decode is in the decode stage; the recorder needs none (recorder.md 10 item 6, D9).
-                item = (DecodeInput(payload=image, source="BGR", **fields) if image is not None
-                        else DecodeInput(payload=payload, source="JPEG", **fields))
+                if image is not None:
+                    item = DecodeInput(payload=image, source="BGR", **fields)
+                elif jpeg is not None:  # ring 8.7: with Quick Sync, the raw frame, converted with the decided range
+                    item = DecodeInput(payload=frame.payload, source=frame.format, full_range=bool(self.full_range),
+                                       **fields)
+                else:
+                    item = DecodeInput(payload=payload, source="JPEG", **fields)
                 self.decode_stage.waiting_place.put(item)
         except Exception as error:  # a failing ring write does not stop capture or recording (ring 5.3)
             logger.exception(f"Frame ring write failed for camera {self.camera_id}: {error}")
@@ -775,6 +876,7 @@ class CameraLoop:
         self.status.set_state("starting")  # again: a live change of the control thread can set `checking` (F3)
         self._close_rings()
         self._add_replaced()
+        self._close_encoder()
         self.source.close()
         self._retire("source")
         if self.search is not None:  # [GEH0]: as `_end`, the search ends as `camera-closed` in the status
@@ -791,7 +893,7 @@ class CameraLoop:
 
     def _start_take(self, spec) -> None:
         if self.take_writer is not None:
-            self._end_take()
+            self._close_take()
         orchestrator = self.orchestrator
         if orchestrator.first_recording_frame_number.value == -1 or orchestrator.last_frame != -1:
             # The take ended (or its start failed) before this spec came: no writer (ADR-P5VE).
@@ -838,6 +940,12 @@ class CameraLoop:
                 RecordingFinishedMessage(camera_id=self.camera_id, error=text))
         finally:
             self.last_wait_end = perf_counter_ns()
+
+    def _close_take(self) -> None:
+        """`_end_take`, then the `encoder_fallback` item goes: it stays only while the take runs (22.2 [3WCA 3])."""
+        self._end_take()
+        if self.fallbacks:
+            self.status.replace_warning_items("camera_warnings", ("encoder_fallback",), [])
 
     def _end_take(self) -> None:
         """End the camera writer with the frame count of the take (7.6) and send its result at once.
@@ -949,7 +1057,7 @@ class CameraLoop:
         if self.failed and self.started:  # dead while its process runs: placeholders to the end (M1)
             self._missing_until_end()
         if self.take_writer is not None:
-            self._end_take()
+            self._close_take()
 
     def hard_end(self) -> None:
         """6.6: after a hang, end the camera process at once with no clean-up. The main process completes the
@@ -973,6 +1081,7 @@ class CameraLoop:
             if not hung:
                 self._stop_control()
                 self._add_replaced()
+                self._close_encoder()
                 if self.source is not None:
                     try:
                         # 4.7 [Z7F3]: no call into a wedged camera; each other failure (and a lost heartbeat) restores
@@ -991,6 +1100,8 @@ class CameraLoop:
             self.status.replaced_count.value = self.replaced_total
             logger.info(f"Camera {self.camera_id} stop: replaced {self.replaced_total} frames since its first "
                         f"frame in the gate")
+            if self.had_encoder:  # 22.2 [3WCA 3]
+                logger.info(f"Camera {self.camera_id} stop: encoder fallbacks {self.fallbacks}")
             if hung:
                 self.hard_end()
             self.status.connected.value = False
@@ -1123,6 +1234,8 @@ class CameraLoop:
     def _timing_steps(self) -> tuple:
         """5.4: the steps that apply to this camera."""
         steps = capture_timings.CAMERA_STEPS + tuple(getattr(self.source, "timing_steps", ()))
+        if self.raw_format and "jpeg_encode" not in steps:  # 13.2: the encode of a YUY2 or NV12 frame
+            steps += ("jpeg_encode",)
         return steps + capture_timings.BGR_STEPS if self.config.bgr_ring else steps
 
     # ----- publishing -----

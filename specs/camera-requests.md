@@ -914,7 +914,8 @@ the text of a slow camera.
 ### 2.1 The rule
 
 - The camera list has one frame rate choice for all cameras, at the top [F1].
-- It offers 30 fps and 60 fps. Nothing below 30 fps is offered [F3]; 29.97 fps counts as 30 (2.6,
+- It offers 30 fps and 60 fps. Nothing below 30 fps is offered [F3], and no size below the size
+  floor (640 wide and 360 high, [`windows-capture.md`](windows-capture.md) 22.2, Q887 to Q889); 29.97 fps counts as 30 (2.6,
   item 8 of [ADR-BVK7](../decisions/entries/BVK7-certify-rulings-of-the-user-one-test-one-row.md)). A rate above 60 fps is not offered [A14].
 - The group runs at 60 fps only when each selected camera passed a real 60 fps rate check. Else the
   group runs at 30 fps, and the camera list says which camera could not [F2].

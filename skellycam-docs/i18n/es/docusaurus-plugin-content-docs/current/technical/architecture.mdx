@@ -20,7 +20,7 @@ graph TB
     subgraph UI ["React / Electron UI"]
         Redux["Redux Store"]
         WS_Client["WebSocket Connection"]
-        Canvas["OffscreenCanvas Workers<br/>(per camera)"]
+        Canvas["Tile of each camera<br/>(ImageDecoder, main thread)"]
     end
 
     WS_Client -- "WebSocket (binary frames + JSON)" --> WS_Server
@@ -112,15 +112,15 @@ graph LR
     A["Camera Sensor"] --> B["CameraWorker<br/>grab() + retrieve()"]
     B --> C["Per-Camera<br/>SharedMemory<br/>Ring Buffer"]
     C --> D["CameraGroup<br/>Multi-Frame Assembly"]
-    D --> E["WebSocket Server<br/>JPEG compress + pack"]
-    E --> F["Frontend<br/>Binary parse -> ImageBitmap"]
-    F --> G["OffscreenCanvas<br/>Web Workers"]
+    D --> E["WebSocket Server<br/>One camera message each"]
+    E --> F["PreviewTiles<br/>Newest pending, one ready each"]
+    F --> G["Tile<br/>ImageDecoder, main thread"]
 ```
 
 1. **Camara -> Memoria Compartida** — Cada worker de camara escribe su fotograma en un buffer circular de memoria compartida por camara.
 2. **Memoria Compartida -> Buffer MultiFrame** — El grupo de camaras lee los fotogramas de todas las camaras y escribe un multi-fotograma sincronizado en un segundo buffer de memoria compartida.
 3. **MultiFrame -> WebSocket** — El servidor WebSocket lee el ultimo multi-fotograma, comprime en JPEG la imagen de cada camara (calidad 80, redimensionada para coincidir con las dimensiones de visualizacion del cliente o al 50% de la resolucion nativa), y las empaqueta en una carga binaria.
-4. **WebSocket -> Frontend** — La carga binaria se envia por WebSocket. El frontend analiza el protocolo binario, crea objetos `ImageBitmap` y renderiza en `OffscreenCanvas` mediante Web Workers.
+4. **WebSocket → Frontend** — The server sends one camera message for each frame of each camera that it sends, and waits for the ready message of that camera, with a safety net of 1 s. `PreviewTiles` gives the newest message of each camera to its tile; the tile decodes the JPEG with `ImageDecoder` and draws it on the main thread.
 
 ## Flujo de Datos: Grabacion
 
@@ -150,8 +150,8 @@ La interfaz React usa:
 
 - **Redux Toolkit** — Gestion de estado global para camaras, grabacion, datos de velocidad de fotogramas, logs y tema.
 - **Conexion WebSocket** — Conexion persistente al servidor con reconexion automatica y heartbeat.
-- **FrameProcessor** — Analiza el protocolo binario de multi-fotograma y crea objetos `ImageBitmap`.
-- **CanvasManager** — Gestiona pares de `OffscreenCanvas` + `Worker` para cada camara, habilitando renderizado acelerado por GPU sin bloquear el hilo principal.
+- **PreviewTiles** — Reads each camera message (`parseCameraMessage`), keeps the newest pending message of each camera, gives each tile one update at a time on `requestAnimationFrame`, and sends one `camera_ready` for each draw.
+- **Tile** (`skellycam-ui/src/player/`) — The shared tile of the player and the preview: it decodes the JPEG with `ImageDecoder` and draws it with its overlay (camera list label, rate, state) on the main thread.
 - **Reproduccion Bloqueada por Fotograma Basada en Lider** — La pagina de reproduccion elige el primer video como el "lider" cuyo `.play()` nativo impulsa el tiempo canonico. Un bucle `requestAnimationFrame` lee `leader.currentTime` y deriva el numero de fotograma. Los videos seguidores solo se corrigen cuando divergen mas de 2 fotogramas. Al pausar o avanzar fotograma a fotograma, `video.currentTime` se establece directamente en todos los elementos simultaneamente. Las superposiciones de fotogramas se actualizan mediante referencias DOM directas para evitar re-renderizados de React durante la reproduccion.
 - **Material UI** — Biblioteca de componentes para los paneles de control, vistas de arbol y diseno.
 - **i18next** — Internacionalizacion con archivos de traduccion mantenidos por la comunidad.

@@ -15,13 +15,13 @@ import time
 import pytest
 
 from skellycam.tests.capture.capture_session import (
-    RingWatcher, Spies, camera_key_of, capture_app, capture_logs, numbers_in, one_camera, parse_relay, product,
+    RingWatcher, Spies, camera_key_of, capture_app, capture_logs, numbers_in, one_camera, product,
     ready_app_steps, sfn_gaps, spy_check_anchors, stop_line_count, take_rows, too_slow_after_the_window_start)
 from skellycam.tests.capture.fake_source import FakeScript
 from skellycam.tests.pace import bound, one_run
 
 FRAME_NS = round(1e9 / 30)
-MODES_30_60 = ((640, 480, 30, 1, "MJPG"), (640, 480, 60, 1, "MJPG"), (320, 240, 30, 1, "MJPG"))
+MODES_30_60 = ((640, 480, 30, 1, "MJPG"), (640, 480, 60, 1, "MJPG"), (1280, 720, 30, 1, "MJPG"))
 
 
 def opens(app, camera_id):
@@ -251,7 +251,7 @@ def test_t_cap_30_live_exposure_change_and_resolution_reopen(monkeypatch):
         app.wait_state(changed, "ready")
         assert opens(app, changed) == 1 and app.ring_name(changed) == ring
         t_resize = app.clock.now_ns()
-        assert app.apply([app.config(changed, width=320, height=240), app.config(other)]).status_code == 200
+        assert app.apply([app.config(changed, width=1280, height=720), app.config(other)]).status_code == 200
         app.wait(lambda: app.ring_name(changed) != ring and app.state(changed) == "ready", "the reopen")
         t_starting = app.tracker.first(changed, "starting", t_resize)
         assert t_starting is not None
@@ -598,116 +598,13 @@ def test_t_cap_84_whole_request_check_then_each_camera_alone(monkeypatch):
         for camera_id in app.factory.camera_ids:
             assert app.state(camera_id) == "ready" and app.status(camera_id)["mode"]["fps_num"] == 30
             assert app.ring_name(camera_id) == rings[camera_id] and opens(app, camera_id) == 1
-        configs = [app.config(resized, width=320, height=240), app.config(failing, width=320, height=240),
+        configs = [app.config(resized, width=1280, height=720), app.config(failing, width=1280, height=720),
                    app.config(untouched)]
         assert app.apply(configs).status_code == 200
         app.wait_state(failing, "failed")
-        app.wait(lambda: app.state(resized) == "ready" and app.status(resized)["mode"]["width"] == 320, "new size")
+        app.wait(lambda: app.state(resized) == "ready" and app.status(resized)["mode"]["width"] == 1280, "new size")
         assert app.state(untouched) == "ready"
         assert app.ring_name(untouched) == rings[untouched] and opens(app, untouched) == 1
-
-
-# ---------------------------------------------------------------------------
-# T-CAP-86: the interim relay during a reopen
-# ---------------------------------------------------------------------------
-
-def test_t_cap_86_relay_sends_each_camera_on_its_own(monkeypatch):
-    """T-CAP-86, section 5.8 [U13, agent 54]: three fakes with preview; reopen one camera by a change of
-    its resolution. Capture relay messages during the reopen. Each message holds the newest frame of
-    each camera that has one; the frames of the other two cameras keep advancing while the third is
-    `starting`; the third comes back after `ready`.
-
-    The reopened fake holds after its first frame, so the camera stays in `starting` while the test
-    reads the relay. The test thread joins the virtual clock from before the reopen until the held
-    camera runs again. Else the other two loops run the virtual time on alone while the test thread
-    does not run, and the held camera passes its 15 s ready limit (CI runs of d8989972d, macOS, and
-    6d496aa24, Linux)."""
-    scripts = [FakeScript(modes=MODES_30_60), FakeScript(modes=MODES_30_60), FakeScript(modes=MODES_30_60, hold_opens=(2,))]
-    with capture_app(monkeypatch, scripts) as app:
-        messages, snapshots, trace = [], [], []
-        try:
-            ready_app_steps(app)
-            a, b, reopened = app.factory.camera_ids
-            result = []
-            configs = [app.config(a), app.config(b), app.config(reopened, width=320, height=240)]
-            thread = threading.Thread(target=lambda: result.append(app.apply(configs)))
-            app.clock.wait_until(app.clock.now_ns())  # join the clock: the time moves only when this thread waits on it
-            source = None
-            try:
-                thread.start()
-                app.wait(lambda: reopened in app.factory.sources and app.factory.sources[reopened].holding.is_set(),
-                         "the reopened camera holds in `starting`")
-                source = app.factory.sources[reopened]
-                snapshots.append(("the hold is seen", app.clock.describe()))
-                assert app.state(reopened) == "starting"
-                _collect_one_frame_apart(app, messages, 20, trace)
-                snapshots.append(("the relay messages are collected", app.clock.describe()))
-                for header, frames in messages:
-                    assert reopened not in frames and {a, b} <= set(frames), frames
-                    assert header == max(frames.values())
-                for camera_id in (a, b):
-                    assert messages[-1][1][camera_id] > messages[0][1][camera_id], f"camera {camera_id} did not advance"
-            finally:
-                snapshots.append(("before the release", app.clock.describe()))
-                if source is not None:
-                    source.release()
-                    app.wait(lambda: not source.holding.is_set(), "the held camera runs again")
-                app.clock.leave()
-                thread.join(60)
-            assert result and result[0].status_code == 200
-            app.wait_state(reopened, "ready")
-            after = []
-            app.wait(lambda: _collect(app, after) and reopened in after[-1][1], "the reopened camera in the relay")
-        finally:
-            _print_t_cap_86_diagnostics(app, messages, snapshots, trace)
-
-
-def _print_t_cap_86_diagnostics(app, messages, snapshots, trace):
-    """Q673 [ADR-F4N7]: the virtual time, the clock states, the state and the frame count of each camera, the relay
-    messages and the events of the reopened camera (s from the clock start). Also the clock at three points of the
-    test, and (pass of the collection, virtual time, message count) at each new relay message. Pytest shows them for
-    a failed test."""
-    try:
-        group = app.group_or_none()
-        counts = group.cameras.orchestrator.camera_frame_counts if group is not None else {}
-        cameras = {cid: (app.status(cid).get("state") if group is not None else None, counts.get(cid),
-                         len(app.factory.logs[cid].taken)) for cid in app.factory.camera_ids}
-        start = app.clock.START_NS
-        reopened = app.factory.camera_ids[-1]
-        events = [(name, round((t - start) / 1e9, 3), "" if d is None else str(d)[:60])
-                  for name, t, d in app.factory.logs[reopened].events]
-        print("T-CAP-86 clock:", app.clock.describe())
-        print("T-CAP-86 cameras (state, gate frame count, frames taken from the fake):", cameras)
-        print("T-CAP-86 relay messages:", len(messages), [frames for _, frames in messages[-3:]])
-        print("T-CAP-86 clock during the test:", snapshots)
-        print("T-CAP-86 collection (pass, s, messages, gate counts):", trace)
-        print("T-CAP-86 events of the reopened camera:", events)
-    except Exception as error:  # the diagnostics must not hide the failure of the test
-        print("T-CAP-86 diagnostics failed:", repr(error))
-
-
-def _collect_one_frame_apart(app, messages, count, trace=None):
-    """Collect relay messages one frame of virtual time apart. The caller has joined the clock, so the
-    virtual time does not run on while a poll builds a payload. `trace` gets (pass, virtual s, message count, gate
-    frame count of each camera) at each new message."""
-    for index in range(50 * count):
-        before = len(messages)
-        if _collect(app, messages) > before and trace is not None:
-            counts = list(app.group.cameras.orchestrator.camera_frame_counts.values())
-            trace.append((index, round((app.clock.now_ns() - app.clock.START_NS) / 1e9, 3), len(messages), counts))
-        if len(messages) >= count:
-            return
-        app.clock.wait_until(app.clock.now_ns() + FRAME_NS)
-    raise AssertionError(f"{len(messages)} relay messages, not {count}")
-
-
-def _collect(app, messages):
-    payload = app.group.get_latest_ring_payload()
-    if payload is not None:
-        message = parse_relay(payload[2])
-        if not messages or message != messages[-1]:
-            messages.append(message)
-    return len(messages)
 
 
 # ---------------------------------------------------------------------------

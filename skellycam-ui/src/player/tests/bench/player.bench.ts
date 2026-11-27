@@ -9,6 +9,7 @@ import {mkdirSync, writeFileSync} from 'node:fs';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {harnessTest} from '../browser/harness.ts';
+import {observe, observed} from '../harness/observer.ts';
 import type {Harness} from '../browser/harness.ts';
 import {defaultTake} from '../fixtures/take.ts';
 import type {RowPlan} from '../fixtures/take.ts';
@@ -59,44 +60,6 @@ async function layout(h: Harness, n: number): Promise<Geometry> {
     await h.app.evaluate(({BrowserWindow}, [w, hh]) => BrowserWindow.getAllWindows()[0].setContentSize(w, hh), [width, Math.ceil(n / cols) * 264 + 40] as const);
     await h.page.waitForFunction(w => innerWidth === w, width);
     return h.page.evaluate(c => window.bench.layout(c), cols);
-}
-
-/** The observer outside the page: the main process takes each composited frame of the window
- * (`beginFrameSubscription`, about 30 frames/s, so a time resolution of about 33 ms) and reads from it the
- * reference strip (k*) and the barcode of each tile. */
-async function observe(app: ElectronApplication, geo: Geometry) {
-    await app.evaluate(({BrowserWindow}, g) => {
-        const G = globalThis as never as {__observed: number[][]};
-        G.__observed = [];
-        BrowserWindow.getAllWindows()[0].webContents.beginFrameSubscription(false, image => {
-            const s = image.getSize().width / g.innerWidth;
-            const out = [performance.timeOrigin + performance.now()];
-            for (const pts of [g.ref, ...g.tiles]) {
-                const x0 = Math.floor(pts[0][0] * s);
-                const bmp = image.crop({x: x0, y: Math.round(pts[0][1] * s), width: Math.ceil(pts[pts.length - 1][0] * s) - x0 + 1, height: 1}).toBitmap();
-                let v = 0;
-                for (const [x] of pts) {
-                    const i = (Math.round(x * s) - x0) * 4;
-                    v = v * 2 + ((bmp[i] + bmp[i + 1] + bmp[i + 2]) / 3 > 128 ? 1 : 0);
-                }
-                out.push(v);
-            }
-            G.__observed.push(out);
-        });
-    }, geo);
-}
-
-/** Stop the observer. For each tile: the percent of the frames in [from, to] that show the image of k*. */
-async function observed(app: ElectronApplication, from: number, to: number) {
-    const frames = (await app.evaluate(({BrowserWindow}) => {
-        BrowserWindow.getAllWindows()[0].webContents.endFrameSubscription();
-        return (globalThis as never as {__observed: number[][]}).__observed;
-    })).filter(f => f[0] >= from && f[0] <= to);
-    const n = frames.length ? frames[0].length - 2 : 0;
-    // a tile value is the camera index in 4 bits, then the position in 12 bits
-    const shownPercent = Array.from({length: n}, (_, i) =>
-        (100 * frames.filter(f => (f[i + 2] & 4095) === f[1] % CYCLE && f[i + 2] >> 12 === i % 16).length) / Math.max(1, frames.length));
-    return {frames: frames.length, framesPerSecond: frames.length / ((to - from) / 1000), shownPercent};
 }
 
 /** Play for `seconds` and measure: the page draws k* at each refresh, the observer reads the tiles. */

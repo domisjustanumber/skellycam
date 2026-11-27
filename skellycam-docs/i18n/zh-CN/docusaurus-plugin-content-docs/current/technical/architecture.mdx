@@ -20,7 +20,7 @@ graph TB
     subgraph UI ["React / Electron UI"]
         Redux["Redux Store"]
         WS_Client["WebSocket Connection"]
-        Canvas["OffscreenCanvas Workers<br/>(per camera)"]
+        Canvas["Tile of each camera<br/>(ImageDecoder, main thread)"]
     end
 
     WS_Client -- "WebSocket (binary frames + JSON)" --> WS_Server
@@ -112,15 +112,15 @@ graph LR
     A["Camera Sensor"] --> B["CameraWorker<br/>grab() + retrieve()"]
     B --> C["Per-Camera<br/>SharedMemory<br/>Ring Buffer"]
     C --> D["CameraGroup<br/>Multi-Frame Assembly"]
-    D --> E["WebSocket Server<br/>JPEG compress + pack"]
-    E --> F["Frontend<br/>Binary parse -> ImageBitmap"]
-    F --> G["OffscreenCanvas<br/>Web Workers"]
+    D --> E["WebSocket Server<br/>One camera message each"]
+    E --> F["PreviewTiles<br/>Newest pending, one ready each"]
+    F --> G["Tile<br/>ImageDecoder, main thread"]
 ```
 
 1. **摄像头 -> 共享内存** — 每个摄像头工作进程将帧写入各自的共享内存环形缓冲区。
 2. **共享内存 -> 多帧缓冲区** — 摄像头组从所有摄像头读取帧，并将同步的多帧写入第二个共享内存缓冲区。
 3. **多帧 -> WebSocket** — WebSocket 服务器读取最新的多帧，对每个摄像头图像进行 JPEG 压缩（质量 80，调整大小以匹配客户端显示尺寸或原始分辨率的 50%），并打包成二进制负载。
-4. **WebSocket -> 前端** — 二进制负载通过 WebSocket 发送。前端解析二进制协议，创建 `ImageBitmap` 对象，并通过 Web Workers 渲染到 `OffscreenCanvas`。
+4. **WebSocket → Frontend** — The server sends one camera message for each frame of each camera that it sends, and waits for the ready message of that camera, with a safety net of 1 s. `PreviewTiles` gives the newest message of each camera to its tile; the tile decodes the JPEG with `ImageDecoder` and draws it on the main thread.
 
 ## 数据流：录制
 
@@ -150,8 +150,8 @@ React UI 使用：
 
 - **Redux Toolkit** — 用于摄像头、录制、帧率数据、日志和主题的全局状态管理。
 - **WebSocket 连接** — 与服务器的持久连接，支持自动重连和心跳。
-- **FrameProcessor** — 解析二进制多帧协议并创建 `ImageBitmap` 对象。
-- **CanvasManager** — 为每个摄像头管理 `OffscreenCanvas` + `Worker` 对，实现 GPU 加速渲染而不阻塞主线程。
+- **PreviewTiles** — Reads each camera message (`parseCameraMessage`), keeps the newest pending message of each camera, gives each tile one update at a time on `requestAnimationFrame`, and sends one `camera_ready` for each draw.
+- **Tile** (`skellycam-ui/src/player/`) — The shared tile of the player and the preview: it decodes the JPEG with `ImageDecoder` and draws it with its overlay (camera list label, rate, state) on the main thread.
 - **基于领导者的帧锁定回放** — 回放页面选择第一个视频作为"领导者"，其原生 `.play()` 驱动权威时间。`requestAnimationFrame` 循环读取 `leader.currentTime` 并推导帧号。跟随者视频仅在偏差超过 2 帧时进行漂移校正。暂停或逐帧步进时，所有元素的 `video.currentTime` 被直接同时设置。帧覆盖层通过直接 DOM 引用更新，避免回放期间的 React 重渲染。
 - **Material UI** — 用于控制面板、树视图和布局的组件库。
 - **i18next** — 国际化，使用社区维护的翻译文件。

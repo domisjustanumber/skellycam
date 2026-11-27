@@ -1,15 +1,14 @@
-"""The watch thread of `CameraGroup` (specs/windows-capture.md, section 6.6) and the ring readers of the
-interim relay (5.8). F8 of the review of the 3a code (ADR-BM73).
+"""The watch thread of `CameraGroup` (specs/windows-capture.md, section 6.6) and the ring readers of the main
+process. F8 of the review of the 3a code (ADR-BM73).
 
 - An error in one pass of the watch does not end the watch: it marks a later ended process and reads
   the queues of the camera processes.
 - A ring reader is closed only on the event loop. The watch thread hands the close to the loop, so a
-  close cannot come in the middle of a relay read. The interim relay of this branch also holds
-  `_ring_lock` for its walk and each read, and copies each payload; a reader that reads with no lock
-  on the loop (the preview relay of step 4a) needs the hand-off.
+  close cannot come in the middle of a read on the loop. `read_latest_ring_frames` holds `_ring_lock` for its
+  walk and each read; a reader that reads with no lock on the loop (`PreviewRelay`) needs the hand-off.
 
 The group is made without `create`: no camera process and no shared memory. The stand-ins have only
-the fields that the watch and the relay read.
+the fields that the watch and the read use.
 """
 
 import asyncio
@@ -128,7 +127,7 @@ class SlowReader:
 
 def test_a_ring_reader_is_closed_only_on_the_event_loop():
     """The relay reads a ring on the event loop while the process of that camera ends. The watch thread
-    sees the end during the read. The reader is not closed during the read; the relay message is
+    sees the end during the read. The reader is not closed during the read; the read is
     complete; then the loop closes the reader and unlinks the ring, one time."""
     reader, ring = SlowReader(), StandInRing()
     worker = SimpleNamespace(worker=SimpleNamespace(exitcode=None))
@@ -145,8 +144,8 @@ def test_a_ring_reader_is_closed_only_on_the_event_loop():
                 reader.inside.wait(WAIT_S)
                 worker.worker.exitcode = 3  # the process ends while the relay reads
             threading.Thread(target=end_during_read, daemon=True).start()
-            payload = group.get_latest_ring_payload()  # on the event loop, as the websocket relay
-            assert payload is not None and payload[0] == 7
+            reads = group.read_latest_ring_frames()  # on the event loop, as a reader of the main process
+            assert reads is not None and reads["aaaa"].frame_number == 7
             assert not reader.closed_inside, "the reader was closed during a read"
             for _ in range(200):
                 await asyncio.sleep(0.01)

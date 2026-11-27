@@ -143,7 +143,7 @@ GitHub Actions se ejecuta en cada push y pull request (`.github/workflows/test.y
 - Componentes funcionales **React 19** con hooks
 - **Redux Toolkit** para gestion de estado con hooks tipados
 - **Material UI** para estilado de componentes
-- Workers de **OffscreenCanvas** para renderizado de fotogramas de camara en vivo
+- **The shared tile** of `src/player/` for live camera frames: `ImageDecoder` and a canvas on the main thread
 - **Reproduccion bloqueada por fotograma** — los videos grabados usan una estrategia de sincronizacion basada en lider: el primer video impulsa el tiempo canonico via su `.play()` nativo, un bucle `requestAnimationFrame` lee `leader.currentTime` para derivar el numero de fotograma, y los videos seguidores se corrigen cuando divergen mas de 2 fotogramas. Las superposiciones se actualizan mediante referencias DOM directas para evitar re-renderizados de React durante la reproduccion.
 
 ## Agregar un Nuevo Endpoint de API

@@ -19,110 +19,75 @@ Learn more: [WebSocket (Wikipedia)](https://en.wikipedia.org/wiki/WebSocket)
 
 The WebSocket endpoint at `/skellycam/websocket/connect` carries three types of traffic:
 
-1. **Binary frame payloads** (server -> client) — Multi-camera JPEG frames
-2. **JSON messages** (server -> client) — Log records, framerate updates, application state
-3. **Text messages** (client -> server) — Frame acknowledgments and ping/pong
+1. **Binary camera messages** (server -> client): one JPEG frame of one camera in each message
+2. **JSON messages** (server -> client): log records, framerate updates, application state
+3. **Text messages** (client -> server): ready messages and ping/pong
 
 ## Connection Lifecycle
 
 1. Client opens a WebSocket connection to `/skellycam/websocket/connect`.
-2. Server accepts the connection and starts four concurrent tasks: image relay, log relay, state sender, and client message handler.
+2. Server accepts the connection and starts four concurrent tasks: preview relay, log relay, state sender, and client message handler.
 3. Client begins receiving messages immediately.
 4. When the client disconnects (or the server shuts down), all tasks are cancelled and the connection is closed.
 
-## Binary Frame Payload Format
+## Binary Camera Message Format
 
-When cameras are active, the server sends binary (bytes) messages containing JPEG-compressed frames from all cameras in the active group. Each binary message is a self-contained multi-frame payload with the following structure:
+When cameras are active, the server sends one binary message for each frame of each camera that it sends: the
+camera message. It is a header of 48 bytes, then the JPEG bytes of the frame ring, untouched (no resize, no
+re-encode, no rotation). Each camera has its own messages, so a slow or a stopped camera does not hold back another
+camera.
 
 ```
 +--------------------------------------------+
-|              Payload Header (24 bytes)      |
+|           Header (48 bytes)                |
 +--------------------------------------------+
-|         Frame Header Camera 0 (56 bytes)   |
-+--------------------------------------------+
-|         JPEG Data Camera 0 (variable)      |
-+--------------------------------------------+
-|         Frame Header Camera 1 (56 bytes)   |
-+--------------------------------------------+
-|         JPEG Data Camera 1 (variable)      |
-+--------------------------------------------+
-|                    ...                      |
-+--------------------------------------------+
-|         Frame Header Camera N (56 bytes)   |
-+--------------------------------------------+
-|         JPEG Data Camera N (variable)      |
-+--------------------------------------------+
-|              Payload Footer (24 bytes)      |
+|           JPEG (jpeg_len bytes)            |
 +--------------------------------------------+
 ```
 
-All multi-byte integers are **little-endian**. Structures use **aligned** layout (numpy `align=True`), which introduces padding bytes for natural alignment.
+All multi-byte integers are **little-endian**. The Python form is `struct.Struct("<B3xIqqII16s")`. The message length
+is `48 + jpeg_len`.
 
-### Payload Header (24 bytes)
+| Offset | Size | Type | Name | Value |
+|---|---|---|---|---|
+| 0 | 1 | u8 | `version` | 1. It is also the message type. |
+| 1 | 3 | | reserved | zero |
+| 4 | 4 | u32 | `flags` | the ring flags, all 32 bits |
+| 8 | 8 | i64 | `frame_number` | the frame number of the camera |
+| 16 | 8 | i64 | `arrival_ns` | `perf_counter_ns` at the capture callback |
+| 24 | 4 | u32 | `rotation_cw_deg` | 0, 90, 180 or 270 |
+| 28 | 4 | u32 | `jpeg_len` | the number of JPEG bytes after the header; 0 for a flagged frame |
+| 32 | 16 | ASCII | `camera_id` | the camera id, NUL-padded |
+| 48 | `jpeg_len` | bytes | JPEG | the bytes of the ring, untouched |
 
-| Offset | Size | Type | Field | Description |
-|--------|------|------|-------|-------------|
-| 0 | 1 | `uint8` | `message_type` | Always `0` (PAYLOAD_HEADER) |
-| 1-7 | 7 | — | *(padding)* | Alignment padding for 8-byte `frame_number` |
-| 8 | 8 | `int64` | `frame_number` | Monotonically increasing frame counter |
-| 16 | 4 | `int32` | `number_of_cameras` | Number of camera frames in this payload |
-| 20-23 | 4 | — | *(padding)* | Struct alignment padding |
+Example: camera `a1b2`, frame 258, arrival 1,000,000,007 ns, rotation 90, flags 0x30, and the 4 bytes `FF D8 FF D9`
+as the JPEG:
 
-### Frame Header (56 bytes, one per camera)
+```text
+ 0: 01 00 00 00 30 00 00 00 02 01 00 00 00 00 00 00
+16: 07 ca 9a 3b 00 00 00 00 5a 00 00 00 04 00 00 00
+32: 61 31 62 32 00 00 00 00 00 00 00 00 00 00 00 00
+48: ff d8 ff d9
+```
 
-| Offset | Size | Type | Field | Description |
-|--------|------|------|-------|-------------|
-| 0 | 1 | `uint8` | `message_type` | Always `1` (FRAME_HEADER) |
-| 1-7 | 7 | — | *(padding)* | Alignment padding |
-| 8 | 8 | `int64` | `frame_number` | Same frame number as the payload header |
-| 16 | 16 | `ascii` | `camera_id` | Null-terminated ASCII string, zero-padded to 16 bytes |
-| 32 | 4 | `int32` | `camera_index` | Integer index of the camera |
-| 36 | 4 | `int32` | `image_width` | Width of the JPEG image in pixels |
-| 40 | 4 | `int32` | `image_height` | Height of the JPEG image in pixels |
-| 44 | 4 | `int32` | `color_channels` | Number of color channels (typically 3) |
-| 48 | 4 | `int32` | `jpeg_string_length` | Length of the following JPEG data in bytes |
-| 52-55 | 4 | — | *(padding)* | Struct alignment padding |
+### Field Rules
 
-Immediately following each frame header is the raw JPEG data (`jpeg_string_length` bytes). There is no padding between the JPEG data and the next frame header.
-
-### Payload Footer (24 bytes)
-
-| Offset | Size | Type | Field | Description |
-|--------|------|------|-------|-------------|
-| 0 | 1 | `uint8` | `message_type` | Always `2` (PAYLOAD_FOOTER) |
-| 1-7 | 7 | — | *(padding)* | Alignment padding |
-| 8 | 8 | `int64` | `frame_number` | Must match the payload header's frame number |
-| 16 | 4 | `int32` | `number_of_cameras` | Must match the payload header's camera count |
-| 20-23 | 4 | — | *(padding)* | Struct alignment padding |
-
-The footer serves as a consistency check — parsers can verify that `frame_number` and `number_of_cameras` match the header.
-
-### Message Type Constants
-
-| Value | Name | Description |
-|-------|------|-------------|
-| `0` | `PAYLOAD_HEADER` | Start of a multi-frame payload |
-| `1` | `FRAME_HEADER` | Per-camera frame metadata (followed by JPEG data) |
-| `2` | `PAYLOAD_FOOTER` | End of a multi-frame payload |
-
-### Parsing a Payload
-
-To parse a binary payload:
-
-1. Read 24 bytes -> payload header. Verify `message_type == 0`. Extract `frame_number` and `number_of_cameras`.
-2. For each camera (`number_of_cameras` times):
-    1. Read 56 bytes -> frame header. Verify `message_type == 1`. Extract `jpeg_string_length`.
-    2. Read `jpeg_string_length` bytes -> raw JPEG image data.
-3. Read 24 bytes -> payload footer. Verify `message_type == 2` and that `frame_number` / `number_of_cameras` match the header.
+- **`version`**: a parser that sees a value other than 1 refuses the message and logs both values.
+- **`frame_number`** and **`arrival_ns`** are 64-bit values. A JavaScript client reads them as `BigInt`
+  (`DataView.getBigInt64`).
+- **A flagged frame**: when `flags & 0x0F` is not zero, the message has no JPEG (`jpeg_len` 0). The client keeps the
+  last image and shows the mark "flagged frame".
+- A client refuses a message that is shorter than 48 bytes, whose length is not `48 + jpeg_len`, whose rotation is
+  not one of the four values, or whose camera id is empty.
 
 ### Implementation References
 
-- **Python (server):** `skellycam/core/types/frontend_payload_bytearray.py` — `create_frontend_payload()` builds the binary payload using numpy structured arrays. `skellycam/api/websocket/websocket_message_types.py` — `WebsocketMessageType` enum defining all JSON message type strings.
-- **TypeScript (client):** `skellycam-ui/src/services/server/server-helpers/frame-processor/binary-protocol.ts` — struct definitions and field offsets. `binary-frame-parser.ts` — `parseMultiFramePayload()` parses the binary data and creates `ImageBitmap` objects.
-
-### Image Processing Notes
-
-The server resizes each camera frame before JPEG encoding. If the client has sent `displayImageSizes` in a frame acknowledgment, the server resizes to match the client's display dimensions. Otherwise, images are scaled to 50% of their native resolution. JPEG encoding uses quality level 80 by default.
+- **Python (server):** `skellycam/api/websocket/preview_relay.py`: `pack_camera_frame()` builds the message, and
+  `PreviewRelay` sends the messages of one connection. `skellycam/api/websocket/websocket_message_types.py`:
+  `WebsocketMessageType` defines the JSON message type strings.
+- **TypeScript (client):** `skellycam-ui/src/services/server/preview/camera-message.ts`: `parseCameraMessage()`.
+  `preview-tiles.ts`: `PreviewTiles`, the flow control for each camera. The shared tile of
+  `skellycam-ui/src/player/` decodes the JPEG with `ImageDecoder` and draws it on the main thread.
 
 ## JSON Messages (Server -> Client)
 
@@ -154,27 +119,41 @@ Log records at `TRACE` level (level 5) and above are forwarded to the WebSocket.
 {
   "message_type": "framerate_update",
   "camera_group_id": "group-0",
-  "backend_framerate": {
-    "mean_frame_duration_ms": 33.3,
-    "mean_frames_per_second": 30.0,
-    "frame_duration_max": 40.1,
-    "frame_duration_min": 28.5,
-    "frame_duration_mean": 33.3,
-    "frame_duration_stddev": 2.1,
-    "frame_duration_median": 33.2,
-    "frame_duration_coefficient_of_variation": 0.063,
-    "calculation_window_size": 100,
-    "framerate_source": "Server"
-  },
-  "frontend_framerate": {
-    "mean_frame_duration_ms": 34.1,
-    "mean_frames_per_second": 29.3,
-    "framerate_source": "Display"
+  "cameras": {
+    "a1b2": {
+      "delivered_framerate": {
+        "mean_frame_duration_ms": 33.3,
+        "mean_frames_per_second": 30.0,
+        "frame_duration_max": 40.1,
+        "frame_duration_min": 28.5,
+        "frame_duration_mean": 33.3,
+        "frame_duration_stddev": 2.1,
+        "frame_duration_median": 33.2,
+        "frame_duration_coefficient_of_variation": 0.063,
+        "calculation_window_size": 8,
+        "framerate_source": "a1b2"
+      },
+      "not_shown_count": 3,
+      "ring_skipped_count": 0,
+      "oversize_count": 0
+    }
   }
 }
 ```
 
-Sent approximately every 250ms when cameras are active. The `backend_framerate` represents the true camera capture rate (computed from frame numbers and capture timestamps, accurate even when the WebSocket skips frames due to backpressure). The `frontend_framerate` represents the WebSocket delivery rate (what the UI actually receives).
+Sent every 250 ms for each group, with one item for each camera. The values are for this connection:
+
+- `delivered_framerate`: the rate at which the camera delivered frames to the server, from the frame numbers and the
+  capture times of the frame ring. It does not depend on the client. `null` when there is not enough data. The UI
+  shows it as "Captured".
+- `not_shown_count`: the frames that the server did not send on this connection, because the client was slower than
+  the camera.
+- `ring_skipped_count`: the frames that the frame ring skipped.
+- `oversize_count`: the frames that were larger than their ring slot.
+
+The UI computes "Displayed" itself: the frames that its window drew for each camera. `replaced_count` (the frames
+that the gate replaced) is in the camera status of `app_state`, at
+`state.camera_groups[<group id>].cameras[<camera id>].status`, with the camera `state`.
 
 ### Application State
 
@@ -234,36 +213,27 @@ are in `specs/capture-timings.md` of the repository.
 
 ## Client -> Server Messages
 
-### Frame Acknowledgment
+### Ready Message
 
-After processing a binary frame payload, the client sends an acknowledgment:
+When the client has drawn the frame of a camera message, it sends one ready message for that camera:
 
 ```json
-{
-  "frameNumber": 42,
-  "displayImageSizes": {
-    "group-0": {
-      "0": { "width": 640, "height": 480 },
-      "1": { "width": 640, "height": 480 }
-    }
-  }
-}
+{"message_type": "camera_ready", "camera_id": "a1b2"}
 ```
-
-The `frameNumber` field tells the server which frame has been rendered. The server uses this for backpressure management — it will not send new frames until the previous frame is acknowledged. If the frontend falls behind, the server skips frames to prevent buffer bloat.
-
-The `displayImageSizes` field (optional) tells the server the current display dimensions for each camera, allowing it to resize JPEG frames to match, reducing bandwidth.
 
 ### Ping/Pong
 
 Sending the text `"ping"` will receive `"pong"` in response. This can be used for connection health checks.
 
-## Backpressure Management
+## Flow Control and the Safety Net
 
-The server tracks the last sent frame number and the last acknowledged frame number. If the frontend has not acknowledged the most recent frame:
+The server sends a camera at most one camera message that is not yet ready:
 
-1. The server skips sending new frames.
-2. After acknowledgment arrives, the server skips one additional frame to let the frontend catch up.
-3. If the gap exceeds 1000 frames, a trace-level warning is logged.
+1. After a camera message, the server waits for the ready message of that camera. Then it sends the newest frame of
+   that camera. The frames in between are not shown, and `not_shown_count` counts them.
+2. The client keeps only the newest pending message of each camera, gives the tile one update at a time, and draws at
+   most one frame of each camera for each display refresh. It sends one ready message for each draw.
+3. **The safety net**: when no ready message comes, the server sends the newest frame of the camera after 1 s all
+   the same. A hidden window thus gets one message each second for each camera.
 
-This ensures the WebSocket buffer does not grow unbounded even when the frontend rendering is slower than the camera capture rate.
+A slow camera or a slow tile holds back only its own camera. Websocket compression is off: a client must not need it.

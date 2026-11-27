@@ -131,7 +131,8 @@ Each step has its own fake-layer tests (section 6). Its hardware validation is a
 - Uncompressed modes (YUY2, NV12) on Linux and macOS. They follow step 3b of Windows [W 13].
 - UVC requests on endpoint 0 on macOS in the product [U].
 - Hot-unplug tests [U]. The source still maps a removal to `dead` (4.3.8, 4.4.9).
-- Modes below 30 fps; any group rate other than one rate (30 or 60) for all cameras [U, W U11].
+- Modes below 30 fps and modes below the size floor (640 wide and 360 high); any group rate other than one rate
+  (30 or 60) for all cameras [U, W U11, W 22.2 U Q887 to Q889].
 - H.264 modes [W D4]. The removal of the lockstep gate (phase 8).
 - macOS before 12.3 and the x32 ABI of Linux: these systems keep the OpenCV source [U, A].
 
@@ -695,8 +696,10 @@ imports [NV]. T-UNX-88 finds a gap; then `skellycam.spec` adds hidden imports on
 - The capture interface of [W 4.1] stays: `open`, `read_frame`, `set_controls`, `close` and
   `replaced_count`. Section 4.2 adds `diagnostics()` and the failure code.
 - The shared loop, the gate, the warm-up, the rate check, the recorder and the rings stay as
-  [W 5] to [W 12] give them, with the changes of 4.2 and 4.5. The floor of 30 fps [W U11] and one
-  rate (30 or 60) for all cameras [U] apply to each source.
+  [W 5] to [W 12] give them, with the changes of 4.2 and 4.5. The floor of 30 fps [W U11], the size
+  floor (640 wide and 360 high) [W 22.2, U Q887 to Q889] and one rate (30 or 60) for all cameras [U] apply to each source. The
+  size floor is in the shared code (`modes.py`, the whole-request check, the shared loop); it is [NV] on
+  Linux and macOS until a certify report.
 - `CaptureWaitingPlace` of `source.py` serves both new sources (push sources).
 - The OpenCV source stays as the fallback on Linux and macOS until a camera model passes the gate of
   [cert 11.3] on the system (4.9) [U].

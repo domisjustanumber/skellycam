@@ -21,9 +21,9 @@ Each payload contains exactly **one image per camera per frame event, captured a
 
 SkellyCam uses a compact binary WebSocket protocol to stream frames:
 
-1. **JPEG compression** — Each camera's frame is JPEG-compressed (quality 80 by default) and optionally downscaled to match the client's display dimensions.
-2. **Binary packing** — All compressed frames for a single multi-frame event are packed into one binary WebSocket message, along with per-camera metadata (camera ID, resolution, timestamp).
-3. **Backpressure management** — If the client can't keep up, the server drops frames rather than buffering indefinitely. This prevents memory buildup and keeps the stream responsive.
+1. **Untouched JPEG** — The server sends the JPEG of the frame ring of each camera as it is: no resize, no re-encode, no rotation.
+2. **One message for each camera frame** — Each binary message holds one frame of one camera, after a header of 48 bytes (version, flags, frame number, arrival time, rotation, JPEG length, camera ID).
+3. **Flow control for each camera** — The server sends a camera its next frame when the client has drawn the last one, and drops the frames in between. With no ready message, a safety net sends one frame each second. A slow camera or a slow tile holds back only its own camera.
 
 The same WebSocket connection also carries JSON messages for logs, state updates, framerate statistics, and control commands.
 
@@ -33,9 +33,9 @@ For full protocol details, see the [WebSocket Protocol](../technical/websocket-p
 
 The React/Electron frontend processes incoming frames through a pipeline optimized for performance (see the [camera view components](https://github.com/freemocap/skellycam/tree/development/skellycam-ui/src/components/camera-views) and [server services](https://github.com/freemocap/skellycam/tree/development/skellycam-ui/src/services/server) in the UI source):
 
-1. **Binary parse** — The binary payload is parsed to extract per-camera JPEG blobs.
-2. **ImageBitmap creation** — Each JPEG blob is decoded into an `ImageBitmap`, which can be transferred to a worker thread without copying.
-3. **OffscreenCanvas rendering** — Each camera's feed is rendered on an `OffscreenCanvas` in a dedicated Web Worker, keeping the main thread free for UI interactions.
+1. **Parse** — `parseCameraMessage` reads the header and gives a view of the JPEG bytes, with no copy.
+2. **Newest pending** — `PreviewTiles` keeps only the newest message of each camera and gives each tile one update at a time, at most one for each display refresh.
+3. **Decode and draw** — The shared tile of the player decodes the JPEG with `ImageDecoder` and draws it with its overlay on the main thread. Then the UI sends one ready message for that camera.
 
 This architecture supports many simultaneous camera feeds without frame drops in the UI.
 

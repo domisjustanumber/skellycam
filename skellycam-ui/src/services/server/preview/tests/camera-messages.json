@@ -1,0 +1,83 @@
+{
+  "source": "tools/write_camera_message_fixture.py",
+  "cases": [
+    {
+      "name": "spec-example",
+      "input": {
+        "camera_id": "a1b2",
+        "result": "OK",
+        "flags": 48,
+        "frame_number": "258",
+        "arrival_ns": "1000000007",
+        "rotation_cw_deg": 90,
+        "jpeg_hex": "ffd8ffd9"
+      },
+      "message_hex": "0100000030000000020100000000000007ca9a3b000000005a0000000400000061316232000000000000000000000000ffd8ffd9"
+    },
+    {
+      "name": "flagged",
+      "input": {
+        "camera_id": "a1b2",
+        "result": "FLAGGED",
+        "flags": 4,
+        "frame_number": "7",
+        "arrival_ns": "2000000000",
+        "rotation_cw_deg": 0,
+        "jpeg_hex": ""
+      },
+      "message_hex": "010000000400000007000000000000000094357700000000000000000000000061316232000000000000000000000000"
+    },
+    {
+      "name": "oversize",
+      "input": {
+        "camera_id": "c3c6",
+        "result": "OVERSIZE",
+        "flags": 1,
+        "frame_number": "8",
+        "arrival_ns": "2033333333",
+        "rotation_cw_deg": 180,
+        "jpeg_hex": ""
+      },
+      "message_hex": "010000000100000008000000000000005534327900000000b40000000000000063336336000000000000000000000000"
+    },
+    {
+      "name": "flags-0x30-rotation-270",
+      "input": {
+        "camera_id": "0a1b",
+        "result": "OK",
+        "flags": 48,
+        "frame_number": "9",
+        "arrival_ns": "3000000000",
+        "rotation_cw_deg": 270,
+        "jpeg_hex": "ffd8ffe000104a464946ffd9"
+      },
+      "message_hex": "01000000300000000900000000000000005ed0b2000000000e0100000c00000030613162000000000000000000000000ffd8ffe000104a464946ffd9"
+    },
+    {
+      "name": "camera-id-16",
+      "input": {
+        "camera_id": "abcdefghijklmnop",
+        "result": "OK",
+        "flags": 0,
+        "frame_number": "10",
+        "arrival_ns": "4000000000",
+        "rotation_cw_deg": 0,
+        "jpeg_hex": "ffd80102ffd9"
+      },
+      "message_hex": "01000000000000000a0000000000000000286bee0000000000000000060000006162636465666768696a6b6c6d6e6f70ffd80102ffd9"
+    },
+    {
+      "name": "large-values",
+      "input": {
+        "camera_id": "f976",
+        "result": "OK",
+        "flags": 0,
+        "frame_number": "9007199254740993",
+        "arrival_ns": "9223372036854775807",
+        "rotation_cw_deg": 0,
+        "jpeg_hex": "ffd8ffd9"
+      },
+      "message_hex": "01000000000000000100000000002000ffffffffffffff7f000000000400000066393736000000000000000000000000ffd8ffd9"
+    }
+  ]
+}

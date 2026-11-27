@@ -26,7 +26,7 @@ export const CameraConfigSidebarPanel: React.FC = () => {
     // The error of each apply (Update Cameras, Connect, the menu, the settings) and of Detect: the store keeps it
     const cameraError = useAppSelector(selectError);
     const dispatch = useAppDispatch();
-    const { isConnected } = useServer();
+    const { isConnected, connectedCameraIds } = useServer();
     const { t } = useTranslation();
     const { requestGuardedAction } = useRecordingGuard();
     const cameras = useAppSelector(selectCameras);
@@ -138,13 +138,13 @@ export const CameraConfigSidebarPanel: React.FC = () => {
                     
                      
                                                 <p className="flex flex-row text md text-gray">{t('cameraListCount', { count: cameras.length })}</p>
-                            {connectedCameras.length > 0 && (
+                            {connectedCameraIds.length > 0 && (  // preview-4b.md 5.6: the cameras that stream [Q10]
                                 <span
                                     className="text md"
                                     style={{ color: 'var(--color-success, #4ade80)', display: 'inline-flex', alignItems: 'center', gap: '4px' }}
                                 >
                                     {/* <span className="icon icon-size-20 streaming-icon" /> */}
-                                    {t('streamingCount', { count: connectedCameras.length })}
+                                    {t('streamingCount', { count: connectedCameraIds.length })}
                                 </span>
                             )}
                     <div className="flex-1" />
