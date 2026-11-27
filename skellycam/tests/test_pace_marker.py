@@ -37,7 +37,6 @@ PACE_TESTS = [
     ("skellycam.tests.preview.test_ws_flow", "test_t_prv_13_client_1_gets_its_share"),
     ("skellycam.tests.preview.test_ws_flow", "test_t_prv_15_b_gets_8_messages_within_0_5_s"),
     ("skellycam.tests.preview.test_ws_flow", "test_t_prv_16_b_gets_30_messages_within_2_s"),
-    ("skellycam.tests.preview.test_ws_flow", "test_t_prv_17_b_gets_15_messages_within_1_s"),
     # Q905 [ADR-P3EZ]: the give waits of the short stall of T-REC-STALL
     ("skellycam.tests.take_recorder.test_benchmarks", "test_t_rec_stall_short_has_no_give_wait"),
     # Q917 (b) [ADR-N7ZR]: the waits and the counts of the slow holder of the status locks
@@ -72,7 +71,6 @@ NOT_PACE = [
     ("skellycam.tests.preview.test_ws_flow", "test_t_prv_13_two_clients"),
     ("skellycam.tests.preview.test_ws_flow", "test_t_prv_15_ring_recreated"),
     ("skellycam.tests.preview.test_ws_flow", "test_t_prv_16_a_camera_stops"),
-    ("skellycam.tests.preview.test_ws_flow", "test_t_prv_17_reader_removed_then_closed"),
     ("skellycam.tests.preview.test_ws_flow", "test_t_prv_54_the_next_message_after_an_answer_holds_the_newest_frame"),
     # Q905 [ADR-P3EZ]: no lost frame, equal rows and finished files of the short stall of T-REC-STALL
     ("skellycam.tests.take_recorder.test_benchmarks", "test_t_rec_stall_short_pass_parts"),
