@@ -1093,7 +1093,7 @@ choices [ADR-06PW](../decisions/entries/06PW-choices-of-the-shutdown-limit-lane.
    - **What it can cut.** Any other request that still runs after 5 s, for example an apply, a detection or an
      exposure search. The thread that such a request started runs on; then the lifespan end closes the groups. This
      case is not tested.
-6. [NV] Linux and macOS: items 1, 3, 5, 7 and 8 apply on each system; the selector transports call
+6. [NV] Linux and macOS: items 1, 3, 5, 7, 8 and 9 apply on each system; the selector transports call
    `Server._detach` in a `finally` after `socket.close()`, so no lost connection is known there. The port-in-use
    hang and the Ctrl-Break faults were seen on Windows only.
 7. **A record start during the close of the groups gets 409 (Q935).** While `close_all_camera_groups` runs (the
@@ -1110,6 +1110,28 @@ choices [ADR-06PW](../decisions/entries/06PW-choices-of-the-shutdown-limit-lane.
    of certify), the close of a group whose start loop stopped early raises: `ManagedThread.join` joins a thread that never started
    (`ManagedProcess.join` skips a process that never started). That case is a strict `xfail` until the user decides
    (open work).
+9. **A second Ctrl-C aborts (Q934).** A second Ctrl-C (SIGINT) or Ctrl-Break (SIGBREAK, item 3) means "abort now":
+   every process must end and release each hold; a clean take is not expected, and the manifest may stay
+   `recording`. `__main__` wraps `uvicorn.Server.handle_exit`: at the second SIGINT or SIGBREAK it sets uvicorn's
+   `force_exit` and the global kill flag. So each camera process ends at once, a take stop that waits for its
+   cameras gives up (`GIVE_UP_AFTER_EXIT_S`), and the server ends. The first Ctrl-C does not change (items 3 and 5).
+   - Bound: each process ends within 8 s of the second Ctrl-C (the `pace` half; 60 s in the blocking half). The
+     camera processes end at the kill flag; `WorkerRegistry.shutdown_all()` waits 3 s for each one, then ends it
+     (SIGTERM, then kill), so 8 s leaves room. It does not rest on the lost heartbeat of decision L (10 s).
+   - Measured on Windows before this rule, with a take stop that waits 12 s for its cameras: a second Ctrl-C during
+     a stop request ended each process 4.1 s after it (uvicorn's `force_exit`, then the 3 s wait of
+     `shutdown_all()`). A second Ctrl-C while the lifespan end stopped the take did nothing: the exit came 12.1 s
+     after it, when the slow stop ended, because uvicorn does not end its lifespan wait on `force_exit`. A second
+     Ctrl-Break did nothing in either case (uvicorn takes only a second SIGINT as `force_exit`): 12.3 s.
+   - Holds after the exit, checked by the test: no frame ring can be attached, the port binds again at once, the take
+     folder can be renamed, and its take lock (`folder_files.take_lock`) can be taken. The locks of `CameraStatus`
+     live in its shared values: they end with the last process that maps them.
+   - The test (`take_recorder/test_second_ctrl_c.py`) runs the real server of `__main__` with two fake camera
+     processes. On Windows it sends the keyboard Ctrl-C to the hidden console of the server, or Ctrl-Break to its
+     process group; elsewhere SIGINT to its process group. The child notes each signal that uvicorn takes, so the
+     second one is sent only after the first was taken.
+   - A disk call that hangs inside a take start or stop (`start_take`, `take.finish`) still holds the exit (item 5):
+     the thread that runs it cannot be stopped.
 
 ## 10. Connection to the shared loop (after step 3a)
 
