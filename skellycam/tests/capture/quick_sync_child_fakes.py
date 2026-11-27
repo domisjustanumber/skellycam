@@ -4,6 +4,7 @@ a JPEG and False for no JPEG."""
 
 import os
 import sys
+import threading
 import time
 
 ACCESS_VIOLATION = 0xC0000005  # the exit code of a Windows process that ended with an access violation
@@ -34,3 +35,10 @@ def exits_access_violation():
 
 def raises():
     raise RuntimeError("a fake encode error")
+
+
+def answers_then_hangs_at_exit():
+    """A good encode whose teardown hangs: a thread that is not a daemon holds the exit of the child for 60 s, so the
+    child gives its answer and then does not end."""
+    threading.Thread(target=time.sleep, args=(60,), daemon=False).start()
+    return True

@@ -18,6 +18,5 @@ def fake_quick_sync_check(monkeypatch):
         calls.append(kwargs)
         return SimpleNamespace(**WORKS)
 
-    # raising=False: before the product call exists the other certify tests keep their own result (22.6 item 20)
-    monkeypatch.setattr(encoder, "check_quick_sync", check, raising=False)
+    monkeypatch.setattr(encoder, "check_quick_sync", check)  # a renamed or removed product call fails each test
     return calls

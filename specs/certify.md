@@ -1172,7 +1172,9 @@ product (5 s). The rules [VTW3 9 to 14]:
 - `not-run` only when the check could not start: `cancelled` and `over-budget` when the run stopped before it, and
   `cameras-busy` when the run is refused (9.7), as each row of such a run. A cancel during the check gives `not-run`
   `cancelled` at once (9.3 reads the cancel two times each second); the child then ends at its own limit at the
-  latest.
+  latest. The wait for the row watches the cancel and the abandon, not the deadline of the run: the row always runs
+  to its own end, at worst about 10 s (the limit of 5 s and the join of 5 s, windows-capture.md 22.7 item 5), so a
+  quick run can pass its budget by that much [VTW3 14].
 - Linux and macOS: no row. The product runs the check only for a camera of the Media Foundation source (windows-
   capture.md 22.6 item 6), and never on macOS. The row comes to a system when its native source encodes raw frames.
 - Certify does not set the answer of a camera group manager: the product still decides one time for each app run

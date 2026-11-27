@@ -2884,7 +2884,11 @@ proposed choice of an agent.
    Each WARNING line ends with "cv2.imencode is used". An encode that raises is the normal answer on a machine with
    no Intel GPU, so it stays at INFO; only a fault of the child is a WARNING [VTW3 4].
 5. **No process left.** After a time-out or a crash no check child is left: the call kills the child and joins it.
-   A test checks it with a process listing [VTW3 5].
+   A child that gives its answer and then does not end is joined for 5 s, then killed; its answer stands, and
+   `check_ms` is still the time to the answer. Whether such a child means "does not work" is a question for the user
+   (ADR-VTW3). A child whose start fails (a target that does not pickle) can exist for a short time on Windows,
+   because the process starts before the pickling; it ends by itself within about 2 s. A test checks each case with
+   a process listing [VTW3 5].
 6. **App start.** The child starts only at the first accepted request that opens a raw camera (22.2). The start of
    the app and a request with no raw camera start no check child. The app already imports PyAV at its start (the
    take recorder, `take_recorder/mkv.py`), so the check adds no import to the start of the app; the child imports
@@ -2895,8 +2899,10 @@ proposed choice of an agent.
    ([`camera-requests.md`](camera-requests.md) 2.4a item 7). A request that the check refuses (422 or 409) starts no
    child [ZEK6 2] [VTW3 7].
 8. **One time for each app run.** The manager keeps the answer for its lifetime, also False after a time-out or a
-   crash, and never starts a second check child in that app run [3WCA 6] [U Q879]. The camera processes get it
-   through the status flag `quick_sync` (22.2).
+   crash, and never starts a second check child in that app run [3WCA 6] [U Q879]. A lock of the manager holds the
+   check: a second request that needs the answer while the check runs waits for that answer and starts no child.
+   Only the request that ran the check writes the switch of 22.2 [VTW3 17]. The camera processes get it through the
+   status flag `quick_sync` (22.2).
 9. **certify.** The record-only check `system:quick-sync` ([`certify.md`](certify.md) 3.6.2) calls
    `check_quick_sync()`, the product call (certify 2.2). It does not set the answer of a manager [VTW3 8].
 
@@ -2914,6 +2920,8 @@ module `skellycam/tests/capture/quick_sync_child_fakes.py`, because a `spawn` ch
 | T-CAP-171 | 3b | child | `quick_sync_works()` with the encode of the main process replaced by a function that records a call. On macOS (a patched `sys.platform`): `in_child` replaced by a function that records a call. | A bool comes back and the encode of the main process never ran. On macOS: False and no child call. |
 | T-CAP-172 | 3b | fake | The manager with `check_quick_sync` replaced by a counter that gives `timed-out`: an accepted MJPG request, a refused YUY2 request (422), then an accepted YUY2 request, then a second accepted YUY2 request. | The MJPG request and the refused request make no call; the accepted YUY2 request makes one call; the second request makes none; the status flag `quick_sync` of the camera is False. |
 | T-CAP-173 | 3b | process | A new interpreter imports `skellycam.app`. | No child process of that interpreter exists after the import. |
+| T-CAP-174 | 3b | fake | A group of two MJPG cameras runs; two YUY2 requests come at the same time, the second while a slow check of the first runs. | One check starts; each request ends with 200 or 409; the manager keeps the one answer. |
+| T-CAP-175 | 3b | fake child | A fake check that gives True, then holds the exit of its child for 60 s. | `works` True; `check_ms` under 4000 (the time to the answer); the call returns after the join of 5 s; no child is left. |
 
 T-CAP-156 (22.3) still checks that the check of `request_runs` and its set have no wait between them, with a slow
 check in place of `quick_sync_works`. The tests of the detection child (T-CAP-23, T-CAP-24, T-CAP-48) check the

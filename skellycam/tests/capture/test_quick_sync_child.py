@@ -9,6 +9,7 @@ Intel GPU; T-CAP-171 runs the real encode in a child, and either answer passes.
 import logging
 import subprocess
 import sys
+import threading
 import time
 from types import SimpleNamespace
 
@@ -178,6 +179,54 @@ def test_t_cap_172_the_manager_checks_one_time_and_only_for_an_accepted_raw_requ
         assert len(calls) == expected, "a second check ran in one app run"
         assert app.manager.quick_sync is False
         assert app.group.cameras.orchestrator.camera_statuses[raw].quick_sync.value == 0
+
+
+def test_t_cap_174_two_raw_requests_at_once_start_one_check(monkeypatch):
+    """T-CAP-174, 22.7 item 8: a group of two MJPG cameras runs; two YUY2 requests come at the same time, the second
+    while the check of the first still runs. Only one check starts; the second request waits for its answer."""
+    encoder = product(ENCODER_MODULE)
+    calls, go = [], threading.Event()
+
+    def slow_check():
+        calls.append(threading.get_ident())
+        go.wait(30)
+        return False
+
+    with capture_app(monkeypatch, [raw_camera(), raw_camera()], full_modes=True) as app:
+        first, second = app.factory.camera_ids
+        ready_app_steps(app, [app.config(first), app.config(second)])
+        monkeypatch.setattr(encoder, "quick_sync_works", slow_check)
+        out = {}
+        threads = [threading.Thread(target=lambda key=key, raw=raw, other=other: out.setdefault(key, app.apply(
+            [app.config(raw, capture_fourcc="YUY2"), app.config(other)])))
+            for key, raw, other in (("a", first, second), ("b", second, first))]
+        threads[0].start()
+        try:
+            app.wait(lambda: len(calls) == 1, "the check of the first request runs")
+            threads[1].start()
+            deadline = time.monotonic() + 2.0  # time for the second request to reach its check
+            while len(calls) < 2 and time.monotonic() < deadline:
+                time.sleep(0.02)
+        finally:
+            go.set()
+            for thread in threads:
+                if thread.is_alive() or thread.ident is not None:
+                    thread.join(60)
+        assert len(calls) == 1, f"{len(calls)} Quick Sync checks started in one app run"
+        assert {out["a"].status_code, out["b"].status_code} <= {200, 409}, (out["a"].text, out["b"].text)
+        assert app.manager.quick_sync is False
+
+
+@pytest.mark.capture_timing  # real time: the join of 5 s after the answer, then the kill
+def test_t_cap_175_a_child_that_answers_and_then_hangs_at_exit():
+    """T-CAP-175, 22.7 items 2 and 5: the child gives a good answer and then does not end. `check_ms` is the time to
+    the answer (well under the join of 5 s); the call kills the child, and no child is left."""
+    before = descendants()
+    result, _, _, seconds = check(check=fakes.answers_then_hangs_at_exit)
+    assert result.works is True and result.failure is None, result  # the behaviour of today: a question for Dom
+    assert result.check_ms < 4000.0, f"check_ms {result.check_ms:.0f} is not the time to the answer"
+    assert seconds >= 4.5, f"the call did not wait for the exit of the child ({seconds:.2f} s)"
+    assert_no_new_child(before)
 
 
 @pytest.mark.capture_timing  # a new interpreter imports the app: a few seconds under load
