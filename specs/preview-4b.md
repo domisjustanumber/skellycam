@@ -164,8 +164,8 @@ Import path of the tile:
 | `framerate-store.ts` and the frame rate viewer: the two series "Server" (`backend`) and "Display" (`frontend`) | The two series "Captured" and "Displayed" for each camera, and the counts (5.8) [Q3] |
 | The docs of the group message (5.9) | The camera message, the ready message and the new `framerate_update` |
 
-After the merge of 4b, `CameraGroup.read_latest_ring_frames` and `WebsocketServer._send_json` have
-no caller in the product. A later lane deletes both [Q871]. The `FRAMERATE` subscription
+After the merge of 4b, `CameraGroup.read_latest_ring_frames` and `WebsocketServer._send_json` had
+no caller in the product. Both are deleted [Q871]. The `FRAMERATE` subscription
 of `CameraGroupManager` stays [agent 13].
 
 ### 3.2 Tests
