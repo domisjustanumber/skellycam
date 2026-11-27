@@ -204,3 +204,9 @@ task. Delete an item when its work is done. The PR that closes an item records t
   attributes it reads; it waits for the close path of `CameraGroup`), the dark rule (T-CERT-09, 13, 23) and the light
   data. The privacy list moves into the contract (its owner). The `fork` of freemocap's certify child stays in the
   Linux review of ADR-T34M.
+- **Question for the user (Q907, [ADR-06PW](entries/06PW-choices-of-the-shutdown-limit-lane.md)): a connection limit
+  for the shutdown of the server?** No hang was found (0 of 39 runs), so none is built. At a limit, uvicorn cancels the
+  requests that still run; a cancelled take stop leaves the manifest `recording` on each path but the shutdown
+  endpoint ([evidence](evidence/cancelled-take-stop-at-a-shutdown-limit-20261127.md)). Suggested: first a lane that
+  shields the take start and stop, test first, then the limit (kept on `dom/server-shutdown-limit`). The same file
+  holds a fault of today: a second Ctrl-C skips the lifespan end.
