@@ -204,6 +204,8 @@ task. Delete an item when its work is done. The PR that closes an item records t
 - **Shutdown, later UI lane** ([ADR-9V4Y](entries/9V4Y-decisions-of-the-user-on-the-shutdown-lane-q924-to-q928.md)):
   a "saving" message when the wait for the exit of the server passes about 10 s (Q925, no bound); "port in use" when
   the server ends with that error (Q927). Q926 (skellylogs) is the work of another lane.
+  Later lane: a record start during the background close of `/shutdown` gets 500, not 409 (no `_closing` check in
+  `_start_recording`); no take is lost.
 - **Question for the user: a second Ctrl-C during a take.** It sets `force_exit` of uvicorn, which skips the lifespan
   end that ends a running take: the manifest can stay `recording` (a fault of today,
   [evidence](evidence/cancelled-take-stop-at-a-shutdown-limit-20261127.md)). Suggested: the second Ctrl-C ends the

@@ -1068,7 +1068,8 @@ choices [ADR-06PW](../decisions/entries/06PW-choices-of-the-shutdown-limit-lane.
    with its traceback.
    Its last test runs the real server of `__main__` with two fake cameras (`take_recorder/server_take_child.py`):
    during a take stop that waits 12 s for its cameras, the server process group gets Ctrl-Break (Windows) or the
-   server gets SIGINT. The take end must start before the signal and end after the signal plus the limit, and
+   server gets SIGINT. The test sends the signal only after the child writes that the take end started (no fixed
+   wait, Q619). The take end must start before the signal and end after the signal plus the limit, and
    uvicorn must log its cancel, else the test fails. The process ends with code 0, the manifest is `finished` with
    no `camera_dead`, and each camera has the same rows.
 5. **The connection limit (Q928, after item 3).** The shutdown of uvicorn waits at most 5 s for the open
@@ -1086,7 +1087,9 @@ choices [ADR-06PW](../decisions/entries/06PW-choices-of-the-shutdown-limit-lane.
    - **What it cannot cut.** A take start or a take stop (item 3: the cancel does not reach the shielded task; the
      close of the lifespan end waits for the take lock of each group before it closes it). The close of the lifespan
      end, which ends a running take and closes the groups: it runs after the limit and has no limit of its own. The background close of the shutdown endpoint: it
-     is no request task. The wait for each protected save: it comes before the signal.
+     is no request task. The wait for each protected save: it comes before the signal. A disk call that hangs inside
+     a take start or stop (`start_take`, `take.finish`) therefore holds the exit with no bound: that is the price of
+     a take that is never lost (Q925: the Electron app waits with no bound too).
    - **What it can cut.** Any other request that still runs after 5 s, for example an apply, a detection or an
      exposure search. The thread that such a request started runs on; then the lifespan end closes the groups. This
      case is not tested.
