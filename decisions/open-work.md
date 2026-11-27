@@ -203,7 +203,5 @@ task. Delete an item when its work is done. The PR that closes an item records t
   ([evidence](evidence/cancelled-take-stop-at-a-shutdown-limit-20261127.md)).
 - **Docs** (Q951, [ADR-318R](entries/318R-decisions-of-the-user-on-q942-to-q955.md) item 10), a later docs lane: the front matter `description` of the streaming page and the
   feature text of `content.config` (`preview-4b.md` 5.9).
-- **Question for the user (Q946, [ADR-318R](entries/318R-decisions-of-the-user-on-q942-to-q955.md) item 5).** The player should remember the last folder it played from: what
-  exactly? Which folder (the take, or the folder above it), for each window or for the app, and does it open again
-  by itself at the start? `picked-take-folders.json` (in the user data folder) kept the picked folders across restarts in
-  the 6a build; since Q919 no build reads or writes it (`player.md` 5.3). The picks that wait: [ADR-K907](entries/K907-the-open-part-of-adr-wp77-picks-across-runs.md).
+- **Recently opened folders** (`player.md` 5.10): not done yet, the user checks by hand the dialog start folder, the
+  `api.ts` wiring and the section; the user answers [ADR-FHP6](entries/FHP6-choices-of-the-recently-opened-take-folders-lane.md).

@@ -1,8 +1,10 @@
 # K907 — The open part of ADR-WP77: picks across runs and the list file
 
-**Status:** proposed, 2026-11-27 (agent, player lane; moved out of
-[ADR-WP77](WP77-choices-of-the-player-label-and-picked-folders-lane.md) by the answers lane, Q945 of
-[ADR-318R](318R-decisions-of-the-user-on-q942-to-q955.md); waits for Q946).
+**Status:** rejected, 2026-11-27 (merge of dom/integration into dom/player-recent: the user decided Q946 in
+[ADR-8J08](8J08-decisions-of-the-user-on-the-recently-opened-take-folders.md); `player.md` 5.3 and 5.10 state the
+rule. Items 1 and 2 stay true for the pick list of the run; items 3 and 4 are replaced. Was proposed, 2026-11-27
+(agent, player lane; moved out of [ADR-WP77](WP77-choices-of-the-player-label-and-picked-folders-lane.md) by the
+answers lane, Q945 of [ADR-318R](318R-decisions-of-the-user-on-q942-to-q955.md); waits for Q946)).
 
 ## Decision
 

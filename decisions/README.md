@@ -91,10 +91,10 @@ These entries wait for a decision of the user. Section is the section or area of
 | [7GC1](entries/7GC1-choices-of-the-gate-on-the-test-clock-and-the-end-of-t-cap-05.md) | Choices of fix lane 6: a loop at an open gate holds the test clock until its next probe, forced steps still move it; T-CAP-05 checks the last ring frames | none | proposed |
 | [JFG4](entries/JFG4-choices-of-the-capture-timings-build.md) | Choices of the capture timings build that the user did not decide: source sets, sets, main process, message loop, route, test seams, faults | none | proposed |
 | [4PPS](entries/4PPS-choices-of-the-answers-lane-of-q842-to-q856.md) | Choices of the answers lane that wait: the Q852 sentences (item 5) and the time of the control-read check (item 7) | none | proposed |
-| [K907](entries/K907-the-open-part-of-adr-wp77-picks-across-runs.md) | The part of ADR-WP77 that waits for Q946: a pick ends with the main process, the old list file, the T-PLAY-62 check, a list file later | none | proposed |
 | [9GHT](entries/9GHT-choices-of-the-answers-lane-of-q929-to-q955.md) | Choices of the answers lane of Q929 to Q955: the Q931 split, the Q932 tolerance, the split of WP77, log facts | none | proposed |
 | [590X](entries/590X-choices-of-the-ui-messages-lane.md) | Choices of the UI messages lane (Q925, Q927): native boxes, 10 s from the quit, the bind-error rule, no retry, `isRunning` after the exit, texts via the menu | `recorder` | proposed |
 | [6MMJ](entries/6MMJ-choices-of-the-move-of-t-prv-25-and-of-the-kit-proposal.md) | Choices of the Q964 move: a test that names no package and its limits, kind `tool`, `capture.yml`, the kit branch, skellytracker open | none | proposed |
+| [FHP6](entries/FHP6-choices-of-the-recently-opened-take-folders-lane.md) | Choices of the recently opened folders lane: only the player dialog adds, a click moves to the top, the file rules, a link swap is "gone", the three calls | none | proposed |
 
 The entries that are `rejected`, `superseded by XXXX`, `absorbed into <path>#<anchor>`,
 `evidence; used by XXXX`, `evidence; replaced by XXXX` or `done` are in [historical.md](historical.md).

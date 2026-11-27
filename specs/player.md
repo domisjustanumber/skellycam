@@ -214,7 +214,7 @@ The module is the folder `skellycam-ui/src/player/`:
 | `reader/` | The take reader: `take.ts`, `manifest.ts`, `sidecar.ts`, `fit.ts`, `matroska.ts`. |
 | `clock/` | `clock.ts` (the master clock), `choose.ts` (the frame choice). |
 | `tile/` | `tile.ts` (decode and draw), `format.ts` (the overlay text). |
-| `main/` | `take-scheme.ts` (the handler, main process), `bridge.ts` (the preload bridge). |
+| `main/` | `take-scheme.ts` (the handler, main process), `bridge.ts` (the preload bridge), `recent-folders.ts` (the rules of the recently opened list of 5.10, Node only). |
 | `tests/` | `unit/`, `browser/`, `bench/`, `fixtures/`, `harness/` (section 12). |
 
 The root `.gitignore` of the repository ignores each file with the name `index.ts` or `tsconfig.json`.
@@ -370,29 +370,36 @@ the user picked in the system folder dialog [L7]:
   process computes it from `app.getPath('home')` with the same rule and gives it to
   `installTakeHandler` as `recordingsFolder`.
 - A picked folder is a folder that `dialog.showOpenDialog` returned in the main process, through the
-  existing call `fileSystem.selectDirectory` [C `electron/main/api.ts`]. The main process adds each
-  such folder to a list in its memory, for the run of the app. No list file (`picked-take-folders.json`) is
-  read or written (the ruling of [ADR-4D94](../decisions/entries/4D94-step-6a-choices-of-the-canvas-player.md), which overturns
-  the "remembered across restarts" of U1 for 6a; Q851 of [ADR-88HQ](../decisions/entries/88HQ-decisions-of-the-user-on-q842-to-q856.md);
-  Q919 of [ADR-70J6](../decisions/entries/70J6-decisions-of-the-user-on-the-remaining-items-of-4pps.md): "no saved picked-folders file").
-  Whether a later step adds one waits for Q946 (the user: "the player should remember the last folder it played
-  from"; not decided) [ADR-K907](../decisions/entries/K907-the-open-part-of-adr-wp77-picks-across-runs.md) (proposed). A folder that the user picked earlier
-  in the same run, for example the base recording folder of the recording browser, stays allowed.
-- How long a pick lasts ([ADR-WP77](../decisions/entries/WP77-choices-of-the-player-label-and-picked-folders-lane.md),
-  Q945): a reload, a navigation or a close of a window does not end it, and each window of the run can open the
-  picked folder. Until Q946 is decided [ADR-K907](../decisions/entries/K907-the-open-part-of-adr-wp77-picks-across-runs.md) (proposed): a pick lasts until the main process ends, and a restart of
-  the app ends every pick. The handler writes
-  no file, and it reads no file of an earlier pick: a `picked-take-folders.json` that an earlier build left
-  in the user data folder is not read and not deleted [ADR-K907 item 2] (proposed). T-PLAY-62 and T-PLAY-85 test
-  it.
+  existing call `fileSystem.selectDirectory` [C `electron/main/api.ts`], or an entry of the recently opened
+  list of 5.10 after the check of a click on it. The main process adds each such folder to a list in its
+  memory, for the run of the app. This pick list is not saved: no `picked-take-folders.json` is read or
+  written (the ruling of [ADR-4D94](../decisions/entries/4D94-step-6a-choices-of-the-canvas-player.md); Q851 of
+  [ADR-88HQ](../decisions/entries/88HQ-decisions-of-the-user-on-q842-to-q856.md); Q919 of
+  [ADR-70J6](../decisions/entries/70J6-decisions-of-the-user-on-the-remaining-items-of-4pps.md): "no saved picked-folders file").
+  Only the recently opened list of 5.10 is saved, and its entries become picks only at a click (Q965 of
+  [ADR-8J08](../decisions/entries/8J08-decisions-of-the-user-on-the-recently-opened-take-folders.md)). A folder that the user
+  picked earlier in the same run, for example the base recording folder of the recording browser, stays allowed.
+- How long a pick lasts ([ADR-WP77](../decisions/entries/WP77-choices-of-the-player-label-and-picked-folders-lane.md), Q945;
+  ADR-8J08):
+  until the main process ends. A reload, a navigation or a close of a window does not end it, and each
+  window of the run can open the picked folder. A restart of the app ends every pick. After a restart, a folder
+  of the recently opened list opens again only by a click on its entry (5.10). The handler writes no file of the
+  pick list, and it reads no file of an earlier pick: a `picked-take-folders.json` that an earlier build left
+  in the user data folder is not read and not deleted (Q968 of ADR-8J08). T-PLAY-62 and T-PLAY-85 test it.
 - The main process keeps the real path of the picked folder, taken at the pick, and never resolves it
   again. A pick allows that folder and each folder below it, by the "inside" rule below. When the picked
   folder is later replaced by a link to another folder, the pick does not follow the link: the other
   folder is refused (T-PLAY-86).
 - The handler takes the real path of the recordings folder at each open, so a recordings folder that the
   backend makes after the start of the app is allowed.
-- Only a dialog pick in the main process adds a folder to the list. No bridge call, IPC message or
-  request of a page can add a folder, change the list or read it [U1]. T-PLAY-62 tests this.
+- Two ways add a folder to the pick list: a dialog pick in the main process, and the call `openRecent` of 5.10
+  for an entry of the recently opened list that passes the check of 5.10. The main process cannot tell a click
+  from a script of the page, so the folders that a page can reach are the dialog picks of this run plus the
+  entries of the list (normally folders that the user picked in the dialog of the player in earlier runs; the
+  file is untrusted, 5.10), each entry after its check [ADR-FHP6]. No bridge call, IPC message or request of a page can add a folder to the
+  recently opened list, add any other folder to the pick list, or read the pick list [U1, Q965]. The page can
+  read the recently opened list, ask to open one of its entries and clear it (5.10). T-PLAY-62 and T-PLAY-89
+  test this.
 - "Inside" compares real paths (`fs.realpath`): the folder is the allowed folder or below it. On
   Windows the comparison ignores case.
 - Links: the rule uses the real path of the folder that the page asks for, never the path through a link.
@@ -515,6 +522,110 @@ uses the acceptance rule of 5.6 and passes the shared check suite [L8]. The chan
 route needs are in `RT` §6: serve the original file, send `Cache-Control: no-store` and the expose
 header, do not list the folder on each request, and leave the route out of the request log. The review
 of option B with threads and process splits is open work, not 6a (14.4) [Y2].
+
+### 5.10 Recently opened folders [agent 41]
+
+The decisions of the user are Q946, Q957, Q959 and Q965 to Q968 of
+[ADR-8J08](../decisions/entries/8J08-decisions-of-the-user-on-the-recently-opened-take-folders.md). The details that
+the user did not decide are in [ADR-FHP6](../decisions/entries/FHP6-choices-of-the-recently-opened-take-folders-lane.md)
+(proposed), marked [agent 41].
+
+**The list.**
+
+- The player remembers, across restarts, the folders that the user opened in it. The list holds at most 5
+  folders, most recent first (Q946, Q957, Q966).
+- An entry is the folder that the user picked in the folder dialog of the player (Q966): the buttons "Select
+  recording folder" and "Open the folder dialog" of the recording browser (10). The main process stores the real
+  path of the pick (`fs.realpath`), as the pick of 5.3 (Q965). The entry goes into the list at the pick, before
+  the player reads the folder; a folder that does not play is also an entry [agent 41]. The other folder dialogs
+  of the app (the base recording folder, the video folder of the menu) add no entry [agent 41].
+- A pick of a folder that is in the list (the same path: case ignored on Windows, as in 5.3) moves that entry to
+  the top. The pick of a sixth folder drops the last entry (Q966).
+- A click on an entry that passes the check below moves the entry to the top [agent 41].
+- A pick whose real path fails the item rules of the file below (for example a UNC path) is a pick for the run
+  (5.3), and it adds no entry [agent 41].
+
+**The file** (Q968) [agent 41].
+
+- One file, `recent-take-folders.json`, in the user data folder of the app (`app.getPath('userData')`). Only the
+  main process reads or writes it (Q965).
+- The form: `{"version": 1, "folders": ["<real path>", ...]}`, JSON with a 2-space indent and a final LF.
+  `folders` holds 0 to 5 strings, most recent first.
+- The main process reads the file once, in `installTakeHandler`. After each change of the list it writes the
+  whole file: first `recent-take-folders.json.tmp` in the same folder, then a rename over the file. The writes
+  run one after the other. A failed write keeps the list in memory and logs one line with no path. The user
+  gets no message.
+- The file is untrusted input: a person or another program can change it. At the read:
+  - a missing file, a file that is not a regular file (a FIFO would block the read), a file larger than 1 MiB, a
+    file that does not read, text that is not JSON, a value that is not an object, a `version` other than the
+    number 1, or no `folders` array gives an empty list;
+  - an item of `folders` that is not a string, is empty, is longer than 32,767 UTF-16 code units, holds a NUL
+    character, is not absolute (`path.isAbsolute`) or starts with two slashes or backslashes is left out. The
+    two-slash rule is the only device rule: it covers UNC paths and the forms `\\?\` and `\\.\` (as in 5.3).
+    Each other wrong path that the read lets through fails the check at the click;
+  - an item with the same path as an earlier item is left out;
+  - then only the first 5 items stay.
+- The read resolves no path and writes nothing. The list that it gives goes to the file at the next change. A
+  file of another `version` (for example from a later build) thus gives an empty list, and the next change
+  replaces it.
+- An item of the file is not a pick. Its folder opens only by a click, after the check below. An item that is not
+  a real path (a path through a link, a path with `..`, or another case on Linux and macOS) fails that check.
+- An old `picked-take-folders.json` is not read and not deleted (Q968).
+
+**The calls.** The bridge of 4.3 step 2 gets three calls, on three new channels of `TAKE_CHANNELS`:
+
+- `recent(): Promise<string[]>` (`skellycam-take:recent`) gives the list, most recent first.
+- `openRecent(folder: string): Promise<string>` (`skellycam-take:open-recent`). The main process takes the entry
+  whose path is the same as `folder`. A `folder` that is no entry fails with the error "folder not allowed", and
+  nothing changes. Then the main process checks the entry again (Q965): `fs.realpath` of the stored path succeeds,
+  its result is the same path as the stored path, and it is a directory. Each error of `fs.realpath` or `stat`
+  (missing, no access, busy) fails the check [agent 41]. When the check passes and the entry is still in the list
+  (a "Clear list" during the check removes it: then the call fails with "folder not allowed" and opens nothing),
+  the stored path becomes a pick of the run (5.3), the entry moves to the top, and the call returns the stored
+  path. The page then opens the folder as after a dialog pick. When the check fails, the entry leaves the list,
+  the file is written, and the call fails with the error "folder gone" (Q967). A folder that was replaced by a
+  link fails the check in the same way [agent 41].
+- `clearRecent(): Promise<void>` (`skellycam-take:clear-recent`) empties the list and writes the file with an empty
+  `folders` (Q967). It ends no pick of the run [agent 41].
+- No call adds a path to the list (Q965). The page asks by the path of an entry that `recent()` gave, and the main
+  process uses only the stored entry [agent 41]. The page sees the paths of the list; `selectDirectory` gives the
+  page the path of a pick today too.
+- `TakeHandler` gets `recent()`, `dialogFolder()` (below), and a second argument of `recordPick`:
+  `recordPick(folder, {recent: true})` is a pick of the player dialog [agent 41]. `installTakeHandler` keeps its one
+  option `recordingsFolder` (4.3).
+- The page client `files/electron-take-files.ts` exports the three calls as `recentTakeFolders()`,
+  `openRecentTakeFolder(folder)` and `clearRecentTakeFolders()`, and `index.ts` exports them [agent 41].
+
+**The dialog.** The folder dialog of the player opens at the top entry of the list (Q957). With an empty list it
+opens at the recordings folder when that is a folder, else at the home folder (`app.getPath('home')`): an explicit
+`defaultPath` in each case, because with none Windows opens the dialog at the folder that it remembers for the
+program (Q967) [agent 41]. Thus "Clear list" also forgets where the dialog opens [NV: the native dialog follows
+`defaultPath` on each system; to be checked by hand by the user]. `TakeHandler.dialogFolder()` gives this folder. The
+host asks for this dialog with `fileSystem.selectDirectory({player: true})`, which passes `dialogFolder()` as
+`defaultPath`. With no input the call does what it does today [agent 41].
+
+**No reopen.** At its start the app opens no folder of the list by itself (Q959).
+
+**The UI** (Q946, Q967). The recording browser (10) shows a section "Recently Opened" under the folder button
+when the list is not empty. It has one button for each entry, with the folder name; the tooltip of the button is
+the full path. A button "Clear list" ends the section. A click on an entry calls `openRecent`, and then opens the
+folder as a dialog pick does, with no dialog. On "folder gone" the browser shows "This folder no longer exists or
+was moved. It was removed from Recently Opened." and reads the list again. On "folder not allowed" (a list that
+another window changed) it shows no message and reads the list again. The texts are in `en`, `es`, `zh-CN` and
+`ar`; the other locales fall back to English (Q948) [agent 41]. Also [agent 41]:
+
+- The message line is a live region (`role="status"`).
+- The section is a group with the label "Recently Opened". The accessible name of each entry is its folder name
+  and its full path, so two folders with one name differ.
+- When the clicked entry or the whole section goes, the focus moves to the folder button.
+- The folder names and paths are isolated from the direction of the text around them (`<bdi>`, and U+2068 and
+  U+2069 in the tooltip and the accessible name), for `ar`.
+- A picked path keeps a root as a root: `D:\` stays `D:\` and `/` stays `/`; a root shows as itself as the name. White space stays: it is part of a folder name.
+
+**Tests.** T-PLAY-87, T-PLAY-88, T-PLAY-90, T-PLAY-91 and T-PLAY-92 (unit), T-PLAY-89 and T-PLAY-62 (electron) test
+these rules. Not tested by a test, to be checked by hand by the user [agent 41]: the native dialog and its start folder; the wiring
+in `electron/main/api.ts` (the `player` flag, `defaultPath` from `dialogFolder()`, `recordPick` with `recent`);
+the UI section of the recording browser (the host harness does not show the recording browser).
 
 ## 6. The take reader
 
@@ -1135,6 +1246,7 @@ refreshes, at the current rate. It skips the rows between them. The cost at 8 ti
 - A take of the new format in a folder that the handler refuses (L7) does not go to the player of
   today. The recording browser tells the user to open the folder with the folder dialog and shows a
   button that opens it ([ADR-5FBS](../decisions/entries/5FBS-fixes-of-the-6a-code-review.md)).
+- The recording browser shows the recently opened folders of 5.10 and their "Clear list" button.
 - The host gives `initialFrame` and gets `frame` events for F19.
 
 ## 11. Performance
@@ -1205,7 +1317,8 @@ cold disk; a low-end laptop; a file that a writer still writes; real clock align
   `installTakeHandler` a temporary `recordingsFolder`, and it sets the Electron `userData` folder to a
   folder in the temporary folder of the test, so no test touches the profile of the user and the
   checks of 5.3 see each file of the harness ([ADR-WP77](../decisions/entries/WP77-choices-of-the-player-label-and-picked-folders-lane.md)). It has two test-only
-  hooks: one records a dialog pick, one makes the reads of one path fail.
+  hooks: one records a dialog pick (with `{recent: true}`, a pick of the player dialog of 5.10), one makes the
+  reads of one path fail.
 - **benchmark**: timed runs on the Windows test machine, started by hand. They record results and
   compare them with the targets of 11.3. They do not run in CI.
 
@@ -1358,7 +1471,7 @@ The recorder spec uses this description as the model of its placeholder, so it i
 | T-PLAY-59 | electron | A test variant of the handler answers 200 with the exact length, 200 with the whole file, and 206 with a wrong `Content-Range` start. | The page client accepts only the first; the two others are read errors. |
 | T-PLAY-60 | electron | A sparse file of 5 GiB; read 3 ranges past 4 GiB. | The bytes equal the bytes that the test wrote at those offsets. |
 | T-PLAY-61 | electron | Open `normal`, play it to the end, seek 50 times, close. | Each file of the folder has the same bytes and modification time as before [SFF-799]. |
-| T-PLAY-62 | electron | Open a folder outside the test `recordingsFolder` and not picked; the page calls each bridge and IPC channel of the module with that folder; the same folder after the test hook records a dialog pick; a folder inside the `recordingsFolder`; a link inside the `recordingsFolder` to an outside folder. | Refused with "folder not allowed" and no token, also after the page calls; allowed after the pick; refused again after a restart of the harness; from before the page calls to after the restart, no file below the temporary folder of the test is added or changed outside the user data folder of the harness, and no file below the temporary folder holds the path of the pick, so no `picked-take-folders.json` exists (5.3, ADR-4D94, ADR-70J6; until Q946: ADR-K907); allowed inside; the link is refused [L7, U1]. |
+| T-PLAY-62 | electron | Open a folder outside the test `recordingsFolder` and not picked; the page calls each bridge and IPC channel of the module with that folder; the same folder after the test hook records a pick of the player dialog (`{recent: true}`); a folder inside the `recordingsFolder`; a link inside the `recordingsFolder` to an outside folder. | Refused with "folder not allowed" and no token, also after the page calls; the page calls add no entry (`recent()` is empty); allowed after the pick; refused again after a restart of the harness, while `recent()` still lists it (it opens again only by a click, T-PLAY-89); from before the page calls to after the restart, no file below the temporary folder of the test is added or changed outside the user data folder of the harness, and the only file below the temporary folder that holds the path of the pick is `recent-take-folders.json` of the user data folder; no `picked-take-folders.json` exists (5.3, 5.10, ADR-4D94, ADR-70J6, ADR-8J08); allowed inside; the link is refused [L7, U1]. |
 | T-PLAY-63 | electron | Open a take in window A; navigate A; open a take in window B, then open a second take in B; close B. | A's token gets 404 after the navigation; B's first token gets 404 after the second open; B's second token gets 404 after the close. |
 | T-PLAY-64 | electron | The shared `TakeFiles` check suite of T-PLAY-39 on the Electron implementation. | The same results as T-PLAY-39 [L8]. |
 | T-PLAY-65 | benchmark | 16 readers × 60 fps × 150 kB for 60 s through the handler; CPU of the main, renderer and GPU processes. | Target 11.3; results recorded [M `RT` §8 item 3]. |
@@ -1383,6 +1496,12 @@ The recorder spec uses this description as the model of its placeholder, so it i
 | T-PLAY-84 | unit | `normal` with a usable capture info, then copies: the capture info missing; not JSON; another `take_uuid`; `skellyfileformat` another value; `camera_configs` not an object; a read of the file that fails; `recording_name` of the manifest with a `/`, and with a `\`; no manifest. A spy records the path and the limit of each whole read. ([ADR-WP77](../decisions/entries/WP77-choices-of-the-player-label-and-picked-folders-lane.md)) | The usable file: the labels of the capture info, read once with the limit 16 MiB; each copy: `camera_label` on each camera, no `error` event, the take warnings of the take with no capture info, and the take opens; with the capture info missing, with the `/`, with the `\` and with no manifest, no read of a capture info (5.8, 8.4). |
 | T-PLAY-85 | electron | Record a dialog pick of a folder outside the test `recordingsFolder`; open it and a folder below it in the first window; reload that window and open it again; open it in a second window; open it through a link outside every allowed folder that points to it. ([ADR-WP77](../decisions/entries/WP77-choices-of-the-player-label-and-picked-folders-lane.md)) | Each open gives a token; the pick adds or changes no file below the temporary folder of the test outside the user data folder, and no file there holds the path of the pick (5.3). |
 | T-PLAY-86 | electron | Record a dialog pick of a folder P outside the test `recordingsFolder` and open it; replace P by a link to a folder S outside every allowed folder; open P, S and a folder below S; make a real folder P again with a link inside it to S, and open that link. ([ADR-WP77](../decisions/entries/WP77-choices-of-the-player-label-and-picked-folders-lane.md)) | The first open gives a token; after the swap P, S and the folder below S are refused with "folder not allowed"; the link inside P to S is refused (5.3). |
+| T-PLAY-87 | unit | The list and the file of 5.10 in `main/recent-folders.ts`: picks of A, B, A again; 6 picks; a pick with another case; a relative and a UNC pick; the text of a list and of an empty list; the read of: no file, a folder in place of the file, a FIFO in its place (not on Windows), a file larger than 1 MiB, not JSON, an array, `version` 2 and "1", `folders` not an array, items that are not strings, empty, too long, with a NUL, relative, UNC, device, repeated, and 7 valid items. | [A], [B, A], [A, B]; 5 entries, the first pick dropped; another case is the same entry on Windows only; the relative and the UNC pick add no entry; the text is `{"version": 1, "folders": [...]}` with a 2-space indent and a final LF, and it reads back the same list; each wrong file gives an empty list; each wrong item is left out; the first 5 of the 7 stay. |
+| T-PLAY-88 | unit | The check at the click (5.10) with real folders: a listed folder; a path that is no entry; the listed path in another case; the folder deleted; the folder replaced by a link (a junction on Windows) to another folder; a file in its place; an entry that is the path of a link to a real folder. | The listed folder passes with the stored path; the path that is no entry is "not listed"; another case passes on Windows only; each other case is "gone". |
+| T-PLAY-89 | electron | Record picks of the player dialog of A and B; restart; open A; `openRecent` of a folder that is no entry, of A, of B after B is replaced by a link to a folder S, and of A after its delete; `clearRecent`; `dialogFolder()` of the handler after the picks and after the clear (with the recordings folder made); a hand-edited `recent-take-folders.json` and a `picked-take-folders.json` before a restart. | After the restart A is refused until `openRecent(A)`, which returns A and moves it to the top; the file lists the real paths in that order; the folder that is no entry fails with "folder not allowed" and changes nothing; B and A fail with "folder gone" and leave the list and the file; B and S stay refused; `clearRecent` leaves `folders` empty; `dialogFolder()` is B after the picks and the recordings folder after the clear; the hand-edited file gives its first 5 valid items; the path of `picked-take-folders.json` is refused and not listed, and that file keeps its bytes (5.10, ADR-8J08). |
+| T-PLAY-90 | unit | The store of 5.10 on a temporary file: picks of A and B; a click on A; a click on a path that is no entry; a click on B after its delete; a clear. Then a click on A with a clear while its check runs. | The click returns A, gives A to the pick once and moves it to the top, and the file follows; the path that is no entry fails with "folder not allowed"; B fails with "folder gone" and leaves the list and the file; the clear leaves `folders` empty. The click during the clear fails with "folder not allowed", makes no pick, and the list and the file stay empty. |
+| T-PLAY-91 | unit | `dialogFolder` with a list; with an empty list and no recordings folder, a file in its place, and a recordings folder. | The top entry; the home folder twice; the recordings folder. |
+| T-PLAY-92 | unit | `trimFolder` and `folderNameOf` of `take-route.ts` on `D:\`, `/`, a Windows path and a POSIX path with trailing separators. | A root stays a root and is its own name; the trailing separators go; the name is the last part. |
 
 ### 12.4 Decisions and reader rules to tests
 
@@ -1398,7 +1517,7 @@ The recorder spec uses this description as the model of its placeholder, so it i
 | M1, M2, M3 | T-PLAY-01, T-PLAY-17, T-PLAY-20, T-PLAY-26, T-PLAY-46 |
 | M4, M6 | T-PLAY-42 (inserted DHT) |
 | M5 | T-PLAY-21 |
-| U1 | T-PLAY-62, T-PLAY-85 |
+| U1 | T-PLAY-62, T-PLAY-85, T-PLAY-89 |
 | U2 | T-PLAY-71, T-PLAY-72 |
 | M7 | T-PLAY-20 (T_0) |
 | M10 | No test here: it is a rule of the shared Python reader. |
@@ -1415,6 +1534,7 @@ The recorder spec uses this description as the model of its placeholder, so it i
 | E5, SFF-751 | T-PLAY-08, T-PLAY-41 |
 | E6 | T-PLAY-37, T-PLAY-44 |
 | The label of 8.4 (Q11 of ADR-VYS7, Q919), SFF-803 | T-PLAY-83, T-PLAY-84 |
+| The recently opened folders of 5.10 (ADR-8J08) | T-PLAY-62, T-PLAY-87 to T-PLAY-92 |
 | E7, SFF-706 | T-PLAY-10 |
 | E8, SFF-781 | T-PLAY-14, T-PLAY-15, T-PLAY-20 |
 | E9 | Replaced by M1 to M5; tests as M1 to M5 |
@@ -1647,7 +1767,7 @@ each one [agent n].
 5. The scheme `skellycam-take`, its privileges, the token of 32 lower-case hexadecimal characters, tied
    to the window that asked (5.2, 5.4).
 6. The recordings folder computed with the backend rule; the picked folders in memory for the run of the
-   app, with no list file in 6a (ADR-4D94); "inside" by real path, without case on Windows
+   app, with no list file in 6a (ADR-4D94; the one saved list is that of 5.10, ADR-8J08); "inside" by real path, without case on Windows
    (5.3).
 7. The open: a scan of the root and the media folder only, regular files only, no links or junctions,
    an allow-list by exact relative path, identities by `stat` with `bigint`, no absolute path to the
@@ -1709,8 +1829,11 @@ each one [agent n].
     with no error; `installTakeHandler` loses `pickedFoldersFile` (8.4, 5.3, 5.8). Accepted by Q919
     ([ADR-70J6](../decisions/entries/70J6-decisions-of-the-user-on-the-remaining-items-of-4pps.md) items 1 and 2).
     The details of the label and of the picks are in
-    [ADR-WP77](../decisions/entries/WP77-choices-of-the-player-label-and-picked-folders-lane.md) (accepted by Q945); the
-    part that waits for Q946 is in [ADR-K907](../decisions/entries/K907-the-open-part-of-adr-wp77-picks-across-runs.md) (proposed).
+    [ADR-WP77](../decisions/entries/WP77-choices-of-the-player-label-and-picked-folders-lane.md) (accepted by Q945).
+41. The details of the recently opened folders of 5.10: which dialog adds an entry, a click as an open, the time of
+    the entry, the file form and its read and write, a folder replaced by a link, "Clear list" and the picks of the
+    run, the calls, the texts, the module and the tests. They are in
+    [ADR-FHP6](../decisions/entries/FHP6-choices-of-the-recently-opened-take-folders-lane.md) (proposed).
 
 ## 17. Questions for the user
 
@@ -1830,6 +1953,8 @@ The user gave these answers on 2026-11-20, relayed by the supervisor
 - U1: A folder that the user picked in the system folder dialog is remembered across restarts of the
   app. A page must not be able to add to the list without a dialog pick. For 6a, ADR-4D94 overturns the
   first sentence: the picks are kept for the run of the app, and the list file waits for step 6c (5.3).
+  ADR-8J08 brings the first sentence back for the folder dialog of the player: the recently opened list of
+  5.10 is remembered, and an entry opens only by a click that passes its check.
 - U2: A write error on one camera file is a second short-file case: the same short pair as a killed
   process (`missing` rows with empty byte fields and no block, `# repair`, `# end`), with the manifest
   warnings `camera_file_short` and `take_error`, and no `camera_dead`.

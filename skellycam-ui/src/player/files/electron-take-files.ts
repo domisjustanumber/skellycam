@@ -4,11 +4,25 @@ import type {TakeFiles} from './take-files.ts';
 interface TakeBridge {
     open(folderPath: string): Promise<{token: string; folderName: string; entries: {path: string; size: number}[]}>;
     close(token: string): Promise<void>;
+    recent(): Promise<string[]>;
+    openRecent(folder: string): Promise<string>;
+    clearRecent(): Promise<void>;
 }
 
-export async function electronTakeFiles(folderPath: string): Promise<TakeFiles> {
+const takeBridge = () => {
     const bridge = (globalThis as {skellycamTake?: TakeBridge}).skellycamTake;
     if (!bridge) throw new Error('the take bridge is not exposed');
+    return bridge;
+};
+
+/** The recently opened folders, most recent first (5.10). */
+export const recentTakeFolders = () => takeBridge().recent();
+/** Open an entry of the list with no dialog; fails with "folder gone" when the check of 5.10 fails. */
+export const openRecentTakeFolder = (folder: string) => takeBridge().openRecent(folder);
+export const clearRecentTakeFolders = () => takeBridge().clearRecent();
+
+export async function electronTakeFiles(folderPath: string): Promise<TakeFiles> {
+    const bridge = takeBridge();
     const {token, folderName, entries} = await bridge.open(folderPath);
     const sizes = new Map(entries.map(e => [e.path, e.size]));
     const sizeOf = (path: string) => {

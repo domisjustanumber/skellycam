@@ -4,12 +4,13 @@
  *
  * Standalone component: only depends on CSS utility classes + server URL helper.
  */
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import clsx from "clsx";
 import { serverUrls } from "@/services/server/server-helpers/server-urls";
 import { backendFetch } from "@/services/electron-ipc/backend-fetch";
 import { useElectronIPC } from "@/services";
-import { routeTake } from "./take-route";
+import { folderNameOf, routeTake, trimFolder } from "./take-route";
+import { clearRecentTakeFolders, openRecentTakeFolder, recentTakeFolders } from "../../player/index.ts";
 import { useTranslation } from "react-i18next";
 import ButtonSm from "../ui-components/ButtonSm";
 import SubactionHeader from "../ui-components/SubactionHeader";
@@ -193,6 +194,18 @@ export const RecordingBrowser: React.FC<RecordingBrowserProps> = ({
 
   // Manual path input
   const [manualPath, setManualPath] = useState("");
+  // The recently opened folders of the player dialog (player.md 5.10)
+  const [recent, setRecent] = useState<string[]>([]);
+  const readRecent = useCallback(
+    () => (isElectron ? recentTakeFolders().then(setRecent, () => setRecent([])) : Promise.resolve()),
+    [isElectron],
+  );
+  useEffect(() => {
+    void readRecent();
+  }, [readRecent]);
+  // focus goes to the folder button when the clicked entry or the whole section goes away
+  const folderRowRef = useRef<HTMLDivElement>(null);
+  const focusFolderButton = () => folderRowRef.current?.querySelector("button")?.focus();
 
   // Filter / sort
   const [filterText, setFilterText] = useState("");
@@ -342,19 +355,40 @@ export const RecordingBrowser: React.FC<RecordingBrowserProps> = ({
     }
   }, [initialLoadPath, didAutoLoad, loadRecording]);
 
+  const openPicked = useCallback((result: string) => {
+    const trimmed = trimFolder(result);
+    setManualPath(trimmed);
+    loadRecording({ name: folderNameOf(trimmed), path: trimmed, video_count: 0 });
+  }, [loadRecording]);
+
   const handleBrowseDirectory = useCallback(async () => {
     if (!isElectron || !api) return;
-    const result: string | null = await api.fileSystem.selectDirectory.mutate();
+    const result: string | null = await api.fileSystem.selectDirectory.mutate({ player: true });
     if (!result) return;
-    const trimmed = result.trim().replace(/[\\/]+$/, "");
-    setManualPath(trimmed);
-    const lastSep = Math.max(
-      trimmed.lastIndexOf("/"),
-      trimmed.lastIndexOf("\\"),
-    );
-    const recName = lastSep >= 0 ? trimmed.slice(lastSep + 1) : trimmed;
-    loadRecording({ name: recName, path: trimmed, video_count: 0 });
-  }, [api, isElectron, loadRecording]);
+    void readRecent();
+    openPicked(result);
+  }, [api, isElectron, openPicked, readRecent]);
+
+  // A click on a recently opened folder opens it with no dialog, after the check of the main process (5.10)
+  const handleOpenRecent = useCallback(async (folder: string) => {
+    try {
+      openPicked(await openRecentTakeFolder(folder));
+      void readRecent();
+    } catch (e) {
+      // "folder gone": a message; "folder not allowed" (a list that another window changed): no message
+      if (String(e).includes("folder gone")) {
+        setError(t("recentFolderGone", "This folder no longer exists or was moved. It was removed from Recently Opened."));
+      }
+      await readRecent();
+      focusFolderButton();
+    }
+  }, [openPicked, readRecent, t]);
+
+  const handleClearRecent = useCallback(async () => {
+    await clearRecentTakeFolders().catch(() => undefined);
+    await readRecent();
+    focusFolderButton();
+  }, [readRecent]);
 
   // -----------------------------------------------------------------------
   // Sort controls
@@ -374,11 +408,11 @@ export const RecordingBrowser: React.FC<RecordingBrowserProps> = ({
     <div className="flex playback-page-content pos-rel has-videos flex flex-col gap-1 h-full overflow-hidden">
       {/* Manual path row */}
       <div className="load-group bg-middark br-1 p-1 flex flex-start flex-wrap gap-1 items-center pb-2">
-        <div className="flex flex-col flex-start gap-1 items-center">
+        <div ref={folderRowRef} className="flex flex-col flex-start gap-1 items-center">
           <SubactionHeader text="Folder Directory" />
           <ButtonSm
             iconClass="subfolder-icon"
-            text={manualPath || "Select recording folder"}
+            text={manualPath ? `⁨${manualPath}⁩` : "Select recording folder"}
             onClick={handleBrowseDirectory}
             title="Click to select recording folder"
             disabled={!isElectron}
@@ -386,10 +420,32 @@ export const RecordingBrowser: React.FC<RecordingBrowserProps> = ({
             textClass="text-wrap flex-1"
           />
         </div>
+        {recent.length > 0 && (
+          <div role="group" aria-label={t("recentlyOpened", "Recently Opened")} className="flex flex-col flex-start gap-1 min-w-full">
+            <SubactionHeader text={t("recentlyOpened", "Recently Opened")} />
+            {recent.map((folder) => (
+              // the name and the path are isolated from the direction of the text around them (ar); the full path
+              // is in the accessible name, so two folders with one name differ
+              <button
+                type="button"
+                key={folder}
+                className="button-sm-group gap-1 br-1 button items-center sm fit-content flex-inline text-left text-black select-path bg-middark"
+                title={`\u2068${folder}\u2069`}
+                aria-label={`\u2068${folderNameOf(folder)}\u2069, \u2068${folder}\u2069`}
+                onClick={() => handleOpenRecent(folder)}
+                disabled={isLoadingRecording}
+              >
+                <span className="icon icon-size-20 subfolder-icon" />
+                <p className="text-gray text-nowrap text md text-align-left text-wrap flex-1"><bdi>{folderNameOf(folder)}</bdi></p>
+              </button>
+            ))}
+            <ButtonSm text={t("clearList", "Clear list")} onClick={handleClearRecent} className="fit-content" />
+          </div>
+        )}
       </div>
 
       {/* Error */}
-      {error && <p className="pl-2 flex flex-row text sm text-error">{error}</p>}
+      <p role="status" className="pl-2 flex flex-row text sm text-error">{error}</p>
       {needsPick && (
         <button className="button sm ml-2 fit-content" onClick={handleBrowseDirectory}>
           {t("openFolderDialog", "Open the folder dialog")}

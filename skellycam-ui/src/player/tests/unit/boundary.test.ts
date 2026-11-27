@@ -13,7 +13,7 @@ const UI = path.resolve(MODULE, '../..');
 const MODULE_FILES = [
     'index.ts', 'files/take-files.ts', 'files/electron-take-files.ts', 'reader/take.ts', 'reader/manifest.ts',
     'reader/sidecar.ts', 'reader/fit.ts', 'reader/matroska.ts', 'clock/clock.ts', 'clock/choose.ts',
-    'tile/tile.ts', 'tile/format.ts', 'main/take-scheme.ts', 'main/bridge.ts',
+    'tile/tile.ts', 'tile/format.ts', 'main/take-scheme.ts', 'main/bridge.ts', 'main/recent-folders.ts',
 ];
 const PUBLIC = new Set(['index.ts', 'main/take-scheme.ts', 'main/bridge.ts']);
 
