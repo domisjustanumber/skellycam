@@ -630,6 +630,32 @@ def test_t_cert_153_the_not_reached_row_of_a_quick_run_counts_none_of_the_six(mo
     assert by_name(report)[f"{slow}:not-reached"]["numbers"] == {"checks": 7 + (5 if unix else 0)}
 
 
+@pytest.mark.parametrize("rule", ["gaps_explained", "image_effect"])
+def test_t_cert_153_a_fault_in_a_left_out_check_shows_on_the_next_check(monkeypatch, tmp_path, rule):
+    """T-CERT-153, 3.6.1 (Q902): a quick run where the code of a left-out check raises (`gaps-explained` in the take
+    step, `image-effect` in the settings step). The next check of that camera that quick has is `not-run` with the
+    class name of the error; it is the first row of the camera that does not pass, and no row of the six is in the
+    report; the camera counts as running at the stop, so it gets `release:<label>` `camera-not-restored` and its
+    notice."""
+    def fault(*args, **kwargs):
+        raise RuntimeError("planted")
+    monkeypatch.setattr(product(CATALOG), rule, fault)
+    with capture_app(monkeypatch, [good()]) as app:
+        (label,) = labels(app.factory.device_infos())
+        plan = product(RUN).plan("quick", devices=app.factory.device_infos(),
+                                 **{k: v for k, v in paths(tmp_path).items() if k != "recording_folder"})
+        report = run_with(app, tmp_path)
+    assert_valid(report)
+    own_rows = [c for c in report["checks"] if c["name"].startswith(label + ":")]
+    first = next(c for c in own_rows if c["result"] != "pass" and c["result"] != "record-only")
+    assert (first["result"], first["reason"]) == ("not-run", "RuntimeError"), own_rows
+    assert first["name"] in plan["details"]["checks"], first
+    assert not [c for c in own_rows if c["name"].split(":", 1)[1] in FULL_ONLY]
+    assert {"name": f"release:{label}", "result": "fail", "reason": "camera-not-restored",
+            "module": "Fake camera 0"} in report.get("cleanup", []), report.get("cleanup")
+    assert {"code": "camera-not-restored", "values": {"camera": "Fake camera 0"}} in report.get("notices", [])
+
+
 def test_t_cert_16_a_cancel_during_the_take(monkeypatch, tmp_path):
     """T-CERT-16, 8.3, 9.3: the cancel comes when the take starts. The checks that ended keep their results; the
     running and later checks are `not-run` `cancelled`; a thread session closes its group itself (the close
@@ -795,18 +821,19 @@ def test_t_cert_12_a_camera_that_hangs_at_the_open(monkeypatch, tmp_path):
     assert checks[f"{fine}:records:rows-complete"]["result"] == "pass"
 
 
-def test_session_child_runs_the_product_path(tmp_path, monkeypatch):
+@pytest.mark.parametrize("level", ["quick", "full"])
+def test_session_child_runs_the_product_path(tmp_path, monkeypatch, level):
     """T-CERT-32 in part, 2.1, 2.2: the session runs in a spawn child with real camera processes; the setting
     `SKELLYCAM_WINDOWS_CAPTURE=opencv` does not change the source (the factory gives the fakes); each check of
-    the five groups passes; no process of the run is left."""
+    the five groups of the level passes (full: also the six of 3.6.1, Q902); no process of the run is left."""
     monkeypatch.setenv("SKELLYCAM_WINDOWS_CAPTURE", "opencv")
     factory = FakeSourceFactory([good()])
     before = {p.pid for p in psutil.Process().children(recursive=True)}
-    report = product(RUN).run("quick", devices=factory.device_infos(), source_factory=factory, **paths(tmp_path))
+    report = product(RUN).run(level, devices=factory.device_infos(), source_factory=factory, **paths(tmp_path))
     assert_valid(report)
     (label,) = labels(factory.device_infos())
     checks = by_name(report)
-    for name in group_checks(label, "quick"):
+    for name in group_checks(label, level):
         assert checks[name]["result"] == "pass", checks[name]
     time.sleep(0.5)
     left = {p.pid for p in psutil.Process().children(recursive=True)} - before
