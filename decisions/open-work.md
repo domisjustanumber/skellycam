@@ -95,10 +95,6 @@ task. Delete an item when its work is done. The PR that closes an item records t
   - The DirectShow open order of `sfn26` (item 1 of ADR-6T78) waits for a check on the cameras.
   - The UI does not show the `start_failure` warning item.
   - Not verified: real cameras, Linux, macOS and the installer build.
-- **The full stall-watch test** (Q892 of
-  [ADR-N2VE](entries/N2VE-decisions-of-the-user-on-the-ci-triage-and-the-stall-watch-code.md), low priority). A later
-  small test lane writes it: a real camera loop, a fake camera whose frames stop after a reopen, the watch on the
-  same clock (`unix-capture.md` 4.10).
 - **Quick certify runs** (Q902, [ADR-Y2RN](entries/Y2RN-decisions-of-the-user-on-the-size-floor-review-and-certify-quick-runs.md)): the next certify lane, spec text and test
   first: a quick run leaves out the six full-only checks of Q593 (image-effect, not-reencoded, size,
   ring-equals-mkv, source-equals-ring, gaps-explained).

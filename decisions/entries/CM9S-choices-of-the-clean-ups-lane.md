@@ -28,6 +28,30 @@ The user decided the work (Q871, Q873, Q892, Q900, Q909 of
    1280 × 720 أو أعلى أفضل تتبع." and "أصغر حجم هو 640 × 360". In the Arabic file each size is in a left-to-right
    isolate (`⁦` … `⁩`, written as escapes): in right-to-left text the bidi rules would show
    "720 × 1280". No native speaker checked them.
+3. **Q892, the stall-watch test (T-UNX-109 of `unix-capture.md`).** The frames stop at the first read in
+   `waiting` after the open of a reopen (a size change), by the read hook of the fake factory: that pass
+   attaches the new rings, so the test runs the attach path of 4.10. A stop in the open itself (a held open)
+   fails the camera at stage `warm-up` in `starting`, where the watch is off, so it tests nothing. The watch
+   goes on the clock in the test only: in its thread, `time.monotonic` of the group module gives the clock
+   time and `_stop_watch.wait` waits on the clock, so each round is 0.1 s of clock time; the thread leaves the
+   clock at its end. The test checks that the watch did not trip (a spy on `CameraGroup._end_process`), the
+   failure of the in-process rule, and at least 15 rounds of the watch in the 2 s after the stop. The failure
+   text alone is not enough: with THREAD workers a tripped watch cannot end the loop, and the loop writes its
+   own failure later over the failure of the watch. It has the marker `capture_timing`, as each test of its
+   file. Evidence (not committed): with the in-process limit patched to 3 s the test fails ("the watch
+   tripped"); with the count after the attach removed it still passes, because on the virtual clock the attach
+   and its count take no time. The unit test of 4PPS item 10 guards that count.
+4. **Q909, the kill rule.** `PreviewKit.close` still ends every step (each app, then each server), then throws
+   one error that names each killed step. A kill counts both at a time-out of `close` and in `UiServer.stop`
+   when the clean stop failed. The "hung step" note stays in the report.
+5. **Step 8 nits.** The fixture of T-TIM-24 gets `window_ns` 1000500000 and the id `frame_hash` with 600
+   samples: the oldest 88 are 90 ms, so a summary over all 600 would differ. `expected` comes from the Python
+   `build_summary`. `capture-timings.md` 5.3 gets the sentence on the stamp of `PreviewTiles` when off.
+6. **Q873, the docs page.** The new first section, "Each camera on its own", states only facts of
+   `preview.md` 4.1, 4.3, 5.4 and `preview-4b.md` 4.1. The copies in `es`, `zh-CN` and `ar` get the same
+   English section (the rule of [`preview-4b.md`](../../specs/preview-4b.md) 5.9). The front matter
+   `description` and the feature text of `content.config` still describe one message for a group: not
+   changed (outside the first section).
 
 ## Reason
 
