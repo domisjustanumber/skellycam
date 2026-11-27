@@ -656,6 +656,75 @@ def test_t_cert_153_a_fault_in_a_left_out_check_shows_on_the_next_check(monkeypa
     assert {"code": "camera-not-restored", "values": {"camera": "Fake camera 0"}} in report.get("notices", [])
 
 
+def camera_results(report, plan, label):
+    """{check without `<label>:`: (result, reason)} of the rows of one camera that the plan of the level names, and
+    its `not-reached` row."""
+    names = {n.split(":", 1)[1] for n in plan["details"]["checks"] if n.startswith(label + ":")} | {"not-reached"}
+    return {c["name"].split(":", 1)[1]: (c["result"], c["reason"]) for c in report["checks"]
+            if c["name"].startswith(label + ":") and c["name"].split(":", 1)[1] in names}
+
+
+def run_both_levels(monkeypatch, tmp_path, patch):
+    """A quick and a full run of two good fakes with `patch(app)` applied; (labels, {level: (report, plan)})."""
+    out = {}
+    for level in ("quick", "full"):
+        folder = tmp_path / level
+        folder.mkdir()
+        with capture_app(monkeypatch, [good(), good()]) as app:
+            patch(app)
+            devices = app.factory.device_infos()
+            plan = product(RUN).plan(level, devices=devices,
+                                     **{k: v for k, v in paths(folder).items() if k != "recording_folder"})
+            out[level] = (run_with(app, folder, level=level), plan)
+        assert_valid(out[level][0])
+    return labels(devices), out
+
+
+def test_t_cert_153_a_fault_in_the_image_effect_of_one_of_two_cameras(monkeypatch, tmp_path):
+    """T-CERT-153, 3.6.1 (Q902): two cameras; the image rule raises for camera 0 only. Quick: the error is on the
+    next check of camera 0 that quick has; camera 1 has the rows of full less the six (no extra error row); both
+    cameras get `camera-not-restored`, as in full."""
+    def patch(app):
+        rule, calls = product(CATALOG).image_effect, []
+
+        def fault(*args):
+            calls.append(args)
+            if len(calls) == 1:  # camera 0: the settings step judges the cameras in the detection order
+                raise RuntimeError("planted")
+            return rule(*args)
+        monkeypatch.setattr(product(CATALOG), "image_effect", fault)
+    (first, second), runs = run_both_levels(monkeypatch, tmp_path, patch)
+    (quick, quick_plan), (full, full_plan) = runs["quick"], runs["full"]
+    own_rows = [c for c in quick["checks"] if c["name"].startswith(first + ":")]
+    failed = next(c for c in own_rows if c["result"] not in ("pass", "record-only"))
+    assert (failed["result"], failed["reason"]) == ("not-run", "RuntimeError"), own_rows
+    assert failed["name"] in quick_plan["details"]["checks"], failed
+    assert camera_results(quick, quick_plan, second) == {
+        k: v for k, v in camera_results(full, full_plan, second).items() if k not in FULL_ONLY}
+    for report in (quick, full):
+        cleanup = {c["name"]: c["reason"] for c in report.get("cleanup", [])}
+        assert cleanup == {f"release:{first}": "camera-not-restored", f"release:{second}": "camera-not-restored"}, (
+            report["kind"], cleanup)
+
+
+def test_t_cert_153_a_fault_of_the_settings_apply_adds_no_row(monkeypatch, tmp_path):
+    """T-CERT-153, 3.6.1 (Q902): the product apply of the settings step raises (no check of the six runs). Quick has
+    the rows of full less the six for each camera, and no extra error row."""
+    def patch(app):
+        apply = app.manager.create_or_update_camera_group
+
+        async def fault(configs, *args, **kwargs):
+            if any(config.exposure == -8 for config in configs.values()):  # the live change of 4.3
+                raise RuntimeError("planted")
+            return await apply(configs, *args, **kwargs)
+        app.manager.create_or_update_camera_group = fault
+    labels_, runs = run_both_levels(monkeypatch, tmp_path, patch)
+    (quick, quick_plan), (full, full_plan) = runs["quick"], runs["full"]
+    for label in labels_:
+        assert camera_results(quick, quick_plan, label) == {
+            k: v for k, v in camera_results(full, full_plan, label).items() if k not in FULL_ONLY}, label
+
+
 def test_t_cert_16_a_cancel_during_the_take(monkeypatch, tmp_path):
     """T-CERT-16, 8.3, 9.3: the cancel comes when the take starts. The checks that ended keep their results; the
     running and later checks are `not-run` `cancelled`; a thread session closes its group itself (the close
