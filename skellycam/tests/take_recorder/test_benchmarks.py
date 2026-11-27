@@ -117,8 +117,9 @@ def paced_take(tmp_path, runs, children, *, groups, seconds, stall=None, writer_
             "frame_count": frame_counts[id(first)] if first else None, "manifest": manifests[0] if manifests else None}
 
 
-def stall_pass_parts(out, stall_s, queue_s, limit_s):
-    """The pass parts of T-REC-STALL (section 11)."""
+def stall_pass_parts(out, stall_s, queue_s, limit_s, give_waits=True):
+    """The pass parts of T-REC-STALL (section 11). `give_waits=False` leaves out the check "no `give` wait" of a
+    stall shorter than the queue: in the short CI form it is the `pace` test of Q905 (12.1)."""
     run, ids, frame_count = out["run"], out["ids"], out["frame_count"]
     rows = {c: sidecar_check.read(run.csv(c)) for c in ids}
     for i, camera_id in enumerate(ids):
@@ -130,7 +131,8 @@ def stall_pass_parts(out, stall_s, queue_s, limit_s):
         assert sidecar.footer_words() == ["end"], "each file is finished"
     waits = [s["result"]["give_wait_count"] for s in out["summaries"]]
     if stall_s < queue_s:
-        assert waits == [0] * len(ids), "no give wait"
+        if give_waits:
+            assert waits == [0] * len(ids), "no give wait"
         assert out["stalled"] is None
     elif stall_s < queue_s + limit_s:
         assert out["stalled"] is None and max(waits) >= 1
@@ -147,16 +149,30 @@ def stall_pass_parts(out, stall_s, queue_s, limit_s):
 def test_t_rec_stall_short_pass_parts(tmp_path, runs, children, stall_s):
     """T-REC-STALL, the short CI form (12.1): two camera processes at 720p30 for 6 s; the MKV file
     object of camera 0 blocks one time at frame 30; the queue (0.3 s) and the stall limit (1.0 s) are
-    scaled down by 10. 0.05 s: no `give` wait and no lost frame. The 15 s case: the take ends with
+    scaled down by 10. 0.05 s: no lost frame, equal rows, finished files. The 15 s case: the take ends with
     `take_error` "disk stall"; each file is finished; equal rows.
 
     The 15 s case needs a stall that `give` sees (longer than the queue fill plus the limit) and that
     ends before `end` gives up (the end call plus the limit, at least 2.3 s after the stall began).
     15 s scaled by 10 (1.5 s) left 0.2 s on the first side, and a slow runner (macOS CI) missed it.
-    2.0 s leaves 0.7 s there (a queue fill up to 3 times slower) and at least 0.3 s on the other."""
+    2.0 s leaves 0.7 s there (a queue fill up to 3 times slower) and at least 0.3 s on the other.
+
+    The check "no `give` wait" of 0.05 s is the `pace` test `test_t_rec_stall_short_has_no_give_wait` (Q905, 12.1):
+    on a busy runner the writers of both cameras fell behind the queue (CI run 45912461163: waits [5, 5])."""
     out = paced_take(tmp_path, runs, children, groups=[(2, 1280, 720, (30, 1))], seconds=6.0,
                      stall=(0, 30, stall_s), queue_seconds=0.3, stall_limit_s=1.0)
-    stall_pass_parts(out, stall_s, 0.3, 1.0)
+    stall_pass_parts(out, stall_s, 0.3, 1.0, give_waits=False)
+
+
+@pytest.mark.pace  # Q905: a busy runner makes the writers of each camera fall behind the queue of 0.3 s
+@pytest.mark.recorder_slow
+def test_t_rec_stall_short_has_no_give_wait(tmp_path, runs, children):
+    """T-REC-STALL, the short CI form (12.1), its `pace` half [U Q905]: the run of
+    `test_t_rec_stall_short_pass_parts` with the stall of 0.5 s scaled by 10; no camera waits in `give`."""
+    out = paced_take(tmp_path, runs, children, groups=[(2, 1280, 720, (30, 1))], seconds=6.0,
+                     stall=(0, 30, 0.05), queue_seconds=0.3, stall_limit_s=1.0)
+    waits = [s and s["result"]["give_wait_count"] for s in out["summaries"]]
+    assert waits == [0] * len(out["ids"]), "no give wait"
 
 
 @pytest.mark.recorder_bench

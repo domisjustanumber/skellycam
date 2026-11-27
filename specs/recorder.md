@@ -1120,6 +1120,10 @@ plan test T-REC-MF-DEFER needs a camera. It is not in R11 and waits for the conn
   machines of the user, because the shared CI runners give no stable times [agent 27]. The pass parts
   of T-REC-STALL and T-REC-KILL also run in CI in a short form (5 kills, stalls of 0.5 and 15 s, with
   `queue_seconds` and the stall limit scaled down by 10).
+  In the short form of T-REC-STALL, the check "no `give` wait" of the stall of 0.5 s is a `pace` test of
+  [cap 16.1] (`test_t_rec_stall_short_has_no_give_wait`): a busy runner makes the writers of each camera
+  fall behind the queue of 0.3 s. No lost frame, equal rows and finished files stay in the blocking test
+  `test_t_rec_stall_short_pass_parts` [U Q905] [ADR-P3EZ](../decisions/entries/P3EZ-decision-of-the-user-on-the-give-wait-check-of-the-short-stall-test.md).
 - **connection**: T-REC-40 to T-REC-49. They come with the connection commit and use the fake source
   of [cap 16.1].
 - `test_a_slow_stop_ends_each_camera_at_the_last_frame` of
@@ -1199,7 +1203,7 @@ Each test of the kinds unit and process uses at least two cameras unless it says
 | T-REC-35 | unit | A take whose spec has a layout and whose frames 0 to 2 are damaged; a spec with `layout` `None` and damaged frames 0 to 2, then good frames; a spec with `layout` `None` and only damaged frames for longer than the queue size. | Case 1: rows 0 to 2 are on disk before frame 3 is given, with the spec's placeholder; case 2: rows 0 to 2 wait and get the layout of frame 3; case 3: after the queue size of rows, the held rows are written with a 4:2:2 placeholder of the mode size and one warning [M2, M7, agent 22]. |
 | T-REC-36 | unit | A take at 1080p with frames of 600 kB at 60/1, 30 s, in one process. | No `give` wait on a free disk; every frame in the CSV (a sanity check, not a measurement). |
 | T-REC-37 | unit | Run the conformance subset of 12.3. | Exactly the expected results of 12.3. |
-| T-REC-STALL | benchmark | Section 11. | Section 11. |
+| T-REC-STALL | benchmark | Section 11. | Section 11. The short form in CI (12.1): its check "no `give` wait" is a `pace` test [U Q905]. |
 | T-REC-KILL | process | Section 11. | Section 11. |
 | T-REC-FSYNC | benchmark | Section 11. | No pass value. |
 | T-REC-GIL | benchmark | Section 11. | No pass value. |
