@@ -34,7 +34,8 @@ export async function launch(recordings: string, picked: string, pageName: 'harn
     const app = await _electron.launch({args: [HARNESS_MAIN, '--no-sandbox'], env});
     const page = await app.firstWindow();
     await page.waitForFunction(name => name in window, pageName);
-    console.log(`harness ${pageName} window at start: requestAnimationFrame ${await rafRate(page)}/s`);
+    const inner = await page.evaluate(() => [innerWidth, innerHeight]);
+    console.log(`harness ${pageName} window at start: requestAnimationFrame ${await rafRate(page)}/s, inner size ${inner.join(' x ')}`);
     return {app, page};
 }
 

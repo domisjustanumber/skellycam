@@ -781,6 +781,12 @@ frames each second on each of 8 tiles during a scrub [M ADR-1ACK evidence].
   provider on `window.__previewTiles` for the tests. Only the harness page does this. The harness
   main process of the player (`src/player/tests/harness/main.ts`) adds the page `preview`, and an
   option to open a window with the default `backgroundThrottling` (T-PRV-49).
+  The harness window fits the work area of the screen, at most 1400 x 1000, and the grid and the viewer of the
+  page `preview` fit the window. A CI runner has a smaller screen: Windows cuts a larger window to the screen,
+  and the part of a window past the edge of an xvfb screen is not drawn, so a tile there gives the observer no
+  image of its own camera. `PLAYER_HARNESS_MAX_WINDOW=<width>x<height>` gives such a screen on a larger one
+  ([ADR-FP47](../decisions/entries/FP47-choices-of-the-triage-of-the-first-ci-run-of-the-4b-component-tests.md),
+  proposed).
 - **The outside observer.** `observe` and `observed` of the player bench
   (`src/player/tests/bench/player.bench.ts`) move to `src/player/tests/harness/observer.ts`, with
   no change of their method: the Electron main process takes each composited image of the window
