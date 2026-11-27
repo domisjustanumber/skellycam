@@ -1,10 +1,13 @@
 # M5PJ — Choices of the shutdown follow-ups, Q934 and Q935
 
-**Status:** proposed, 2026-11-27 (agent; applies Q934 and Q935 of the user; commit to dom/shutdown-followups).
+**Status:** absorbed into
+[`specs/recorder.md#91-the-end-of-the-server-process`](../../specs/recorder.md#91-the-end-of-the-server-process),
+2026-11-27 (commit to dom/shutdown-followups; was accepted, 2026-11-27 (user, Q992 of
+[ADR-XJA8](XJA8-decisions-of-the-user-on-the-shutdown-follow-ups-q990-to-q993.md)); was proposed, 2026-11-27 (agent)).
 
 ## Decision
 
-The user did not decide these details. [`recorder.md`](../../specs/recorder.md) 9.1 items 7 to 9 state them.
+Q992 accepts these choices of the agent. [`recorder.md`](../../specs/recorder.md) 9.1 items 7 to 9 state them.
 
 1. **Second Ctrl-C** (item 9): `abort_on_a_second_ctrl_c` of `__main__` (a module function, so a unit test can check
    it with a fake server and clock) wraps `uvicorn.Server.handle_exit`. Only SIGINT and SIGBREAK are presses; a

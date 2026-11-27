@@ -1148,9 +1148,13 @@ choices [ADR-M5PJ](../decisions/entries/M5PJ-choices-of-the-shutdown-follow-ups-
      folder can be renamed, and its take lock (`folder_files.take_lock`) can be taken. The locks of `CameraStatus`
      live in its shared values: they end with the last process that maps them.
    - The test (`take_recorder/test_second_ctrl_c.py`) runs the real server of `__main__` with two fake camera
-     processes. On Windows it sends the keyboard Ctrl-C to the hidden console of the server, or Ctrl-Break to its
-     process group; elsewhere SIGINT to its process group. The child notes each signal that uvicorn takes, so the
-     second one is sent only after the first was taken.
+     processes. On Windows it sends the keyboard Ctrl-C to the hidden console of the server
+     (`GenerateConsoleCtrlEvent`; the child turns Ctrl-C on for that console with `SetConsoleCtrlHandler(None,
+     False)`, as a terminal has it), or Ctrl-Break to its process group; elsewhere SIGINT to its process group. The
+     child notes each signal that uvicorn takes, so the second one is sent only after the first was taken. The test
+     of one press with two signals 0.1 s apart is a `pace` test (Q991
+     [ADR-XJA8](../decisions/entries/XJA8-decisions-of-the-user-on-the-shutdown-follow-ups-q990-to-q993.md)): the
+     blocking unit tests with a fake clock carry the rule.
    - Without an abort, a disk call that hangs inside a take start or stop still holds the exit with no bound (item 5).
    - Blocking checks with no timing: a unit test of `abort_on_a_second_ctrl_c` (a fake server and clock) checks the
      drop, a key that repeats, a SIGTERM before a press, the abort, the kill flag and the forced-exit event; the

@@ -64,7 +64,6 @@ These entries are `accepted`.
 | [318R](entries/318R-decisions-of-the-user-on-q942-to-q955.md) | Q942 to Q955: SKZ8, W3VD, FP47, CM9S, C47T and WP77 (in part) accepted; three locales; Q950 marks; later lanes; Q946 open | accepted |
 | [D6YZ](entries/D6YZ-decisions-of-the-user-on-the-server-spawn-lane-q961-q973-to-q975.md) | Q961, Q973 to Q975: `dom/server-spawn` merges; stdout stays dropped; YR3G accepted once safe; the packaged app tried after the merge | accepted |
 | [YR3G](entries/YR3G-choices-of-the-server-spawn-lane.md) | Choices of the server spawn lane: `spawn` with no shell and no output limit, stdout to the null device, the stderr tail, no kill | accepted |
-| [F7BK](entries/F7BK-decisions-of-the-user-on-the-shutdown-follow-ups-q972-q976-q977.md) | Q972, Q976, Q977: a thread join returns for a thread never started; the strict xfail stays until fixed; forced exit 5 s after a second Ctrl-C | accepted |
 
 ### Proposed
 
@@ -96,7 +95,6 @@ These entries wait for a decision of the user. Section is the section or area of
 | [590X](entries/590X-choices-of-the-ui-messages-lane.md) | Choices of the UI messages lane (Q925, Q927): native boxes, 10 s from the quit, the bind-error rule, no retry, `isRunning` after the exit, texts via the menu | `recorder` | proposed |
 | [6MMJ](entries/6MMJ-choices-of-the-move-of-t-prv-25-and-of-the-kit-proposal.md) | Choices of the Q964 move: a test that names no package and its limits, kind `tool`, `capture.yml`, the kit branch, skellytracker open | none | proposed |
 | [FHP6](entries/FHP6-choices-of-the-recently-opened-take-folders-lane.md) | Choices of the recently opened folders lane: only the player dialog adds, a click moves to the top, the file rules, a link swap is "gone", the three calls | none | proposed |
-| [M5PJ](entries/M5PJ-choices-of-the-shutdown-follow-ups-q934-q935.md) | Choices of the shutdown follow-ups: a second Ctrl-C after 1 s sets the kill flag, forced exit, 409 while groups close, cancel tests | `recorder` | proposed |
 
 The entries that are `rejected`, `superseded by XXXX`, `absorbed into <path>#<anchor>`,
 `evidence; used by XXXX`, `evidence; replaced by XXXX` or `done` are in [historical.md](historical.md).

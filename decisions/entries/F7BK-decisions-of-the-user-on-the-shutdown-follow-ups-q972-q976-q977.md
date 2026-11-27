@@ -1,6 +1,8 @@
 # F7BK — Decisions of the user on the shutdown follow-ups, Q972, Q976 and Q977
 
-**Status:** accepted, 2026-11-27 (user, Q972, Q976, Q977).
+**Status:** absorbed into
+[`specs/recorder.md#91-the-end-of-the-server-process`](../../specs/recorder.md#91-the-end-of-the-server-process),
+2026-11-27 (commit to dom/shutdown-followups; was accepted, 2026-11-27 (user, Q972, Q976, Q977)).
 
 ## Decision
 
