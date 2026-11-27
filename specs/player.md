@@ -373,12 +373,29 @@ the user picked in the system folder dialog [L7]:
   existing call `fileSystem.selectDirectory` [C `electron/main/api.ts`]. The main process adds each
   such folder to a list in its memory, for the run of the app. In 6a it writes no list file
   (`picked-take-folders.json`): the list file waits for step 6c (the ruling of [ADR-4D94](../decisions/entries/4D94-step-6a-choices-of-the-canvas-player.md), which overturns
-  the "remembered across restarts" of U1 for 6a; Q851 of [ADR-88HQ](../decisions/entries/88HQ-decisions-of-the-user-on-q842-to-q856.md)). A folder that the user picked earlier
+  the "remembered across restarts" of U1 for 6a; Q851 of [ADR-88HQ](../decisions/entries/88HQ-decisions-of-the-user-on-q842-to-q856.md);
+  Q919 of [ADR-70J6](../decisions/entries/70J6-decisions-of-the-user-on-the-remaining-items-of-4pps.md)). A folder that the user picked earlier
   in the same run, for example the base recording folder of the recording browser, stays allowed.
+- How long a pick lasts ([ADR-WP77](../decisions/entries/WP77-choices-of-the-player-label-and-picked-folders-lane.md), proposed):
+  until the main process ends. A reload, a navigation or a close of a window does not end it, and each
+  window of the run can open the picked folder. A restart of the app ends every pick. The handler writes
+  no file, and it reads no file of an earlier pick: a `picked-take-folders.json` that an earlier build left
+  in the user data folder is not read and not deleted. T-PLAY-62 and T-PLAY-85 test it.
+- The main process keeps the real path of the picked folder, taken at the pick. A pick allows that folder
+  and each folder below it, by the "inside" rule below.
+- The handler takes the real path of the recordings folder at each open, so a recordings folder that the
+  backend makes after the start of the app is allowed.
 - Only a dialog pick in the main process adds a folder to the list. No bridge call, IPC message or
   request of a page can add a folder, change the list or read it [U1]. T-PLAY-62 tests this.
 - "Inside" compares real paths (`fs.realpath`): the folder is the allowed folder or below it. On
   Windows the comparison ignores case.
+- Links: the rule uses the real path of the folder that the page asks for, never the path through a link.
+  A link (a symbolic link or a junction) inside an allowed folder to a folder outside every allowed folder
+  is refused (T-PLAY-62). A link outside to a folder inside an allowed folder opens, because the real path
+  is inside: it gives no access to a file outside (T-PLAY-85). Inside the opened take folder, the handler
+  serves no link (5.4).
+- Only this handler uses these folders. The server route of the v1 player has its own allowed roots
+  ([`player-legacy.md`](player-legacy.md) 4.2); a pick in the dialog adds no root to that route.
 - Any other folder: the open fails with the error "folder not allowed", and no token is made.
 - A relative path, a UNC path (`\\host\share`) and a device path (`\\?\`, `\\.\`) fail the same way
   before any file system call: a UNC path makes the main process open a network connection ([ADR-5FBS](../decisions/entries/5FBS-fixes-of-the-6a-code-review.md)).
@@ -478,8 +495,8 @@ answer as a read error [M `RT` §7] [agent 10]. Thus a later transport that answ
 ### 5.8 What the reader reads
 
 - the manifest: `readWhole('recording_manifest.json', 16 MiB)` [agent 11];
-- the capture info JSON, for the camera label of 8.4: `readWhole('<recording_name>_info.json', 16 MiB)`;
-  a failed read gives no error, only the label `camera_label` [agent 40];
+- the capture info JSON, for the camera label of 8.4: `readWhole('<recording_name>_info.json', 16 MiB)`,
+  only when 8.4 says so; a failed read gives no error, only the label `camera_label` [agent 40];
 - each video sidecar: `readWhole(<csv>, no limit)`;
 - each camera file: its head (6.9), the range of each frame that it shows (6.10) and its tail (6.9).
 
@@ -993,8 +1010,37 @@ overlay [SFF-737].
   of the member of the camera in `camera_configs` of the capture info JSON ([`recorder.md`](recorder.md) 6.7). The
   tiles are in the order of `group_position`. A take without these values (an older take, a take with no
   manifest, a capture info that is missing or does not parse, or a null value) shows `camera_label`
-  (Q11 of [ADR-VYS7](../decisions/entries/VYS7-answers-of-the-user-to-the-step-4b-spec-and-go-ahead-for-its-tests.md); Q851 of [ADR-88HQ](../decisions/entries/88HQ-decisions-of-the-user-on-q842-to-q856.md)). The reader finds the file by the name `<recording_name>_info.json` of the
-  manifest [agent 40].
+  (Q11 of [ADR-VYS7](../decisions/entries/VYS7-answers-of-the-user-to-the-step-4b-spec-and-go-ahead-for-its-tests.md); Q851 of [ADR-88HQ](../decisions/entries/88HQ-decisions-of-the-user-on-q842-to-q856.md);
+  Q919 of [ADR-70J6](../decisions/entries/70J6-decisions-of-the-user-on-the-remaining-items-of-4pps.md)). The reader finds the file by the name `<recording_name>_info.json` of the
+  manifest [agent 40]. The details ([ADR-WP77](../decisions/entries/WP77-choices-of-the-player-label-and-picked-folders-lane.md), proposed):
+  - **The read.** The reader reads the file once, at the open, only when it uses the manifest (6.2), the
+    manifest member `recording_name` is a string that is not empty and holds no `/` and no `\`, and
+    `<recording_name>_info.json` is an entry of the snapshot at the root of the take folder. Else it reads
+    no capture info, and each camera shows `camera_label`. A change of the file after the open changes no
+    label.
+  - **The file.** The reader uses the file only when it is a JSON object with `skellyfileformat`
+    `capture_info`, the `take_uuid` of the take and an object `camera_configs`. A file that is missing, that
+    is larger than 16 MiB, whose read fails, that does not parse or that fails this check gives
+    `camera_label` on each camera. The reader checks no other member: the checks of SFF-803 belong to the
+    full reader result of 6c [L2].
+  - **The camera.** The member of a camera is the member of `camera_configs` whose key is the `camera_key`
+    of the sidecar of the camera, as SFF-803 links them. The label uses it only when `device.os_index` is a
+    JSON integer from 0 to 2^53 − 1 and `device.os_name` is a string with a character that is not white
+    space. `os_name` shows as it is. Each other case gives that camera `camera_label`, and the other cameras
+    keep their labels: no member, a sidecar with no `camera_key`, the key `0` of a converted take (skellycam
+    never writes it, SFF-752), and a value that is null, absent or of another type.
+  - **`camera_label`** is the value of the sidecar header. A refused file whose header has no
+    `camera_label` gives the empty text.
+  - **No message.** A fallback gives no error, no `error` event and no warning. The label changes no camera
+    order, no state, no warning and not K.
+  - **Equal labels.** Two cameras can get the same label, from equal values in the capture info or from
+    `duplicate_label` (6.4). Each tile shows its label as it is, with no added text; the tiles stay in the
+    order of `group_position`. `duplicate_label` comes only from the `camera_label` of the sidecars
+    [SFF-870], never from the label of the player.
+  - The state member `label` (4.4), the `camera` part of the overlay and `data-camera-label` of the host
+    view (10) hold this label. T-PLAY-83 and T-PLAY-84 test these rules.
+  - A FreeMoCap v1 recording has no capture info of this format: its label is the stem of the video
+    file (T-LEG-09 of [`player-legacy.md`](player-legacy.md)). The rules of this item do not apply to it.
 - `nominalFps` of the player state, for "Rec: fps", is the nominal rate of the camera with the lowest
   `group_position`, rounded to 3 decimals as SFF-728 rounds `nominal_fps` [agent 30].
 
@@ -1302,7 +1348,7 @@ The recorder spec uses this description as the model of its placeholder, so it i
 | T-PLAY-59 | electron | A test variant of the handler answers 200 with the exact length, 200 with the whole file, and 206 with a wrong `Content-Range` start. | The page client accepts only the first; the two others are read errors. |
 | T-PLAY-60 | electron | A sparse file of 5 GiB; read 3 ranges past 4 GiB. | The bytes equal the bytes that the test wrote at those offsets. |
 | T-PLAY-61 | electron | Open `normal`, play it to the end, seek 50 times, close. | Each file of the folder has the same bytes and modification time as before [SFF-799]. |
-| T-PLAY-62 | electron | Open a folder outside the test `recordingsFolder` and not picked; the page calls each bridge and IPC channel of the module with that folder; the same folder after the test hook records a dialog pick; a folder inside the `recordingsFolder`; a link inside the `recordingsFolder` to an outside folder. | Refused with "folder not allowed" and no token, also after the page calls; allowed after the pick; refused again after a restart of the harness, and no `picked-take-folders.json` exists (5.3, ADR-4D94); allowed inside; the link is refused [L7, U1]. |
+| T-PLAY-62 | electron | Open a folder outside the test `recordingsFolder` and not picked; the page calls each bridge and IPC channel of the module with that folder; the same folder after the test hook records a dialog pick; a folder inside the `recordingsFolder`; a link inside the `recordingsFolder` to an outside folder. | Refused with "folder not allowed" and no token, also after the page calls; allowed after the pick; refused again after a restart of the harness; no file below the temporary folder of the test is added or changed, so no `picked-take-folders.json` exists (5.3, ADR-4D94, ADR-70J6); allowed inside; the link is refused [L7, U1]. |
 | T-PLAY-63 | electron | Open a take in window A; navigate A; open a take in window B, then open a second take in B; close B. | A's token gets 404 after the navigation; B's first token gets 404 after the second open; B's second token gets 404 after the close. |
 | T-PLAY-64 | electron | The shared `TakeFiles` check suite of T-PLAY-39 on the Electron implementation. | The same results as T-PLAY-39 [L8]. |
 | T-PLAY-65 | benchmark | 16 readers × 60 fps × 150 kB for 60 s through the handler; CPU of the main, renderer and GPU processes. | Target 11.3; results recorded [M `RT` §8 item 3]. |
@@ -1323,6 +1369,9 @@ The recorder spec uses this description as the model of its placeholder, so it i
 | T-PLAY-80 | component | Host view on `counts_refused`. | The loading message goes away ([ADR-5FBS](../decisions/entries/5FBS-fixes-of-the-6a-code-review.md)). |
 | T-PLAY-81 | unit | The route with a bridge double that refuses the folder, and with an old folder. | `not_allowed` for the first (`chooseTakePlayer` still gives `video`); `video` for the second, and the files close ([ADR-5FBS](../decisions/entries/5FBS-fixes-of-the-6a-code-review.md)). |
 | T-PLAY-82 | unit | Copies of `dead_short` whose camera 3 has: row 100 with one empty byte field; row 100 with empty byte fields and no flag `missing`; row 78 with empty byte fields and no block, so that row 79 has byte fields after it. Also a copy whose camera 3 has no block. | The first three: camera 3 is `invalid` with `bad_metadata` (SFF-759; skellyfileformat ADR-76NN item 10). No block: camera 3 is `repaired` and not refused, 120 rows, `deadFrom` 0, K = 120, the mark "camera lost at frame 0" (SFF-754) ([ADR-3B97](../decisions/entries/3B97-format-sync-to-the-format-commit-with-f1-to-f10.md)). |
+| T-PLAY-83 | unit | `normal` with a capture info `<rec>_info.json` whose members give camera 0 `os_index` 0 and `os_name` "USB Camera"; camera 1 `os_name` null; camera 2 no member; camera 3 `os_index` "3" (a string). A copy whose cameras 2 and 3 get `os_index` 7, `os_name` "Same Cam"; a copy whose camera 1 gets `os_name` "  " and camera 2 `os_index` −1. ([ADR-WP77](../decisions/entries/WP77-choices-of-the-player-label-and-picked-folders-lane.md)) | Camera 0: `Camera 0 · USB Camera` in the state and in the tile label; each other camera of the first take: its `camera_label`; the copy: cameras 2 and 3 both `Camera 7 · Same Cam`, no added text, no `duplicate_label`; the second copy: cameras 1 and 2 `camera_label`; the camera order, the take warnings and K equal those of the take with no capture info; no `error` event (8.4). |
+| T-PLAY-84 | unit | `normal` with a usable capture info, then copies: the capture info missing; not JSON; another `take_uuid`; `skellyfileformat` another value; `camera_configs` not an object; a read of the file that fails; `recording_name` of the manifest with a `/`; no manifest. A spy records the path and the limit of each whole read. ([ADR-WP77](../decisions/entries/WP77-choices-of-the-player-label-and-picked-folders-lane.md)) | The usable file: the labels of the capture info, read once with the limit 16 MiB; each copy: `camera_label` on each camera, no `error` event, the take warnings of the take with no capture info, and the take opens; with the `/` and with no manifest, no read of a capture info (5.8, 8.4). |
+| T-PLAY-85 | electron | Record a dialog pick of a folder outside the test `recordingsFolder`; open it and a folder below it in the first window; reload that window and open it again; open it in a second window; open it through a link outside every allowed folder that points to it. ([ADR-WP77](../decisions/entries/WP77-choices-of-the-player-label-and-picked-folders-lane.md)) | Each open gives a token; no file below the temporary folder of the test is added or changed by the pick (5.3). |
 
 ### 12.4 Decisions and reader rules to tests
 
@@ -1338,7 +1387,7 @@ The recorder spec uses this description as the model of its placeholder, so it i
 | M1, M2, M3 | T-PLAY-01, T-PLAY-17, T-PLAY-20, T-PLAY-26, T-PLAY-46 |
 | M4, M6 | T-PLAY-42 (inserted DHT) |
 | M5 | T-PLAY-21 |
-| U1 | T-PLAY-62 |
+| U1 | T-PLAY-62, T-PLAY-85 |
 | U2 | T-PLAY-71, T-PLAY-72 |
 | M7 | T-PLAY-20 (T_0) |
 | M10 | No test here: it is a rule of the shared Python reader. |
@@ -1347,13 +1396,14 @@ The recorder spec uses this description as the model of its placeholder, so it i
 | L3 | T-PLAY-11, T-PLAY-54, T-PLAY-58 |
 | L4 | T-PLAY-31, T-PLAY-44, T-PLAY-50, T-PLAY-51 |
 | L5 | T-PLAY-51 (today's `PlaybackControls` as it is); no test changes the player of today. |
-| L7 | T-PLAY-62 |
+| L7 | T-PLAY-62, T-PLAY-85 |
 | E1 | T-PLAY-25, T-PLAY-40, T-PLAY-49, T-PLAY-66 |
 | E2 | T-PLAY-53 (an old folder opens in today's player) |
 | E3 | No test: the reader is in the module (T-PLAY-35). |
 | E4, SFF-783 | T-PLAY-29, T-PLAY-34, T-PLAY-49 |
 | E5, SFF-751 | T-PLAY-08, T-PLAY-41 |
 | E6 | T-PLAY-37, T-PLAY-44 |
+| The label of 8.4 (Q11 of ADR-VYS7, Q919), SFF-803 | T-PLAY-83, T-PLAY-84 |
 | E7, SFF-706 | T-PLAY-10 |
 | E8, SFF-781 | T-PLAY-14, T-PLAY-15, T-PLAY-20 |
 | E9 | Replaced by M1 to M5; tests as M1 to M5 |
@@ -1385,7 +1435,7 @@ The recorder spec uses this description as the model of its placeholder, so it i
 | SFF-890 | T-PLAY-02 |
 | F1 to F21 | T-PLAY-31, T-PLAY-37, T-PLAY-44, T-PLAY-50 to T-PLAY-53 |
 
-Counts: 46 unit, 17 component, 13 electron, 6 benchmark: 82 tests.
+Counts: 48 unit, 17 component, 14 electron, 6 benchmark: 85 tests.
 
 ### 12.5 Parity of the systems [Y7]
 
@@ -1644,8 +1694,10 @@ each one [agent n].
 39. The wording of the three items that the player contributes to the F-list (13).
 40. Of the answers of 2026-11-26 (Q851): the capture info found by `<recording_name>_info.json` of the
     manifest, read with the limit of the manifest; each failure of that read falls back to `camera_label`
-    with no error; `installTakeHandler` loses `pickedFoldersFile` (8.4, 5.3, 5.8,
-    [ADR-4PPS](../decisions/entries/4PPS-choices-of-the-answers-lane-of-q842-to-q856.md), proposed).
+    with no error; `installTakeHandler` loses `pickedFoldersFile` (8.4, 5.3, 5.8). Accepted by Q919
+    ([ADR-70J6](../decisions/entries/70J6-decisions-of-the-user-on-the-remaining-items-of-4pps.md) items 1 and 2).
+    The details of the label and of the picks are in
+    [ADR-WP77](../decisions/entries/WP77-choices-of-the-player-label-and-picked-folders-lane.md) (proposed).
 
 ## 17. Questions for the user
 
