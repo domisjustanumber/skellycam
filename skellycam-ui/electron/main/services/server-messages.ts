@@ -25,6 +25,15 @@ export async function noticeWhileWaiting<T>(wait: Promise<T>, delayMs: number, s
     }
 }
 
+/**
+ * Item 1: the "saving" box goes on a window when one exists. With no window, macOS runs a box synchronously: its
+ * `signal` cannot close it, and its modal loop holds the main process (the reads of the server output). No box there.
+ */
+export function savingBoxPlace(platform: NodeJS.Platform, hasWindow: boolean): 'window' | 'alone' | 'none' {
+    if (hasWindow) return 'window';
+    return platform === 'darwin' ? 'none' : 'alone';
+}
+
 // The bind error of `loop.create_server` for a port in use: WSAEADDRINUSE on Windows, EADDRINUSE on Linux and macOS
 const PORT_IN_USE = /\[Errno (?:10048|98|48)\] error while attempting to bind on address/;
 

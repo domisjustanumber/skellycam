@@ -16,7 +16,9 @@ gaps.
    message uses the same means.
 3. **The delay.** "About 10 s" is 10 s from the start of the wait of the quit. Only a quit shows the box; the
    "Stop server" and "Reset" buttons do not.
-4. **The "saving" box.** No parent window. One button, the system "OK". A close removes the box only; it does not
+4. **The "saving" box.** On the window when one exists, on each system (a review found that `signal` does not
+   close a box with no parent on macOS). With no window: no parent on Windows and Linux, and no box on macOS (no
+   system notification either; the smallest safe choice). One button, the system "OK". A close removes the box only; it does not
    come back; the wait goes on. The box closes itself when the wait ends. Two quits in one wait show one box.
 5. **The "port in use" rule.** A non-zero exit code and the bind error of `loop.create_server` with errno 10048, 98
    or 48 in the last 4096 characters of stderr, at the `close` event. The exit code (3) alone is not enough: other
@@ -40,7 +42,7 @@ gaps.
    SkellyCam تشغيل الخادم الخاص به: المنفذ {{port}} قيد الاستخدام." / "برنامج آخر، أو نسخة أخرى من SkellyCam، يستخدم
    هذا المنفذ. أغلقه، ثم انقر على “Launch server” في قائمة الاتصال، أو أعد تشغيل SkellyCam.". No native speaker
    checked them.
-9. **The tests.** T-APP-01 to T-APP-04 are unit tests of one pure module,
+9. **The tests.** T-APP-01 to T-APP-05 are unit tests of one pure module,
    `skellycam-ui/electron/main/services/server-messages.ts`. `test:player:unit` gets the glob
    `electron/main/**/*.test.ts`, so CI runs them. The boxes and the wiring are not tested: the repository has no
    harness for the main process of the app, and this lane builds none.
@@ -54,7 +56,8 @@ is left and that matches how the app handles a failed start today.
 
 - Questions for the user (a yes accepts each recommendation): (a) Items 1 to 9 as written? (b) The "saving" box
   shows only at a quit, not at "Stop server"? (c) No retry button in the "port in use" box? (d) A port in a
-  reserved range (10013) shows nothing new for now?
+  reserved range (10013) shows nothing new for now? (e) On macOS, after the close of the last window, the wait
+  shows nothing (no box, no notification)?
 - Two faults outside this lane, found by code reading, not changed: the server starts through `exec` with a
   `maxBuffer` of 100 MB, and Node kills a child whose stdout or stderr passes that size (a kill of the server
   during a long run); and when the shutdown request fails, the app stays with no window and no way to quit except

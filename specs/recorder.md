@@ -1124,9 +1124,13 @@ Before this section (code reading):
 The rules:
 
 1. **The "saving" message (Q925).** When a quit has waited 10 s (`SAVING_NOTICE_DELAY_MS`) for the exit of the
-   server, the main process shows a native message box with no parent window. The text is "Recordings are still
-   being saved." with the detail "SkellyCam closes by itself when this is done." With no parent, the box shows also
-   when no window is left.
+   server, the main process shows a native message box. The text is "Recordings are still being saved." with the
+   detail "SkellyCam closes by itself when this is done."
+   - Its place (`savingBoxPlace`): on the window when a window exists (a quit from the menu), on each system. With
+     no window left (the close of the last window), the box has no parent on Windows and Linux. On macOS it shows
+     no box: a box with no parent runs synchronously there, its `signal` does not close it (the type docs of
+     Electron), and its modal loop would hold the main process, which reads the output of the server. The limit:
+     on macOS, after the close of the last window, the wait shows nothing.
    - The box has one button, the "OK" of the system. A click on it, or a close of the box, removes the box only.
      The wait goes on, and the app closes when the server exits. The box does not come back.
    - The box closes by itself when the wait ends (the `signal` of `dialog.showMessageBox`): at the exit of the
@@ -1159,13 +1163,16 @@ The rules:
    - T-APP-02: the port-in-use rule is true for code 3 with the Windows line of a real run, and with the Linux and
      macOS lines; it is false for code 0, for no code, for another error and for the bind error of another errno.
    - T-APP-03: the process rule of `isRunning`: true while it runs, false after an exit code or a signal.
+   - T-APP-05: the place of the "saving" box: on the window when one exists (Windows, Linux, macOS); with no
+     window, alone on Windows and Linux, and no box on macOS.
    - T-APP-04: the English file has the four keys with the English texts of items 1 and 2; the `es`, `zh-CN` and
      `ar` files have the four keys, and each port text has `{{port}}`; the renderer sends each key.
-   - Not tested: the message boxes and the wiring in `index.ts`, `python-server.ts`, `window-manager.ts` and
+   - Not tested: the message boxes and the wiring in `index.ts`, `python-server.ts`, `server-dialogs.ts` and
      `menu-builder.ts`. The repository has no test harness for the main process of the app. The user tries them
      by hand.
-5. [NV] Linux and macOS: the errno texts come from CPython code reading (`loop.create_server`), and a message box
-   with no window was not tried there.
+5. [NV] Linux and macOS: the errno texts come from CPython code reading (`loop.create_server`). The boxes were not
+   tried there. On macOS the "saving" box comes only on a window (item 1); the "port in use" box comes at a start
+   from the window, so it has its window.
 
 ## 10. Connection to the shared loop (after step 3a)
 

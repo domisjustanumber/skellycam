@@ -9,6 +9,7 @@ import {
     endedWithPortInUse,
     noticeWhileWaiting,
     processIsRunning,
+    savingBoxPlace,
 } from '../server-messages.ts';
 
 const source = (path: string) => readFileSync(new URL(`../../../../${path}`, import.meta.url), 'utf8');
@@ -58,6 +59,16 @@ test('T-APP-01: the "saving" box shows after 10 s of the wait, once, and closes 
     } finally {
         mock.timers.reset();
     }
+});
+
+test('T-APP-05: the "saving" box has the window as parent when one exists; on macOS with no window there is no box (9.2 item 1)', () => {
+    for (const platform of ['win32', 'linux', 'darwin'] as const) {
+        assert.equal(savingBoxPlace(platform, true), 'window', `${platform} with a window`);
+    }
+    assert.equal(savingBoxPlace('win32', false), 'alone');
+    assert.equal(savingBoxPlace('linux', false), 'alone');
+    // macOS runs a box with no parent synchronously: its `signal` cannot close it, and it holds the main process
+    assert.equal(savingBoxPlace('darwin', false), 'none');
 });
 
 // The Windows line is from a real run on 2026-11-27; Linux and macOS follow `loop.create_server` of CPython 3.13
