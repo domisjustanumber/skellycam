@@ -159,12 +159,8 @@ task. Delete an item when its work is done. The PR that closes an item records t
   ([ADR-TFD7](entries/TFD7-search-limit-stop-rate-median-role-flag-and-restore-after-a-failed-loop.md)):
   a role flag in place of the `parent_process()`
   guards.
-- **Capture timings: the capture side is merged into `dom/integration` (211130fd5)**
-  ([ADR-MX8V](entries/MX8V-decisions-of-the-user-on-capture-timings.md),
-  [ADR-8B85](entries/8B85-acceptance-of-the-capture-timings-spec.md)). Steps 1 to 6 of section 11 of
-  [`specs/capture-timings.md`](../specs/capture-timings.md); the user decided its open choices in
-  [ADR-GZS7](entries/GZS7-decisions-of-the-user-on-the-capture-timings-build-and-the-merge-order.md); the rest
-  of [ADR-JFG4](entries/JFG4-choices-of-the-capture-timings-build.md) is proposed. Open: the timed test
+- **Capture timings** ([`specs/capture-timings.md`](../specs/capture-timings.md) steps 1 to 6 built;
+  [ADR-JFG4](entries/JFG4-choices-of-the-capture-timings-build.md) proposed). Open: the timed test
   `test_process_workers.py` (an OK of the user first); M-TIM-1 on the hardware of the user (step 7); step 8 (Q870).
 - **Merges (ADR-GZS7).** Each merge runs the tests that no CI job runs on a push (Q841); tests and code merge
   together when they pass (Q815). The FreeMoCap display comes after FreeMoCap moves to the frame-ring API.
