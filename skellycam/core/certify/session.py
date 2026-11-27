@@ -339,10 +339,11 @@ class Session:
         except Exception as error:
             # 3.6.1 [KXQ9 item 6]: a fault in a left-out check: the next check of the camera that the level has is
             # the running check, so the caller gives it the class name of the error
-            following = self.next_shown(self.hidden) if self.hidden and not isinstance(error, Stopped) else None
-            if following is not None:
-                with contextlib.suppress(Exception):
-                    self._begin(following)
+            if self.hidden and not isinstance(error, Stopped):
+                with contextlib.suppress(Exception):  # never replaces the error of the session
+                    following = self.next_shown(self.hidden)
+                    if following is not None:
+                        self._begin(following)
             raise
         finally:
             for watch in self.watches.values():
@@ -542,7 +543,7 @@ class Session:
         group = self.group()
         opened_at = {unit.label: group.configs[unit.camera_id].exposure for unit in manual}
         for unit in manual:
-            for name in self.all_names(unit)["settings"]:  # `begin` marks a left-out one as running [KXQ9 item 6]
+            for name in catalog.camera_names(unit.label, unit.base, self.level, self.unix)["settings"]:
                 self.begin(name)
         await self.manager.create_or_update_camera_group(
             {u.camera_id: group.configs[u.camera_id].model_copy(update=dict(exposure=EXPOSURE_CHANGED)) for u in manual})
@@ -574,6 +575,8 @@ class Session:
             holds = later[unit.label] == EXPOSURE_CHANGED
             self.done(row(names[1], "pass" if holds else "fail", None if holds else "setting-reverted", unit.module,
                           **numbers))
+            if names[2] in self.left_out:  # quick: running only while its own rule runs [KXQ9 item 6]
+                self.begin(names[2])
             self.done(row(names[2], *catalog.image_effect(m7, m8, unit_kind), unit.module, **numbers))
             self.facts[unit.label]["control_path"] = data.get("control_path")
 
