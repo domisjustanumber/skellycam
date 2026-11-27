@@ -85,8 +85,7 @@ task. Delete an item when its work is done. The PR that closes an item records t
 - **Phase 4 (live preview)** ([`specs/preview.md`](../specs/preview.md), [`specs/preview-4b.md`](../specs/preview-4b.md);
   [ADR-BPP8](entries/BPP8-answers-of-the-user-q864-to-q873-on-the-step-4b-code.md)). Open:
   - M-PRV-4 on Linux ([ADR-HDC9](entries/HDC9-measurements-m-prv-1-to-m-prv-5-of-the-preview-sender.md)).
-  - Step 4b, after the merge: the tile timings
-    (step 8 of `capture-timings.md`), tests first (Q870); delete `read_latest_ring_frames` and `_send_json` with their
+  - Step 4b, after the merge: delete `read_latest_ring_frames` and `_send_json` with their
     spec line and test probe (Q871); rewrite the top of the real-time streaming page (Q873).
   - Soon, spec and test first (Q907): does the product server hang at its shutdown after a client connection reset?
     If so, a shutdown time limit; also the blocked queue feeder thread. After that fix, a
@@ -152,9 +151,10 @@ task. Delete an item when its work is done. The PR that closes an item records t
   ([ADR-TFD7](entries/TFD7-search-limit-stop-rate-median-role-flag-and-restore-after-a-failed-loop.md)):
   a role flag in place of the `parent_process()`
   guards.
-- **Capture timings** ([`specs/capture-timings.md`](../specs/capture-timings.md) steps 1 to 6 built;
-  [ADR-JFG4](entries/JFG4-choices-of-the-capture-timings-build.md) proposed). Open: the timed test
-  `test_process_workers.py` (an OK of the user first); M-TIM-1 on the hardware of the user (step 7); step 8 (Q870).
+- **Capture timings** ([`specs/capture-timings.md`](../specs/capture-timings.md) steps 1 to 6 and 8 built;
+  [ADR-JFG4](entries/JFG4-choices-of-the-capture-timings-build.md) and
+  [ADR-W3VD](entries/W3VD-choices-of-the-tile-timings-lane.md) proposed). Open: the timed test
+  `test_process_workers.py` (an OK of the user first); M-TIM-1 on the hardware of the user (step 7).
 - **Merges (ADR-GZS7).** Each merge runs the tests that no CI job runs on a push (Q841); tests and code merge
   together when they pass (Q815). The FreeMoCap display comes after FreeMoCap moves to the frame-ring API.
 - **Deferred by the user (2026-11-23).** At 60 fps the exposure search never tries a value longer

@@ -113,3 +113,77 @@ test('T-PLAY-45 Tile alone: no new image, the eight states, a rate text, flagged
     expect(both).toEqual(['superseded', 'drawn']);
     await assertImage(h, 'p', 3, 42);
 });
+
+// T-TIM-25 and T-TIM-26: the decode and draw timing of the tile (specs/capture-timings.md 7, 10.2). The page has
+// one TileTimings on a fake clock: each read moves it 0.25 ms, and the decode seam moves it 2.5 ms more.
+type Summary = {source: string; camera_group_id: string | null; camera_id: string; clock: string; seq: number;
+    window_end_ns: number; window_s: number; steps: Record<string, {n: number; p50_ms: number | null; max_ms: number | null}>;
+    delays: Record<string, {n: number; p50_ms: number | null; max_ms: number | null}>};
+const takeSummaries = (h: Harness) => h.page.evaluate(() => window.harness.takeSummaries()) as Promise<Summary[]>;
+const counts = (s: Summary) => ({
+    ui_jpeg_decode: s.steps.ui_jpeg_decode?.n, ui_draw: s.steps.ui_draw?.n, receive_to_draw: s.delays.receive_to_draw?.n,
+});
+
+test('T-TIM-25 tile timings off: no clock read; summaries with n 0; a tile with no handle works as today', async ({harness: h}) => {
+    await h.page.evaluate(() => window.harness.makeTimedTile('off', 'cam1'));
+    const before = await h.page.evaluate(() => window.harness.clockCalls());
+    expect(await h.page.evaluate(u => window.harness.updateTile('off', u), wire({jpeg: barcodeJpeg(1, 5), receivedAtMs: 900}))).toBe('drawn');
+    expect(await h.page.evaluate(u => window.harness.updateTileWithImage('off', u), wire({jpeg: barcodeJpeg(1, 6)}))).toBe('drawn');
+    expect(await h.page.evaluate(u => window.harness.updateTile('off', u), wire({jpeg: null, cameraState: 'ready'}))).toBe('drawn');
+    expect(await h.page.evaluate(() => window.harness.clockCalls()), 'no read of now() while off').toBe(before);
+    const [summary, ...more] = await takeSummaries(h);
+    expect(more, 'one summary for the one handle').toEqual([]);
+    expect(summary).toMatchObject({source: 'ui', camera_id: 'cam1', camera_group_id: 'g1', clock: 'performance.now', seq: 0});
+    expect(counts(summary)).toEqual({ui_jpeg_decode: 0, ui_draw: 0, receive_to_draw: 0});
+    expect(summary.steps.ui_draw.p50_ms).toBe(null);
+
+    await h.page.evaluate(() => window.harness.setTimingsOn(true));
+    await h.page.evaluate(() => window.harness.makeTimedTile('plain', null));
+    const calls = await h.page.evaluate(() => window.harness.clockCalls());
+    expect(await h.page.evaluate(u => window.harness.updateTile('plain', u), wire({jpeg: barcodeJpeg(2, 7), label, receivedAtMs: 900}))).toBe('drawn');
+    expect((await h.page.evaluate(() => window.harness.overlay('plain'))).overlay).toMatchObject({frame: 'F007', camera: 'a1b2c3'});
+    expect(await h.page.evaluate(() => window.harness.clockCalls()), 'a tile with no handle reads no clock').toBe(calls);
+    expect((await takeSummaries(h)).map(s => s.camera_id), 'no summary for a tile with no handle').toEqual(['cam1']);
+});
+
+test('T-TIM-26 tile timings on: the decode, the draw and receive_to_draw with their values', async ({harness: h}) => {
+    // the clock: 1000 at handle(); each read +0.25; the decode +2.5
+    await h.page.evaluate(() => window.harness.makeTimedTile('on', 'cam1'));
+    await h.page.evaluate(() => window.harness.setTimingsOn(true));
+    expect(await h.page.evaluate(u => window.harness.updateTile('on', u), wire({jpeg: barcodeJpeg(1, 5), receivedAtMs: 900}))).toBe('drawn');
+    // decode 1000.25 to 1003.0; draw 1003.25 to 1003.5; receive_to_draw 1003.5 - 900; the window ends at 1003.75
+    const [first] = await takeSummaries(h);
+    expect(first).toEqual({
+        source: 'ui', camera_group_id: 'g1', camera_id: 'cam1', clock: 'performance.now', seq: 0,
+        window_end_ns: 1_003_750_000, window_s: 0.004,
+        steps: {
+            ui_jpeg_decode: {kind: 'work', cadence: 'frame', where: 'ui_tile', n: 1, p50_ms: 2.75, p95_ms: 2.75, max_ms: 2.75},
+            ui_draw: {kind: 'work', cadence: 'frame', where: 'ui_tile', n: 1, p50_ms: 0.25, p95_ms: 0.25, max_ms: 0.25},
+        },
+        delays: {receive_to_draw: {where: 'ui_tile', n: 1, p50_ms: 103.5, p95_ms: 103.5, max_ms: 103.5}},
+    });
+
+    // an update with an image: a draw and no decode; a resize redraw and an overlay-only update: no draw
+    expect(await h.page.evaluate(u => window.harness.updateTileWithImage('on', u), wire({jpeg: barcodeJpeg(1, 6)}))).toBe('drawn');
+    expect(await h.page.evaluate(() => window.harness.resizeTile('on', 480)), 'the resize redrew the tile').toBe(480);
+    expect(await h.page.evaluate(u => window.harness.updateTile('on', u), wire({jpeg: null, cameraState: 'ready'}))).toBe('drawn');
+    const [second] = await takeSummaries(h);
+    expect(second.seq).toBe(1);
+    expect(counts(second)).toEqual({ui_jpeg_decode: 0, ui_draw: 1, receive_to_draw: 0});
+
+    // three updates with no wait: the first decodes and is superseded, the second is replaced before its decode
+    // (no sample), the third is drawn; receive_to_draw is that of the third
+    const results = await h.page.evaluate(us => window.harness.updateMany('on', us as never), [
+        wire({jpeg: barcodeJpeg(1, 7), receivedAtMs: 0}), wire({jpeg: barcodeJpeg(1, 8), receivedAtMs: 0}),
+        wire({jpeg: barcodeJpeg(1, 9), receivedAtMs: 1000}),
+    ]);
+    expect(results).toEqual(['superseded', 'superseded', 'drawn']);
+    const [third] = await takeSummaries(h);
+    expect(counts(third)).toEqual({ui_jpeg_decode: 2, ui_draw: 1, receive_to_draw: 1});
+    expect(third.delays.receive_to_draw.max_ms, 'the stamp of the drawn update').toBeLessThan(100);
+
+    // a second takeSummaries() with no new step
+    const [fourth] = await takeSummaries(h);
+    expect(fourth.seq).toBe(third.seq + 1);
+    expect(counts(fourth)).toEqual({ui_jpeg_decode: 0, ui_draw: 0, receive_to_draw: 0});
+});

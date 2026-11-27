@@ -168,3 +168,23 @@ test('T-PRV-39 no tile yet; tile removed; connection closed', async () => {
     assert.equal(fake[A].updates.length, 0, 'no update for A after clearPending');
     assert.equal(tiles.tiles.get(A), fake[A], 'the tile of A stays');
 });
+
+test('T-TIM-26 (Node part) receivedAtMs: the stamp of receive goes with the update; a replaced message never reaches the tile', async () => {
+    const {tiles, f, fake} = await setUp(A);
+    f.clock.ms = 100;
+    tiles.receive(message({camera: A, frame: 1}));
+    f.clock.ms = 150;
+    tiles.receive(message({camera: A, frame: 2}));   // replaces frame 1
+    f.clock.ms = 175;
+    tiles.tick();
+    await flush();
+    assert.deepEqual(fake[A].frames(), [2]);
+    assert.equal(fake[A].last!.receivedAtMs, 150, 'the stamp of frame 2 at its receive, not at the tick');
+    await fake[A].resolve('drawn');
+    tiles.setOverlay(A, {rateText: '30.0 fps'});
+    tiles.tick();
+    await flush();
+    assert.equal(fake[A].updates.length, 2);
+    assert.equal(fake[A].last!.jpeg, null);
+    assert.ok(!('receivedAtMs' in fake[A].last!), 'an overlay update has no receivedAtMs');
+});

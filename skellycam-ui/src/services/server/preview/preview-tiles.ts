@@ -14,6 +14,7 @@ export interface OverlayValues {
 
 interface CameraEntry extends OverlayValues {
     pending: CameraMessage | null;
+    receivedAtMs: number;   // now() at the receive of `pending` (capture-timings.md 7)
     busy: boolean;
     overlayChanged: boolean;
     lastFrame: number | null;   // the frame number of the last frame given to the tile; null before the first
@@ -45,7 +46,7 @@ export class PreviewTiles {
     private entry(cameraId: string): CameraEntry {
         let e = this.cameras.get(cameraId);
         if (!e) {
-            e = {pending: null, busy: false, overlayChanged: false, label: null, cameraState: null, rateText: null,
+            e = {pending: null, receivedAtMs: 0, busy: false, overlayChanged: false, label: null, cameraState: null, rateText: null,
                 lastFrame: null, lastMark: null, lastRotation: 0};
             this.cameras.set(cameraId, e);
         }
@@ -74,7 +75,9 @@ export class PreviewTiles {
             }
             return;
         }
-        this.entry(message.cameraId).pending = message;
+        const e = this.entry(message.cameraId);
+        e.pending = message;
+        e.receivedAtMs = this.now();
     }
 
     setOverlay(cameraId: string, values: Partial<OverlayValues>): void {
@@ -122,6 +125,7 @@ export class PreviewTiles {
                 cameraState: e.cameraState,
                 mark: e.lastMark,
             };
+            if (message) update.receivedAtMs = e.receivedAtMs;
             e.busy = true;
             void tile.update(update).then(result => {
                 e.busy = false;

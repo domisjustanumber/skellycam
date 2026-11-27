@@ -2,6 +2,7 @@
 // (specs/player.md section 8). The player and the live preview use it [Y3, L6]. It imports nothing
 // of the take reader.
 import {formatFrame, formatTime} from './format.ts';
+import type {TileTimingHandle} from './timings.ts';
 
 export interface DecodedImage {
     displayWidth: number;
@@ -39,6 +40,7 @@ export interface TileUpdate {
     mark: TileMark | null;
     image?: DecodedImage;
     blank?: boolean;
+    receivedAtMs?: number; // the stamp of PreviewTiles.receive: the start of receive_to_draw (capture-timings.md 7)
 }
 
 /** The texts of the overlay; `{reason}` and `{frame}` are replaced. `time_title` is the canvas title. */
@@ -92,6 +94,7 @@ export class Tile {
     overlay: TileOverlay = {frame: null, camera: null, time: null, rate: null, state: null, mark: null};
     #canvas: HTMLCanvasElement;
     #decode: JpegDecoder;
+    #timing: TileTimingHandle | undefined; // capture-timings.md 7: no handle, no measurement
     #options: TileOptions;
     #image: DecodedImage | null = null;
     #rotation = 0;
@@ -102,9 +105,10 @@ export class Tile {
     #observer: ResizeObserver | null = null;
     #closed = false;
 
-    constructor(canvas: HTMLCanvasElement, options: Partial<TileOptions> = {}, seams: {decode?: JpegDecoder} = {}) {
+    constructor(canvas: HTMLCanvasElement, options: Partial<TileOptions> = {}, seams: {decode?: JpegDecoder; timing?: TileTimingHandle} = {}) {
         this.#canvas = canvas;
         this.#decode = seams.decode ?? decodeJpeg;
+        this.#timing = seams.timing;
         this.#options = {showLabel: true, timeFormat: 'timecode', ...options, texts: {...TEXTS, ...options.texts}};
         if (typeof ResizeObserver !== 'undefined') {
             this.#observer = new ResizeObserver(() => this.#draw());
@@ -123,7 +127,7 @@ export class Tile {
         this.#dropPending();
         if (u.jpeg === null || u.image || u.blank) {
             if (u.blank || u.image) this.#setImage(u.image ?? null, u.rotationCwDeg);
-            this.#apply(u);
+            this.#apply(u, !!u.image);
             return Promise.resolve('drawn');
         }
         return new Promise(resolve => {
@@ -154,7 +158,10 @@ export class Tile {
         if (this.#decoding || !p) return;
         this.#pending = null;
         this.#decoding = true;
+        const t = this.#timing?.on ? this.#timing : null;   // ui_jpeg_decode: the call to its result (table 3.1)
+        const start = t ? t.now() : 0;
         const done = (image: DecodedImage | null) => {
+            if (t) t.add('ui_jpeg_decode', t.now() - start);
             this.#decoding = false;
             if (this.#closed || p.seq !== this.#seq) {
                 image?.close();
@@ -162,7 +169,7 @@ export class Tile {
             } else {
                 // a JPEG that does not decode keeps the last image
                 if (image) this.#setImage(image, p.u.rotationCwDeg);
-                this.#apply(p.u);
+                this.#apply(p.u, image !== null);
                 p.resolve('drawn');
             }
             this.#next();
@@ -176,9 +183,17 @@ export class Tile {
         this.#rotation = rotation;
     }
 
-    #apply(u: TileUpdate): void {
+    /** `newImage`: the update set a new decoded image, so its draw is a `ui_draw` sample (capture-timings.md 7). */
+    #apply(u: TileUpdate, newImage: boolean): void {
         this.#last = {label: u.label, rateText: u.rateText, cameraState: u.cameraState, mark: u.mark};
+        const t = newImage && this.#timing?.on ? this.#timing : null;
+        const start = t ? t.now() : 0;
         this.#draw();
+        if (t) {
+            const end = t.now();
+            t.add('ui_draw', end - start);
+            if (u.receivedAtMs !== undefined) t.add('receive_to_draw', end - u.receivedAtMs);
+        }
     }
 
     #draw(): void {
