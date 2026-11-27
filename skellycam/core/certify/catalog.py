@@ -25,6 +25,9 @@ AFTER_READY = ("native-jpeg:format", "native-jpeg:not-reencoded", "native-jpeg:s
 SETTINGS = ("settings-stick:readback", "settings-stick:holds", "settings-stick:image-effect")
 AFTER_TAKE = ("native-jpeg:valid", "native-jpeg:size", "native-jpeg:ring-equals-mkv",
               "records:rows-complete", "records:blocks-decode", "records:gaps-explained")
+# 3.6.1 [U Q593, Q902]: the six camera checks of full only; a quick run leaves them out (no row, not planned)
+FULL_ONLY = ("native-jpeg:not-reencoded", "native-jpeg:source-equals-ring", "settings-stick:image-effect",
+             "native-jpeg:size", "native-jpeg:ring-equals-mkv", "records:gaps-explained")
 CLOCK = ("clock:base", "clock:before-arrival", "clock:near-arrival", "sequence", "time-gaps")  # 10.2, 10.6
 LIVE = "live-at-close"  # 3.6.2 [U Q646]: the last check of each camera [ADR-0Z6Q item 15]
 QUICK_SYNC = "system:quick-sync"  # 3.6.2 [U Q879]: record-only, both levels, Windows, right after `detect`
@@ -157,6 +160,8 @@ def camera_names(unit_label: str, base, level: str, unix: bool) -> dict:
         "clock": [f"{unit_label}:{c}" for c in CLOCK] if unix or level == "full" else [],
         "close": [f"{unit_label}:{LIVE}"],
     }
+    if level != "full":  # 3.6.1 [U Q902]
+        names = {step: [n for n in group if _suffix(n, unit_label) not in FULL_ONLY] for step, group in names.items()}
     return names
 
 
