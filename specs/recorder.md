@@ -1054,8 +1054,10 @@ choices [ADR-06PW](../decisions/entries/06PW-choices-of-the-shutdown-limit-lane.
      again after `serve()` returns does not end the process before `WorkerRegistry.shutdown_all()`. Before this rule,
      a Ctrl-Break to the process group ended each camera process at once (exit code `0xC000013A`): the take ended
      with `camera_dead` for each camera, and the server process ended with exit code 3.
-   - Not covered: a second Ctrl-C (uvicorn's `force_exit`) skips the lifespan end, which ends a running take
-     ([`open-work.md`](../decisions/open-work.md), a question for the user).
+   - Not covered: a second Ctrl-C (uvicorn's `force_exit`) skips the lifespan end. Q934
+     ([ADR-6PJ2](../decisions/entries/6PJ2-decisions-of-the-user-on-q929-to-q941.md) item 6): a second Ctrl-C means
+     "abort now"; every process must end and release every hold and lock; cleaning up the recording would be nice but
+     is not expected ([`open-work.md`](../decisions/open-work.md)).
 4. **Tests.** `skellycam/tests/test_server_exit.py` runs the real server in a child process with its port in use:
    the process ends with an error code. With one connection that never leaves its server, the process ends after
    `/shutdown` (the blocking half), within the limit plus the period of the worker monitor (the `pace` half).
@@ -1173,6 +1175,53 @@ The rules:
 5. [NV] Linux and macOS: the errno texts come from CPython code reading (`loop.create_server`). The boxes were not
    tried there. On macOS the "saving" box comes only on a window (item 1); the "port in use" box comes at a start
    from the window, so it has its window.
+
+### 9.3 The start of the server process by the Electron app
+
+Added on 2026-11-27 (a fault found in 9.2 and confirmed by a review run; choices
+[ADR-YR3G](../decisions/entries/YR3G-choices-of-the-server-spawn-lane.md), proposed). The rule of the user that no
+recording is lost applies.
+
+Before this section: `python-server.ts` started the server with `child_process.exec("\"<path>\"")` and a `maxBuffer`
+of 100 MiB. `exec` runs the command in a shell (`cmd.exe` on Windows, `/bin/sh` elsewhere), keeps all of stdout and
+stderr in memory, and gives nobody the output: the app wrote none of it to its own log. When stdout or stderr passed
+100 MiB in total, Node sent SIGTERM to the child. On Windows the child is `cmd.exe`: the server ran on with broken
+pipes, but the app took it as ended ("Stopped", no `/shutdown` at a quit, an orphan server, a take that records with
+no UI). On Linux and macOS the signal ended the server and any take early. The server logs to stdout at 0.5 to
+1.6 KiB/s in an ordinary session (18 to 57 h to the limit), 12.2 KiB/s with a client that polls over HTTP (2.3 h),
+and 334 KiB/s in a storm of asyncio warnings (5 min) (the review, 2026-11-27).
+
+The rules:
+
+1. **No shell.** `startServerProcess` (`electron/main/services/server-process.ts`) calls `spawn(<path>, [])` with no
+   shell. The path is the same candidate path as before (`app-paths.ts`: the bundled, installed, development or
+   portable executable, or the bare name, which Node looks up as the shell did), with no arguments, as before. A
+   path with spaces works, as with the quotes of the shell. A path with `%`, `$`, a backtick or `"` is no longer
+   read by a shell. The working folder (that of the app) and the environment (a copy of the environment of the app)
+   do not change.
+2. **No output limit, nothing kept.** stdin stays a pipe, as with `exec`. stdout goes to the null device
+   (`'ignore'`): nobody read it before, and a null device cannot fill or block, also when the main process is busy.
+   stderr is a pipe that the main process reads at all times; it keeps only the last 4096 characters, for the
+   port-in-use rule of 9.2 item 2. No output size can stop, kill or detach the server.
+3. **The process.** The PID check, `isRunning`, the exit and close handlers, the shutdown (`/shutdown`, then a wait
+   for the exit) and the "saving" box do not change. The app kills the server nowhere, also not at a quit (no
+   `taskkill`, no tree kill, no `kill()`). What changes: on Windows the PID is that of the server, not that of
+   `cmd.exe`, so the PID in the server section of the connection menu is the PID of the server, and the exit is the
+   exit of the server. A path that cannot start now fails at the start (no PID: "Start failed: …", and a stored path
+   is then replaced by the found candidate, as for each failed start), where the shell started and then ended with
+   an error code. On Windows a path that is not an executable image (a `.bat`, `.cmd` or `.py` file, which the
+   "All Files" filter of the file picker allows) no longer starts: `spawn` throws at once (EINVAL for `.cmd`, EFTYPE
+   for `.py` on Node 26.13.1), the user sees "Start failed: spawn EINVAL", and the retry of the renderer runs.
+   Through `cmd.exe` such a path started.
+4. **Test.** T-APP-06 (unit, `electron/main/services/tests/server-process.test.ts`): `startServerProcess` starts a
+   real Node child (`process.execPath`, which has a space on the Windows test machine, and the script
+   `big-output-child.mjs`) that writes 105 MiB to stdout, then 105 MiB to stderr, then the bind-error line. When
+   the stderr tail ends with that line, the child must still run (no exit code, no signal, not killed), with a PID,
+   and the tail is at most 4096 characters. The test then ends its own child. With the `exec` start, Node kills the
+   child at 100 MiB, and the test fails.
+5. [NV] The PyInstaller server on each system: one process for a onedir build, so its PID is the PID of the
+   server; the console window of the server (`console=True` of `skellycam.spec`) shows as it showed under
+   `cmd.exe`. Not tried; the user tries the packaged app by hand.
 
 ## 10. Connection to the shared loop (after step 3a)
 

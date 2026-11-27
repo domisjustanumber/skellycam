@@ -25,10 +25,13 @@ a 5 most recent folders rememebered in a Recently Opened section, with a UI opti
 7. **Q968.** The list is one file in the user data folder of the app: `recent-take-folders.json`. An old
    `picked-take-folders.json` stays not read and not deleted.
 
-This decides the open part of ADR-WP77 (items 8 and 13: a restart ends every pick; a list file later), and the
-question of ADR-K907 of `dom/answers-q929` (not merged here): the folders of the player dialog are remembered. The
-picks for the run stay as ADR-WP77 items 8 to 10 say: only the list of this entry is saved. The details that the user
-did not decide are in [ADR-FHP6](FHP6-choices-of-the-recently-opened-take-folders-lane.md) (proposed).
+This decides the question of [ADR-K907](K907-the-open-part-of-adr-wp77-picks-across-runs.md) (the part of ADR-WP77
+that waited for Q946; now rejected): the folders of the player dialog are remembered. The picks for the run stay as
+[ADR-WP77](WP77-choices-of-the-player-label-and-picked-folders-lane.md) says: they are not saved, and a restart ends
+them; only the list of this entry is saved. It also answers the sentence of
+[ADR-4D94](4D94-step-6a-choices-of-the-canvas-player.md) that the list file waits for step 6c: the saved list is
+`recent-take-folders.json`, now; the rule of ADR-4D94 that the picks of the run are not saved stays. The details that
+the user did not decide are in [ADR-FHP6](FHP6-choices-of-the-recently-opened-take-folders-lane.md) (proposed).
 
 ## Reason
 

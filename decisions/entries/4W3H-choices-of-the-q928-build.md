@@ -1,7 +1,10 @@
 # 4W3H — Choices of the Q928 build: the shield, Ctrl-Break and the tests
 
-**Status:** proposed, 2026-11-27 (agent; applies Q928 of
-[ADR-9V4Y](9V4Y-decisions-of-the-user-on-the-shutdown-lane-q924-to-q928.md); commit to dom/server-shutdown-limit).
+**Status:** absorbed into
+[`specs/recorder.md#91-the-end-of-the-server-process`](../../specs/recorder.md#91-the-end-of-the-server-process),
+2026-11-27 (commit to dom/answers-q929; was accepted, 2026-11-27 (user, Q933 of [ADR-6PJ2](6PJ2-decisions-of-the-user-on-q929-to-q941.md)); was proposed,
+2026-11-27 (agent; applies Q928 of
+[ADR-9V4Y](9V4Y-decisions-of-the-user-on-the-shutdown-lane-q924-to-q928.md); commit to dom/server-shutdown-limit)).
 
 ## Decision
 

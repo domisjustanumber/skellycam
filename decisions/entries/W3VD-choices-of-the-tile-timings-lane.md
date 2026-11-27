@@ -1,7 +1,11 @@
 # W3VD — Choices of the tile timings lane: step 8 of `specs/capture-timings.md`
 
-**Status:** proposed, 2026-11-27 (agent, tile timings lane of Q870 of
-[ADR-BPP8](BPP8-answers-of-the-user-q864-to-q873-on-the-step-4b-code.md); waits for the user).
+**Status:** absorbed into
+[`specs/capture-timings.md#7-the-shared-tile-u-q586-u-q587-16`](../../specs/capture-timings.md#7-the-shared-tile-u-q586-u-q587-16),
+[`specs/capture-timings.md#102-test-list`](../../specs/capture-timings.md#102-test-list),
+2026-11-27 (commit to dom/answers-q929; was accepted, 2026-11-27 (user, Q943 of [ADR-318R](318R-decisions-of-the-user-on-q942-to-q955.md)); was proposed,
+2026-11-27 (agent, tile timings lane of Q870 of
+[ADR-BPP8](BPP8-answers-of-the-user-q864-to-q873-on-the-step-4b-code.md); waits for the user)).
 
 ## Decision
 

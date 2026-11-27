@@ -1,7 +1,12 @@
 # VTW3 — Choices of the Quick Sync check in a child process and its certify check
 
-**Status:** proposed, 2026-11-26 (agent; the Quick Sync lane builds Q879 of
-[ADR-4TBY](4TBY-decisions-of-the-user-on-the-review-of-the-3b-code.md) item 4; waits for the user).
+**Status:** absorbed into
+[`specs/windows-capture.md#227-the-quick-sync-check-in-a-child-process-q879`](../../specs/windows-capture.md#227-the-quick-sync-check-in-a-child-process-q879),
+[`specs/certify.md#362-the-check-catalogue-for-each-level`](../../specs/certify.md#362-the-check-catalogue-for-each-level),
+[`specs/certify.md#17-test-list-of-the-certify-code`](../../specs/certify.md#17-test-list-of-the-certify-code),
+2026-11-27 (commit to dom/answers-q929; was accepted, 2026-11-27 (user, Q937 of [ADR-6PJ2](6PJ2-decisions-of-the-user-on-q929-to-q941.md)); was proposed,
+2026-11-26 (agent; the Quick Sync lane builds Q879 of
+[ADR-4TBY](4TBY-decisions-of-the-user-on-the-review-of-the-3b-code.md) item 4; waits for the user)).
 
 ## Decision
 
@@ -47,11 +52,10 @@ entry holds the choices of the lane that the user did not decide. `specs/windows
 17. **One check at a time.** A `threading.Lock` of the manager holds the check, so a second request waits for the
     answer of the first and starts no child; only the request that ran the check writes the switch (T-CAP-174).
 
-## Question for the user
+## Answer of the user
 
-- A child that gives a good answer and then does not end (T-CAP-175) keeps `works` True today. A driver that hangs at
-  its teardown after a good encode can also hang a camera process at its close. Recommended: treat it as "does not
-  work", with one WARNING line. The lane did not change it.
+- A child that gives a good answer and then does not end (T-CAP-175) keeps `works` True today. Q938 of [ADR-6PJ2](6PJ2-decisions-of-the-user-on-q929-to-q941.md): it
+  counts as "does not work", with one WARNING line. Not built (open work).
 
 ## Reason
 
