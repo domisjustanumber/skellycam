@@ -171,8 +171,12 @@ class Session:
     def __init__(self, manager, units, work_folder, level, unix, begin, done, fact, sleep):
         self.manager, self.units, self.work = manager, list(units), Path(work_folder)
         self.level, self.unix = level, unix
-        self.begin, self.fact, self.sleep = begin, fact, sleep
-        self._done = done
+        self.fact, self.sleep = fact, sleep
+        self._begin, self._done = begin, done
+        # 3.6.1 [U Q902]: the steps still compute the six checks of full only; a quick run sends no message or row of
+        # them [KXQ9 item 2]
+        self.left_out = set() if level == "full" else {f"{u.label}:{c}" for u in self.units for c in catalog.FULL_ONLY}
+        self.hidden: str | None = None  # the left-out check that began last and has not ended [KXQ9 item 6]
         self.results: set[str] = set()  # the names of the checks that have a result
         self.watches: dict[str, RingWatch] = {}
         self.live: list[Unit] = []  # the cameras that are `ready`
@@ -190,9 +194,31 @@ class Session:
 
     # ----- helpers -----
 
+    def begin(self, name: str) -> None:
+        self.hidden = name if name in self.left_out else None
+        if self.hidden is None:
+            self._begin(name)
+
     def done(self, result: dict) -> None:
+        if result["name"] in self.left_out:
+            if self.hidden == result["name"]:
+                self.hidden = None
+            return
         self.results.add(result["name"])
         self._done(result)
+
+    def all_names(self, unit) -> dict:
+        """The check names of a camera by step with the six of full only, for the steps that compute them by
+        position (ready, settings, take); `begin` and `done` drop them in quick."""
+        return catalog.camera_names(unit.label, unit.base, "full", self.unix)
+
+    def next_shown(self, name: str) -> str | None:
+        """The next check of the camera of `name`, in the order of the plan, that the level has and that has no
+        result."""
+        unit = next(u for u in self.units if name.startswith(u.label + ":"))
+        shown = {n for names in catalog.camera_names(unit.label, unit.base, self.level, self.unix).values() for n in names}
+        order = [n for names in self.all_names(unit).values() for n in names]
+        return next((n for n in order[order.index(name) + 1:] if n in shown and n not in self.results), None)
 
     def status(self, unit):
         group = self.group()
@@ -310,6 +336,15 @@ class Session:
                         and f"{unit.label}:records:rows-complete" in self.results):
                     self.begin(f"{unit.label}:{catalog.LIVE}")
                     self.closing.append(unit)
+        except Exception as error:
+            # 3.6.1 [KXQ9 item 6]: a fault in a left-out check: the next check of the camera that the level has is
+            # the running check, so the caller gives it the class name of the error
+            if self.hidden and not isinstance(error, Stopped):
+                with contextlib.suppress(Exception):  # never replaces the error of the session
+                    following = self.next_shown(self.hidden)
+                    if following is not None:
+                        self._begin(following)
+            raise
         finally:
             for watch in self.watches.values():
                 watch.stop()
@@ -453,7 +488,7 @@ class Session:
     async def ready_step(self):
         """The rate numbers, the "before" values, and the JPEG checks of the frames after the first `ready` (4.4)."""
         for unit in self.live:
-            names = catalog.camera_names(unit.label, unit.base, self.level, self.unix)
+            names = self.all_names(unit)
             data = await self.wait_hashes(unit)
             self.send_before(unit)
             watch = self.watches.get(unit.label, NO_WATCH)
@@ -519,7 +554,7 @@ class Session:
         later = {u.label: ((self.status(u).get("controls") or {}).get("exposure") or {}).get("value") for u in manual}
         self.scan(manual)  # a camera that left in the change: the running check is the read-back (B1)
         for unit in manual:
-            names = catalog.camera_names(unit.label, unit.base, self.level, self.unix)["settings"]
+            names = self.all_names(unit)["settings"]
             if unit.label in self.wedged or unit.label in self.left:
                 continue
             data = self.diagnostics(unit)
@@ -540,6 +575,8 @@ class Session:
             holds = later[unit.label] == EXPOSURE_CHANGED
             self.done(row(names[1], "pass" if holds else "fail", None if holds else "setting-reverted", unit.module,
                           **numbers))
+            if names[2] in self.left_out:  # quick: running only while its own rule runs [KXQ9 item 6]
+                self.begin(names[2])
             self.done(row(names[2], *catalog.image_effect(m7, m8, unit_kind), unit.module, **numbers))
             self.facts[unit.label]["control_path"] = data.get("control_path")
 
@@ -587,7 +624,7 @@ class Session:
         after = {u.label: self.diagnostics(u) for u in takers}
         files = self.take_files(summary, takers)
         self.group_take_rows(summary, takers, files)
-        rows_complete = lambda u: catalog.camera_names(u.label, u.base, self.level, self.unix)["take"][3]  # noqa: E731
+        rows_complete = lambda u: self.all_names(u)["take"][3]  # noqa: E731
         wedged = {u.label for u in self.scan(takers, running=rows_complete)}
         for unit in takers:
             if unit.label in wedged:
@@ -647,7 +684,7 @@ class Session:
         self.done(row(catalog.TAKE[4], "pass" if rate_ok else "fail", None if rate_ok else "group-rate-off", **numbers))
 
     def camera_take_rows(self, unit, files, replaced, diagnostics):
-        names = catalog.camera_names(unit.label, unit.base, self.level, self.unix)["take"]
+        names = self.all_names(unit)["take"]
         if files is None:
             self.prior(unit, "prior-check-failed")
             return

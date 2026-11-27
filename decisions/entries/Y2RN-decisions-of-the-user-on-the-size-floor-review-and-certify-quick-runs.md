@@ -2,6 +2,7 @@
 
 **Status:** absorbed into
 [`specs/windows-capture.md#222-rules-of-step-3b`](../../specs/windows-capture.md#222-rules-of-step-3b),
+[`specs/certify.md#361-rules-of-the-rows`](../../specs/certify.md#361-rules-of-the-rows),
 [`decisions/open-work.md#open-work`](../open-work.md#open-work),
 2026-11-26 (commit to dom/jpeg-encode-tests; was accepted, 2026-11-26 (user, relayed by the supervisor)).
 

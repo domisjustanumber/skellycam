@@ -1108,6 +1108,8 @@ def _write_record(rows, context, level, summary, checks_path):
         # 3.6.1: a settings check in the `not-reached` row is `not-run` with the reason of that row
         missing = rows.get(f"{first}:not-reached") or dict(result="not-run", reason="not-built")
         settings = [rows.get(f"{first}:settings-stick:{c}") or missing for c in ("readback", "holds", "image-effect")]
+        if level != "full":  # 2.5 [U Q627, MEE1 20; Q902]: quick has no image check, so `unproven` at most
+            settings[2] = dict(result="not-run", reason=None)
         path = (settings[0].get("numbers") or {}).get("control_path")
         result = catalog.control_result(settings[0].get("result"), settings[1].get("result"),
                                         {"result": settings[2].get("result"), "reason": settings[2].get("reason")})

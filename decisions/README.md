@@ -93,6 +93,7 @@ These entries wait for a decision of the user. Section is the section or area of
 | [VTW3](entries/VTW3-choices-of-the-quick-sync-check-in-a-child-process.md) | Q879 choices: one child call for detection and Quick Sync, 5 s, log levels; `system:quick-sync` in both levels on Windows, record-only, no GPU is false | none | proposed |
 | [W3VD](entries/W3VD-choices-of-the-tile-timings-lane.md) | Choices of the tile timings lane: `buildSummary` on the fixture input, a checked copy of the step table, one handle for each camera, the host in skellycam-ui | none | proposed |
 | [FP47](entries/FP47-choices-of-the-triage-of-the-first-ci-run-of-the-4b-component-tests.md) | Triage of the first CI run of the 4b component tests: the harness window and grid fit a small runner screen; no product fault | none | proposed |
+| [KXQ9](entries/KXQ9-choices-of-the-quick-run-without-the-six-full-checks.md) | Q902 choices: no quick row of the six full checks (not planned, no `not-run`, not in `not_built`); the work stays; T-CERT-153; 8CP7 not absorbed (Q853) | `certify` | proposed |
 
 The entries that are `rejected`, `superseded by XXXX`, `absorbed into <path>#<anchor>`,
 `evidence; used by XXXX`, `evidence; replaced by XXXX` or `done` are in [historical.md](historical.md).

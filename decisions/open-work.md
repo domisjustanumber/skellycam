@@ -102,14 +102,12 @@ task. Delete an item when its work is done. The PR that closes an item records t
   [ADR-N2VE](entries/N2VE-decisions-of-the-user-on-the-ci-triage-and-the-stall-watch-code.md), low priority). A later
   small test lane writes it: a real camera loop, a fake camera whose frames stop after a reopen, the watch on the
   same clock (`unix-capture.md` 4.10).
-- **Quick certify runs** (Q902, [ADR-Y2RN](entries/Y2RN-decisions-of-the-user-on-the-size-floor-review-and-certify-quick-runs.md)): the next certify lane, spec text and test
-  first: a quick run leaves out the six full-only checks of Q593 (image-effect, not-reencoded, size,
-  ring-equals-mkv, source-equals-ring, gaps-explained).
 - **The certify run of skellycam.** The spec [`specs/certify.md`](../specs/certify.md) is draft 3. The code is in `skellycam/core/certify/` (section 19 of the
   spec). Open: the checks that are `not-run`
   `not-built` (the status line of the spec). Not decided: FC1C items 4 and 13, HQE5 items 2 and 3
-  ([ADR-6YGH](entries/6YGH-acceptance-of-the-as-built-choices-of-fix-lanes-4-and-5-and-of-certify.md)). The next
-  certify lane checks whether 8CP7 can be absorbed (Q853).
+  ([ADR-6YGH](entries/6YGH-acceptance-of-the-as-built-choices-of-fix-lanes-4-and-5-and-of-certify.md)). Q853: 8CP7
+  stays: its items 3, 6 and 7 differ from later spec text
+  ([ADR-KXQ9](entries/KXQ9-choices-of-the-quick-run-without-the-six-full-checks.md) item 5 asks the user).
 - **Certify report fields, decided 2026-11-23, not built**
   ([ADR-F6C3](entries/F6C3-decisions-of-the-user-on-the-certify-report-fields.md)). The fields, the
   kept logs are in section 3.5 of the spec, in the slim form of Q594, with the build order of 3.6.7 (Q626) and
