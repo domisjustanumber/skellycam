@@ -43,6 +43,8 @@ PACE_TESTS = [
     ("skellycam.tests.take_recorder.test_benchmarks", "test_t_rec_stall_short_has_no_give_wait"),
     # Q917 (b) [ADR-N7ZR]: the waits and the counts of the slow holder of the status locks
     ("skellycam.tests.capture.test_status_locks", "test_a_live_but_slow_holder_waits_once_and_logs_one_line"),
+    # Q907, Q928 [ADR-9V4Y]: the connection limit of the shutdown of the server (recorder.md 9.1)
+    ("skellycam.tests.test_server_exit", "test_the_server_ends_within_the_connection_limit"),
 ]
 # A test whose failure does not depend on the pace blocks (16.1): the functional halves of the split tests, the
 # long-interval test (no bound of time), the slow stop (its row counts are the lock rule), and the tests of item 1
@@ -79,6 +81,8 @@ NOT_PACE = [
     ("skellycam.tests.take_recorder.test_benchmarks", "test_t_rec_stall_short_pass_parts"),
     # Q917 (b) [ADR-N7ZR]: the slow holder never makes the status stop its tries; no torn JSON escapes
     ("skellycam.tests.capture.test_status_locks", "test_a_live_but_slow_holder_and_torn_json_never_raise"),
+    # Q907, Q928 [ADR-9V4Y]: the server process ends after /shutdown with a lost connection
+    ("skellycam.tests.test_server_exit", "test_the_server_ends_after_shutdown_with_a_lost_connection"),
 ]
 
 
