@@ -216,6 +216,7 @@ def _run(tmp_path, kind, phase, slow_s=SLOW_S, press="two"):
         return {"left": sorted(alive), "end_s": max(ends.values(), default=None), "code": code,
                 "gap_s": gaps[1] - gaps[0], "aborts": len(_events(times_file, "abort")), "manifest": manifest,
                 "kill_flag": [item["kill_flag"] for item in _events(times_file, "abort")],
+                "collect_ended_by_a_camera": [item["camera_ended"] for item in _events(times_file, "collect")],
                 "terminated": [item["name"] for event in ("terminate", "kill") for item in _events(times_file, event)],
                 "held": _held(port, names, recordings / "take")}
     finally:
@@ -237,6 +238,8 @@ def test_a_second_ctrl_c_ends_every_process_and_releases_each_hold(tmp_path, kin
     assert (result["left"], result["held"], result["code"]) == ([], [], 0), result
     # the handler set the kill flag, and each camera process ended at it: none was ended by terminate or kill
     assert (result["aborts"], result["kill_flag"], result["terminated"]) == (1, [True], []), result
+    # the slow wait of the take stop ended because a camera process ended (at the kill flag), not at its time
+    assert result["collect_ended_by_a_camera"] == [True], result
 
 
 @pytest.mark.pace

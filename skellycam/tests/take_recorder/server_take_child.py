@@ -6,7 +6,7 @@ open fake sources. The wait of a take stop for the cameras (`_collect_results`) 
 a camera process ends; with slow seconds below 0 it hangs for ever, as a disk call that hangs. The times file gets one
 JSON line for each of these: a take end (`_end_take`) starts or ends; a group has started (the names of its frame
 rings); uvicorn takes a signal (`signal`); the handler of `__main__` gets a signal (`ctrl`) or makes the abort
-(`abort`, with the kill flag); a camera process is ended with `terminate` or `kill` (`terminate`, `kill`).
+(`abort`, with the kill flag); the slow wait ends (`collect`: a camera process ended first or not); a camera process is ended with `terminate` or `kill` (`terminate`, `kill`).
 """
 
 import json
@@ -63,6 +63,7 @@ def _slow_collect(group):
     workers = list(group.cameras.camera_workers.values())
     while time.monotonic() < deadline and not any(worker.worker.exitcode is not None for worker in workers):
         time.sleep(0.05)
+    _write_time("collect", camera_ended=any(worker.worker.exitcode is not None for worker in workers))
     return _collect(group)
 
 
