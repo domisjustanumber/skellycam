@@ -69,6 +69,9 @@ const openRecent = (page: Page, folder: string): Promise<string> =>
     page.evaluate(f => (window as never as {skellycamTake: RecentBridge}).skellycamTake.openRecent(f), folder);
 const clearRecent = (page: Page): Promise<void> =>
     page.evaluate(() => (window as never as {skellycamTake: RecentBridge}).skellycamTake.clearRecent());
+/** The folder that the player dialog opens at (5.10): what `selectDirectory({player: true})` passes as `defaultPath`. */
+const dialogFolderOf = (h: Harness): Promise<string> =>
+    h.app.evaluate(() => (globalThis as never as {__harness: {dialogFolder(): Promise<string>}}).__harness.dialogFolder());
 
 /** Each file below the test folder, with its size and modification time, outside the userData folder of the
  * harness, where Chromium writes its own files: a test of "no file is written" (5.3). */
@@ -418,6 +421,7 @@ test('T-PLAY-89 recently opened folders across a restart: the click, its check, 
     await recordPick(h, b, {recent: true});
     expect(await recentOf(h.page)).toEqual([rb, ra]);
     expect(onDisk()).toEqual({version: 1, folders: [rb, ra]});
+    expect(await dialogFolderOf(h), 'the dialog opens at the top entry').toBe(rb);
     await h.relaunch();
     await expect(bridgeOpen(h.page, a), 'an entry is no pick after a restart').rejects.toThrow(/folder not allowed/);
     const before = readFileSync(file);
@@ -447,6 +451,8 @@ test('T-PLAY-89 recently opened folders across a restart: the click, its check, 
     await clearRecent(h.page);
     expect(await recentOf(h.page)).toEqual([]);
     expect(onDisk()).toEqual({version: 1, folders: []});
+    mkdirSync(h.recordings, {recursive: true});
+    expect(await dialogFolderOf(h), 'with an empty list: the recordings folder, never undefined').toBe(h.recordings);
     expect((await bridgeOpen(h.page, s)).token, 'clear ends no pick of the run').toMatch(token);
     // a hand-edited list file and an old picked-take-folders.json, before a restart
     const old = path.join(h.root, 'old_pick');

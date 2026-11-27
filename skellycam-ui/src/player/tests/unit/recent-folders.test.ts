@@ -1,10 +1,12 @@
-// Unit tests of the recently opened folders (specs/player.md 5.10; ADR-8J08, ADR-FHP6): T-PLAY-87 and T-PLAY-88.
+// Unit tests of the recently opened folders (specs/player.md 5.10; ADR-8J08, ADR-FHP6): T-PLAY-87, T-PLAY-88,
+// T-PLAY-90 and T-PLAY-91.
 import assert from 'node:assert/strict';
-import {mkdirSync, mkdtempSync, realpathSync, rmSync, symlinkSync, writeFileSync} from 'node:fs';
+import {execFileSync} from 'node:child_process';
+import {mkdirSync, mkdtempSync, readFileSync, realpathSync, rmSync, symlinkSync, writeFileSync} from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import test from 'node:test';
-import {RECENT_FILE, addRecent, checkRecent, parseRecent, readRecent, recentText} from '../../main/recent-folders.ts';
+import {RECENT_FILE, addRecent, checkRecent, dialogFolder, parseRecent, readRecent, recentStore, recentText} from '../../main/recent-folders.ts';
 
 const win = process.platform === 'win32';
 const abs = (name: string) => path.resolve(os.tmpdir(), 'recent-test', name);
@@ -83,6 +85,13 @@ test('T-PLAY-87 the file: missing, larger than 1 MiB, or valid', async t => {
     assert.deepEqual(await readRecent(file), [], 'a folder in place of the file');
 });
 
+test('T-PLAY-87 a FIFO in place of the file gives an empty list and does not block', {skip: win ? 'no FIFO on Windows' : false}, async t => {
+    const file = path.join(tempDir(t), RECENT_FILE);
+    execFileSync('mkfifo', [file]);
+    const result = await Promise.race([readRecent(file), new Promise(resolve => setTimeout(() => resolve('blocked'), 2000))]);
+    assert.deepEqual(result, []);
+});
+
 test('T-PLAY-88 the check at the click: a listed real folder passes with its stored path', async t => {
     const dir = tempDir(t);
     const a = path.join(dir, 'take_a');
@@ -115,4 +124,60 @@ test('T-PLAY-88 the check at the click: deleted, replaced by a link, a file, a l
     assert.deepEqual(await checkRecent([link], link), {ok: false, reason: 'gone'}, 'an entry that is the path of a link');
     const dotted = [other, '..', 'other'].join(path.sep);   // not path.join: it would remove the ..
     assert.deepEqual(await checkRecent([dotted], dotted), {ok: false, reason: 'gone'}, 'an entry with ..');
+});
+
+test('T-PLAY-90 the store: a click opens a listed folder, moves it to the top and writes the file', async t => {
+    const dir = tempDir(t);
+    const [a, b] = ['take_a', 'take_b'].map(n => path.join(dir, n));
+    mkdirSync(a);
+    mkdirSync(b);
+    const file = path.join(dir, 'data', RECENT_FILE);
+    const store = await recentStore(file);
+    assert.deepEqual(store.list(), [], 'no file');
+    await store.add(a);
+    await store.add(b);
+    assert.deepEqual(store.list(), [b, a]);
+    const opened: string[] = [];
+    assert.equal(await store.open(a, f => opened.push(f)), a);
+    assert.deepEqual(opened, [a], 'the stored path becomes the pick');
+    assert.deepEqual(store.list(), [a, b]);
+    assert.deepEqual(parseRecent(readFileSync(file, 'utf8')), [a, b]);
+    await assert.rejects(store.open(path.join(dir, 'other'), f => opened.push(f)), /folder not allowed/);
+    rmSync(b, {recursive: true});
+    await assert.rejects(store.open(b, f => opened.push(f)), /folder gone/);
+    assert.deepEqual(store.list(), [a], 'a gone entry leaves the list');
+    assert.deepEqual(parseRecent(readFileSync(file, 'utf8')), [a]);
+    assert.deepEqual(opened, [a]);
+    await store.clear();
+    assert.deepEqual(parseRecent(readFileSync(file, 'utf8')), []);
+});
+
+test('T-PLAY-90 the store: a clear during the check of a click opens nothing and is not undone', async t => {
+    const dir = tempDir(t);
+    const a = path.join(dir, 'take_a');
+    mkdirSync(a);
+    const file = path.join(dir, RECENT_FILE);
+    const store = await recentStore(file);
+    await store.add(a);
+    const opened: string[] = [];
+    const click = store.open(a, f => opened.push(f));
+    const cleared = store.clear();   // runs while the click waits for its realpath
+    await assert.rejects(click, /folder not allowed/);
+    await cleared;
+    assert.deepEqual(opened, [], 'no pick');
+    assert.deepEqual(store.list(), [], 'the clear stays');
+    assert.deepEqual(parseRecent(readFileSync(file, 'utf8')), []);
+});
+
+test('T-PLAY-91 the dialog folder: the top entry; with an empty list the recordings folder, else the home folder', async t => {
+    const dir = tempDir(t);
+    const recordings = path.join(dir, 'recordings');
+    const home = path.join(dir, 'home');
+    assert.equal(await dialogFolder([abs('B'), abs('A')], recordings, home), abs('B'));
+    assert.equal(await dialogFolder([], recordings, home), home, 'no recordings folder');
+    writeFileSync(recordings, 'x');
+    assert.equal(await dialogFolder([], recordings, home), home, 'a file in place of the recordings folder');
+    rmSync(recordings);
+    mkdirSync(recordings);
+    assert.equal(await dialogFolder([], recordings, home), recordings);
 });

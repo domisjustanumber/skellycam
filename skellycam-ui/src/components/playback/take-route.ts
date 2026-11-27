@@ -17,6 +17,15 @@ export async function routeTake(folderPath: string): Promise<'canvas' | 'video' 
     }
 }
 
+/** A picked folder path with no trailing separator; a root (`D:\`, `/`) stays a root, so it stays absolute. */
+export const trimFolder = (folder: string) => folder.trim().replace(/([^:\\/])[\\/]+$/, '$1');
+
+/** The last part of a folder path (player.md 5.10); a root shows as itself. */
+export function folderNameOf(folder: string): string {
+    const trimmed = trimFolder(folder);
+    return trimmed.slice(Math.max(trimmed.lastIndexOf('/'), trimmed.lastIndexOf('\\')) + 1) || trimmed;
+}
+
 export async function chooseTakePlayer(folderPath: string): Promise<'canvas' | 'video'> {
     return (await routeTake(folderPath)) === 'canvas' ? 'canvas' : 'video';
 }

@@ -107,6 +107,7 @@ const need = (): Handler => {
 (globalThis as Record<string, unknown>).__harness = {
     productError: () => productError,
     recordPick: (folder: string, options?: {recent: boolean}) => need().recordPick(folder, options),
+    dialogFolder: () => need().dialogFolder(),
     setReadFault: (relativePath: string | null) => need().setReadFault(relativePath),
     openWindow: (name?: string, options?: WindowOptions) => openWindow(name, options),
     installVariant,

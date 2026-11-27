@@ -88,14 +88,14 @@ export const api = t.router({
 
     // File System Operations
     fileSystem: t.router({
-        // `player`: the folder dialog of the player opens at the last folder of its recently opened list (player.md 5.10)
+        // `player`: the folder dialog of the player opens at the folder of player.md 5.10 (the top recent entry)
         selectDirectory: t.procedure
             .input(z.object({ player: z.boolean() }).optional())
             .mutation(async ({ input }) => {
                 const player = input?.player === true;
                 const result = await dialog.showOpenDialog({
                     properties: ['openDirectory'],
-                    defaultPath: player ? takeHandler?.recent()[0] : undefined,
+                    defaultPath: player ? await takeHandler?.dialogFolder() : undefined,
                 });
                 if (result.canceled) return null;
                 await takeHandler?.recordPick(result.filePaths[0], { recent: player });

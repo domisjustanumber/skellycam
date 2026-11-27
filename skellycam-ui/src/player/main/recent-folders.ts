@@ -1,6 +1,6 @@
 // The rules of the recently opened folders (specs/player.md 5.10; ADR-8J08, ADR-FHP6): the list, its file, and
 // the check at a click. Node only, so the unit tests load it with no Electron.
-import {readFile, realpath, stat} from 'node:fs/promises';
+import {mkdir, readFile, realpath, rename, stat, writeFile} from 'node:fs/promises';
 import path from 'node:path';
 
 export const RECENT_FILE = 'recent-take-folders.json';
@@ -39,10 +39,11 @@ export function parseRecent(text: string): string[] {
 
 export const recentText = (list: readonly string[]) => JSON.stringify({version: 1, folders: list}, null, 2) + '\n';
 
-/** The list of the file; a missing, unreadable or too large file gives an empty list. */
+/** The list of the file; a missing, unreadable, too large or not regular file (a FIFO would block the read) gives an empty list. */
 export async function readRecent(file: string): Promise<string[]> {
     try {
-        if ((await stat(file)).size > FILE_LIMIT) return [];
+        const st = await stat(file);
+        if (!st.isFile() || st.size > FILE_LIMIT) return [];
         return parseRecent(await readFile(file, 'utf8'));
     } catch {
         return [];
@@ -57,7 +58,49 @@ export async function checkRecent(list: readonly string[], asked: unknown): Prom
         const real = await realpath(entry);
         if (same(real, entry) && (await stat(real)).isDirectory()) return {ok: true, folder: entry};
     } catch {
-        // missing or unreadable: gone
+        // each realpath or stat error (missing, no access, busy) is gone (5.10)
     }
     return {ok: false, reason: 'gone'};
+}
+
+/** The folder that the player dialog opens at: the top entry; with an empty list, the recordings folder when it
+ * is a folder, else the home folder. Never undefined: Windows would open its own last folder of the program. */
+export async function dialogFolder(list: readonly string[], recordingsFolder: string, home: string): Promise<string> {
+    if (list.length > 0) return list[0];
+    return (await stat(recordingsFolder).then(st => st.isDirectory(), () => false)) ? recordingsFolder : home;
+}
+
+/** The list of the main process and its file (5.10). The writes run one after the other; a failed write keeps
+ * the list in memory. */
+export async function recentStore(file: string) {
+    let recent = await readRecent(file);
+    let saving = Promise.resolve();
+    const set = (list: string[]) => {
+        recent = list;
+        const text = recentText(list);
+        saving = saving.then(async () => {
+            await mkdir(path.dirname(file), {recursive: true});
+            await writeFile(`${file}.tmp`, text);
+            await rename(`${file}.tmp`, file);
+        }).catch(() => console.error('the recently opened folders were not saved'));
+        return saving;
+    };
+    return {
+        list: (): readonly string[] => recent,
+        add: (real: string) => set(addRecent(recent, real)),
+        clear: () => set([]),
+        /** A click: `onOpen` gets the stored path, the entry moves to the top. Fails with "folder not allowed" for a
+         * path that is no entry, also one that a clear removed during the check, and with "folder gone". */
+        async open(asked: unknown, onOpen: (folder: string) => void): Promise<string> {
+            const check = await checkRecent(recent, asked);
+            if (!check.ok && check.reason === 'gone') {
+                await set(recent.filter(p => !same(p, asked as string)));
+                throw new Error('folder gone');
+            }
+            if (!check.ok || !recent.some(p => same(p, check.folder))) throw new Error('folder not allowed');
+            onOpen(check.folder);
+            await set(addRecent(recent, check.folder));
+            return check.folder;
+        },
+    };
 }

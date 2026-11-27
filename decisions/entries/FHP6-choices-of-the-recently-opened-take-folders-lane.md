@@ -1,82 +1,71 @@
 # FHP6 — Choices of the recently opened take folders lane
 
 **Status:** proposed, 2026-11-27 (agent, the lane of
-[ADR-8J08](8J08-decisions-of-the-user-on-the-recently-opened-take-folders.md); commit to dom/player-recent; waits
-for the user).
+[ADR-8J08](8J08-decisions-of-the-user-on-the-recently-opened-take-folders.md), with the fixes of its review; commit
+to dom/player-recent; waits for the user).
 
 ## Decision
 
-The user decided the feature (ADR-8J08). He did not decide these details.
-[`player.md`](../../specs/player.md) 5.10 states them.
+The user decided the feature (ADR-8J08). [`player.md`](../../specs/player.md) 5.3 and 5.10 state these details.
 
-1. **Which dialog adds an entry.** Only the folder dialog of the player: the buttons "Select recording folder" and
-   "Open the folder dialog" of the recording browser. They call `fileSystem.selectDirectory({player: true})`. The
-   other dialogs of the app (the base recording folder, the video folder of the menu) are picks for the run only
-   (5.3), add no entry and do not open at the last pick.
-2. **A click is an open.** A click that passes the check moves its entry to the top. The dialog opens at the top
-   entry. There is one list and no separate "last folder" value, so "Clear list" also clears the dialog folder.
-3. **The time of the entry.** A pick adds its entry at the pick, before the player reads the folder. A folder that
-   does not play (for example a folder of takes: the player treats a pick as one take folder) is also an entry.
-4. **A pick that is no valid entry.** A pick whose real path fails the item rules of the file (for example a UNC
-   path, which the handler refuses anyway, 5.3) is a pick for the run and adds no entry. Thus the list holds only
-   paths that the read of the file accepts.
-5. **The file.** `{"version": 1, "folders": [...]}`, JSON with a 2-space indent and a final LF. The read accepts
-   at most 1 MiB. A file that fails the object rules gives an empty list. An item that is not a string, is empty,
-   is longer than 32,767 UTF-16 code units, holds a NUL, is not absolute, or starts with two slashes or
-   backslashes is left out; a repeat (the same-path rule of 5.3) is left out; then the first 5 stay. The read
-   resolves no path and writes nothing. A file of another `version` gives an empty list, and the next change
-   replaces it.
-6. **The write.** The whole file after each change: a temporary file `recent-take-folders.json.tmp` in the same
-   folder, then a rename. Writes run one after the other. A failed write keeps the list in memory and logs one line
-   with no path. No message to the user.
-7. **A folder replaced by a link.** At the click this is the same as a folder that no longer exists: the same
-   message, and the entry leaves the list. Its real path is no longer the stored path.
-8. **"Clear list" ends no pick of the run.** A folder of the list that was opened in this run stays readable until
-   the app ends, as each pick of 5.3.
-9. **The IPC.** Three calls of the bridge of 4.3, on three new channels of `TAKE_CHANNELS`: `recent()`,
-   `openRecent(folder)` and `clearRecent()`. The page asks by the path of an entry that `recent()` gave. The main
-   process uses only the stored entry with an equal path. A path that is no entry fails with "folder not allowed"
-   and changes nothing. A key by path, not by index: a list that changes between the show and the click cannot
-   open another folder.
-10. **The page sees the paths of the list.** The section shows the folder name, with the full path as its tooltip.
-    `selectDirectory` gives the page the path of a pick today too.
-11. **The message.** "This folder no longer exists or was moved. It was removed from Recently Opened." In `en`,
-    `es`, `zh-CN` and `ar` (Q948 of ADR-318R of `dom/answers-q929`), not checked by a native speaker; the other
-    locales fall back to English. The section title "Recently Opened" and the button "Clear list" are in the same
-    four locales.
-12. **The module.** The rules of the list and of the file are pure functions in `main/recent-folders.ts`
-    (Node only, no `electron`). `take-scheme.ts` holds the store, the file and the channels. `TakeHandler` gets
-    `recent()` and `recordPick(folder, {recent: true})`. `installTakeHandler` keeps one option,
-    `recordingsFolder`: the file path comes from `app.getPath('userData')`, which the harness sets (12.1).
-13. **Tests.** T-PLAY-87 (unit: the list and the file), T-PLAY-88 (unit: the check at the click, with real folders
-    and a junction or a symbolic link), T-PLAY-89 (electron: across a restart). T-PLAY-62 checks the new rule:
-    a pick of the player dialog is refused again after a restart until a click, the only file that holds its path
-    is `recent-take-folders.json`, and the page calls add no entry. T-PLAY-85 is unchanged. The harness hook
-    `recordPick` passes the second argument. The `defaultPath` of the native dialog is checked by hand.
-14. **An entry on a drive that is not connected.** At the click it does not exist, so it leaves the list (Q967 as
-    written).
+1. **Which dialog adds.** Only the folder dialog of the player ("Select recording folder", "Open the folder
+   dialog"), through `fileSystem.selectDirectory({player: true})`. The other dialogs are picks for the run only.
+2. **The dialog folder.** The top entry; a click that passes the check moves its entry to the top. With an empty
+   list: the recordings folder when it is a folder, else the home folder. Never no `defaultPath`: Windows would open
+   at its own remembered folder of the program. One list, so "Clear list" also clears the dialog folder.
+3. **The time of the entry.** At the pick, before the read: a folder that does not play is also an entry.
+4. **The file.** `{"version": 1, "folders": [...]}`, a 2-space indent, a final LF, at most 1 MiB, a regular file
+   (a FIFO would block). A wrong file gives an empty list. An item that is not a string, is empty, is longer than
+   32,767 UTF-16 code units, holds a NUL, is not absolute or starts with two slashes or backslashes is left out,
+   then repeats, then all after the fifth. The two-slash rule is the only device rule; each other wrong path fails
+   at the click. The read resolves and writes nothing; another `version` is replaced at the next change. A pick
+   that fails the item rules (UNC) adds no entry.
+5. **The write.** A `.tmp` file, then a rename; one write after the other; a failed write keeps the list in memory
+   and logs one line with no path, with no message.
+6. **The check.** Each error of `realpath` or `stat` (missing, no access, busy) is "gone", and the entry leaves the
+   list, also a folder replaced by a link. A clear during the check wins: the click fails with "folder not
+   allowed" and opens nothing.
+7. **What a page can reach.** The calls `recent()`, `openRecent(folder)` and `clearRecent()`. The page asks by the
+   path of an entry; the main process opens only the stored entry. It cannot tell a click from a script, so a page
+   can reach the dialog picks of this run plus the at most 5 entries, each after its check. A path key, not an
+   index: a list that changes between the show and the click cannot open another folder.
+8. **"Clear list" ends no pick of the run.**
+9. **The UI.** The folder name with the full path as the tooltip and in the accessible name; a group labelled
+   "Recently Opened"; the message line is a live region; the focus goes to the folder button when the clicked entry
+   or the section goes; names and paths are bidi-isolated for `ar`; a root stays a root (`D:\`). "folder not
+   allowed" from a stale list shows no message. The texts in `en`, `es`, `zh-CN` and `ar` (Q948), not checked by
+   a native speaker.
+10. **The module.** `main/recent-folders.ts` holds the rules and the store (Node only); `take-scheme.ts` the
+    channels. `TakeHandler` gets `recent()`, `dialogFolder()` and `recordPick(folder, {recent: true})`.
+11. **Tests.** T-PLAY-87, 88 and 90 to 92 (unit), T-PLAY-89 and the new T-PLAY-62 (electron). The native dialog, the
+    wiring of `electron/main/api.ts` and the UI section are checked by hand.
+12. **A drive that is not connected.** Its entry leaves the list at the click (Q967 as written; Q987 asks the user).
+13. **Earlier entries.** ADR-8J08 decides the question of
+    [ADR-K907](K907-the-open-part-of-adr-wp77-picks-across-runs.md) (now rejected). The picks of the run stay as
+    [ADR-WP77](WP77-choices-of-the-player-label-and-picked-folders-lane.md) says: not saved, ended by a restart.
+    It also answers the sentence of [ADR-4D94](4D94-step-6a-choices-of-the-canvas-player.md) that the list file
+    waits for step 6c; the rule of ADR-4D94 that the picks of the run are not saved stays, so no entry supersedes it.
 
 ## Reason
 
-1. Q957 names "the folder dialog" of the player. The base recording folder is no folder the player played from.
-2. "Recently Opened" names opens, not only dialog picks. One list is the smallest store, and Q967 asks that a
-   clear also forgets the dialog folder.
-3. Q966: "an entry is the folder picked in the dialog".
-4. An entry that the next read leaves out would show once and then go.
-5. The file is untrusted input. An absolute, non-UNC path is safe as a `defaultPath` and as a key; the click
-   check refuses every other wrong item. 1 MiB holds 5 items of the largest length.
-6. A rename keeps the old file whole if the app ends during a write.
-7. The check of Q965 fails for both.
-8. Q967 names the list and the dialog folder only. A pick for the run is in memory and ends with the app.
-9. Q965: the page asks by entry; the main process opens only a stored entry.
-10. A name alone does not tell two folders with one name apart.
-11. to 14. Q967 asks for a short message and makes no exception; the unit tests run under Node with no Electron;
-    the harness cannot drive the native dialog.
+1. Q957 names the dialog of the player; the base recording folder is no folder the player played from.
+2. "Recently Opened" names opens. Q967 asks that a clear also forgets the dialog folder; with no `defaultPath`
+   it would not, on Windows.
+3. Q966: "an entry is the folder picked in the dialog". Q988 asks the user.
+4. The file is untrusted input. An absolute, non-UNC path is safe as a `defaultPath` and as a key; the check
+   refuses each other wrong item. 1 MiB holds 5 items of the largest length.
+5. A rename keeps the old file whole if the app ends during a write.
+6. Each error means that the folder cannot be opened now; Q967 says it leaves the list. A clear is the later act.
+7. Q965: the page asks by entry and cannot add a path.
+8. Q967 names the list and the dialog folder only.
+9. to 13. Q967 asks for a short message; a name alone does not tell two folders apart; the unit tests run with no
+   Electron; the harness cannot drive the native dialog; a full supersede of ADR-4D94 would restate a rule that
+   does not change.
 
 ## Alternatives rejected
 
-- A check of each entry at the start, to drop missing folders: the message of Q967 would never show, and the start
-  would touch each folder, also on a slow or a network drive.
+- A check of each entry at the start: the message of Q967 would never show, and the start would touch each folder.
+- Only ENOENT and ENOTDIR as "gone": an entry with no access would stay and fail at each click with no message.
 
 ## Open work
 

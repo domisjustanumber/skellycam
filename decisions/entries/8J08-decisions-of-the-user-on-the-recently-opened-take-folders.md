@@ -17,7 +17,7 @@ a 5 most recent folders rememebered in a Recently Opened section, with a UI opti
 4. **Q965.** A click on an entry of "Recently Opened" opens that folder directly, with no folder dialog. Only the
    main process reads or writes the list. Each entry is the real path stored at the pick. At the click the main
    process checks the path again: it exists, and it still resolves to the same real path. Only then can the page
-   read the folder. The page asks by entry. The page can never add a path to the list.
+   read the folder. The page can never add a path to the list.
 5. **Q966.** An entry is the folder picked in the dialog. The list is most recent first. A repeat pick moves the
    folder to the top. The sixth folder drops off.
 6. **Q967.** "Clear list" empties the list. It also forgets where the dialog opens. A recent folder that no longer
@@ -25,13 +25,8 @@ a 5 most recent folders rememebered in a Recently Opened section, with a UI opti
 7. **Q968.** The list is one file in the user data folder of the app: `recent-take-folders.json`. An old
    `picked-take-folders.json` stays not read and not deleted.
 
-This decides the question of [ADR-K907](K907-the-open-part-of-adr-wp77-picks-across-runs.md) (the part of ADR-WP77
-that waited for Q946; now rejected): the folders of the player dialog are remembered. The picks for the run stay as
-[ADR-WP77](WP77-choices-of-the-player-label-and-picked-folders-lane.md) says: they are not saved, and a restart ends
-them; only the list of this entry is saved. It also answers the sentence of
-[ADR-4D94](4D94-step-6a-choices-of-the-canvas-player.md) that the list file waits for step 6c: the saved list is
-`recent-take-folders.json`, now; the rule of ADR-4D94 that the picks of the run are not saved stays. The details that
-the user did not decide are in [ADR-FHP6](FHP6-choices-of-the-recently-opened-take-folders-lane.md) (proposed).
+The details that the user did not decide, and the earlier entries that this decides, are in
+[ADR-FHP6](FHP6-choices-of-the-recently-opened-take-folders-lane.md) (proposed).
 
 ## Reason
 
