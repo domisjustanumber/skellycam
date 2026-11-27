@@ -12,6 +12,7 @@ THREAD workers on the virtual clock, fake sources, synthetic JPEGs in tmp folder
 
 import asyncio
 import json
+import logging
 import os
 import signal
 import socket
@@ -150,10 +151,103 @@ def test_a_cancelled_take_start_still_finishes_the_take(monkeypatch, tmp_path):
     assert all(count == finished[0] for count in rows.values()) and finished[0] > 0, (finished, rows)
 
 
+async def _close_after_a_cancelled_close(manager, wait_s=0.3):
+    """A close of all groups that is cancelled while it waits, then a close of the lifespan end."""
+    first = asyncio.ensure_future(manager.close_all_camera_groups())
+    await asyncio.sleep(wait_s)
+    first.cancel()
+    try:
+        await first
+    except asyncio.CancelledError:
+        pass
+    await manager.close_all_camera_groups()
+
+
+@pytest.mark.parametrize("close", ["at once", "cancelled mid-wait"])
+def test_a_close_at_once_after_a_cancelled_start_waits_for_the_start(monkeypatch, tmp_path, close):
+    """The order of uvicorn (review of 0ed35cfc8): `/record/start` waits in a slow `start_take`, the limit cancels
+    it, and the lifespan end closes the groups at once, before the start set `self.take`. The close of all groups
+    waits for the take lock of each group first (9.1 item 3), so the start ends, and the close stops its take: the
+    manifest is `finished`, each camera has the frame count of the take, and no shielded task is left. The second
+    case cancels a first close while it waits, as a cancelled `DELETE /group/close/all`. Before the fix, the close
+    saw no take, closed the cameras under the start and left its task running: the manifest stayed `recording`."""
+    from skellycam.core.recorders.videos.recording_info import RecordingInfo
+
+    module = group_module()
+    finished = _finish_spy(monkeypatch)
+    starting = threading.Event()
+    with capture_app(monkeypatch, [FakeScript(), FakeScript()]) as app:
+        start_take = module.start_take
+
+        def slow_start_take(*args, **kwargs):
+            starting.set()
+            time.sleep(2.0)  # a slow disk: the cancel and the close come while the take folder is made
+            return start_take(*args, **kwargs)
+
+        monkeypatch.setattr(module, "start_take", slow_start_take)
+        ready_app_steps(app)
+        group = app.group
+        info = RecordingInfo(recording_name="take", recording_directory=str(tmp_path))
+        ended = app.client.portal.call(_cancel_when, lambda: app.manager.start_recording_all_groups(info),
+                                       starting.is_set)
+        assert group.take is None, "the start set its take before the close: the order of the test is lost"
+        if close == "at once":
+            _close_as_the_lifespan(app)
+        else:
+            app.client.portal.call(_close_after_a_cancelled_close, app.manager)
+        left = len(group._end_tasks)
+        camera_ids = list(app.factory.camera_ids)
+    assert ended == "cancelled"
+    state, rows = take_manifest(tmp_path)["state"], _rows(tmp_path, camera_ids)
+    assert (state, len(finished), left) == ("finished", 1, 0), (state, finished, left, rows)
+    assert all(count == finished[0] for count in rows.values()), (finished, rows)
+
+
+def test_an_error_of_a_shielded_stop_with_a_cancelled_caller_is_logged(monkeypatch, tmp_path):
+    """Review of 0ed35cfc8: the limit cancels a stop, then `take.finish` raises (a full disk). No caller gets the
+    error, so the group logs it at ERROR with its traceback (9.1 item 3). Before the fix, nothing logged it."""
+    from skellycam.core.take_recorder import Take
+    from skellycam.tests.capture.capture_session import capture_logs
+
+    module = group_module()
+    monkeypatch.setattr(module, "TAKE_QUEUE_SECONDS", 0.2)
+    monkeypatch.setattr(module, "TAKE_STALL_LIMIT_S", 60.0)
+
+    def full_disk(take, *args, **kwargs):
+        raise OSError("test: the disk is full")
+
+    monkeypatch.setattr(Take, "finish", full_disk)
+    collecting = threading.Event()
+    collect = module.CameraGroup._collect_results
+
+    def watched_collect(group):
+        collecting.set()
+        return collect(group)
+
+    monkeypatch.setattr(module.CameraGroup, "_collect_results", watched_collect)
+    with capture_logs() as logs, capture_app(monkeypatch, [FakeScript(), FakeScript()]) as app:
+        spies = Spies(monkeypatch, app)
+        hold = WriterHold(monkeypatch, app.factory.camera_ids[0])
+        ready_app_steps(app)
+        assert app.record_start(tmp_path).status_code == 200
+        record_until(app, spies, 30)
+        hold.start()
+        wait_blocked_in_give(app, spies, hold)
+        group = app.group
+        ended = app.client.portal.call(_cancel_when, group.stop_recording, collecting.is_set)
+        hold.stop()
+        app.wait(lambda: not group._end_tasks, "the shielded stop ends")
+        _close_as_the_lifespan(app)
+    assert ended == "cancelled"
+    logged = [message for message in logs.tracebacks() if "test: the disk is full" in message]
+    assert logged, logs.messages(logging.ERROR)
+
+
 # ----- the real server and a real signal -----
 
 SERVER_CHILD = Path(__file__).with_name("server_take_child.py")
-SLOW_STOP_S = 8.0  # longer than the shutdown limit of 9.1 item 5: the signal comes while the stop waits
+SLOW_STOP_S = 12.0  # the shutdown limit of 9.1 item 5 (5 s) falls inside the stop: the signal comes while it waits
+LIMIT_S = 5.0
 
 
 def _http(port, method, path, body=None, timeout=10.0):
@@ -177,7 +271,9 @@ def _signal_the_server(server):
 
 def test_a_signal_during_a_slow_take_stop_ends_with_the_take_finished(tmp_path):
     """Q928: the real server of `__main__` with two fake cameras records; a take stop waits for its cameras for
-    `SLOW_STOP_S`; then the server gets a real Ctrl-Break (Windows) or SIGINT. The process ends with exit code 0,
+    `SLOW_STOP_S`; then the server gets a real Ctrl-Break (Windows) or SIGINT. The take end must span the shutdown
+    limit (it starts before the signal and ends after the signal plus 5 s) and uvicorn must log its cancel, so the
+    test fails, not passes, when the stop came too late to be cancelled. The process ends with exit code 0,
     the manifest is `finished` with no `camera_dead`, and each camera has the same rows, more than zero, with a
     finished file (recorder.md 9.1 items 3 and 4)."""
     from skellycam.core.camera.config.camera_config import CameraConfig
@@ -199,9 +295,10 @@ def test_a_signal_during_a_slow_take_stop_ends_with_the_take_finished(tmp_path):
         "start_new_session": True}
     log = tmp_path / "server.out"
     recordings = tmp_path / "recordings"
+    times_file = tmp_path / "end_take_times.jsonl"
     with open(log, "w") as out:
         server = subprocess.Popen([sys.executable, str(SERVER_CHILD), str(port), str(tmp_path / "base"),
-                                   str(tmp_path / "server.log"), str(SLOW_STOP_S)],
+                                   str(tmp_path / "server.log"), str(SLOW_STOP_S), str(times_file)],
                                   stdout=out, stderr=subprocess.STDOUT, **group)
     stops = []
     try:
@@ -227,12 +324,19 @@ def test_a_signal_during_a_slow_take_stop_ends_with_the_take_finished(tmp_path):
             _http(port, "POST", "/skellycam/camera/group/all/record/stop", timeout=60.0)), daemon=True)
         stopper.start()
         time.sleep(1.0)  # the stop waits in `_collect_results`
+        signalled = time.time()
         _signal_the_server(server)
         code = server.wait(timeout=60)
     finally:
         if server.poll() is None:
             server.kill()
             server.wait()
+    output = log.read_text(errors="replace")
+    # The test must exercise the shield: the take end ran when the limit cancelled the stop request. Else it fails.
+    ends = [json.loads(line) for line in times_file.read_text(encoding="utf-8").splitlines()] if times_file.exists() else []
+    assert len(ends) == 1 and ends[0]["start"] < signalled and ends[0]["end"] > signalled + LIMIT_S, (
+        f"the take end did not span the limit; the shield was not exercised: ends={ends}, signal={signalled}")
+    assert "timeout graceful shutdown exceeded" in output, "uvicorn did not cancel a request at its limit"
     manifest = take_manifest(recordings)
     state, dead = manifest["state"], [w for w in manifest["warnings"] if w["code"] == "camera_dead"]
     assert (code, dead) == (0, []), (code, dead, log.read_text(errors="replace")[-3000:])
