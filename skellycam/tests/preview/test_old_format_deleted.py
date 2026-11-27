@@ -3,7 +3,8 @@
 search. The rule is the deletion itself. The test searches the files of 7.7 for the names of 7.7, and checks that
 each deleted file of 3.1 does not exist. It does not search the decision log, `specs/`, `skellycam/tests/preview/`,
 `node_modules`, build output or `.venv`. A name matches only as a whole word: `FRAME_HEADER_SIZE` must not match
-`CAMERA_FRAME_HEADER_SIZE`, the constant of the new parser (5.2) [ADR-70WD].
+`CAMERA_FRAME_HEADER_SIZE`, the constant of the new parser (5.2) [ADR-70WD]. `WebsocketServer._send_json` is
+checked as an attribute, not as a name: `PreviewRelay` keeps a `_send_json` of its own (7.7) [Q871].
 """
 
 import re
@@ -18,7 +19,8 @@ OLD_KEYS = ("frameNumber", "frameAcknowledgment", "backend_framerate", "frontend
 PYTHON_ONLY = ("frontend_payload_bytearray", "FRONTEND_FRAME_HEADER_DTYPE", "FRONTEND_PAYLOAD_HEADER_FOOTER_DTYPE",
                "get_latest_ring_payload", "get_latest_frontend_payloads", "get_backend_framerate_updates",
                "_frontend_image_relay", "check_frame_acknowledgment_status", "last_received_frontend_confirmation",
-               "BACKPRESSURE_WARNING_THRESHOLD", "FramerateUpdateMessage", "parse_relay")
+               "BACKPRESSURE_WARNING_THRESHOLD", "FramerateUpdateMessage", "parse_relay",
+               "read_latest_ring_frames")  # Q871
 UI_KEYS = ("frameAcknowledgment", "backend_framerate", "frontend_framerate")  # not frameNumber: CameraMessage has it
 UI_AND_DOCS = ("parseMultiFramePayload", "PAYLOAD_FOOTER", "FRAME_HEADER_SIZE", "FrameProcessor", "CanvasManager",
                "transferControlToOffscreen", "bitmaprenderer", "frame-decode.worker", "offscreen-renderer.worker")
@@ -67,3 +69,10 @@ def test_t_prv_30_the_names_of_the_old_format_are_gone():
 def test_t_prv_30_the_deleted_files_do_not_exist():
     """T-PRV-30: each deleted file of 3.1 does not exist."""
     assert [path for path in DELETED if (ROOT / path).exists()] == []
+
+
+def test_t_prv_30_the_server_has_no_send_json():
+    """T-PRV-30, 7.7 [Q871]: `WebsocketServer` has no `_send_json`; nothing sent JSON through it after 4b."""
+    from skellycam.api.websocket.websocket_server import WebsocketServer
+
+    assert not hasattr(WebsocketServer, "_send_json")

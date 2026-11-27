@@ -85,7 +85,7 @@ tile [P1, P5, P6]. After 4b, the wire carries one format, and the UI reads it [A
   label and the tile order in the player [Q5] belong to `specs/player.md` and the recorder spec
   [Q11].
 - A display of `measured_fps` of the camera status [agent 14].
-- The performance page and `CameraGroup.read_latest_ring_frames` [ring A5].
+- The performance page [ring A5].
 - A change of the Redux camera slice (`connectionStatus`, `failure`). The demo commits change it
   (5.7).
 - A warning of the recorder in the UI. "Captured" does not show a recorder problem as a lower line
@@ -164,7 +164,8 @@ Import path of the tile:
 | `framerate-store.ts` and the frame rate viewer: the two series "Server" (`backend`) and "Display" (`frontend`) | The two series "Captured" and "Displayed" for each camera, and the counts (5.8) [Q3] |
 | The docs of the group message (5.9) | The camera message, the ready message and the new `framerate_update` |
 
-`read_latest_ring_frames` stays for the performance data [ring A5]. The `FRAMERATE` subscription
+After the merge of 4b, `CameraGroup.read_latest_ring_frames` and `WebsocketServer._send_json` have
+no caller in the product. A later lane deletes both [Q871]. The `FRAMERATE` subscription
 of `CameraGroupManager` stays [agent 13].
 
 ### 3.2 Tests
@@ -178,8 +179,8 @@ of `CameraGroupManager` stays [agent 13].
 | The mocks `get_latest_frontend_payloads` and `get_backend_framerate_updates` in `skellycam/tests/conftest.py` | none (mocks) | The mock manager gets `closing = False` instead |
 | The two T-TIM-19 tests of the interim relay in `skellycam/tests/capture_timings/test_main_process.py` | the steps of the interim relay (`capture-timings.md` 6.5) | none: the relay is gone. The send-lock test of T-TIM-19 runs through `WebsocketServer.__init__` and its `PreviewRelay` [ADR-BPP8](../decisions/entries/BPP8-answers-of-the-user-q864-to-q873-on-the-step-4b-code.md) |
 
-Two tests that used a deleted name keep their rule [Q872]: `test_group_watch.py` reads with
-`read_latest_ring_frames`, and `test_websocket_internals.py` imports `ServerFramerateCalculator` from
+Two tests that used a deleted name keep their rule [Q872]: `test_group_watch.py` reads the ring
+reader on the event loop with no lock, as `PreviewRelay` does [Q871], and `test_websocket_internals.py` imports `ServerFramerateCalculator` from
 `framerate_tracker`. The counting relay of `ui_server.py` passes each keyword of the constructor of
 `PreviewRelay` on, and `test_pace_marker.py` lists the two halves of T-PRV-26 [Q872].
 
@@ -916,8 +917,9 @@ and `npm run test:player:browser` (Linux under `xvfb-run`). `doc-checks.yml` run
 - File: `skellycam/tests/preview/test_old_format_deleted.py`.
 - Set-up: none. The names and the files of 7.7, checked on `dom/integration` [S].
 - Steps: search the files of 7.7 for the names of 7.7. Do not search the decision log, `specs/` and
-  `skellycam/tests/preview/`. Check that each deleted file of 3.1 does not exist.
-- Pass: no hit; no deleted file exists. The rule is the deletion itself [P5].
+  `skellycam/tests/preview/`. Check that each deleted file of 3.1 does not exist, and that
+  `WebsocketServer` has no `_send_json` (7.7).
+- Pass: no hit; no deleted file exists; no `_send_json`. The rule is the deletion itself [P5].
 - Runs: no marker. `capture-windows`, `capture-linux`, `capture-macos`.
 - Must not: search `node_modules`, build output or `.venv`.
 
@@ -1254,7 +1256,9 @@ Files: `skellycam/**/*.py`, `skellycam-ui/src/**`, `skellycam-docs/docs/**` and
   `FRONTEND_PAYLOAD_HEADER_FOOTER_DTYPE`, `get_latest_ring_payload`, `get_latest_frontend_payloads`,
   `get_backend_framerate_updates`, `_frontend_image_relay`, `check_frame_acknowledgment_status`,
   `last_received_frontend_confirmation`, `BACKPRESSURE_WARNING_THRESHOLD`, `FramerateUpdateMessage`,
-  `parse_relay`.
+  `parse_relay`, `read_latest_ring_frames` [Q871].
+- Not a name search: `WebsocketServer` has no attribute `_send_json` [Q871]. `PreviewRelay` keeps
+  its own `_send_json`, the JSON send that the server passes in (4.1).
 - In UI files: `frameAcknowledgment`, `backend_framerate`, `frontend_framerate`. Not
   `frameNumber`: the parser field `CameraMessage.frameNumber` (5.2) is in the UI.
 - In UI files and docs: `parseMultiFramePayload`, `PAYLOAD_FOOTER`, `FRAME_HEADER_SIZE`,

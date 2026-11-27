@@ -180,7 +180,7 @@ ids are stable `snake_case` [U Q587 5].
 | `csv_row` | work | frame | `recorder_thread` | `_write_row` without its fsync (`camera_writer.py:300-308`): `sidecar.row_line` and `_write_line`. | `row_line`: 1.1 µs p50 [M ADR-3TYP]. The write: not measured. | all |
 | `fsync` | work | second | `recorder_thread` | `self._fsync_both()` (`camera_writer.py:311`, `:348`): `os.fsync` of the MKV and of the CSV. | p50 2.0 to 2.1 ms, max 29 to 182 ms with 16 writers at 1080p60 [M ADR-8RES] | all |
 | `mkv_close` | work | event | `recorder_thread` | All of `_finish` (`camera_writer.py:325-351`) minus the samples of `mkv_mux`, `csv_row` and `fsync` that it records: `close_container()`, the search of the last block in the file, the end line and the two file closes. | Not measured. | all |
-| `preview_ring_read` | work | frame | `main_process` | The ring read of the preview sender: `reader.read` in `PreviewRelay._newest_unsent` (`skellycam/api/websocket/preview_relay.py:163`, `:167`), or `reader.read_newest()` in `CameraGroup.read_latest_ring_frames` (`skellycam/core/camera_group/camera_group.py:559`) [U Q587 11]. | 0.08 / 0.25 ms median, 0.16 / 0.44 ms p99 at 720p / 1080p [M ADR-HDC9] | all |
+| `preview_ring_read` | work | frame | `main_process` | The ring read of the preview sender: `reader.read` in `PreviewRelay._newest_unsent` (`skellycam/api/websocket/preview_relay.py:163`, `:167`) [U Q587 11]. (The interim relay read with `reader.read_newest()` in `CameraGroup.read_latest_ring_frames`; Q871 deletes it after 4b.) | 0.08 / 0.25 ms median, 0.16 / 0.44 ms p99 at 720p / 1080p [M ADR-HDC9] | all |
 | `preview_pack` | work | frame | `main_process` | `pack_camera_frame(camera_id, read)` (`preview_relay.py:146`), or the build of the group message in `CameraGroup.get_latest_ring_payload` after its reads (`camera_group.py:573-596`) [U Q587 11]. | `pack_camera_frame`: 0.005 / 0.11 ms median [M ADR-HDC9]. Group message: not measured. | all |
 | `preview_send` | work | frame | `main_process` | The send of the bytes of one camera message, after the send lock of the connection: in `PreviewRelay`, which holds the lock that the server passes in (6.5). The wait for the send lock is outside it. | 0.13 / 0.23 ms median, 0.63 / 1.11 ms p99 with compression off [M ADR-HDC9] | all |
 | `ui_jpeg_decode` | work | frame | `ui_tile` | The call `this.#decode(p.u.jpeg!)` in `Tile.#next` to its result (`skellycam-ui/src/player/tile/tile.ts:170`): `decodeJpeg` with `ImageDecoder`, the EXIF undo and the decoder close (`tile.ts:73-87`, [player 8.1]). Only an update with `jpeg` and no `image`. | Not measured live. The player `ImageDecoder`: 2.7 ms median at 1080p, 1 tile; 3.7 ms at 4 tiles [M `decisions/evidence/1ACK-findings-of-the-6a-player-code.md`]. | all |
@@ -409,7 +409,8 @@ has `where`, `n`, `p50_ms`, `p95_ms` and `max_ms`; its `where` is the place of i
   `skellycam/tests/test_websocket_internals.py`, the import of the module (`:5-9`) and the classes
   `TestPerformanceDataHelpers` and `TestExtractPerformanceData`. `TestServerFramerateCalculator`
   stays. The stop response keeps `inter_camera_grab_range_ms_stats` for each take.
-- `read_latest_ring_frames` stays for the interim relay. This spec changes the two specs that named
+- `read_latest_ring_frames` stays for the interim relay (Q871 deletes it after 4b,
+  [`preview-4b.md`](preview-4b.md) 3.1). This spec changes the two specs that named
   `get_latest_performance_data`: [prv 2.3] and the table of [ring 2.1].
 
 ### 6.5 The preview sender [U Q587 11]
