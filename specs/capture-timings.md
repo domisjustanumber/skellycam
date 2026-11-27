@@ -8,7 +8,7 @@ Q583 and Q586 on 2026-11-23
 each one. The user accepted the choices of the agent as a set (Q587); section 13 and
 [ADR-8Z0Q](../decisions/entries/8Z0Q-choices-of-the-capture-timings-spec.md) list them. Steps 1 to 6
 of section 11 are built; the user decided the open choices of that build in Q837 to Q840 ([ADR-GZS7](../decisions/entries/GZS7-decisions-of-the-user-on-the-capture-timings-build-and-the-merge-order.md)).
-The tile part (step 8) comes with step 4b [U Q571, Q587].
+The tile part (step 8) is built after step 4b, in a lane of its own (Q870, [ADR-BPP8](../decisions/entries/BPP8-answers-of-the-user-q864-to-q873-on-the-step-4b-code.md)).
 
 ## 0. How to read this spec
 
@@ -538,6 +538,16 @@ built together with step 4b. The interim workers get no measurement (1.3).
   `node --experimental-strip-types --test`, as `npm run test:player:unit`. The brackets in the tile
   need a canvas: a test in `skellycam-ui/src/player/tests/browser/tile.spec.ts`, run by
   `npm run test:player:browser` (playwright). No new dependency.
+- **Details of the build** ([ADR-W3VD](../decisions/entries/W3VD-choices-of-the-tile-timings-lane.md), proposed).
+  The summary function is `buildSummary`. It takes the fields of the Python `build_summary`, with durations in
+  integer nanoseconds; the handle gives `Math.round(ms * 1_000_000)`. `timings.ts` holds a copy of `STEPS` and
+  `DELAYS`; T-TIM-24 compares it with the Python tables. `handle()` gives one handle for each camera id; a second
+  call gives the same handle and sets its group id. The window of a handle starts at `handle()`.
+  `takeSummaries()` gives a summary for each handle also when `on` is false. A bracket reads `on` at its start. A
+  decode that is superseded or fails gives a `ui_jpeg_decode` sample and no `ui_draw`; an update with `image` gives
+  `ui_draw`; a `blank` update gives none. skellycam-ui gives each tile `handle(cameraId, null)` through
+  `getTileTimings()` of `useServer()`, and sets `on` from the guard `isCaptureTimings` of `server-messages.ts`.
+  `PreviewTiles` stamps each message, also when the timings are off.
 
 ## 8. Interface note for FreeMoCap
 
@@ -720,8 +730,8 @@ user and a change of the certify spec. This spec does not change certify [U Q587
 | T-TIM-22 | Step registry: the `STEPS` constant (id, kind, cadence, where) equals table 3.1 and table 8.5; each id in each summary of T-TIM-06, T-TIM-12, T-TIM-13, T-TIM-19 and T-TIM-26 is in `STEPS`. | no |
 | T-TIM-23 | Budget: with the switch on, the camera loop calls `TimingControl.clock()` at most 10 times for each frame plus one time for each refused pass. Also a YUY2 camera with the fake Quick Sync encoder: at most 10 reads for each taken frame, at most 10 reads in each pass that gives a ring frame and 4 in a pass whose frame Quick Sync holds, and one `jpeg_encode` sample for each [ZEK6 11]. | no |
 | T-TIM-24 | One shape (node): the summary function of `tile/timings.ts` and the Python function give the same JSON for one shared fixture file of samples. | no |
-| T-TIM-25 | Tile off (playwright): with `timings.on` false, a tile with a handle calls `now` zero times; `takeSummaries()` gives summaries with `n` 0; a tile with no handle works as today. | no |
-| T-TIM-26 | Tile on (playwright): a fake decode seam and a fake `now` give `ui_jpeg_decode`, `ui_draw` and `receive_to_draw` with the expected values; an update with `image` gives no `ui_jpeg_decode`; a resize redraw and an overlay-only update give no `ui_draw`; a replaced message gives no sample; a second `takeSummaries()` with no new step gives `n` 0 and `seq` + 1. | no |
+| T-TIM-25 | Tile off (playwright): with `timings.on` false, a tile with a handle calls `now` zero times; `takeSummaries()` gives summaries with `n` 0; a tile with no handle works as today. A Node part (ADR-W3VD item 11): the guard `isCaptureTimings`. | no |
+| T-TIM-26 | Tile on (playwright): a fake decode seam and a fake `now` give `ui_jpeg_decode`, `ui_draw` and `receive_to_draw` with the expected values; an update with `image` gives no `ui_jpeg_decode`; a resize redraw and an overlay-only update give no `ui_draw`; a replaced message gives no sample; a second `takeSummaries()` with no new step gives `n` 0 and `seq` + 1. A Node part (ADR-W3VD item 11): `PreviewTiles` stamps `receivedAtMs` and passes it on; the stamp of a replaced message never reaches the tile. | no |
 
 ## 11. Build order
 

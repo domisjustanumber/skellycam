@@ -399,7 +399,8 @@ message given to the tile [Q872].
 
 ### 5.4 The tile for each camera
 
-`CameraView` makes `new Tile(canvas)` with the default options [player 8.3], and calls
+`CameraView` makes `new Tile(canvas, {}, {timing})` with the default options [player 8.3] and the timing handle of
+`capture-timings.md` 7 (`timing` is `getTileTimings().handle(cameraId, null)` of `useServer()`), and calls
 `previewTiles.setTile(cameraId, tile)` through `setTile(cameraId, tile)` of `useServer()`, which also gives a
 new tile the overlay values that the provider keeps: rule 9 of 5.3 drops them at a removal [Q872]. On unmount it calls `setTile(cameraId, null)` and
 `tile.close()`. The tile draws on the main thread with ImageDecoder [T, player 8.1].
@@ -414,6 +415,7 @@ The update of rule 3 of 5.3:
 | `rateText` | `<mean_frames_per_second to 1 decimal> fps` from `delivered_framerate` [4a 6.2]: the "Captured" rate (5.8); `null` when it is `null` [agent 7, A3] |
 | `cameraState` | `status.state` of `app_state`, when it is one of the eight states; else `null` [A4] |
 | `mark` | `{ kind: 'flagged' }` when `flags & 0x0F`; else `null` [P4] |
+| `receivedAtMs` | `now()` of `PreviewTiles` at the `receive` of the message; absent in an overlay update (`capture-timings.md` 7) |
 
 - `Number(frameNumber)` is exact up to 2^53. A frame number of a camera does not reach it.
 - **The camera list label** [Q5] [agent 20]. It is `Camera <number> · <name>`, for example
