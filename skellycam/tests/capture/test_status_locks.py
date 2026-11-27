@@ -13,6 +13,7 @@ from skellycam.core.camera_group.camera_status import CameraStatus
 from skellycam.core.capture_timings import PreviewTimings, TimingControl
 from skellycam.tests.capture import status_children
 from skellycam.tests.frame_ring import ring_children
+from skellycam.tests.pace import one_run
 
 SPAWN = multiprocessing.get_context("spawn")
 
@@ -33,13 +34,9 @@ def read_for(status, seconds):
     return reads
 
 
-@pytest.mark.capture_timing
-@pytest.mark.parametrize("locked", [True, False], ids=["writes with the lock", "writes with no lock"])
-def test_a_live_but_slow_holder_and_torn_json_never_raise(monkeypatch, locked):
-    """A live child holds the lock of `info` for 1.5 s, then writes `info` (with its lock, or with no lock). The
-    first main-process read goes on with no lock after 0.5 s and logs one line; the next reads of that stretch do
-    not wait (F4 of the review); the status does not stop the tries for good (the child is alive); no
-    JSONDecodeError escapes over many reads; the later reads take the lock again."""
+def _slow_holder_run(monkeypatch, locked):
+    """One run of the slow-holder test, as data: a live child holds the lock of `info` for 1.5 s, then writes `info`
+    (with its lock, or with no lock); the main process reads it (Q917 [ADR-N7ZR])."""
     from unittest.mock import Mock
 
     log = Mock()
@@ -51,17 +48,47 @@ def test_a_live_but_slow_holder_and_torn_json_never_raise(monkeypatch, locked):
         assert go.wait(60), "the child holds the lock"
         started = time.monotonic()
         status.info_dict()
-        assert time.monotonic() - started >= camera_status.ARRAY_LOCK_WAIT_S - 0.05
+        first_wait = time.monotonic() - started
         started = time.monotonic()
         status.info_dict()
-        assert time.monotonic() - started < 0.2, "a second wait in one stretch with no lock"
-        assert not status.holder_dead and "info" in status.no_lock
-        assert read_for(status, 3.0) > 100
-        assert not status.holder_dead and "info" not in status.no_lock  # the lock came again
-        assert log.error.call_count == 1
+        second_wait = time.monotonic() - started
+        dead_in_stretch, in_stretch = status.holder_dead, "info" in status.no_lock
+        reads = read_for(status, 3.0)  # a JSONDecodeError that escapes fails the test here
+        return dict(first_wait=first_wait, second_wait=second_wait, dead_in_stretch=dead_in_stretch,
+                    in_stretch=in_stretch, reads=reads, dead_at_end=status.holder_dead,
+                    stretch_at_end="info" in status.no_lock, errors=log.error.call_count)
     finally:
         stop.set()
         child.join(30)
+
+
+@pytest.mark.capture_timing
+@pytest.mark.parametrize("locked", [True, False], ids=["writes with the lock", "writes with no lock"])
+def test_a_live_but_slow_holder_and_torn_json_never_raise(monkeypatch, locked):
+    """A live child holds the lock of `info` for 1.5 s, then writes `info` (with its lock, or with no lock). The
+    status does not stop the tries for good (the child is alive); no JSONDecodeError escapes over many reads; the
+    later reads take the lock again. The checks that depend on the pace (the first read waits 0.5 s and logs one
+    line, the next reads of that stretch do not wait (F4 of the review), the count of reads) are
+    `test_a_live_but_slow_holder_waits_once_and_logs_one_line` (Q917 [ADR-N7ZR])."""
+    run = one_run(f"slow holder {locked}", lambda: _slow_holder_run(monkeypatch, locked))
+    assert not run["dead_in_stretch"] and not run["dead_at_end"]
+    assert not run["stretch_at_end"]  # the lock came again
+
+
+@pytest.mark.pace  # Q917: the waits and the counts need the main process to read within the hold of 1.5 s
+@pytest.mark.capture_timing
+@pytest.mark.parametrize("locked", [True, False], ids=["writes with the lock", "writes with no lock"])
+def test_a_live_but_slow_holder_waits_once_and_logs_one_line(monkeypatch, locked):
+    """The `pace` half of the slow-holder test (Q917 [ADR-N7ZR]): the first main-process read goes on with no lock
+    after 0.5 s and logs one line; the next read of that stretch does not wait (F4 of the review); more than 100 reads
+    in 3 s. CI runs: WSL on 2 cores, 1 of 20 ("info" not in `no_lock` after the second read, evidence item 13 of
+    ADR-4CAF); macOS arm64, two error lines (CI run 45925313532)."""
+    run = one_run(f"slow holder {locked}", lambda: _slow_holder_run(monkeypatch, locked))
+    assert run["first_wait"] >= camera_status.ARRAY_LOCK_WAIT_S - 0.05
+    assert run["second_wait"] < 0.2, "a second wait in one stretch with no lock"
+    assert run["in_stretch"]
+    assert run["reads"] > 100
+    assert run["errors"] == 1
 
 
 def test_a_torn_info_gives_the_last_good_value():
