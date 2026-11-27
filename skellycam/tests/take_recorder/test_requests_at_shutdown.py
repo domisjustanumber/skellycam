@@ -138,3 +138,30 @@ def test_a_cancelled_detection_leaves_nothing_after_the_close(monkeypatch):
         left = _nothing_left(app, [])
     assert ended == "cancelled"
     assert left == {"groups": [], "rings": []}, left
+
+
+def test_a_record_start_while_a_second_close_still_runs_gets_409(monkeypatch, tmp_path):
+    """Review of e9eef6e1c: two closes of all groups overlap; the first ends while the second still runs. A record start
+    then still gets 409: the `closing` value counts the closes that run (9.1 item 7)."""
+    module = group_module()
+    calls = []
+    close_cameras = module.CameraGroup._close_cameras
+
+    def slow_close_cameras(group):
+        calls.append(1)
+        time.sleep(0.5 if len(calls) == 1 else 3.0)  # the second close is still in its close when the first ends
+        return close_cameras(group)
+
+    monkeypatch.setattr(module.CameraGroup, "_close_cameras", slow_close_cameras)
+    with capture_app(monkeypatch, [FakeScript(), FakeScript()]) as app:
+        ready_app_steps(app)
+        first = app.client.portal.start_task_soon(app.manager.close_all_camera_groups)
+        app.wait(lambda: len(calls) == 1, "the first close reaches the cameras")
+        second = app.client.portal.start_task_soon(app.manager.close_all_camera_groups)
+        app.wait(lambda: len(calls) == 2, "the second close reaches the cameras")
+        first.result(30)
+        assert not second.done(), "the second close ended with the first: the overlap of the test is lost"
+        response = app.record_start(tmp_path)
+        second.result(30)
+    assert response.status_code == 409, response.text
+    assert response.json()["detail"] == "The cameras close: no recording starts", response.text

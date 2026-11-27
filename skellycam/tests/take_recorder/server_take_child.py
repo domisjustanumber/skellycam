@@ -1,12 +1,12 @@
-"""The real server of `skellycam/__main__.py` with two fake cameras, for `test_take_end_cancel.py`.
+"""The real server of `skellycam/__main__.py` with two fake cameras, for the take recorder tests of the shutdown.
 
 argv: port, base folder, log file, slow seconds, times file. No telemetry, no bytecode pass, the base folder (also of
 the restore files) and the log file in a temporary folder. Detection gives the fake cameras, and the camera processes
-open fake sources. The wait of a take stop for the cameras (`_collect_results`) first waits the slow seconds, or until a camera
-process ends. The
-times file gets one JSON line when a take end (`_end_take`) starts and one when it ends, with the wall-clock time,
-one line with the names of the frame rings when a group has started, and one line for each signal that
-uvicorn takes.
+open fake sources. The wait of a take stop for the cameras (`_collect_results`) first waits the slow seconds, or until
+a camera process ends; with slow seconds below 0 it hangs for ever, as a disk call that hangs. The times file gets one
+JSON line for each of these: a take end (`_end_take`) starts or ends; a group has started (the names of its frame
+rings); uvicorn takes a signal (`signal`); the handler of `__main__` gets a signal (`ctrl`) or makes the abort
+(`abort`, with the kill flag); a camera process is ended with `terminate` or `kill` (`terminate`, `kill`).
 """
 
 import json
@@ -22,6 +22,7 @@ import skellycam.app as app_module
 import skellycam.core.camera_group.camera_group as group_module
 import skellycam.core.camera_group.camera_group_manager as manager_module
 import skellycam.system.default_paths as default_paths
+from skellycam.core.ipc.process_management.managed_worker import ManagedProcess
 from skellycam.tests.capture.fake_source import FakeScript, FakeSourceFactory
 
 port, base_folder, log_file, slow_s, times_file = sys.argv[1:6]
@@ -55,7 +56,9 @@ _collect = group_module.CameraGroup._collect_results
 
 def _slow_collect(group):
     """A slow disk: the wait for the cameras takes the slow seconds, but it ends early when a camera process ends, as
-    the wait of the product gives up on a camera that ended (`GIVE_UP_AFTER_EXIT_S`)."""
+    the wait of the product gives up on a camera that ended (`GIVE_UP_AFTER_EXIT_S`). Below 0: it hangs for ever."""
+    while float(slow_s) < 0:
+        time.sleep(1.0)
     deadline = time.monotonic() + float(slow_s)
     workers = list(group.cameras.camera_workers.values())
     while time.monotonic() < deadline and not any(worker.worker.exitcode is not None for worker in workers):
@@ -92,6 +95,30 @@ def _noted_handle_exit(server, sig, frame):
 
 
 uvicorn.Server.handle_exit = _noted_handle_exit
+_abort_handler = getattr(skellycam_main, "abort_on_a_second_ctrl_c", None)
+
+
+def _noted_abort_handler(server, kill_flag, **kwargs):
+    handler = _abort_handler(server, kill_flag, **kwargs)
+
+    def noted(signum, frame):
+        _write_time("ctrl", number=int(signum))
+        aborted = server.force_exit
+        handler(signum, frame)
+        if server.force_exit and not aborted:
+            _write_time("abort", kill_flag=bool(kill_flag.value))
+
+    return noted
+
+
+if _abort_handler is not None:
+    skellycam_main.abort_on_a_second_ctrl_c = _noted_abort_handler
+for _name in ("terminate", "kill"):  # a camera process that the kill flag did not end
+    def _noted(worker, *args, _end=getattr(ManagedProcess, _name), _event=_name, **kwargs):
+        _write_time(_event, name=worker.name)
+        return _end(worker, *args, **kwargs)
+
+    setattr(ManagedProcess, _name, _noted)
 
 
 async def _timed_end_take(group):

@@ -43,6 +43,17 @@ def _worker_that_respects_kill_flag(
 # ---------------------------------------------------------------------------
 
 class TestManagedThread:
+    def test_join_of_a_thread_never_started_returns_at_once(self) -> None:
+        """Q972 [ADR-F7BK], recorder.md 9.1 item 8: as `ManagedProcess.join` for a process never started."""
+        thread = ManagedThread(
+            target=_worker_that_exits_cleanly,
+            name="test-never-started",
+            shutdown_flag=multiprocessing.Value("b", False),
+            log_queue=None,
+        )
+        thread.join(timeout=2.0)
+        assert not thread.is_alive()
+
     def test_thread_starts_and_exits(self) -> None:
         kill_flag = multiprocessing.Value("b", False)
         thread = ManagedThread(
