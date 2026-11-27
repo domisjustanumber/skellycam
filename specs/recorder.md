@@ -1093,9 +1093,23 @@ choices [ADR-06PW](../decisions/entries/06PW-choices-of-the-shutdown-limit-lane.
    - **What it can cut.** Any other request that still runs after 5 s, for example an apply, a detection or an
      exposure search. The thread that such a request started runs on; then the lifespan end closes the groups. This
      case is not tested.
-6. [NV] Linux and macOS: items 1, 3 and 5 apply on each system; the selector transports call
+6. [NV] Linux and macOS: items 1, 3, 5, 7 and 8 apply on each system; the selector transports call
    `Server._detach` in a `finally` after `socket.close()`, so no lost connection is known there. The port-in-use
    hang and the Ctrl-Break faults were seen on Windows only.
+7. **A record start during the close of the groups gets 409 (Q935).** While `close_all_camera_groups` runs (the
+   background close of `/shutdown`, the close of the lifespan end, `DELETE /group/close/all`), the manager refuses a
+   record start with 409 and the text "The cameras close: no recording starts". No take folder is made. Before this
+   rule, the start reached the closing cameras and got 500 ("Cannot change camera state: camera group has
+   stopped."). A start that waits for the take lock of its group before the close begins is an ordinary start: the
+   close waits for it (item 3) and stops its take.
+8. **Other requests cut by the limit (Q935).** `take_recorder/test_requests_at_shutdown.py` cancels an apply while
+   the group starts its camera workers, an exposure search in its wait loop, and an apply in its detection, as
+   uvicorn cancels a request at its limit; then it closes the groups as the lifespan end does. Nothing is left: no
+   group, no live camera worker, no frame ring that a reader can attach, and the search flag is clear. The apply
+   runs with camera processes (the product) and with THREAD workers. With THREAD workers (tests, the thread session
+   of certify), the close of a group whose start loop stopped early raises: `ManagedThread.join` joins a thread that never started
+   (`ManagedProcess.join` skips a process that never started). That case is a strict `xfail` until the user decides
+   (open work).
 
 ## 10. Connection to the shared loop (after step 3a)
 
