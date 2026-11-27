@@ -41,8 +41,10 @@ test('T-PLAY-41 rotations: the quadrants at the upright corners', async ({harnes
     const built = h.build(planOf('rotations'));
     await h.page.evaluate(folder => window.harness.openPlayer(folder), built.dir);
     for (const [i, cam] of built.plan.cameras.entries()) {
-        await expect.poll(() => h.page.evaluate(n => window.harness.readPlayerTile(n), i)).toMatchObject({camera: cam.index, position: 0});
-        const r = await h.page.evaluate(n => window.harness.readPlayerTile(n), i);
+        // the quadrants of the same reading as the barcode: a second read could come between a resize of the canvas,
+        // which clears it, and the redraw of the tile
+        let r = await h.page.evaluate(n => window.harness.readPlayerTile(n), i);
+        await expect.poll(async () => (r = await h.page.evaluate(n => window.harness.readPlayerTile(n), i))).toMatchObject({camera: cam.index, position: 0});
         r.quadrants.forEach((q: Rgb, j: number) => expect(near(q, ycbcrToRgb(QUADRANTS[j])), `rotation ${cam.rotation} quadrant ${j}: ${q}`).toBe(true));
     }
     await h.page.evaluate(() => window.harness.closePlayer());

@@ -15,6 +15,7 @@ interface States {
     states: Record<string, string | null>;
     alive: Record<string, boolean>;
     at: number;
+    applies: ({status: number; text: string} | null)[];   // the answer of each apply; null while it runs
 }
 
 const states = (server: UiServer) => server.command<States>({cmd: 'states'});
@@ -34,15 +35,16 @@ async function waitStates(server: UiServer, want: Record<string, string>, timeou
 async function stateTimes(server: UiServer, page: Page, id: string, state: string, timeoutMs = 30_000) {
     let atServer: number | null = null;
     let atTile: number | null = null;
+    let last: States | null = null;
     const deadline = Date.now() + timeoutMs;
     while ((atServer === null || atTile === null) && Date.now() < deadline) {
-        const s = await states(server);
+        const s = last = await states(server);
         if (atServer === null && s.states[id] === state) atServer = s.at;
         const o = await page.evaluate(i => window.preview.overlay(i), id);
         if (atTile === null && o?.state === state) atTile = Date.now();
         await sleep(50);
     }
-    expect(atServer, `the server gives ${state} for ${id}`).not.toBeNull();
+    expect(atServer, `the server gives ${state} for ${id} (last states ${JSON.stringify(last?.states)}, applies ${JSON.stringify(last?.applies)})`).not.toBeNull();
     expect(atTile, `the tile of ${id} shows ${state}`).not.toBeNull();
     expect(atTile! - atServer!, `the tile of ${id} shows ${state} within ${SHOW_WITHIN_MS} ms of its change in app_state`)
         .toBeLessThanOrEqual(SHOW_WITHIN_MS);
@@ -63,6 +65,9 @@ test('T-PRV-44 the states of the cameras, with no filter on alive', async ({prev
 
     await server.command({cmd: 'apply'});
     await waitStates(server, {[A.id]: 'failed', [B.id]: 'failed', [C.id]: 'ready'}, 60_000);
+    // the states can be final before the first apply answers; a second apply while it runs is refused (409)
+    await expect.poll(async () => (await states(server)).applies[0]?.status ?? null,
+        {message: 'the first apply has its answer', timeout: 60_000}).not.toBeNull();
     // A opens again; its second open holds in `starting`
     await server.command({cmd: 'apply', retry: [A.id]});
     await stateTimes(server, page, A.id, 'starting');
