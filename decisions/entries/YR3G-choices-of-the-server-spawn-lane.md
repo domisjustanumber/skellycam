@@ -17,7 +17,10 @@ output passed that size. That can end a take early (Linux, macOS) or leave an or
 4. **stdin stays a pipe**, as with `exec`.
 5. **No kill anywhere.** The app had none, and gets none.
 6. **A path that cannot start fails at the start** (no PID), where the shell before ended at once with an error
-   code. The existing retry of the renderer then tries the found candidate.
+   code. The existing retry of the renderer then tries the found candidate. On Windows a path that is not an
+   executable image (`.bat`, `.cmd`, `.py`, picked through the "All Files" filter) no longer starts: `spawn` throws
+   at once (EINVAL for `.cmd`, EFTYPE for `.py` on Node 26.13.1) and the user sees "Start failed: spawn EINVAL".
+   Through `cmd.exe` such a path started.
 7. **The test** starts a real Node child that writes 105 MiB to each stream. It is in `test:player:unit` (CI). It
    takes about one second.
 

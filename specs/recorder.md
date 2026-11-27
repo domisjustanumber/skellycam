@@ -1207,7 +1207,10 @@ The rules:
    `cmd.exe`, so the PID in the server section of the connection menu is the PID of the server, and the exit is the
    exit of the server. A path that cannot start now fails at the start (no PID: "Start failed: …", and a stored path
    is then replaced by the found candidate, as for each failed start), where the shell started and then ended with
-   an error code.
+   an error code. On Windows a path that is not an executable image (a `.bat`, `.cmd` or `.py` file, which the
+   "All Files" filter of the file picker allows) no longer starts: `spawn` throws at once (EINVAL for `.cmd`, EFTYPE
+   for `.py` on Node 26.13.1), the user sees "Start failed: spawn EINVAL", and the retry of the renderer runs.
+   Through `cmd.exe` such a path started.
 4. **Test.** T-APP-06 (unit, `electron/main/services/tests/server-process.test.ts`): `startServerProcess` starts a
    real Node child (`process.execPath`, which has a space on the Windows test machine, and the script
    `big-output-child.mjs`) that writes 105 MiB to stdout, then 105 MiB to stderr, then the bind-error line. When

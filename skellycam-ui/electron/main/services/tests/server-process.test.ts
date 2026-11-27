@@ -9,7 +9,8 @@ import { startServerProcess } from '../server-process.ts';
 const CHILD = fileURLToPath(new URL('./big-output-child.mjs', import.meta.url));
 const LINE = "ERROR:    [Errno 10048] error while attempting to bind on address ('127.0.0.1', 53117): end\n";
 
-test('T-APP-06: a server that writes more than 100 MiB to stdout and to stderr still runs, with a PID (9.3)', async () => {
+// Its own timeout: a start that leaves stdout piped and unread would block the child and hang the run
+test('T-APP-06: a server that writes more than 100 MiB to stdout and to stderr still runs, with a PID (9.3)', { timeout: 90_000 }, async () => {
     const { child, stderrTail } = startServerProcess(process.execPath, [CHILD]);
     const exit = once(child, 'exit');
     try {

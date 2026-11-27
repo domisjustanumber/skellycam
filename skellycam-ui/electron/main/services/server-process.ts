@@ -12,6 +12,7 @@ export interface ServerProcess {
  * No shell and no output limit, so no output size can kill or detach the server. stdout goes to the null device
  * (nobody read it; it cannot fill or block); stderr is read at all times and only its tail is kept (9.2 item 2).
  */
+// The caller must add an 'error' listener before the next tick (python-server.ts does), or ENOENT crashes the main process
 export function startServerProcess(executablePath: string, args: string[] = []): ServerProcess {
     const child = spawn(executablePath, args, { env: { ...process.env }, stdio: ['pipe', 'ignore', 'pipe'] });
     let tail = '';
