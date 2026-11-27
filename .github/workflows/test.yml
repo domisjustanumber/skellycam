@@ -97,7 +97,13 @@ jobs:
           cache-dependency-path: skellycam-ui/package-lock.json
 
       - name: Install dependencies
+        id: deps
         run: npm ci --ignore-scripts
 
       - name: Typecheck
         run: npx tsc --noEmit
+
+      # Q897 [ADR-S1DJ]: the root tsconfig.json leaves out the test folders; this config adds them.
+      - name: Typecheck the test code
+        if: ${{ !cancelled() && steps.deps.outcome == 'success' }}
+        run: npx tsc -p tsconfig.tests.json --noEmit

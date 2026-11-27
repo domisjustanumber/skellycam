@@ -66,7 +66,7 @@ test('T-PRV-40 the grid lists each camera with no filter on alive, in the order 
     assert.equal(values.overlays.c4.label, 'Camera 4 · USB Camera', 'not in the list: the config');
     assert.equal(values.overlays.c1.label, cameraLabel(LIST[0]));
     for (const [id, o] of Object.entries(values.overlays)) {
-        for (const other of ['c1', 'c2', 'c3', 'c4']) assert.ok(!o.label.includes(other), `the label of ${id} holds the camera id ${other}`);
+        for (const other of ['c1', 'c2', 'c3', 'c4']) assert.ok(!o.label!.includes(other), `the label of ${id} holds the camera id ${other}`);
     }
     const notAlive = appStateValues(appState({g1: {alive: false, cameras: {c1: {state: 'failed'}, c2: {state: 'starting'}, c3: {state: 'ready'}}}}) as never, LIST);
     assert.deepEqual(notAlive.connectedCameraIds, ['c3'], 'the group that is not alive: only c3 streams');

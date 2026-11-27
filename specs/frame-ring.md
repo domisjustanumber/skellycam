@@ -1167,7 +1167,13 @@ The user decided items 63 to 67 on 2026-11-19, after items 60 to 62
     the certify suite of a later task and is not run by hand now. The user has not decided
     T-RING-35 (arm64 CI) yet.
 68. The user decided on 2026-11-19 to add the arm64 CI job now ([ADR-7DE6](../decisions/entries/7DE6-arm64-ci-job-for-the-portable-frame-ring-tests.md)).
-    The workflow `.github/workflows/ring-arm64.yml` has one job on `ubuntu-24.04-arm`. It runs on
-    each push to `dom/native-jpeg` that changes the ring, its tests, this spec, `pyproject.toml`
-    or `uv.lock`, and by hand. The job has not run yet. This item applies items 51 and 67 to
-    T-RING-35 and T-RING-48.
+    The workflow `.github/workflows/ring-arm64.yml` has one job, `ring-portable`, on
+    `ubuntu-24.04-arm`. It runs on each push to `dom/native-jpeg` or `dom/integration`
+    ([ADR-S1DJ](../decisions/entries/S1DJ-decisions-of-the-user-on-the-ci-lane.md), Q915) that
+    changes the ring, its tests, this spec, `pyproject.toml`, `uv.lock` or the workflow file, and by
+    hand. It has no `pull_request` trigger. It installs uv `0.13.7`, the uv of the workflows
+    (ADR-S1DJ, Q854), Python 3.13.18 and the `dev` group as `test.yml` does. It runs
+    `uv run pytest skellycam/tests/frame_ring -m "ring_portable and not pace" -q` with
+    `SKELLYCAM_RING_FULL=1`, and the tests with the marker `pace` in a step that does not block
+    (Q619). The time limit is 20 minutes, and the permission is `contents: read`. The job has not
+    run yet. This item applies items 51 and 67 to T-RING-35 and T-RING-48.

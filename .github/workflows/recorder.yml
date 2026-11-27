@@ -61,6 +61,21 @@ jobs:
       - name: Install dependencies
         run: uv sync --group dev --python 3.13.18
 
+      # Q922 [ADR-D2YZ, ADR-C47T]: T-REC-36 waited on the C: disk of the runner. The temp folder goes to the D:
+      # drive when the runner has one; else it stays the default. Not run on a runner yet.
+      - name: Put the temp folder on the D drive
+        shell: pwsh
+        run: |
+          try {
+            if (-not (Test-Path 'D:\')) { throw 'the runner has no D: drive' }
+            $temp = (New-Item -ItemType Directory -Force -Path 'D:\tmp').FullName
+            "TEMP=$temp" >> $env:GITHUB_ENV
+            "TMP=$temp" >> $env:GITHUB_ENV
+            "The temp folder is $temp"
+          } catch {
+            "The temp folder stays $env:TEMP ($_)"
+          }
+
       - name: Run the recorder tests
         run: uv run pytest skellycam/tests/take_recorder -m "not recorder_bench and not pace"
 
