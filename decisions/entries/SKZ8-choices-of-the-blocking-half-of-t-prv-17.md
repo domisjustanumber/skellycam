@@ -1,6 +1,10 @@
 # SKZ8 — Choices of the blocking half of T-PRV-17
 
-**Status:** proposed, 2026-11-27 (agent; builds Q923 of [ADR-D2YZ](D2YZ-decisions-of-the-user-on-t-rec-36-t-prv-17-and-the-slow-holder-reading.md); waits for the user).
+**Status:** absorbed into
+[`specs/preview.md#91-kinds-and-helpers`](../../specs/preview.md#91-kinds-and-helpers),
+[`skellycam/tests/preview/test_ws_flow.py`](../../skellycam/tests/preview/test_ws_flow.py),
+2026-11-27 (commit to dom/answers-q929; was accepted, 2026-11-27 (user, Q942 of [ADR-318R](318R-decisions-of-the-user-on-q942-to-q955.md)); was proposed,
+2026-11-27 (agent; builds Q923 of [ADR-D2YZ](D2YZ-decisions-of-the-user-on-t-rec-36-t-prv-17-and-the-slow-holder-reading.md); waits for the user)).
 
 ## Decision
 

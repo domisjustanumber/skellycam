@@ -1348,8 +1348,14 @@ test list of the encode at capture (2026-11-25).
   largest gap of the loop passes of `test_the_watch_ends_no_healthy_camera_under_load` with THREAD workers, and
   with PROCESS workers (Q721, [ADR-2AQT](../decisions/entries/2AQT-decision-of-the-user-on-the-gap-of-the-stall-test-with-process-workers.md)); and
   the shares and the counts of messages of [`preview.md`](preview.md) 9.2. The blocking half of the test under load
-  keeps, with THREAD and with PROCESS workers: no healthy camera is ended, both cameras stay `ready`, and the loops
-  keep passing (Q721). T-CAP-110 (16.2) and the gate test
+  keeps, with PROCESS workers: no healthy camera is ended, both cameras stay `ready`, and the loops keep passing
+  (more than 30 passes in the 12 s, Q721). With THREAD workers the camera loops share the GIL of the test process, a
+  mode that the product does not use, and a loop that gets no GIL for 2 s ends by the in-process rule (CI run
+  45933928951, [evidence](../decisions/evidence/stall-watch-under-load-thread-20261127.md)). There these three
+  checks are the `pace` test `test_no_camera_ends_under_load_with_thread_workers` [U Q931]
+  [ADR-6PJ2](../decisions/entries/6PJ2-decisions-of-the-user-on-q929-to-q941.md), and the blocking half keeps that
+  each loop passes under the load (at least one pass)
+  [ADR-9GHT](../decisions/entries/9GHT-choices-of-the-answers-lane-of-q929-to-q955.md) (proposed). T-CAP-110 (16.2) and the gate test
   have no fixed count of rows (Q671): conditions replace the counts. The gate test waits for frame 300 of camera A
   with a loose time limit, not for 12 s, and the take must hold the gap of A.
   The nominal value of a gap between two frames of one camera is one frame period (1/30 s), so the tolerance of
@@ -2632,8 +2638,11 @@ side of these rules is the certify checks of section 20 of [`certify.md`](certif
   in the error style of the camera list, `role="alert"`); the inputs point at it with `aria-describedby`
   [U Q899]. The line goes at a valid custom size, at a preset, at an empty field and when the resolution
   changes from another control. The two texts are also in the locale files of Spanish, Chinese
-  (Simplified) and Arabic, the three languages of the docs copies; the other locales fall back to English
-  [U Q900, ADR-CM9S 2]. A translation keeps "1280 × 720" and "640 × 360" as in English (T-CAP-165). The note and the line use the gray and the error text styles of the camera
+  (Simplified) and Arabic, the three languages of the docs copies; the other 37 locales fall back to English until
+  there are native-speaker translations, and a native speaker reviews the three before a release [U Q900, Q948,
+  ADR-CM9S 2]. A translation keeps "1280 × 720" and "640 × 360" as in English (T-CAP-165). In the Arabic file each
+  size is in a left-to-right isolate (U+2066 before it, U+2069 after it), else the right-to-left text shows
+  "720 × 1280". No test checks that all locale files have the same keys. The note and the line use the gray and the error text styles of the camera
   list. The UI has its own copy of the two bounds in `resolution-floor.ts`, with its unit test (T-CAP-165)
   [U Q900]. The default size of a camera config is 1280x720, the size that the user
   calls ideal (Q888).
@@ -2848,7 +2857,8 @@ The user decided on 2026-11-26, spec and tests first: the check of 13.2 runs in 
 and a hang or a crash means "no Quick Sync, use OpenCV" (Q879,
 [ADR-4TBY](../decisions/entries/4TBY-decisions-of-the-user-on-the-review-of-the-3b-code.md) item 4). A mark
 [VTW3 n] is item n of [ADR-VTW3](../decisions/entries/VTW3-choices-of-the-quick-sync-check-in-a-child-process.md), a
-proposed choice of an agent.
+choice of an agent that the user accepted (Q937 of
+[ADR-6PJ2](../decisions/entries/6PJ2-decisions-of-the-user-on-q929-to-q941.md)).
 
 1. **One mechanism.** The bounded child call of the detection (7.1) becomes one function of
    `capture/bounded.py`: `in_child(stage, what, target, args, *, limit_s, name)`. It starts a child with the
@@ -2889,8 +2899,8 @@ proposed choice of an agent.
    no Intel GPU, so it stays at INFO; only a fault of the child is a WARNING [VTW3 4].
 5. **No process left.** After a time-out or a crash no check child is left: the call kills the child and joins it.
    A child that gives its answer and then does not end is joined for 5 s, then killed; its answer stands, and
-   `check_ms` is still the time to the answer. Whether such a child means "does not work" is a question for the user
-   (ADR-VTW3). A child whose start fails (a target that does not pickle) can exist for a short time on Windows,
+   `check_ms` is still the time to the answer. The user decided that such a child means "does not work", with one
+   WARNING line (Q938 of ADR-6PJ2); that is not built yet (open work), and T-CAP-175 tests the code of today. A child whose start fails (a target that does not pickle) can exist for a short time on Windows,
    because the process starts before the pickling; it ends by itself within about 2 s. A test checks each case with
    a process listing [VTW3 5].
 6. **App start.** The child starts only at the first accepted request that opens a raw camera (22.2). The start of

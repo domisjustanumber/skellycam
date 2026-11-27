@@ -41,10 +41,11 @@ task. Delete an item when its work is done. The PR that closes an item records t
     phase 2 loop (W8); it changes after the redaction decision of that file.
   - Step 3b (section 22, merged). No test of the real `QuickSyncEncoder` or of the raw path
     of Media Foundation; 22.5 not run. The Quick Sync check is [NV] off the development machine until a certify
-    report gives `system:quick-sync` (22.7; [ADR-VTW3](entries/VTW3-choices-of-the-quick-sync-check-in-a-child-process.md)).
-    Question for the user (Q900, [ADR-CM9S](entries/CM9S-choices-of-the-clean-ups-lane.md) item 2): the tracking note and the
-    size error line are in es, zh-CN and ar only. Only these three, or all 40 locale files? Recommended: these three
-    now, the rest when there are native-speaker translations. Q809: the 3c tests of `dom/3bc-tests` come later.
+    report gives `system:quick-sync` (22.7). Q809: the 3c tests of `dom/3bc-tests` come later.
+  - Q938 ([ADR-6PJ2](entries/6PJ2-decisions-of-the-user-on-q929-to-q941.md) item 10), test first: a Quick Sync check child that answers "works" and then does not end counts as
+    "does not work", with one WARNING line (22.7 item 5, T-CAP-175).
+  - Q949 ([ADR-318R](entries/318R-decisions-of-the-user-on-q942-to-q955.md) item 8), a small lane, test first: a camera loop keeps a failure that the stall watch already wrote.
+  - Q948: a native speaker reviews the note and the size error line in es, zh-CN and ar before a release (22.2).
   - Phase 7: the parity table of section 16.7 of the spec is the to-do list for Linux and macOS
     (14 tests with no counterpart yet).
 - **Support virtual cameras.** Detection shows a virtual camera with `virtual=True`, and a request
@@ -84,8 +85,6 @@ task. Delete an item when its work is done. The PR that closes an item records t
 - **Phase 4 (live preview)** ([`specs/preview.md`](../specs/preview.md), [`specs/preview-4b.md`](../specs/preview-4b.md);
   [ADR-BPP8](entries/BPP8-answers-of-the-user-q864-to-q873-on-the-step-4b-code.md)). Open:
   - M-PRV-4 on Linux ([ADR-HDC9](entries/HDC9-measurements-m-prv-1-to-m-prv-5-of-the-preview-sender.md)).
-  - The next CI run of `player.yml` confirms the harness fix of the 4b component tests (the inner size in the launch
-    line; [ADR-FP47](entries/FP47-choices-of-the-triage-of-the-first-ci-run-of-the-4b-component-tests.md)).
   - Soon, spec and test first (Q907): does the product server hang at its shutdown after a client connection reset?
     If so, a shutdown time limit; also the blocked queue feeder thread.
 - **The `sfn26` integration on `dom/integration`**
@@ -97,9 +96,8 @@ task. Delete an item when its work is done. The PR that closes an item records t
 - **The certify run of skellycam.** The spec [`specs/certify.md`](../specs/certify.md) is draft 3. The code is in `skellycam/core/certify/` (section 19 of the
   spec). Open: the checks that are `not-run`
   `not-built` (the status line of the spec). Not decided: FC1C items 4 and 13, HQE5 items 2 and 3
-  ([ADR-6YGH](entries/6YGH-acceptance-of-the-as-built-choices-of-fix-lanes-4-and-5-and-of-certify.md)). Q853: 8CP7
-  stays: its items 3, 6 and 7 differ from later spec text
-  ([ADR-KXQ9](entries/KXQ9-choices-of-the-quick-run-without-the-six-full-checks.md) item 5 asks the user).
+  ([ADR-6YGH](entries/6YGH-acceptance-of-the-as-built-choices-of-fix-lanes-4-and-5-and-of-certify.md)). Q941
+  ([ADR-6PJ2](entries/6PJ2-decisions-of-the-user-on-q929-to-q941.md) item 13), low priority: a lane measures the wait of quick for the hash set (3.6.1), then removes it.
 - **Certify report fields, decided 2026-11-23, not built**
   ([ADR-F6C3](entries/F6C3-decisions-of-the-user-on-the-certify-report-fields.md)). The fields, the
   kept logs are in section 3.5 of the spec, in the slim form of Q594, with the build order of 3.6.7 (Q626) and
@@ -144,8 +142,7 @@ task. Delete an item when its work is done. The PR that closes an item records t
   a role flag in place of the `parent_process()`
   guards.
 - **Capture timings** ([`specs/capture-timings.md`](../specs/capture-timings.md) steps 1 to 6 and 8 built;
-  [ADR-JFG4](entries/JFG4-choices-of-the-capture-timings-build.md) and
-  [ADR-W3VD](entries/W3VD-choices-of-the-tile-timings-lane.md) proposed). Open: the timed test
+  [ADR-JFG4](entries/JFG4-choices-of-the-capture-timings-build.md) proposed). Open: the timed test
   `test_process_workers.py` (an OK of the user first); M-TIM-1 on the hardware of the user (step 7).
 - **Merges (ADR-GZS7).** Each merge runs the tests that no CI job runs on a push (Q841); tests and code merge
   together when they pass (Q815). The FreeMoCap display comes after FreeMoCap moves to the frame-ring API.
@@ -168,18 +165,16 @@ task. Delete an item when its work is done. The PR that closes an item records t
   [ADR-2SX2](entries/2SX2-acceptance-of-the-choices-of-fix-lane-7-and-its-follow-ups.md)).
   - macOS [NV]: the runner's open-file limit, and that its errors came from this leak. A run of the macOS jobs by
     hand gives the result.
-- **The CI lane** ([ADR-C47T](entries/C47T-choices-of-the-ci-lane.md), proposed). Not run on a runner yet: the D: drive
-  step of `recorder-windows`, the uv steps of `player.yml` and the type check of the UI test code.
-- **Question for the user: the stall watch under load with THREAD workers.** The `[thread]` case of
-  `test_the_watch_ends_no_healthy_camera_under_load` failed once on CI from GIL starvation in the test process, a mode
-  that the product does not use ([evidence](evidence/stall-watch-under-load-thread-20261127.md)). Move its check "no
-  camera ended" to `pace`, and keep `[process]` blocking? Recommended: yes. (The other way, a change of the
-  in-process rule, would weaken the detection of real stalls.) It stays blocking until the user answers.
+- **The CI lane** ([ADR-C47T](entries/C47T-choices-of-the-ci-lane.md)). Not run on a runner yet: the D: drive
+  step of `recorder-windows`, the uv steps of `player.yml` and the type check of the UI test code. Q953 ([ADR-318R](entries/318R-decisions-of-the-user-on-q942-to-q955.md) item
+  12), one CI lane: fix the type error of `vite.config.ts` and type-check it; the player's own type check; a 1920 x
+  1080 virtual screen for the Linux player job.
 - **Question for the user: T-PRV-25 and Doc checks.** `doc-checks.yml` syncs only the dev group, and T-PRV-25 imports
   `skellycam`; the `--ignore` of `preview-4b.md` 7.8 (Q836) is in kit text (`kit.toml`), so it needs an entry, a
   `kit_sync.py propose` and a PR to freemocap/project. The other way: move the test into `skellycam/tests/preview/`,
   which reverses "stays in `tools/tests/`" of Q836. Recommended: move the test (one local change; `test.yml` and
-  `capture.yml` run it). Doc checks stays red until the user answers.
+  `capture.yml` run it). Q930 ([ADR-6PJ2](entries/6PJ2-decisions-of-the-user-on-q929-to-q941.md) item 2), not decided: the user asks why the move is needed and what the
+  exception to the rule is for. Doc checks stays red until he decides.
 - **ZEX9** ([ADR-ZEX9](entries/ZEX9-decisions-of-the-user-on-the-housekeeping-of-2026-11-25.md)) becomes `done`
   after the CI result of its item 4.
 - **Exclusive access** (accepted, [ADR-5PAR](entries/5PAR-decisions-of-the-user-on-the-control-read-the-holder-and-the-exclusive-access-drafts.md)).
@@ -196,9 +191,16 @@ task. Delete an item when its work is done. The PR that closes an item records t
 - **Shutdown, later UI lane** ([ADR-9V4Y](entries/9V4Y-decisions-of-the-user-on-the-shutdown-lane-q924-to-q928.md)):
   a "saving" message when the wait for the exit of the server passes about 10 s (Q925, no bound); "port in use" when
   the server ends with that error (Q927). Q926 (skellylogs) is the work of another lane.
-  Later lane: a record start during the background close of `/shutdown` gets 500, not 409 (no `_closing` check in
-  `_start_recording`); no take is lost.
-- **Question for the user: a second Ctrl-C during a take.** It sets `force_exit` of uvicorn, which skips the lifespan
-  end that ends a running take: the manifest can stay `recording` (a fault of today,
-  [evidence](evidence/cancelled-take-stop-at-a-shutdown-limit-20261127.md)). Suggested: the second Ctrl-C ends the
-  take first, or `__main__` stops a running take after `serve()` returns.
+  Q935 ([ADR-6PJ2](entries/6PJ2-decisions-of-the-user-on-q929-to-q941.md) item 7), one later lane, test first: tests of the requests that the 5 s limit cuts (an apply, a
+  search); a record start during the background close of `/shutdown` gets 409, not 500 (no `_closing` check in
+  `_start_recording`).
+- **A second Ctrl-C** (Q934, [ADR-6PJ2](entries/6PJ2-decisions-of-the-user-on-q929-to-q941.md) item 6), the shutdown lane: prove that a second Ctrl-C ends every process and
+  releases every hold and lock; the take's clean-up is not expected
+  ([evidence](evidence/cancelled-take-stop-at-a-shutdown-limit-20261127.md)). `recorder.md` 9.1 item 3 still calls it a
+  question for the user.
+- **Docs** (Q951, [ADR-318R](entries/318R-decisions-of-the-user-on-q942-to-q955.md) item 10), a later docs lane: the front matter `description` of the streaming page and the
+  feature text of `content.config` (`preview-4b.md` 5.9).
+- **Question for the user (Q946, [ADR-318R](entries/318R-decisions-of-the-user-on-q942-to-q955.md) item 5).** The player should remember the last folder it played from: what
+  exactly? Which folder (the take, or the folder above it), for each window or for the app, and does it open again
+  by itself at the start? `picked-take-folders.json` (in the user data folder) kept the picked folders across restarts in
+  the 6a build; since Q919 no build reads or writes it (`player.md` 5.3). The picks that wait: [ADR-K907](entries/K907-the-open-part-of-adr-wp77-picks-across-runs.md).
