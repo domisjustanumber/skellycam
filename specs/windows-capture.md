@@ -1369,7 +1369,7 @@ test list of the encode at capture (2026-11-25).
   ([ADR-B1DE](../decisions/entries/B1DE-decisions-of-the-user-on-the-share-level-and-the-test-clock.md), Q692).
   A test thread that reads a ring in real time on a virtual clock holds the clock while the head of the ring is a
   set number of frames past its last read (`capture_session.hold_clock_while_behind`): the ring watch of certify
-  8 frames (its ring holds 1 s), the reader of T-RING-40 500 frames. The thread of the certify watch holds the
+  8 frames (its ring holds 1 s), the reader of T-RING-40 half of its slots. The thread of the certify watch holds the
   clock from its start and leaves it at its end. In the open step of certify, the time also holds from the open of
   each JPEG ring until a watch reads it or the ring closes (`capture_session.install_watch_clock`). That hold hides
   the race of [`certify.md`](certify.md) 4.4 in each THREAD test, so T-CERT-151 covers the race with PROCESS
@@ -2622,7 +2622,10 @@ side of these rules is the certify checks of section 20 of [`certify.md`](certif
   `aria-describedby` [YQN1 6]. A custom size below the floor is not applied: the typed numbers stay, and
   an error line under the control says "The smallest size is 640 × 360" (key `smallestSizeIs640x360`,
   in the error style of the camera list, `role="alert"`); the inputs point at it with `aria-describedby`
-  [U Q899]. The line goes at a valid custom size and at a preset. The default size of a camera config is 1280x720, the size that the user
+  [U Q899]. The line goes at a valid custom size, at a preset, at an empty field and when the resolution
+  changes from another control. The note and the line use the gray and the error text styles of the camera
+  list. The UI has its own copy of the two bounds in `resolution-floor.ts`, with its unit test (T-CAP-165)
+  [U Q900]. The default size of a camera config is 1280x720, the size that the user
   calls ideal (Q888).
 - **The format of a raw take [Q808].** A take of a camera in YUY2 records `requested.capture_format`
   `"YUYV"` (SFF-800; [`recorder.md`](recorder.md) 6.7). This also applies to a camera that opened its

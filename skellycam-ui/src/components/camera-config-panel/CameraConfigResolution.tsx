@@ -34,6 +34,7 @@ export const CameraConfigResolution: React.FC<CameraConfigResolutionProps> = ({
     const [customHeight, setCustomHeight] = useState<string>(resolution.height.toString());
 
     useEffect(() => {
+        setTooSmall(false);  // a new resolution (also from another control): the error line has no cause now
         if (selectedLabel === t("custom")) {
             setCustomWidth(resolution.width.toString());
             setCustomHeight(resolution.height.toString());
@@ -50,7 +51,10 @@ export const CameraConfigResolution: React.FC<CameraConfigResolutionProps> = ({
     const applyCustom = () => {
         const w = parseInt(customWidth, 10);
         const h = parseInt(customHeight, 10);
-        if (isNaN(w) || isNaN(h)) return;
+        if (isNaN(w) || isNaN(h)) {
+            setTooSmall(false);
+            return;
+        }
         // 22.2 (Q899): a size below the floor is not applied; the typed numbers stay, with an error line
         setTooSmall(!sizeAtFloor(w, h));
         if (sizeAtFloor(w, h)) onChange(w, h);

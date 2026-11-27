@@ -25,3 +25,11 @@ test('T-CAP-165: a custom size below the floor keeps the typed numbers and shows
     assert.match(text, /aria-describedby=\{[^}]*errorId/, 'the inputs do not point at the error line');
     assert.doesNotMatch(text, /else \{[^}]*setCustomWidth\(resolution\.width\.toString\(\)\)/, 'a reject must keep the typed numbers');
 });
+
+test('T-CAP-165: the error line goes when its cause goes (22.2, Q899)', () => {
+    const text = source('components/camera-config-panel/CameraConfigResolution.tsx');
+    // a change of the resolution by another control: the effect that puts the applied size in the fields
+    assert.match(text, /useEffect\(\(\) => \{\s*setTooSmall\(false\);/, 'the effect of a new resolution keeps the error line');
+    // an empty or non-numeric field
+    assert.match(text, /if \(isNaN\(w\) \|\| isNaN\(h\)\) \{\s*setTooSmall\(false\);\s*return;/, 'an empty field keeps the error line');
+});
