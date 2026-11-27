@@ -1049,7 +1049,9 @@ choices [ADR-06PW](../decisions/entries/06PW-choices-of-the-shutdown-limit-lane.
    - Not covered: a second Ctrl-C (uvicorn's `force_exit`) skips the lifespan end, which ends a running take
      ([`open-work.md`](../decisions/open-work.md), a question for the user).
 4. **Tests.** `skellycam/tests/test_server_exit.py` runs the real server in a child process with its port in use:
-   the process ends with an error code. `test_entry_point.py` checks the cancel of item 1.
+   the process ends with an error code. With one connection that never leaves its server, the process ends after
+   `/shutdown` (the blocking half), within the limit plus the period of the worker monitor (the `pace` half).
+   `test_entry_point.py` checks the cancel of item 1.
    `take_recorder/test_take_end_cancel.py` cancels a take stop that waits for a held camera, a close of all groups
    at the same place, and a take start in `start_take`, as uvicorn cancels a request; then it closes the groups as
    the lifespan end does. The manifest is `finished`, and each camera has the frame count of the take.
@@ -1057,10 +1059,27 @@ choices [ADR-06PW](../decisions/entries/06PW-choices-of-the-shutdown-limit-lane.
    during a take stop that waits for its cameras, the server process group gets Ctrl-Break (Windows) or the server
    gets SIGINT. The process ends with code 0, the manifest is `finished` with no `camera_dead`, and each camera has
    the same rows.
-5. **Open: the wait for connections has no limit yet.** The shutdown of uvicorn waits with no time limit for the
-   open connections, their request tasks and `Server.wait_closed()`. The product did not hang in 39 runs with reset
-   clients. Q928: the limit of 5 s comes after item 3.
-6. [NV] Linux and macOS: items 1 and 3 apply on each system; the port-in-use hang was seen on Windows only.
+5. **The connection limit (Q928, after item 3).** The shutdown of uvicorn waits at most 5 s for the open
+   connections, their request tasks and `Server.wait_closed()` (`SHUTDOWN_CONNECTION_LIMIT_S` of
+   `skellycam/__main__.py`, the `timeout_graceful_shutdown` of its `uvicorn.Config`). Then it cancels each request
+   task that still runs, the lifespan end runs, and `serve()` returns. A connection whose loss never reaches the
+   asyncio server then delays the exit by at most 5 s. On Windows, code reading shows that a client reset can do this
+   (CPython 3.13 `_ProactorBasePipeTransport._call_connection_lost` calls `socket.shutdown()` before it leaves its
+   server, and a `ConnectionResetError` there leaves it in the server); the product did not hang in 39 runs with
+   reset clients.
+   - **Where it starts.** At the first SIGINT, SIGBREAK or SIGTERM that uvicorn gets. With the shutdown endpoint
+     (the Electron app), that signal comes after the close of the groups, the end of each take and each protected
+     save (section 9). With Ctrl-C, Ctrl-Break, a SIGTERM from outside, or the kill flag that a fault sets, it comes
+     while requests can still run.
+   - **What it cannot cut.** A take start or a take stop (item 3: the cancel does not reach the shielded task; the
+     lifespan end waits for `_end_lock`). The close of the lifespan end, which ends a running take and closes the
+     groups: it runs after the limit and has no limit of its own. The background close of the shutdown endpoint: it
+     is no request task. The wait for each protected save: it comes before the signal.
+   - **What it can cut.** Any other request that still runs after 5 s, for example an apply, a detection or an
+     exposure search. The thread that such a request started runs on; then the lifespan end closes the groups. This
+     case is not tested.
+6. [NV] Linux and macOS: items 1, 3 and 5 apply on each system; the selector transports call
+   `Server._detach` in a `finally` after `socket.close()`, so no lost connection is known there; the port-in-use hang was seen on Windows only.
 
 ## 10. Connection to the shared loop (after step 3a)
 
