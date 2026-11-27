@@ -95,6 +95,9 @@ task. Delete an item when its work is done. The PR that closes an item records t
       deletes `read_latest_ring_frames` and `_send_json`, with the spec line and the probe of their three tests
       (Q871); a docs lane rewrites the first section of the real-time streaming page (Q873); the next CI lane adds a
       second type check that covers the UI test code, which `tsconfig.json` leaves out (Q897).
+    - Soon, a small lane, spec and test first (Q907): does the product server hang at its shutdown when a client
+      resets its connection (uvicorn waiting for a lost connection; seen in the test server)? If so, a shutdown
+      time limit. The same lane looks at the blocked queue feeder thread (likely the websocket log queue).
 - **The `sfn26` integration on `dom/integration`**
   ([ADR-EQY4](entries/EQY4-base-the-work-on-upstream-sfn26-without-rust.md),
   [ADR-6T78](entries/6T78-choices-of-the-sfn26-integration.md)). Open:

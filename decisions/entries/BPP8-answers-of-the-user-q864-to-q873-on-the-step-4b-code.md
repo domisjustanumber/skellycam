@@ -1,4 +1,4 @@
-# BPP8 — Answers of the user Q864 to Q873, Q885 and Q893 to Q897 on the step 4b code
+# BPP8 — Answers of the user Q864 to Q873, Q885, Q893 to Q897, Q906 and Q907 on the step 4b code
 
 **Status:** absorbed into
 [`specs/preview-4b.md#32-tests`](../../specs/preview-4b.md#32-tests),
@@ -15,7 +15,7 @@
 [`specs/preview-4b.md#74-test-list`](../../specs/preview-4b.md#74-test-list),
 [`specs/preview-4b.md#75-parity-of-the-systems-p7`](../../specs/preview-4b.md#75-parity-of-the-systems-p7),
 [`specs/capture-timings.md#65-the-preview-sender-u-q587-11`](../../specs/capture-timings.md#65-the-preview-sender-u-q587-11),
-2026-11-26 (commit to dom/preview-4b-tests; the open work of items 7, 8, 10 and 16 is in open-work.md; was accepted, 2026-11-26 (user; the supervisor relayed the answers)).
+2026-11-26 (commit to dom/preview-4b-tests; the open work of items 7, 8, 10, 16 and 18 is in open-work.md; was accepted, 2026-11-26 (user; the supervisor relayed the answers)).
 
 ## Decision
 
@@ -57,10 +57,15 @@ other items (Q872), and Q864 replaces its item 9. Each answer accepts the recomm
 15. **Q896.** `PreviewKit.close` gives each step a time limit, kills the app or the server at a time-out and logs the
     step that hung; before the branch merges (7.2).
 16. **Q897.** CI gets a second type check that covers the test code of the UI, in the next CI lane (open work).
+17. **Q906.** The test server `ui_server.py` sets the graceful-shutdown limit of uvicorn to 5 s, so that its stop ends
+    on its own; the time limit of Q896 stays as the backstop (7.2).
+18. **Q907.** A small lane, soon, spec and test first: does the product server hang at its shutdown when a client
+    resets its connection (uvicorn waiting for a lost connection), and if so a shutdown time limit; the same lane
+    looks at the blocked queue feeder thread (open work).
 
 ## Reason
 
-The user, 2026-11-26: "agree to all Q864-Q881", and the answers Q885 and "agree to all Q893-Q902" of the same day.
+The user, 2026-11-26: "agree to all Q864-Q881", and the answers Q885 and "agree to all Q893-Q902" of the same day; "Q906-907 agree" of 2026-11-27.
 
 ## Open work
 
