@@ -22,4 +22,5 @@ jobs:
           python-version: "3.13.18"
       # The doc checks need only pytest. pyproject.toml has it in the dev group.
       - run: uv sync --only-group dev
-      - run: uv run --no-sync pytest tools/tests
+      # T-PRV-25 imports skellycam, which this job does not install: it runs in the capture jobs (preview-4b.md 7.8, Q836)
+      - run: uv run --no-sync pytest tools/tests --ignore=tools/tests/test_camera_message_fixture.py
