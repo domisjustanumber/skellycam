@@ -2,14 +2,19 @@ name: Player
 
 # specs/player.md section 12.6: the unit, component and electron tests of the step 6a player on Windows,
 # Linux and macOS (Y7). The benchmarks do not run here. Each job also runs the unit tests of the cameras slice
-# (`npm run test:cameras`) in a step of its own.
+# (`npm run test:cameras`) in a step of its own. The step 4b preview component tests start a Python server with
+# uv, so each job installs uv, Python and the dev group as capture.yml does (specs/preview-4b.md 7.8, ADR-S1DJ).
 on:
   push:
-    branches: [dom/player, dom/native-jpeg]
+    branches: [dom/player, dom/native-jpeg, dom/integration]
     paths:
       - "skellycam-ui/src/player/**"
       - "skellycam-ui/src/components/playback/**"
       - "skellycam-ui/src/store/slices/**"
+      - "skellycam-ui/src/services/server/**"
+      - "skellycam-ui/src/components/camera-views/**"
+      - "skellycam/tests/preview/**"
+      - "specs/preview-4b.md"
       - "skellycam-ui/electron/**"
       - "skellycam-ui/package.json"
       - "skellycam-ui/package-lock.json"
@@ -23,6 +28,10 @@ on:
       - "skellycam-ui/src/player/**"
       - "skellycam-ui/src/components/playback/**"
       - "skellycam-ui/src/store/slices/**"
+      - "skellycam-ui/src/services/server/**"
+      - "skellycam-ui/src/components/camera-views/**"
+      - "skellycam/tests/preview/**"
+      - "specs/preview-4b.md"
       - "skellycam-ui/electron/**"
       - "skellycam-ui/package.json"
       - "skellycam-ui/package-lock.json"
@@ -57,6 +66,18 @@ jobs:
           node-version: '26.13.1'
           cache: npm
           cache-dependency-path: skellycam-ui/package-lock.json
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
+        with:
+          version: "0.13.7"
+          enable-cache: true
+
+      - name: Set up Python 3.13.18
+        run: uv python install 3.13.18
+
+      - name: Install the Python dependencies
+        run: uv sync --group dev --python 3.13.18
 
       - name: Install dependencies
         id: deps
@@ -97,6 +118,24 @@ jobs:
           echo "xvfb $(dpkg-query -W -f='${Version}' xvfb)"
           command -v xvfb-run
 
+      - name: Install uv
+        uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
+        with:
+          version: "0.13.7"
+          enable-cache: true
+
+      - name: Set up Python 3.13.18
+        run: uv python install 3.13.18
+
+      # The preview server imports sounddevice. Its Linux wheel does not hold PortAudio.
+      - name: Install PortAudio
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends libportaudio2=19.6.0-1.2build3
+
+      - name: Install the Python dependencies
+        run: uv sync --group dev --python 3.13.18
+
       - name: Install dependencies
         id: deps
         run: npm ci
@@ -132,6 +171,18 @@ jobs:
           node-version: '26.13.1'
           cache: npm
           cache-dependency-path: skellycam-ui/package-lock.json
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
+        with:
+          version: "0.13.7"
+          enable-cache: true
+
+      - name: Set up Python 3.13.18
+        run: uv python install 3.13.18
+
+      - name: Install the Python dependencies
+        run: uv sync --group dev --python 3.13.18
 
       - name: Install dependencies
         id: deps

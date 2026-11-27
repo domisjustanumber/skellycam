@@ -1,6 +1,9 @@
 # S1DJ — Decisions of the user on the CI lane: Q854, Q897 and Q915 item 4
 
-**Status:** accepted, 2026-11-27 (user, Q854, Q897 and Q915; the supervisor relayed the answers).
+**Status:** absorbed into [`specs/frame-ring.md#14-accepted-decisions`](../../specs/frame-ring.md#14-accepted-decisions),
+[`specs/player.md#126-ci-agent-35`](../../specs/player.md#126-ci-agent-35),
+[`tools/tests/test_workflows.py`](../../tools/tests/test_workflows.py), 2026-11-27 (commit to dom/ci-lane; was
+accepted, 2026-11-27 (user, Q854, Q897 and Q915; the supervisor relayed the answers)).
 
 ## Decision
 
