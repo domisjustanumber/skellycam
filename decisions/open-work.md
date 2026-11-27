@@ -188,9 +188,9 @@ task. Delete an item when its work is done. The PR that closes an item records t
   attributes it reads; it waits for the close path of `CameraGroup`), the dark rule (T-CERT-09, 13, 23) and the light
   data. The privacy list moves into the contract (its owner). The `fork` of freemocap's certify child stays in the
   Linux review of ADR-T34M.
-- **Shutdown, later UI lane** ([ADR-9V4Y](entries/9V4Y-decisions-of-the-user-on-the-shutdown-lane-q924-to-q928.md)):
-  a "saving" message when the wait for the exit of the server passes about 10 s (Q925, no bound); "port in use" when
-  the server ends with that error (Q927). Q926 (skellylogs) is the work of another lane.
+- **Shutdown, UI messages** ([ADR-9V4Y](entries/9V4Y-decisions-of-the-user-on-the-shutdown-lane-q924-to-q928.md)):
+  Q925 and Q927 are built on `dom/ui-saving-port` (`recorder.md` 9.2); the user answers the questions of ADR-590X
+  and tries the two boxes by hand. Q926 (skellylogs) is the work of another lane.
   Q935 ([ADR-6PJ2](entries/6PJ2-decisions-of-the-user-on-q929-to-q941.md) item 7), one later lane, test first: tests of the requests that the 5 s limit cuts (an apply, a
   search); a record start during the background close of `/shutdown` gets 409, not 500 (no `_closing` check in
   `_start_recording`).

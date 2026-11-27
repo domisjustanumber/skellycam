@@ -1099,6 +1099,83 @@ choices [ADR-06PW](../decisions/entries/06PW-choices-of-the-shutdown-limit-lane.
    `Server._detach` in a `finally` after `socket.close()`, so no lost connection is known there. The port-in-use
    hang and the Ctrl-Break faults were seen on Windows only.
 
+### 9.2 The Electron app at a slow end and at a failed start of the server
+
+Added on 2026-11-27 (Q925 and Q927 [ADR-9V4Y](../decisions/entries/9V4Y-decisions-of-the-user-on-the-shutdown-lane-q924-to-q928.md),
+Q954; choices [ADR-590X](../decisions/entries/590X-choices-of-the-ui-messages-lane.md), proposed). The code is in
+`skellycam-ui/electron/main/`. No other section owns the Electron side of the end of the server.
+
+Before this section (code reading):
+
+- **A quit.** Two paths wait for the exit of the server: `window-all-closed` (the close of the last window) and
+  `before-quit` (a quit from the menu, which keeps the window open) of `index.ts`. Each calls
+  `PythonServer.shutdown()` (`gracefulPythonShutdown`: `/shutdown`, then a wait for the exit with no bound). The app
+  shows nothing while it waits. After the close of the last window, only the main process runs: no window exists
+  that can show a message. When the shutdown request fails and the server still runs, the app stays, with no
+  window, to protect the saves; this section does not change that.
+- **A start with the port in use.** `PythonServer.start` returns when the process has a PID. The server then ends
+  (exit code 3, the `STARTUP_FAILURE` of uvicorn) with one line on stderr, for example
+  `ERROR:    [Errno 10048] error while attempting to bind on address ('127.0.0.1', 53117): [winerror 10048] only one
+  usage of each socket address (protocol/network address/port) is normally permitted` (a run on Windows,
+  2026-11-27). The app reads no output of the server. `PythonServer.isRunning()` stays true after the exit (it
+  checks only `killed`), so the connection menu shows "Running" and the button "Stop server", and the websocket
+  shows "Connecting…" for ever. When the port holder is another copy of the server, the websocket connects to it.
+- **Other start failures.** A start that throws (no executable, no PID) shows "Start failed: …" in the server
+  section of the connection menu. The app stays open, and "Launch server" in that menu starts again.
+
+The rules:
+
+1. **The "saving" message (Q925).** When a quit has waited 10 s (`SAVING_NOTICE_DELAY_MS`) for the exit of the
+   server, the main process shows a native message box. The text is "Recordings are still being saved." with the
+   detail "SkellyCam closes by itself when this is done."
+   - Its place (`savingBoxPlace`): on the window when a window exists (a quit from the menu), on each system. With
+     no window left (the close of the last window), the box has no parent on Windows and Linux. On macOS it shows
+     no box: a box with no parent runs synchronously there, its `signal` does not close it (the type docs of
+     Electron), and its modal loop would hold the main process, which reads the output of the server. The limit:
+     on macOS, after the close of the last window, the wait shows nothing.
+   - The box has one button, the "OK" of the system. A click on it, or a close of the box, removes the box only.
+     The wait goes on, and the app closes when the server exits. The box does not come back.
+   - The box closes by itself when the wait ends (the `signal` of `dialog.showMessageBox`): at the exit of the
+     server, or at a failed shutdown request.
+   - The box offers no "force quit". The app has none today. Nothing stops or kills the server because of the box.
+   - Two quits during one wait share the wait, and show one box.
+2. **"Port in use" (Q927).** When the server process ends with an exit code other than 0 and its stderr holds the
+   bind error of a port in use (`[Errno 10048]` on Windows, `[Errno 98]` on Linux, `[Errno 48]` on macOS, then
+   `error while attempting to bind on address`), the main process shows a native message box on the main window
+   (with no parent when no window exists). The text is "SkellyCam cannot start its server: port 53117 is in use."
+   with the detail "Another program, or another copy of SkellyCam, uses this port. Close it, then click “Launch
+   server” in the connection menu, or restart SkellyCam."
+   - The app stays open. The box has one button, the "OK" of the system, and no retry: "Launch server" is the
+     retry, as after each other start failure. A close of the box removes it only.
+   - The main process keeps the last 4096 characters of stderr. It decides at the `close` event of the child, after
+     the end of its output, not at `exit`.
+   - `PythonServer.isRunning()` is false after the server process ended (an exit code or a signal). The connection
+     menu then shows "Stopped" and "Launch server" at its next poll (5 s).
+   - Any other end of the server shows nothing new.
+3. **Text.** The four texts are the i18n keys `savingRecordingsMessage`, `savingRecordingsDetail`,
+   `portInUseMessage` and `portInUseDetail`. The renderer sends them to the main process with the menu labels
+   (`useMenuActions.ts`, channel `update-menu-labels`), with `{{port}}` filled. Until then the main process uses
+   the English texts. The English, `es`, `zh-CN` and `ar` files have the keys (Q948); the other locale files fall
+   back to English. "Launch server" stays in English in each language, because the button has no translation. No
+   native speaker checked the translations.
+4. **Tests.** Unit tests with `node --test`, in `npm run test:player:unit`
+   (`skellycam-ui/electron/main/services/tests/server-messages.test.ts`):
+   - T-APP-01: no box when the wait ends before 10 s; a box at 10 s; the box closes when the wait ends and when it
+     fails; the result or the error of the wait is unchanged. Mocked timers.
+   - T-APP-02: the port-in-use rule is true for code 3 with the Windows line of a real run, and with the Linux and
+     macOS lines; it is false for code 0, for no code, for another error and for the bind error of another errno.
+   - T-APP-03: the process rule of `isRunning`: true while it runs, false after an exit code or a signal.
+   - T-APP-05: the place of the "saving" box: on the window when one exists (Windows, Linux, macOS); with no
+     window, alone on Windows and Linux, and no box on macOS.
+   - T-APP-04: the English file has the four keys with the English texts of items 1 and 2; the `es`, `zh-CN` and
+     `ar` files have the four keys, and each port text has `{{port}}`; the renderer sends each key.
+   - Not tested: the message boxes and the wiring in `index.ts`, `python-server.ts`, `server-dialogs.ts` and
+     `menu-builder.ts`. The repository has no test harness for the main process of the app. The user tries them
+     by hand.
+5. [NV] Linux and macOS: the errno texts come from CPython code reading (`loop.create_server`). The boxes were not
+   tried there. On macOS the "saving" box comes only on a window (item 1); the "port in use" box comes at a start
+   from the window, so it has its window.
+
 ## 10. Connection to the shared loop (after step 3a)
 
 The module stays apart from the loop until step 3a of phase 3 is joined [R10]. Then one connection
