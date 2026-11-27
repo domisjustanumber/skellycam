@@ -1,12 +1,16 @@
 # 06PW — Choices of the shutdown limit lane
 
 **Status:** proposed, 2026-11-27 (agent; applies Q907 of
-[ADR-75CF](75CF-decision-of-the-user-on-the-shutdown-of-the-server.md); commit to dom/server-shutdown).
+[ADR-75CF](75CF-decision-of-the-user-on-the-shutdown-of-the-server.md); commit to dom/server-shutdown; this text is on the parked branch
+`dom/server-shutdown-limit`, which is not merged).
 
 ## Decision
 
 The user did not decide these details. [`recorder.md`](../../specs/recorder.md) 9.1 states them.
 
+0. **A limit although the product did not hang.** Q907 asks for a limit only if the product hangs; the product did
+   not hang (0 of 39 runs, Evidence). This branch adds the limit all the same. A review then found that the limit can
+   leave a take unfinished (item 6), so `dom/server-shutdown` takes it out and this branch waits for the user.
 1. **The limit is 5 s.** `skellycam/__main__.py` sets `timeout_graceful_shutdown=SHUTDOWN_CONNECTION_LIMIT_S` (5)
    in its `uvicorn.Config`. That is the only `uvicorn.Config` of the product. The other one is in the measurement
    script `decisions/scripts/measure_preview_m_prv.py`, which does not change after its entry.
@@ -17,6 +21,11 @@ The user did not decide these details. [`recorder.md`](../../specs/recorder.md) 
    `get_websocket_log_queue().cancel_join_thread()` after `configure_logging`.
 4. **One DEBUG line for each suppressed `ConnectionResetError`** (9.1 item 5), with the message of the context.
    The handler stays.
+6. **The finding of the review (not fixed here).** At the limit, uvicorn cancels the requests that still run; a
+   cancelled take stop leaves the manifest `recording` on each path but the shutdown endpoint, also for a reason that
+   is not Ctrl-C ([evidence](../evidence/cancelled-take-stop-at-a-shutdown-limit-20261127.md)). So item 2 is wrong
+   where it says that only a request on the Ctrl-C path is cut. Suggested: a lane that shields the take start and
+   stop, test first, before this limit merges.
 5. **The tests** (9.1 item 6). `test_server_exit.py` starts the real server with `server_exit_child.py`: no
    telemetry, no bytecode pass, a temporary base folder and log file, a free port. A lost connection is made
    portable: the child skips `Server._detach` for the first accepted connection. The test is split as Q669 says,
@@ -24,7 +33,8 @@ The user did not decide these details. [`recorder.md`](../../specs/recorder.md) 
 
 ## Reason
 
-1. 5 s is the value that the user suggested in the brief of the lane. It is longer than an ordinary close of a
+1. 5 s is the value of the brief of the supervisor, not of the user: the 5 s of the user (Q906) is for the test
+   server `ui_server.py`. It is longer than an ordinary close of a
    websocket and of an HTTP request. A bigger value that covers the 15 s of a stuck writer only matters on the
    Ctrl-C path (item 2), and it makes each app quit with a lost connection 15 s or more longer.
 2. The order of section 9 puts the signal after the close of the groups and the saves, so the limit cannot cut a
@@ -32,8 +42,8 @@ The user did not decide these details. [`recorder.md`](../../specs/recorder.md) 
 3. With no open websocket, nobody reads the queue. The feeder thread then waits in `_send_bytes` on a full pipe,
    and the exit handler `_cleanup_log_queue` of `skellylogs` waits for it with `join_thread`. The records that the
    cancel drops at the exit have no reader.
-4. The handler hid the 10054 error of the stop of the test server. A DEBUG line costs nothing at the default
-   level and shows the reset in the log file.
+4. The handler hid the 10054 error of the stop of the test server. The default level is TRACE (`LOG_LEVEL` of
+   `skellycam/__init__.py`), so the DEBUG line shows in the console and in the log file.
 5. The proactor fault depends on a race that the product did not show in 39 runs (Evidence). The skipped
    `_detach` gives the same state of the asyncio server on each system, every time.
 
