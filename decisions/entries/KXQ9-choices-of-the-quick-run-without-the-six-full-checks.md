@@ -22,7 +22,8 @@ quick report holds for them. The agent made these choices. Section 3.6.1 of
    steps are the same code in both levels. A later change can skip that work in quick, with a measurement first.
 3. **This part of build step 5 comes first, alone.** The rest of step 5 of 3.6.7 (`<label>:detect`, `<model>:units`,
    `group:take` with two rows, `system:recording-space`, `group:in-step`) is not built.
-4. **The tests.** T-CERT-153 is new. T-CERT-151 case (1) runs at `full`, and case (2) at both levels. The helper of
+4. **The tests.** T-CERT-153 is new. T-CERT-151 cases (1) and (2) run at both levels, with `source-equals-ring` in
+   full only. The session-child test runs at both levels, so the six pass through the child in full. The helper of
    the tests that lists the checks of the five groups takes the level.
 5. **8CP7 is not absorbed (Q853).** The specs state most items of
    [ADR-8CP7](8CP7-certify-spec-draft-3-choices-of-the-agent.md), with the later changes of the user. Three items
@@ -34,6 +35,14 @@ quick report holds for them. The agent made these choices. Section 3.6.1 of
      the code send one before each check.
 
    The entry stays `accepted` until the user says which text wins (the question of open work).
+6. **A fault in a left-out check (review of 2026-11-27).** The session remembers the left-out check that began last
+   and has not ended; a later `begin` clears it. When the session fails while one is open, it calls `begin` for the
+   next check of that camera that the level has, in the order of the plan, before the error ends the session. That
+   check is then the running check: the existing rule of a crash (19.2 items 8 and 13) gives it `not-run` with the
+   class name of the error, and phase G counts the camera as running (`camera-not-restored`), as before Q902. A
+   fault in `settings-stick:image-effect` thus shows on `native-jpeg:valid`, and one in `records:gaps-explained` on
+   `live-at-close` (Media Foundation) or `clock:base` (Linux, macOS). No row of a left-out check is added, and the
+   report contract does not change.
 
 ## Reason
 
@@ -50,6 +59,8 @@ quick report holds for them. The agent made these choices. Section 3.6.1 of
 - The six as `not-run` with a new reason code in quick: a change of the meaning of the report and of the codes, and
   each quick item `partial`.
 - Skip the hash wait in quick now: it changes the timing of the ready step with no measurement.
+- For item 6, a `begin` of the next check at each left-out `begin`: it sends the progress message of that check too
+  early and holds it pending through a whole step, so a cancel would give it its own `cancelled` row.
 
 ## Open work
 
