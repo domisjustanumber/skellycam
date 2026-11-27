@@ -38,7 +38,7 @@ The user decided the feature (ADR-8J08). [`player.md`](../../specs/player.md) 5.
 10. **The module.** `main/recent-folders.ts` holds the rules and the store (Node only); `take-scheme.ts` the
     channels. `TakeHandler` gets `recent()`, `dialogFolder()` and `recordPick(folder, {recent: true})`.
 11. **Tests.** T-PLAY-87, 88 and 90 to 92 (unit), T-PLAY-89 and the new T-PLAY-62 (electron). The native dialog, the
-    wiring of `electron/main/api.ts` and the UI section are checked by hand.
+    wiring of `electron/main/api.ts` and the UI section are to be checked by hand by the user (open work).
 12. **A drive that is not connected.** Its entry leaves the list at the click (Q967 as written; Q987 asks the user).
 13. **Earlier entries.** ADR-8J08 decides the question of
     [ADR-K907](K907-the-open-part-of-adr-wp77-picks-across-runs.md) (now rejected). The picks of the run stay as

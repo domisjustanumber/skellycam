@@ -395,8 +395,8 @@ the user picked in the system folder dialog [L7]:
 - Two ways add a folder to the pick list: a dialog pick in the main process, and the call `openRecent` of 5.10
   for an entry of the recently opened list that passes the check of 5.10. The main process cannot tell a click
   from a script of the page, so the folders that a page can reach are the dialog picks of this run plus the
-  entries of the list (at most 5 folders that the user picked in the dialog of the player in earlier runs), each
-  entry after its check [ADR-FHP6]. No bridge call, IPC message or request of a page can add a folder to the
+  entries of the list (normally folders that the user picked in the dialog of the player in earlier runs; the
+  file is untrusted, 5.10), each entry after its check [ADR-FHP6]. No bridge call, IPC message or request of a page can add a folder to the
   recently opened list, add any other folder to the pick list, or read the pick list [U1, Q965]. The page can
   read the recently opened list, ask to open one of its entries and clear it (5.10). T-PLAY-62 and T-PLAY-89
   test this.
@@ -600,7 +600,7 @@ the user did not decide are in [ADR-FHP6](../decisions/entries/FHP6-choices-of-t
 opens at the recordings folder when that is a folder, else at the home folder (`app.getPath('home')`): an explicit
 `defaultPath` in each case, because with none Windows opens the dialog at the folder that it remembers for the
 program (Q967) [agent 41]. Thus "Clear list" also forgets where the dialog opens [NV: the native dialog follows
-`defaultPath` on each system; checked by hand on Windows only]. `TakeHandler.dialogFolder()` gives this folder. The
+`defaultPath` on each system; to be checked by hand by the user]. `TakeHandler.dialogFolder()` gives this folder. The
 host asks for this dialog with `fileSystem.selectDirectory({player: true})`, which passes `dialogFolder()` as
 `defaultPath`. With no input the call does what it does today [agent 41].
 
@@ -620,10 +620,10 @@ another window changed) it shows no message and reads the list again. The texts 
 - When the clicked entry or the whole section goes, the focus moves to the folder button.
 - The folder names and paths are isolated from the direction of the text around them (`<bdi>`, and U+2068 and
   U+2069 in the tooltip and the accessible name), for `ar`.
-- A picked path keeps a root as a root: `D:\` stays `D:\` and `/` stays `/`; a root shows as itself as the name.
+- A picked path keeps a root as a root: `D:\` stays `D:\` and `/` stays `/`; a root shows as itself as the name. White space stays: it is part of a folder name.
 
 **Tests.** T-PLAY-87, T-PLAY-88, T-PLAY-90, T-PLAY-91 and T-PLAY-92 (unit), T-PLAY-89 and T-PLAY-62 (electron) test
-these rules. Not tested by a test, checked by hand [agent 41]: the native dialog and its start folder; the wiring
+these rules. Not tested by a test, to be checked by hand by the user [agent 41]: the native dialog and its start folder; the wiring
 in `electron/main/api.ts` (the `player` flag, `defaultPath` from `dialogFolder()`, `recordPick` with `recent`);
 the UI section of the recording browser (the host harness does not show the recording browser).
 

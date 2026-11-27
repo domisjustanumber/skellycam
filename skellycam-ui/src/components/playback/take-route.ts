@@ -17,8 +17,9 @@ export async function routeTake(folderPath: string): Promise<'canvas' | 'video' 
     }
 }
 
-/** A picked folder path with no trailing separator; a root (`D:\`, `/`) stays a root, so it stays absolute. */
-export const trimFolder = (folder: string) => folder.trim().replace(/([^:\\/])[\\/]+$/, '$1');
+/** A picked folder path with no trailing separator; a root (`D:\`, `/`) stays a root, so it stays absolute. White
+ * space stays: it is part of a folder name. */
+export const trimFolder = (folder: string) => folder.replace(/([^:\\/])[\\/]+$/, '$1');
 
 /** The last part of a folder path (player.md 5.10); a root shows as itself. */
 export function folderNameOf(folder: string): string {

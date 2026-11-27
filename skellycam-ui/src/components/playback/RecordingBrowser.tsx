@@ -427,6 +427,7 @@ export const RecordingBrowser: React.FC<RecordingBrowserProps> = ({
               // the name and the path are isolated from the direction of the text around them (ar); the full path
               // is in the accessible name, so two folders with one name differ
               <button
+                type="button"
                 key={folder}
                 className="button-sm-group gap-1 br-1 button items-center sm fit-content flex-inline text-left text-black select-path bg-middark"
                 title={`\u2068${folder}\u2069`}

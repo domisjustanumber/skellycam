@@ -203,4 +203,5 @@ task. Delete an item when its work is done. The PR that closes an item records t
   ([evidence](evidence/cancelled-take-stop-at-a-shutdown-limit-20261127.md)).
 - **Docs** (Q951, [ADR-318R](entries/318R-decisions-of-the-user-on-q942-to-q955.md) item 10), a later docs lane: the front matter `description` of the streaming page and the
   feature text of `content.config` (`preview-4b.md` 5.9).
-- **Recently opened folders** (`player.md` 5.10): by hand, the dialog start folder and the section; the user answers [ADR-FHP6](entries/FHP6-choices-of-the-recently-opened-take-folders-lane.md).
+- **Recently opened folders** (`player.md` 5.10): not done yet, the user checks by hand the dialog start folder, the
+  `api.ts` wiring and the section; the user answers [ADR-FHP6](entries/FHP6-choices-of-the-recently-opened-take-folders-lane.md).
