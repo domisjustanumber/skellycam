@@ -72,13 +72,13 @@ export function appStateValues(message: AppStateLike, cameraList: ListedCamera[]
     return {overlays, gridCameraIds, connectedCameraIds: gridCameraIds.filter(id => STREAMING.has(states[id] ?? ''))};
 }
 
-/** The new shape of `framerate_update` [4a 6.2]: `message_type` and an object `cameras`. */
 /** The guard of the `capture_timings` message (capture-timings.md 6.4): its switch sets `on` of the tile timings (7). */
 export function isCaptureTimings(data: unknown): data is {message_type: 'capture_timings'; log_capture_times: boolean} {
     const d = data as {message_type?: unknown; log_capture_times?: unknown} | null;
     return !!d && typeof d === 'object' && d.message_type === 'capture_timings' && typeof d.log_capture_times === 'boolean';
 }
 
+/** The new shape of `framerate_update` [4a 6.2]: `message_type` and an object `cameras`. */
 export function isFramerateUpdate(data: unknown): data is FramerateUpdate {
     const d = data as {message_type?: unknown; cameras?: unknown} | null;
     return !!d && typeof d === 'object' && d.message_type === 'framerate_update'
