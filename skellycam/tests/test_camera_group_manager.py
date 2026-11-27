@@ -36,7 +36,7 @@ class TestCameraGroupManagerInit:
     def test_starts_empty(self, manager):
         """New manager has no camera groups."""
         assert manager.camera_groups == {}
-        assert manager.closing is False
+        assert manager.closing == 0  # the count of the closes that run (recorder.md 9.1 item 7)
 
     def test_get_nonexistent_group_raises(self, manager):
         """Requesting a nonexistent group raises ValueError."""
@@ -48,7 +48,7 @@ class TestCameraGroupManagerInit:
         """Closing with no groups should not raise."""
         await manager.close_all_camera_groups()
         assert manager.camera_groups == {}
-        assert manager.closing is False  # sfn26: a close with no group must not stop the payloads
+        assert manager.closing == 0  # sfn26: a close with no group must not stop the payloads
 
     def test_to_state_dict_empty(self, manager):
         """State dict with no groups returns expected structure."""
@@ -93,7 +93,7 @@ class TestCloseAll:
         manager.camera_group_framerate_subscriptions.update(g1=Mock(), g2=Mock())
         with pytest.raises(RuntimeError, match="could not be killed"):
             await manager.close_all_camera_groups()
-        assert manager.closing is False
+        assert manager.closing == 0  # the count of the closes that run (recorder.md 9.1 item 7)
         assert list(manager.camera_groups) == ["g2"]
         assert list(manager.camera_group_framerate_subscriptions) == ["g2"]
 
@@ -107,7 +107,7 @@ class TestCloseAll:
         manager.camera_group_framerate_subscriptions.update(g1=Mock())
         await manager.close_all_camera_groups()
         assert manager.camera_groups == {} and manager.camera_group_framerate_subscriptions == {}
-        assert manager.closing is False
+        assert manager.closing == 0  # the count of the closes that run (recorder.md 9.1 item 7)
 
 
     @pytest.mark.asyncio
