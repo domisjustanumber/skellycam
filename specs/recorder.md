@@ -1079,7 +1079,8 @@ choices [ADR-06PW](../decisions/entries/06PW-choices-of-the-shutdown-limit-lane.
      exposure search. The thread that such a request started runs on; then the lifespan end closes the groups. This
      case is not tested.
 6. [NV] Linux and macOS: items 1, 3 and 5 apply on each system; the selector transports call
-   `Server._detach` in a `finally` after `socket.close()`, so no lost connection is known there; the port-in-use hang was seen on Windows only.
+   `Server._detach` in a `finally` after `socket.close()`, so no lost connection is known there. The port-in-use
+   hang and the Ctrl-Break faults were seen on Windows only.
 
 ## 10. Connection to the shared loop (after step 3a)
 
