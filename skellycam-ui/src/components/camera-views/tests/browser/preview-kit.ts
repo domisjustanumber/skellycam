@@ -81,7 +81,8 @@ export class UiServer {
         const args = ['run', 'python', '-m', 'skellycam.tests.preview.ui_server', '--mode', o.mode ?? 'fake',
             '--cameras', JSON.stringify(o.cameras), '--width', String(o.width ?? 640), '--height', String(o.height ?? 360),
             '--fps', String(o.fps ?? 30), '--target-bytes', String(o.targetBytes ?? 0)];
-        const s = new UiServer(spawn('uv', args, {cwd: REPO, stdio: ['pipe', 'pipe', 'pipe']}));
+        // off Windows the server gets its own process group, so that killTree ends it and its children [NV]
+        const s = new UiServer(spawn('uv', args, {cwd: REPO, stdio: ['pipe', 'pipe', 'pipe'], detached: process.platform !== 'win32'}));
         const started = await s.next(o.startTimeoutMs ?? 120_000);
         if (started.event !== 'started') throw new Error(`ui_server.py did not start: ${JSON.stringify(started)}\n${s.tail.join('\n')}`);
         s.port = started.port as number;
@@ -133,7 +134,7 @@ export class UiServer {
             while (!this.exited && Date.now() < deadline) await sleep(50);
         } finally {
             // shortcut: a kill only when the clean stop failed; the test has failed then anyway
-            if (!this.exited) this.proc.kill();
+            if (!this.exited) this.killTree();
         }
     }
 
@@ -145,9 +146,23 @@ export class UiServer {
      * lines. On Windows `uv` starts the server as a child process: a kill of `uv` alone left the server running. */
     kill(): void {
         console.log(`the last output lines of ui_server.py:\n${this.tail.join('\n')}`);
-        if (this.exited) return;
-        if (process.platform === 'win32') spawnSync('taskkill', ['/PID', String(this.proc.pid), '/T', '/F']);
-        else this.proc.kill();
+        this.killTree();
+    }
+
+    /** `uv` starts the server as a child process: end the whole tree. Windows: `taskkill /T`; elsewhere the process
+     * group of the detached `uv` [NV off Windows]. */
+    private killTree(): void {
+        if (this.exited || this.proc.pid === undefined) return;
+        if (process.platform === 'win32') {
+            const r = spawnSync('taskkill', ['/PID', String(this.proc.pid), '/T', '/F'], {encoding: 'utf8'});
+            if (r.status !== 0) console.log(`taskkill of ui_server.py ended with ${r.status}: ${(r.stderr || r.stdout || String(r.error)).trim()}`);
+        } else {
+            try {
+                process.kill(-this.proc.pid, 'SIGKILL');
+            } catch (e) {
+                console.log(`the kill of the process group of ui_server.py failed: ${e}`);
+            }
+        }
     }
 }
 
@@ -160,6 +175,8 @@ async function limited(step: string, work: Promise<unknown>, ms: number, kill: (
     clearTimeout(timer);
     if (result === 'time-out') {
         console.log(`hung step: ${step} (more than ${ms} ms); the process is killed`);
+        // Q909: the test keeps passing until the Q907 lane fixes the cause; the report shows the kill
+        base.info().annotations.push({type: 'hung step', description: step});
         kill();
     }
 }

@@ -693,7 +693,8 @@ checked" means each capture, not each camera frame. The B-1a criterion of 6.3 al
 - **The claim of the product.** At the end of each run, the bench reads `drawnCount` of
   `PreviewTiles` through the harness page. It is reported as the claim of the product (6.1).
 - **Runs.** For each frame rate F (30 and 60): 3 runs of 2 s warm-up and 60 s measurement. Each
-  target uses the median of the runs.
+  target uses the median of the runs. The result file keeps, for B-1a, each second of each camera below its
+  ratio, with the frames that the observer read in that second [Q894].
 
 ### 6.3 Targets [Q6, Q9] [agent 10, agent 26]
 
@@ -792,7 +793,8 @@ frames each second on each of 8 tiles during a scrub [M ADR-1ACK evidence].
   image of `webContents.capturePage()` in the same way [Q867].
 - **The clean-up after each test.** `PreviewKit.close` closes each app, then stops each `ui_server.py`, each step
   with a time limit (10 s for an app, 20 s for a server), inside the 60 s of the test. At a time-out it kills that
-  process and logs `hung step: <step>` [Q896]. `ui_server.py` sets the graceful-shutdown limit of uvicorn to 5 s,
+  process tree (on Windows `taskkill /T`; elsewhere the process group, [NV] off Windows), logs `hung step: <step>`
+  and adds it to the test report as an annotation; the kill does not fail the test [Q896]. `ui_server.py` sets the graceful-shutdown limit of uvicorn to 5 s,
   so that its stop ends on its own also when a reset client connection never reports its loss; the time limit and
   the kill stay as the backstop [Q906].
 - **The kept overlay text.** A test reads the overlay of a tile from `Tile.overlay`, which the tile
@@ -1189,6 +1191,10 @@ target goes to the user, and section 6.4 applies.
 - Pass: B-1b, B-2 and B-3 of 6.3, in the median of the runs. The values of the outside observer are
   recorded, with no target.
 - Must not: report a value of the outside observer at 60 fps as a pass or a miss.
+
+Two unit tests of `preview/tests/unit/` are guards of the code lane, with no T-ID: `preview-tiles-order.test.ts`
+(the order of the tile updates turns at each refresh [Q893]) and `preview-tiles-reject.test.ts` (a rejected tile
+update clears `busy`).
 
 T-PRV-45 and T-PRV-46 were cut in revision 2: T-PRV-36 tests the flagged message, T-PLAY-41 tests
 the rotation of the tile, and T-PRV-36 tests that the rotation reaches the tile.
