@@ -2646,7 +2646,11 @@ side of these rules is the certify checks of section 20 of [`certify.md`](certif
   still holds at a close are dropped. A Quick Sync encoder that does not open at the start of a camera
   is not counted as a fallback: the camera uses `cv2.imencode` [U Q881]. After one fallback, each later
   open of that camera in the same app run uses `cv2.imencode` too, also in a new group, until the app
-  restarts [U Q886]. The camera is kept by its `camera_id` [YQN1 8]. The Quick Sync check of 13.2
+  restarts [U Q886]. The camera is kept by its `camera_id` [YQN1 8]. Each status has the flag
+  `encoder_failed`, which the camera loop sets at a fallback. At each write of the switch, the manager
+  reads the flag of the status of the newest group of each camera (its shared value stays readable after
+  the close of the group) and writes it only as True, so that a fallback that lands meanwhile is never
+  reset; the loop also keeps its own count [YQN1 10, U Q903]. The Quick Sync check of 13.2
   encodes one NV12 test frame of 1280x720: the user asked for at least 640x480, ideally 720p (Q887), and
   an agent chose 720p [YQN1 12].
 - **OpenCV source [V4].** A YUY2 or NV12 request gives a `cv2.imencode` JPEG at quality 90 of the
@@ -2710,6 +2714,9 @@ missing module, not with an error at collection (22.6 item 20).
 | T-CAP-164 | 3b | fake | The OpenCV fake opens and reports 320x240 for a request of 640x480 [U Q887, Q889]. | The camera fails, stage `set mode`, code `below-floor`, reason "no mode of 640x360 or more". |
 | T-CAP-165 | 3b | UI unit | `resolution-floor.ts` of the UI: the size floor and the note of 22.2 [U Q888, Q889]. | 640x480, 640x360, 1280x720 are at the floor and 320x240, 424x240, 480x360, 639x480, 640x359 are not; the note shows for 640x480, 640x360, 1279x720 and 1280x719, not for 1280x720 and 1920x1080; the English text is as 22.2. |
 | T-CAP-160 | 3b | fake | `input_range` "full" and "limited" against the share of the warm-up; "auto" with the OS flag "full" [ZEK6 4]. | The log gives the set range; the ring JPEG is the full-range BGR of the source with that range, within 3 levels. |
+
+The fake tests use sizes at the size floor of 22.2: 640x480 in place of 320x240, 1280x720 for a second
+size, and 640x360 at 100 fps for T-RING-40 (two rings of about 89 MiB) [YQN1 7, U Q903].
 
 T-CAP-150 to T-CAP-153 are T-CAP-105, T-CAP-106, T-CAP-109 and T-CAP-110 of `dom/3bc-tests` and of
 ADR-8MTY. On this branch T-CAP-105 to T-CAP-114 are other tests (22.6 item 16). T-CAP-151 runs on

@@ -86,7 +86,6 @@ These entries wait for a decision of the user. Section is the section or area of
 | [JFG4](entries/JFG4-choices-of-the-capture-timings-build.md) | Choices of the capture timings build that the user did not decide: source sets, sets, main process, message loop, route, test seams, faults | none | proposed |
 | [QF7V](entries/QF7V-choices-of-the-test-workflow-on-dom-integration.md) | Choices of the push run of `test.yml`: no run for log-only pushes, no macOS job on a push, pinned labels, PortAudio, no `capture_local`, no fail-fast, 60 min | none | proposed |
 | [4PPS](entries/4PPS-choices-of-the-answers-lane-of-q842-to-q856.md) | Choices of the answers lane: the label from `<recording_name>_info.json` with a fall back, no `pickedFoldersFile`, Q852 sentences, control-read setting, OS key | none | proposed |
-| [YQN1](entries/YQN1-choices-of-the-size-floor.md) | Choices of the size floor: one predicate, reason and refusal texts, the check after the open, the UI control and its tracking note, test sizes | `skellycam.core.camera.capture` | proposed |
 
 The entries that are `rejected`, `superseded by XXXX`, `absorbed into <path>#<anchor>`,
 `evidence; used by XXXX`, `evidence; replaced by XXXX` or `done` are in [historical.md](historical.md).

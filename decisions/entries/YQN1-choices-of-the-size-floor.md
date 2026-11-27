@@ -1,14 +1,22 @@
 # YQN1 — Choices of the size floor and the tracking note (Q887 to Q889)
 
-**Status:** proposed, 2026-11-26 (agent).
+**Status:** absorbed into
+[`specs/windows-capture.md#74-full-mode-list-3c-d14`](../../specs/windows-capture.md#74-full-mode-list-3c-d14),
+[`specs/windows-capture.md#75-mode-choice-auto-rate-group-rate`](../../specs/windows-capture.md#75-mode-choice-auto-rate-group-rate),
+[`specs/windows-capture.md#141-linux-and-macos-d46`](../../specs/windows-capture.md#141-linux-and-macos-d46),
+[`specs/windows-capture.md#222-rules-of-step-3b`](../../specs/windows-capture.md#222-rules-of-step-3b),
+[`specs/windows-capture.md#223-test-list-of-the-encode-at-capture`](../../specs/windows-capture.md#223-test-list-of-the-encode-at-capture),
+2026-11-27 (commit to dom/jpeg-encode-tests; was accepted, 2026-11-26 (user, Q899, Q900 and Q903,
+[ADR-Y2RN](Y2RN-decisions-of-the-user-on-the-size-floor-review-and-certify-quick-runs.md),
+[ADR-AR6Z](AR6Z-decisions-of-the-user-on-the-last-choices-of-the-size-floor.md))).
 
 ## Decision
 
 The user decided the size floor and the note
 ([ADR-25VS](25VS-decisions-of-the-user-on-the-later-opens-and-the-size-floor.md)). An agent chose the
 items below. The user accepted items 1, 2, 3, 4 and 6 with Q900, and replaced item 5 with Q899
-([ADR-Y2RN](Y2RN-decisions-of-the-user-on-the-size-floor-review-and-certify-quick-runs.md)). Items 7 to
-12 wait for the user. Section 22.2 of [`specs/windows-capture.md`](../../specs/windows-capture.md) marks each one
+([ADR-Y2RN](Y2RN-decisions-of-the-user-on-the-size-floor-review-and-certify-quick-runs.md)). The user accepted items 7
+to 12 with Q903 ([ADR-AR6Z](AR6Z-decisions-of-the-user-on-the-last-choices-of-the-size-floor.md)). Section 22.2 of [`specs/windows-capture.md`](../../specs/windows-capture.md) marks each one
 [YQN1 n]. T-CAP-162 to T-CAP-165 test them.
 
 1. **One predicate.** `modes.size_at_floor(width, height)` on the server: width 640 or more and height
