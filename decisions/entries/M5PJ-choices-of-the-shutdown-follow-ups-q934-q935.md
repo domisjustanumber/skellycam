@@ -7,9 +7,10 @@
 The user did not decide these details. [`recorder.md`](../../specs/recorder.md) 9.1 items 7 to 9 state them.
 
 1. **Second Ctrl-C** (item 9): `abort_on_a_second_ctrl_c` of `__main__` (a module function, so a unit test can check
-   it with a fake server and clock) wraps `uvicorn.Server.handle_exit`. A SIGINT or SIGBREAK less than 1 s
-   (`SECOND_CTRL_C_AFTER_S`, monotonic clock) after the first is dropped; one 1 s or more after it sets
-   `force_exit` and the global kill flag and starts the forced-exit thread. The first signal does as before.
+   it with a fake server and clock) wraps `uvicorn.Server.handle_exit`. Only SIGINT and SIGBREAK are presses; a
+   SIGTERM is no first press. A press less than 1 s (`SECOND_CTRL_C_AFTER_S`, monotonic clock) after the last press,
+   also a dropped one, is dropped; one 1 s or more after it sets `force_exit` and the global kill flag and sets the
+   forced-exit event. A first press after a SIGTERM is dropped (uvicorn would take it as `force_exit`).
 2. **A second Ctrl-Break is a second Ctrl-C**, as item 3 handles Ctrl-Break as Ctrl-C (uvicorn alone takes only a
    second SIGINT as `force_exit`).
 3. **The bound is 8 s** from the second signal to the end of each process (a `pace` half), 60 s in the blocking
@@ -23,8 +24,9 @@ The user did not decide these details. [`recorder.md`](../../specs/recorder.md) 
    all groups that runs).
 7. **Requests cut by the limit** (item 8): the tests cancel an apply in its start loop, a search in its wait loop
    and an apply in its detection; nothing is left. With Q972 the THREAD case passes, and its strict mark goes.
-8. **The forced exit** (Q977): a daemon thread waits `FORCED_EXIT_AFTER_S` (5 s) from the abort; when the process
-   still runs then, it logs the names of the threads that run and calls `os._exit(1)`. It also covers a hang in
+8. **The forced exit** (Q977): a daemon thread, started when the handler is put in place, waits for the event of the
+   abort, then `FORCED_EXIT_AFTER_S` (5 s); when the process still runs then, it logs the names of the threads that
+   run and calls `os._exit(1)`. The handler starts no thread (a lock of `threading` can be held by the main thread). It also covers a hang in
    the lifespan end, where `shutdown_all()` does not run yet; the camera processes ended at the kill flag.
 9. **Blocking checks with no timing:** the unit test of item 1, and in the process test, no camera process ended by
    `WorkerRegistry.shutdown_all()` (the child writes the exit code and the terminate mark of each worker).

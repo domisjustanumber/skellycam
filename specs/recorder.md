@@ -1116,18 +1116,25 @@ choices [ADR-M5PJ](../decisions/entries/M5PJ-choices-of-the-shutdown-follow-ups-
    gone wrong"; the goal is that all processes stop and release any holds and locks; cleaning up the recording
    would be nice, but is not expected. So the manifest may stay `recording`. Ctrl-Break (SIGBREAK) counts as Ctrl-C
    (item 3). `__main__` handles the signals of uvicorn with `abort_on_a_second_ctrl_c` (`skellycam/__main__.py`):
-   - The first SIGINT, SIGBREAK or SIGTERM goes to uvicorn as before (items 3 and 5).
-   - A SIGINT or SIGBREAK less than `SECOND_CTRL_C_AFTER_S` (1 s) after the first one is the same key press (a
-     launcher that forwards SIGINT while the terminal also signals the process group, or key repeat). It is dropped:
-     uvicorn does not get it, so it does not set `force_exit`, and the quit stays an ordinary quit.
-   - A SIGINT or SIGBREAK 1 s or more after the first one is the abort. It sets uvicorn's `force_exit` and the
-     global kill flag. So each camera process ends at once, a take stop that waits for its cameras gives up
-     (`GIVE_UP_AFTER_EXIT_S`), and the server ends.
+   - Only a Ctrl-C (SIGINT) or a Ctrl-Break (SIGBREAK) is a press. A SIGTERM (the worker monitor after
+     `/shutdown`, the kill flag of a fault, a SIGTERM from outside) goes to uvicorn as before (items 3 and 5) and is
+     no first press.
+   - The first press goes to uvicorn as before, unless uvicorn already ends (a SIGTERM came first): then it is
+     dropped, because uvicorn would take a SIGINT after its shutdown began as `force_exit`.
+   - A press less than `SECOND_CTRL_C_AFTER_S` (1 s) after the last press is the same key press (a launcher that
+     forwards SIGINT while the terminal also signals the process group, or key repeat). It is dropped: uvicorn does
+     not get it, and the quit stays an ordinary quit. The 1 s counts from the last press, also a dropped one, so a
+     key that repeats for longer than 1 s never aborts.
+   - A press 1 s or more after the last press is the abort. It sets uvicorn's `force_exit` and the global kill flag.
+     So each camera process ends at once, a take stop that waits for its cameras gives up (`GIVE_UP_AFTER_EXIT_S`),
+     and the server ends.
    - The forced exit (Q977 [ADR-F7BK](../decisions/entries/F7BK-decisions-of-the-user-on-the-shutdown-follow-ups-q972-q976-q977.md)):
-     the abort starts a daemon thread. When the process still runs `FORCED_EXIT_AFTER_S` (5 s) after the abort, a
-     thread still holds it (for example a disk call that hangs inside a take start or stop). The thread logs the
-     names of the threads that run, and the process ends with `os._exit(1)`. The camera processes ended at the kill
-     flag before that; a camera process that hangs ends at the lost heartbeat (decision L).
+     a daemon thread starts when `main()` puts the handler in place, and waits for an event. The abort sets the event
+     (the handler starts no thread: a signal handler that starts a thread can block on a lock of `threading` that the
+     main thread holds). When the process still runs `FORCED_EXIT_AFTER_S` (5 s) after the abort, a thread still
+     holds it (for example a disk call that hangs inside a take start or stop). The daemon thread logs the names of
+     the threads that run, and the process ends with `os._exit(1)`. The camera processes ended at the kill flag
+     before that; a camera process that hangs ends at the lost heartbeat (decision L).
    - Bound: each process ends within 8 s of the second Ctrl-C (the `pace` half; 60 s in the blocking half). The
      camera processes end at the kill flag; `WorkerRegistry.shutdown_all()` waits 3 s for each one, then ends it
      (SIGTERM, then kill), so 8 s leaves room. It does not rest on the lost heartbeat of decision L (10 s).
@@ -1146,11 +1153,13 @@ choices [ADR-M5PJ](../decisions/entries/M5PJ-choices-of-the-shutdown-follow-ups-
      second one is sent only after the first was taken.
    - Without an abort, a disk call that hangs inside a take start or stop still holds the exit with no bound (item 5).
    - Blocking checks with no timing: a unit test of `abort_on_a_second_ctrl_c` (a fake server and clock) checks the
-     drop, the abort, the kill flag and the forced-exit thread; the process test checks that no camera process was
-     ended by `WorkerRegistry.shutdown_all()` (each one ended at the kill flag) and that a hung take stop ends with
-     the forced exit, the camera processes ended and the port free.
-   - [NV] What stays of a shared-memory ring on Linux and macOS after the forced exit (no close unlinks it; the sweep
-     of the next start does), and how much of the files of a stuck take stays readable.
+     drop, a key that repeats, a SIGTERM before a press, the abort, the kill flag and the forced-exit event; the
+     process test checks that no camera process was ended with `terminate` or `kill` (each one ended at the kill
+     flag) and that a hung take stop ends with the forced exit, the camera processes ended and the port free.
+   - [NV] Linux and macOS: `FrameRingCreator` makes each ring with `SharedMemory(create=True)`, which the resource
+     tracker of Python tracks, so the tracker should unlink the ring when the main process ends with `os._exit`; the
+     sweep at the next start (frame-ring.md, A37) is a second net. Not run there. Also not checked: how much of the
+     files of a stuck take stays readable.
 
 ### 9.2 The Electron app at a slow end and at a failed start of the server
 
