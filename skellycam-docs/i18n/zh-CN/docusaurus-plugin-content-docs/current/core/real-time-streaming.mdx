@@ -11,11 +11,13 @@ import config from '@site/content.config';
 
 <CoreFeatureHeader feature={config.features.find(f => f.id === 'real-time-streaming')} repoUrl="https://github.com/freemocap/skellycam" />
 
-## 多摄像头系统的单摄像头语义
+## Each camera on its own
 
-SkellyCam API 的一个关键设计目标是**多摄像头组的行为就像单个摄像头**。您无需管理 N 个独立的摄像头流，每个都有独立的帧率和连接生命周期，而是连接到一个 WebSocket 端点，接收同步的多帧负载的单一流。
+The live preview sends each camera on its own. For each WebSocket connection, the server has one sender, `PreviewRelay`. In each pass, the sender reads the frame ring of each camera and sends the newest frame that it has not sent yet, as one binary camera message. It skips the older frames and keeps no queue, so a connection has at most one camera message in flight for each camera.
 
-每个负载包含每个帧事件中每个摄像头**恰好一张图像**，以一致的帧率传递。您的应用代码无需跨摄像头关联帧、处理漂移或管理每个摄像头的连接。您只需处理每个负载，知道它代表所有摄像头的单个同步时刻。
+Each camera has its own flow control. When the UI has drawn a frame, it sends a ready message for that camera, `{"message_type": "camera_ready", "camera_id": "a1b2"}`. Then the sender can send that camera its next frame. When no ready message comes, a safety net sends the newest unsent frame of that camera one time each second. Thus a slow camera or a slow tile holds back only its own camera. The other cameras go on at their own rate.
+
+The preview does not wait for the lockstep gate or for equal frame numbers. A camera with a new frame in its ring is shown. A camera with no new frame keeps its last frame on the screen. Thus the tiles can show frames of slightly different moments. For frame-matched data from many cameras, see [Frame-Perfect Sync](./frame-perfect-sync).
 
 ## WebSocket 协议
 
