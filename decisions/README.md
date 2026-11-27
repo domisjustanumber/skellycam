@@ -97,6 +97,7 @@ These entries wait for a decision of the user. Section is the section or area of
 | [WP77](entries/WP77-choices-of-the-player-label-and-picked-folders-lane.md) | Choices of the player label and picked-folders lane: when the capture info is read, its checks, the member by key, equal labels, picks for the run, links | none | proposed |
 | [CM9S](entries/CM9S-choices-of-the-clean-ups-lane.md) | Choices of the clean-ups lane: the Q871 guard and probes, the three locales of Q900, the stall-watch test, the kill rule, the fixture, the docs page | none | proposed |
 | [590X](entries/590X-choices-of-the-ui-messages-lane.md) | Choices of the UI messages lane (Q925, Q927): native boxes, 10 s from the quit, the bind-error rule, no retry, `isRunning` after the exit, texts via the menu | `recorder` | proposed |
+| [YR3G](entries/YR3G-choices-of-the-server-spawn-lane.md) | Choices of the server spawn lane: `spawn` with no shell and no output limit, stdout to the null device, the stderr tail, no kill | `recorder` | proposed |
 
 The entries that are `rejected`, `superseded by XXXX`, `absorbed into <path>#<anchor>`,
 `evidence; used by XXXX`, `evidence; replaced by XXXX` or `done` are in [historical.md](historical.md).

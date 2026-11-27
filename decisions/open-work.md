@@ -195,7 +195,8 @@ task. Delete an item when its work is done. The PR that closes an item records t
   Linux review of ADR-T34M.
 - **Shutdown, UI messages** ([ADR-9V4Y](entries/9V4Y-decisions-of-the-user-on-the-shutdown-lane-q924-to-q928.md)):
   Q925 and Q927 are built on `dom/ui-saving-port` (`recorder.md` 9.2); the user answers the questions of ADR-590X
-  and tries the two boxes by hand. Q926 (skellylogs) is the work of another lane.
+  and tries the two boxes by hand. Q926 (skellylogs) is the work of another lane. The start with no output limit
+  (`recorder.md` 9.3) is on `dom/server-spawn`, not merged: the user answers ADR-YR3G and tries the packaged app.
   Later lane: a record start during the background close of `/shutdown` gets 500, not 409 (no `_closing` check in
   `_start_recording`); no take is lost.
 - **Question for the user: a second Ctrl-C during a take.** It sets `force_exit` of uvicorn, which skips the lifespan
