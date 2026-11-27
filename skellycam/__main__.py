@@ -90,6 +90,19 @@ async def main() -> None:
             timeout_graceful_shutdown=SHUTDOWN_CONNECTION_LIMIT_S,
         )
         server = uvicorn.Server(config)
+        handle_exit = server.handle_exit
+        abort_signals = (signal.SIGINT, getattr(signal, "SIGBREAK", signal.SIGINT))
+
+        def abort_on_a_second_ctrl_c(signum: int, frame: object) -> None:
+            """recorder.md 9.1 item 9 (Q934): a second Ctrl-C or Ctrl-Break aborts. uvicorn stops its waits, and the
+            kill flag ends each camera process at once; the first signal does as before."""
+            second = server.should_exit and signum in abort_signals
+            handle_exit(signum, frame)
+            if second:
+                server.force_exit = True
+                global_kill_flag.value = True
+
+        server.handle_exit = abort_on_a_second_ctrl_c
 
         logger.info(f"Starting server on {HOSTNAME}:{PORT}")
         await server.serve()
