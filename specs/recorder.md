@@ -1032,8 +1032,16 @@ choices [ADR-06PW](../decisions/entries/06PW-choices-of-the-shutdown-limit-lane.
    `CameraGroup.stop_recording` run their body as a task under `asyncio.shield`. The task holds `_end_lock`, and the
    group keeps a reference to it until it ends. A cancel of the caller (a request task that uvicorn cancels, or a
    close that is cancelled while it stops the take) does not cancel the task: the take start or stop runs to its end.
-   A later stop or close waits for `_end_lock`. Then the close finds no take (the 409 that `close` handles), or the
-   take that the start began, and stops it with the frame count of the take.
+   A later stop waits for `_end_lock` in its own task. `CameraGroupManager.close_all_camera_groups` (the close of the
+   lifespan end and of `DELETE /group/close/all`) waits for the take lock of each group (`CameraGroup.await_take_end`)
+   before `group.close()`. So a start or stop that runs ends first, also a start that has not set `self.take` yet
+   (it waits in `pause` or in the thread of `start_take`). Then the close finds no take, or the take that the start
+   began, and stops it with the frame count of the take. A close that is cancelled while it waits for the lock
+   leaves its group listed; the close of the lifespan end waits again. The other caller of `group.close()`, the
+   teardown of a group whose start failed, runs before any take can start in that group.
+   - When the caller was cancelled, nobody gets the outcome of the task. An error of the task then goes to the log
+     at ERROR with its traceback (not a `RequestRefused`, which only says that no take runs). A caller that was not
+     cancelled gets the error itself, and the group logs nothing more.
    - `DELETE /group/close/all` during a take: its close stops the take through `stop_recording`, so the shield
      covers the take. A close that is cancelled after the take stop leaves its group listed, and the close of the
      lifespan end closes it again. The order of `CameraGroup.close` does not change.
@@ -1054,11 +1062,15 @@ choices [ADR-06PW](../decisions/entries/06PW-choices-of-the-shutdown-limit-lane.
    `test_entry_point.py` checks the cancel of item 1.
    `take_recorder/test_take_end_cancel.py` cancels a take stop that waits for a held camera, a close of all groups
    at the same place, and a take start in `start_take`, as uvicorn cancels a request; then it closes the groups as
-   the lifespan end does. The manifest is `finished`, and each camera has the frame count of the take.
+   the lifespan end does. The manifest is `finished`, and each camera has the frame count of the take. A start that
+   is cancelled in `start_take` is followed at once by the close (also by a close that is cancelled while it waits):
+   the manifest is `finished`, and no shielded task is left. An error of a stop whose caller was cancelled is logged
+   with its traceback.
    Its last test runs the real server of `__main__` with two fake cameras (`take_recorder/server_take_child.py`):
-   during a take stop that waits for its cameras, the server process group gets Ctrl-Break (Windows) or the server
-   gets SIGINT. The process ends with code 0, the manifest is `finished` with no `camera_dead`, and each camera has
-   the same rows.
+   during a take stop that waits 12 s for its cameras, the server process group gets Ctrl-Break (Windows) or the
+   server gets SIGINT. The take end must start before the signal and end after the signal plus the limit, and
+   uvicorn must log its cancel, else the test fails. The process ends with code 0, the manifest is `finished` with
+   no `camera_dead`, and each camera has the same rows.
 5. **The connection limit (Q928, after item 3).** The shutdown of uvicorn waits at most 5 s for the open
    connections, their request tasks and `Server.wait_closed()` (`SHUTDOWN_CONNECTION_LIMIT_S` of
    `skellycam/__main__.py`, the `timeout_graceful_shutdown` of its `uvicorn.Config`). Then it cancels each request
@@ -1072,8 +1084,8 @@ choices [ADR-06PW](../decisions/entries/06PW-choices-of-the-shutdown-limit-lane.
      save (section 9). With Ctrl-C, Ctrl-Break, a SIGTERM from outside, or the kill flag that a fault sets, it comes
      while requests can still run.
    - **What it cannot cut.** A take start or a take stop (item 3: the cancel does not reach the shielded task; the
-     lifespan end waits for `_end_lock`). The close of the lifespan end, which ends a running take and closes the
-     groups: it runs after the limit and has no limit of its own. The background close of the shutdown endpoint: it
+     close of the lifespan end waits for the take lock of each group before it closes it). The close of the lifespan
+     end, which ends a running take and closes the groups: it runs after the limit and has no limit of its own. The background close of the shutdown endpoint: it
      is no request task. The wait for each protected save: it comes before the signal.
    - **What it can cut.** Any other request that still runs after 5 s, for example an apply, a detection or an
      exposure search. The thread that such a request started runs on; then the lifespan end closes the groups. This
