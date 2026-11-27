@@ -11,6 +11,7 @@ the result, for example the MTA of Media Foundation (`media_foundation/bounded.p
 
 import contextlib
 import logging
+import multiprocessing
 import threading
 import time
 
@@ -73,3 +74,48 @@ def call(stage: str, what: str, function, on_late=None, *, limit_s: float = DEFA
         raise value
     logger.debug(f"{stage}: {what}: ok in {ms:.1f} ms")
     return value
+
+
+def in_child(stage: str, what: str, target, args=(), *, limit_s: float, name: str, times: dict | None = None):
+    """The bounded child call of the detection (windows-capture.md 7.1) and of the Quick Sync check (22.7 item 1).
+
+    Run `target(*args, sender)` in a new `spawn` child and return the first message `(kind, value)` whose kind is not
+    "alive". Each message must come within `limit_s`. A child with no message in time is killed: `CaptureFailure`
+    with the code `hung`. A child that ends with no message gives `CaptureFailure` with the code `process-ended` and
+    its exit code in `exit_code`. The call joins the child at its end, and kills a child that is still alive.
+    `times["answer"]` gets the `time.perf_counter()` of the answer, the kill or the end, before that join (22.7 item 2).
+    """
+    times = {} if times is None else times
+    context = multiprocessing.get_context("spawn")
+    receiver, sender = context.Pipe(duplex=False)
+    child = context.Process(target=target, args=(*args, sender), name=name, daemon=True)
+    try:
+        try:
+            child.start()
+        finally:
+            sender.close()
+        while True:
+            if not receiver.poll(limit_s):
+                times["answer"] = time.perf_counter()
+                child.kill()
+                raise CaptureFailure(stage, f"{what} did not answer in {limit_s:g} s", code="hung")
+            try:
+                kind, value = receiver.recv()
+            except EOFError:
+                times["answer"] = time.perf_counter()
+                child.join(DEFAULT_LIMIT_S)  # the pipe can close before the exit code is known
+                failure = CaptureFailure(stage, f"{what} ended with code {child.exitcode}", code="process-ended")
+                failure.exit_code = child.exitcode
+                raise failure from None
+            if kind != "alive":
+                times["answer"] = time.perf_counter()
+                return kind, value
+    finally:
+        receiver.close()
+        # pid None: the start failed. On Windows the process exists before the pickling of the target fails; it has
+        # no handle here and ends by itself when its pipe closes (within about 2 s, T-CAP-170).
+        if child.pid is not None:
+            child.join(DEFAULT_LIMIT_S)
+            if child.is_alive():
+                child.kill()
+                child.join(DEFAULT_LIMIT_S)

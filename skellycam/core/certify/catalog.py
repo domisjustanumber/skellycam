@@ -27,6 +27,7 @@ AFTER_TAKE = ("native-jpeg:valid", "native-jpeg:size", "native-jpeg:ring-equals-
               "records:rows-complete", "records:blocks-decode", "records:gaps-explained")
 CLOCK = ("clock:base", "clock:before-arrival", "clock:near-arrival", "sequence", "time-gaps")  # 10.2, 10.6
 LIVE = "live-at-close"  # 3.6.2 [U Q646]: the last check of each camera [ADR-0Z6Q item 15]
+QUICK_SYNC = "system:quick-sync"  # 3.6.2 [U Q879]: record-only, both levels, Windows, right after `detect`
 TAKE = tuple(f"group:take:{c}" for c in ("finished", "csv-rows", "no-missing", "frame-count", "rate"))
 # with the retry alone of 4.2; the quick checks of 3.6.11 and 3.6.12 (Q822)
 QUICK_NOT_BUILT = ("group:open", "system:recording-space", "system:memory", "system:camera-access", "group:in-step",
@@ -170,6 +171,8 @@ def planned_checks(level: str, units: list, backend: str) -> list:
     for lab, _, module in units:
         models.setdefault(lab.rsplit(".", 1)[0], module)
     out = [("detect", None)]
+    if backend == "media-foundation":  # 3.6.2 [U Q879]: the product runs the check only for this source
+        out.append((QUICK_SYNC, None))
     for step in ("detect", "open", "ready", "settings"):
         out += [(name, module) for _, module, names in by_unit for name in names[step]]
     if units:
