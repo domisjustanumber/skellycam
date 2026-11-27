@@ -12,7 +12,7 @@ import re
 
 from pydantic import computed_field
 
-from skellycam.core.camera.capture.modes import NativeMode, supported_modes
+from skellycam.core.camera.capture.modes import NativeMode, capture_modes, supported_modes
 from skellycam.core.camera.capture.source import BOUNDED_CALL_LIMIT_S, CaptureFailure
 from skellycam.core.device_detection.detect_cameras_devices import CameraDeviceInfo
 
@@ -161,6 +161,7 @@ def detect_media_foundation_cameras(*, backend=None, modes: bool = True) -> list
     for index, (name, link, native) in enumerate(result):
         camera = MediaFoundationDeviceInfo(index=index, name=name, path=link, vendor_id=_usb_id(link, "vid"),
                                            product_id=_usb_id(link, "pid"), supported_modes=supported_modes(native or []),
+                                           capture_modes=capture_modes(native or []),
                                            modes_read=native is not None,
                                            virtual=is_virtual(name, link))
         if camera.camera_id in links:

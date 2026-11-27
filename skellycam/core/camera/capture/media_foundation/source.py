@@ -11,12 +11,14 @@ import threading
 import time
 from ctypes import byref, c_long, c_ulong, c_void_p, sizeof, string_at
 
+import numpy as np
 from comtypes import COMObject
 
 from skellycam.core.camera.capture.media_foundation import bounded, com, detect
 from skellycam.core.camera.capture.media_foundation.errors import E_FAIL, check, failure, hresult_reason
 from skellycam.core.camera.capture.failure_codes import WEDGE_CODES
-from skellycam.core.camera.capture.modes import choose_mode, mode_fraction
+from skellycam.core.camera.capture.encoder import raw_shape
+from skellycam.core.camera.capture.modes import RAW_FORMATS, choose_mode, mode_fraction
 from skellycam.core.camera.capture.source import (
     BOUNDED_CALL_LIMIT_S, FIRST_FRAME_TIMEOUT_S, CapturedFrame, CaptureFailure, CaptureRequest, CaptureWaitingPlace,
     ControlRestore, ControlSetting, ControlState, ControlValue, FrameLog, OpenedMode, empty_diagnostics)
@@ -289,10 +291,12 @@ class MediaFoundationSource:
 
         def set_mode():
             try:
-                return _set_mode(reader, request)
+                chosen = _set_mode(reader, request)
+                return chosen, _os_range(reader, chosen)
             finally:
                 com.release(reader)
-        mode = self._mode = self._call("set mode", "the mode set", set_mode)
+        mode, os_range = self._call("set mode", "the mode set", set_mode)
+        self._mode, self._format = mode, mode.format  # 22.2 [Q807]: an MJPG request can open a raw mode
         self._frame_log = FrameLog(round(1e9 * mode.fps_den / mode.fps_num))
 
         reader = com.ref(self._reader, com.IMFSourceReader)
@@ -313,7 +317,7 @@ class MediaFoundationSource:
         if self._count == 0:
             raise CaptureFailure("first frame", self._error.reason, code=self._error.code)
         return OpenedMode(width=mode.width, height=mode.height, fps_num=mode.fps_num, fps_den=mode.fps_den,
-                          format=mode.format, device_path=link)
+                          format=mode.format, device_path=link, os_range=os_range)
 
     def _call(self, stage, what, function, on_late=None):
         name, timing = CALLS.get(what, (None, None))
@@ -373,9 +377,15 @@ class MediaFoundationSource:
         self._zero_bytes += not payload
         if on:
             steps.add("camera_sample_copy", steps.control.clock() - t0)
+        delivered_len = len(payload)  # bytes, also for a raw frame (4.2)
+        if self._format in RAW_FORMATS:  # 13.2: one new array; a frame of the wrong length stays 1-D [3WCA 9]
+            shape = raw_shape(self._format, self._mode.width, self._mode.height)
+            payload = np.frombuffer(payload, np.uint8)
+            if payload.size == np.prod(shape):
+                payload = payload.reshape(shape)
         return CapturedFrame(payload=payload, format=self._format, arrival_ns=arrival_ns,
                              sample_ns=sample_ns if self._sample_time_ok else NO_SAMPLE_NS,
-                             delivered_len=len(payload), driver_error=False, source_frame_number=number,
+                             delivered_len=delivered_len, driver_error=False, source_frame_number=number,
                              discontinuity=discontinuity)
 
     def _read_next(self):
@@ -424,6 +434,20 @@ def _set_mode(reader, request):
     if got != chosen:
         raise CaptureFailure("set mode", f"the camera set {got} instead of {chosen}", code="no-mode")
     return chosen
+
+
+def _os_range(reader, mode):
+    """13.3: the range flag of the OS for a YUY2 or NV12 type. MFNominalRange_0_255 is 1, MFNominalRange_16_235 is 2;
+    0 (unknown) or a missing flag is None (not set)."""
+    if mode.format not in RAW_FORMATS:
+        return None
+    raw = c_void_p()
+    check(reader.GetCurrentMediaType(FIRST, byref(raw)), "set mode")
+    current = com.own(raw, com.IMFMediaType)
+    try:
+        return {1: "full", 2: "limited"}.get(com.get_uint32(current, com.MF_MT_VIDEO_NOMINAL_RANGE))
+    finally:
+        com.release(current)
 
 
 def _copy(buffer):

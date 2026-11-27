@@ -84,14 +84,14 @@ def test_t_cap_06_frame_numbers_across_a_resolution_change(monkeypatch):
     """T-CAP-06, section 5.3 [D27, agent 5]: run, change the resolution, run again. Ring `frame_number`
     is 0, 1, 2, ... in each ring; `source_frame_number` is the source count; the gate count continues
     across the change."""
-    script = FakeScript(modes=((640, 480, 30, 1, "MJPG"), (320, 240, 30, 1, "MJPG")))
+    script = FakeScript(modes=((640, 480, 30, 1, "MJPG"), (1280, 720, 30, 1, "MJPG")))
     with capture_app(monkeypatch, [script]) as app:
         spies = Spies(monkeypatch, app)
         ready_app_steps(app)
         camera_id = app.factory.camera_ids[0]
         app.wait_clock(4.0)
         count_before = app.group.cameras.orchestrator.camera_statuses[camera_id].frame_count.value
-        response = app.apply([app.config(camera_id, width=320, height=240)])
+        response = app.apply([app.config(camera_id, width=1280, height=720)])
         assert response.status_code == 200, response.text
         app.wait_state(camera_id, "ready")
         status = app.group.cameras.orchestrator.camera_statuses[camera_id]

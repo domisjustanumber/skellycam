@@ -170,17 +170,17 @@ NATIVE_25 = (
     (640, 480, 30, 1, "MJPG"),
     (640, 480, 15, 2, "MJPG"),  # 7.5
     (640, 480, 30, 1, "YUY2"),
-    (480, 640, 30, 1, "MJPG"),  # the same area as 640x480, smaller width
-    (320, 240, 15, 2, "MJPG"),  # only low rates: the size is left out
-    (320, 240, 24, 1, "MJPG"),
+    (960, 960, 30, 1, "MJPG"),  # the same area as 1280x720, smaller width (above the size floor, Q887)
+    (1024, 576, 15, 2, "MJPG"),  # only low rates: the size is left out (above the size floor, Q887)
+    (1024, 576, 24, 1, "MJPG"),
     (800, 600, 30, 1, "YUY2"),  # no MJPG type: left out
     (960, 540, 30, 1, "H264"),  # only H.264: left out
 )
 EXPECTED_25 = [
     {"width": 1920, "height": 1080, "framerates": [30.0]},
     {"width": 1280, "height": 720, "framerates": [30.0, 60.0]},
+    {"width": 960, "height": 960, "framerates": [30.0]},
     {"width": 640, "height": 480, "framerates": [29.97, 30.0]},
-    {"width": 480, "height": 640, "framerates": [30.0]},
 ]
 
 
@@ -216,8 +216,10 @@ def _refused(native, width, height, framerate):
     return failure.value
 
 
+# The NV12 type is at 15 fps (Q876): below the floor, so the raw-mode open of 22.2 (Q807) does not take it, and
+# 1920x1080 has no mode that an MJPG request opens, as in the spec row.
 NATIVE_26 = ((1280, 720, 30000, 1001, "MJPG"), (1280, 720, 30, 1, "MJPG"), (640, 480, 30, 1, "MJPG"),
-             (1920, 1080, 30, 1, "H264"), (1920, 1080, 30, 1, "NV12"))
+             (1920, 1080, 30, 1, "H264"), (1920, 1080, 15, 1, "NV12"))
 
 
 def test_t_cap_26_mode_choice():

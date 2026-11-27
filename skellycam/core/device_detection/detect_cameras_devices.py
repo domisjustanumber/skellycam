@@ -9,7 +9,7 @@ from cv2_enumerate_cameras.camera_info import CameraInfo
 from pydantic import BaseModel, computed_field
 from tabulate import tabulate
 
-from skellycam.core.camera.capture.modes import CaptureMode  # ADR-HP7D item 3: also reachable here
+from skellycam.core.camera.capture.modes import CaptureMode, CaptureModeEntry  # ADR-HP7D item 3, 3WCA 1: also here
 from skellycam.core.camera.determine_backend import determine_opencv_camera_backend, OpenCVBackend
 from skellycam.core.device_detection.usb_connection import usb_link
 from skellycam.core.types.type_overloads import CameraIndexInt, CameraNameString, CameraBackendInt, CameraVendorIdInt, \
@@ -43,6 +43,7 @@ class CameraDeviceInfo(BaseModel):
     backend_id: CameraBackendInt | None = None
     backend_name: CameraBackendNameString | None = None
     supported_modes: list[CaptureMode] = []  # spec 7.3; empty when the mode list cannot be read
+    capture_modes: list[CaptureModeEntry] = []  # spec 7.4, 22.2 [V1]: every native type; [] with the OpenCV detection
     virtual: bool = False  # ADR-PDD3 W5: detection shows a virtual camera; a request cannot select it
     modes_read: bool = False  # the native mode list was read: [] then means no mode at the floor (7.5)
     usb_link: str = "unknown"  # "USB 3", "USB 2", "USB 1" or "unknown"

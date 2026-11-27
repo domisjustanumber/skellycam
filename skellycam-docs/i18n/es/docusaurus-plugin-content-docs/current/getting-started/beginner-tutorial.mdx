@@ -33,7 +33,7 @@ Cada camara en el grupo se puede configurar de forma independiente. El panel de 
 
 | Parametro | Valor por defecto | Descripcion |
 |-----------|-------------------|-------------|
-| **Resolucion** | 1280 x 720 | Resolucion de captura en pixeles. Si la camara no soporta la resolucion solicitada, OpenCV recurre a la mas cercana soportada. |
+| **Resolucion** | 1280 x 720 | Resolucion de captura en pixeles. La camara debe tener un modo de ese tamano exacto; SkellyCam no elige otro. El tamano minimo es 640 x 360, y por debajo de 1280 x 720 el seguimiento de manos y cara es limitado. |
 | **Tasa de fotogramas** | Por defecto de la camara | Tasa de captura objetivo. Deja el valor por defecto (`-1`) para ejecutar tan rapido como el hardware lo permita, o establece un valor especifico (por ejemplo, `30`). |
 | **Exposicion** | `-7` | Valor de exposicion dependiente del hardware. Mas negativo = tiempo de exposicion mas corto. El rango valido depende del modelo de tu camara. |
 | **Modo de exposicion** | `MANUAL` | Elige entre `MANUAL`, `AUTO` o `RECOMMENDED`. |

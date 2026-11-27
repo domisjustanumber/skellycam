@@ -68,6 +68,11 @@ class CameraStatus:
     # capture-timings.md 2 item 2: the one switch of the app; the manager writes it, the loop reads it at each publish.
     # `reset_for_start` keeps it.
     log_capture_times: Any = field(default_factory=lambda: multiprocessing.Value("b", False, lock=False))
+    # windows-capture.md 13.2: the result of the one Quick Sync check of the app run; the manager writes it before the
+    # camera opens a YUY2 or NV12 mode. `reset_for_start` keeps it.
+    quick_sync: Any = field(default_factory=lambda: multiprocessing.Value("b", False, lock=False))
+    # windows-capture.md 22.2 [U Q886]: the camera fell back from Quick Sync; the manager keeps it for the app run.
+    encoder_failed: Any = field(default_factory=lambda: multiprocessing.Value("b", False, lock=False))
     # The main process only: the counter subset of the newest diagnostics of the camera (unix-capture.md 4.2 item 2).
     diagnostics: dict = field(default_factory=dict)
     # Per process, and never pickled: the worker of the camera (the main process sets it), whether that process
@@ -244,6 +249,7 @@ class CameraStatus:
             "failure": info.get("failure"),
             "mode": info.get("mode"),
             "measured_fps": info.get("measured_fps"),
+            "jpeg_encoder": info.get("jpeg_encoder"),  # windows-capture.md 22.2 [V3]: "quick_sync", "cv2" or None
             "warnings": self.warning_items() + self.warning_items("camera_warnings")
                         + self.warning_items("group_warnings"),  # camera-requests.md 1.5 [AC5B]
             "exposure_search": ({**info["exposure_search"], "count": self.search_count.value}

@@ -50,5 +50,5 @@ These are inherent to the hardware — SkellyCam's job is to get the best possib
 ## Multi-camera setup tips
 
 - **Use separate USB controllers** — Plug cameras into ports on different USB host controllers to avoid bandwidth contention. On desktops, ports on different sides of the machine are often on different controllers.
-- **Lower resolution if needed** — If you're hitting bandwidth limits, configure cameras at a lower resolution. The synchronization will be tighter too, since smaller frames transfer faster.
+- **Lower resolution if needed** — If you're hitting bandwidth limits, configure cameras at a lower resolution, but not below 640 x 360: SkellyCam ignores smaller modes, as it ignores modes below 30 fps. Below 1280 x 720, hand and face tracking are limited. The synchronization will be tighter too, since smaller frames transfer faster.
 - **Consistent cameras** — Using identical camera models simplifies configuration and produces more consistent results, though mixing models works fine.

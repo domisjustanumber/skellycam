@@ -73,19 +73,21 @@ def count_reads(monkeypatch):
     return calls
 
 
-JPEG = synthetic_jpeg(64, 48)
+JPEG = synthetic_jpeg(640, 480)  # the size floor of windows-capture.md 22.2 (Q887)
 
 
 class ScriptSource:
     """A pull source. Each read moves the clock by `read_ns` and gives a frame; `empty` is a list of the read
-    calls (0 is the first) that give no frame. `copy_ns`: the fake callback copy of each frame."""
+    calls (0 is the first) that give no frame. `copy_ns`: the fake callback copy of each frame. `raw`: each frame is
+    a synthetic YUY2 frame (windows-capture.md 13.2)."""
 
     name = "fake"
     searches = False
 
     def __init__(self, clock, *, read_ns=30 * MS, empty=(), copy_ns=None, bgr=False, diagnostics=None,
-                 timing_steps=None, on_read=None):
+                 timing_steps=None, on_read=None, raw=False):
         self.clock, self.read_ns, self.empty, self.copy_ns, self.bgr = clock, read_ns, set(empty), copy_ns, bgr
+        self.raw = raw
         self.reads = self.frames = 0
         self.extra_diagnostics = diagnostics or {}
         self.diagnostics_ns = 0
@@ -96,7 +98,7 @@ class ScriptSource:
 
     def open(self, request):
         from skellycam.core.camera.capture.source import OpenedMode
-        return OpenedMode(width=64, height=48, fps_num=30, fps_den=1, format="MJPG", device_path="fake")
+        return OpenedMode(width=640, height=480, fps_num=30, fps_den=1, format="MJPG", device_path="fake")
 
     def set_controls(self, changes):
         from skellycam.core.camera.capture.source import ControlValue
@@ -125,8 +127,12 @@ class ScriptSource:
             self.clock.advance(self.copy_ns)
             if on:
                 steps.add("camera_sample_copy", steps.control.clock() - t0)
-        if self.bgr:
-            payload, fmt, length = np.full((48, 64, 3), 128, np.uint8), "BGR", 0
+        if self.raw:
+            from skellycam.tests.capture.uncompressed import synthetic_raw
+            payload = synthetic_raw("YUY2", 640, 480)
+            fmt, length = "YUY2", payload.nbytes
+        elif self.bgr:
+            payload, fmt, length = np.full((480, 640, 3), 128, np.uint8), "BGR", 0
         else:
             payload = with_comment(JPEG, number)
             fmt, length = "MJPG", len(payload)
@@ -156,7 +162,7 @@ class FakeRing(_writer_class()):
     """A JPEG or BGR ring writer: each write moves the clock by `write_ns`. A `FrameRingWriter` with no shared
     memory, so that the annotations of the product accept it."""
 
-    def __init__(self, clock, write_ns=0, name="ring", shape=(48, 64, 3)):
+    def __init__(self, clock, write_ns=0, name="ring", shape=(480, 640, 3)):
         self.clock, self.write_ns, self.name, self.shape = clock, write_ns, name, shape
         self.writes = []
         self._counters = [0] * 8
@@ -225,7 +231,7 @@ class StubCapture:
 
     def retrieve(self):
         self.clock.advance(self.retrieve_ns)
-        return True, np.full((48, 64, 3), 128, np.uint8)
+        return True, np.full((480, 640, 3), 128, np.uint8)
 
     def release(self):
         pass
@@ -302,7 +308,7 @@ def take_spec(tmp_path, queue_size=90, camera_id=CAMERA_ID):
     from skellycam.core.take_recorder.take import CameraTakeSpec
     return CameraTakeSpec(camera_id=camera_id, mkv_path=tmp_path / f"{camera_id}.mkv",
                           csv_path=tmp_path / f"{camera_id}.csv", header=(), take_start_host_ns=0, num=30, den=1,
-                          width=64, height=48, layout=None, queue_size=queue_size, stall_limit_s=10.0)
+                          width=640, height=480, layout=None, queue_size=queue_size, stall_limit_s=10.0)
 
 
 def start_take(loop, tmp_path, **kwargs):

@@ -685,7 +685,7 @@ manifest, with the same content [SFF-801].
 | config `device.backend` | `"media_foundation"` for the Media Foundation source; the lower-case OpenCV backend name (for example `"v4l2"`, `"avfoundation"`, `"msmf"`) for the OpenCV source [agent 23]. | — |
 | config `device.os_index` | The detection index. | — |
 | config `device.model`, `serial`, `port_path`, `os_device_id` | null. | 5d |
-| config `requested` | `width`, `height`, `framerate` (the requested number, or `"camera_default"` for a request of -1 or 0 [D16]), `capture_format` (`"MJPG"` or `"YUYV"`), `exposure_mode` (`"auto"`, `"manual"` or `"recommend"`). | — |
+| config `requested` | `width`, `height`, `framerate` (the requested number, or `"camera_default"` for a request of -1 or 0 [D16]), `capture_format` (`"MJPG"`, `"YUYV"`, or `"NV12"` (SFF-800 of skellyspecs main, Q849; Q877 of [ADR-4TBY](../decisions/entries/4TBY-decisions-of-the-user-on-the-review-of-the-3b-code.md))), `exposure_mode` (`"auto"`, `"manual"` or `"recommend"`). | — |
 | config `controls` | `exposure_us`, `gain` and `focus` from the read-back values of the config [cap 11.4]. `exposure_us` is 2^v × 10^6 for the exposure value v of skellycam (log2 seconds) [D35] [agent 29]. `auto` is the auto flag of each control [D37]. | 5d: the other controls of SFF-802 |
 | config `exposure_step` | null. | 5d |
 
@@ -1419,7 +1419,8 @@ VPF8 and J3QP record that R1 to R5, M1 to M5 and C5, C6 replace their effect.
 
 1. The UI display of the queue event [P §6: "shown in the UI"]. Step 5a logs the counts. Who shows
    them in the UI, and in which phase, is open.
-2. `capture_format` of the capture info has no value for NV12 (3b) [SFF-800 lists `MJPG` and `YUYV`].
+2. `capture_format` of the capture info for NV12 (3b): skellyspecs main adds `NV12` to SFF-800 (Q849). An NV12
+   take records `"NV12"` (Q877 of [ADR-4TBY](../decisions/entries/4TBY-decisions-of-the-user-on-the-review-of-the-3b-code.md)).
 3. The fsync of the folder after a rename on Linux and macOS. SFF-786 does not ask for it; a rename
    can be lost on a power loss without it.
 4. The camera-side drop that only the flag `DISCONTINUITY` shows [D34] is not in the CSV (7.1). The

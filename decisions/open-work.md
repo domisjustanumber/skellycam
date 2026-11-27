@@ -40,6 +40,13 @@ task. Delete an item when its work is done. The PR that closes an item records t
   - Open: section 15 must name the macOS timing step (BM73 7); item 90 of section 18 is stale.
   - The `README.md` of `skellycam/tests/reference_recordings/` still names the deleted tests of the
     phase 2 loop (W8); it changes after the redaction decision of that file.
+  - Step 3b (section 22): merges after a review (Q815). No test of the real `QuickSyncEncoder` or of the raw path
+    of Media Foundation; 22.5 not run. Q879 ([ADR-4TBY](entries/4TBY-decisions-of-the-user-on-the-review-of-the-3b-code.md)),
+    a lane after the merge, spec and tests first: a record-only certify check of Quick Sync and its time; the
+    product check in a child process with a 5 s limit (a hang or crash: OpenCV). 13.2 keeps [NV] until then.
+    Q900 ([ADR-Y2RN](entries/Y2RN-decisions-of-the-user-on-the-size-floor-review-and-certify-quick-runs.md)): the
+    next UI lane adds `trackingLimitedByResolution` and `smallestSizeIs640x360` to the other three language
+    files. Q809: the 3c tests of `dom/3bc-tests` come later.
   - Phase 7: the parity table of section 16.7 of the spec is the to-do list for Linux and macOS
     (14 tests with no counterpart yet).
 - **Support virtual cameras.** Detection shows a virtual camera with `virtual=True`, and a request
@@ -109,9 +116,9 @@ task. Delete an item when its work is done. The PR that closes an item records t
   [ADR-N2VE](entries/N2VE-decisions-of-the-user-on-the-ci-triage-and-the-stall-watch-code.md), low priority). A later
   small test lane writes it: a real camera loop, a fake camera whose frames stop after a reopen, the watch on the
   same clock (`unix-capture.md` 4.10).
-- **Question for the user: the six full checks run in quick.** `certify.md` 3.4 and 3.6.2 give quick twelve checks
-  for each camera (Q593). The code gives the six full checks in quick too (`catalog.camera_names`, `ITEM`), so a
-  quick item counts them: a camera with no ring watch is then `partial`. Restrict them to full, as the spec says?
+- **Quick certify runs** (Q902, [ADR-Y2RN](entries/Y2RN-decisions-of-the-user-on-the-size-floor-review-and-certify-quick-runs.md)): the next certify lane, spec text and test
+  first: a quick run leaves out the six full-only checks of Q593 (image-effect, not-reencoded, size,
+  ring-equals-mkv, source-equals-ring, gaps-explained).
 - **The certify run of skellycam.** The spec [`specs/certify.md`](../specs/certify.md) is draft 3. The code is in `skellycam/core/certify/` (section 19 of the
   spec). Open: the checks that are `not-run`
   `not-built` (the status line of the spec). Not decided: FC1C items 4 and 13, HQE5 items 2 and 3
@@ -193,9 +200,6 @@ task. Delete an item when its work is done. The PR that closes an item records t
     `pace`, or stay as it is? It fails 1 in 20 on 2 cores (real time; JC4X item 3).
   - macOS [NV]: the runner's open-file limit, and that its errors came from this leak. A run of the macOS jobs by
     hand gives the result.
-- **The later merge of `dom/jpeg-encode-tests`.** On TC9B, 53VB, JWZ1 and 8ACV, the status text of
-  `dom/log-cleanup` wins. Both branches absorb 2AQT into `windows-capture.md` 16.1, so they agree; the 16.1
-  text of `dom/answers-q842` (both cameras stay `ready`) wins.
 - **Next CI lane (Q854).** Each workflow pins uv 0.13.7 (also `test.yml`, ADR-PA3A); ADR-7DE6 says 0.13.9. An
   entry with the version of the workflows supersedes ADR-7DE6.
 - **ZEX9** ([ADR-ZEX9](entries/ZEX9-decisions-of-the-user-on-the-housekeeping-of-2026-11-25.md)) becomes `done`
