@@ -39,6 +39,7 @@ async def main() -> None:
         def _suppress_connection_reset(loop: asyncio.AbstractEventLoop, context: dict) -> None:
             exception = context.get("exception")
             if isinstance(exception, ConnectionResetError):
+                logger.debug(f"Suppressed a connection reset: {context.get('message')}")  # recorder.md 9.1 item 2
                 return
             if _default_handler is not None:
                 _default_handler(loop, context)
@@ -99,7 +100,7 @@ async def main() -> None:
 
 def entry_point() -> None:
     """Sync entry point for the `skellycam` console script."""
-    from skellylogs import configure_logging
+    from skellylogs import configure_logging, get_websocket_log_queue
 
     from skellycam import LOG_LEVEL
     from skellycam.system.default_paths import get_log_file_path
@@ -107,6 +108,8 @@ def entry_point() -> None:
     # the app calls logger.api / logger.success, which exist only after this (a host such as freemocap
     # configures logging itself; the standalone server must do it here)
     configure_logging(level=LOG_LEVEL, log_file_path=get_log_file_path())
+    # recorder.md 9.1 item 1: only an open websocket reads this queue; no exit waits for its feeder thread
+    get_websocket_log_queue().cancel_join_thread()
 
     multiprocessing.freeze_support()
     try:

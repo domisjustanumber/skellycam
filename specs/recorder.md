@@ -1014,6 +1014,28 @@ Added on 2026-11-20 (L of [ADR-JMS0](../decisions/entries/JMS0-review-decisions.
   its pair has placeholders to that frame (7.3), the `# end` line, and the same rows as each other
   pair. When no main process is alive, the manifest stays `recording` (step 5c).
 
+### 9.1 The end of the server process
+
+Added on 2026-11-27 (Q907 [ADR-75CF](../decisions/entries/75CF-decision-of-the-user-on-the-shutdown-of-the-server.md),
+choices [ADR-06PW](../decisions/entries/06PW-choices-of-the-shutdown-limit-lane.md)).
+
+1. **The exit does not wait for the log queue.** `entry_point()` of `skellycam/__main__.py` calls
+   `cancel_join_thread()` on the websocket log queue after `configure_logging`. Only an open websocket reads that
+   queue, so its feeder thread can wait for ever on a full pipe. The exit handler of `skellylogs` joins that thread.
+   The two `os._exit` calls of `entry_point()` skip the exit handlers, but an exit that does not reach them runs
+   them: for example the `sys.exit` of uvicorn when the port is in use. So a server whose start fails ends with an
+   error code. Before this rule, such a server process did not end (3 of 3 runs on Windows).
+2. **A suppressed reset is visible.** The exception handler of the loop on Windows still suppresses each
+   `ConnectionResetError`. It logs one DEBUG line with the message of the context.
+3. **Tests.** `skellycam/tests/test_server_exit.py` runs the real server in a child process with its port in use:
+   the process ends with an error code. `test_entry_point.py` checks the cancel of item 1.
+4. **Open: the wait for connections has no limit.** The shutdown of uvicorn waits with no time limit for the open
+   connections, their request tasks and `Server.wait_closed()` (no `timeout_graceful_shutdown`). The product did not
+   hang in 39 runs with reset clients. A limit is not built: at the limit, uvicorn cancels each request task that
+   still runs, and a cancelled take stop leaves the manifest `recording` on each path other than the shutdown
+   endpoint. The question and its evidence are in [`open-work.md`](../decisions/open-work.md).
+5. [NV] Linux and macOS: item 1 applies on each system; the port-in-use hang was seen on Windows only.
+
 ## 10. Connection to the shared loop (after step 3a)
 
 The module stays apart from the loop until step 3a of phase 3 is joined [R10]. Then one connection
