@@ -39,7 +39,9 @@ quick report holds for them. The agent made these choices. Section 3.6.1 of
    and has not ended; a later `begin` clears it. When the session fails while one is open, it calls `begin` for the
    next check of that camera that the level has, in the order of the plan, before the error ends the session. That
    check is then the running check: the existing rule of a crash (19.2 items 8 and 13) gives it `not-run` with the
-   class name of the error, and phase G counts the camera as running (`camera-not-restored`), as before Q902. A
+   class name of the error, and phase G counts the camera as running (`camera-not-restored`), as before Q902. In
+   quick, a step begins a left-out check only right before its own code (the settings step: just before the image
+   rule of each camera), so a fault of another camera or of the apply is never put on a left-out check. A
    fault in `settings-stick:image-effect` thus shows on `native-jpeg:valid`, and one in `records:gaps-explained` on
    `live-at-close` (Media Foundation) or `clock:base` (Linux, macOS). No row of a left-out check is added, and the
    report contract does not change.
