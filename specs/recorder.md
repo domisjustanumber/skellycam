@@ -1017,6 +1017,7 @@ Added on 2026-11-20 (L of [ADR-JMS0](../decisions/entries/JMS0-review-decisions.
 ### 9.1 The end of the server process
 
 Added on 2026-11-27 (Q907 [ADR-75CF](../decisions/entries/75CF-decision-of-the-user-on-the-shutdown-of-the-server.md),
+Q924 to Q928 [ADR-9V4Y](../decisions/entries/9V4Y-decisions-of-the-user-on-the-shutdown-lane-q924-to-q928.md),
 choices [ADR-06PW](../decisions/entries/06PW-choices-of-the-shutdown-limit-lane.md)).
 
 1. **The exit does not wait for the log queue.** `entry_point()` of `skellycam/__main__.py` calls
@@ -1027,14 +1028,30 @@ choices [ADR-06PW](../decisions/entries/06PW-choices-of-the-shutdown-limit-lane.
    error code. Before this rule, such a server process did not end (3 of 3 runs on Windows).
 2. **A suppressed reset is visible.** The exception handler of the loop on Windows still suppresses each
    `ConnectionResetError`. It logs one DEBUG line with the message of the context.
-3. **Tests.** `skellycam/tests/test_server_exit.py` runs the real server in a child process with its port in use:
+3. **A cancel does not cut a take start or a take stop (Q928).** `CameraGroup.start_recording` and
+   `CameraGroup.stop_recording` run their body as a task under `asyncio.shield`. The task holds `_end_lock`, and the
+   group keeps a reference to it until it ends. A cancel of the caller (a request task that uvicorn cancels, or a
+   close that is cancelled while it stops the take) does not cancel the task: the take start or stop runs to its end.
+   A later stop or close waits for `_end_lock`. Then the close finds no take (the 409 that `close` handles), or the
+   take that the start began, and stops it with the frame count of the take.
+   - `DELETE /group/close/all` during a take: its close stops the take through `stop_recording`, so the shield
+     covers the take. A close that is cancelled after the take stop leaves its group listed, and the close of the
+     lifespan end closes it again. The order of `CameraGroup.close` does not change.
+   - Before the shield, a cancel in the wait of `_end_take` for the cameras (`_collect_results`) cleared the take and
+     its first and last frame. `take.finish` never ran: the manifest stayed `recording`. Each camera then ended at
+     the close with a frame count from frame 0, not the frame count of the take (70 rows for a take of 50 frames).
+     A cancel in the thread of `start_take` left a `recording` take folder that nobody finished.
+   - Not covered: a second Ctrl-C (uvicorn's `force_exit`) skips the lifespan end, which ends a running take
+     ([`open-work.md`](../decisions/open-work.md), a question for the user).
+4. **Tests.** `skellycam/tests/test_server_exit.py` runs the real server in a child process with its port in use:
    the process ends with an error code. `test_entry_point.py` checks the cancel of item 1.
-4. **Open: the wait for connections has no limit.** The shutdown of uvicorn waits with no time limit for the open
-   connections, their request tasks and `Server.wait_closed()` (no `timeout_graceful_shutdown`). The product did not
-   hang in 39 runs with reset clients. A limit is not built: at the limit, uvicorn cancels each request task that
-   still runs, and a cancelled take stop leaves the manifest `recording` on each path other than the shutdown
-   endpoint. The question and its evidence are in [`open-work.md`](../decisions/open-work.md).
-5. [NV] Linux and macOS: item 1 applies on each system; the port-in-use hang was seen on Windows only.
+   `take_recorder/test_take_end_cancel.py` cancels a take stop that waits for a held camera, a close of all groups
+   at the same place, and a take start in `start_take`, as uvicorn cancels a request; then it closes the groups as
+   the lifespan end does. The manifest is `finished`, and each camera has the frame count of the take.
+5. **Open: the wait for connections has no limit yet.** The shutdown of uvicorn waits with no time limit for the
+   open connections, their request tasks and `Server.wait_closed()`. The product did not hang in 39 runs with reset
+   clients. Q928: the limit of 5 s comes after item 3.
+6. [NV] Linux and macOS: items 1 and 3 apply on each system; the port-in-use hang was seen on Windows only.
 
 ## 10. Connection to the shared loop (after step 3a)
 

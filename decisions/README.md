@@ -61,6 +61,7 @@ These entries are `accepted`.
 | [88HQ](entries/88HQ-decisions-of-the-user-on-q842-to-q856.md) | Q842 to Q856: J1HD and TYH0 accepted, the stall watch at 2 s, the player label and picked folders, absorb sentences, N72V, push rule | accepted |
 | [8MTY](entries/8MTY-answers-v1-to-v7-of-the-user-to-the-3b-and-3c-tests.md) | Answers V1 to V7: `capture_modes` in 3b, auto rate of a raw format, `jpeg_encoder`, OpenCV parity, range tests | accepted |
 | [75CF](entries/75CF-decision-of-the-user-on-the-shutdown-of-the-server.md) | Q907: check for a hang of the server at its shutdown after a client reset; if so, a time limit; look at the blocked queue feeder | accepted |
+| [9V4Y](entries/9V4Y-decisions-of-the-user-on-the-shutdown-lane-q924-to-q928.md) | Q924 to Q928: the shutdown lane's choices; no Electron bound; skellylogs fix; "port in use" in the UI; shield first, then the limit | accepted |
 
 ### Proposed
 
