@@ -91,6 +91,7 @@ These entries wait for a decision of the user. Section is the section or area of
 | [SKZ8](entries/SKZ8-choices-of-the-blocking-half-of-t-prv-17.md) | Choices of the blocking half of T-PRV-17 (Q923): B gets 15 camera messages within the loose limit of 9.1; the check of A keeps 1 s | none | proposed |
 | [C47T](entries/C47T-choices-of-the-ci-lane.md) | Choices of the CI lane: uv from `doc-checks.yml`, `test_workflows.py`, `tsconfig.tests.json`, one type fix, uv steps in `player.yml`, D: drive try | none | proposed |
 | [VTW3](entries/VTW3-choices-of-the-quick-sync-check-in-a-child-process.md) | Q879 choices: one child call for detection and Quick Sync, 5 s, log levels; `system:quick-sync` in both levels on Windows, record-only, no GPU is false | none | proposed |
+| [KXQ9](entries/KXQ9-choices-of-the-quick-run-without-the-six-full-checks.md) | Q902 choices: no quick row of the six full checks (not planned, no `not-run`, not in `not_built`); the work stays; T-CERT-153; 8CP7 not absorbed (Q853) | `certify` | proposed |
 
 The entries that are `rejected`, `superseded by XXXX`, `absorbed into <path>#<anchor>`,
 `evidence; used by XXXX`, `evidence; replaced by XXXX` or `done` are in [historical.md](historical.md).

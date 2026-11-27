@@ -11,7 +11,10 @@ Status: draft 3 for the user, 2026-11-20; the first code step on 2026-11-21. The
 (3.6.1, Q646 [ADR-056Z](../decisions/entries/056Z-decisions-of-the-user-on-a-late-camera-failure-the-release-build-file-and-the-open-rows.md)); `group:take:finished`,
 `:csv-rows`, `:no-missing`, `:frame-count`, `:rate`; `<model>:units`; in full the roll-up checks
 `<model>:gate:<step>` and `<model>:gate` and the check `<model>:gate:no-hang`; the cleanup rows `release:<label>`,
-`delete-work-folder` and `write-record`; and `session:exit`. Steps 1 to 4 of 3.6.7 are built [ADR-0Z6Q](../decisions/entries/0Z6Q-choices-of-the-certify-report-shape-build.md): each other
+`delete-work-folder` and `write-record`; and `session:exit`. The six camera checks that Q593 moves to full
+(`:native-jpeg:not-reencoded`, `:native-jpeg:size`, `:native-jpeg:ring-equals-mkv`, `:native-jpeg:source-equals-ring`,
+`:settings-stick:image-effect`, `:records:gaps-explained`) are in `full` only: a quick run leaves them out (3.6.1,
+Q902 [ADR-Y2RN](../decisions/entries/Y2RN-decisions-of-the-user-on-the-size-floor-review-and-certify-quick-runs.md)). Steps 1 to 4 of 3.6.7 are built [ADR-0Z6Q](../decisions/entries/0Z6Q-choices-of-the-certify-report-shape-build.md): each other
 check of this spec is not in `checks`, and `details.not_built` names it: `group:open` with the retry alone (4.2), `self:hang-100ms:gap` and `:hard-end`, the camera block of
 `full` (5, 8.2, 10.2), and the group, system and self checks of `full` (6, 7). The checks of a mode above `<base>`
 and the macOS probes (10.7) are not in the report yet. On Linux and macOS the native detection is not built:
@@ -964,8 +967,8 @@ agent were marked [A] ([ADR-MEE1](../decisions/entries/MEE1-choices-of-the-certi
 them as a set (Q627), so they are marked [U Q627, MEE1 n] or [U Q627, DBF8 n] with the item number of the entry,
 except the choices that Q628 changes (the camera names and the USB link notice), which stay [A]. The contract
 owner confirmed on 2026-11-23 that format 1.7.0 carries the two verdicts of Q611 and the "gate not complete" of
-Q610 with no change of the format [C 3.4, 3.7, 4.2, 5.3, 7.2]. Steps 1 to 4 of 3.6.7 are built [ADR-0Z6Q](../decisions/entries/0Z6Q-choices-of-the-certify-report-shape-build.md); the other
-steps are not built.
+Q610 with no change of the format [C 3.4, 3.7, 4.2, 5.3, 7.2]. Steps 1 to 4 of 3.6.7 are built [ADR-0Z6Q](../decisions/entries/0Z6Q-choices-of-the-certify-report-shape-build.md); of step 5
+only the six checks of full (Q902, 3.6.1) are built; the other steps are not built.
 
 #### 3.6.1 Rules of the rows
 
@@ -979,6 +982,22 @@ steps are not built.
   - A check of the camera block of `full` for a second unit of a model (5.1) is not planned and gives no row,
     in place of `not-run` with `same-model` [U Q627, MEE1 4]. The label of the unit (`.1`, `.2`) tells the reader that the
     first unit of the model had the block.
+- **The six checks of `full` only in a quick run [U Q593, Q902; the form: A,
+  [ADR-KXQ9](../decisions/entries/KXQ9-choices-of-the-quick-run-without-the-six-full-checks.md)].** A quick run
+  leaves out the six checks of each camera that Q593 moves to full (3.4, 3.6.2): `native-jpeg:not-reencoded`,
+  `native-jpeg:size`, `native-jpeg:ring-equals-mkv`, `native-jpeg:source-equals-ring`, `settings-stick:image-effect`
+  and `records:gaps-explained`. They have code, so the rule of a check that a level does not have applies (as for the
+  clock checks of quick on Media Foundation, and the camera block of a second unit above). In a quick run each of
+  the six:
+  - is not planned: it is not in `details.checks` of the plan, and `total` does not count it (9.1);
+  - has no row in `checks`, also no `not-run` row, and it is not in `details.not_built`;
+  - is named by no progress message, and `numbers.checks` of a `<label>:not-reached` row does not count it;
+  - is never the B1 row of a camera that leaves the run (the first check with no result, in the order of the plan).
+
+  The summary item of 3.4 reads only the checks of the level, so the six change no quick item: a camera that would
+  fail `image-effect` in full can give `pass` in quick. The local record follows 2.5: with no image check, a quick
+  row gives `unproven` at most for the exposure route. The quick estimate of 4.7 does not change, because the six
+  use frames that the run already has (4.4). A full run keeps the six, each with its row and its rule.
 - **One row for a camera that could not go on [U Q592].** When a camera cannot go on, the checks of that camera
   that no progress message named yet give one row `<label>:not-reached` in place of their filled `not-run` rows.
   - `result` is `not-run`. `reason` is the reason of the first check that it stands for: `prior-check-failed`,
@@ -1349,7 +1368,7 @@ step on, and a part of a test that needs a later step joins at that step (the co
 | 2 | The schema id 1.7.0, also in the validator | T-CERT-03 (schema), the validator tests | T-CERT-03 pipeline item: step 6 |
 | 3 | `details.not_built` and the plan with no not-built check; no `same-model` rows; the plan total with `session:exit` | T-CERT-91, T-CERT-01, T-CERT-103 | |
 | 4 | `<label>:not-reached` and the `done` count | T-CERT-92, T-CERT-17 | |
-| 5 | Quick with eleven checks for each camera (with `live-at-close`, Q646, [ADR-0Z6Q](../decisions/entries/0Z6Q-choices-of-the-certify-report-shape-build.md) item 15), full with the six; `group:take` with two rows; `system:recording-space` and `group:in-step`; no `<label>:detect`, no `<model>:units` | T-CERT-07, T-CERT-99, T-CERT-26, T-CERT-110, T-CERT-111 | T-CERT-07: the pipeline item at step 6; T-CERT-26: `details.cameras` at step 8; T-CERT-99: the cases of a rate 1.5 % off at step 11; T-CERT-111: `details.limits.in_step_ms` at step 9 [ADR-0Z6Q](../decisions/entries/0Z6Q-choices-of-the-certify-report-shape-build.md) |
+| 5 | Quick with eleven checks for each camera (with `live-at-close`, Q646, [ADR-0Z6Q](../decisions/entries/0Z6Q-choices-of-the-certify-report-shape-build.md) item 15), full with the six (this part is built first, alone: Q902, 3.6.1, T-CERT-153); `group:take` with two rows; `system:recording-space` and `group:in-step`; no `<label>:detect`, no `<model>:units` | T-CERT-07, T-CERT-99, T-CERT-26, T-CERT-110, T-CERT-111 | T-CERT-07: the pipeline item at step 6; T-CERT-26: `details.cameras` at step 8; T-CERT-99: the cases of a rate 1.5 % off at step 11; T-CERT-111: `details.limits.in_step_ms` at step 9 [ADR-0Z6Q](../decisions/entries/0Z6Q-choices-of-the-certify-report-shape-build.md) |
 | 6 | The two verdicts of 3.6.10: the pipeline item, the kind and the `module` of each check, the count of the models, the B1 and wedge rules, no `module` with no item, `details.pipeline`, the pipeline row of the record | T-CERT-105 to T-CERT-109, T-CERT-123, T-CERT-125, T-CERT-126, T-CERT-44 | |
 | 7 | The gates: two rows for each model and `pipeline:gate`, each wired by `module`; `details.gates`; "gate not complete" with `not-built`, `partial` items and `"sign-off": "not-built"` in the record; the plan of full | T-CERT-65, T-CERT-98, T-CERT-47, T-CERT-124 | |
 | 8 | `details.cameras` with the verdict and the names of 9.4; the list of known cameras; the record key with no USB id | T-CERT-94, T-CERT-95, T-CERT-100, T-CERT-127 | |
@@ -3734,6 +3753,7 @@ tests only the self-check.
 | T-CERT-150 | 3 OS, fakes of the app page [U Q735, Q766, Q803, Q847]. A full run with a fake page result for the check `player-legacy-decode`: an `mp4v` tile, a WebCodecs tile, a tile switched by F6 and a tile that the core rule stopped; then a run with no app page; then a run before the v1 player code exists. | The row `player-legacy-decode` is `record-only` with the `module` of the pipeline item and blocks no gate; `details.player_legacy_decode` holds for each tile the fields of `player-legacy.md` 10.5 (T-LEG-79 checks their shape); with no app page: `not-run` `no-ui`; before the code: the name is in `details.not_built`. |
 | T-CERT-151 | 3 OS, fakes (4.4) [ADR-2HW5]. (1) Quick, PROCESS workers: one camera hangs at the open (5 s), one good camera waits for it in `waiting`; no ring look of the session comes between the open of the rings and the judge of the open. (2) Quick: one good camera whose ring watch cannot attach. | (1) The good camera has its rows of the ready step, the settings step and the take (`native-jpeg:format`, `settings-stick:readback`, `records:rows-complete` `pass`) and no `not-reached` row. (2) The camera goes on to the settings step and the take; `native-jpeg:source-equals-ring` is `not-run` `ring-lapped`; no `not-reached` row. |
 | T-CERT-152 | 3 OS, a fake `check_quick_sync` and a patched backend [U Q879] [ADR-VTW3]. A quick and a full run with no camera, with each answer of cap 22.7 item 4: works; `no-jpeg`; `RuntimeError`; `timed-out`; `crashed` with exit code 3. A quick run with one fake camera, with works and with `crashed`. A cancel during the check; a refused run (`cameras-busy`); the runs and the plan with the backends of Linux and macOS; the plan on Windows. | Each answer gives one row `system:quick-sync`, right after `detect`, `record-only` with no `reason` and no `module`, and the five `numbers` of 3.6.2 with the values of the fake; with works and with `crashed` the item of the camera, which passes each check, stays `pass`; the cancel gives `not-run` `cancelled` while the fake check still runs, and the run returns within 2 s; the refused run gives `not-run` `cameras-busy` and calls no check; Linux and macOS have no such row, call no check and do not plan it; the plan on Windows lists it right after `detect`. |
+| T-CERT-153 | 3 OS, fakes [U Q902] [ADR-KXQ9]. The plans of quick and full on each backend; a quick and a full run with two good fakes of two models, one whose image does not get darker at -8; a quick run with a camera that fails `rate` beside a good one; the first check with no result of a quick session (the B1 row) at each point of the ready, settings and take steps. | Quick: the camera checks of the quick plan are the camera checks of the full plan less the six of 3.6.1 and less the clock checks that quick does not have (10.6); no name of the six is in the plan, in `checks` (also not `not-run`), in `details.not_built` or in a progress message; `total` and `done` agree; the `not-reached` row counts none of the six; the B1 row is never one of the six; the two items are `pass`, and the quick record gives `controls.exposure` `unproven`. Full: each of the six has its row; the camera whose image does not change has `image-effect` `fail` `no-image-effect` and its item `partial`. `seconds_estimate` of quick is that of 4.7. |
 
 **The changes of 3.6 to the tests above [U Q591 to Q599, Q610 to Q618, A].** Where a row above and this list
 differ, this list is the rule. T-CERT-91 to T-CERT-132 are new. Q624 also changes T-CERT-61 to T-CERT-64:
@@ -3749,6 +3769,9 @@ differ, this list is the rule. T-CERT-91 to T-CERT-132 are new. Q624 also change
 - T-CERT-13: `image-effect` cases run at `full`. A dark case (Q773, 20.7): a pass in the dark stays `pass`; a fail
   in the dark is `not-run` `too-dark`; no frame or no ratio is `not-run` `no-frame`.
 - T-CERT-14: `not-reencoded` and `size` cases run at `full`.
+- T-CERT-151 (Q902, 3.6.1): case (1) runs at `full`, where `source-equals-ring` `pass` shows that the watch attached
+  before the judge; case (2) runs at both levels: quick has no `source-equals-ring` row, full has it `not-run`
+  `ring-lapped`.
 - T-CERT-17: `done` counts a `not-reached` row as its checks (T-CERT-92).
 - T-CERT-19: the second C922 gets no row for the camera block, not `same-model`.
 - T-CERT-22, T-CERT-45 and T-CERT-58: the checks `exposure:<w>x<h>@60` and the two Auto checks at 60 are removed
