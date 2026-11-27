@@ -123,14 +123,15 @@ def check_quick_sync(*, limit_s: float = QUICK_SYNC_LIMIT_S, check=None) -> Quic
     """The Quick Sync check in a child process with a time limit (22.7 items 2 to 5). Never raises an `Exception`."""
     t0 = time.perf_counter()
     encode_ms = exit_code = None
+    times = {}  # the time of the answer or the kill, before the join of the child (22.7 item 2)
     try:
         kind, value = capture_bounded.in_child("quick sync", "the Quick Sync check process", _check_in_child, (check,),
-                                               limit_s=limit_s, name="skellycam quick sync check")
+                                               limit_s=limit_s, name="skellycam quick sync check", times=times)
         if kind == "ok":
             works, encode_ms = value
             failure = None if works else "no-jpeg"
             logger.info(f"Quick Sync JPEG encoder {'works' if works else 'gave no JPEG; cv2.imencode is used'} "
-                        f"({(time.perf_counter() - t0) * 1e3:.0f} ms)")
+                        f"({(times['answer'] - t0) * 1e3:.0f} ms)")
         else:  # the encode raised: the normal answer of a machine with no Quick Sync, at INFO (22.7 item 4)
             failure, text, encode_ms = value
             works = False
@@ -147,7 +148,7 @@ def check_quick_sync(*, limit_s: float = QUICK_SYNC_LIMIT_S, check=None) -> Quic
     except Exception as error:  # the child did not start, or its answer is not a result
         works, failure = False, type(error).__name__
         logger.warning(f"Quick Sync check: error {failure}: {error}; cv2.imencode is used")
-    return QuickSyncCheck(works, failure, (time.perf_counter() - t0) * 1e3, encode_ms, exit_code)
+    return QuickSyncCheck(works, failure, (times.get("answer", time.perf_counter()) - t0) * 1e3, encode_ms, exit_code)
 
 
 def quick_sync_works() -> bool:

@@ -1,6 +1,7 @@
 import asyncio
 import logging
 import multiprocessing
+import threading
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from collections.abc import Callable
@@ -71,6 +72,7 @@ class CameraGroupManager:
     )
     _log_capture_times: bool = False  # capture-timings.md 2: the one switch of the app
     quick_sync: bool | None = None  # windows-capture.md 13.2 [3WCA 6]: the one Quick Sync check of the app run
+    _quick_sync_lock: object = field(default_factory=threading.Lock)  # 22.7 item 8: one check at a time
     encoder_failed: set = field(default_factory=set)  # 22.2 [U Q886]: cameras that fell back from Quick Sync
     _last_statuses: dict = field(default_factory=dict)  # camera_id -> its status of the newest group (Q886)
 
@@ -217,8 +219,7 @@ class CameraGroupManager:
         if self.quick_sync is None and self._opens_raw(camera_configs):
             # 13.2: only for a request that the check accepts; the check runs again after the wait, so the check of
             # `request_runs` and its set have no wait between them (camera-requests.md 2.4a item 7) [ZEK6 2]
-            self.quick_sync = await asyncio.to_thread(capture_encoder.quick_sync_works)
-            if camera_group is not None:
+            if await asyncio.to_thread(self._check_quick_sync_once) and camera_group is not None:
                 self._write_switch(camera_group)
             warnings, rates_known = self._check_request(camera_configs, camera_group)
         before, counts = {}, {}  # camera-requests.md 2.4a [ADR-1T0S]: for the fall back to 30 fps
@@ -284,6 +285,15 @@ class CameraGroupManager:
                 warnings.append(dict(kind="mixed_rate", camera_ids=sorted(rates), text=text))
                 logger.warning(text)
         return camera_group, failures, warnings
+
+    def _check_quick_sync_once(self) -> bool:
+        """22.7 item 8 [VTW3 17]: one check child for each app run. A second request waits here for the answer of the
+        first. Returns whether this call ran the check (then its request writes the switch)."""
+        with self._quick_sync_lock:  # a thread lock: the worker thread holds it, so it binds to no event loop
+            if self.quick_sync is not None:
+                return False
+            self.quick_sync = capture_encoder.quick_sync_works()
+            return True
 
     def _opens_raw(self, camera_configs: CameraConfigs) -> bool:
         """13.2 [3WCA 6]: a request with a camera of the Media Foundation source that opens YUY2 or NV12 (also by
