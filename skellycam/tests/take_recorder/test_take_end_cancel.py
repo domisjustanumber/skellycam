@@ -261,6 +261,25 @@ def _http(port, method, path, body=None, timeout=10.0):
         return error.code, error.read()
 
 
+def _take_end_times(times_file):
+    """{event: [wall-clock times]} of the lines of the child (`start`, `end` of each take end)."""
+    times = {}
+    if times_file.exists():
+        for line in times_file.read_text(encoding="utf-8").splitlines():
+            item = json.loads(line)
+            times.setdefault(item["event"], []).append(item["time"])
+    return times
+
+
+def _wait_for_the_take_end_start(times_file, server, log, limit_s=60.0):
+    """Wait until the child wrote that the take end started, so the signal comes while the stop waits."""
+    deadline = time.monotonic() + limit_s
+    while "start" not in _take_end_times(times_file):
+        assert server.poll() is None, f"the server ended before the take end started: {log.read_text(errors='replace')[-3000:]}"
+        assert time.monotonic() < deadline, f"the take end did not start within {limit_s:g} s of the stop request"
+        time.sleep(0.05)
+
+
 def _signal_the_server(server):
     """Ctrl-Break to the process group of the server on Windows (uvicorn takes SIGBREAK), SIGINT elsewhere."""
     if sys.platform == "win32":
@@ -323,7 +342,7 @@ def test_a_signal_during_a_slow_take_stop_ends_with_the_take_finished(tmp_path):
         stopper = threading.Thread(target=lambda: stops.append(
             _http(port, "POST", "/skellycam/camera/group/all/record/stop", timeout=60.0)), daemon=True)
         stopper.start()
-        time.sleep(1.0)  # the stop waits in `_collect_results`
+        _wait_for_the_take_end_start(times_file, server, log)  # in place of a fixed wait (Q619)
         signalled = time.time()
         _signal_the_server(server)
         code = server.wait(timeout=60)
@@ -333,9 +352,10 @@ def test_a_signal_during_a_slow_take_stop_ends_with_the_take_finished(tmp_path):
             server.wait()
     output = log.read_text(errors="replace")
     # The test must exercise the shield: the take end ran when the limit cancelled the stop request. Else it fails.
-    ends = [json.loads(line) for line in times_file.read_text(encoding="utf-8").splitlines()] if times_file.exists() else []
-    assert len(ends) == 1 and ends[0]["start"] < signalled and ends[0]["end"] > signalled + LIMIT_S, (
-        f"the take end did not span the limit; the shield was not exercised: ends={ends}, signal={signalled}")
+    times = _take_end_times(times_file)
+    starts, ends = times.get("start", []), times.get("end", [])
+    assert len(starts) == len(ends) == 1 and starts[0] < signalled and ends[0] > signalled + LIMIT_S, (
+        f"the take end did not span the limit; the shield was not exercised: {times}, signal={signalled}")
     assert "timeout graceful shutdown exceeded" in output, "uvicorn did not cancel a request at its limit"
     manifest = take_manifest(recordings)
     state, dead = manifest["state"], [w for w in manifest["warnings"] if w["code"] == "camera_dead"]

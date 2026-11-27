@@ -3,7 +3,7 @@
 argv: port, base folder, log file, slow seconds, times file. No telemetry, no bytecode pass, the base folder (also of
 the restore files) and the log file in a temporary folder. Detection gives the fake cameras, and the camera processes
 open fake sources. The wait of a take stop for the cameras (`_collect_results`) first sleeps the slow seconds. The
-times file gets the wall-clock start and end of each take end (`_end_take`), one JSON line each.
+times file gets one JSON line when a take end (`_end_take`) starts and one when it ends, with the wall-clock time.
 """
 
 import json
@@ -53,13 +53,17 @@ group_module.CameraGroup._collect_results = _slow_collect
 _end_take = group_module.CameraGroup._end_take
 
 
+def _write_time(event):
+    with open(times_file, "a", encoding="utf-8") as out:
+        print(json.dumps({"event": event, "time": time.time()}), file=out, flush=True)
+
+
 async def _timed_end_take(group):
-    started = time.time()
+    _write_time("start")  # the test sends its signal only after this line
     try:
         return await _end_take(group)
     finally:
-        with open(times_file, "a", encoding="utf-8") as out:
-            print(json.dumps({"start": started, "end": time.time()}), file=out)
+        _write_time("end")
 
 
 group_module.CameraGroup._end_take = _timed_end_take
