@@ -46,6 +46,7 @@ from skellycam.core.take_recorder import TakeSummary  # noqa: TC001 — beartype
 
 logger = logging.getLogger(__name__)
 CLOSED_DURING_REQUEST = "The cameras were closed while the request ran. Send the request again."
+CLOSING_REFUSED = "The cameras close: no recording starts"  # recorder.md 9.1 item 7
 
 
 @dataclass
@@ -476,6 +477,8 @@ class CameraGroupManager:
 
     async def start_recording_all_groups(self, recording_info: RecordingInfo) -> list:
         """Start recording for all camera groups. Return the warnings of 11.3."""
+        if self.closing:  # recorder.md 9.1 item 7: the close of the groups runs (also the background close of /shutdown)
+            raise RequestRefused(409, CLOSING_REFUSED)
         warnings = []
         for camera_group in self.camera_groups.values():
             warnings += await camera_group.start_recording(recording_info=recording_info,
