@@ -239,6 +239,8 @@ def _process_entry_point(
     signal.signal(signal.SIGTERM, _on_signal)
     # Ctrl-C reaches each process of the console. The main process stops a running take, then ends the children.
     signal.signal(signal.SIGINT, signal.SIG_IGN)
+    if hasattr(signal, "SIGBREAK"):  # Ctrl-Break (Windows) reaches each process of the group too (recorder.md 9.1)
+        signal.signal(signal.SIGBREAK, signal.SIG_IGN)
 
     if log_queue is not None:
         utf8_console()

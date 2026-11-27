@@ -66,6 +66,8 @@ async def main() -> None:
 
     signal.signal(signal.SIGTERM, handle_signal)
     signal.signal(signal.SIGINT, handle_signal)
+    if hasattr(signal, "SIGBREAK"):  # uvicorn raises it again after serve(): no exit before shutdown_all (9.1)
+        signal.signal(signal.SIGBREAK, handle_signal)
 
     try:
         app = create_fastapi_app(
