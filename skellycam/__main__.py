@@ -19,6 +19,10 @@ import signal  # noqa: E402
 
 logger = logging.getLogger(__name__)
 
+# recorder.md 9.1 item 5 [ADR-9V4Y]: the shutdown of uvicorn waits at most this long for open connections. It starts at
+# the first signal; a take start or stop is shielded (item 3), and the lifespan close runs after it.
+SHUTDOWN_CONNECTION_LIMIT_S = 5
+
 
 async def main() -> None:
     import sys
@@ -83,6 +87,7 @@ async def main() -> None:
             reload=False,
             # A JPEG does not compress: deflate cost 12.7 ms of the event loop for each 1080p frame (ADR-HDC9)
             ws_per_message_deflate=False,
+            timeout_graceful_shutdown=SHUTDOWN_CONNECTION_LIMIT_S,
         )
         server = uvicorn.Server(config)
 
