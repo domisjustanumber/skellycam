@@ -84,17 +84,19 @@ function Bridge() {
 function Root({options}: {options: StartOptions}) {
     const [viewer, setViewer] = useState<ViewerMode>(options.viewer ?? null);
     setViewerMode = setViewer;
-    const gridHeight = options.gridHeight ?? (viewer ? 600 : 980);
+    // the grid fits the window: on a small screen (a CI runner) the harness window is smaller than 1400 x 1000
+    const gridWidth = Math.min(GRID_WIDTH, window.innerWidth - 4);
+    const gridHeight = Math.min(options.gridHeight ?? (viewer ? 600 : 980), window.innerHeight - (viewer ? 384 : 4));
     return (
         <Provider store={store}>
             <ServerContextProvider>
                 <RecordingGuardProvider>
                     <Bridge/>
-                    <div id="grid" style={{width: GRID_WIDTH, height: gridHeight, position: 'relative', overflow: 'hidden'}}>
+                    <div id="grid" style={{width: gridWidth, height: gridHeight, position: 'relative', overflow: 'hidden'}}>
                         <CameraViewsGrid manualColumns={null} resetKey={0}/>
                     </div>
                     {viewer && (
-                        <div id="viewer" style={{width: GRID_WIDTH, height: 380}}>
+                        <div id="viewer" style={{width: gridWidth, height: 380}}>
                             <FramerateViewerPanel isCollapsed={viewer === 'collapsed'}/>
                         </div>
                     )}

@@ -5,7 +5,7 @@
 // The page `preview` is the harness page of the step 4b preview (specs/preview-4b.md 7.2). With
 // PLAYER_HARNESS_PRODUCT_THROTTLING=1 (T-PRV-49) the app has no switch against backgrounding, as the product
 // app, and `openWindow(name, {productThrottling: true})` opens a window with the default `backgroundThrottling`.
-import {app, BrowserWindow, ipcMain, protocol} from 'electron';
+import {app, BrowserWindow, ipcMain, protocol, screen} from 'electron';
 import type {NativeImage} from 'electron';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
@@ -48,11 +48,20 @@ interface WindowOptions {
     productThrottling?: boolean;   // the default `backgroundThrottling` of the product window (T-PRV-49)
 }
 
+/** The largest window: the work area of the screen, or PLAYER_HARNESS_MAX_WINDOW (`<width>x<height>`), which
+ * gives the screen of a CI runner on a larger screen. A window larger than the screen is cut to the screen by
+ * Windows, and the part of a window past the edge of an xvfb screen is not drawn (specs/preview-4b.md 7.2). */
+function maxWindow(): {width: number; height: number} {
+    const m = /^(\d+)x(\d+)$/.exec(process.env.PLAYER_HARNESS_MAX_WINDOW ?? '');
+    return m ? {width: Number(m[1]), height: Number(m[2])} : screen.getPrimaryDisplay().workArea;
+}
+
 function openWindow(name = firstPage, options: WindowOptions = {}): number {
     // a hidden window must run requestAnimationFrame and timers as a shown one (CI runs hidden)
     const throttling = options.productThrottling ? {} : {backgroundThrottling: false};
+    const fit = maxWindow();
     const win = new BrowserWindow({
-        width: 1400, height: 1000, show: process.env.PLAYER_HARNESS_SHOW === '1',
+        width: Math.min(1400, fit.width), height: Math.min(1000, fit.height), show: process.env.PLAYER_HARNESS_SHOW === '1',
         webPreferences: {preload: path.join(here, '..', 'preload', 'preload.mjs'), contextIsolation: true, sandbox: true, ...throttling},
     });
     // a never-shown window paints about once a second once a canvas draws: show it transparent, inactive
