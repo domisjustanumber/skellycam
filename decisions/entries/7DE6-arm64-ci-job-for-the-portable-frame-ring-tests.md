@@ -1,6 +1,7 @@
 # 7DE6 — CI job that runs the portable frame ring tests on an arm64 Linux runner
 
-**Status:** accepted, 2026-11-19 (user; commit to dom/native-jpeg).
+**Status:** superseded by [S1DJ](S1DJ-decisions-of-the-user-on-the-ci-lane.md), 2026-11-27 (commit to
+dom/ci-lane; was accepted, 2026-11-19 (user; commit to dom/native-jpeg)).
 
 ## Decision
 

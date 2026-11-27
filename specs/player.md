@@ -1409,7 +1409,9 @@ A new workflow `.github/workflows/player.yml`, on the pattern of `.github/workfl
 - Trigger: each push to `dom/player` and to `dom/native-jpeg`, and each pull request, that changes
   `skellycam-ui/src/player/**`, `skellycam-ui/src/components/playback/**`, `skellycam-ui/electron/**`,
   `skellycam-ui/package.json`, `skellycam-ui/package-lock.json`, `skellycam-ui/tsconfig.json`,
-  `specs/player.md` or the workflow; and by hand.
+  `specs/player.md` or the workflow; and by hand. Also each push to `dom/integration`
+  ([ADR-S1DJ](../decisions/entries/S1DJ-decisions-of-the-user-on-the-ci-lane.md), Q915), with the
+  trigger paths and the uv steps of [`preview-4b.md` 7.8](preview-4b.md#78-counts-and-ci-agent-12).
 - `permissions: contents: read`; a concurrency group for each ref with `cancel-in-progress`.
 - The same pinned actions as the existing workflows: `actions/checkout` at
   `3d3c42e5aac5ba805825da76410c181273ba90b1` (v7.0.1); `actions/setup-node` at

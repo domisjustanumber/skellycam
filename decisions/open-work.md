@@ -28,8 +28,7 @@ task. Delete an item when its work is done. The PR that closes an item records t
     ([evidence](evidence/four-camera-timing-of-step-2a-20261118.md)).
   - The user runs T-RING-49, the optional four-camera smoke test. It needs cameras.
   - T-RING-34 (Apple Silicon) is on hold. It goes into the certify suite of a later task and is not
-    run by hand now (item 67). The job `ring-portable` of `.github/workflows/ring-arm64.yml` runs T-RING-35 and T-RING-48 on
-    each push to `dom/native-jpeg` ([ADR-7DE6](entries/7DE6-arm64-ci-job-for-the-portable-frame-ring-tests.md)).
+    run by hand now (item 67). The job `ring-portable` of `ring-arm64.yml` runs T-RING-35 and T-RING-48 (item 68).
     It has not run yet.
   - The measurements M4 and M8 of section 11.3 are not done. Phase 2 makes them before it fixes a
     performance number.
@@ -87,9 +86,9 @@ task. Delete an item when its work is done. The PR that closes an item records t
 - **Phase 4 (live preview)** ([`specs/preview.md`](../specs/preview.md), [`specs/preview-4b.md`](../specs/preview-4b.md);
   [ADR-BPP8](entries/BPP8-answers-of-the-user-q864-to-q873-on-the-step-4b-code.md)). Open:
   - M-PRV-4 on Linux ([ADR-HDC9](entries/HDC9-measurements-m-prv-1-to-m-prv-5-of-the-preview-sender.md)).
-  - Step 4b: the CI changes of 7.8 (own PR). After the merge: the tile timings
+  - Step 4b, after the merge: the tile timings
     (step 8 of `capture-timings.md`), tests first (Q870); delete `read_latest_ring_frames` and `_send_json` with their
-    spec line and test probe (Q871); rewrite the top of the real-time streaming page (Q873); a CI type check of the UI test code (Q897).
+    spec line and test probe (Q871); rewrite the top of the real-time streaming page (Q873).
   - Soon, spec and test first (Q907): does the product server hang at its shutdown after a client connection reset?
     If so, a shutdown time limit; also the blocked queue feeder thread. After that fix, a
     kill in `PreviewKit.close` fails the test (Q909).
@@ -178,10 +177,8 @@ task. Delete an item when its work is done. The PR that closes an item records t
   [ADR-2SX2](entries/2SX2-acceptance-of-the-choices-of-fix-lane-7-and-its-follow-ups.md)).
   - macOS [NV]: the runner's open-file limit, and that its errors came from this leak. A run of the macOS jobs by
     hand gives the result.
-- **Next CI lane (Q854).** Each workflow pins uv 0.13.7 (also `test.yml`, ADR-PA3A); ADR-7DE6 says 0.13.9. An
-  entry with the version of the workflows supersedes ADR-7DE6.
-  The same lane tries the runner's D: drive for the temp folder of the Windows recorder job (Q922 of
-  [ADR-D2YZ](entries/D2YZ-decisions-of-the-user-on-t-rec-36-t-prv-17-and-the-slow-holder-reading.md)): T-REC-36 and T-REC-STALL failed with `give` waits there.
+- **The CI lane** ([ADR-C47T](entries/C47T-choices-of-the-ci-lane.md), proposed). Not run on a runner yet: the D: drive
+  step of `recorder-windows`, the uv steps of `player.yml` and the type check of the UI test code.
 - **Question for the user: the stall watch under load with THREAD workers.** The `[thread]` case of
   `test_the_watch_ends_no_healthy_camera_under_load` failed once on CI from GIL starvation in the test process, a mode
   that the product does not use ([evidence](evidence/stall-watch-under-load-thread-20261127.md)). Move its check "no

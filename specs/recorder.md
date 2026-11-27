@@ -1168,6 +1168,10 @@ plan test T-REC-MF-DEFER needs a camera. It is not in R11 and waits for the conn
   `uv run pytest skellycam/tests/take_recorder -m "not recorder_bench"`. The job `recorder-macos` runs
   only by hand (`if: github.event_name == 'workflow_dispatch'`), not on a push
   [ADR-N14T](../decisions/entries/N14T-decisions-of-the-user-on-the-ci-review-of-2026-11-25.md).
+  Before its test steps, `recorder-windows` puts its temp folder (`TEMP` and `TMP`) on the D: drive of
+  the runner, when the runner has one; else the temp folder stays the default
+  [U Q922] [ADR-D2YZ](../decisions/entries/D2YZ-decisions-of-the-user-on-t-rec-36-t-prv-17-and-the-slow-holder-reading.md),
+  [ADR-C47T](../decisions/entries/C47T-choices-of-the-ci-lane.md) [NV: not run on a runner].
 - **Where each test runs**:
 
   | Tests | Windows | Linux | macOS |

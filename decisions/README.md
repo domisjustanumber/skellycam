@@ -23,7 +23,6 @@ These entries are `accepted`.
 | [2S1P](entries/2S1P-bootstrap-answers-with-binding-specs.md) | Answers to the bootstrap questions of the kit adoption; supersedes S222: the specs in `specs/` are normative (item 4) | accepted |
 | [N2NH](entries/N2NH-index-limit-24000-no-shortened-rows-and-binding-specs.md) | Index limit 24,000 characters until the clean-up; no agent shortens the row of an entry it did not write; specs are binding | accepted |
 | [9G2W](entries/9G2W-python-api-of-the-frame-ring-as-the-2a-tests-assume-it.md) | Python API of the frame ring, as the 2a tests assume it; clarifications, corrections and decisions on the 2a code (items 52 to 67) | accepted |
-| [7DE6](entries/7DE6-arm64-ci-job-for-the-portable-frame-ring-tests.md) | CI job that runs the portable frame ring tests on an arm64 Linux runner, on pushes to `dom/native-jpeg` | accepted |
 | [5MYA](entries/5MYA-python-api-of-the-bgr-ring-and-the-decode-stage-as-the-2b-tests-assume-it.md) | Python API of the BGR ring and the decode stage, as the 2b tests assume it | accepted |
 | [467Z](entries/467Z-step-2b-self-check-stop-opencv-threads-and-yuv-conversion.md) | Step 2b: no BGR self-check log, `stop()` drops and counts a waiting frame, `cv2.setNumThreads(1)` in each camera process, default YUY2 and NV12 conversion | accepted |
 | [E817](entries/E817-choices-of-the-2b-code.md) | Choices of the 2b code: `bgr` on the JPEG creator, `set_skipped_count`, `None` payload for a flagged BGR frame, no libjpeg limit on Windows until phase 3 | accepted |
@@ -61,6 +60,7 @@ These entries are `accepted`.
 | [88HQ](entries/88HQ-decisions-of-the-user-on-q842-to-q856.md) | Q842 to Q856: J1HD and TYH0 accepted, the stall watch at 2 s, the player label and picked folders, absorb sentences, N72V, push rule | accepted |
 | [8MTY](entries/8MTY-answers-v1-to-v7-of-the-user-to-the-3b-and-3c-tests.md) | Answers V1 to V7: `capture_modes` in 3b, auto rate of a raw format, `jpeg_encoder`, OpenCV parity, range tests | accepted |
 | [75CF](entries/75CF-decision-of-the-user-on-the-shutdown-of-the-server.md) | Q907: check for a hang of the server at its shutdown after a client reset; if so, a time limit; look at the blocked queue feeder | accepted |
+| [S1DJ](entries/S1DJ-decisions-of-the-user-on-the-ci-lane.md) | Supersedes 7DE6: Q854 uv 0.13.7 of the workflows; Q897 a type check of the UI tests; Q915 player and arm64 ring on `dom/integration`, no `debug-azure.yml` | accepted |
 
 ### Proposed
 
@@ -90,6 +90,7 @@ These entries wait for a decision of the user. Section is the section or area of
 | [4PPS](entries/4PPS-choices-of-the-answers-lane-of-q842-to-q856.md) | Choices of the answers lane: the label from `<recording_name>_info.json` with a fall back, no `pickedFoldersFile`, Q852 sentences, control-read setting, OS key | none | proposed |
 | [06PW](entries/06PW-choices-of-the-shutdown-limit-lane.md) | Choices of the shutdown limit lane: no connection limit (no hang found), no join of the log queue feeder at the exit, a DEBUG line for a reset, tests | `recorder` | proposed |
 | [SKZ8](entries/SKZ8-choices-of-the-blocking-half-of-t-prv-17.md) | Choices of the blocking half of T-PRV-17 (Q923): B gets 15 camera messages within the loose limit of 9.1; the check of A keeps 1 s | none | proposed |
+| [C47T](entries/C47T-choices-of-the-ci-lane.md) | Choices of the CI lane: uv from `doc-checks.yml`, `test_workflows.py`, `tsconfig.tests.json`, one type fix, uv steps in `player.yml`, D: drive try | none | proposed |
 
 The entries that are `rejected`, `superseded by XXXX`, `absorbed into <path>#<anchor>`,
 `evidence; used by XXXX`, `evidence; replaced by XXXX` or `done` are in [historical.md](historical.md).
