@@ -12,8 +12,7 @@ The user answered "agree to Q842-855" on 2026-11-26 (Q854), "agree to all Q893-Q
 [ADR-7DE6](7DE6-arm64-ci-job-for-the-portable-frame-ring-tests.md).
 
 1. **Q854** ([ADR-88HQ](88HQ-decisions-of-the-user-on-q842-to-q856.md) item 13). The uv version is the version of
-   the workflows: `0.13.7`. ADR-7DE6 said `0.13.9`, so this entry supersedes it. Each `astral-sh/setup-uv` step of
-   each workflow pins one version, and the specs and the Active entries name no other.
+   the workflows: `0.13.7`. ADR-7DE6 said `0.13.9`, so this entry supersedes it.
 2. **Q897** ([ADR-BPP8](BPP8-answers-of-the-user-q864-to-q873-on-the-step-4b-code.md) item 16). CI gets a second
    type check that covers the test code of the UI.
 3. **Q915 item 4.** The CI lane makes `player.yml` and `ring-arm64.yml` run on the pushes to `dom/integration`, and

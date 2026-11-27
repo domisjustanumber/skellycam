@@ -27,9 +27,11 @@ user did not decide them.
    `preview-4b.md` 7.8; the fifth, `skellycam-ui/src/store/slices/cameras/**`, is already in
    `skellycam-ui/src/store/slices/**`. Each of its three jobs gets the steps of `capture.yml` before `npm ci`: setup-uv
    (the same SHA and uv), `uv python install 3.13.18`, PortAudio on Linux, and `uv sync --group dev --python
-   3.13.18`. The preview component tests start `uv run python -m skellycam.tests.preview.ui_server`. The job
-   `player-macos` still runs on a push ([ADR-N14T](N14T-decisions-of-the-user-on-the-ci-review-of-2026-11-25.md):
-   "`player.yml` does not change").
+   3.13.18`. The preview component tests start `uv run python -m skellycam.tests.preview.ui_server`. On a push to
+   `dom/integration`, the job `player-macos` runs only by hand:
+   `if: github.event_name == 'workflow_dispatch' || github.ref != 'refs/heads/dom/integration'`. On each other
+   branch and event, it runs as before. Question for the user: does `player-macos` run only by hand on a push to
+   `dom/integration`? Yes accepts this choice.
 6. **`ring-arm64.yml`.** Its push branches are `[dom/native-jpeg, dom/integration]`, as `capture.yml`. Its paths do
    not change. It gets no `pull_request` trigger.
 7. **The D: drive in `recorder-windows`.** A step "Put the temp folder on the D drive" runs before the test
@@ -43,7 +45,10 @@ user did not decide them.
 2. A file of its own needs no kit proposal.
 3. A second config leaves the product check as it is, and checks every TypeScript file of the UI tests.
 4. A non-null assertion is a change of the type only. `?? ''` would let a null label pass.
-5. Without uv, the preview component tests in `player.yml` cannot start their server.
+5. Without uv, the preview component tests in `player.yml` cannot start their server. On `dom/integration`, the
+   hosted `macos-15` runner often did not take a job ("The job was not acquired by Runner of type hosted",
+   [ADR-N14T](N14T-decisions-of-the-user-on-the-ci-review-of-2026-11-25.md)), so `capture-macos` and
+   `recorder-macos` run only by hand there. `player-macos` would make Player red with no real fault.
 7. Python and pytest take the temp folder from `TEMP` on Windows. A guard keeps the job as it was on a runner with
    no D: drive.
 
@@ -52,7 +57,8 @@ user did not decide them.
 - A separate job for the second type check: it would run `npm ci` a second time.
 - Removing the excludes of the root `tsconfig.json`: the product build (`npm run build` runs `tsc`) would then
   depend on the test code.
-- `player-macos` only by hand on a push, as the other macOS jobs: N14T kept `player.yml` as it is.
+- `player-macos` on every push, also to `dom/integration`: the runner faults of N14T would make Player red with no
+  real fault. N14T kept `player.yml` as it is for its old branches, and they keep it.
 
 ## Open work
 

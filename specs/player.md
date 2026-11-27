@@ -1411,7 +1411,9 @@ A new workflow `.github/workflows/player.yml`, on the pattern of `.github/workfl
   `skellycam-ui/package.json`, `skellycam-ui/package-lock.json`, `skellycam-ui/tsconfig.json`,
   `specs/player.md` or the workflow; and by hand. Also each push to `dom/integration`
   ([ADR-S1DJ](../decisions/entries/S1DJ-decisions-of-the-user-on-the-ci-lane.md), Q915), with the
-  trigger paths and the uv steps of [`preview-4b.md` 7.8](preview-4b.md#78-counts-and-ci-agent-12).
+  trigger paths and the uv steps of [`preview-4b.md` 7.8](preview-4b.md#78-counts-and-ci-agent-12). On a push to
+  `dom/integration`, `player-macos` runs only by hand, as the macOS jobs of `capture.yml` and `recorder.yml`
+  ([ADR-C47T](../decisions/entries/C47T-choices-of-the-ci-lane.md), proposed).
 - `permissions: contents: read`; a concurrency group for each ref with `cancel-in-progress`.
 - The same pinned actions as the existing workflows: `actions/checkout` at
   `3d3c42e5aac5ba805825da76410c181273ba90b1` (v7.0.1); `actions/setup-node` at

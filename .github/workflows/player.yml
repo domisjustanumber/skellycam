@@ -152,8 +152,11 @@ jobs:
         run: xvfb-run --auto-servernum npm run test:player:browser
 
   # GitHub has few macOS runners: no other job waits for this job, and a newer push cancels it.
+  # On a push to dom/integration it runs only by hand, as the macOS jobs of capture.yml and recorder.yml (ADR-N14T,
+  # ADR-C47T); on the other branches and on a pull request it runs as before.
   player-macos:
     name: Player tests (Node 26.13.1, macos-15 arm64)
+    if: github.event_name == 'workflow_dispatch' || github.ref != 'refs/heads/dom/integration'
     runs-on: macos-15
     timeout-minutes: 40
     concurrency:
