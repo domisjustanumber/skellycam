@@ -14,14 +14,14 @@ import os
 import re
 import subprocess
 import sys
-import threading
 import time
 
 import cv2
 import numpy as np
 import pytest
 
-from skellycam.tests.capture.capture_session import capture_app, hold_clock_while_behind
+from skellycam.tests.capture.capture_session import (
+    capture_app, hold_clock_from_the_ring_open, hold_clock_while_behind)
 from skellycam.tests.capture.fake_source import FakeScript
 from skellycam.tests.frame_ring.ring_session import (
     fake_configs,
@@ -47,20 +47,28 @@ from skellycam.tests.frame_ring.test_lifecycle import _bytes_pattern, _wait_gone
 FRAMES_T_RING_40 = 10_000
 
 
-def _ready_fake_camera(cleanup, app, until=("ready",)):
+def _ready_fake_camera(cleanup, app, until=("ready",), hold=True):
     """Apply the one fake camera of `app` with a BGR ring and wait until it is in a state of `until`. Give its
     ID, and the names and raw views (open after the close of the session) of its JPEG and BGR rings. A camera
     that ends soon after `ready` must also accept `dead`: on the virtual clock its time in `ready` can be
     shorter than one poll of `wait_state` (as `capture_session.one_camera`). The views open just after the apply,
     before the wait: the group watch closes the rings of a camera whose loop ended [ADR-2HW5]."""
     camera_id = app.factory.camera_ids[0]
-    app.detect()
-    response = app.apply([app.config(camera_id, bgr_ring=True)])
-    assert response.status_code == 200, response.text
-    info = app.group.ring_infos[camera_id]  # the apply returns after the open of the rings (CameraGroup.start)
-    names = (info.jpeg_ring_name, info.bgr_ring_name)
-    views = [cleanup.handle(open_raw(name)) for name in names]
-    app.wait_state(camera_id, *until)
+    if hold:  # a reader of the test holds the clock from the open of the JPEG ring; it must call
+        # `hold_clock_while_behind` next and leave the clock before the close (`hold_clock_from_the_ring_open`)
+        hold_clock_from_the_ring_open(app, camera_id)
+    try:
+        app.detect()
+        response = app.apply([app.config(camera_id, bgr_ring=True)])
+        assert response.status_code == 200, response.text
+        info = app.group.ring_infos[camera_id]  # the apply returns after the open of the rings (CameraGroup.start)
+        names = (info.jpeg_ring_name, info.bgr_ring_name)
+        views = [cleanup.handle(open_raw(name)) for name in names]
+        app.wait_state(camera_id, *until)
+    except BaseException:
+        if hold:
+            app.clock.leave()
+        raise
     return camera_id, names, views
 
 
@@ -181,7 +189,7 @@ def test_t_ring_38_slow_bgr_stage_in_the_camera_loop(monkeypatch, cleanup):
 
     monkeypatch.setattr(fr.FrameRingWriter, "write", slow_bgr_write)
     with capture_app(monkeypatch, [FakeScript(modes=((640, 480, 60, 1, "MJPG"),), stop_after_frame=200)]) as app:
-        camera_id, _, (jpeg_shm, bgr_shm) = _ready_fake_camera(cleanup, app, until=("ready", "dead"))
+        camera_id, _, (jpeg_shm, bgr_shm) = _ready_fake_camera(cleanup, app, until=("ready", "dead"), hold=False)
         app.wait(lambda: app.status(camera_id)["closed"], "the end of the loop after the last frame")
     jpeg = parse_ring_header(jpeg_shm.buf)
     frames = jpeg["head"] + 1
@@ -254,7 +262,6 @@ def test_t_ring_40_both_rings_match(monkeypatch, cleanup):
         camera_id, names, (jpeg_shm, bgr_shm) = _ready_fake_camera(cleanup, app)
         jpeg_reader, bgr_reader = (cleanup.handle(fr.FrameRingReader.attach(name)) for name in names)
         deadline = time.monotonic() + max(WAIT_TIMEOUT_S, 180.0)
-        app.clock.expect(threading.current_thread())
         try:
             while k < FRAMES_T_RING_40:
                 assert app.state(camera_id) == "ready", app.status(camera_id)

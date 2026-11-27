@@ -155,17 +155,37 @@ def install_loop_clock(monkeypatch, clock):
     monkeypatch.setattr(CameraWorker, "start", start_on_the_clock)
 
 
-def hold_clock_while_behind(clock, reader, number, lead):
-    """The calling thread reads a ring in real time and has just asked `reader` for frame `number`. Until its next
-    call, the virtual time does not move while the head of the ring is `lead` frames or more past `number`: a gate
-    whose `shut` reads the head of the block (8 bytes, no lock, no clock call). Else the fake cameras run seconds of
-    virtual time while the thread waits for the CPU, and the ring laps it: on 2 cores the certify ring watch missed
-    the hashed frames (`ring-lapped`), and the reader of T-RING-40 got `LAPPED` (CI run 45872128301) [ADR-2HW5]. The
-    thread must be a participant first (`VirtualClock.expect`), and it must leave the clock before the reader closes."""
+def _ring_head(reader):
     from skellycam.core.ipc.frame_ring.layout import HEAD_OFFSET
 
-    view = reader._shm.buf
-    clock.gate(True, shut=lambda: int.from_bytes(view[HEAD_OFFSET:HEAD_OFFSET + 8], "little", signed=True) - number < lead)
+    return int.from_bytes(reader._shm.buf[HEAD_OFFSET:HEAD_OFFSET + 8], "little", signed=True)
+
+
+def hold_clock_while_behind(clock, reader, number, lead=None):
+    """The calling thread reads a ring in real time and has just asked `reader` for frame `number`. Until its next
+    call, the virtual time does not move while the head of the ring is `lead` frames or more past `number` (with no
+    `lead`: half the slots of the ring): a gate whose `shut` reads the head of the block (8 bytes, no lock, no clock
+    call). Else the fake cameras run seconds of virtual time while the thread waits for the CPU, and the ring laps
+    it: on 2 cores the certify ring watch missed the hashed frames (`ring-lapped`), and the reader of T-RING-40 got
+    `LAPPED` (CI run 45872128301) [ADR-2HW5]. The thread must be a participant first (`VirtualClock.expect`), and it
+    must leave the clock before the reader closes."""
+    lead = reader._slot_count // 2 if lead is None else lead
+    clock.gate(True, shut=lambda: _ring_head(reader) - number < lead)
+
+
+def hold_clock_from_the_ring_open(app, camera_id):
+    """The calling test thread becomes a participant of the virtual clock, and from the open of the JPEG ring of
+    `camera_id` the time does not move while that ring holds half of its slots or more: a reader that attaches after
+    `ready` still finds frame 0 (T-RING-40 got `LAPPED` at frame 0, CI run 45912461226) [ADR-2HW5]. The first
+    `hold_clock_while_behind` of the thread replaces this hold. The group reader of the ring gives the head; `shut`
+    takes no lock and makes no clock call."""
+    def shut():
+        group = app.group_or_none()
+        reader = group.ring_readers.get(camera_id) if group is not None else None
+        return reader is None or _ring_head(reader) + 1 < reader._slot_count // 2
+
+    app.clock.expect(threading.current_thread())
+    app.clock.gate(True, shut=shut)
 
 
 def install_watch_clock(monkeypatch, clock, lead=8):

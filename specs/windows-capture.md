@@ -1351,8 +1351,10 @@ section adds only what capture adds.
   ([ADR-B1DE](../decisions/entries/B1DE-decisions-of-the-user-on-the-share-level-and-the-test-clock.md), Q692).
   A test thread that reads a ring in real time on a virtual clock holds the clock while the head of the ring is a
   set number of frames past its last read (`capture_session.hold_clock_while_behind`): the ring watch of certify
-  8 frames (its ring holds 1 s), the reader of T-RING-40 500 frames. The thread of the certify watch holds the
-  clock from its start and leaves it at its end. In the open step of certify, the time also holds from the open of
+  8 frames (its ring holds 1 s), the reader of T-RING-40 half the slots of its ring. The thread of the certify watch
+  holds the clock from its start and leaves it at its end. The reader of T-RING-40 holds it from the open of its
+  JPEG ring while the ring holds half of its slots or more, until its first read
+  (`capture_session.hold_clock_from_the_ring_open`; CI run 45912461226 got `LAPPED` at frame 0). In the open step of certify, the time also holds from the open of
   each JPEG ring until a watch reads it or the ring closes (`capture_session.install_watch_clock`). That hold hides
   the race of [`certify.md`](certify.md) 4.4 in each THREAD test, so T-CERT-151 covers the race with PROCESS
   workers [ADR-2HW5](../decisions/entries/2HW5-choices-of-the-ci-triage-of-the-first-test-run-on-dom-integration.md) ([ADR-N2VE](../decisions/entries/N2VE-decisions-of-the-user-on-the-ci-triage-and-the-stall-watch-code.md), Q883).
