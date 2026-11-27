@@ -67,12 +67,11 @@ export async function installTakeHandler(options: TakeHandlerOptions): Promise<T
         const rel = path.relative(process.platform === 'win32' ? root.toLowerCase() : root, process.platform === 'win32' ? folder.toLowerCase() : folder);
         return same(folder, root) || (rel !== '' && rel !== '..' && !rel.startsWith('..' + path.sep) && !path.isAbsolute(rel));
     };
+    // the recordings folder is resolved at each open; a pick keeps the real path of its pick time, so a link put in
+    // its place later is not followed (5.3)
     const allowed = async (real: string) => {
-        for (const root of [options.recordingsFolder, ...picked]) {
-            const rootReal = await realpath(root).catch(() => null);
-            if (rootReal && inside(real, rootReal)) return true;
-        }
-        return false;
+        const recordings = await realpath(options.recordingsFolder).catch(() => null);
+        return [...(recordings ? [recordings] : []), ...picked].some(root => inside(real, root));
     };
 
     const closeToken = (token: string) => {
