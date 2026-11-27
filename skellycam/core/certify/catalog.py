@@ -18,7 +18,8 @@ NAME = re.compile(r"^[A-Za-z0-9][A-Za-z0-9_.:@-]{0,127}$")  # C 3.4
 BACKENDS = {"Windows": "media-foundation", "Linux": "v4l2", "Darwin": "avfoundation"}
 DEFAULT_BASE = (1280, 720, 30.0)  # 3.4 `<base>`; the plan uses it when the modes were not read
 
-# The quick checks of one camera (3.4, 4.2 to 4.5), by the step of the run that gives them (4.1).
+# The checks of one camera (3.4, 4.2 to 4.5), by the step of the run that gives them (4.1); quick leaves out
+# FULL_ONLY.
 DETECT = ("detect", "detect:mjpg-mode")
 OPEN = ("opens", "rate", "modes:granted")  # `modes:granted` gets `:<base>`
 AFTER_READY = ("native-jpeg:format", "native-jpeg:not-reencoded", "native-jpeg:source-equals-ring")

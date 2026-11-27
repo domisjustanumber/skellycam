@@ -176,6 +176,7 @@ class Session:
         # 3.6.1 [U Q902]: the steps still compute the six checks of full only; a quick run sends no message or row of
         # them [KXQ9 item 2]
         self.left_out = set() if level == "full" else {f"{u.label}:{c}" for u in self.units for c in catalog.FULL_ONLY}
+        self.hidden: str | None = None  # the left-out check that began last and has not ended [KXQ9 item 6]
         self.results: set[str] = set()  # the names of the checks that have a result
         self.watches: dict[str, RingWatch] = {}
         self.live: list[Unit] = []  # the cameras that are `ready`
@@ -194,11 +195,14 @@ class Session:
     # ----- helpers -----
 
     def begin(self, name: str) -> None:
-        if name not in self.left_out:
+        self.hidden = name if name in self.left_out else None
+        if self.hidden is None:
             self._begin(name)
 
     def done(self, result: dict) -> None:
         if result["name"] in self.left_out:
+            if self.hidden == result["name"]:
+                self.hidden = None
             return
         self.results.add(result["name"])
         self._done(result)
@@ -207,6 +211,14 @@ class Session:
         """The check names of a camera by step with the six of full only, for the steps that compute them by
         position (ready, settings, take); `begin` and `done` drop them in quick."""
         return catalog.camera_names(unit.label, unit.base, "full", self.unix)
+
+    def next_shown(self, name: str) -> str | None:
+        """The next check of the camera of `name`, in the order of the plan, that the level has and that has no
+        result."""
+        unit = next(u for u in self.units if name.startswith(u.label + ":"))
+        shown = {n for names in catalog.camera_names(unit.label, unit.base, self.level, self.unix).values() for n in names}
+        order = [n for names in self.all_names(unit).values() for n in names]
+        return next((n for n in order[order.index(name) + 1:] if n in shown and n not in self.results), None)
 
     def status(self, unit):
         group = self.group()
@@ -324,6 +336,14 @@ class Session:
                         and f"{unit.label}:records:rows-complete" in self.results):
                     self.begin(f"{unit.label}:{catalog.LIVE}")
                     self.closing.append(unit)
+        except Exception as error:
+            # 3.6.1 [KXQ9 item 6]: a fault in a left-out check: the next check of the camera that the level has is
+            # the running check, so the caller gives it the class name of the error
+            following = self.next_shown(self.hidden) if self.hidden and not isinstance(error, Stopped) else None
+            if following is not None:
+                with contextlib.suppress(Exception):
+                    self._begin(following)
+            raise
         finally:
             for watch in self.watches.values():
                 watch.stop()
@@ -522,7 +542,7 @@ class Session:
         group = self.group()
         opened_at = {unit.label: group.configs[unit.camera_id].exposure for unit in manual}
         for unit in manual:
-            for name in catalog.camera_names(unit.label, unit.base, self.level, self.unix)["settings"]:
+            for name in self.all_names(unit)["settings"]:  # `begin` marks a left-out one as running [KXQ9 item 6]
                 self.begin(name)
         await self.manager.create_or_update_camera_group(
             {u.camera_id: group.configs[u.camera_id].model_copy(update=dict(exposure=EXPOSURE_CHANGED)) for u in manual})
