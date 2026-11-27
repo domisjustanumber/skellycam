@@ -1,9 +1,10 @@
-// Electron tests of the take handler with real files: T-PLAY-55 to T-PLAY-64, T-PLAY-85 and T-PLAY-86 (specs/player.md section 5).
+// Electron tests of the take handler with real files: T-PLAY-55 to T-PLAY-64, T-PLAY-85, T-PLAY-86 and T-PLAY-89
+// (specs/player.md section 5).
 import {expect} from '@playwright/test';
 import type {Page} from '@playwright/test';
 import {execFileSync} from 'node:child_process';
 import {createHash} from 'node:crypto';
-import {appendFileSync, existsSync, mkdirSync, openSync, closeSync, readdirSync, readFileSync, renameSync, rmdirSync, rmSync, statSync, symlinkSync, writeFileSync, writeSync, ftruncateSync, unlinkSync} from 'node:fs';
+import {appendFileSync, existsSync, mkdirSync, openSync, closeSync, readdirSync, readFileSync, realpathSync, renameSync, rmdirSync, rmSync, statSync, symlinkSync, writeFileSync, writeSync, ftruncateSync, unlinkSync} from 'node:fs';
 import path from 'node:path';
 import {writeSuiteFolder} from '../fixtures/node-take-files.ts';
 import {patternBytes} from '../fixtures/take-files-checks.ts';
@@ -56,8 +57,18 @@ function patternFile(file: string, size: number, seed: number) {
     writeFileSync(file, patternBytes(seed, 0, size));
 }
 
-const recordPick = (h: Harness, folder: string) =>
-    h.app.evaluate((_e, f) => (globalThis as never as {__harness: {recordPick(f: string): Promise<void>}}).__harness.recordPick(f), folder);
+/** A dialog pick in the main process; `{recent: true}` is a pick of the folder dialog of the player (5.10). */
+const recordPick = (h: Harness, folder: string, options?: {recent: boolean}) =>
+    h.app.evaluate((_e, [f, o]) => (globalThis as never as {__harness: {recordPick(f: string, o?: {recent: boolean}): Promise<void>}}).__harness.recordPick(f, o),
+        [folder, options] as const);
+
+type RecentBridge = {recent(): Promise<string[]>; openRecent(f: string): Promise<string>; clearRecent(): Promise<void>};
+const recentOf = (page: Page): Promise<string[]> =>
+    page.evaluate(() => (window as never as {skellycamTake: RecentBridge}).skellycamTake.recent());
+const openRecent = (page: Page, folder: string): Promise<string> =>
+    page.evaluate(f => (window as never as {skellycamTake: RecentBridge}).skellycamTake.openRecent(f), folder);
+const clearRecent = (page: Page): Promise<void> =>
+    page.evaluate(() => (window as never as {skellycamTake: RecentBridge}).skellycamTake.clearRecent());
 
 /** Each file below the test folder, with its size and modification time, outside the userData folder of the
  * harness, where Chromium writes its own files: a test of "no file is written" (5.3). */
@@ -319,13 +330,18 @@ test('T-PLAY-62 which folders open: recordings folder, dialog picks, links', asy
         }, [ch, outside] as const);
     }
     await expect(bridgeOpen(h.page, outside)).rejects.toThrow(/folder not allowed/);
-    // a dialog pick in the main process allows it for the run of the app only, and writes no file
-    await recordPick(h, outside);
+    expect(await recentOf(h.page), 'the page calls add no entry to the recently opened list').toEqual([]);
+    // a pick of the player dialog allows it for the run of the app; after a restart only a click opens it (5.10)
+    await recordPick(h, outside, {recent: true});
     expect((await bridgeOpen(h.page, outside)).token).toMatch(/^[0-9a-f]{32}$/);
     await h.relaunch();
     await expect(bridgeOpen(h.page, outside), 'a pick ends with the run of the app').rejects.toThrow(/folder not allowed/);
-    expect(filesBelow(h), 'no file is added or changed, so no picked-take-folders.json').toEqual(filesBefore);
-    expect(filesHolding(h, 'outside_take'), 'no file holds the path of the pick, also in userData').toEqual([]);
+    expect(await recentOf(h.page), 'the entry stays in the list').toEqual([realpathSync(outside)]);
+    expect(filesBelow(h), 'no file is added or changed outside userData').toEqual(filesBefore);
+    expect(filesHolding(h, 'outside_take'), 'only the recently opened list holds the path of the pick')
+        .toEqual([path.relative(h.root, path.join(h.userData, 'recent-take-folders.json'))]);
+    expect((readdirSync(h.root, {recursive: true}) as string[]).filter(f => path.basename(f) === 'picked-take-folders.json'),
+        'no picked-take-folders.json').toEqual([]);
     // inside the recordings folder
     const inside = path.join(h.recordings, 'inside');
     patternFile(path.join(inside, 'synchronized_videos', 'i.mkv'), 4 * KiB, 9);
@@ -387,6 +403,63 @@ test('T-PLAY-86 a pick keeps its real path: a link put in its place later is not
     symlinkSync(target, path.join(picked, 'inner_link'), linkKind);
     await expect(bridgeOpen(h.page, path.join(picked, 'inner_link'))).rejects.toThrow(/folder not allowed/);
     expect(existsSync(path.join(target, 'synchronized_videos', 's.mkv')), 'the outside folder is untouched').toBe(true);
+});
+
+test('T-PLAY-89 recently opened folders across a restart: the click, its check, clear, the file', async ({harness: h}) => {
+    await h.requireProduct();
+    const token = /^[0-9a-f]{32}$/;
+    const linkKind = process.platform === 'win32' ? 'junction' : 'dir';
+    const [a, b, s] = ['recent_a', 'recent_b', 'recent_target'].map(n => path.join(h.root, n));
+    [a, b, s].forEach((f, i) => patternFile(path.join(f, 'synchronized_videos', 'c.mkv'), 4 * KiB, 20 + i));
+    const [ra, rb, rs] = [a, b, s].map(f => realpathSync(f));
+    const file = path.join(h.userData, 'recent-take-folders.json');
+    const onDisk = () => JSON.parse(readFileSync(file, 'utf8'));
+    await recordPick(h, a, {recent: true});
+    await recordPick(h, b, {recent: true});
+    expect(await recentOf(h.page)).toEqual([rb, ra]);
+    expect(onDisk()).toEqual({version: 1, folders: [rb, ra]});
+    await h.relaunch();
+    await expect(bridgeOpen(h.page, a), 'an entry is no pick after a restart').rejects.toThrow(/folder not allowed/);
+    const before = readFileSync(file);
+    await expect(openRecent(h.page, path.join(h.root, 'not_listed')), 'a path that is no entry').rejects.toThrow(/folder not allowed/);
+    await expect(openRecent(h.page, s), 'a real folder that is no entry').rejects.toThrow(/folder not allowed/);
+    expect(await recentOf(h.page), 'nothing changes').toEqual([rb, ra]);
+    expect(readFileSync(file)).toEqual(before);
+    expect(await openRecent(h.page, ra), 'the click returns the stored path').toBe(ra);
+    expect((await bridgeOpen(h.page, a)).token, 'readable after the click').toMatch(token);
+    expect(await recentOf(h.page), 'the click moves the entry to the top').toEqual([ra, rb]);
+    expect(onDisk().folders).toEqual([ra, rb]);
+    // B is replaced by a link to S: the check at the click fails, and the entry leaves the list
+    rmSync(b, {recursive: true, force: true});
+    symlinkSync(s, b, linkKind);
+    await expect(openRecent(h.page, rb)).rejects.toThrow(/folder gone/);
+    expect(await recentOf(h.page)).toEqual([ra]);
+    expect(onDisk().folders).toEqual([ra]);
+    await expect(bridgeOpen(h.page, b)).rejects.toThrow(/folder not allowed/);
+    await expect(bridgeOpen(h.page, s)).rejects.toThrow(/folder not allowed/);
+    // A is deleted
+    rmSync(a, {recursive: true, force: true});
+    await expect(openRecent(h.page, ra)).rejects.toThrow(/folder gone/);
+    expect(await recentOf(h.page)).toEqual([]);
+    // clear
+    await recordPick(h, s, {recent: true});
+    expect(await recentOf(h.page)).toEqual([rs]);
+    await clearRecent(h.page);
+    expect(await recentOf(h.page)).toEqual([]);
+    expect(onDisk()).toEqual({version: 1, folders: []});
+    expect((await bridgeOpen(h.page, s)).token, 'clear ends no pick of the run').toMatch(token);
+    // a hand-edited list file and an old picked-take-folders.json, before a restart
+    const old = path.join(h.root, 'old_pick');
+    patternFile(path.join(old, 'synchronized_videos', 'o.mkv'), 4 * KiB, 25);
+    const oldFile = path.join(h.userData, 'picked-take-folders.json');
+    writeFileSync(oldFile, JSON.stringify([realpathSync(old)]));
+    const oldBytes = readFileSync(oldFile);
+    const hand = (n: number) => path.join(h.root, `hand_${n}`);
+    writeFileSync(file, JSON.stringify({version: 1, folders: [3, 'relative/x', '\\\\host\\share\\x', hand(1), hand(2), hand(1), hand(3), hand(4), hand(5), hand(6)]}));
+    await h.relaunch();
+    expect(await recentOf(h.page), 'the first 5 valid items').toEqual([1, 2, 3, 4, 5].map(hand));
+    await expect(bridgeOpen(h.page, old), 'the old file is not read').rejects.toThrow(/folder not allowed/);
+    expect(readFileSync(oldFile), 'the old file is not changed or deleted').toEqual(oldBytes);
 });
 
 test('T-PLAY-63 tokens end with their window', async ({harness: h}) => {

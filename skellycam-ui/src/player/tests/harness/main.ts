@@ -1,6 +1,7 @@
 // The main process of the test Electron app (specs/player.md section 12.1). It installs the take
 // handler with a temporary recordings folder, and gives the tests two hooks
-// through `globalThis.__harness` (Playwright `electronApp.evaluate`): a dialog pick and a read fault.
+// through `globalThis.__harness` (Playwright `electronApp.evaluate`): a dialog pick (with `{recent: true}`, a pick
+// of the player dialog, 5.10) and a read fault.
 // A missing product module is recorded, and the window still opens, so each test fails on its own.
 // The page `preview` is the harness page of the step 4b preview (specs/preview-4b.md 7.2). With
 // PLAYER_HARNESS_PRODUCT_THROTTLING=1 (T-PRV-49) the app has no switch against backgrounding, as the product
@@ -105,7 +106,7 @@ const need = (): Handler => {
 
 (globalThis as Record<string, unknown>).__harness = {
     productError: () => productError,
-    recordPick: (folder: string) => need().recordPick(folder),
+    recordPick: (folder: string, options?: {recent: boolean}) => need().recordPick(folder, options),
     setReadFault: (relativePath: string | null) => need().setReadFault(relativePath),
     openWindow: (name?: string, options?: WindowOptions) => openWindow(name, options),
     installVariant,
