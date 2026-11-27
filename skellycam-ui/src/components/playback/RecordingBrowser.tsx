@@ -10,6 +10,7 @@ import { serverUrls } from "@/services/server/server-helpers/server-urls";
 import { backendFetch } from "@/services/electron-ipc/backend-fetch";
 import { useElectronIPC } from "@/services";
 import { routeTake } from "./take-route";
+import { clearRecentTakeFolders, openRecentTakeFolder, recentTakeFolders } from "../../player/index.ts";
 import { useTranslation } from "react-i18next";
 import ButtonSm from "../ui-components/ButtonSm";
 import SubactionHeader from "../ui-components/SubactionHeader";
@@ -99,6 +100,12 @@ function parseTimestampFromName(name: string): Date | null {
     return new Date(+y, +mo - 1, +d);
   }
   return null;
+}
+
+/** The last part of a folder path, with / or \ as the separator. */
+function folderNameOf(folder: string): string {
+  const trimmed = folder.replace(/[\\/]+$/, "");
+  return trimmed.slice(Math.max(trimmed.lastIndexOf("/"), trimmed.lastIndexOf("\\")) + 1);
 }
 
 function formatRelativeTime(date: Date): string {
@@ -193,6 +200,12 @@ export const RecordingBrowser: React.FC<RecordingBrowserProps> = ({
 
   // Manual path input
   const [manualPath, setManualPath] = useState("");
+  // The recently opened folders of the player dialog (player.md 5.10)
+  const [recent, setRecent] = useState<string[]>([]);
+  const readRecent = useCallback(() => {
+    if (isElectron) recentTakeFolders().then(setRecent, () => setRecent([]));
+  }, [isElectron]);
+  useEffect(readRecent, [readRecent]);
 
   // Filter / sort
   const [filterText, setFilterText] = useState("");
@@ -342,19 +355,36 @@ export const RecordingBrowser: React.FC<RecordingBrowserProps> = ({
     }
   }, [initialLoadPath, didAutoLoad, loadRecording]);
 
-  const handleBrowseDirectory = useCallback(async () => {
-    if (!isElectron || !api) return;
-    const result: string | null = await api.fileSystem.selectDirectory.mutate();
-    if (!result) return;
+  const openPicked = useCallback((result: string) => {
     const trimmed = result.trim().replace(/[\\/]+$/, "");
     setManualPath(trimmed);
-    const lastSep = Math.max(
-      trimmed.lastIndexOf("/"),
-      trimmed.lastIndexOf("\\"),
-    );
-    const recName = lastSep >= 0 ? trimmed.slice(lastSep + 1) : trimmed;
-    loadRecording({ name: recName, path: trimmed, video_count: 0 });
-  }, [api, isElectron, loadRecording]);
+    loadRecording({ name: folderNameOf(trimmed), path: trimmed, video_count: 0 });
+  }, [loadRecording]);
+
+  const handleBrowseDirectory = useCallback(async () => {
+    if (!isElectron || !api) return;
+    const result: string | null = await api.fileSystem.selectDirectory.mutate({ player: true });
+    if (!result) return;
+    readRecent();
+    openPicked(result);
+  }, [api, isElectron, openPicked, readRecent]);
+
+  // A click on a recently opened folder opens it with no dialog, after the check of the main process (5.10)
+  const handleOpenRecent = useCallback(async (folder: string) => {
+    try {
+      openPicked(await openRecentTakeFolder(folder));
+    } catch (e) {
+      if (String(e).includes("folder gone")) {
+        setError(t("recentFolderGone", "This folder no longer exists or was moved. It was removed from Recently Opened."));
+      }
+    }
+    readRecent();
+  }, [openPicked, readRecent, t]);
+
+  const handleClearRecent = useCallback(async () => {
+    await clearRecentTakeFolders().catch(() => undefined);
+    readRecent();
+  }, [readRecent]);
 
   // -----------------------------------------------------------------------
   // Sort controls
@@ -386,6 +416,24 @@ export const RecordingBrowser: React.FC<RecordingBrowserProps> = ({
             textClass="text-wrap flex-1"
           />
         </div>
+        {recent.length > 0 && (
+          <div className="flex flex-col flex-start gap-1 min-w-full">
+            <SubactionHeader text={t("recentlyOpened", "Recently Opened")} />
+            {recent.map((folder) => (
+              <ButtonSm
+                key={folder}
+                iconClass="subfolder-icon"
+                text={folderNameOf(folder)}
+                title={folder}
+                onClick={() => handleOpenRecent(folder)}
+                disabled={isLoadingRecording}
+                className="select-path bg-middark"
+                textClass="text-wrap flex-1"
+              />
+            ))}
+            <ButtonSm text={t("clearList", "Clear list")} onClick={handleClearRecent} className="fit-content" />
+          </div>
+        )}
       </div>
 
       {/* Error */}

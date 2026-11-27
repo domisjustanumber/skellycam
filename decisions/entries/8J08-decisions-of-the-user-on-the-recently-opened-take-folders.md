@@ -1,7 +1,9 @@
 # 8J08 — Decisions of the user on the recently opened take folders (Q946, Q957, Q959, Q965 to Q968)
 
-**Status:** accepted, 2026-11-27 (user, Q946, Q957, Q959, Q965 to Q968; the supervisor asked the questions and
-relayed the answers; commit to dom/player-recent).
+**Status:** absorbed into [`specs/player.md#53-which-folders-open-l7-agent-6`](../../specs/player.md#53-which-folders-open-l7-agent-6),
+[`specs/player.md#510-recently-opened-folders-agent-41`](../../specs/player.md#510-recently-opened-folders-agent-41),
+2026-11-27 (commit to dom/player-recent; was accepted, 2026-11-27 (user, Q946, Q957, Q959, Q965 to Q968; the
+supervisor asked the questions and relayed the answers; commit to dom/player-recent)).
 
 ## Decision
 

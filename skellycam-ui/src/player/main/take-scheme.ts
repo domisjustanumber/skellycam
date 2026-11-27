@@ -1,13 +1,14 @@
 // The take handler in the Electron main process (specs/player.md sections 5.2 to 5.7). It serves only
 // the regular files of the opened take folder from the allow-list of a token, and it opens a folder
 // only inside the recordings folder or a folder that the user picked in the system dialog [Y2, L7, U1].
-import {ipcMain, protocol} from 'electron';
+import {app, ipcMain, protocol} from 'electron';
 import type {WebContents} from 'electron';
 import {randomBytes} from 'node:crypto';
-import {lstat, open, readdir, realpath, stat} from 'node:fs/promises';
+import {lstat, mkdir, open, readdir, realpath, rename, stat, writeFile} from 'node:fs/promises';
 import type {FileHandle} from 'node:fs/promises';
 import path from 'node:path';
 import {TAKE_CHANNELS} from './bridge.ts';
+import {RECENT_FILE, addRecent, checkRecent, readRecent, recentText, same} from './recent-folders.ts';
 
 const SCHEME = 'skellycam-take';
 const MEDIA = 'synchronized_videos';
@@ -35,8 +36,10 @@ export interface TakeHandlerOptions {
 }
 
 export interface TakeHandler {
-    /** Call it after each folder pick of the system dialog, in the main process. */
-    recordPick(folder: string): Promise<void>;
+    /** Call it after each folder pick of the system dialog, in the main process; `recent` for the dialog of the player (5.10). */
+    recordPick(folder: string, options?: {recent?: boolean}): Promise<void>;
+    /** The recently opened folders, most recent first; the dialog of the player opens at the first (5.10). */
+    recent(): readonly string[];
     /** Test hook: make the reads of one relative path fail. */
     setReadFault(relativePath: string | null): void;
 }
@@ -59,10 +62,26 @@ export async function installTakeHandler(options: TakeHandlerOptions): Promise<T
     const watched = new Set<number>();
     const navigations = new Map<number, number>();   // the count of navigations of each window
     let readFault: string | null = null;
-    // the real paths of the dialog picks, for the run of the app only: no list file (5.3, ADR-70J6)
+    // the real paths of the dialog picks, for the run of the app only: no file of this list (5.3, ADR-70J6)
     const picked: string[] = [];
+    const pick = (real: string) => {
+        if (!picked.some(p => same(p, real))) picked.push(real);
+    };
+    // the recently opened folders of the player dialog, the one saved list; an entry is no pick until a click (5.10)
+    const recentFile = path.join(app.getPath('userData'), RECENT_FILE);
+    let recent = await readRecent(recentFile);
+    let saving = Promise.resolve();
+    const setRecent = (list: string[]) => {
+        recent = list;
+        const text = recentText(list);
+        saving = saving.then(async () => {
+            await mkdir(path.dirname(recentFile), {recursive: true});
+            await writeFile(`${recentFile}.tmp`, text);
+            await rename(`${recentFile}.tmp`, recentFile);
+        }).catch(() => console.error('the recently opened folders were not saved'));
+        return saving;
+    };
 
-    const same = (a: string, b: string) => (process.platform === 'win32' ? a.toLowerCase() === b.toLowerCase() : a === b);
     const inside = (folder: string, root: string) => {
         const rel = path.relative(process.platform === 'win32' ? root.toLowerCase() : root, process.platform === 'win32' ? folder.toLowerCase() : folder);
         return same(folder, root) || (rel !== '' && rel !== '..' && !rel.startsWith('..' + path.sep) && !path.isAbsolute(rel));
@@ -134,6 +153,24 @@ export async function installTakeHandler(options: TakeHandlerOptions): Promise<T
 
     ipcMain.handle(TAKE_CHANNELS[1], (event, token: unknown) => {
         if (typeof token === 'string' && tokens.get(token)?.sender === event.sender.id) closeToken(token);
+    });
+
+    // 5.10: the page reads the list, asks to open an entry, or clears it; no call adds a path
+    ipcMain.handle(TAKE_CHANNELS[2], () => [...recent]);
+    ipcMain.handle(TAKE_CHANNELS[3], async (_event, folder: unknown) => {
+        const check = await checkRecent(recent, folder);
+        if (!check.ok && check.reason === 'not listed') throw new Error('folder not allowed');
+        if (!check.ok) {
+            await setRecent(recent.filter(p => !same(p, folder as string)));
+            throw new Error('folder gone');
+        }
+        // the stored path, not a new realpath: a link put in its place after the check is not followed
+        pick(check.folder);
+        await setRecent(addRecent(recent, check.folder));
+        return check.folder;
+    });
+    ipcMain.handle(TAKE_CHANNELS[4], async () => {
+        await setRecent([]);
     });
 
     /** Open a file and check that it is the file of the snapshot. */
@@ -219,11 +256,12 @@ export async function installTakeHandler(options: TakeHandlerOptions): Promise<T
     });
 
     return {
-        async recordPick(folder: string) {
+        async recordPick(folder: string, options: {recent?: boolean} = {}) {
             const real = await realpath(folder);
-            if (picked.some(p => same(p, real))) return;
-            picked.push(real);
+            pick(real);
+            if (options.recent) await setRecent(addRecent(recent, real));
         },
+        recent: () => recent,
         setReadFault(relativePath: string | null) {
             readFault = relativePath;
         },

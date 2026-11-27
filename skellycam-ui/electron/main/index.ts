@@ -64,7 +64,8 @@ if (!gotTheLock) {
             await systemPreferences.askForMediaAccess('microphone');
         }
 
-        // The take handler of the player: the recordings folder of the backend; dialog picks last for this run only
+        // The take handler of the player: the recordings folder of the backend; dialog picks last for this run only, and
+        // the folders of the player dialog are remembered in recent-take-folders.json (player.md 5.10)
         setTakeHandler(await installTakeHandler({
             recordingsFolder: path.join(app.getPath('home'), 'skellycam_data', 'recordings'),
         }));
