@@ -2631,7 +2631,9 @@ side of these rules is the certify checks of section 20 of [`certify.md`](certif
   an error line under the control says "The smallest size is 640 × 360" (key `smallestSizeIs640x360`,
   in the error style of the camera list, `role="alert"`); the inputs point at it with `aria-describedby`
   [U Q899]. The line goes at a valid custom size, at a preset, at an empty field and when the resolution
-  changes from another control. The note and the line use the gray and the error text styles of the camera
+  changes from another control. The two texts are also in the locale files of Spanish, Chinese
+  (Simplified) and Arabic, the three languages of the docs copies; the other locales fall back to English
+  [U Q900, ADR-CM9S 2]. A translation keeps "1280 × 720" and "640 × 360" as in English (T-CAP-165). The note and the line use the gray and the error text styles of the camera
   list. The UI has its own copy of the two bounds in `resolution-floor.ts`, with its unit test (T-CAP-165)
   [U Q900]. The default size of a camera config is 1280x720, the size that the user
   calls ideal (Q888).
@@ -2721,7 +2723,7 @@ missing module, not with an error at collection (22.6 item 20).
 | T-CAP-162 | 3b | fake | `supported_modes`, `capture_modes` and the mode choice with modes of 320x240, 424x240, 480x360, 600x480, 639x480, 640x359, 640x360 and 640x480 [U Q887, Q888]. | Only 640x480 and 640x360 are in `supported_modes` and selectable; the others have the reason "below 640x360"; a request for each of them fails at `set mode` with "no mode of 640x360 or more"; the raw-mode open of Q807 never opens a size below the floor. |
 | T-CAP-163 | 3b | fake | A request for 320x240 to a fake with a mode there, with the MJPG and with the OpenCV detection data [U Q887, Q889]. | HTTP 422 with "no mode of 640x360 or more"; no camera opens. |
 | T-CAP-164 | 3b | fake | The OpenCV fake opens and reports 320x240 for a request of 640x480 [U Q887, Q889]. | The camera fails, stage `set mode`, code `below-floor`, reason "no mode of 640x360 or more". |
-| T-CAP-165 | 3b | UI unit | `resolution-floor.ts` of the UI: the size floor and the note of 22.2 [U Q888, Q889]. | 640x480, 640x360, 1280x720 are at the floor and 320x240, 424x240, 480x360, 639x480, 640x359 are not; the note shows for 640x480, 640x360, 1279x720 and 1280x719, not for 1280x720 and 1920x1080; the English text is as 22.2. |
+| T-CAP-165 | 3b | UI unit | `resolution-floor.ts` of the UI: the size floor and the note of 22.2 [U Q888, Q889]. | 640x480, 640x360, 1280x720 are at the floor and 320x240, 424x240, 480x360, 639x480, 640x359 are not; the note shows for 640x480, 640x360, 1279x720 and 1280x719, not for 1280x720 and 1920x1080; the English text is as 22.2; the `es`, `zh-CN` and `ar` files have both keys, with "1280 × 720" and "640 × 360" unchanged. |
 | T-CAP-160 | 3b | fake | `input_range` "full" and "limited" against the share of the warm-up; "auto" with the OS flag "full" [ZEK6 4]. | The log gives the set range; the ring JPEG is the full-range BGR of the source with that range, within 3 levels. |
 
 The fake tests use sizes at the size floor of 22.2: 640x480 in place of 320x240, 1280x720 for a second
