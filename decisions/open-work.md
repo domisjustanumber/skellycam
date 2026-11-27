@@ -40,7 +40,7 @@ task. Delete an item when its work is done. The PR that closes an item records t
   - Open: section 15 must name the macOS timing step (BM73 7); item 90 of section 18 is stale.
   - The `README.md` of `skellycam/tests/reference_recordings/` still names the deleted tests of the
     phase 2 loop (W8); it changes after the redaction decision of that file.
-  - Step 3b (section 22): merges after a review (Q815). No test of the real `QuickSyncEncoder` or of the raw path
+  - Step 3b (section 22, merged). No test of the real `QuickSyncEncoder` or of the raw path
     of Media Foundation; 22.5 not run. Q879 ([ADR-4TBY](entries/4TBY-decisions-of-the-user-on-the-review-of-the-3b-code.md)),
     a lane after the merge, spec and tests first: a record-only certify check of Quick Sync and its time; the
     product check in a child process with a 5 s limit (a hang or crash: OpenCV). 13.2 keeps [NV] until then.
@@ -62,8 +62,6 @@ task. Delete an item when its work is done. The PR that closes an item records t
 - **Phase 6a (the canvas player for new takes).** The spec [`specs/player.md`](../specs/player.md) (revision 2)
   and its test list are accepted ([ADR-YV3V](entries/YV3V-acceptance-of-the-phase-6a-player-spec-and-test-list.md),
   [ADR-4D94](entries/4D94-step-6a-choices-of-the-canvas-player.md)).
-  - The benchmarks T-PLAY-65 to T-PLAY-70 run by hand with `playwright.player-bench.config.ts`.
-  - The unit tests ran on Node 26.13.1 on Windows only.
   - The recorder spec needs one sentence for a `camera_dead` detail that does not parse (item 4 of
     ADR-1ACK).
   - Owed to `player.md` (Q851), test first: T-PLAY-62 of `handler.spec.ts` still checks the old list file and
@@ -86,26 +84,15 @@ task. Delete an item when its work is done. The PR that closes an item records t
   expose header (user, Y2 of [ADR-J2BQ](entries/J2BQ-phase-6-player-decisions-y1-to-y7.md); section
   14.4 of [`specs/player.md`](../specs/player.md)). The measured gap at 16 cameras × 60 fps × 150 kB:
   the bare FastAPI route was 4 % short and 25 % short behind the logging middleware.
-- **Phase 4 (live preview).** The step 4a spec [`specs/preview.md`](../specs/preview.md) and its test list are
-  accepted ([ADR-WB08](entries/WB08-acceptance-of-the-step-4a-preview-spec-and-its-test-list.md),
-  [ADR-68JT](entries/68JT-step-4a-choices-of-the-preview-sender.md)).
-  - The tests of step 4a (T-PRV-01 to T-PRV-24) are in `skellycam/tests/preview/`, with the
-    helpers of spec section 9.1 in `preview_helpers.py`. The measurements
-    M-PRV-1 to M-PRV-5 are done on Windows
-    ([ADR-HDC9](entries/HDC9-measurements-m-prv-1-to-m-prv-5-of-the-preview-sender.md)). Open: M-PRV-4
-    on Linux.
-  - Step 4b ([`specs/preview-4b.md`](../specs/preview-4b.md); tests
-    [ADR-70WD](entries/70WD-failing-tests-of-step-4b-and-the-names-they-assume.md); code on `dom/preview-4b-tests`,
-    [ADR-BPP8](entries/BPP8-answers-of-the-user-q864-to-q873-on-the-step-4b-code.md)). Open:
-    - The CI changes of 7.8, in their own PR. Tests and code merge together after an independent review (Q815).
-    - After the merge: the tile timings lane (step 8 of `capture-timings.md`), tests first (Q870); a small lane
-      deletes `read_latest_ring_frames` and `_send_json`, with the spec line and the probe of their three tests
-      (Q871); a docs lane rewrites the first section of the real-time streaming page (Q873); the next CI lane adds a
-      second type check that covers the UI test code, which `tsconfig.json` leaves out (Q897).
-    - Soon, a small lane, spec and test first (Q907): does the product server hang at its shutdown when a client
-      resets its connection (uvicorn waiting for a lost connection; seen in the test server)? If so, a shutdown
-      time limit. The same lane looks at the blocked queue feeder thread (likely the websocket log queue).
-      After the Q907 fix: a kill in `PreviewKit.close` fails the test (Q909).
+- **Phase 4 (live preview)** ([`specs/preview.md`](../specs/preview.md), [`specs/preview-4b.md`](../specs/preview-4b.md);
+  [ADR-BPP8](entries/BPP8-answers-of-the-user-q864-to-q873-on-the-step-4b-code.md)). Open:
+  - M-PRV-4 on Linux ([ADR-HDC9](entries/HDC9-measurements-m-prv-1-to-m-prv-5-of-the-preview-sender.md)).
+  - Step 4b: the CI changes of 7.8 (own PR). After the merge: the tile timings
+    (step 8 of `capture-timings.md`), tests first (Q870); delete `read_latest_ring_frames` and `_send_json` with their
+    spec line and test probe (Q871); rewrite the top of the real-time streaming page (Q873); a CI type check of the UI test code (Q897).
+  - Soon, spec and test first (Q907): does the product server hang at its shutdown after a client connection reset?
+    If so, a shutdown time limit; also the blocked queue feeder thread. After that fix, a
+    kill in `PreviewKit.close` fails the test (Q909).
 - **The `sfn26` integration on `dom/integration`**
   ([ADR-EQY4](entries/EQY4-base-the-work-on-upstream-sfn26-without-rust.md),
   [ADR-6T78](entries/6T78-choices-of-the-sfn26-integration.md)). Open:
@@ -173,11 +160,9 @@ task. Delete an item when its work is done. The PR that closes an item records t
   [`specs/capture-timings.md`](../specs/capture-timings.md); the user decided its open choices in
   [ADR-GZS7](entries/GZS7-decisions-of-the-user-on-the-capture-timings-build-and-the-merge-order.md); the rest
   of [ADR-JFG4](entries/JFG4-choices-of-the-capture-timings-build.md) is proposed. Open: the timed test
-  `test_process_workers.py` (an OK of the user first); M-TIM-1 on the hardware of the user (step 7); the tile
-  timings of step 8 (Q870, the lane of step 4b).
-- **Merge order (2026-11-25, ADR-GZS7).** Each merge runs the tests that no CI job runs on a push (Q841). The branches of failing
-  tests stay unmerged; each code lane builds on its test branch, and tests and code merge together when they pass
-  (Q815). The FreeMoCap display comes after FreeMoCap moves to the frame-ring API.
+  `test_process_workers.py` (an OK of the user first); M-TIM-1 on the hardware of the user (step 7); step 8 (Q870).
+- **Merges (ADR-GZS7).** Each merge runs the tests that no CI job runs on a push (Q841); tests and code merge
+  together when they pass (Q815). The FreeMoCap display comes after FreeMoCap moves to the frame-ring API.
 - **Deferred by the user (2026-11-23).** At 60 fps the exposure search never tries a value longer
   than the frame period. The product switches low light compensation off after each open.
 - **Fix lane 4 follow-ups** ([ADR-HQE5](entries/HQE5-choices-of-fix-lane-4.md)).
