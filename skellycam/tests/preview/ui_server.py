@@ -614,7 +614,9 @@ async def serve(args):
     app = build_app(args.kill_flag)
     sock = free_socket()
     port = sock.getsockname()[1]
-    server = uvicorn.Server(uvicorn.Config(app=app, log_level="warning", ws_per_message_deflate=False))
+    # Q906: the stop ends on its own when a reset client connection never reports its loss (spec 7.2)
+    server = uvicorn.Server(uvicorn.Config(app=app, log_level="warning", ws_per_message_deflate=False,
+                                           timeout_graceful_shutdown=GRACEFUL_SHUTDOWN_S))
     serving = asyncio.create_task(server.serve(sockets=[sock]))
     while not server.started:
         if serving.done():
@@ -642,11 +644,15 @@ async def serve(args):
         step("connections closed")
         server.should_exit = True
         await serving
+        uvicorn_ms = round((time.monotonic() - started) * 1000)
         step("uvicorn ended")
         await mode.close()
         step("mode closed")
         faulthandler.cancel_dump_traceback_later()
-        emit({"event": "stopped"})
+        emit({"event": "stopped", "uvicorn_ms": uvicorn_ms})
+
+
+GRACEFUL_SHUTDOWN_S = 5
 
 
 def main(argv=None):

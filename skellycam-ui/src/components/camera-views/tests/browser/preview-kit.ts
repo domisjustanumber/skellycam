@@ -127,6 +127,8 @@ export class UiServer {
             await this.command({cmd: 'stop'}, 30_000);
             const end = await this.next(60_000);
             if (end.event !== 'stopped' && end.event !== 'exit') throw new Error(`ui_server.py stop: ${JSON.stringify(end)}`);
+            // Q906: the graceful-shutdown limit of 5 s ended uvicorn
+            if (typeof end.uvicorn_ms === 'number' && end.uvicorn_ms >= 4500) console.log(`ui_server.py stop: the 5 s graceful-shutdown limit ended uvicorn (${end.uvicorn_ms} ms)`);
             const deadline = Date.now() + 30_000;
             while (!this.exited && Date.now() < deadline) await sleep(50);
         } finally {

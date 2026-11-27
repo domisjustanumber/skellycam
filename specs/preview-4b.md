@@ -792,7 +792,9 @@ frames each second on each of 8 tiles during a scrub [M ADR-1ACK evidence].
   image of `webContents.capturePage()` in the same way [Q867].
 - **The clean-up after each test.** `PreviewKit.close` closes each app, then stops each `ui_server.py`, each step
   with a time limit (10 s for an app, 20 s for a server), inside the 60 s of the test. At a time-out it kills that
-  process and logs `hung step: <step>` [Q896].
+  process and logs `hung step: <step>` [Q896]. `ui_server.py` sets the graceful-shutdown limit of uvicorn to 5 s,
+  so that its stop ends on its own also when a reset client connection never reports its loss; the time limit and
+  the kill stay as the backstop [Q906].
 - **The kept overlay text.** A test reads the overlay of a tile from `Tile.overlay`, which the tile
   keeps "so that a test can read it" [player 8.4], through `window.__previewTiles.tiles`. This is
   product state, not a pixel read.
