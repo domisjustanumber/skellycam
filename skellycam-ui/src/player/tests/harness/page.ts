@@ -8,6 +8,7 @@ import type {PlayerEvent, TakePlayer, TileUpdate} from '../../index.ts';
 import type {TakeFiles} from '../../files/take-files.ts';
 
 type TileModule = typeof import('../../tile/tile.ts');
+type TimingsModule = typeof import('../../tile/timings.ts');
 type PlayerModule = typeof import('../../index.ts');
 type TileObject = InstanceType<TileModule['Tile']>;
 type WireUpdate = Omit<TileUpdate, 'jpeg'> & {jpeg: string | null};
@@ -51,6 +52,18 @@ function readCanvas(canvas: HTMLCanvasElement, rotation: number): TileReading {
 
 const productError = async () => (await window.harnessIpc.productError()) ?? window.harnessBridgeError ?? null;
 const tileModule = () => import('../../tile/tile.ts');
+const timingsModule = (): Promise<TimingsModule> => import('../../tile/timings.ts');
+
+// The tile timing tests (specs/capture-timings.md 10.2, T-TIM-25 and T-TIM-26): one TileTimings on a fake clock that
+// moves `step` ms at each read, and a decode seam that moves it `decodeMs` ms more. No real time is in a sample.
+const clock = {ms: 1000, step: 0.25, decodeMs: 2.5, calls: 0};
+const fakeNow = () => {
+    clock.calls++;
+    const value = clock.ms;
+    clock.ms += clock.step;
+    return value;
+};
+let timings: InstanceType<TimingsModule['TileTimings']> | null = null;
 const playerModule = (): Promise<PlayerModule> => import('../../index.ts');
 
 function needPlayer(): TakePlayer {
@@ -65,6 +78,50 @@ const harness = {
         const {Tile} = await tileModule();
         const canvas = makeCanvas(width, height);
         tiles.set(id, {tile: new Tile(canvas), canvas, rotation: 0});
+    },
+
+    /** A tile on the fake clock, with the timing handle of `cameraId` (group 'g1'), or with no handle when null. */
+    async makeTimedTile(id: string, cameraId: string | null): Promise<void> {
+        const [{Tile, decodeJpeg}, {TileTimings}] = await Promise.all([tileModule(), timingsModule()]);
+        timings ??= new TileTimings(fakeNow);
+        const decode = async (jpeg: Uint8Array) => {
+            const image = await decodeJpeg(jpeg);
+            clock.ms += clock.decodeMs;
+            return image;
+        };
+        const canvas = makeCanvas(640, 320);
+        const seams = cameraId === null ? {decode} : {decode, timing: timings.handle(cameraId, 'g1')};
+        tiles.set(id, {tile: new Tile(canvas, {}, seams), canvas, rotation: 0});
+    },
+
+    setTimingsOn(on: boolean): void {
+        timings!.on = on;
+    },
+
+    clockCalls: (): number => clock.calls,
+
+    takeSummaries: () => timings!.takeSummaries(),
+
+    /** An update with an image that the caller decoded ahead, as the player gives it: no decode in the tile. */
+    async updateTileWithImage(id: string, u: WireUpdate): Promise<string> {
+        const {decodeJpeg} = await tileModule();
+        const jpeg = fromBase64(u.jpeg!);
+        return tiles.get(id)!.tile.update({...u, jpeg, image: await decodeJpeg(jpeg)});
+    },
+
+    /** Updates with no wait between them. */
+    async updateMany(id: string, updates: WireUpdate[]): Promise<string[]> {
+        const t = tiles.get(id)!;
+        return Promise.all(updates.map(u => t.tile.update({...u, jpeg: u.jpeg === null ? null : fromBase64(u.jpeg)})));
+    },
+
+    /** A new CSS size of the canvas, then two display refreshes: the ResizeObserver redraws the tile. Gives the
+     * canvas width, which only a draw of the tile sets. */
+    async resizeTile(id: string, width: number): Promise<number> {
+        const {canvas} = tiles.get(id)!;
+        canvas.style.width = `${width}px`;
+        for (let i = 0; i < 2; i++) await new Promise(resolve => requestAnimationFrame(resolve));
+        return canvas.width;
     },
 
     async updateTile(id: string, u: WireUpdate): Promise<string> {

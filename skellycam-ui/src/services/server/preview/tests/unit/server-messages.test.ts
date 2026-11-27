@@ -94,3 +94,13 @@ test('T-PRV-40 the rate text from framerate_update [A3]', async () => {
     assert.equal(isFramerateUpdate({message_type: 'app_state'}), false);
     assert.deepEqual(rateTexts(update as never), {c1: null, c3: '30.0 fps'});
 });
+
+test('T-TIM-25 (Node part) the guard of the capture_timings message sets the switch of the tile timings', async () => {
+    const {isCaptureTimings} = await serverMessages();
+    const off = {message_type: 'capture_timings', version: 1, log_capture_times: false, summaries: []};
+    assert.equal(isCaptureTimings(off), true);
+    assert.equal(isCaptureTimings({...off, log_capture_times: true}), true);
+    assert.equal(isCaptureTimings({...off, log_capture_times: 'yes'}), false, 'not a boolean');
+    assert.equal(isCaptureTimings({...off, message_type: 'framerate_update'}), false);
+    assert.equal(isCaptureTimings(null), false);
+});
