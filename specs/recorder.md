@@ -1014,6 +1014,42 @@ Added on 2026-11-20 (L of [ADR-JMS0](../decisions/entries/JMS0-review-decisions.
   its pair has placeholders to that frame (7.3), the `# end` line, and the same rows as each other
   pair. When no main process is alive, the manifest stays `recording` (step 5c).
 
+### 9.1 The end of the server process
+
+Added on 2026-11-27 (Q907 of the user [ADR-75CF](../decisions/entries/75CF-decision-of-the-user-on-the-shutdown-of-the-server.md),
+choices [ADR-06PW](../decisions/entries/06PW-choices-of-the-shutdown-limit-lane.md)).
+
+1. **The connection limit.** The shutdown of uvicorn waits at most 5 s for the open connections, their request
+   tasks and `Server.wait_closed()` (`SHUTDOWN_CONNECTION_LIMIT_S` of `skellycam/__main__.py`, the
+   `timeout_graceful_shutdown` of its `uvicorn.Config`). Then it cancels each request task that still runs, the
+   lifespan end runs, and `serve()` returns. A connection whose loss never reaches the asyncio server then delays the
+   exit by at most 5 s, not for ever. On Windows, code reading shows that a client reset can do this: the proactor
+   transport calls `socket.shutdown()` before it leaves its server, and a `ConnectionResetError` (WinError 10054)
+   there leaves it in the server (CPython 3.13 `_ProactorBasePipeTransport._call_connection_lost`). A test server
+   of the preview tests hung so; the product server did not hang in 39 runs with reset clients (ADR-06PW).
+2. **Where the limit starts.** The limit starts when uvicorn starts its shutdown, at the first SIGTERM or SIGINT.
+   - The shutdown endpoint (the Electron app): the close of the groups ends each take first (section 9). Then the
+     kill flag is set, the worker monitor waits for each protected save (`wait_for_recording_save`), and only then
+     it raises SIGTERM. So the limit starts after each take is finished.
+   - Ctrl-C: the limit starts at the signal. The lifespan end, which ends a running take and closes the groups,
+     runs after the limit, so the limit does not cut it. The limit cancels only a request that still runs after
+     5 s, for example a `/record/stop` that waits for a slow writer.
+3. **No other change of the order.** `WorkerRegistry.shutdown_all()` runs after `serve()` returns, as before.
+4. **The exit does not wait for the log queue.** `entry_point()` calls `cancel_join_thread()` on the websocket log
+   queue after `configure_logging`. Only an open websocket reads that queue, so its feeder thread can wait for ever
+   on a full pipe. The exit handler of `skellylogs` joins that thread. The two `os._exit` calls of `entry_point()`
+   skip the exit handlers, but an exit that does not reach them runs them: for example the `sys.exit` of uvicorn
+   when the port is in use. Before this rule, such a server process did not end (3 of 3 runs on Windows).
+5. **A suppressed reset is visible.** The exception handler of the loop on Windows still suppresses each
+   `ConnectionResetError`. It logs one DEBUG line with the message of the context.
+6. **Tests.** `skellycam/tests/test_server_exit.py` runs the real server in a child process. With one connection
+   that never leaves its server, the process ends after `/shutdown` (the blocking half), within the limit plus the
+   period of the worker monitor (the `pace` half). With its port in use, the process ends with an error code.
+   `test_shutdown.py`, `test_recording_shutdown_safety.py` and the exit tests of `take_recorder/test_connection.py`
+   keep the order of section 9.
+7. [NV] Linux and macOS: the limit and the cancel apply on each system. The selector transports call
+   `Server._detach` in a `finally` after `socket.close()`, so no case of a lost connection is known there.
+
 ## 10. Connection to the shared loop (after step 3a)
 
 The module stays apart from the loop until step 3a of phase 3 is joined [R10]. Then one connection

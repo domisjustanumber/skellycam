@@ -57,6 +57,7 @@ These entries are `accepted`.
 | [8CP7](entries/8CP7-certify-spec-draft-3-choices-of-the-agent.md) | Certify spec draft 3 on format 1.4.0, tests T-CERT-01 to 67, 15 agent choices: split checks, model item, gate roll-ups, local record, macOS probes | accepted |
 | [PA3A](entries/PA3A-decision-of-the-user-on-the-test-workflow-on-dom-integration.md) | "Yes": `test.yml` runs on each push to `dom/integration`: ruff, the test suite and the UI typecheck | accepted |
 | [88HQ](entries/88HQ-decisions-of-the-user-on-q842-to-q856.md) | Q842 to Q856: J1HD and TYH0 accepted, the stall watch at 2 s, the player label and picked folders, absorb sentences, N72V, push rule | accepted |
+| [75CF](entries/75CF-decision-of-the-user-on-the-shutdown-of-the-server.md) | Q907: check for a hang of the server at its shutdown after a client reset; if so, a time limit; look at the blocked queue feeder | accepted |
 
 ### Proposed
 
@@ -85,6 +86,7 @@ These entries wait for a decision of the user. Section is the section or area of
 | [JFG4](entries/JFG4-choices-of-the-capture-timings-build.md) | Choices of the capture timings build that the user did not decide: source sets, sets, main process, message loop, route, test seams, faults | none | proposed |
 | [QF7V](entries/QF7V-choices-of-the-test-workflow-on-dom-integration.md) | Choices of the push run of `test.yml`: no run for log-only pushes, no macOS job on a push, pinned labels, PortAudio, no `capture_local`, no fail-fast, 60 min | none | proposed |
 | [4PPS](entries/4PPS-choices-of-the-answers-lane-of-q842-to-q856.md) | Choices of the answers lane: the label from `<recording_name>_info.json` with a fall back, no `pickedFoldersFile`, Q852 sentences, control-read setting, OS key | none | proposed |
+| [06PW](entries/06PW-choices-of-the-shutdown-limit-lane.md) | Choices of the shutdown limit lane: 5 s from the first signal, no join of the log queue feeder at the exit, a DEBUG line for a reset, tests | `recorder` | proposed |
 
 The entries that are `rejected`, `superseded by XXXX`, `absorbed into <path>#<anchor>`,
 `evidence; used by XXXX`, `evidence; replaced by XXXX` or `done` are in [historical.md](historical.md).
