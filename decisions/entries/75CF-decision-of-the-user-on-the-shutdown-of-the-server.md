@@ -1,6 +1,8 @@
 # 75CF — Decision of the user on the shutdown of the server
 
-**Status:** accepted, 2026-11-27 (user, Q907).
+**Status:** absorbed into
+[`specs/recorder.md#91-the-end-of-the-server-process`](../../specs/recorder.md#91-the-end-of-the-server-process),
+2026-11-27 (commit to dom/server-shutdown; was accepted, 2026-11-27 (user, Q907)).
 
 ## Decision
 

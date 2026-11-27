@@ -57,7 +57,9 @@ and a probe that prints when `_call_connection_lost` raises, and a driver that c
   pipe before a websocket reads it.
 - **An idle server**: after 10 s with no websocket, the feeder thread waited for new items
   (`queues._feed` in `wait`), and the exit took 1.11 s.
-- `test_server_exit.py` before the code change: see the commit of the tests.
+- `test_server_exit.py` and `test_entry_point.py`: their 4 tests failed before the code change (the lost connection
+  held the exit for more than 30 s, the port-in-use server did not end, no cancel), and pass after it. After it,
+  ten runs of the lost connection ended 5.66 s to 5.75 s after the answer of `/shutdown`.
 
 ## Alternatives rejected
 
