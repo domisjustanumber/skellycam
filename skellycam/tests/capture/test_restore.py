@@ -222,6 +222,7 @@ def test_a_lost_heartbeat_still_restores_the_controls_at_the_close(monkeypatch):
     assert source.diagnostics()["restore_ok"] is True
 
 
+@pytest.mark.filterwarnings("ignore::pytest.PytestUnhandledThreadExceptionWarning")  # Q950: the raise is on purpose
 def test_an_end_by_another_base_exception_is_not_a_lost_heartbeat(monkeypatch):
     """Fix lane I: a loop that a BaseException other than an `Exception` ends (here `KeyboardInterrupt` in a pass) is
     not labelled "lost the server's heartbeat"."""

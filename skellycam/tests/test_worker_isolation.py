@@ -24,7 +24,12 @@ def exit_abruptly() -> None:
     os._exit(17)
 
 
-@pytest.mark.parametrize("mode,abrupt", [(WorkerMode.PROCESS, False), (WorkerMode.THREAD, False), (WorkerMode.PROCESS, True)])
+# Q950: the THREAD case raises on purpose inside a thread, so only it ignores the warning of that raise
+@pytest.mark.parametrize("mode,abrupt", [
+    (WorkerMode.PROCESS, False),
+    pytest.param(WorkerMode.THREAD, False,
+                 marks=pytest.mark.filterwarnings("ignore::pytest.PytestUnhandledThreadExceptionWarning")),
+    (WorkerMode.PROCESS, True)])
 def test_owner_failure_isolation(mode: WorkerMode, abrupt: bool) -> None:
     application = multiprocessing.Value("b", False)
     owner = multiprocessing.Value("b", False)

@@ -540,16 +540,28 @@ built together with step 4b. The interim workers get no measurement (1.3).
   `node --experimental-strip-types --test`, as `npm run test:player:unit`. The brackets in the tile
   need a canvas: a test in `skellycam-ui/src/player/tests/browser/tile.spec.ts`, run by
   `npm run test:player:browser` (playwright). No new dependency.
-- **Details of the build** ([ADR-W3VD](../decisions/entries/W3VD-choices-of-the-tile-timings-lane.md), proposed).
-  The summary function is `buildSummary`. It takes the fields of the Python `build_summary`, with durations in
-  integer nanoseconds; the handle gives `Math.round(ms * 1_000_000)`. `timings.ts` holds a copy of `STEPS` and
-  `DELAYS`; T-TIM-24 compares it with the Python tables. `handle()` gives one handle for each camera id; a second
-  call gives the same handle and sets its group id. The window of a handle starts at `handle()`.
-  `takeSummaries()` gives a summary for each handle also when `on` is false. A bracket reads `on` at its start. A
-  decode that is superseded or fails gives a `ui_jpeg_decode` sample and no `ui_draw`; an update with `image` gives
-  `ui_draw`; a `blank` update gives none. skellycam-ui gives each tile `handle(cameraId, null)` through
-  `getTileTimings()` of `useServer()`, and sets `on` from the guard `isCaptureTimings` of `server-messages.ts`.
-  `PreviewTiles` stamps each message, also when the timings are off.
+- **Details of the build** ([ADR-W3VD](../decisions/entries/W3VD-choices-of-the-tile-timings-lane.md), Q943 of
+  [ADR-318R](../decisions/entries/318R-decisions-of-the-user-on-q942-to-q955.md)).
+  The summary function is `buildSummary`. It takes the fields of the Python `build_summary`, with the same snake_case
+  names and with durations in integer nanoseconds, so it reads the `input` of the shared fixture as it is; the handle
+  gives `Math.round(ms * 1_000_000)`. `timings.ts` holds a copy of `STEPS` and `DELAYS`, because the fixture has
+  steps that the tile does not measure; T-TIM-24 compares the copy with the Python tables, which it reads from the
+  Python file. `handle()` gives one handle for each camera id; a second call gives the same handle and sets its
+  group id, so a tile that mounts again adds no second summary. No call removes a handle: the handle of a camera
+  that leaves keeps a summary with `n` 0 in each `takeSummaries()` [U Q943]. The window of a handle starts at
+  `handle()` (one read of `now()`); `takeSummaries()` reads `now()` one time for all handles, gives a summary for each
+  handle also when `on` is false, and `seq` counts for each handle from 0. A bracket reads `on` at its start: a
+  bracket that starts with `on` true stores its sample also when `on` becomes false before its end. A decode that is
+  superseded or fails gives a `ui_jpeg_decode` sample (the call to its result) and no `ui_draw` and no
+  `receive_to_draw` sample; an update that a newer update replaces before its decode starts gives no sample; an
+  update with `image` gives `ui_draw` and no `ui_jpeg_decode`; a `blank` update gives none. The tile sees its handle
+  as `TileTimingHandle`: `on`, `now()` and `add(id, ms)`; the handle keeps one `Float64Array` of 512 values and one
+  total for each of the three steps. In skellycam-ui, `ServerContextProvider` makes one `TileTimings`, and
+  `useServer()` gives it with `getTileTimings()`, as `getPreviewTiles()`. `CameraView` gives each tile
+  `handle(cameraId, null)`: the group id is `null` (8.4 permits it), because skellycam-ui reads no summary [U Q943].
+  The provider sets `on` from `log_capture_times` of each message that the guard `isCaptureTimings` of
+  `server-messages.ts` finds; a disconnect does not change `on`. `PreviewTiles` stamps each camera message with its
+  own `now` (the clock of `onDrawn`), also when the timings are off: one `performance.now()` call for each message.
 
 ## 8. Interface note for FreeMoCap
 

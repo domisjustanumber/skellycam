@@ -1,8 +1,14 @@
 # KXQ9 — Choices of the quick certify run without the six full checks (Q902), and the 8CP7 check (Q853)
 
-**Status:** proposed, 2026-11-27 (agent; the certify lane builds Q902 of
+**Status:** absorbed into
+[`specs/certify.md#361-rules-of-the-rows`](../../specs/certify.md#361-rules-of-the-rows),
+[`specs/certify.md#367-build-order-u-q627-dbf8-17`](../../specs/certify.md#367-build-order-u-q627-dbf8-17),
+[`specs/certify.md#17-test-list-of-the-certify-code`](../../specs/certify.md#17-test-list-of-the-certify-code),
+[`skellycam/tests/certify/test_certify.py`](../../skellycam/tests/certify/test_certify.py),
+2026-11-27 (commit to dom/answers-q929; was accepted, 2026-11-27 (user, Q939 of [ADR-6PJ2](6PJ2-decisions-of-the-user-on-q929-to-q941.md)); was proposed,
+2026-11-27 (agent; the certify lane builds Q902 of
 [ADR-Y2RN](Y2RN-decisions-of-the-user-on-the-size-floor-review-and-certify-quick-runs.md) item 5 and checks Q853 of
-[ADR-88HQ](88HQ-decisions-of-the-user-on-q842-to-q856.md); waits for the user).
+[ADR-88HQ](88HQ-decisions-of-the-user-on-q842-to-q856.md); waits for the user)).
 
 ## Decision
 
@@ -34,7 +40,7 @@ quick report holds for them. The agent made these choices. Section 3.6.1 of
    - 8CP7-7 sends no progress message for a roll-up or a computed check (accepted as built by Q814); 9.6 (H0BQ) and
      the code send one before each check.
 
-   The entry stays `accepted` until the user says which text wins (the question of open work).
+   Q940 of [ADR-6PJ2](6PJ2-decisions-of-the-user-on-q929-to-q941.md): the later spec text wins on the three, and ADR-8CP7 is absorbed.
 6. **A fault in a left-out check (review of 2026-11-27).** The session remembers the left-out check that began last
    and has not ended; a later `begin` clears it. When the session fails while one is open, it calls `begin` for the
    next check of that camera that the level has, in the order of the plan, before the error ends the session. That

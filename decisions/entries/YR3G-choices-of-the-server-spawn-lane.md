@@ -1,7 +1,9 @@
 # YR3G — Choices of the server spawn lane
 
-**Status:** proposed, 2026-11-27 (agent: the UI messages lane on `dom/server-spawn`, a fault found in
-[ADR-590X](590X-choices-of-the-ui-messages-lane.md) and confirmed by a review run).
+**Status:** accepted, 2026-11-27 (user, Q974 of [ADR-D6YZ](D6YZ-decisions-of-the-user-on-the-server-spawn-lane-q961-q973-to-q975.md):
+accepted once the review says safe; the review said safe). Proposed on 2026-11-27 by the agent of the UI messages
+lane on `dom/server-spawn`, for a fault found in [ADR-590X](590X-choices-of-the-ui-messages-lane.md) and confirmed by a
+review run.
 
 ## Decision
 
