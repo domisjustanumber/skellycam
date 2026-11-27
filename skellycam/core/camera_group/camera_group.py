@@ -612,10 +612,26 @@ class CameraGroup:
         def ended(done) -> None:
             self._end_tasks.discard(done)
             if not done.cancelled():
-                done.exception()  # read: an outcome with no waiting caller is not logged as lost
+                done.exception()  # read: asyncio does not log it as lost; `lost` below logs it when no caller waits
+
+        def lost(done) -> None:
+            error = None if done.cancelled() else done.exception()
+            if error is not None and not isinstance(error, RequestRefused):
+                logger.error(f"The take start or stop of group {self.id} failed after its caller was cancelled: "
+                             f"{error!r}", exc_info=error)
 
         task.add_done_callback(ended)
-        return await asyncio.shield(task)
+        try:
+            return await asyncio.shield(task)
+        except asyncio.CancelledError:
+            task.add_done_callback(lost)  # the caller is gone: nobody else gets the outcome
+            raise
+
+    async def await_take_end(self) -> None:
+        """Wait until no take start, stop or error end runs (recorder.md 9.1 item 3): the close of all groups calls it
+        before `close`, so a start that has not set `self.take` yet ends first."""
+        async with self._end_lock:
+            pass
 
     async def _start_recording(self, recording_info: RecordingInfo, devices: dict | None) -> list:
         statuses = self.cameras.orchestrator.camera_statuses
