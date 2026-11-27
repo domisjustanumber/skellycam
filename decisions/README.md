@@ -60,6 +60,7 @@ These entries are `accepted`.
 | [88HQ](entries/88HQ-decisions-of-the-user-on-q842-to-q856.md) | Q842 to Q856: J1HD and TYH0 accepted, the stall watch at 2 s, the player label and picked folders, absorb sentences, N72V, push rule | accepted |
 | [8MTY](entries/8MTY-answers-v1-to-v7-of-the-user-to-the-3b-and-3c-tests.md) | Answers V1 to V7: `capture_modes` in 3b, auto rate of a raw format, `jpeg_encoder`, OpenCV parity, range tests | accepted |
 | [9V4Y](entries/9V4Y-decisions-of-the-user-on-the-shutdown-lane-q924-to-q928.md) | Q924 to Q928: the shutdown lane's choices; no Electron bound; skellylogs fix; "port in use" in the UI; shield first, then the limit | accepted |
+| [F7BK](entries/F7BK-decisions-of-the-user-on-the-shutdown-follow-ups-q972-q976-q977.md) | Q972, Q976, Q977: a thread join returns for a thread never started; the strict xfail stays until fixed; forced exit 5 s after a second Ctrl-C | accepted |
 
 ### Proposed
 
@@ -88,7 +89,7 @@ These entries wait for a decision of the user. Section is the section or area of
 | [JFG4](entries/JFG4-choices-of-the-capture-timings-build.md) | Choices of the capture timings build that the user did not decide: source sets, sets, main process, message loop, route, test seams, faults | none | proposed |
 | [4PPS](entries/4PPS-choices-of-the-answers-lane-of-q842-to-q856.md) | Choices of the answers lane that wait: the Q852 sentences (item 5) and the time of the control-read check (item 7) | none | proposed |
 | [4W3H](entries/4W3H-choices-of-the-q928-build.md) | Choices of the Q928 build: the take start and stop as shielded tasks, Ctrl-Break as Ctrl-C, the cancel and real-signal tests | `recorder` | proposed |
-| [M5PJ](entries/M5PJ-choices-of-the-shutdown-follow-ups-q934-q935.md) | Choices of the shutdown follow-ups: a second Ctrl-C or Ctrl-Break sets the kill flag, 8 s bound, 409 for a start during the close, cancel tests | `recorder` | proposed |
+| [M5PJ](entries/M5PJ-choices-of-the-shutdown-follow-ups-q934-q935.md) | Choices of the shutdown follow-ups: a second Ctrl-C after 1 s sets the kill flag, forced exit, 409 while groups close, cancel tests | `recorder` | proposed |
 | [SKZ8](entries/SKZ8-choices-of-the-blocking-half-of-t-prv-17.md) | Choices of the blocking half of T-PRV-17 (Q923): B gets 15 camera messages within the loose limit of 9.1; the check of A keeps 1 s | none | proposed |
 | [C47T](entries/C47T-choices-of-the-ci-lane.md) | Choices of the CI lane: uv from `doc-checks.yml`, `test_workflows.py`, `tsconfig.tests.json`, one type fix, uv steps in `player.yml`, D: drive try | none | proposed |
 | [VTW3](entries/VTW3-choices-of-the-quick-sync-check-in-a-child-process.md) | Q879 choices: one child call for detection and Quick Sync, 5 s, log levels; `system:quick-sync` in both levels on Windows, record-only, no GPU is false | none | proposed |
