@@ -90,6 +90,7 @@ These entries wait for a decision of the user. Section is the section or area of
 | [06PW](entries/06PW-choices-of-the-shutdown-limit-lane.md) | Choices of the shutdown limit lane: no connection limit (no hang found), no join of the log queue feeder at the exit, a DEBUG line for a reset, tests | `recorder` | proposed |
 | [SKZ8](entries/SKZ8-choices-of-the-blocking-half-of-t-prv-17.md) | Choices of the blocking half of T-PRV-17 (Q923): B gets 15 camera messages within the loose limit of 9.1; the check of A keeps 1 s | none | proposed |
 | [C47T](entries/C47T-choices-of-the-ci-lane.md) | Choices of the CI lane: uv from `doc-checks.yml`, `test_workflows.py`, `tsconfig.tests.json`, one type fix, uv steps in `player.yml`, D: drive try | none | proposed |
+| [FP47](entries/FP47-choices-of-the-triage-of-the-first-ci-run-of-the-4b-component-tests.md) | Triage of the first CI run of the 4b component tests: the harness window and grid fit a small runner screen; no product fault | none | proposed |
 
 The entries that are `rejected`, `superseded by XXXX`, `absorbed into <path>#<anchor>`,
 `evidence; used by XXXX`, `evidence; replaced by XXXX` or `done` are in [historical.md](historical.md).

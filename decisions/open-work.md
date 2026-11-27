@@ -89,6 +89,8 @@ task. Delete an item when its work is done. The PR that closes an item records t
   - Step 4b, after the merge: the tile timings
     (step 8 of `capture-timings.md`), tests first (Q870); delete `read_latest_ring_frames` and `_send_json` with their
     spec line and test probe (Q871); rewrite the top of the real-time streaming page (Q873).
+  - The next CI run of `player.yml` confirms the harness fix of the 4b component tests (the inner size in the launch
+    line; [ADR-FP47](entries/FP47-choices-of-the-triage-of-the-first-ci-run-of-the-4b-component-tests.md)).
   - Soon, spec and test first (Q907): does the product server hang at its shutdown after a client connection reset?
     If so, a shutdown time limit; also the blocked queue feeder thread. After that fix, a
     kill in `PreviewKit.close` fails the test (Q909).
