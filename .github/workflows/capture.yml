@@ -20,8 +20,6 @@ on:
       - "specs/preview.md"
       - "specs/frame-ring.md"
       - "specs/preview-4b.md"
-      - "tools/write_camera_message_fixture.py"
-      - "tools/tests/test_camera_message_fixture.py"
       - "pyproject.toml"
       - "uv.lock"
       - ".github/workflows/capture.yml"
@@ -56,7 +54,7 @@ jobs:
 
       # T-CAP-46 (load the Media Foundation module) is one of these tests; it runs on Windows only.
       - name: Run the fake-source tests and the preview tests
-        run: uv run pytest skellycam/tests/capture skellycam/tests/preview tools/tests/test_camera_message_fixture.py -m "not camera_hardware and not capture_local and not pace"
+        run: uv run pytest skellycam/tests/capture skellycam/tests/preview -m "not camera_hardware and not capture_local and not pace"
 
       # Q619 of the user ("A red workflow should mean a real fault"): the tests with the marker `pace` run here with
       # wide margins. A failure shows as a failed step, a warning and lines in the job summary; the job stays green.
@@ -101,7 +99,7 @@ jobs:
         run: uv sync --group dev --python 3.13.18
 
       - name: Run the fake-source tests and the preview tests
-        run: uv run pytest skellycam/tests/capture skellycam/tests/preview tools/tests/test_camera_message_fixture.py -m "not camera_hardware and not capture_local and not pace"
+        run: uv run pytest skellycam/tests/capture skellycam/tests/preview -m "not camera_hardware and not capture_local and not pace"
 
       # Q619 of the user ("A red workflow should mean a real fault"): the tests with the marker `pace` run here with
       # wide margins. A failure shows as a failed step, a warning and lines in the job summary; the job stays green.
@@ -148,7 +146,7 @@ jobs:
         run: uv sync --group dev --python 3.13.18
 
       - name: Run the fake-source tests and the preview tests
-        run: uv run pytest skellycam/tests/capture skellycam/tests/preview tools/tests/test_camera_message_fixture.py -m "not camera_hardware and not capture_local and not capture_timing and not pace"
+        run: uv run pytest skellycam/tests/capture skellycam/tests/preview -m "not camera_hardware and not capture_local and not capture_timing and not pace"
 
       # The tests of real-time gaps of 100 ms in their own step: this runner can be slow (ADR-BM73).
       - name: Run the real-time gap tests
