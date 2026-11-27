@@ -1374,6 +1374,9 @@ test list of the encode at capture (2026-11-25).
   each JPEG ring until a watch reads it or the ring closes (`capture_session.install_watch_clock`). That hold hides
   the race of [`certify.md`](certify.md) 4.4 in each THREAD test, so T-CERT-151 covers the race with PROCESS
   workers [ADR-2HW5](../decisions/entries/2HW5-choices-of-the-ci-triage-of-the-first-test-run-on-dom-integration.md) ([ADR-N2VE](../decisions/entries/N2VE-decisions-of-the-user-on-the-ci-triage-and-the-stall-watch-code.md), Q883).
+  The reader of T-RING-40 also holds the clock from the open of its JPEG ring, while the ring holds half of its slots
+  or more, until its first read (`capture_session.hold_clock_from_the_ring_open`): CI run 45912461226 got `LAPPED`
+  at frame 0, because the camera ran before the reader attached.
 
 Systems [U18, U20, U21]:
 
