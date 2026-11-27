@@ -78,12 +78,18 @@ def labels(devices):
     return [label for label, _ in product(CATALOG).camera_labels(devices, product(CATALOG).system_backend())]
 
 
-def group_checks(label):
-    return [f"{label}:opens", f"{label}:rate", f"{label}:modes:granted:640x480@30",
-            f"{label}:settings-stick:readback", f"{label}:settings-stick:holds", f"{label}:settings-stick:image-effect",
-            *(f"{label}:native-jpeg:{c}" for c in ("format", "not-reencoded", "valid", "size", "ring-equals-mkv",
-                                                    "source-equals-ring")),
-            *(f"{label}:records:{c}" for c in ("rows-complete", "blocks-decode", "gaps-explained"))]
+# 3.6.1 (Q593, Q902): the six camera checks of full only; a quick run leaves them out
+FULL_ONLY = ("native-jpeg:not-reencoded", "native-jpeg:size", "native-jpeg:ring-equals-mkv",
+             "native-jpeg:source-equals-ring", "settings-stick:image-effect", "records:gaps-explained")
+
+
+def group_checks(label, level="full"):
+    names = [f"{label}:opens", f"{label}:rate", f"{label}:modes:granted:640x480@30",
+             f"{label}:settings-stick:readback", f"{label}:settings-stick:holds", f"{label}:settings-stick:image-effect",
+             *(f"{label}:native-jpeg:{c}" for c in ("format", "not-reencoded", "valid", "size", "ring-equals-mkv",
+                                                     "source-equals-ring")),
+             *(f"{label}:records:{c}" for c in ("rows-complete", "blocks-decode", "gaps-explained"))]
+    return names if level == "full" else [n for n in names if n.split(":", 1)[1] not in FULL_ONLY]
 
 
 def own(report, label):
@@ -359,7 +365,7 @@ def test_t_cert_03_07_17_26_a_quick_run_with_good_fakes(monkeypatch, tmp_path):
     a0, a1, b0 = labels(devices)
     assert a0.endswith(".0") and a1.endswith(".1") and b0.endswith(".0")
     for label in (a0, a1, b0):
-        for name in group_checks(label):
+        for name in group_checks(label, "quick"):
             assert checks[name]["result"] == "pass", checks[name]
     for name in ("group:take:finished", "group:take:csv-rows", "group:take:no-missing", "group:take:frame-count",
                  "group:take:rate"):
@@ -479,14 +485,16 @@ def test_t_cert_10_a_camera_in_use(monkeypatch, tmp_path):
     assert [r["device"] for r in record] == ["feed:0001"]
 
 
-def test_t_cert_13_settings_stick(monkeypatch, tmp_path):
+@pytest.mark.parametrize("level", ["quick", "full"])
+def test_t_cert_13_settings_stick(monkeypatch, tmp_path, level):
     """T-CERT-13, 4.3: a read-back that differs after the change, an image that does not change, a mean of 240,
-    and a camera with no manual exposure; each item `partial`; no `fail` for the camera with no manual exposure."""
+    and a camera with no manual exposure; no `fail` for the camera with no manual exposure. The image cases run at
+    `full`, where each item is `partial`; quick has no `image-effect` row, so its two image cases pass (Q902)."""
     scripts = [good(live_set_faults=("readback:-5",)), good(brightness=()), good(brightness=((-7, 240), (-8, 235))),
                good(controls=(("exposure", False, False, 0), ("gain", True, False, 0), ("focus", True, True, 30)))]
     with capture_app(monkeypatch, scripts) as app:
         devices = app.factory.device_infos()
-        report = run_with(app, tmp_path)
+        report = run_with(app, tmp_path, level=level)
     assert_valid(report)
     checks = by_name(report)
     differs, flat, bright, none = labels(devices)
@@ -496,30 +504,130 @@ def test_t_cert_13_settings_stick(monkeypatch, tmp_path):
         return check["result"], check["reason"]
     assert result(differs, "readback") == ("fail", "readback-differs")
     assert result(differs, "holds") == ("not-run", "prior-check-failed")
+    for name in ("readback", "holds"):
+        assert result(none, name) == ("not-run", "no-manual-exposure")
+    if level == "quick":
+        assert not [c for c in report["checks"] if c["name"].endswith(":settings-stick:image-effect")]
+        assert [i["result"] for i in report["summary"]] == ["partial", "pass", "pass", "partial"]
+        return
     assert result(flat, "image-effect") == ("fail", "no-image-effect")
     assert result(bright, "image-effect") == ("not-run", "too-bright")
-    for name in ("readback", "holds", "image-effect"):
-        assert result(none, name) == ("not-run", "no-manual-exposure")
+    assert result(none, "image-effect") == ("not-run", "no-manual-exposure")
     assert [i["result"] for i in report["summary"]] == ["partial"] * 4
 
 
-def test_t_cert_14_native_jpeg(monkeypatch, tmp_path):
+@pytest.mark.parametrize("level", ["quick", "full"])
+def test_t_cert_14_native_jpeg(monkeypatch, tmp_path, level):
     """T-CERT-14, 4.4: a fake with cut JPEGs gives `native-jpeg:valid` `fail` `jpeg-damaged`, and its other JPEG
-    checks keep their own results; a fake with no DHT passes each JPEG check with `dht_inserted` > 0."""
+    checks keep their own results; a fake with no DHT passes each JPEG check with `dht_inserted` > 0. The
+    `not-reencoded`, `size` and ring cases run at `full`; quick has only `format` and `valid` (Q902)."""
     scripts = [good(cut_off_frames=tuple(range(0, 3000, 9))), good(no_dht=True)]
     with capture_app(monkeypatch, scripts) as app:
         devices = app.factory.device_infos()
-        report = run_with(app, tmp_path)
+        report = run_with(app, tmp_path, level=level)
     assert_valid(report)
     checks = by_name(report)
     cut, no_dht = labels(devices)
     assert checks[f"{cut}:native-jpeg:valid"]["result"] == "fail"
     assert checks[f"{cut}:native-jpeg:valid"]["reason"] == "jpeg-damaged"
     assert checks[f"{cut}:native-jpeg:format"]["result"] == "pass"
-    assert checks[f"{cut}:native-jpeg:not-reencoded"]["result"] == "pass"
-    for name in ("format", "not-reencoded", "valid", "size", "ring-equals-mkv", "source-equals-ring"):
+    jpeg = ("format", "not-reencoded", "valid", "size", "ring-equals-mkv", "source-equals-ring")
+    if level == "quick":
+        assert [c["name"].split(":", 1)[1] for c in report["checks"] if ":native-jpeg:" in c["name"]] == [
+            "native-jpeg:format", "native-jpeg:format", "native-jpeg:valid", "native-jpeg:valid"]
+        jpeg = ("format", "valid")
+    else:
+        assert checks[f"{cut}:native-jpeg:not-reencoded"]["result"] == "pass"
+    for name in jpeg:
         assert checks[f"{no_dht}:native-jpeg:{name}"]["result"] == "pass", checks[f"{no_dht}:native-jpeg:{name}"]
     assert checks[f"{no_dht}:native-jpeg:format"]["numbers"]["dht_inserted"] > 0
+
+
+def test_t_cert_153_the_quick_plan_leaves_out_the_six_full_checks():
+    """T-CERT-153, 3.6.1 (Q902): on each backend the camera checks of the quick plan are those of the full plan less
+    the six of Q593 and less the clock checks that quick does not have (10.6), in the same order; `details.not_built`
+    names none of the six, in either level."""
+    catalog = product(CATALOG)
+    label = "cam.x.0001-0002.0"
+    units = [(label, (640, 480, 30.0), "C")]
+    for backend in ("media-foundation", "v4l2", "avfoundation"):
+        def camera(level):
+            return [n.split(":", 1)[1] for n, _ in catalog.planned_checks(level, units, backend)
+                    if n.startswith(label + ":")]
+        clock = catalog.CLOCK if backend == "media-foundation" else ()
+        quick, full = camera("quick"), camera("full")
+        assert set(FULL_ONLY) <= set(full), backend
+        assert quick == [n for n in full if n not in FULL_ONLY and n not in clock], backend
+        for level in ("quick", "full"):
+            assert not set(FULL_ONLY) & set(catalog.not_built(level, units, backend)["camera"]), (backend, level)
+
+
+def test_t_cert_153_the_b1_row_of_a_quick_session_is_never_a_full_check(tmp_path):
+    """T-CERT-153, 3.6.1 B1 (Q902): the first check with no result of a quick session, at each point of the ready,
+    settings and take steps, is never one of the six; a full session goes through all six."""
+    session = product("skellycam.core.certify.session")
+    unit = session.Unit(label="cam.media-foundation.feed-0000.0", camera_id="e605", index=0, base=(640, 480, 30.0),
+                        module="Fake camera 0", device=None)
+
+    def order(level):
+        run = session.Session(None, [unit], tmp_path, level, False, begin=lambda name: None,
+                              done=lambda result: None, fact=lambda name, value: None, sleep=time.sleep)
+        out = []
+        while (name := run.first_without_result(unit)) is not None:
+            out.append(name.split(":", 1)[1])
+            run.results.add(name)
+        return out
+    assert order("quick") == ["native-jpeg:format", "settings-stick:readback", "settings-stick:holds",
+                              "native-jpeg:valid", "records:rows-complete", "records:blocks-decode", "live-at-close"]
+    assert set(FULL_ONLY) <= set(order("full"))
+
+
+@pytest.mark.parametrize("level", ["quick", "full"])
+def test_t_cert_153_a_quick_run_leaves_out_the_six_full_checks(monkeypatch, tmp_path, level):
+    """T-CERT-153, 3.6.1, 2.5 (Q902): two good fakes of two models, one whose image does not get darker at -8. Quick:
+    no name of the six in the plan, in `checks`, in `details.not_built` or in a progress message; `done` ends at
+    `total`; both items `pass`; the record gives `controls.exposure` `unproven`. Full: each of the six has its row,
+    `image-effect` fails for the flat image, and its item is `partial`. The quick estimate is that of 4.7."""
+    messages = []
+    options = {k: v for k, v in paths(tmp_path).items() if k != "recording_folder"}
+    with capture_app(monkeypatch, [good(), good(brightness=())]) as app:
+        devices = app.factory.device_infos()
+        plan = product(RUN).plan(level, devices=devices, **options)
+        report = run_with(app, tmp_path, level=level, progress=messages.append)
+    assert_valid(report)
+    checks = by_name(report)
+    fine, flat = labels(devices)
+    six = {f"{label}:{c}" for label in (fine, flat) for c in FULL_ONLY}
+    named = {(m.get("step") or {}).get("name") for m in messages}
+    totals = [m for m in messages if m["total"] is not None]
+    assert totals[-1]["state"] == "done" and totals[-1]["done"] == totals[-1]["total"] == plan["total"]
+    assert not set(FULL_ONLY) & set(report["details"]["not_built"]["camera"])
+    record = sorted(json.loads((tmp_path / "camera_checks.json").read_text(encoding="utf-8"))["rows"],
+                    key=lambda r: r["device"])
+    if level == "quick":
+        assert not six & set(plan["details"]["checks"]), six & set(plan["details"]["checks"])
+        assert not six & set(checks) and not six & named
+        assert [i["result"] for i in report["summary"]] == ["pass", "pass"]
+        assert [r.get("controls") for r in record] == [{"exposure": {"iam": "unproven"}}] * 2
+        assert plan["seconds_estimate"] == min(30, -(-(80 + 2) // 4) + 10)
+        return
+    assert six <= set(checks) and six <= set(plan["details"]["checks"])
+    assert (checks[f"{flat}:settings-stick:image-effect"]["result"],
+            checks[f"{flat}:settings-stick:image-effect"]["reason"]) == ("fail", "no-image-effect")
+    assert [i["result"] for i in report["summary"]] == ["pass", "partial"]
+    assert [r.get("controls") for r in record] == [{"exposure": {"iam": "works"}}, {"exposure": {"iam": "no"}}]
+
+
+def test_t_cert_153_the_not_reached_row_of_a_quick_run_counts_none_of_the_six(monkeypatch, tmp_path):
+    """T-CERT-153, 3.6.1 (Q902): a camera that fails `rate` beside a good one: its `not-reached` row stands for the
+    quick checks after the open only (seven, and the five clock checks of 10.6 on Linux and macOS)."""
+    with capture_app(monkeypatch, [good(rate=25.0), good()]) as app:
+        devices = app.factory.device_infos()
+        report = run_with(app, tmp_path)
+    assert_valid(report)
+    slow, _ = labels(devices)
+    unix = product(CATALOG).system_backend() != "media-foundation"
+    assert by_name(report)[f"{slow}:not-reached"]["numbers"] == {"checks": 7 + (5 if unix else 0)}
 
 
 def test_t_cert_16_a_cancel_during_the_take(monkeypatch, tmp_path):
@@ -698,7 +806,7 @@ def test_session_child_runs_the_product_path(tmp_path, monkeypatch):
     assert_valid(report)
     (label,) = labels(factory.device_infos())
     checks = by_name(report)
-    for name in group_checks(label):
+    for name in group_checks(label, "quick"):
         assert checks[name]["result"] == "pass", checks[name]
     time.sleep(0.5)
     left = {p.pid for p in psutil.Process().children(recursive=True)} - before

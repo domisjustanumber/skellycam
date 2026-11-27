@@ -338,13 +338,13 @@ def test_t_cert_151_a_ready_camera_with_no_ring_watch_at_the_judge(monkeypatch, 
     """T-CERT-151 case 1, 4.4, 3.6.1: a camera hangs at the open (5 s) and a good camera waits for it in `waiting` (PROCESS
     workers). The group opens the rings only after the hang, and the good camera is `ready` at once. No ring look of
     the session comes before the judge of the open (`SlowRingLook`). The good camera still gets its ready, settings
-    and take checks, and it has no `not-reached` row."""
+    and take checks, and it has no `not-reached` row. It runs at `full`: quick has no `source-equals-ring` (Q902)."""
     monkeypatch.setattr(product("skellycam.core.certify.session"), "asyncio", SlowRingLook())
     messages = []
     with capture_app(monkeypatch, [good(hang_at="open", hang_armed=True), good()], workers="process") as app:
         devices = app.factory.device_infos()
-        plan = product(RUN).plan("quick", devices=devices, **plan_options(tmp_path))
-        report = run_with(app, tmp_path, progress=messages.append)
+        plan = product(RUN).plan("full", devices=devices, **plan_options(tmp_path))
+        report = run_with(app, tmp_path, level="full", progress=messages.append)
     assert_valid(report)
     hung, fine = labels(devices)
     checks = by_name(report)
@@ -392,18 +392,23 @@ class NoRingReader:
         raise FileNotFoundError(name)
 
 
-def test_t_cert_151_a_ready_camera_whose_ring_watch_cannot_attach(monkeypatch, tmp_path):
+@pytest.mark.parametrize("level", ["quick", "full"])
+def test_t_cert_151_a_ready_camera_whose_ring_watch_cannot_attach(monkeypatch, tmp_path, level):
     """T-CERT-151 case 2, 4.4: a `ready` camera whose ring watch cannot attach goes on to the settings step and the
-    take; `native-jpeg:source-equals-ring` is `not-run` `ring-lapped`; it has no `not-reached` row."""
+    take; in full `native-jpeg:source-equals-ring` is `not-run` `ring-lapped`, and quick has no such row (Q902); it
+    has no `not-reached` row."""
     monkeypatch.setattr(product("skellycam.core.certify.session"), "FrameRingReader", NoRingReader)
     with capture_app(monkeypatch, [good()]) as app:
         (label,) = labels(app.factory.device_infos())
-        report = run_with(app, tmp_path)
+        report = run_with(app, tmp_path, level=level)
     assert_valid(report)
     checks = by_name(report)
     rows = [c for c in report["checks"] if c["name"].startswith(label + ":")]
-    assert (checks[f"{label}:native-jpeg:source-equals-ring"]["result"],
-            checks[f"{label}:native-jpeg:source-equals-ring"]["reason"]) == ("not-run", "ring-lapped"), rows
+    ring = checks.get(f"{label}:native-jpeg:source-equals-ring")
+    if level == "quick":
+        assert ring is None, rows
+    else:
+        assert (ring["result"], ring["reason"]) == ("not-run", "ring-lapped"), rows
     for name in ("opens", "native-jpeg:format", "settings-stick:readback", "records:rows-complete"):
         assert checks[f"{label}:{name}"]["result"] == "pass", (name, rows)
     assert f"{label}:not-reached" not in checks, rows
