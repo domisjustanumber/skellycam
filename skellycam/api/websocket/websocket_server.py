@@ -77,12 +77,6 @@ class WebsocketServer:
             if not task.done():
                 task.cancel()
 
-    async def _send_json(self, data: dict) -> None:
-        """Send JSON through the websocket, serialized by the send lock."""
-        async with self._send_lock:
-            if self.websocket.client_state == WebSocketState.CONNECTED:
-                await self.websocket.send_json(data)
-
     async def _send_bytes_in_lock(self, data: bytes | bytearray | memoryview) -> None:
         """Send bytes; the caller holds the send lock."""
         if self.websocket.client_state == WebSocketState.CONNECTED:
