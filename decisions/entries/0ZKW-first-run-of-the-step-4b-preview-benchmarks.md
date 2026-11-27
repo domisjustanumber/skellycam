@@ -32,3 +32,15 @@ off the Network domain of the own session of Playwright, and a `page.evaluate` s
 Recorded, with no target (medians of the runs): the observer gave 30.0 captures each second; CPU of the page
 process 84 % and 168 % of one core, of the GPU process 25 % and 45 %; working set 706 MB and 959 MB; the Python
 event-loop thread 0.09 and 0.15 of one core.
+
+Run after Q893 and Q895 (2026-11-26, same tool and method; the order of the tile updates turns at each refresh, and
+the grid has no cell transition): every target of 6.3 is met.
+
+| ID | F = 30 (T-PRV-51) | F = 60 (T-PRV-52) | Target |
+|---|---|---|---|
+| B-1a wrong camera, behind more than 2 | 0, 0 | 0, 0 (recorded only) | 0, 0 at F = 30 |
+| B-1a worst distinct ratio | 1.037 (no second below the ratio in any run) | 1.034 to 1.039 (recorded only) | at least 1 at F = 30 |
+| B-1b ready messages each second, lowest camera | 30 | 55 (each camera 55 to 56 in each run) | 27 and 53.1 |
+| B-1b `drawnCount` ratio | 1.112 | 1.037 | at least 1 |
+| B-2 send-to-ready p95 | 21.9 ms | 30.2 ms | at most 50 ms |
+| B-3 `TaskDuration` share | 0.193 | 0.382 | at most 0.5 |

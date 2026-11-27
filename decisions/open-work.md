@@ -96,18 +96,11 @@ task. Delete an item when its work is done. The PR that closes an item records t
   - Step 4b ([`specs/preview-4b.md`](../specs/preview-4b.md); tests
     [ADR-70WD](entries/70WD-failing-tests-of-step-4b-and-the-names-they-assume.md); code on `dom/preview-4b-tests`,
     [ADR-BPP8](entries/BPP8-answers-of-the-user-q864-to-q873-on-the-step-4b-code.md)). Open:
-    - T-PRV-51 and T-PRV-52, first clean run
-      ([ADR-0ZKW](entries/0ZKW-first-run-of-the-step-4b-preview-benchmarks.md)): B-1a misses at 30 fps (0.996) and
-      B-1b at 60 fps (52.5 of 53.1); the user decides (6.4).
-    - Question for the user: the tiles grow and slide into place over about 220 ms after they mount (the 0.2 s
-      cell transition of the CSS of `react-grid-layout`), and the first frames draw on small tiles. Keep it, or turn
-      the transition off for the grid? The tests wait until the layout settles.
-    - Question for the user: `skellycam-ui/tsconfig.json` excludes each `tests` folder, so `tsc` never checks the
-      test code.
     - The CI changes of 7.8, in their own PR. Tests and code merge together after an independent review (Q815).
     - After the merge: the tile timings lane (step 8 of `capture-timings.md`), tests first (Q870); a small lane
       deletes `read_latest_ring_frames` and `_send_json`, with the spec line and the probe of their three tests
-      (Q871); a docs lane rewrites the first section of the real-time streaming page (Q873).
+      (Q871); a docs lane rewrites the first section of the real-time streaming page (Q873); the next CI lane adds a
+      second type check that covers the UI test code, which `tsconfig.json` leaves out (Q897).
 - **The `sfn26` integration on `dom/integration`**
   ([ADR-EQY4](entries/EQY4-base-the-work-on-upstream-sfn26-without-rust.md),
   [ADR-6T78](entries/6T78-choices-of-the-sfn26-integration.md)). Open:

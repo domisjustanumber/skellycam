@@ -1,4 +1,4 @@
-# BPP8 — Answers of the user Q864 to Q873 and Q885 on the step 4b code
+# BPP8 — Answers of the user Q864 to Q873, Q885 and Q893 to Q897 on the step 4b code
 
 **Status:** absorbed into
 [`specs/preview-4b.md#32-tests`](../../specs/preview-4b.md#32-tests),
@@ -7,6 +7,7 @@
 [`specs/preview-4b.md#53-flow-control-previewtiles-p2-a6-agent-5`](../../specs/preview-4b.md#53-flow-control-previewtiles-p2-a6-agent-5),
 [`specs/preview-4b.md#54-the-tile-for-each-camera`](../../specs/preview-4b.md#54-the-tile-for-each-camera),
 [`specs/preview-4b.md#55-text-messages-in-the-provider`](../../specs/preview-4b.md#55-text-messages-in-the-provider),
+[`specs/preview-4b.md#56-the-grid-and-the-camera-list`](../../specs/preview-4b.md#56-the-grid-and-the-camera-list),
 [`specs/preview-4b.md#58-the-frame-rate-viewer-a7-p4-q3`](../../specs/preview-4b.md#58-the-frame-rate-viewer-a7-p4-q3),
 [`specs/preview-4b.md#59-docs`](../../specs/preview-4b.md#59-docs),
 [`specs/preview-4b.md#62-method-agent-9`](../../specs/preview-4b.md#62-method-agent-9),
@@ -14,7 +15,7 @@
 [`specs/preview-4b.md#74-test-list`](../../specs/preview-4b.md#74-test-list),
 [`specs/preview-4b.md#75-parity-of-the-systems-p7`](../../specs/preview-4b.md#75-parity-of-the-systems-p7),
 [`specs/capture-timings.md#65-the-preview-sender-u-q587-11`](../../specs/capture-timings.md#65-the-preview-sender-u-q587-11),
-2026-11-26 (commit to dom/preview-4b-tests; the open work of items 5, 7, 8 and 10 is in open-work.md; was accepted, 2026-11-26 (user; the supervisor relayed the answers)).
+2026-11-26 (commit to dom/preview-4b-tests; the open work of items 7, 8, 10 and 16 is in open-work.md; was accepted, 2026-11-26 (user; the supervisor relayed the answers)).
 
 ## Decision
 
@@ -48,10 +49,18 @@ other items (Q872), and Q864 replaces its item 9. Each answer accepts the recomm
 10. **Q873.** A later docs lane rewrites the first section of the real-time streaming page.
 11. **Q885.** T-PRV-49 checks that drawing stops (`requestAnimationFrame` gives no frame) in place of the visibility
     flag, and keeps its checks of the server message count and of window 1 (7.4, 7.5).
+12. **Q893.** `PreviewTiles.tick` turns the camera that gets its update first at each refresh, so that no camera is
+    always last (5.3 rule 6); then the 60 fps benchmark runs again.
+13. **Q894.** B-1a at 30 fps is accepted as passing, after three clean runs; the bench keeps its per-second record
+    ([ADR-0ZKW](0ZKW-first-run-of-the-step-4b-preview-benchmarks.md)).
+14. **Q895.** The camera grid has no grow-and-slide animation (5.6, 7.4).
+15. **Q896.** `PreviewKit.close` gives each step a time limit, kills the app or the server at a time-out and logs the
+    step that hung; before the branch merges (7.2).
+16. **Q897.** CI gets a second type check that covers the test code of the UI, in the next CI lane (open work).
 
 ## Reason
 
-The user, 2026-11-26: "agree to all Q864-Q881", and the answer Q885 of the same day.
+The user, 2026-11-26: "agree to all Q864-Q881", and the answers Q885 and "agree to all Q893-Q902" of the same day.
 
 ## Open work
 
