@@ -46,6 +46,10 @@ def _slow_holder_run(monkeypatch, locked):
     status.owner = child
     try:
         assert go.wait(60), "the child holds the lock"
+        lock = status.info.get_lock()
+        held_at_start = not lock.acquire(False)  # a probe with no wait: the child still holds the lock
+        if not held_at_start:
+            lock.release()
         started = time.monotonic()
         status.info_dict()
         first_wait = time.monotonic() - started
@@ -54,7 +58,8 @@ def _slow_holder_run(monkeypatch, locked):
         second_wait = time.monotonic() - started
         dead_in_stretch, in_stretch = status.holder_dead, "info" in status.no_lock
         reads = read_for(status, 3.0)  # a JSONDecodeError that escapes fails the test here
-        return dict(first_wait=first_wait, second_wait=second_wait, dead_in_stretch=dead_in_stretch,
+        return dict(held_at_start=held_at_start, first_wait=first_wait, second_wait=second_wait,
+                    dead_in_stretch=dead_in_stretch,
                     in_stretch=in_stretch, reads=reads, dead_at_end=status.holder_dead,
                     stretch_at_end="info" in status.no_lock, errors=log.error.call_count)
     finally:
@@ -67,10 +72,15 @@ def _slow_holder_run(monkeypatch, locked):
 def test_a_live_but_slow_holder_and_torn_json_never_raise(monkeypatch, locked):
     """A live child holds the lock of `info` for 1.5 s, then writes `info` (with its lock, or with no lock). The
     status does not stop the tries for good (the child is alive); no JSONDecodeError escapes over many reads; the
-    later reads take the lock again. The checks that depend on the pace (the first read waits 0.5 s and logs one
-    line, the next reads of that stretch do not wait (F4 of the review), the count of reads) are
-    `test_a_live_but_slow_holder_waits_once_and_logs_one_line` (Q917 [ADR-N7ZR])."""
+    later reads take the lock again. The run must exercise a stretch: the child holds the lock at the first read,
+    and one stretch with no lock begins (at least one error line). The checks that depend on the pace (the first
+    read waits 0.5 s and logs one line, the next reads of that stretch do not wait (F4 of the review), the count of
+    reads) are `test_a_live_but_slow_holder_waits_once_and_logs_one_line` (Q917 [ADR-N7ZR], the reading of the lane
+    in [ADR-GV50])."""
     run = one_run(f"slow holder {locked}", lambda: _slow_holder_run(monkeypatch, locked))
+    # the run exercised a stretch: the child held the lock at the first read, and one stretch with no lock began
+    assert run["held_at_start"], "the child did not hold the lock at the first read"
+    assert run["errors"] >= 1, "no stretch with no lock began"
     assert not run["dead_in_stretch"] and not run["dead_at_end"]
     assert not run["stretch_at_end"]  # the lock came again
 
