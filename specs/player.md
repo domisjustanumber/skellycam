@@ -375,13 +375,16 @@ the user picked in the system folder dialog [L7]:
   read or written (the ruling of [ADR-4D94](../decisions/entries/4D94-step-6a-choices-of-the-canvas-player.md), which overturns
   the "remembered across restarts" of U1 for 6a; Q851 of [ADR-88HQ](../decisions/entries/88HQ-decisions-of-the-user-on-q842-to-q856.md);
   Q919 of [ADR-70J6](../decisions/entries/70J6-decisions-of-the-user-on-the-remaining-items-of-4pps.md): "no saved picked-folders file").
-  Whether a later step adds one is a question for the user (ADR-WP77). A folder that the user picked earlier
+  Whether a later step adds one waits for Q946 (the user: "the player should remember the last folder it played
+  from"; not decided) [ADR-K907](../decisions/entries/K907-the-open-part-of-adr-wp77-picks-across-runs.md) (proposed). A folder that the user picked earlier
   in the same run, for example the base recording folder of the recording browser, stays allowed.
-- How long a pick lasts ([ADR-WP77](../decisions/entries/WP77-choices-of-the-player-label-and-picked-folders-lane.md), proposed):
-  until the main process ends. A reload, a navigation or a close of a window does not end it, and each
-  window of the run can open the picked folder. A restart of the app ends every pick. The handler writes
+- How long a pick lasts ([ADR-WP77](../decisions/entries/WP77-choices-of-the-player-label-and-picked-folders-lane.md),
+  Q945): a reload, a navigation or a close of a window does not end it, and each window of the run can open the
+  picked folder. Until Q946 is decided [ADR-K907](../decisions/entries/K907-the-open-part-of-adr-wp77-picks-across-runs.md) (proposed): a pick lasts until the main process ends, and a restart of
+  the app ends every pick. The handler writes
   no file, and it reads no file of an earlier pick: a `picked-take-folders.json` that an earlier build left
-  in the user data folder is not read and not deleted. T-PLAY-62 and T-PLAY-85 test it.
+  in the user data folder is not read and not deleted [ADR-K907 item 2] (proposed). T-PLAY-62 and T-PLAY-85 test
+  it.
 - The main process keeps the real path of the picked folder, taken at the pick, and never resolves it
   again. A pick allows that folder and each folder below it, by the "inside" rule below. When the picked
   folder is later replaced by a link to another folder, the pick does not follow the link: the other
@@ -1015,7 +1018,8 @@ overlay [SFF-737].
   manifest, a capture info that is missing or does not parse, or a null value) shows `camera_label`
   (Q11 of [ADR-VYS7](../decisions/entries/VYS7-answers-of-the-user-to-the-step-4b-spec-and-go-ahead-for-its-tests.md); Q851 of [ADR-88HQ](../decisions/entries/88HQ-decisions-of-the-user-on-q842-to-q856.md);
   Q919 of [ADR-70J6](../decisions/entries/70J6-decisions-of-the-user-on-the-remaining-items-of-4pps.md)). The reader finds the file by the name `<recording_name>_info.json` of the
-  manifest [agent 40]. The details ([ADR-WP77](../decisions/entries/WP77-choices-of-the-player-label-and-picked-folders-lane.md), proposed):
+  manifest [agent 40]. The details ([ADR-WP77](../decisions/entries/WP77-choices-of-the-player-label-and-picked-folders-lane.md), Q945 of
+  [ADR-318R](../decisions/entries/318R-decisions-of-the-user-on-q942-to-q955.md)):
   - **The read.** The reader reads the file once, at the open, only when it uses the manifest (6.2), the
     manifest member `recording_name` is a string that is not empty and holds no `/` and no `\`, and
     `<recording_name>_info.json` is an entry of the snapshot at the root of the take folder. Else it reads
@@ -1029,7 +1033,8 @@ overlay [SFF-737].
   - **The camera.** The member of a camera is the member of `camera_configs` whose key is the `camera_key`
     of the sidecar of the camera, as SFF-803 links them. The label uses it only when `device.os_index` is a
     JSON integer from 0 to 2^53 − 1 and `device.os_name` is a string with a character that is not white
-    space. `os_name` shows as it is. Each other case gives that camera `camera_label`, and the other cameras
+    space. `os_name` shows as it is, with no length limit: the tile cuts a long name. Each other case gives that
+    camera `camera_label`, and the other cameras
     keep their labels: no member, a sidecar with no `camera_key`, the key `0` of a converted take (skellycam
     never writes it, SFF-752), and a value that is null, absent or of another type.
   - **`camera_label`** is the value of the sidecar header. A refused file whose header has no
@@ -1353,7 +1358,7 @@ The recorder spec uses this description as the model of its placeholder, so it i
 | T-PLAY-59 | electron | A test variant of the handler answers 200 with the exact length, 200 with the whole file, and 206 with a wrong `Content-Range` start. | The page client accepts only the first; the two others are read errors. |
 | T-PLAY-60 | electron | A sparse file of 5 GiB; read 3 ranges past 4 GiB. | The bytes equal the bytes that the test wrote at those offsets. |
 | T-PLAY-61 | electron | Open `normal`, play it to the end, seek 50 times, close. | Each file of the folder has the same bytes and modification time as before [SFF-799]. |
-| T-PLAY-62 | electron | Open a folder outside the test `recordingsFolder` and not picked; the page calls each bridge and IPC channel of the module with that folder; the same folder after the test hook records a dialog pick; a folder inside the `recordingsFolder`; a link inside the `recordingsFolder` to an outside folder. | Refused with "folder not allowed" and no token, also after the page calls; allowed after the pick; refused again after a restart of the harness; from before the page calls to after the restart, no file below the temporary folder of the test is added or changed outside the user data folder of the harness, and no file below the temporary folder holds the path of the pick, so no `picked-take-folders.json` exists (5.3, ADR-4D94, ADR-70J6); allowed inside; the link is refused [L7, U1]. |
+| T-PLAY-62 | electron | Open a folder outside the test `recordingsFolder` and not picked; the page calls each bridge and IPC channel of the module with that folder; the same folder after the test hook records a dialog pick; a folder inside the `recordingsFolder`; a link inside the `recordingsFolder` to an outside folder. | Refused with "folder not allowed" and no token, also after the page calls; allowed after the pick; refused again after a restart of the harness; from before the page calls to after the restart, no file below the temporary folder of the test is added or changed outside the user data folder of the harness, and no file below the temporary folder holds the path of the pick, so no `picked-take-folders.json` exists (5.3, ADR-4D94, ADR-70J6; until Q946: ADR-K907); allowed inside; the link is refused [L7, U1]. |
 | T-PLAY-63 | electron | Open a take in window A; navigate A; open a take in window B, then open a second take in B; close B. | A's token gets 404 after the navigation; B's first token gets 404 after the second open; B's second token gets 404 after the close. |
 | T-PLAY-64 | electron | The shared `TakeFiles` check suite of T-PLAY-39 on the Electron implementation. | The same results as T-PLAY-39 [L8]. |
 | T-PLAY-65 | benchmark | 16 readers × 60 fps × 150 kB for 60 s through the handler; CPU of the main, renderer and GPU processes. | Target 11.3; results recorded [M `RT` §8 item 3]. |
@@ -1469,7 +1474,8 @@ A new workflow `.github/workflows/player.yml`, on the pattern of `.github/workfl
   ([ADR-S1DJ](../decisions/entries/S1DJ-decisions-of-the-user-on-the-ci-lane.md), Q915), with the
   trigger paths and the uv steps of [`preview-4b.md` 7.8](preview-4b.md#78-counts-and-ci-agent-12). On a push to
   `dom/integration`, `player-macos` runs only by hand, as the macOS jobs of `capture.yml` and `recorder.yml`
-  ([ADR-C47T](../decisions/entries/C47T-choices-of-the-ci-lane.md), proposed).
+  ([ADR-C47T](../decisions/entries/C47T-choices-of-the-ci-lane.md), Q952 of
+  [ADR-318R](../decisions/entries/318R-decisions-of-the-user-on-q942-to-q955.md)).
 - `permissions: contents: read`; a concurrency group for each ref with `cancel-in-progress`.
 - The same pinned actions as the existing workflows: `actions/checkout` at
   `3d3c42e5aac5ba805825da76410c181273ba90b1` (v7.0.1); `actions/setup-node` at
@@ -1703,7 +1709,8 @@ each one [agent n].
     with no error; `installTakeHandler` loses `pickedFoldersFile` (8.4, 5.3, 5.8). Accepted by Q919
     ([ADR-70J6](../decisions/entries/70J6-decisions-of-the-user-on-the-remaining-items-of-4pps.md) items 1 and 2).
     The details of the label and of the picks are in
-    [ADR-WP77](../decisions/entries/WP77-choices-of-the-player-label-and-picked-folders-lane.md) (proposed).
+    [ADR-WP77](../decisions/entries/WP77-choices-of-the-player-label-and-picked-folders-lane.md) (accepted by Q945); the
+    part that waits for Q946 is in [ADR-K907](../decisions/entries/K907-the-open-part-of-adr-wp77-picks-across-runs.md) (proposed).
 
 ## 17. Questions for the user
 

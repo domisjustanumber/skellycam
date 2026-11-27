@@ -1,6 +1,6 @@
 # C47T — Choices of the CI lane
 
-**Status:** proposed, 2026-11-27 (agent, CI lane; waits for the user).
+**Status:** accepted, 2026-11-27 (user, Q952 of [ADR-318R](318R-decisions-of-the-user-on-q942-to-q955.md); commit to dom/answers-q929; was proposed, 2026-11-27 (agent, CI lane; waits for the user)).
 
 ## Decision
 
@@ -30,8 +30,7 @@ user did not decide them.
    3.13.18`. The preview component tests start `uv run python -m skellycam.tests.preview.ui_server`. On a push to
    `dom/integration`, the job `player-macos` runs only by hand:
    `if: github.event_name == 'workflow_dispatch' || github.ref != 'refs/heads/dom/integration'`. On each other
-   branch and event, it runs as before. Question for the user: does `player-macos` run only by hand on a push to
-   `dom/integration`? Yes accepts this choice.
+   branch and event, it runs as before. Q952 of [ADR-318R](318R-decisions-of-the-user-on-q942-to-q955.md) accepts it.
 6. **`ring-arm64.yml`.** Its push branches are `[dom/native-jpeg, dom/integration]`, as `capture.yml`. Its paths do
    not change. It gets no `pull_request` trigger.
 7. **The D: drive in `recorder-windows`.** A step "Put the temp folder on the D drive" runs before the test

@@ -37,8 +37,8 @@ An agent made these choices when it applied Q964
    The test is a new kit file unit, `tools/tests/test_tools_import_no_product.py`. The same block
    now says that a tool or a script that imports the product goes to the product package, not to
    `tools/`.
-8. **Q930.** Q964 also answers Q930. Item 2 of ADR-6PJ2 (on the answers branch) says "Q930: not
-   decided".
+8. **Q930.** Q964 also answers Q930. Item 2 of
+   [ADR-6PJ2](6PJ2-decisions-of-the-user-on-q929-to-q941.md) says "Q930: not decided".
 9. **Known limits of the enforcing test.** It does not find a dynamic import
    (`importlib.import_module`, `__import__`, `spec_from_file_location`) or a `python -m <package>`
    call. It does not find a namespace package with no `__init__.py`, a package in

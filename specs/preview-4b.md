@@ -631,6 +631,12 @@ below. The collapsed text of a camera is `<label>: Captured <x> fps, Displayed <
   exists): the same tables and code blocks, with English prose for the changed parts [Q8]. Each copy keeps
   its translated headings and the prose of the parts that do not change [Q872].
 - `docs/intro.mdx`: its table row "Binary frame format, JSON messages, backpressure" stays true.
+- `docs/core/real-time-streaming.mdx` starts with the section "Each camera on its own". It states only facts of
+  [`preview.md`](preview.md) 4.1, 4.3, 5.4 and of 4.1 here. Its copies in `es`, `zh-CN` and `ar` get the same English
+  section. The front matter `description` of the page and the feature text of `content.config` still describe one
+  message for a group: a later docs lane fixes them (Q951 of
+  [ADR-318R](../decisions/entries/318R-decisions-of-the-user-on-q942-to-q955.md))
+  [ADR-CM9S](../decisions/entries/CM9S-choices-of-the-clean-ups-lane.md).
 
 ## 6. The measurement: 8 cameras on the main-thread tile, at 30 and 60 fps [T, Q9]
 
@@ -792,9 +798,11 @@ frames each second on each of 8 tiles during a scrub [M ADR-1ACK evidence].
   page `preview` fit the window. The grid height is the inner height of the window on each machine, also where
   the window is 1400 x 1000 (before, 980 px ran past an inner height of about 935 px). A CI runner has a smaller screen: Windows cuts a larger window to the screen,
   and the part of a window past the edge of an xvfb screen is not drawn, so a tile there gives the observer no
-  image of its own camera. `PLAYER_HARNESS_MAX_WINDOW=<width>x<height>` gives such a screen on a larger one
+  image of its own camera. `PLAYER_HARNESS_MAX_WINDOW=<width>x<height>` gives such a screen on a larger one, for a
+  local check. The launch line of the harness gives the inner size of the window, so that a CI log shows it. The
+  fix changes no check and no limit, and no product code
   ([ADR-FP47](../decisions/entries/FP47-choices-of-the-triage-of-the-first-ci-run-of-the-4b-component-tests.md),
-  proposed).
+  Q944 of [ADR-318R](../decisions/entries/318R-decisions-of-the-user-on-q942-to-q955.md)).
 - **The outside observer.** `observe` and `observed` of the player bench
   (`src/player/tests/bench/player.bench.ts`) move to `src/player/tests/harness/observer.ts`, with
   no change of their method: the Electron main process takes each composited image of the window
