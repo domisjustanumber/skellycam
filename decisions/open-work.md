@@ -106,6 +106,11 @@ task. Delete an item when its work is done. The PR that closes an item records t
 - **Quick certify runs** (Q902, [ADR-Y2RN](entries/Y2RN-decisions-of-the-user-on-the-size-floor-review-and-certify-quick-runs.md)): the next certify lane, spec text and test
   first: a quick run leaves out the six full-only checks of Q593 (image-effect, not-reencoded, size,
   ring-equals-mkv, source-equals-ring, gaps-explained).
+- **Question for the user: the count of T-PRV-17.** "15 camera messages of B within 1 s after A's reader is
+  removed": move it to `pace` as T-PRV-16 (Q669), and add T-PRV-17 to the list of `preview.md` 9.1? It failed once on
+  macOS (10 of 15; CI run 45925313532); it stays blocking until then. The review (from the code only): no product path
+  slows B after the removal (`preview_relay.py`, `reader.py`); the count depends on the pace of the test client. A
+  later `pace` half must count the frames of B written after the removal (`rings[B].written[k] > t_removed`).
 - **The certify run of skellycam.** The spec [`specs/certify.md`](../specs/certify.md) is draft 3. The code is in `skellycam/core/certify/` (section 19 of the
   spec). Open: the checks that are `not-run`
   `not-built` (the status line of the spec). Not decided: FC1C items 4 and 13, HQE5 items 2 and 3
@@ -180,9 +185,6 @@ task. Delete an item when its work is done. The PR that closes an item records t
   `Windows 2025Server 24H2` [NV]; `stop_after_frame=200` tests that wait for `ready` have the risk of T-UNX-95.
 - **Fix lane 7 follow-ups** ([ADR-R394](entries/R394-choices-of-fix-lane-7.md),
   [ADR-2SX2](entries/2SX2-acceptance-of-the-choices-of-fix-lane-7-and-its-follow-ups.md)).
-  - Question for the user (not decided by [ADR-ZT5F](entries/ZT5F-acceptance-of-the-choices-of-fix-lane-8.md) item 3):
-    does `test_status_locks.py::test_a_live_but_slow_holder_and_torn_json_never_raise[writes with no lock]` move to
-    `pace`, or stay as it is? It fails 1 in 20 on 2 cores (real time; JC4X item 3).
   - macOS [NV]: the runner's open-file limit, and that its errors came from this leak. A run of the macOS jobs by
     hand gives the result.
 - **Next CI lane (Q854).** Each workflow pins uv 0.13.7 (also `test.yml`, ADR-PA3A); ADR-7DE6 says 0.13.9. An
