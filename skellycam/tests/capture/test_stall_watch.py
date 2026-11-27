@@ -11,10 +11,12 @@ slow close of a reopen, the OpenCV fake (a pull source), and cameras under a loa
 T-UNX-18 and T-UNX-45 (the in-process stall rule of W 9.5 with the V4L2 and AVFoundation fakes) wait for
 steps 7a and 7b; T-CAP-36 checks that rule with the fake source.
 
-Each test runs in real time and has the marker `capture_timing`.
+Each test has the marker `capture_timing`. Most run in real time; T-UNX-109 runs on the virtual clock of
+`capture_session`.
 """
 
 import asyncio
+import importlib
 import threading
 import time
 from types import SimpleNamespace
@@ -600,7 +602,8 @@ def test_t_unx_109_frames_that_stop_after_a_reopen_end_by_the_in_process_rule(mo
     frames stop at its first read in `waiting` after the open of a reopen, and the watch of the group on the same
     clock. That first pass in `waiting` attaches the new rings, starts the clock of the in-process rule there and then
     adds one to the counter, so the in-process rule (`no frame for 2 s`) ends the camera, not the watch (`no loop pass
-    for 2.5 s`) (4.10)."""
+    for 2.5 s`) (4.10). The attach takes 0.6 s of clock time here: without the count after it (4PPS item 10) the
+    watch would count from before the attach and trip first."""
     stop = {}
 
     def stop_in_waiting(source, now_ns):  # the read of the camera loop thread
@@ -620,6 +623,15 @@ def test_t_unx_109_frames_that_stop_after_a_reopen_end_by_the_in_process_rule(mo
     modes = ((640, 480, 30, 1, "MJPG"), (1280, 720, 30, 1, "MJPG"))
     with capture_app(monkeypatch, [FakeScript(modes=modes)], on_read=stop_in_waiting) as app:
         reads = watch_on_the_clock(monkeypatch, app.clock)
+        loop_module = importlib.import_module("skellycam.core.camera.capture.camera_loop")
+        attach = loop_module.CameraLoop._attach_rings
+
+        def slow_attach(loop):  # 4PPS item 10: an attach that takes clock time, so the count after it matters
+            attach(loop)
+            if loop.ring_writer is not None:
+                app.clock.wait_until(app.clock.now_ns() + 600_000_000)
+
+        monkeypatch.setattr(loop_module.CameraLoop, "_attach_rings", slow_attach)
         ready_app_steps(app)
         camera_id = app.factory.camera_ids[0]
         stop["app"] = app

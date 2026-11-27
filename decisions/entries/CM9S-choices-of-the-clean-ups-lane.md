@@ -39,10 +39,11 @@ The user decided the work (Q871, Q873, Q892, Q900, Q909 of
    clock at its end. The test checks that the watch did not trip (a spy on `CameraGroup._end_process`), the
    failure of the in-process rule, and at least 15 rounds of the watch in the 2 s after the stop. The failure
    text alone is not enough: with THREAD workers a tripped watch cannot end the loop, and the loop writes its
-   own failure later over the failure of the watch. It has the marker `capture_timing`, as each test of its
-   file. Evidence (not committed): with the in-process limit patched to 3 s the test fails ("the watch
-   tripped"); with the count after the attach removed it still passes, because on the virtual clock the attach
-   and its count take no time. The unit test of 4PPS item 10 guards that count.
+   own failure later over the failure of the watch. The test wraps `CameraLoop._attach_rings` so that a
+   successful attach waits 0.6 s of clock time: on the virtual clock an attach takes no time, and the count after
+   the attach (4PPS item 10) would then not matter. It has the marker `capture_timing`, as each test of its
+   file. Evidence (not committed): with the in-process limit patched to 3 s, and with the count after the
+   attach removed, the test fails ("the watch tripped"); with the product as it is, it passes.
 4. **Q909, the kill rule.** `PreviewKit.close` still ends every step (each app, then each server), then throws
    one error that names each killed step. A kill counts both at a time-out of `close` and in `UiServer.stop`
    when the clean stop failed. The "hung step" note stays in the report.
