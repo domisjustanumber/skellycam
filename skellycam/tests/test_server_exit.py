@@ -46,12 +46,12 @@ def _run(tmp_path: Path) -> dict:
         started = time.monotonic()
         while True:  # the first answered request is the connection that the server loses
             try:
-                _get(port, "/health", timeout=1)
+                _get(port, "/health", timeout=1.0)
                 break
             except OSError:
                 assert server.poll() is None and time.monotonic() - started < 60, log.read_text(errors="replace")
                 time.sleep(0.2)
-        assert _get(port, "/shutdown", timeout=5)["status"] == "shutdown_initiated"
+        assert _get(port, "/shutdown", timeout=5.0)["status"] == "shutdown_initiated"
         answered = time.monotonic()
         try:
             code = server.wait(timeout=HANG_S)
