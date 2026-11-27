@@ -43,5 +43,5 @@ Estas son limitaciones inherentes al hardware — el trabajo de SkellyCam es obt
 ## Consejos para configuracion multicamara
 
 - **Usa controladores USB separados** — Conecta las camaras a puertos de diferentes controladores host USB para evitar contension de ancho de banda. En computadoras de escritorio, los puertos en diferentes lados de la maquina a menudo estan en controladores diferentes.
-- **Reduce la resolucion si es necesario** — Si estas alcanzando limites de ancho de banda, configura las camaras a una resolucion mas baja. La sincronizacion sera mas ajustada tambien, ya que los fotogramas mas pequenos se transfieren mas rapido.
+- **Reduce la resolucion si es necesario** — Si estas alcanzando limites de ancho de banda, configura las camaras a una resolucion mas baja, pero no por debajo de 640 x 360: SkellyCam ignora los modos mas pequenos, como ignora los modos por debajo de 30 fps. Por debajo de 1280 x 720, el seguimiento de manos y cara es limitado. La sincronizacion sera mas ajustada tambien, ya que los fotogramas mas pequenos se transfieren mas rapido.
 - **Camaras consistentes** — Usar modelos de camara identicos simplifica la configuracion y produce resultados mas consistentes, aunque mezclar modelos funciona bien.

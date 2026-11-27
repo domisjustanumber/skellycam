@@ -408,7 +408,8 @@ On Linux and macOS, quick also has `<label>:clock:base`, `<label>:clock:before-a
 `<label>:sequence` stays in the report as `not-run` with `no-sequence` (10.2).
 
 `<base>` is `1280x720@30`. A camera with no 1280x720 MJPG mode at the floor uses the largest MJPG
-size below 1280x720 in area that has a rate at the floor, for example `640x480@30` [A].
+size below 1280x720 in area that has a rate at the floor, for example `640x480@30` [A]. A size below
+the size floor (640 wide and 360 high) is never a base ([`windows-capture.md`](windows-capture.md) 22.2, Q887 to Q889).
 
 **The summary item of a model** [C 3.7]. The summary has one `camera` item for each camera model on
 the system (the USB vendor id and product id), not for each unit. `name` is the cleaned name (9.4,
@@ -1942,7 +1943,7 @@ confirmed by the user,
 |---|---|---|---|
 | `detect` | The detection child. Limit 20 s. | `seconds`, `cameras`, `virtual`, `modes_read` | `pass`; `fail` with `timed-out`, `crashed`, `backend-missing` |
 | `<label>:detect` (removed by 3.6.2: `details.cameras[].modes` holds the modes) | The modes (cap 7.3). Record only. | `mjpg_sizes`, `has_720p30`, `has_1080p30`, `has_60`, `max_fps`, `largest_w`, `largest_h`, `modes_read` | `record-only` |
-| `<label>:detect:mjpg-mode` | A MJPG mode exists at the floor (before 3b). | `mjpg_sizes` | `pass`; `fail` with `no-mjpg-mode` |
+| `<label>:detect:mjpg-mode` | A MJPG mode exists at the floor of 30 fps and of 640 wide and 360 high (before 3b). | `mjpg_sizes` | `pass`; `fail` with `no-mjpg-mode` |
 | `<label>:opens` | One apply opens each real camera at `<base>`, in `MANUAL` at -7 (certify sets it; the product default is `AUTO` [req 1.5]), MJPG, rate 30. A camera in `MANUAL` has the start-up rate check of cap 10.1 [req 1.3b]. | `seconds_to_first_frame`; the failure facts of 3.5.3 (3.6.2: `seconds_to_ready` and the CPU go to `details.steps`) | `pass` at `ready`; `not-run` with `camera-in-use`; `fail` with the reason of the product failure (section 15) |
 | `<label>:rate` | The start-up rate check of the product (cap 10.1): frames 6 to 90, ±3 %. Then the brightness of 3 ring frames. | `measured_fps`, `luma_mean`, `jpeg_kb_mean`; the rate window of 3.5.6 (3.6.2) | `pass`; `fail` with `rate-low` or `rate-high`; `not-run` with `too-dark` (4.6) |
 | `<label>:modes:granted:<base>` | The granted format, size and rate equal the request (D-1). | `requested_fourcc`, `granted_fourcc`, `granted_w`, `granted_h`, `granted_fps_num`, `granted_fps_den` | `pass`; `fail` with `mode-not-granted` |
@@ -2166,7 +2167,7 @@ The exposure rule of the product, which the certify checks must match [U]:
 - A camera in Auto searches at every open, and when the person changes the frame rate.
 - The camera's own auto exposure is never a mode. No certify check turns it on as a mode.
 - The text for a slow camera is "Camera is slow. Try adding more light".
-- Nothing below 30 fps is offered.
+- Nothing below 30 fps is offered, and no size below the size floor of 640 wide and 360 high (Q887 to Q889).
 
 The camera requests spec owns the search [req 1.3, 1.3a, 1.3b]: the names `exposure` and
 `exposure_found_at_fps` in the config, the status object `exposure_search` with `state`
@@ -3428,8 +3429,8 @@ of a product failure gives the product code as its reason, with one exception: t
 | `one-camera` | group checks | The check needs two cameras. |
 | `no-ui` | `player-legacy-decode` | The run has no page of the app, so the decode check of the v1 player cannot run (3.6.2) [U Q847]. |
 | `no-mode` | mode checks | The camera does not declare this mode. |
-| `no-mjpg-mode` | `<label>:detect` | No MJPG mode at 30 fps or more (before 3b). |
-| `below-floor` | `opens` | The nearest mode is below 30 fps (cap 7.5). |
+| `no-mjpg-mode` | `<label>:detect` | No MJPG mode at 30 fps or more and 640 wide and 360 high or more (before 3b). |
+| `below-floor` | `opens` | The nearest mode is below 30 fps (cap 7.5), or the size is below 640 wide or 360 high (cap 22.2). |
 | `camera-in-use` | `opens` and each check of that camera | Another program holds the camera. Its summary item is `skipped` with `busy` [C 3.7]. |
 | `usb-bandwidth` | `opens`, `group:open`, `<label>:group-open` | The USB controller refused the stream for bandwidth. |
 | `not-found` | `opens` | The camera was gone at the open. |

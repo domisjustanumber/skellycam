@@ -33,7 +33,7 @@ Each camera in the group can be configured independently. The configuration pane
 
 | Setting | Default | Description |
 |---------|---------|-------------|
-| **Resolution** | 1280 x 720 | Capture resolution in pixels. If the camera doesn't support the requested resolution, OpenCV falls back to the nearest supported one. |
+| **Resolution** | 1280 x 720 | Capture resolution in pixels. The camera must have a mode at that exact size; SkellyCam does not pick another one. The smallest size is 640 x 360, and below 1280 x 720 hand and face tracking are limited. |
 | **Framerate** | Camera default | Target capture framerate. Leave at default (`-1`) to run as fast as the hardware allows, or set a specific value (e.g. `30`). |
 | **Exposure** | `-7` | Hardware-dependent exposure value. More negative = shorter exposure time. The valid range depends on your camera model. |
 | **Exposure Mode** | `MANUAL` | Choose between `MANUAL`, `AUTO`, or `RECOMMENDED`. |

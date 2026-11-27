@@ -142,7 +142,7 @@ async def test_t_ring_37_bgr_ring_recreated_on_a_mode_change(monkeypatch, cleanu
         old_reader = cleanup.handle(fr.FrameRingReader.attach(old))
         old_raw = cleanup.handle(open_raw(old))
         await wait_until(lambda: old_reader.read_newest().result == fr.ReadResult.OK, "first BGR frame")
-        await group.update_camera_settings(fake_configs(2, 320, 240, 30.0, bgr_ids=("0",)))
+        await group.update_camera_settings(fake_configs(2, 1280, 720, 30.0, bgr_ids=("0",)))
         new = group.ring_infos["0"].bgr_ring_name
         assert new is not None and new != old
         assert int(new.rsplit("B", 1)[1]) == int(old.rsplit("B", 1)[1]) + 1
@@ -158,13 +158,13 @@ async def test_t_ring_37_bgr_ring_recreated_on_a_mode_change(monkeypatch, cleanu
         finally:
             raw.close()
         assert header["pixel_format"] == PIXEL_FORMAT_BGR24
-        assert (header["width"], header["height"]) == (320, 240)
-        assert header["slot_capacity"] == bgr_size(320, 240)
+        assert (header["width"], header["height"]) == (1280, 720)
+        assert header["slot_capacity"] == bgr_size(1280, 720)
         new_reader = cleanup.handle(fr.FrameRingReader.attach(new))
         await wait_until(lambda: new_reader.read_newest().result == fr.ReadResult.OK, "first new BGR frame")
         read = new_reader.read_newest()
         assert read.frame_number >= 0
-        assert type(read.payload) is np.ndarray and read.payload.shape == (240, 320, 3)
+        assert type(read.payload) is np.ndarray and read.payload.shape == (720, 1280, 3)
         new_reader.close()
 
 
@@ -251,14 +251,16 @@ def test_t_ring_40_both_rings_match(monkeypatch, cleanup):
     `rotation_cw_deg`; the BGR `published_ns` is not earlier than that of the JPEG. Each number
     that the BGR ring does not give is a counted BGR skip.
 
-    The fake source gives 160x120 MJPG frames at 1,000 frames/s of a virtual clock, and each ring
-    has 1,000 slots. The test thread holds the clock while it is 500 frames behind the JPEG ring, so
-    that the reader keeps up also on a slow machine (`hold_clock_while_behind`) [ADR-2HW5].
+    The fake source gives 640x360 MJPG frames (the smallest size of the floor, windows-capture.md 22.2, Q888)
+    at 100 frames/s of a virtual clock, and each ring has 100 slots (about 89 MiB for the two rings, near the
+    82 MB of the 160x120 frames at 1,000 slots before the floor). The test thread holds the clock from the open of
+    the JPEG ring until its first read, and while it is half of the slots (50 frames) behind the ring, so that the
+    reader keeps up also on a slow machine (`hold_clock_from_the_ring_open`, `hold_clock_while_behind`) [ADR-2HW5].
     """
     fr = ring()
     both = not_in_bgr = 0
     k = 0
-    with capture_app(monkeypatch, [FakeScript(modes=((160, 120, 1000, 1, "MJPG"),))]) as app:
+    with capture_app(monkeypatch, [FakeScript(modes=((640, 360, 100, 1, "MJPG"),))]) as app:
         camera_id, names, (jpeg_shm, bgr_shm) = _ready_fake_camera(cleanup, app)
         jpeg_reader, bgr_reader = (cleanup.handle(fr.FrameRingReader.attach(name)) for name in names)
         deadline = time.monotonic() + max(WAIT_TIMEOUT_S, 180.0)
@@ -269,7 +271,7 @@ def test_t_ring_40_both_rings_match(monkeypatch, cleanup):
                 upto = min(raw_head(jpeg_shm), raw_head(bgr_shm), FRAMES_T_RING_40 - 1)
                 while k <= upto:
                     jpeg = jpeg_reader.read(k)
-                    hold_clock_while_behind(app.clock, jpeg_reader, k, 500)
+                    hold_clock_while_behind(app.clock, jpeg_reader, k)
                     bgr = bgr_reader.read(k)
                     assert jpeg.result == fr.ReadResult.OK, (k, jpeg.result)
                     if bgr.result == fr.ReadResult.OK:
@@ -283,7 +285,7 @@ def test_t_ring_40_both_rings_match(monkeypatch, cleanup):
                         assert bgr.result in (fr.ReadResult.MISSING, fr.ReadResult.LAPPED), (k, bgr.result)
                         not_in_bgr += 1
                     k += 1
-                hold_clock_while_behind(app.clock, jpeg_reader, k, 500)
+                hold_clock_while_behind(app.clock, jpeg_reader, k)
                 time.sleep(0.001)
         finally:
             app.clock.leave()  # before the close: the gate reads the ring

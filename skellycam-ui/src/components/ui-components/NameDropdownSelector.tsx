@@ -7,6 +7,7 @@ import React, { useState, useEffect, useRef } from "react";
  * - initialValue: initial selected string
  * - onChange: callback when selection changes
  * - className: additional classes for container
+ * - describedBy: the id of a note that describes the choice (`aria-describedby` of the trigger)
  */
 interface NameDropdownSelectorProps {
   options?: string[];
@@ -14,6 +15,7 @@ interface NameDropdownSelectorProps {
   onChange?: (value: string) => void;
   className?: string;
   dropUp?: boolean;
+  describedBy?: string;
 }
 
 const NameDropdownSelector: React.FC<NameDropdownSelectorProps> = ({
@@ -22,6 +24,7 @@ const NameDropdownSelector: React.FC<NameDropdownSelectorProps> = ({
   onChange,
   className = "",
   dropUp = false,
+  describedBy,
 }) => {
   const [selected, setSelected] = useState(initialValue);
   const [open, setOpen] = useState(false);
@@ -56,6 +59,7 @@ const NameDropdownSelector: React.FC<NameDropdownSelectorProps> = ({
       <button
         className="gap-1 br-1 button sm fit-content flex-inline text-left items-center full-width dropdown border-1 border-mid-black"
         onClick={() => setOpen((prev) => !prev)}
+        aria-describedby={describedBy}
       >
         <p className="text-gray text md text-align-left text-nowrap">
           {selected || "Select..."}

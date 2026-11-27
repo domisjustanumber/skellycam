@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useId, useRef, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '@/store';
 import { cameraDesiredConfigUpdated, configCopiedToAll } from '@/store/slices/cameras/cameras-slice';
 import { savedSettingsCleared } from '@/store/slices/cameras/cameras-slice';
@@ -10,6 +10,8 @@ import { selectCameras } from '@/store/slices/cameras';
 import ButtonSm from '@/components/ui-components/ButtonSm';
 import { Camera, CameraConfig, ExposureMode, RotationValue, ROTATION_OPTIONS, ROTATION_DEGREE_LABELS } from '@/store/slices/cameras/cameras-types';
 import NameDropdownSelector from '@/components/ui-components/NameDropdownSelector';
+import { TrackingNote } from '@/components/camera-config-panel/TrackingNote';
+import { trackingLimited } from '@/store/slices/cameras/resolution-floor';
 import SegmentedControl from '@/components/ui-components/SegmentedControl';
 import ValueSelector from '@/components/ui-components/ValueSelector';
 import SubactionHeader from '@/components/ui-components/SubactionHeader';
@@ -71,6 +73,7 @@ export const CameraGridSettingsModal: React.FC<CameraGridSettingsModalProps> = (
     const [pos, setPos] = useState(initialPos);
     const dragRef = useRef<{ startX: number; startY: number; startTop: number; startLeft: number } | null>(null);
     const modalRef = useRef<HTMLDivElement>(null);
+    const trackingNoteId = useId();
 
     useEffect(() => {
         const handleKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
@@ -178,11 +181,12 @@ export const CameraGridSettingsModal: React.FC<CameraGridSettingsModalProps> = (
             />
           </Row>
 
-          {/* Resolution */}
+          {/* Resolution; the note below 1280x720 of windows-capture.md 22.2 (Q888) */}
           <Row label="Resolution">
             <NameDropdownSelector
               options={PRESET_RESOLUTIONS.map((p) => p.label)}
               initialValue={resolutionLabel(config)}
+              describedBy={trackingLimited(config.resolution.width, config.resolution.height) ? trackingNoteId : undefined}
               onChange={(label) => {
                 const preset = PRESET_RESOLUTIONS.find(
                   (p) => p.label === label,
@@ -194,6 +198,7 @@ export const CameraGridSettingsModal: React.FC<CameraGridSettingsModalProps> = (
               }}
             />
           </Row>
+          <TrackingNote id={trackingNoteId} width={config.resolution.width} height={config.resolution.height} />
 
           {/* Exposure mode; a camera with no manual exposure has no mode choice (1.9) */}
           <Row label="Exposure">

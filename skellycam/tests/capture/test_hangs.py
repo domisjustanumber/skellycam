@@ -21,7 +21,7 @@ from skellycam.tests.capture.capture_session import (
 from skellycam.tests.capture.fake_source import FakeScript
 from skellycam.tests.pace import bound, one_run
 
-MODES = ((640, 480, 30, 1, "MJPG"), (320, 240, 30, 1, "MJPG"))
+MODES = ((640, 480, 30, 1, "MJPG"), (1280, 720, 30, 1, "MJPG"))  # above the size floor (Q887)
 FRAME_S = 1 / 30  # the nominal gap between two frames of one camera (16.1) [ADR-B7YV]
 
 
@@ -78,7 +78,7 @@ def _t_cap_40_run():
         log = app.factory.logs[hung]
         try:
             log.arm_hang()
-            thread, _ = apply_in_thread(app, [app.config(hung, width=320, height=240), app.config(streaming)])
+            thread, _ = apply_in_thread(app, [app.config(hung, width=1280, height=720), app.config(streaming)])
             app.wait(lambda: log.hang_started_ns.value > 0, "the hang starts")
             app.wait(lambda: watcher.failure is not None, "the failure arrives")
             stage = watcher.failure["stage"]
