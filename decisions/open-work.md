@@ -194,13 +194,8 @@ task. Delete an item when its work is done. The PR that closes an item records t
   and tries the two boxes by hand. Q926 (skellylogs) is the work of another lane.
   The start with no output limit (`recorder.md` 9.3, ADR-YR3G, ADR-D6YZ): the user tries the packaged Windows app
   after the merge (Q975).
-  Q935 ([ADR-6PJ2](entries/6PJ2-decisions-of-the-user-on-q929-to-q941.md) item 7), one later lane, test first: tests of the requests that the 5 s limit cuts (an apply, a
-  search); a record start during the background close of `/shutdown` gets 409, not 500 (no `_closing` check in
-  `_start_recording`).
-- **A second Ctrl-C** (Q934, [ADR-6PJ2](entries/6PJ2-decisions-of-the-user-on-q929-to-q941.md) item 6), the shutdown lane: a second manual Ctrl-C is
-  "abort now, something has gone wrong": the goal is that all processes stop and release any holds and locks;
-  cleaning up the recording would be nice, but is not expected. A test proves it
-  ([evidence](evidence/cancelled-take-stop-at-a-shutdown-limit-20261127.md)).
+  Q935 and Q934 (ADR-6PJ2 items 6 and 7) are built on `dom/shutdown-followups` (`recorder.md` 9.1 items 7 to 9).
+  Q990 (ADR-XJA8), a later lane, test first: a second close of the same camera group does nothing (today `ValueError`).
 - **Docs** (Q951, [ADR-318R](entries/318R-decisions-of-the-user-on-q942-to-q955.md) item 10), a later docs lane: the front matter `description` of the streaming page and the
   feature text of `content.config` (`preview-4b.md` 5.9).
 - **Recently opened folders** (`player.md` 5.10): not done yet, the user checks by hand the dialog start folder, the

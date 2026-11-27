@@ -399,6 +399,8 @@ class ManagedThread(ManagedWorker):
         return self._thread.is_alive()
 
     def join(self, timeout: float | None = None) -> None:
+        if self._thread.ident is None:  # never started (Q972, recorder.md 9.1 item 8): nothing to join
+            return
         self._thread.join(timeout=timeout)
 
     @property

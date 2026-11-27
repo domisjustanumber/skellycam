@@ -16,12 +16,68 @@ import logging  # noqa: E402
 import multiprocessing  # noqa: E402
 import os  # noqa: E402
 import signal  # noqa: E402
+import threading  # noqa: E402
+import time  # noqa: E402
+from typing import Callable  # noqa: E402
 
 logger = logging.getLogger(__name__)
 
 # recorder.md 9.1 item 5 [ADR-9V4Y]: the shutdown of uvicorn waits at most this long for open connections. It starts at
 # the first signal; a take start or stop is shielded (item 3), and the lifespan close runs after it.
 SHUTDOWN_CONNECTION_LIMIT_S = 5
+
+SECOND_CTRL_C_AFTER_S = 1.0  # recorder.md 9.1 item 9: a Ctrl-C sooner after the first one is the same key press
+FORCED_EXIT_AFTER_S = 5.0  # 9.1 item 9 (Q977): the process still runs this long after the abort: os._exit(1)
+_CTRL_C_SIGNALS = tuple(sig for sig in (signal.SIGINT, getattr(signal, "SIGBREAK", None)) if sig is not None)
+
+
+def _forced_exit_after(abort: threading.Event, seconds: float) -> None:
+    """9.1 item 9 (Q977): after the abort, a thread that still holds the process `seconds` later ends it."""
+    abort.wait()
+    time.sleep(seconds)
+    logger.error(f"The exit still waits {seconds:g} s after the second Ctrl-C; running threads: "
+                 f"{[thread.name for thread in threading.enumerate()]}; forced exit")
+    os._exit(1)
+
+
+def _install_forced_exit() -> Callable[[], None]:
+    """The thread starts here, not in the signal handler: a handler that starts a thread can block on a lock of
+    `threading` that the main thread holds. The handler only sets the event."""
+    abort = threading.Event()
+    threading.Thread(target=_forced_exit_after, args=(abort, FORCED_EXIT_AFTER_S), name="ForcedExitAfterAbort",
+                     daemon=True).start()
+    return abort.set
+
+
+def abort_on_a_second_ctrl_c(server: object, kill_flag: object, *, clock: Callable[[], float] = time.monotonic,
+                             forced_exit: Callable[[], None] | None = None) -> Callable[[int, object], None]:
+    """recorder.md 9.1 item 9 (Q934): the signal handler of uvicorn for the server. Only Ctrl-C and Ctrl-Break are
+    presses. The first press goes to uvicorn, unless uvicorn already ends (a SIGTERM came first). A press less than
+    SECOND_CTRL_C_AFTER_S after the last press is the same key press and is dropped. One later is the abort:
+    uvicorn stops its waits (`force_exit`), the kill flag ends each camera process, and the forced exit is set off."""
+    handle_exit = server.handle_exit
+    forced_exit = forced_exit or _install_forced_exit()
+    last: list[float] = []  # the time of the last press
+
+    def handler(signum: int, frame: object) -> None:
+        if signum not in _CTRL_C_SIGNALS:
+            handle_exit(signum, frame)
+            return
+        now = clock()
+        if not last:
+            last.append(now)
+            if not server.should_exit:  # after a SIGTERM uvicorn would take this press as `force_exit`
+                handle_exit(signum, frame)
+            return
+        since, last[0] = now - last[0], now
+        if since < SECOND_CTRL_C_AFTER_S or server.force_exit:
+            return
+        handle_exit(signum, frame)
+        server.force_exit = True
+        kill_flag.value = True
+        forced_exit()
+
+    return handler
 
 
 async def main() -> None:
@@ -90,6 +146,7 @@ async def main() -> None:
             timeout_graceful_shutdown=SHUTDOWN_CONNECTION_LIMIT_S,
         )
         server = uvicorn.Server(config)
+        server.handle_exit = abort_on_a_second_ctrl_c(server, global_kill_flag)  # recorder.md 9.1 item 9
 
         logger.info(f"Starting server on {HOSTNAME}:{PORT}")
         await server.serve()

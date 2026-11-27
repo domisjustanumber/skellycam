@@ -50,6 +50,10 @@ PACE_TESTS = [
     ("skellycam.tests.test_server_exit", "test_the_server_ends_within_the_connection_limit"),
     # Q931: no camera ends under load with THREAD workers (a GIL of the test process; the product uses processes)
     ("skellycam.tests.capture.test_stall_watch", "test_no_camera_ends_under_load_with_thread_workers"),
+    # Q934: the bound of 9.1 item 9 after a second Ctrl-C
+    ("skellycam.tests.take_recorder.test_second_ctrl_c", "test_a_second_ctrl_c_ends_every_process_within_its_bound"),
+    ("skellycam.tests.take_recorder.test_second_ctrl_c", "test_the_forced_exit_comes_5_s_after_the_abort"),
+    ("skellycam.tests.take_recorder.test_second_ctrl_c", "test_one_press_with_two_signals_is_an_ordinary_quit"),
 ]
 # A test whose failure does not depend on the pace blocks (16.1): the functional halves of the split tests, the
 # long-interval test (no bound of time), the slow stop (its row counts are the lock rule), and the tests of item 1
@@ -91,6 +95,9 @@ NOT_PACE = [
     ("skellycam.tests.preview.test_ws_flow", "test_t_prv_17_reader_removed_then_closed"),
     # Q907, Q928 [ADR-9V4Y]: the server process ends after /shutdown with a lost connection
     ("skellycam.tests.test_server_exit", "test_the_server_ends_after_shutdown_with_a_lost_connection"),
+    # Q934: each process ends and each hold is released after a second Ctrl-C
+    ("skellycam.tests.take_recorder.test_second_ctrl_c", "test_a_second_ctrl_c_ends_every_process_and_releases_each_hold"),
+    ("skellycam.tests.take_recorder.test_second_ctrl_c", "test_a_hung_take_stop_ends_with_the_forced_exit"),
 ]
 
 
