@@ -20,6 +20,9 @@ def test_server_config_turns_off_permessage_deflate(monkeypatch):
         def __init__(self, config):
             configs.append(config)
 
+        def handle_exit(self, sig, frame):  # main() wraps it (recorder.md 9.1 item 9)
+            pass
+
         async def serve(self):
             pass
 
