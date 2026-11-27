@@ -33,3 +33,11 @@ test('T-CAP-165: the error line goes when its cause goes (22.2, Q899)', () => {
     // an empty or non-numeric field
     assert.match(text, /if \(isNaN\(w\) \|\| isNaN\(h\)\) \{\s*setTooSmall\(false\);\s*return;/, 'an empty field keeps the error line');
 });
+
+test('T-CAP-165: the note and the error line in the three languages of the docs copies, with the numbers of English (22.2, Q900)', () => {
+    for (const file of ['es-espanol.json', 'zh-CN-zhongwen.json', 'ar-arabic.json']) {
+        const texts: Record<string, string> = JSON.parse(source(`i18n/locales/${file}`));
+        assert.ok(texts.trackingLimitedByResolution?.includes('1280 × 720'), `${file}: the note`);
+        assert.ok(texts.smallestSizeIs640x360?.includes('640 × 360'), `${file}: the error line`);
+    }
+});

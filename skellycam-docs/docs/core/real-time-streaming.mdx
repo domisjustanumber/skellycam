@@ -11,11 +11,13 @@ import config from '../../content.config';
 
 <CoreFeatureHeader feature={config.features.find(f => f.id === 'real-time-streaming')} repoUrl="https://github.com/freemocap/skellycam" />
 
-## Single-camera semantics for multi-camera systems
+## Each camera on its own
 
-A key design goal of SkellyCam's API is that **a multi-camera group behaves like a single camera**. Instead of managing N independent camera streams with independent frame rates and connection lifecycles, you connect to one WebSocket endpoint and receive a single stream of synchronized multi-frame payloads.
+The live preview sends each camera on its own. For each WebSocket connection, the server has one sender, `PreviewRelay`. In each pass, the sender reads the frame ring of each camera and sends the newest frame that it has not sent yet, as one binary camera message. It skips the older frames and keeps no queue, so a connection has at most one camera message in flight for each camera.
 
-Each payload contains exactly **one image per camera per frame event, captured at the same realworld timeslice**, delivered at a consistent frame rate. Your application code doesn't need to correlate frames across cameras, handle drift, or manage per-camera connections. You just process each payload knowing it represents a single synchronized moment across all cameras.
+Each camera has its own flow control. When the UI has drawn a frame, it sends a ready message for that camera, `{"message_type": "camera_ready", "camera_id": "a1b2"}`. Then the sender can send that camera its next frame. When no ready message comes, a safety net sends the newest unsent frame of that camera one time each second. Thus a slow camera or a slow tile holds back only its own camera. The other cameras go on at their own rate.
+
+The preview does not wait for the lockstep gate or for equal frame numbers. A camera with a new frame in its ring is shown. A camera with no new frame keeps its last frame on the screen. Thus the tiles can show frames of slightly different moments. For frame-matched data from many cameras, see [Frame-Perfect Sync](./frame-perfect-sync).
 
 ## The WebSocket protocol
 

@@ -8,6 +8,7 @@ except the restore at the close.
 import cv2
 import pytest
 
+from skellycam.core.ipc.frame_ring import ReadResult
 from skellycam.tests.capture.capture_session import (
     capture_app, ready_app_steps, spy_check_anchors, too_slow_after_the_window_start)
 from skellycam.tests.capture.fake_source import FakeScript
@@ -18,6 +19,17 @@ pytestmark = pytest.mark.usefixtures("no_camera_auto_exposure")
 def exposure_sets(app, camera_id):
     """(auto, value) of each exposure set of the fake, in order."""
     return [(s["exposure"].auto, s["exposure"].value) for s in app.factory.logs[camera_id].settings if "exposure" in s]
+
+
+def shows_a_frame(app, camera_id):
+    """The camera is in the gate and its ring gives a frame to show: the lock, gate check and read of the group's
+    interim relay read, which Q871 deleted."""
+    group = app.group
+    with group._ring_lock:
+        status = group.cameras.orchestrator.camera_statuses.get(camera_id)
+        reader = group.ring_readers.get(camera_id)
+        return (status is not None and status.in_gate and reader is not None
+                and reader.read_newest().result is ReadResult.OK)
 
 
 # ---------------------------------------------------------------------------
@@ -292,7 +304,7 @@ def test_t_req_44_a_failed_search_at_an_open_keeps_the_camera(monkeypatch):
         assert items == [{"kind": "exposure_search_failed", "camera_ids": [generic], "control": "exposure",
                           "text": f"Camera {generic}: the exposure search failed: no exposure from -12 to -5 keeps "
                                   f"30 fps. The exposure is -7 again."}]
-        assert generic in (app.group.read_latest_ring_frames() or {})
+        assert shows_a_frame(app, generic)
 
 
 def test_t_req_42_cameras_that_open_together_search_together(monkeypatch, tmp_path):
@@ -737,7 +749,7 @@ def test_t_req_05_a_failed_search_sets_the_old_value_again(monkeypatch):
         assert [w["kind"] for w in body["warnings"]] == ["exposure_search_failed"]
         assert body["warnings"][0]["text"].endswith("keeps 30 fps. The exposure is -7 again.")
         app.wait_state(camera_id, "too_slow")
-        assert camera_id in (app.group.read_latest_ring_frames() or {})
+        assert shows_a_frame(app, camera_id)
 
 
 def test_t_req_10_a_switch_of_one_camera_leaves_the_others(monkeypatch, tmp_path):

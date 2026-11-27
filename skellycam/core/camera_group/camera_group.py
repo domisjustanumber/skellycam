@@ -34,10 +34,8 @@ from skellycam.core.ipc.pubsub.pubsub_topics import (
 from skellycam.core.take_recorder import JpegLayout, Take, TakeCamera, TakeSummary, start_take
 from skellycam.core.ipc.frame_ring import (
     CameraRingInfo,
-    FrameRead,
     FrameRingCreator,
     FrameRingReader,
-    ReadResult,
     camera_ring_info,
     create_session_rings,
     rotation_to_cw_deg,
@@ -573,26 +571,6 @@ class CameraGroup:
     @property
     def camera_ids(self) -> list[CameraIdString]:
         return list(self.configs.keys())
-
-    def read_latest_ring_frames(self, step_set=None) -> dict[CameraIdString, FrameRead] | None:
-        """The newest frame of each camera that has one to show (interim relay of 5.8, U13). `step_set`: the
-        preview steps of a connection (capture-timings.md 6.5); None measures nothing."""
-        statuses = self.cameras.orchestrator.camera_statuses
-        on = step_set is not None and step_set.control.on
-        with self._ring_lock:
-            reads = {}
-            for camera_id, reader in self.ring_readers.items():
-                status = statuses.get(camera_id)
-                if status is None or not status.in_gate:  # agent 54: no frame to show, for example `starting`
-                    continue
-                if on:
-                    t0 = step_set.control.clock()
-                read = reader.read_newest()
-                if on:
-                    step_set.add((self.id, camera_id, "preview_ring_read"), step_set.control.clock() - t0)
-                if read.result is ReadResult.OK:
-                    reads[camera_id] = read
-            return reads or None
 
     async def start_recording(self, recording_info: RecordingInfo, devices: dict | None = None) -> list:
         """Start a take (recorder.md section 10 items 3 to 5, 13). Return the warnings of 11.3. One start, stop or

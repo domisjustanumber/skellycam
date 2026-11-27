@@ -372,6 +372,8 @@ test('T-PLAY-86 a pick keeps its real path: a link put in its place later is not
     const linkKind = process.platform === 'win32' ? 'junction' : 'dir';
     await recordPick(h, picked);
     expect((await bridgeOpen(h.page, picked)).token).toMatch(/^[0-9a-f]{32}$/);
+    patternFile(path.join(`${picked}-other`, 'synchronized_videos', 'o.mkv'), 4 * KiB, 13);
+    await expect(bridgeOpen(h.page, `${picked}-other`), 'a sibling whose name starts with the pick').rejects.toThrow(/folder not allowed/);
     // the picked folder is replaced by a link to a folder outside every allowed folder
     rmSync(picked, {recursive: true, force: true});
     symlinkSync(target, picked, linkKind);

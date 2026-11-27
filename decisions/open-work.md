@@ -42,9 +42,9 @@ task. Delete an item when its work is done. The PR that closes an item records t
   - Step 3b (section 22, merged). No test of the real `QuickSyncEncoder` or of the raw path
     of Media Foundation; 22.5 not run. The Quick Sync check is [NV] off the development machine until a certify
     report gives `system:quick-sync` (22.7; [ADR-VTW3](entries/VTW3-choices-of-the-quick-sync-check-in-a-child-process.md)).
-    Q900 ([ADR-Y2RN](entries/Y2RN-decisions-of-the-user-on-the-size-floor-review-and-certify-quick-runs.md)): the
-    next UI lane adds `trackingLimitedByResolution` and `smallestSizeIs640x360` to the other three language
-    files. Q809: the 3c tests of `dom/3bc-tests` come later.
+    Question for the user (Q900, [ADR-CM9S](entries/CM9S-choices-of-the-clean-ups-lane.md) item 2): the tracking note and the
+    size error line are in es, zh-CN and ar only. Only these three, or all 40 locale files? Recommended: these three
+    now, the rest when there are native-speaker translations. Q809: the 3c tests of `dom/3bc-tests` come later.
   - Phase 7: the parity table of section 16.7 of the spec is the to-do list for Linux and macOS
     (14 tests with no counterpart yet).
 - **Support virtual cameras.** Detection shows a virtual camera with `virtual=True`, and a request
@@ -84,23 +84,16 @@ task. Delete an item when its work is done. The PR that closes an item records t
 - **Phase 4 (live preview)** ([`specs/preview.md`](../specs/preview.md), [`specs/preview-4b.md`](../specs/preview-4b.md);
   [ADR-BPP8](entries/BPP8-answers-of-the-user-q864-to-q873-on-the-step-4b-code.md)). Open:
   - M-PRV-4 on Linux ([ADR-HDC9](entries/HDC9-measurements-m-prv-1-to-m-prv-5-of-the-preview-sender.md)).
-  - Step 4b, after the merge: delete `read_latest_ring_frames` and `_send_json` with their
-    spec line and test probe (Q871); rewrite the top of the real-time streaming page (Q873).
   - The next CI run of `player.yml` confirms the harness fix of the 4b component tests (the inner size in the launch
     line; [ADR-FP47](entries/FP47-choices-of-the-triage-of-the-first-ci-run-of-the-4b-component-tests.md)).
   - Soon, spec and test first (Q907): does the product server hang at its shutdown after a client connection reset?
-    If so, a shutdown time limit; also the blocked queue feeder thread. After that fix, a
-    kill in `PreviewKit.close` fails the test (Q909).
+    If so, a shutdown time limit; also the blocked queue feeder thread.
 - **The `sfn26` integration on `dom/integration`**
   ([ADR-EQY4](entries/EQY4-base-the-work-on-upstream-sfn26-without-rust.md),
   [ADR-6T78](entries/6T78-choices-of-the-sfn26-integration.md)). Open:
   - The DirectShow open order of `sfn26` (item 1 of ADR-6T78) waits for a check on the cameras.
   - The UI does not show the `start_failure` warning item.
   - Not verified: real cameras, Linux, macOS and the installer build.
-- **The full stall-watch test** (Q892 of
-  [ADR-N2VE](entries/N2VE-decisions-of-the-user-on-the-ci-triage-and-the-stall-watch-code.md), low priority). A later
-  small test lane writes it: a real camera loop, a fake camera whose frames stop after a reopen, the watch on the
-  same clock (`unix-capture.md` 4.10).
 - **The certify run of skellycam.** The spec [`specs/certify.md`](../specs/certify.md) is draft 3. The code is in `skellycam/core/certify/` (section 19 of the
   spec). Open: the checks that are `not-run`
   `not-built` (the status line of the spec). Not decided: FC1C items 4 and 13, HQE5 items 2 and 3

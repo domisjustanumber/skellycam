@@ -142,6 +142,9 @@ export class UiServer {
         return this.exited;
     }
 
+    /** True when the process tree had to be killed: a time-out of PreviewKit.close or a failed clean stop (Q909). */
+    killed = false;
+
     /** End the process and its children at once (the time limit of PreviewKit.close), and log its last output
      * lines. On Windows `uv` starts the server as a child process: a kill of `uv` alone left the server running. */
     kill(): void {
@@ -153,6 +156,7 @@ export class UiServer {
      * group of the detached `uv` [NV off Windows]. */
     private killTree(): void {
         if (this.exited || this.proc.pid === undefined) return;
+        this.killed = true;
         if (process.platform === 'win32') {
             const r = spawnSync('taskkill', ['/PID', String(this.proc.pid), '/T', '/F'], {encoding: 'utf8'});
             if (r.status !== 0) console.log(`taskkill of ui_server.py ended with ${r.status}: ${(r.stderr || r.stdout || String(r.error)).trim()}`);
@@ -168,17 +172,17 @@ export class UiServer {
 
 /** One step of the clean-up with a time limit: at a time-out, `kill` ends the process and the log names the step
  * (specs/preview-4b.md 7.2, Q896). */
-async function limited(step: string, work: Promise<unknown>, ms: number, kill: () => void): Promise<void> {
+async function limited(step: string, work: Promise<unknown>, ms: number, kill: () => void): Promise<boolean> {
     let timer: ReturnType<typeof setTimeout> | undefined;
     const timedOut = new Promise<'time-out'>(resolve => (timer = setTimeout(() => resolve('time-out'), ms)));
     const result = await Promise.race([work.then(() => 'done', () => 'done'), timedOut]);
     clearTimeout(timer);
     if (result === 'time-out') {
         console.log(`hung step: ${step} (more than ${ms} ms); the process is killed`);
-        // Q909: the test keeps passing until the Q907 lane fixes the cause; the report shows the kill
         base.info().annotations.push({type: 'hung step', description: step});
         kill();
     }
+    return result === 'time-out';
 }
 
 const APP_CLOSE_MS = 10_000;
@@ -242,11 +246,17 @@ export class PreviewKit {
     }
 
     async close(): Promise<void> {
-        for (const app of this.apps) await limited('app close', app.close(), APP_CLOSE_MS, () => app.process().kill());
+        const killed: string[] = [];
+        for (const app of this.apps) {
+            if (await limited('app close', app.close(), APP_CLOSE_MS, () => app.process().kill())) killed.push('app close');
+        }
         for (const s of this.servers) {
-            await limited('ui_server.py stop', s.stop().catch(e => console.log(`ui_server.py stop: ${e}`)), SERVER_STOP_MS, () => s.kill());
+            const timedOut = await limited('ui_server.py stop', s.stop().catch(e => console.log(`ui_server.py stop: ${e}`)), SERVER_STOP_MS, () => s.kill());
+            if (timedOut || s.killed) killed.push('ui_server.py stop');
         }
         rmSync(this.root, {recursive: true, force: true});
+        // Q909: since the 5 s shutdown limit of the product server (Q907), each kill fails the test
+        if (killed.length) throw new Error(`PreviewKit.close had to kill: ${killed.join(', ')}`);
     }
 }
 

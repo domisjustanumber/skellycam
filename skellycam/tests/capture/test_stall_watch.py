@@ -11,10 +11,12 @@ slow close of a reopen, the OpenCV fake (a pull source), and cameras under a loa
 T-UNX-18 and T-UNX-45 (the in-process stall rule of W 9.5 with the V4L2 and AVFoundation fakes) wait for
 steps 7a and 7b; T-CAP-36 checks that rule with the fake source.
 
-Each test runs in real time and has the marker `capture_timing`.
+Each test has the marker `capture_timing`. Most run in real time; T-UNX-109 runs on the virtual clock of
+`capture_session`.
 """
 
 import asyncio
+import importlib
 import threading
 import time
 from types import SimpleNamespace
@@ -548,3 +550,98 @@ def test_f3_a_reopen_closes_the_source_in_starting(monkeypatch):
 
     loop._reopen(CameraConfig(camera_id="aaaa", camera_index=0, exposure_mode="MANUAL", exposure=-7))
     assert seen == ["starting"]
+
+
+def watch_on_the_clock(monkeypatch, clock):
+    """The watch thread of each new group on the virtual clock of the camera loops (Q892): each round waits 0.1 s of
+    clock time (`_stop_watch.wait` in that thread), and the watch reads the clock time (`time.monotonic` of the group
+    module, in that thread only). Gives the clock times of the reads of the watch."""
+    import skellycam.core.camera_group.camera_group as group_module
+
+    reads = []
+
+    def in_watch():
+        name = threading.current_thread().name
+        return name.startswith("camera group ") and name.endswith(" watch")  # the thread of `CameraGroup`
+
+    class ClockTime:
+        def __getattr__(self, name):
+            return getattr(time, name)
+
+        def monotonic(self):
+            if not in_watch():
+                return time.monotonic()
+            reads.append(clock.now_ns() / 1e9)
+            return reads[-1]
+
+    class ClockEvent(threading.Event):
+        def wait(self, timeout=None):
+            if timeout is None or not in_watch():
+                return super().wait(timeout)
+            clock.wait_until(clock.now_ns() + round(timeout * 1e9))
+            return self.is_set()
+
+    watch_workers = group_module.CameraGroup._watch_workers
+
+    def watch(group):
+        stop, group._stop_watch = group._stop_watch, ClockEvent()
+        if stop.is_set():
+            group._stop_watch.set()
+        try:
+            watch_workers(group)
+        finally:
+            clock.leave()
+
+    monkeypatch.setattr(group_module, "time", ClockTime())
+    monkeypatch.setattr(group_module.CameraGroup, "_watch_workers", watch)
+    return reads
+
+
+def test_t_unx_109_frames_that_stop_after_a_reopen_end_by_the_in_process_rule(monkeypatch):
+    """T-UNX-109, Q892 [ADR-N2VE]: a real camera loop (a THREAD worker on the virtual clock), a fake camera whose
+    frames stop at its first read in `waiting` after the open of a reopen, and the watch of the group on the same
+    clock. That first pass in `waiting` attaches the new rings, starts the clock of the in-process rule there and then
+    adds one to the counter, so the in-process rule (`no frame for 2 s`) ends the camera, not the watch (`no loop pass
+    for 2.5 s`) (4.10). The attach takes 0.6 s of clock time here: without the count after it (4PPS item 10) the
+    watch would count from before the attach and trip first."""
+    stop = {}
+
+    def stop_in_waiting(source, now_ns):  # the read of the camera loop thread
+        app = stop.get("app")
+        if app is None or "at" in stop or source.log.opens.value != 2:
+            return
+        if app.group.cameras.orchestrator.camera_statuses[source.camera_id].state == "waiting":
+            stop["at"] = now_ns / 1e9
+            source.stop_now()
+
+    import skellycam.core.camera_group.camera_group as group_module
+
+    trips = []  # a trip of the watch ends the process; with THREAD workers the loop can still write its failure later
+    end_process = group_module.CameraGroup._end_process
+    monkeypatch.setattr(group_module.CameraGroup, "_end_process",
+                        staticmethod(lambda worker, status: (trips.append(1), end_process(worker, status))))
+    modes = ((640, 480, 30, 1, "MJPG"), (1280, 720, 30, 1, "MJPG"))
+    with capture_app(monkeypatch, [FakeScript(modes=modes)], on_read=stop_in_waiting) as app:
+        reads = watch_on_the_clock(monkeypatch, app.clock)
+        loop_module = importlib.import_module("skellycam.core.camera.capture.camera_loop")
+        attach = loop_module.CameraLoop._attach_rings
+
+        def slow_attach(loop):  # 4PPS item 10: an attach that takes clock time, so the count after it matters
+            attach(loop)
+            if loop.ring_writer is not None:
+                app.clock.wait_until(app.clock.now_ns() + 600_000_000)
+
+        monkeypatch.setattr(loop_module.CameraLoop, "_attach_rings", slow_attach)
+        ready_app_steps(app)
+        camera_id = app.factory.camera_ids[0]
+        stop["app"] = app
+        response = app.apply([app.config(camera_id, width=1280, height=720)])
+        assert response.status_code == 200, response.text
+        app.wait_state(camera_id, "dead", "failed", timeout=30)
+        failure = app.status(camera_id)["failure"]
+    assert "at" in stop, "no read in `waiting` after the reopen"
+    assert not trips, "the watch tripped: it decided, not the in-process rule"
+    assert failure == {"camera_id": camera_id, "stage": "streaming", "reason": "no frame for 2 s",
+                       "code": "stalled"}, failure
+    rounds = [t for t in reads if stop["at"] <= t <= stop["at"] + 2.0]
+    assert len(rounds) >= 15, f"the watch made {len(rounds)} rounds on the clock in the 2 s after the stop"

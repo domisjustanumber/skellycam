@@ -4,8 +4,8 @@ process. F8 of the review of the 3a code (ADR-BM73).
 - An error in one pass of the watch does not end the watch: it marks a later ended process and reads
   the queues of the camera processes.
 - A ring reader is closed only on the event loop. The watch thread hands the close to the loop, so a
-  close cannot come in the middle of a read on the loop. `read_latest_ring_frames` holds `_ring_lock` for its
-  walk and each read; a reader that reads with no lock on the loop (`PreviewRelay`) needs the hand-off.
+  close cannot come in the middle of a read on the loop. A reader that reads with no lock on the loop
+  (`PreviewRelay`) needs the hand-off.
 
 The group is made without `create`: no camera process and no shared memory. The stand-ins have only
 the fields that the watch and the read use.
@@ -144,8 +144,8 @@ def test_a_ring_reader_is_closed_only_on_the_event_loop():
                 reader.inside.wait(WAIT_S)
                 worker.worker.exitcode = 3  # the process ends while the relay reads
             threading.Thread(target=end_during_read, daemon=True).start()
-            reads = group.read_latest_ring_frames()  # on the event loop, as a reader of the main process
-            assert reads is not None and reads["aaaa"].frame_number == 7
+            read = group.ring_readers["aaaa"].read_newest()  # on the event loop with no lock, as `PreviewRelay` reads
+            assert read.result is ReadResult.OK and read.frame_number == 7
             assert not reader.closed_inside, "the reader was closed during a read"
             for _ in range(200):
                 await asyncio.sleep(0.01)
