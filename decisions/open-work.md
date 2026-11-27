@@ -42,7 +42,9 @@ task. Delete an item when its work is done. The PR that closes an item records t
   - Step 3b (section 22, merged). No test of the real `QuickSyncEncoder` or of the raw path
     of Media Foundation; 22.5 not run. The Quick Sync check is [NV] off the development machine until a certify
     report gives `system:quick-sync` (22.7; [ADR-VTW3](entries/VTW3-choices-of-the-quick-sync-check-in-a-child-process.md)).
-    Q809: the 3c tests of `dom/3bc-tests` come later.
+    Question for the user (Q900, [ADR-CM9S](entries/CM9S-choices-of-the-clean-ups-lane.md) item 2): the tracking note and the
+    size error line are in es, zh-CN and ar only. Only these three, or all 40 locale files? Recommended: these three
+    now, the rest when there are native-speaker translations. Q809: the 3c tests of `dom/3bc-tests` come later.
   - Phase 7: the parity table of section 16.7 of the spec is the to-do list for Linux and macOS
     (14 tests with no counterpart yet).
 - **Support virtual cameras.** Detection shows a virtual camera with `virtual=True`, and a request
