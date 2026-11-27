@@ -1018,7 +1018,8 @@ Added on 2026-11-20 (L of [ADR-JMS0](../decisions/entries/JMS0-review-decisions.
 
 Added on 2026-11-27 (Q907 [ADR-75CF](../decisions/entries/75CF-decision-of-the-user-on-the-shutdown-of-the-server.md),
 Q924 to Q928 [ADR-9V4Y](../decisions/entries/9V4Y-decisions-of-the-user-on-the-shutdown-lane-q924-to-q928.md),
-choices [ADR-06PW](../decisions/entries/06PW-choices-of-the-shutdown-limit-lane.md)).
+choices [ADR-06PW](../decisions/entries/06PW-choices-of-the-shutdown-limit-lane.md); items 7 to 9: Q934, Q935,
+choices [ADR-M5PJ](../decisions/entries/M5PJ-choices-of-the-shutdown-follow-ups-q934-q935.md)).
 
 1. **The exit does not wait for the log queue.** `entry_point()` of `skellycam/__main__.py` calls
    `cancel_join_thread()` on the websocket log queue after `configure_logging`. Only an open websocket reads that
@@ -1123,6 +1124,7 @@ choices [ADR-06PW](../decisions/entries/06PW-choices-of-the-shutdown-limit-lane.
      `shutdown_all()`). A second Ctrl-C while the lifespan end stopped the take did nothing: the exit came 12.1 s
      after it, when the slow stop ended, because uvicorn does not end its lifespan wait on `force_exit`. A second
      Ctrl-Break did nothing in either case (uvicorn takes only a second SIGINT as `force_exit`): 12.3 s.
+   - Measured on Windows with this rule: each process ended 0.15 s to 0.27 s after the second signal.
    - Holds after the exit, checked by the test: no frame ring can be attached, the port binds again at once, the take
      folder can be renamed, and its take lock (`folder_files.take_lock`) can be taken. The locks of `CameraStatus`
      live in its shared values: they end with the last process that maps them.
