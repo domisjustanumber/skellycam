@@ -175,11 +175,10 @@ task. Delete an item when its work is done. The PR that closes an item records t
   that the product does not use ([evidence](evidence/stall-watch-under-load-thread-20261127.md)). Move its check "no
   camera ended" to `pace`, and keep `[process]` blocking? Recommended: yes. (The other way, a change of the
   in-process rule, would weaken the detection of real stalls.) It stays blocking until the user answers.
-- **Question for the user: T-PRV-25 and Doc checks.** `doc-checks.yml` syncs only the dev group, and T-PRV-25 imports
-  `skellycam`; the `--ignore` of `preview-4b.md` 7.8 (Q836) is in kit text (`kit.toml`), so it needs an entry, a
-  `kit_sync.py propose` and a PR to freemocap/project. The other way: move the test into `skellycam/tests/preview/`,
-  which reverses "stays in `tools/tests/`" of Q836. Recommended: move the test (one local change; `test.yml` and
-  `capture.yml` run it). Doc checks stays red until the user answers.
+- **The kit change of Q964** ([ADR-93K1](entries/93K1-decision-of-the-user-on-the-place-of-t-prv-25.md),
+  [ADR-6MMJ](entries/6MMJ-choices-of-the-move-of-t-prv-25-and-of-the-kit-proposal.md)). The block `AGENTS.md#decision-log`
+  waits for the kit (`[kit.pending]` of `kit.toml`). The kit commit is on the local branch `dom/tools-import-no-product`
+  of the kit checkout. It waits for a yes of the user to push it, a PR to freemocap/project, and then a `pull` here.
 - **ZEX9** ([ADR-ZEX9](entries/ZEX9-decisions-of-the-user-on-the-housekeeping-of-2026-11-25.md)) becomes `done`
   after the CI result of its item 4.
 - **Exclusive access** (accepted, [ADR-5PAR](entries/5PAR-decisions-of-the-user-on-the-control-read-the-holder-and-the-exclusive-access-drafts.md)).

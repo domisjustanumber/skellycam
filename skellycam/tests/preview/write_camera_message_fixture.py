@@ -4,9 +4,11 @@ The file `skellycam-ui/src/services/server/preview/tests/camera-messages.json` h
 Each case has its input fields (64-bit values as decimal strings) and the message of the real `pack_camera_frame`
 as hex. The Python test T-PRV-25 and the TypeScript test T-PRV-32 read the same file. The JPEG bytes are synthetic.
 
-- `python tools/write_camera_message_fixture.py` writes the file.
-- `python tools/write_camera_message_fixture.py --check` compares the tracked file with a new output, writes
+- `uv run python skellycam/tests/preview/write_camera_message_fixture.py` writes the file.
+- `uv run python skellycam/tests/preview/write_camera_message_fixture.py --check` compares the tracked file with a new output, writes
   nothing, and ends with exit code 1 when they differ.
+
+It imports `skellycam`, so it is here and not in `tools/` (Q964).
 """
 
 import argparse
@@ -14,7 +16,10 @@ import json
 import sys
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[1]
+from skellycam.api.websocket.preview_relay import pack_camera_frame
+from skellycam.core.ipc.frame_ring import FrameRead, ReadResult
+
+ROOT = Path(__file__).resolve().parents[3]
 FIXTURE = ROOT / "skellycam-ui" / "src" / "services" / "server" / "preview" / "tests" / "camera-messages.json"
 
 # name, camera id, result, flags, frame number, arrival ns, rotation, JPEG (synthetic bytes, not a camera frame)
@@ -29,9 +34,6 @@ CASES = (
 
 
 def build() -> str:
-    from skellycam.api.websocket.preview_relay import pack_camera_frame
-    from skellycam.core.ipc.frame_ring import FrameRead, ReadResult
-
     cases = []
     for name, camera_id, result, flags, frame_number, arrival_ns, rotation, jpeg in CASES:
         read = FrameRead(ReadResult[result], frame_number, arrival_ns, 0, 0, frame_number, flags, rotation,
@@ -42,7 +44,7 @@ def build() -> str:
                       "arrival_ns": str(arrival_ns), "rotation_cw_deg": rotation, "jpeg_hex": jpeg.hex()},
             "message_hex": pack_camera_frame(camera_id, read).hex(),
         })
-    return json.dumps({"source": "tools/write_camera_message_fixture.py", "cases": cases}, indent=2) + "\n"
+    return json.dumps({"source": "skellycam/tests/preview/write_camera_message_fixture.py", "cases": cases}, indent=2) + "\n"
 
 
 def main(argv=None) -> int:

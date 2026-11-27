@@ -34,7 +34,7 @@ export interface FixtureCase {
     message_hex: string;
 }
 
-/** The shared fixture of T-PRV-25 (tools/write_camera_message_fixture.py). */
+/** The shared fixture of T-PRV-25 (skellycam/tests/preview/write_camera_message_fixture.py). */
 export function fixtureCases(): FixtureCase[] {
     return JSON.parse(readFileSync(new URL('../camera-messages.json', import.meta.url), 'utf8')).cases;
 }

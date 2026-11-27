@@ -32,6 +32,9 @@ Marks:
   note at the end of 4b; no read-back of a tile canvas; websocket compression off.
 - **[Q864]** to **[Q873]**, **[Q885]**, **[Q893]** to **[Q897]**: the answers of the user of 2026-11-26 on the 4b
   code [ADR-BPP8](../decisions/entries/BPP8-answers-of-the-user-q864-to-q873-on-the-step-4b-code.md).
+- **[Q964]**: the answer of the user of 2026-11-27 on the place of T-PRV-25 and its tool
+  [ADR-93K1](../decisions/entries/93K1-decision-of-the-user-on-the-place-of-t-prv-25.md). It replaces
+  the part of Q836 that kept T-PRV-25 in `tools/tests/`.
 - **[Q824]** to **[Q836]**: the answers of the user of 2026-11-25 on the 4b tests (global numbers)
   [ADR-NA1N](../decisions/entries/NA1N-answers-of-the-user-to-the-questions-of-the-step-4b-tests.md).
 - **[Q1]** to **[Q9]**: the answer of the user of 2026-11-20 to question n of revision 2
@@ -288,7 +291,7 @@ line 304). One camera in `starting`, `failed` or `dead` thus makes the whole gro
 | `skellycam-ui/src/services/server/preview/server-messages.ts` | Pure functions from an `app_state` or a `framerate_update` object, and the camera list, to the values of 5.5. The provider calls them. Node can load the file, so T-PRV-40 tests it. |
 | `skellycam-ui/src/store/slices/cameras/camera-labels.ts` | From the demo commits [demo]. It has `cameraLabel` and `labelText` (5.4) [agent 20, Q825]. No import. |
 | `skellycam-ui/src/services/server/preview/tests/unit/` | The Node unit tests (7.4). |
-| `skellycam-ui/src/services/server/preview/tests/camera-messages.json` | The shared fixture. `tools/write_camera_message_fixture.py` writes it (7.2). |
+| `skellycam-ui/src/services/server/preview/tests/camera-messages.json` | The shared fixture. `skellycam/tests/preview/write_camera_message_fixture.py` writes it (7.2). |
 | `skellycam-ui/src/components/camera-views/tests/browser/` | The component tests (7.4). |
 | `skellycam-ui/src/components/camera-views/tests/harness/preview/` | The harness page `index.html` with `page.tsx` (7.2). |
 | `skellycam-ui/src/components/camera-views/tests/bench/` | The benchmarks (section 6). |
@@ -736,7 +739,8 @@ frames each second on each of 8 tiles during a scrub [M ADR-1ACK evidence].
 - **fake**, **ws**: Python tests as [4a 9.1], with fake rings and no camera.
 - **capture-fake**: a Python test with the real `CameraGroup` and the fake sources of
   `skellycam/tests/capture/` (`fake_source.py`, `capture_session.py`).
-- **tool**: a test in `tools/tests/`.
+- **tool**: the test of the fixture tool of 7.2. It is in `skellycam/tests/preview/`, because it imports
+  `skellycam`. No file in `tools/` imports `skellycam` [Q964].
 - **search**, **doc**: Python tests in `skellycam/tests/preview/` that read files. A search test is
   allowed here because the rule is a deletion [P5]. The doc test checks a deliverable.
 - **unit**: TypeScript under `node --test --experimental-strip-types`, as the player unit tests
@@ -749,7 +753,7 @@ frames each second on each of 8 tiles during a scrub [M ADR-1ACK evidence].
 
 - **The logging prerequisites.** The fixture `logging_runtime` of `skellycam/tests/conftest.py` gives them
   (3.2). 4b adds no session fixture [Q872].
-- **The shared fixture.** `tools/write_camera_message_fixture.py` writes
+- **The shared fixture.** `skellycam/tests/preview/write_camera_message_fixture.py` writes
   `skellycam-ui/src/services/server/preview/tests/camera-messages.json` with `pack_camera_frame`.
   `--check` compares the tracked file with a new output, and writes nothing. Each case has its input
   fields (64-bit values as decimal strings) and the message as hex. Cases: the example of [4a 3.2];
@@ -851,15 +855,17 @@ and `npm run test:player:browser` (Linux under `xvfb-run`). `doc-checks.yml` run
 
 **T-PRV-25** (tool). The shared fixture.
 
-- File: `tools/tests/test_camera_message_fixture.py`; the tool `tools/write_camera_message_fixture.py`.
+- File: `skellycam/tests/preview/test_camera_message_fixture.py`; the tool
+  `skellycam/tests/preview/write_camera_message_fixture.py` [Q964].
 - Set-up: the real `pack_camera_frame`; the independent parser of
   `skellycam/tests/preview/preview_helpers.py` [4a 9.1].
 - Steps: run the tool with `--check` in a subprocess. Load the JSON. Parse the hex of each case with
   the independent parser.
 - Pass: exit code 0; the tracked file equals the new output, byte for byte; it has each case of 7.2;
   each parsed field equals the input field of its case.
-- Runs: no marker. `capture-windows`, `capture-linux`, `capture-macos` with the selection of 7.8. Not
-  in `doc-checks.yml`: it syncs no project package [Q836].
+- Runs: no marker. `capture-windows`, `capture-linux`, `capture-macos`: their selection has
+  `skellycam/tests/preview`. Not in `doc-checks.yml`: it syncs no project package, and it runs only
+  `tools/tests` [Q964].
 - Must not: write the tracked file in `--check` mode.
 
 **T-PRV-26** (ws). The product endpoint sends camera messages.
@@ -1291,12 +1297,11 @@ The test writer checks each name and path on `dom/integration` first [S].
   `skellycam-ui/src/components/camera-views/**`, `skellycam-ui/src/store/slices/cameras/**`,
   `skellycam/tests/preview/**` and `specs/preview-4b.md`, and a pinned uv set-up step in its three
   jobs, as `capture.yml` has. `capture.yml` adds `dom/integration` to its branches [S],
-  `specs/preview-4b.md`, `tools/write_camera_message_fixture.py` and its test to its paths, and
-  `tools/tests/test_camera_message_fixture.py` to the selection of its three jobs, so that T-PRV-25
-  runs on the three systems.
-- T-PRV-25 imports `skellycam`, and `doc-checks.yml` syncs only the dev group. T-PRV-25 runs only in the
-  three capture jobs, which sync the project, and stays in `tools/tests/` [Q836]. The CI PR thus adds
-  `--ignore=tools/tests/test_camera_message_fixture.py` to the pytest step of `doc-checks.yml`.
+  and `specs/preview-4b.md` to its paths. Its path `skellycam/tests/**` and its selection
+  `skellycam/tests/preview` cover T-PRV-25 and its tool, so T-PRV-25 runs on the three systems [Q964].
+- T-PRV-25 imports `skellycam`, and `doc-checks.yml` syncs only the dev group. So T-PRV-25 and its tool
+  are in `skellycam/tests/preview/`, not in `tools/` [Q964]. No file in `tools/` imports `skellycam`.
+  The test `tools/tests/test_tools_import_no_product.py` checks this rule. `doc-checks.yml` does not change.
 
 ## 8. The interface note for the FreeMoCap session [P5]
 
