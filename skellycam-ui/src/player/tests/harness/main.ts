@@ -19,6 +19,8 @@ type Handler = Awaited<ReturnType<SchemeModule['installTakeHandler']>>;
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const recordingsFolder = process.env.PLAYER_HARNESS_RECORDINGS ?? '';
+// the Electron user data folder of the test, so no test touches the profile of the user (player.md 12.1)
+if (process.env.PLAYER_HARNESS_USER_DATA) app.setPath('userData', process.env.PLAYER_HARNESS_USER_DATA);
 const firstPage = process.env.PLAYER_HARNESS_PAGE ?? 'harness';
 const productThrottling = process.env.PLAYER_HARNESS_PRODUCT_THROTTLING === '1';
 

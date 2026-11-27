@@ -131,6 +131,11 @@ test('T-PLAY-84 the file-level fallbacks of the label', async t => {
     slash.extraFiles!.push({path: 'recording_manifest.json', content: JSON.stringify(m, null, 2) + '\n'},
         {path: `synchronized_videos/${slash.rec}_info.json`, content: infoText(slash, USABLE)});
     cases.push(['a recording_name with /', slash]);
+    const back = withInfo('fall_backslash', p => infoText(p, USABLE));
+    const mb = JSON.parse(manifestText(back));
+    mb.recording_name = `synchronized_videos\\${back.rec}`;
+    back.extraFiles!.push({path: 'recording_manifest.json', content: JSON.stringify(mb, null, 2) + '\n'});
+    cases.push(['a recording_name with \\', back]);
     const noManifest = withInfo('fall_no_manifest', p => infoText(p, USABLE));
     noManifest.manifest = 'missing';
     cases.push(['no manifest', noManifest]);
@@ -142,7 +147,7 @@ test('T-PLAY-84 the file-level fallbacks of the label', async t => {
         assert.equal(o.frameCount, bare.frameCount, `${name}: the take opens`);
         const expected = plan.manifest === 'missing' ? [...bare.warnings, 'manifest_missing'].sort() : bare.warnings;
         assert.deepEqual(o.warnings, [...new Set(expected)].sort(), `${name}: no warning from the label`);
-        if (name === 'a recording_name with /' || name === 'no manifest') {
+        if (name === 'missing' || name.startsWith('a recording_name with') || name === 'no manifest') {
             assert.ok(!o.wholeReads.some(r => r.path.endsWith('_info.json')), `${name}: no read of a capture info`);
         }
     }

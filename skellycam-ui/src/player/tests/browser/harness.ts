@@ -19,17 +19,21 @@ export interface Harness {
     page: Page;
     root: string;              // the temporary folder of the test
     recordings: string;        // the test recordingsFolder
+    userData: string;          // the Electron userData folder of the harness
     build(plan: TakePlan | string): BuiltTake;
     relaunch(): Promise<void>;
     /** Fail with the product error when the product is missing. */
     requireProduct(): Promise<void>;
 }
 
+/** The Electron userData folder of a harness, beside its recordings folder (player.md 12.1). */
+export const userDataOf = (recordings: string) => path.join(path.dirname(recordings), 'harness-user-data');
+
 export async function launch(recordings: string, pageName: 'harness' | 'host' | 'preview',
                              extraEnv: Record<string, string> = {}): Promise<{app: ElectronApplication; page: Page}> {
     const env: Record<string, string> = {};
     for (const [k, v] of Object.entries(process.env)) if (v !== undefined && k !== 'ELECTRON_RUN_AS_NODE') env[k] = v;
-    Object.assign(env, {PLAYER_HARNESS_RECORDINGS: recordings, PLAYER_HARNESS_PAGE: pageName}, extraEnv);
+    Object.assign(env, {PLAYER_HARNESS_RECORDINGS: recordings, PLAYER_HARNESS_USER_DATA: userDataOf(recordings), PLAYER_HARNESS_PAGE: pageName}, extraEnv);
     const app = await _electron.launch({args: [HARNESS_MAIN, '--no-sandbox'], env});
     const page = await app.firstWindow();
     await page.waitForFunction(name => name in window, pageName);
@@ -61,7 +65,7 @@ export function harnessTest(pageName: 'harness' | 'host') {
                 get page() {
                     return page;
                 },
-                root, recordings,
+                root, recordings, userData: userDataOf(recordings),
                 build: plan => writeTake(recordings, typeof plan === 'string' ? planOf(plan) : plan),
                 relaunch: async () => {
                     await app.close();
