@@ -804,7 +804,10 @@ frames each second on each of 8 tiles during a scrub [M ADR-1ACK evidence].
 - **The clean-up after each test.** `PreviewKit.close` closes each app, then stops each `ui_server.py`, each step
   with a time limit (10 s for an app, 20 s for a server), inside the 60 s of the test. At a time-out it kills that
   process tree (on Windows `taskkill /T`; elsewhere the process group, [NV] off Windows), logs `hung step: <step>`
-  and adds it to the test report as an annotation; the kill does not fail the test [Q896]. `ui_server.py` sets the graceful-shutdown limit of uvicorn to 5 s,
+  and adds it to the test report as an annotation [Q896]. Since the shutdown fix of Q907 (the 5 s limit of the product
+  server, [ADR-9V4Y](../decisions/entries/9V4Y-decisions-of-the-user-on-the-shutdown-lane-q924-to-q928.md)), each kill
+  fails the test: a kill at a time-out, and the kill of a server whose clean stop failed. `close` ends every step
+  first, then throws one error that names each killed step [Q909]. `ui_server.py` sets the graceful-shutdown limit of uvicorn to 5 s,
   so that its stop ends on its own also when a reset client connection never reports its loss; the time limit and
   the kill stay as the backstop [Q906].
 - **The kept overlay text.** A test reads the overlay of a tile from `Tile.overlay`, which the tile
