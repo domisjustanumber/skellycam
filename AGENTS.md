@@ -146,14 +146,14 @@ Each log has a `README.md` with an Active table, a Proposed table and `## Open w
 All logs have one ID space. Do not add a module name to an ID.
 When the scope of a module entry grows to more than one module, a new root entry supersedes it.
 A tool is code that a test, a hook, a CI job, a skill or a workflow step runs, or code that writes a
-tracked file. It is in the root `tools/`, also when only one module uses it. It has tests.
+tracked file. It is in the root `tools/`, also when only one module uses it. The one exception is a
+tool that imports the product: it is in the product package. A tool has tests.
 No file in `tools/` imports the product, because the doc checks in CI install only the dev group.
-A tool that imports the product is in the product package, with its test.
 `tools/tests/test_tools_import_no_product.py` checks this rule.
 A script made the evidence for an entry or did its one-off job, and the entry names it. It is in
 `scripts/` of the log that holds the entry. Its own tests, if any, are in `scripts/tests/`.
 A script does not change after its entry is decided. When a step starts to run it, move it to
-`tools/` and add a test.
+`tools/`, or to the product package when it imports the product, and add a test.
 The [Rules](decisions/README.md#rules) of the index give the rules for reading a log.
 Before you add or change an entry, a status or a row of a table, load the skill
 [`change-decision-log`](.claude/skills/change-decision-log/SKILL.md). It gives the allowed edits, the status changes and

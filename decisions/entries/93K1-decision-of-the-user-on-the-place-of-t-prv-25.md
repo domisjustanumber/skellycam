@@ -22,20 +22,18 @@ for this".
 1. No file in `tools/` or `tools/tests/` imports `skellycam`. A file that imports `skellycam` is
    under `skellycam/`.
 2. The fixture tool and T-PRV-25 are in `skellycam/tests/preview/`:
-   `write_camera_message_fixture.py` and `test_camera_message_fixture.py`. T-PRV-25 keeps its ID.
-   The fixture file `camera-messages.json` stays in `skellycam-ui/src/services/server/preview/tests/`.
+   `write_camera_message_fixture.py` and `test_camera_message_fixture.py`.
 3. `tools/tests/test_tools_import_no_product.py` enforces rule 1.
 4. This replaces the part of Q836
    ([ADR-NA1N](NA1N-answers-of-the-user-to-the-questions-of-the-step-4b-tests.md)) that kept
    T-PRV-25 in `tools/tests/`. The `--ignore` of T-PRV-25 in `doc-checks.yml` does not come.
-5. The rule goes to the kit, as a kit change of the block `AGENTS.md#decision-log` and a new kit
-   file unit for the test.
+5. A kit change carries this rule.
 
 ## Reason
 
 `doc-checks.yml` is kit text. It installs only the dev group, so `skellycam` is not importable there.
 It runs all of `tools/tests`, so T-PRV-25 failed there, and Doc checks was red. A move is one local
-change. The kit rule keeps each other repository of the kit from the same fault.
+change.
 
 ## Consequences
 

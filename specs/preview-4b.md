@@ -864,8 +864,8 @@ and `npm run test:player:browser` (Linux under `xvfb-run`). `doc-checks.yml` run
 - Pass: exit code 0; the tracked file equals the new output, byte for byte; it has each case of 7.2;
   each parsed field equals the input field of its case.
 - Runs: no marker. `capture-windows`, `capture-linux`, `capture-macos`: their selection has
-  `skellycam/tests/preview`. Not in `doc-checks.yml`: it syncs no project package, and it runs only
-  `tools/tests` [Q964].
+  `skellycam/tests/preview`. `test.yml` also runs it: its selection is `skellycam/tests/`. Not in
+  `doc-checks.yml`: it syncs no project package, and it runs only `tools/tests` [Q964].
 - Must not: write the tracked file in `--check` mode.
 
 **T-PRV-26** (ws). The product endpoint sends camera messages.

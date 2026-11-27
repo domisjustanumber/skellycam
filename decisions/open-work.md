@@ -179,6 +179,8 @@ task. Delete an item when its work is done. The PR that closes an item records t
   [ADR-6MMJ](entries/6MMJ-choices-of-the-move-of-t-prv-25-and-of-the-kit-proposal.md)). The block `AGENTS.md#decision-log`
   waits for the kit (`[kit.pending]` of `kit.toml`). The kit commit is on the local branch `dom/tools-import-no-product`
   of the kit checkout. It waits for a yes of the user to push it, a PR to freemocap/project, and then a `pull` here.
+  Open: skellytracker has 18 files in `tools/` that import `skellytracker`, and it skips `doc-checks.yml`. The new
+  test fails there after a `pull`. The user decides the route first (ADR-6MMJ item 10).
 - **ZEX9** ([ADR-ZEX9](entries/ZEX9-decisions-of-the-user-on-the-housekeeping-of-2026-11-25.md)) becomes `done`
   after the CI result of its item 4.
 - **Exclusive access** (accepted, [ADR-5PAR](entries/5PAR-decisions-of-the-user-on-the-control-read-the-holder-and-the-exclusive-access-drafts.md)).
