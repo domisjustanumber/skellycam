@@ -42,9 +42,7 @@ task. Delete an item when its work is done. The PR that closes an item records t
   - Step 3b (section 22, merged). No test of the real `QuickSyncEncoder` or of the raw path
     of Media Foundation; 22.5 not run. The Quick Sync check is [NV] off the development machine until a certify
     report gives `system:quick-sync` (22.7; [ADR-VTW3](entries/VTW3-choices-of-the-quick-sync-check-in-a-child-process.md)).
-    Q900 ([ADR-Y2RN](entries/Y2RN-decisions-of-the-user-on-the-size-floor-review-and-certify-quick-runs.md)): the
-    next UI lane adds `trackingLimitedByResolution` and `smallestSizeIs640x360` to the other three language
-    files. Q809: the 3c tests of `dom/3bc-tests` come later.
+    Q809: the 3c tests of `dom/3bc-tests` come later.
   - Phase 7: the parity table of section 16.7 of the spec is the to-do list for Linux and macOS
     (14 tests with no counterpart yet).
 - **Support virtual cameras.** Detection shows a virtual camera with `virtual=True`, and a request
