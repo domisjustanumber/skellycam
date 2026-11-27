@@ -73,9 +73,6 @@ and a probe that prints when `_call_connection_lost` raises, and a driver that c
 
 ## Alternatives rejected
 
-- **Detach the transport in the exception handler.** The handler can find the transport through the handle of the
-  callback and call `Server._detach`. It fixes only the one known cause, with private names, and it gives no bound
-  for any other lost connection.
-- **A subclass of `uvicorn.Server` that bounds only `wait_closed()`.** It overrides a private method and keeps the
-  unbounded wait for a request.
-- **`os._exit` for a `SystemExit` in `entry_point()`.** It covers only that path; the cancel covers each exit.
+- **Detach the transport in the exception handler**: private names, and it bounds only the one known cause.
+- **A subclass of `uvicorn.Server` that bounds only `wait_closed()`**: a private method, and no bound for a request.
+- **`os._exit` for a `SystemExit` in `entry_point()`**: only that path; the cancel covers each exit.
