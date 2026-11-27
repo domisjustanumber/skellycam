@@ -1,7 +1,11 @@
 # GV50 — Choices of the split of the slow-holder test
 
-**Status:** proposed, 2026-11-27 (agent; the CI triage lane reads Q917 (b) of
-[ADR-N7ZR](N7ZR-decisions-of-the-user-on-the-test-workflow-and-the-slow-holder-test.md); waits for the user).
+**Status:** absorbed into
+[`specs/windows-capture.md#161-kinds`](../../specs/windows-capture.md#161-kinds),
+[`skellycam/tests/capture/test_status_locks.py`](../../skellycam/tests/capture/test_status_locks.py),
+2026-11-27 (commit to dom/ci-triage; was accepted, 2026-11-27 (user, [ADR-D2YZ](D2YZ-decisions-of-the-user-on-t-rec-36-t-prv-17-and-the-slow-holder-reading.md) item 3); was proposed,
+2026-11-27 (agent; the CI triage lane reads Q917 (b) of
+[ADR-N7ZR](N7ZR-decisions-of-the-user-on-the-test-workflow-and-the-slow-holder-test.md))).
 
 ## Decision
 

@@ -106,11 +106,6 @@ task. Delete an item when its work is done. The PR that closes an item records t
 - **Quick certify runs** (Q902, [ADR-Y2RN](entries/Y2RN-decisions-of-the-user-on-the-size-floor-review-and-certify-quick-runs.md)): the next certify lane, spec text and test
   first: a quick run leaves out the six full-only checks of Q593 (image-effect, not-reencoded, size,
   ring-equals-mkv, source-equals-ring, gaps-explained).
-- **Question for the user: the count of T-PRV-17.** "15 camera messages of B within 1 s after A's reader is
-  removed": move it to `pace` as T-PRV-16 (Q669), and add T-PRV-17 to the list of `preview.md` 9.1? It failed once on
-  macOS (10 of 15; CI run 45925313532); it stays blocking until then. The review (from the code only): no product path
-  slows B after the removal (`preview_relay.py`, `reader.py`); the count depends on the pace of the test client. A
-  later `pace` half must count the frames of B written after the removal (`rings[B].written[k] > t_removed`).
 - **The certify run of skellycam.** The spec [`specs/certify.md`](../specs/certify.md) is draft 3. The code is in `skellycam/core/certify/` (section 19 of the
   spec). Open: the checks that are `not-run`
   `not-built` (the status line of the spec). Not decided: FC1C items 4 and 13, HQE5 items 2 and 3
@@ -185,6 +180,18 @@ task. Delete an item when its work is done. The PR that closes an item records t
     hand gives the result.
 - **Next CI lane (Q854).** Each workflow pins uv 0.13.7 (also `test.yml`, ADR-PA3A); ADR-7DE6 says 0.13.9. An
   entry with the version of the workflows supersedes ADR-7DE6.
+  The same lane tries the runner's D: drive for the temp folder of the Windows recorder job (Q922 of
+  [ADR-D2YZ](entries/D2YZ-decisions-of-the-user-on-t-rec-36-t-prv-17-and-the-slow-holder-reading.md)): T-REC-36 and T-REC-STALL failed with `give` waits there.
+- **Question for the user: the stall watch under load with THREAD workers.** The `[thread]` case of
+  `test_the_watch_ends_no_healthy_camera_under_load` failed once on CI from GIL starvation in the test process, a mode
+  that the product does not use ([evidence](evidence/stall-watch-under-load-thread-20261127.md)). Move its check "no
+  camera ended" to `pace`, and keep `[process]` blocking? Recommended: yes. (The other way, a change of the
+  in-process rule, would weaken the detection of real stalls.) It stays blocking until the user answers.
+- **Question for the user: T-PRV-25 and Doc checks.** `doc-checks.yml` syncs only the dev group, and T-PRV-25 imports
+  `skellycam`; the `--ignore` of `preview-4b.md` 7.8 (Q836) is in kit text (`kit.toml`), so it needs an entry, a
+  `kit_sync.py propose` and a PR to freemocap/project. The other way: move the test into `skellycam/tests/preview/`,
+  which reverses "stays in `tools/tests/`" of Q836. Recommended: move the test (one local change; `test.yml` and
+  `capture.yml` run it). Doc checks stays red until the user answers.
 - **ZEX9** ([ADR-ZEX9](entries/ZEX9-decisions-of-the-user-on-the-housekeeping-of-2026-11-25.md)) becomes `done`
   after the CI result of its item 4.
 - **Exclusive access** (accepted, [ADR-5PAR](entries/5PAR-decisions-of-the-user-on-the-control-read-the-holder-and-the-exclusive-access-drafts.md)).

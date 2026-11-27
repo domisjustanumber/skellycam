@@ -13,6 +13,7 @@ from pathlib import Path
 import psutil
 import pytest
 
+from skellycam.tests.pace import one_run
 from skellycam.tests.take_recorder import jpeg_tools, sidecar_check
 from skellycam.tests.take_recorder.rec_api import (
     DAMAGED_BYTES, T0, Frames, Run, queue_size, rec, recorder_frame, ring_flags, run_in_thread, take_camera)
@@ -270,11 +271,9 @@ def test_t_rec_35_no_good_frame_in_the_queue_time_gives_a_4_2_2_placeholder(tmp_
     assert len(recorder_log_records(caplog, logging.WARNING)) == 1
 
 
-@pytest.mark.recorder_slow
-def test_t_rec_36_1080p60_frames_of_600_kb_for_30_s(tmp_path, runs):
-    """T-REC-36 (a sanity check, not a measurement): 1080p, frames of 600 kB at 60/1 for 30 s, in one
-    process. No `give` wait on a free disk; every frame is in the CSV. The frames are synthetic JPEGs
-    padded after EOI to 600 kB (SFF-738). The test deletes its 2 GB of media at the end."""
+def _t_rec_36_run(tmp_path, runs):
+    """The run of T-REC-36, as data: 1080p, frames of 600 kB at 60/1 for 30 s, in one process. The frames are
+    synthetic JPEGs padded after EOI to 600 kB (SFF-738). The run deletes its 2 GB of media at the end."""
     base = Frames(1920, 1080)
     payloads = [jpeg_tools.padded(base(k), 600_000) for k in range(30)]
     cameras = [take_camera("0a1b", rate=(60, 1), width=1920, height=1080),
@@ -291,8 +290,27 @@ def test_t_rec_36_1080p60_frames_of_600_kb_for_30_s(tmp_path, runs):
             run.give("0a1b", k)
             run.give("ff00", k)
         run.finish(count)
-        for camera_id in ("0a1b", "ff00"):
-            assert run.results[camera_id].give_wait_count == 0
-            assert len(sidecar_check.read(run.csv(camera_id)).rows) == count
+        return dict(count=count, results={c: run.results[c] for c in ("0a1b", "ff00")},
+                    csv_rows={c: len(sidecar_check.read(run.csv(c)).rows) for c in ("0a1b", "ff00")})
     finally:
         shutil.rmtree(run.folder, ignore_errors=True)
+
+
+@pytest.mark.recorder_slow
+def test_t_rec_36_1080p60_frames_of_600_kb_for_30_s(tmp_path, runs):
+    """T-REC-36 (a sanity check, not a measurement): every frame is in the CSV, with no lost frame: the rows and
+    the blocks of each camera equal the frames given. The check "no `give` wait on a free disk" is the `pace` test
+    `test_t_rec_36_has_no_give_wait` [U Q922] [ADR-D2YZ]."""
+    out = one_run("T-REC-36", lambda: _t_rec_36_run(tmp_path, runs))
+    for camera_id, result in out["results"].items():
+        assert out["csv_rows"][camera_id] == out["count"]
+        assert (result.rows, result.blocks, result.missing_rows) == (out["count"], out["count"], 0), result
+
+
+@pytest.mark.pace  # Q922: a busy disk of the runner makes the writers fall behind (CI run 45924771549: 76 waits)
+@pytest.mark.recorder_slow
+def test_t_rec_36_has_no_give_wait(tmp_path, runs):
+    """T-REC-36, the `pace` half [U Q922] [ADR-D2YZ]: no `give` wait on a free disk."""
+    out = one_run("T-REC-36", lambda: _t_rec_36_run(tmp_path, runs))
+    for result in out["results"].values():
+        assert result.give_wait_count == 0, result

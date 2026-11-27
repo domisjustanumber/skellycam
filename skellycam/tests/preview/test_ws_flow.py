@@ -563,15 +563,13 @@ def test_t_prv_16_b_gets_30_messages_within_2_s(cleanup, writers):
     assert_nth_message_within(run.ws, B, run.t_last, 30, 2.0)
 
 
-def test_t_prv_17_reader_removed_then_closed(cleanup, writers, caplog):
-    """T-PRV-17, sections 4.1, 4.4 and 5.1 [agent 21]: remove A's reader from the fake manager, then
-    close it, as `_close_rings` does; then send a ready message for A. No exception; no camera message
-    for A; no log record at WARNING or above; B continues.
-
-    "No camera message for A": no message of a frame of A written after the removal. "B continues":
-    at least 15 camera messages of B in the next 1 s."""
+def _t_prv_17_run(cleanup, writers, caplog):
     rings = fake_rings(cleanup, (A, B))
     manager = manager_with({cid: r.reader() for cid, r in rings.items()})
+
+    def b_after(ws, t_removed):  # (time, frame) of each camera message of a frame of B written after the removal
+        return [(t, m.frame_number) for t, m in ws.camera[B] if rings[B].written[m.frame_number] > t_removed]
+
     with server(manager) as (app, client), client.websocket_connect(ROUTE) as session:
         ws = WsClient(session, answer=True)
         start_writers(writers, rings.values())
@@ -579,9 +577,35 @@ def test_t_prv_17_reader_removed_then_closed(cleanup, writers, caplog):
         client.portal.call(manager.remove_reader, A)
         t_removed = time.monotonic()
         ws.send_ready(A)
-        pump(ws, duration=1.0)
-        assert not app.state.run_tasks[0].done(), "PreviewRelay.run ended"
-    late = [k for k in ws.frames(A) if rings[A].written.get(k, 0) > t_removed]
-    assert late == [], f"camera messages for A after the removal: {late}"
-    assert warnings_or_above(caplog) == []
-    assert len([k for k in ws.frames(B) if rings[B].written[k] > t_removed]) >= 15
+        # 1 s for the check of A, and 15 camera messages of B: a loose limit (10 times the window, 9.1) [ADR-B7YV]
+        pump(ws, until=lambda: time.monotonic() >= t_removed + 1.0 and len(b_after(ws, t_removed)) >= 15,
+             timeout=t_removed + 10.0 - time.monotonic(), what="1 s and 15 camera messages of B after the removal")
+        relay_ended = app.state.run_tasks[0].done()
+    return SimpleNamespace(t_removed=t_removed, relay_ended=relay_ended, b_after=b_after(ws, t_removed),
+                           late=[k for k in ws.frames(A) if rings[A].written.get(k, 0) > t_removed],
+                           warnings=warnings_or_above(caplog))
+
+
+def test_t_prv_17_reader_removed_then_closed(cleanup, writers, caplog):
+    """T-PRV-17, sections 4.1, 4.4 and 5.1 [agent 21]: remove A's reader from the fake manager, then
+    close it, as `_close_rings` does; then send a ready message for A. No exception; no camera message
+    for A; no log record at WARNING or above; the relay still runs; B continues.
+
+    "No camera message for A": no message of a frame of A written after the removal, in at least 1 s. "B
+    continues": blocking, 15 camera messages of frames of B written after the removal, with the loose limit of 9.1
+    (10 s); within 1 s is `test_t_prv_17_b_gets_15_messages_within_1_s` [U Q923] [ADR-D2YZ]."""
+    run = one_run("T-PRV-17", lambda: _t_prv_17_run(cleanup, writers, caplog))
+    assert not run.relay_ended, "PreviewRelay.run ended"
+    assert run.late == [], f"camera messages for A after the removal: {run.late}"
+    assert run.warnings == []
+    assert len(run.b_after) >= 15
+
+
+@pytest.mark.pace  # Q923, as T-PRV-16 (Q669): a count of camera messages in a window depends on the pace
+def test_t_prv_17_b_gets_15_messages_within_1_s(cleanup, writers, caplog):
+    """T-PRV-17, the count [U Q923] [ADR-D2YZ]: the camera message of the 15th frame of B written after the removal
+    of A comes within 1 s of the removal (9.1). A CI run on macOS arm64: 10 in 1 s (CI run 45925313532)."""
+    run = one_run("T-PRV-17", lambda: _t_prv_17_run(cleanup, writers, caplog))
+    assert len(run.b_after) >= 15, run.b_after
+    took = run.b_after[14][0] - run.t_removed
+    assert took <= bound(15 / 30, 1.0), f"the 15th camera message of B came {took:.2f} s after the removal"

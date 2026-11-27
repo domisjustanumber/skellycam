@@ -1332,7 +1332,9 @@ test list of the encode at capture (2026-11-25).
   the hanging restore of F7, the writer p99 of T-RING-12 and of T-RING-23, and the rows of the gaps of
   the slow stop (`test_a_slow_stop_has_a_gap_only_on_the_last_row`), and the `give` waits of the short stall of
   T-REC-STALL (`test_t_rec_stall_short_has_no_give_wait`, Q905 [ADR-P3EZ](../decisions/entries/P3EZ-decision-of-the-user-on-the-give-wait-check-of-the-short-stall-test.md)), and the waits, the read count and the log lines of the slow holder of the status locks
-  (`test_a_live_but_slow_holder_waits_once_and_logs_one_line`, Q917 [ADR-N7ZR](../decisions/entries/N7ZR-decisions-of-the-user-on-the-test-workflow-and-the-slow-holder-test.md)). Their other checks are in blocking
+  (`test_a_live_but_slow_holder_waits_once_and_logs_one_line`, Q917 [ADR-N7ZR](../decisions/entries/N7ZR-decisions-of-the-user-on-the-test-workflow-and-the-slow-holder-test.md)). The `give` waits of T-REC-36
+  (`test_t_rec_36_has_no_give_wait`, [U Q922] [ADR-D2YZ](../decisions/entries/D2YZ-decisions-of-the-user-on-t-rec-36-t-prv-17-and-the-slow-holder-reading.md)) and the count of T-PRV-17 (`test_t_prv_17_b_gets_15_messages_within_1_s`,
+  [U Q923]) are `pace` tests too. Their other checks are in blocking
   tests of the same files: `test_a_slow_stop_ends_each_camera_at_the_last_frame` holds the row counts
   ([`recorder.md`](recorder.md) 12.1). The long-interval test of T-UNX-76 has no bound of time and no
   marker.
