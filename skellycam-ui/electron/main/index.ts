@@ -54,10 +54,9 @@ if (!gotTheLock) {
             await systemPreferences.askForMediaAccess('microphone');
         }
 
-        // The take handler of the player: the recordings folder of the backend and the remembered dialog picks
+        // The take handler of the player: the recordings folder of the backend; dialog picks last for this run only
         setTakeHandler(await installTakeHandler({
             recordingsFolder: path.join(app.getPath('home'), 'skellycam_data', 'recordings'),
-            pickedFoldersFile: path.join(app.getPath('userData'), 'picked-take-folders.json'),
         }));
 
         // Setup IPC

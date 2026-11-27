@@ -1,5 +1,5 @@
 // The main process of the test Electron app (specs/player.md section 12.1). It installs the take
-// handler with a temporary recordings folder and picked-folders file, and gives the tests two hooks
+// handler with a temporary recordings folder, and gives the tests two hooks
 // through `globalThis.__harness` (Playwright `electronApp.evaluate`): a dialog pick and a read fault.
 // A missing product module is recorded, and the window still opens, so each test fails on its own.
 // The page `preview` is the harness page of the step 4b preview (specs/preview-4b.md 7.2). With
@@ -19,7 +19,6 @@ type Handler = Awaited<ReturnType<SchemeModule['installTakeHandler']>>;
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const recordingsFolder = process.env.PLAYER_HARNESS_RECORDINGS ?? '';
-const pickedFoldersFile = process.env.PLAYER_HARNESS_PICKED ?? '';
 const firstPage = process.env.PLAYER_HARNESS_PAGE ?? 'harness';
 const productThrottling = process.env.PLAYER_HARNESS_PRODUCT_THROTTLING === '1';
 
@@ -131,7 +130,7 @@ ipcMain.handle('harness:product-error', () => productError);
 void app.whenReady().then(async () => {
     if (scheme) {
         try {
-            handler = await scheme.installTakeHandler({recordingsFolder, pickedFoldersFile});
+            handler = await scheme.installTakeHandler({recordingsFolder});
         } catch (e) {
             productError = String(e);
         }

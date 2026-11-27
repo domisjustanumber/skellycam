@@ -78,9 +78,10 @@ function withInfo(name: string, info: string | ((plan: TakePlan) => string)): Ta
     return plan;
 }
 
+// one take name, so that the file names and thus the camera order compare
 test('T-PLAY-83 the label from the capture info, camera by camera', async t => {
-    const bare = await open(t, defaultTake('label_bare'));
-    const plan = defaultTake('label_mixed');
+    const bare = await open(t, defaultTake('label'));
+    const plan = defaultTake('label');
     const own = plan.cameras.map(c => c.label);
     plan.extraFiles = [{path: `${plan.rec}_info.json`, content: infoText(plan, [
         {os_index: 0, os_name: 'USB Camera'}, {os_index: 1, os_name: null}, null, {os_index: '3', os_name: 'Cam Three'}])}];
@@ -92,13 +93,13 @@ test('T-PLAY-83 the label from the capture info, camera by camera', async t => {
     assert.equal(mixed.frameCount, bare.frameCount);
     assert.equal(mixed.errors, 0, 'no error event');
 
-    const same = withInfo('label_same', p => infoText(p, [USABLE[0], USABLE[1], {os_index: 7, os_name: 'Same Cam'}, {os_index: 7, os_name: 'Same Cam'}]));
+    const same = withInfo('label', p => infoText(p, [USABLE[0], USABLE[1], {os_index: 7, os_name: 'Same Cam'}, {os_index: 7, os_name: 'Same Cam'}]));
     const dup = await open(t, same);
     assert.deepEqual(dup.labels.slice(2), ['Camera 7 · Same Cam', 'Camera 7 · Same Cam'], 'equal labels, as they are');
     assert.ok(!dup.warnings.includes('duplicate_label'), 'duplicate_label comes only from the sidecars');
     assert.deepEqual(dup.order, bare.order);
 
-    const odd = withInfo('label_odd', p => infoText(p, [USABLE[0], {os_index: 1, os_name: '  '}, {os_index: -1, os_name: 'Cam Two'}, USABLE[3]]));
+    const odd = withInfo('label', p => infoText(p, [USABLE[0], {os_index: 1, os_name: '  '}, {os_index: -1, os_name: 'Cam Two'}, USABLE[3]]));
     const oddOwn = odd.cameras.map(c => c.label);
     const o = await open(t, odd);
     assert.deepEqual(o.labels, ['Camera 0 · USB Camera', oddOwn[1], oddOwn[2], 'Camera 3 · Cam Three'], 'a blank name and a negative index fall back');
@@ -124,9 +125,11 @@ test('T-PLAY-84 the file-level fallbacks of the label', async t => {
     const faulty = withInfo('fall_fault', p => infoText(p, USABLE));
     cases.push(['a read that fails', faulty, `${faulty.rec}_info.json`]);
     const slash = withInfo('fall_slash', p => infoText(p, USABLE));
+    // the name points at a usable capture info in the media folder: only a root file of the take is read
     const m = JSON.parse(manifestText(slash));
-    m.recording_name = `sub/${slash.rec}`;
-    slash.extraFiles!.push({path: 'recording_manifest.json', content: JSON.stringify(m, null, 2) + '\n'});
+    m.recording_name = `synchronized_videos/${slash.rec}`;
+    slash.extraFiles!.push({path: 'recording_manifest.json', content: JSON.stringify(m, null, 2) + '\n'},
+        {path: `synchronized_videos/${slash.rec}_info.json`, content: infoText(slash, USABLE)});
     cases.push(['a recording_name with /', slash]);
     const noManifest = withInfo('fall_no_manifest', p => infoText(p, USABLE));
     noManifest.manifest = 'missing';
