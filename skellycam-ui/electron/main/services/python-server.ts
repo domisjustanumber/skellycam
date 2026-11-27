@@ -5,6 +5,8 @@ import {LifecycleLogger} from "./logger";
 import {gracefulPythonShutdown} from './graceful-python-shutdown';
 import {DEFAULT_PORT} from '../../../src/services/server/server-helpers/server-urls';
 import {PYTHON_EXECUTABLE_CANDIDATES} from "../app-paths";
+import {endedWithPortInUse, processIsRunning} from './server-messages.ts';
+import {showPortInUse} from './server-dialogs';
 
 let pythonProcess: ReturnType<typeof exec> | null = null;
 
@@ -53,6 +55,13 @@ export class PythonServer {
             pythonProcess.on('exit', (code) => {
                 console.log(`Python server exited (code: ${code})`);
                 this.currentExecutablePath = null;
+            });
+
+            // recorder.md 9.2 item 2: decide at `close`, after the end of the output, not at `exit`
+            let stderrTail = '';
+            pythonProcess.stderr?.on('data', (chunk) => { stderrTail = (stderrTail + String(chunk)).slice(-4096); });
+            pythonProcess.on('close', (code) => {
+                if (endedWithPortInUse(code, stderrTail)) showPortInUse();
             });
 
             pythonProcess.on('error', (error) => {
@@ -185,7 +194,7 @@ export class PythonServer {
     }
 
     static isRunning(): boolean {
-        return pythonProcess !== null && pythonProcess.pid !== undefined && !pythonProcess.killed;
+        return processIsRunning(pythonProcess);
     }
 
     static getProcessInfo(): { pid: number | undefined; killed: boolean } | null {
