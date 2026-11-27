@@ -30,6 +30,7 @@ The commands are in `COMMANDS` (common) and in the `handle` method of each mode.
 import argparse
 import asyncio
 import contextlib
+import faulthandler
 import http.client
 import itertools
 import json
@@ -431,7 +432,9 @@ class FakeRingsMode:
         if self.process.is_alive():
             with contextlib.suppress(Exception):
                 await self.writer("quit", timeout=10)
+        print("ui_server stop: the writers answered quit", file=sys.stderr, flush=True)
         self.process.join(10)
+        print(f"ui_server stop: the writer process joined (alive {self.process.is_alive()})", file=sys.stderr, flush=True)
         for camera_id in list(self.manager.group().ring_readers):
             self.manager.remove_reader(camera_id)
         for creator in self.creators.values():
@@ -626,11 +629,23 @@ async def serve(args):
                          name="ui-server-commands").start()
         await stop.wait()
     finally:
+        # the time of each step of the stop on stderr, and the stacks of each thread when the stop takes more than
+        # 8 s (Q896: the test kills a server whose stop takes more than 20 s and logs its last output lines)
+        faulthandler.dump_traceback_later(8, file=sys.stderr)
+        started = time.monotonic()
+
+        def step(name):
+            print(f"ui_server stop: {name} at {(time.monotonic() - started) * 1000:.0f} ms", file=sys.stderr, flush=True)
+
         with contextlib.suppress(Exception):
             await close_connections()
+        step("connections closed")
         server.should_exit = True
         await serving
+        step("uvicorn ended")
         await mode.close()
+        step("mode closed")
+        faulthandler.cancel_dump_traceback_later()
         emit({"event": "stopped"})
 
 

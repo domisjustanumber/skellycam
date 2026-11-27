@@ -4,7 +4,7 @@
 // main process; the page reads no tile canvas back.
 import {expect, test as base} from '@playwright/test';
 import type {ElectronApplication, Page} from '@playwright/test';
-import {spawn} from 'node:child_process';
+import {spawn, spawnSync} from 'node:child_process';
 import type {ChildProcessWithoutNullStreams} from 'node:child_process';
 import {mkdtempSync, rmSync} from 'node:fs';
 import os from 'node:os';
@@ -139,9 +139,13 @@ export class UiServer {
         return this.exited;
     }
 
-    /** End the process at once (the time limit of PreviewKit.close). */
+    /** End the process and its children at once (the time limit of PreviewKit.close), and log its last output
+     * lines. On Windows `uv` starts the server as a child process: a kill of `uv` alone left the server running. */
     kill(): void {
-        if (!this.exited) this.proc.kill();
+        console.log(`the last output lines of ui_server.py:\n${this.tail.join('\n')}`);
+        if (this.exited) return;
+        if (process.platform === 'win32') spawnSync('taskkill', ['/PID', String(this.proc.pid), '/T', '/F']);
+        else this.proc.kill();
     }
 }
 
