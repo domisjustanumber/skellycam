@@ -1,6 +1,7 @@
 # QF7V — Choices of the test workflow on dom/integration
 
-**Status:** proposed, 2026-11-26 (agent; builds [ADR-PA3A](PA3A-decision-of-the-user-on-the-test-workflow-on-dom-integration.md); waits for the user).
+**Status:** accepted, 2026-11-27 (user: [ADR-N7ZR](N7ZR-decisions-of-the-user-on-the-test-workflow-and-the-slow-holder-test.md), Q917 (a); commit to dom/ci-triage; was proposed,
+2026-11-26 (agent; builds [ADR-PA3A](PA3A-decision-of-the-user-on-the-test-workflow-on-dom-integration.md))).
 
 ## Decision
 
