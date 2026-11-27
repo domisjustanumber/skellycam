@@ -1200,9 +1200,10 @@ test list of the encode at capture (2026-11-25).
   are those of the notes: quality 90, the chroma of the source, Quick Sync at depth 2
   [notes: Encoder settings].
 - The main process checks for Quick Sync one time per app run, only if a camera of the session is in
-  an uncompressed mode, and tells the camera processes [notes: Encoder check]. The check ran on the
-  development machine only; on each other machine the check and the encoder are [NV] until a certify
-  report gives them.
+  an uncompressed mode, and tells the camera processes [notes: Encoder check]. The encode of the check
+  runs in a child process with a time limit (22.7) [U Q879]. The check ran on the development machine
+  only; on each other machine the check and the encoder are [NV] until a certify report gives them: the
+  record-only check `system:quick-sync` ([`certify.md`](certify.md) 3.6.2) reports them.
 - An encoder that fails during a take is replaced by `cv2.imencode`, the held frames are encoded
   again from the raw frames, and the first frame after the event gets `DISCONTINUITY` [notes: Encoder
   check] [ring 4].
@@ -2671,7 +2672,8 @@ side of these rules is the certify checks of section 20 of [`certify.md`](certif
   OpenCV conversion. The tables run through `cv2.LUT`. The BGR ring uses the decided range (this closes
   22.4): with `cv2`, it gets the image that `cv2` encoded; with Quick Sync, the decode thread converts
   the raw frame with `DecodeInput.full_range` [U Q887].
-- **The Quick Sync check in the main process [U Q887].** The manager runs the check in a worker thread,
+- **The Quick Sync check in the main process [U Q887].** The manager runs the check in a worker thread
+  (the thread waits for the check child of 22.7 [U Q879]),
   after the whole-request check of a request that it accepts, at the first such request in which a
   camera opens YUY2 or NV12 by the detection data. Then it runs the whole-request check again, so that
   the check of `request_runs` and its set have no wait between them
@@ -2835,3 +2837,81 @@ The port of the 3b tests from `dom/3bc-tests`:
     self-test checks it.
 26. The read path of the decision log was at 92 % after the merge of fix lane 8. ADR-TC9B, ADR-53VB,
     ADR-JWZ1 and ADR-8ACV are absorbed (the user accepted this with Q810).
+
+### 22.7 The Quick Sync check in a child process (Q879)
+
+The user decided on 2026-11-26, spec and tests first: the check of 13.2 runs in a child process with a time limit,
+and a hang or a crash means "no Quick Sync, use OpenCV" (Q879,
+[ADR-4TBY](../decisions/entries/4TBY-decisions-of-the-user-on-the-review-of-the-3b-code.md) item 4). A mark
+[VTW3 n] is item n of [ADR-VTW3](../decisions/entries/VTW3-choices-of-the-quick-sync-check-in-a-child-process.md), a
+proposed choice of an agent.
+
+1. **One mechanism.** The bounded child call of the detection (7.1) becomes one function of
+   `capture/bounded.py`: `in_child(stage, what, target, args, *, limit_s, name)`. It starts a child with the
+   `spawn` method, gives it the sending end of a pipe (`target(*args, sender)`), and returns the first message that
+   is not `("alive", None)`. Each message must come within `limit_s`. A child with no message in time is killed:
+   `CaptureFailure` with the code `hung`. A child that ends with no message gives `CaptureFailure` with the code
+   `process-ended`, and the exit code of the child is in `exit_code`. At its end the call joins the child, and it
+   kills a child that is still alive. Detection (7.1) and the Quick Sync check use this function. No other child
+   mechanism is added [VTW3 1].
+2. **The calls.** `capture.encoder.check_quick_sync(*, limit_s=QUICK_SYNC_LIMIT_S) -> QuickSyncCheck` runs the
+   encode of the one NV12 test frame of 1280x720 (22.2 [YQN1 12]) in a child, through `in_child`. `QuickSyncCheck`
+   has `works` (bool), `failure` (null, or the value of item 4), `check_ms` (from the start of the child to its
+   answer, or to the kill), `encode_ms` (the open, the encode and the flush in the child; null when the child gave
+   no answer) and `exit_code` (the exit code of a child that crashed, else null). It never raises an `Exception`.
+   `quick_sync_works() -> bool` stays the central check of the manager (22.6 item 6): it gives
+   `check_quick_sync().works`. On macOS it gives False and starts no child [notes: JPEG encoder]. The encode never
+   runs in the main process [VTW3 2].
+3. **The limit.** `QUICK_SYNC_LIMIT_S` is `BOUNDED_CALL_LIMIT_S` (5 s), the limit of the detection calls. The limit
+   counts from the start of the child, so it holds the start of the child, its imports and the encode. On the
+   development machine the whole check through a child took 1.03 to 1.08 s: the start of the child and the import of
+   the encoder module 0.42 to 0.45 s, the encode with the import of PyAV 0.54 to 0.57 s (five runs, 2026-11-26). The
+   first start of a child after a pause took 1.17 s for the imports only. Thus 5 s is about 4.7 times the measured
+   time. The limit is not calibrated for other machines: `system:quick-sync` reports `check_ms` [VTW3 3].
+4. **The answers.** Each answer other than a JPEG is "no Quick Sync, use OpenCV" (`works` False) [U Q879]:
+
+   | What happens | `failure` | Log |
+   |---|---|---|
+   | The child gives a JPEG (it starts with `FF D8`). `works` True. | null | one INFO line "Quick Sync JPEG encoder works" with `check_ms` |
+   | The child gives no JPEG. | `no-jpeg` | one INFO line, as before this section |
+   | The encode raises in the child (no Intel GPU, no driver, a build of FFmpeg with no QSV). | the class name of the error, never its text | one INFO line with the class and the text, as before this section |
+   | No answer within the limit. The child is killed. | `timed-out` | one WARNING line with "time-out" and the limit |
+   | The child ends with no answer (a crash, an access violation, `os._exit`). | `crashed` | one WARNING line with "crashed" and the exit code |
+   | Another error of the child call (the child does not start, its answer is not a result). | the class name of the error | one WARNING line with "error", the class and the text |
+
+   Each WARNING line ends with "cv2.imencode is used". An encode that raises is the normal answer on a machine with
+   no Intel GPU, so it stays at INFO; only a fault of the child is a WARNING [VTW3 4].
+5. **No process left.** After a time-out or a crash no check child is left: the call kills the child and joins it.
+   A test checks it with a process listing [VTW3 5].
+6. **App start.** The child starts only at the first accepted request that opens a raw camera (22.2). PyAV is
+   imported only in the check child and in a camera process that opens a Quick Sync encoder. An import of the app
+   (`skellycam.app`) does not import `av` [VTW3 6].
+7. **The wait of the request.** The worker thread of 22.2 waits for the child: about 1.05 s on the development
+   machine (0.55 s before this section), at most the limit and the join. Then the whole-request check runs again
+   (22.2), so the check of `request_runs` and its set have no wait between them
+   ([`camera-requests.md`](camera-requests.md) 2.4a item 7). A request that the check refuses (422 or 409) starts no
+   child [ZEK6 2] [VTW3 7].
+8. **One time for each app run.** The manager keeps the answer for its lifetime, also False after a time-out or a
+   crash, and never starts a second check child in that app run [3WCA 6] [U Q879]. The camera processes get it
+   through the status flag `quick_sync` (22.2).
+9. **certify.** The record-only check `system:quick-sync` ([`certify.md`](certify.md) 3.6.2) calls
+   `check_quick_sync()`, the product call (certify 2.2). It does not set the answer of a manager [VTW3 8].
+
+The tests are in `skellycam/tests/capture/test_quick_sync_child.py`. The tests that start a child are marked
+`capture_timing`, as the detection tests of 7.1 are (a child start is slow under load). They use fake checks in the
+module `skellycam/tests/capture/quick_sync_child_fakes.py`, because a `spawn` child imports its target by name.
+
+| ID | Step | Kind | What | Pass when |
+|---|---|---|---|---|
+| T-CAP-166 | 3b | fake child | `check_quick_sync` with a fake check that gives True. | `works` True, `failure` null, `check_ms` and `encode_ms` above 0, `exit_code` null; one INFO line, no WARNING line. |
+| T-CAP-167 | 3b | fake child | A fake check that gives False. | `works` False, `failure` `no-jpeg`; no WARNING line. |
+| T-CAP-168 | 3b | fake child | A fake check that hangs (60 s), with `limit_s` 1. | The call returns within 1 s + 2 s; `works` False, `failure` `timed-out`, `encode_ms` null; one WARNING line with "time-out"; no child is left (process listing). |
+| T-CAP-169 | 3b | fake child | A fake check that ends its process with `os._exit(3)`; on Windows also with the code of an access violation (`0xC0000005`). | `works` False, `failure` `crashed`, `exit_code` 3 (and 3221225477); one WARNING line with "crashed" and the code; no child is left. |
+| T-CAP-170 | 3b | fake child | A fake check that raises `RuntimeError`; and a check that cannot reach the child (a target that does not pickle). | The first: `works` False, `failure` `RuntimeError`, no WARNING line. The second: `works` False, `failure` the class name of the error, one WARNING line with "error". |
+| T-CAP-171 | 3b | child | `quick_sync_works()` with the encode of the main process replaced by a function that records a call. On macOS (a patched `sys.platform`): `in_child` replaced by a function that records a call. | A bool comes back and the encode of the main process never ran. On macOS: False and no child call. |
+| T-CAP-172 | 3b | fake | The manager with `check_quick_sync` replaced by a counter that gives `timed-out`: a refused YUY2 request (422), then an accepted YUY2 request, then a second accepted YUY2 request. | The refused request makes no call; the accepted request makes one call; the second request makes none; the status flag `quick_sync` of the camera is False. |
+| T-CAP-173 | 3b | process | A new interpreter imports `skellycam.app`. | `av` is not in `sys.modules`. |
+
+T-CAP-156 (22.3) still checks that the check of `request_runs` and its set have no wait between them, with a slow
+check in place of `quick_sync_works`. The tests of the detection child (T-CAP-23, T-CAP-24, T-CAP-48) check the
+detection through `in_child`.
