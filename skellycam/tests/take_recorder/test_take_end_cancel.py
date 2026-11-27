@@ -11,8 +11,17 @@ THREAD workers on the virtual clock, fake sources, synthetic JPEGs in tmp folder
 """
 
 import asyncio
+import json
+import os
+import signal
+import socket
+import subprocess
+import sys
 import threading
 import time
+import urllib.error
+import urllib.request
+from pathlib import Path
 
 import pytest
 
@@ -139,3 +148,95 @@ def test_a_cancelled_take_start_still_finishes_the_take(monkeypatch, tmp_path):
     state, rows = take_manifest(tmp_path)["state"], _rows(tmp_path, camera_ids)
     assert (state, len(finished)) == ("finished", 1), (state, finished, rows)
     assert all(count == finished[0] for count in rows.values()) and finished[0] > 0, (finished, rows)
+
+
+# ----- the real server and a real signal -----
+
+SERVER_CHILD = Path(__file__).with_name("server_take_child.py")
+SLOW_STOP_S = 8.0  # longer than the shutdown limit of 9.1 item 5: the signal comes while the stop waits
+
+
+def _http(port, method, path, body=None, timeout=10.0):
+    data = None if body is None else json.dumps(body).encode()
+    request = urllib.request.Request(f"http://localhost:{port}{path}", data=data, method=method,
+                                     headers={"Content-Type": "application/json"})
+    try:
+        with urllib.request.urlopen(request, timeout=timeout) as response:
+            return response.status, response.read()
+    except urllib.error.HTTPError as error:
+        return error.code, error.read()
+
+
+def _signal_the_server(server):
+    """Ctrl-Break to the process group of the server on Windows (uvicorn takes SIGBREAK), SIGINT elsewhere."""
+    if sys.platform == "win32":
+        os.kill(server.pid, signal.CTRL_BREAK_EVENT)
+    else:
+        os.kill(server.pid, signal.SIGINT)
+
+
+def test_a_signal_during_a_slow_take_stop_ends_with_the_take_finished(tmp_path):
+    """Q928: the real server of `__main__` with two fake cameras records; a take stop waits for its cameras for
+    `SLOW_STOP_S`; then the server gets a real Ctrl-Break (Windows) or SIGINT. The process ends with exit code 0,
+    the manifest is `finished` with no `camera_dead`, and each camera has the same rows, more than zero, with a
+    finished file (recorder.md 9.1 items 3 and 4)."""
+    from skellycam.core.camera.config.camera_config import CameraConfig
+    from skellycam.core.camera.config.image_resolution import ImageResolution
+    from skellycam.tests.capture.fake_source import FakeSourceFactory
+
+    factory = FakeSourceFactory([FakeScript(), FakeScript()])
+    configs = {}
+    for index, camera_id in enumerate(factory.camera_ids):
+        width, height, fps_num, fps_den, _ = factory.scripts[index].modes[0]
+        configs[camera_id] = CameraConfig(camera_id=camera_id, camera_index=index,
+                                          resolution=ImageResolution(width=width, height=height),
+                                          framerate=round(fps_num / fps_den, 2), exposure_mode="MANUAL",
+                                          exposure=-7).model_dump(mode="json")
+    with socket.socket() as probe:
+        probe.bind(("localhost", 0))
+        port = probe.getsockname()[1]
+    group = {"creationflags": subprocess.CREATE_NEW_PROCESS_GROUP} if sys.platform == "win32" else {
+        "start_new_session": True}
+    log = tmp_path / "server.out"
+    recordings = tmp_path / "recordings"
+    with open(log, "w") as out:
+        server = subprocess.Popen([sys.executable, str(SERVER_CHILD), str(port), str(tmp_path / "base"),
+                                   str(tmp_path / "server.log"), str(SLOW_STOP_S)],
+                                  stdout=out, stderr=subprocess.STDOUT, **group)
+    stops = []
+    try:
+        deadline = time.monotonic() + 60
+        while True:
+            try:
+                if _http(port, "GET", "/health", timeout=1.0)[0] == 200:
+                    break
+            except OSError:
+                pass
+            assert server.poll() is None and time.monotonic() < deadline, log.read_text(errors="replace")[-3000:]
+            time.sleep(0.2)
+        assert _http(port, "POST", "/skellycam/camera/detect")[0] == 200
+        status, text = _http(port, "POST", "/skellycam/camera/group/apply",
+                             {"camera_configs": configs, "retry_camera_ids": []}, timeout=60.0)
+        assert status == 200, text
+        body = {"recording_name": "take", "recording_directory": str(recordings)}
+        while (started := _http(port, "POST", "/skellycam/camera/group/all/record/start", body))[0] != 200:
+            assert started[0] == 409 and time.monotonic() < deadline, started  # the cameras are not ready yet
+            time.sleep(0.2)
+        time.sleep(1.5)
+        stopper = threading.Thread(target=lambda: stops.append(
+            _http(port, "POST", "/skellycam/camera/group/all/record/stop", timeout=60.0)), daemon=True)
+        stopper.start()
+        time.sleep(1.0)  # the stop waits in `_collect_results`
+        _signal_the_server(server)
+        code = server.wait(timeout=60)
+    finally:
+        if server.poll() is None:
+            server.kill()
+            server.wait()
+    manifest = take_manifest(recordings)
+    state, dead = manifest["state"], [w for w in manifest["warnings"] if w["code"] == "camera_dead"]
+    assert (code, dead) == (0, []), (code, dead, log.read_text(errors="replace")[-3000:])
+    rows = _rows(recordings, factory.camera_ids)
+    assert state == "finished", (state, rows, log.read_text(errors="replace")[-3000:])
+    counts = list(rows.values())
+    assert all(isinstance(count, int) for count in counts) and counts[0] == counts[1] > 0, rows
