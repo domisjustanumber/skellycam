@@ -225,7 +225,7 @@ export class PreviewKit {
 
     /** Launch the harness app with the page `preview` and start the page on `server`. */
     async open(server: UiServer, cameras: SeedCamera[], o: OpenOptions = {}): Promise<PreviewWindow> {
-        const {app, page} = await launch(path.join(this.root, 'recordings'), path.join(this.root, 'picked.json'), 'preview', o.env);
+        const {app, page} = await launch(path.join(this.root, 'recordings'), 'preview', o.env);
         this.apps.push(app);
         const win = await wrap(app, page);
         await page.evaluate(opts => window.preview.start(opts), {port: server.port, cameras, viewer: o.viewer ?? null, gridHeight: o.gridHeight});

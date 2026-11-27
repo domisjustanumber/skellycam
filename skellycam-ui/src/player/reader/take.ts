@@ -3,7 +3,7 @@
 import type {TakeFiles} from '../files/take-files.ts';
 import {frameTimes} from '../clock/choose.ts';
 import {playerTimes} from './fit.ts';
-import {deadFromDetail, MANIFEST, readManifest} from './manifest.ts';
+import {deadFromDetail, MANIFEST, readLabels, readManifest} from './manifest.ts';
 import {BlockMismatch, checkTail, EBML_MAGIC, readHead} from './matroska.ts';
 import {isMissing, readSidecar, TAKE_KEYS, VIDEO_MARK} from './sidecar.ts';
 import type {FileState, Sidecar} from './sidecar.ts';
@@ -115,8 +115,9 @@ export async function readTake(files: TakeFiles): Promise<Take> {
     const position = (f: Found) => (/^(0|[1-9][0-9]*)$/.test(f.sc.header.group_position ?? '') ? Number(f.sc.header.group_position) : Infinity);
     members.sort((a, b) => position(a) - position(b) || (a.mkv < b.mkv ? -1 : a.mkv > b.mkv ? 1 : 0));
 
+    const cameraLabels = await readLabels(files, used);
     const cameras: Camera[] = [];
-    for (const f of members) cameras.push(await readCamera(files, f, used));
+    for (const f of members) cameras.push(await readCamera(files, f, used, cameraLabels));
 
     const pairs = members.filter(f => f.paired);
     const checked = pairs.filter(f => !refused(f.sc.state));
@@ -145,12 +146,12 @@ export async function readTake(files: TakeFiles): Promise<Take> {
     };
 }
 
-async function readCamera(files: TakeFiles, f: Found, manifest: Awaited<ReturnType<typeof readManifest>>): Promise<Camera> {
+async function readCamera(files: TakeFiles, f: Found, manifest: Awaited<ReturnType<typeof readManifest>>, labels: Map<string, string>): Promise<Camera> {
     const {sc} = f;
     const h = sc.header;
     const rate = /^([0-9]+)\/([0-9]+)$/.exec(h.nominal_rate ?? '');
     const info: CameraState = {
-        label: h.camera_label ?? '', name: f.mkv, state: sc.state, reason: sc.reason, rows: null, tornBytes: null, fit: null,
+        label: labels.get(h.camera_key ?? '') ?? h.camera_label ?? '', name: f.mkv, state: sc.state, reason: sc.reason, rows: null, tornBytes: null, fit: null,
         warnings: [...sc.warnings], rotation: (Number(h.display_rotation) || 0) as CameraState['rotation'], missingRows: 0,
         deadFrom: null, damagedAt: sc.damagedAt,
     };

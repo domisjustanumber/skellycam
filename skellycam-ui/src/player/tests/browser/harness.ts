@@ -1,5 +1,5 @@
 // The Playwright side of the test Electron app: launch, temporary folders, close. Each test gets a new
-// recordings folder and picked-folders file, and the app is closed after the test.
+// recordings folder, and the app is closed after the test.
 import {_electron, test as base} from '@playwright/test';
 import type {ElectronApplication, Page} from '@playwright/test';
 import {mkdtempSync, rmSync} from 'node:fs';
@@ -19,18 +19,21 @@ export interface Harness {
     page: Page;
     root: string;              // the temporary folder of the test
     recordings: string;        // the test recordingsFolder
-    picked: string;            // the test pickedFoldersFile
+    userData: string;          // the Electron userData folder of the harness
     build(plan: TakePlan | string): BuiltTake;
     relaunch(): Promise<void>;
     /** Fail with the product error when the product is missing. */
     requireProduct(): Promise<void>;
 }
 
-export async function launch(recordings: string, picked: string, pageName: 'harness' | 'host' | 'preview',
+/** The Electron userData folder of a harness, beside its recordings folder (player.md 12.1). */
+export const userDataOf = (recordings: string) => path.join(path.dirname(recordings), 'harness-user-data');
+
+export async function launch(recordings: string, pageName: 'harness' | 'host' | 'preview',
                              extraEnv: Record<string, string> = {}): Promise<{app: ElectronApplication; page: Page}> {
     const env: Record<string, string> = {};
     for (const [k, v] of Object.entries(process.env)) if (v !== undefined && k !== 'ELECTRON_RUN_AS_NODE') env[k] = v;
-    Object.assign(env, {PLAYER_HARNESS_RECORDINGS: recordings, PLAYER_HARNESS_PICKED: picked, PLAYER_HARNESS_PAGE: pageName}, extraEnv);
+    Object.assign(env, {PLAYER_HARNESS_RECORDINGS: recordings, PLAYER_HARNESS_USER_DATA: userDataOf(recordings), PLAYER_HARNESS_PAGE: pageName}, extraEnv);
     const app = await _electron.launch({args: [HARNESS_MAIN, '--no-sandbox'], env});
     const page = await app.firstWindow();
     await page.waitForFunction(name => name in window, pageName);
@@ -54,8 +57,7 @@ export function harnessTest(pageName: 'harness' | 'host') {
         harness: async ({}, use) => {
             const root = mkdtempSync(path.join(os.tmpdir(), 'skellycam-player-e2e-'));
             const recordings = path.join(root, 'skellycam_data', 'recordings');
-            const picked = path.join(root, 'userData', 'picked-folders.json');
-            let {app, page} = await launch(recordings, picked, pageName);
+            let {app, page} = await launch(recordings, pageName);
             const h: Harness = {
                 get app() {
                     return app;
@@ -63,11 +65,11 @@ export function harnessTest(pageName: 'harness' | 'host') {
                 get page() {
                     return page;
                 },
-                root, recordings, picked,
+                root, recordings, userData: userDataOf(recordings),
                 build: plan => writeTake(recordings, typeof plan === 'string' ? planOf(plan) : plan),
                 relaunch: async () => {
                     await app.close();
-                    ({app, page} = await launch(recordings, picked, pageName));
+                    ({app, page} = await launch(recordings, pageName));
                 },
                 requireProduct: async () => {
                     const error = await page.evaluate(() => window.harnessIpc.productError());

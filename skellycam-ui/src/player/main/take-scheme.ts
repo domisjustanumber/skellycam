@@ -4,7 +4,7 @@
 import {ipcMain, protocol} from 'electron';
 import type {WebContents} from 'electron';
 import {randomBytes} from 'node:crypto';
-import {lstat, mkdir, open, readdir, readFile, realpath, stat, writeFile} from 'node:fs/promises';
+import {lstat, open, readdir, realpath, stat} from 'node:fs/promises';
 import type {FileHandle} from 'node:fs/promises';
 import path from 'node:path';
 import {TAKE_CHANNELS} from './bridge.ts';
@@ -32,7 +32,6 @@ interface Token {
 
 export interface TakeHandlerOptions {
     recordingsFolder: string;
-    pickedFoldersFile: string;
 }
 
 export interface TakeHandler {
@@ -60,25 +59,19 @@ export async function installTakeHandler(options: TakeHandlerOptions): Promise<T
     const watched = new Set<number>();
     const navigations = new Map<number, number>();   // the count of navigations of each window
     let readFault: string | null = null;
-    let picked: string[] = [];
-    try {
-        const list = JSON.parse(await readFile(options.pickedFoldersFile, 'utf8'));
-        if (Array.isArray(list)) picked = list.filter(p => typeof p === 'string');
-    } catch {
-        // no list yet
-    }
+    // the real paths of the dialog picks, for the run of the app only: no list file (5.3, ADR-70J6)
+    const picked: string[] = [];
 
     const same = (a: string, b: string) => (process.platform === 'win32' ? a.toLowerCase() === b.toLowerCase() : a === b);
     const inside = (folder: string, root: string) => {
         const rel = path.relative(process.platform === 'win32' ? root.toLowerCase() : root, process.platform === 'win32' ? folder.toLowerCase() : folder);
         return same(folder, root) || (rel !== '' && rel !== '..' && !rel.startsWith('..' + path.sep) && !path.isAbsolute(rel));
     };
+    // the recordings folder is resolved at each open; a pick keeps the real path of its pick time, so a link put in
+    // its place later is not followed (5.3)
     const allowed = async (real: string) => {
-        for (const root of [options.recordingsFolder, ...picked]) {
-            const rootReal = await realpath(root).catch(() => null);
-            if (rootReal && inside(real, rootReal)) return true;
-        }
-        return false;
+        const recordings = await realpath(options.recordingsFolder).catch(() => null);
+        return [...(recordings ? [recordings] : []), ...picked].some(root => inside(real, root));
     };
 
     const closeToken = (token: string) => {
@@ -230,8 +223,6 @@ export async function installTakeHandler(options: TakeHandlerOptions): Promise<T
             const real = await realpath(folder);
             if (picked.some(p => same(p, real))) return;
             picked.push(real);
-            await mkdir(path.dirname(options.pickedFoldersFile), {recursive: true});
-            await writeFile(options.pickedFoldersFile, JSON.stringify(picked, null, 2) + '\n');
         },
         setReadFault(relativePath: string | null) {
             readFault = relativePath;
